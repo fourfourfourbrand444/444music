@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Earnings • 444Music</title>
+   <link rel="stylesheet" href="earnings.css">
+  <style>
+   
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="card">
+      <h1>Earnings</h1>
+      <p class="subtitle">Track your royalties and withdraw your revenue</p>
+
+      <div class="balance-box">
+        <div>
+          <div class="balance-label">Account Balance</div>
+          <div id="balanceValue" class="balance-value">GHS 0.00</div>
+        </div>
+
+        <select id="currency" class="currency-select">
+          <option value="GHS">GHS – Ghana Cedi</option>
+          <option value="USD">USD – US Dollar</option>
+          <option value="EUR">EUR – Euro</option>
+          <option value="GBP">GBP – Pound</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="https://www.moneygram.com/r/gh/en" target="_blank">
+          Withdraw Earnings
+        </a>
+      </div>
+
+      <div class="info">
+        <p>
+          Your earnings are generated from streams, downloads, and platform revenue
+          across all digital stores.
+        </p>
+        <p>
+          <strong>Note:</strong> Balances are updated by our team after platform reports
+          are received. You can request a withdrawal once your balance is above the
+          minimum payout threshold.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+ const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
+  measurementId: "G-WCRN117P8P"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const balanceEl = document.getElementById("balanceValue");
+    const currencySelect = document.getElementById("currency");
+
+    let currentBalance = 0;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        currentBalance = snap.data().balance || 0;
+      }
+
+      updateBalance();
+    });
+
+    function updateBalance() {
+      const cur = currencySelect.value;
+      balanceEl.textContent = `${cur} ${Number(currentBalance).toFixed(2)}`;
+    }
+
+    currencySelect.addEventListener("change", updateBalance);
+  </script>
+
+</body>
+</html>
