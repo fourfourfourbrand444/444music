@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Distribution Platforms</title>
+<link rel="stylesheet" href="select.css">
+<style>
+
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>Select Distribution Platforms</h1>
+  <p class="subtitle">Choose where your music will be distributed. You can select all or only the stores you prefer.</p>
+
+  <div class="grid" id="platformGrid">
+
+    <!-- You can replace these image URLs with your own local icons if you want -->
+   <div class="platform" data-name="Spotify">
+  <img src="spotify.svg">
+  <span>Spotify</span>
+</div>
+
+<div class="platform" data-name="Apple Music">
+  <img src="apple-music (1).svg">
+  <span>Apple Music</span>
+</div>
+
+<div class="platform" data-name="YouTube Music">
+  <img src="Youtube_Music_icon.svg.png">
+  <span>YouTube Music</span>
+</div>
+
+<div class="platform" data-name="Amazon Music">
+  <img src="amazon-music.svg">
+  <span>Amazon Music</span>
+</div>
+
+<div class="platform" data-name="Tidal">
+  <img src="tidal.svg">
+  <span>Tidal</span>
+</div>
+
+<div class="platform" data-name="Pandora">
+  <img src="pandora.svg">
+  <span>Pandora</span>
+</div>
+
+<div class="platform" data-name="SoundCloud">
+  <img src="soundcloud.svg">
+  <span>SoundCloud</span>
+</div>
+
+<div class="platform" data-name="Napster">
+  <img src="napster.svg">
+  <span>Napster</span>
+</div>
+
+<div class="platform" data-name="Napster">
+  <img src="instagram.svg">
+  <span>instagram</span>
+</div>
+
+
+<div class="platform" data-name="Napster">
+  <img src="tiktok.svg">
+  <span>Tiktok</span>
+</div>
+
+<div class="platform" data-name="Napster">
+  <img src="icons8-boomplay-50.png">
+  <span>Boomplay</span>
+</div>
+
+<div class="platform" data-name="Napster">
+  <img src="icons8-audiomack-48.png">
+  <span>Audiomack</span>
+</div>
+
+<div class="platform" data-name="Napster">
+  <img src="icons8-facebook-logo-48.png">
+  <span>FaceBook</span>
+</div>
+<div class="wrapper">
+  <h1>200+ stores More.... </h1>
+</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="selectAll()">Select All</button>
+    <button class="btn btn-primary" onclick="continueNext()">Continue</button>
+  </div>
+</div>
+
+<script>
+const items = document.querySelectorAll('.platform');
+
+items.forEach(item => {
+  item.addEventListener('click', () => {
+    item.classList.toggle('selected');
+  });
+});
+
+function selectAll() {
+  items.forEach(i => i.classList.add('selected'));
+}
+
+function continueNext() {
+  const selected = [...items]
+    .filter(i => i.classList.contains('selected'))
+    .map(i => i.dataset.name);
+
+  if (selected.length === 0) {
+    alert("Please select at least one platform.");
+    return;
+  }
+
+  // You can save this in localStorage or send to Firebase later
+  localStorage.setItem("selectedPlatforms", JSON.stringify(selected));
+
+  // Go to next step (upload or dashboard)
+  window.location.href = "https://tally.so/r/NpX0pp";
+}
+</script>
+</body>
+</html>

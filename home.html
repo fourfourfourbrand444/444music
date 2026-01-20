@@ -11,15 +11,19 @@
 <body>
 
 <header>
-  <h1></h1>
-  <nav> 
-    
+  <div class="nav-wrapper">
+  <div class="nav-icon" id="navToggle">☰</div>
+
+  <nav id="navMenu">
+    <a href="view.html">Logout</a>
     <a href="dashboard.html">Dashboard</a>
     <a href="https://fourfourfourbrand444.github.io/444/">Services</a>
     <a href="submit.html">Upload</a>
     <a href="https://wa.me/+233530399523">Contact</a>
     <a href="exp 2.html">T&C</a>
   </nav>
+</div>
+
 </header>
 <section class="hero">
   <div>
@@ -55,4 +59,20 @@
 </footer>
 
 </body>
+<script>
+  const navToggle = document.getElementById("navToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  navToggle.addEventListener("click", () => {
+    navMenu.style.display = navMenu.style.display === "flex" ? "none" : "flex";
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+      navMenu.style.display = "none";
+    }
+  });
+</script>
+
 </html>

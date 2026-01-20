@@ -1,0 +1,119 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", system-ui, sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #fff;
+  padding: 20px;
+}
+
+.wrapper {
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 2rem;
+  background: linear-gradient(90deg, #1DB954, #00e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  text-align: center;
+  color: #bbb;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.platform {
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid #2a2f55;
+  border-radius: 16px;
+  padding: 18px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s ease;
+  position: relative;
+}
+
+.platform:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.platform img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+
+.platform span {
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.platform.selected {
+  border-color: #1DB954;
+  box-shadow: 0 0 0 2px rgba(29,185,84,.3);
+}
+
+.platform.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: #1DB954;
+  color: #000;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn {
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #1DB954, #00e0ff);
+  color: #000;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #2a2f55;
+  color: #fff;
+}
+
+.btn-primary:hover { opacity: .9; }
+.btn-outline:hover { border-color: #1DB954; }
+
+@media (max-width: 520px) {
+  h1 { font-size: 1.6rem; }
+}

@@ -26,6 +26,9 @@
       </div>
       <button type="submit" class="btn">Login</button>
       <div class="error-msg" id="errorMsg"></div>
+     <div class="link">
+       <a href="#" id="forgotPass">Forgot password?</a>
+     </div>
     </form>
 
     <div class="link">
@@ -34,42 +37,77 @@
   </div>
 
   <!-- Firebase JS -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-      authDomain: "usersubmissionsportal.firebaseapp.com",
-      projectId: "usersubmissionsportal",
-      storageBucket: "usersubmissionsportal.firebasestorage.app",
-      messagingSenderId: "734783502459",
-      appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-    };
+ const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    const loginForm = document.getElementById("loginForm");
-    const errorMsg = document.getElementById("errorMsg");
+  const loginForm = document.getElementById("loginForm");
+  const errorMsg = document.getElementById("errorMsg");
+  const forgotPass = document.getElementById("forgotPass");
 
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorMsg.textContent = "";
+  // LOGIN
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorMsg.textContent = "";
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        // Redirect to dashboard after successful login
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        console.error("Login failed:", err);
-        errorMsg.textContent = "Invalid email or password.";
-      }
-    });
-  </script>
+    if (!email || !password) {
+      errorMsg.style.color = "#ffb347";
+      errorMsg.textContent = "Please enter your email and password.";
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      console.error("Login failed:", err);
+      errorMsg.style.color = "#ff6b6b";
+      errorMsg.textContent = "Invalid email or password.";
+    }
+  });
+
+  // FORGOT PASSWORD
+  forgotPass.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+
+    if (!email) {
+      errorMsg.style.color = "#ffb347";
+      errorMsg.textContent = "Enter your email first to reset password.";
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      errorMsg.style.color = "#1DB954";
+      errorMsg.textContent = "Reset link sent! Check your email inbox. Didn't recieve this? check Spam/Junk";
+    } catch (err) {
+      console.error("Reset error:", err);
+      errorMsg.style.color = "#ff6b6b";
+      errorMsg.textContent = err.message;
+    }
+  });
+</script>
 
 </body>
 </html>
