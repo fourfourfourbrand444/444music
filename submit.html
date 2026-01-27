@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create New Release</title>
 <link rel="stylesheet" href="submit.css">
-<style>
-
-</style>
 </head>
 
 <body>
@@ -79,9 +76,10 @@
         </select>
       </div>
 
-    <div class="field" style="margin-top:16px;">
-      <label>Add Lyrics (Optional)</label>
-      <textarea id="description"></textarea>
+      <div class="field" style="margin-top:16px;">
+        <label>Add Lyrics (Optional)</label>
+        <textarea id="description"></textarea>
+      </div>
     </div>
 
     <button class="btn" type="submit">Save & Upload Files</button>
@@ -92,7 +90,14 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  doc, 
+  getDoc, 
+  setDoc 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -108,6 +113,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
+
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -121,9 +127,24 @@ const form = document.getElementById("releaseForm");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!currentUser) return alert("You must be logged in.");
+  if (!currentUser) {
+    alert("You must be logged in.");
+    return;
+  }
 
   try {
+    // 🔥 ENSURE USER EARNINGS DOC EXISTS
+    const userRef = doc(db, "users", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        earnings: 0,
+        createdAt: Date.now()
+      });
+    }
+
+    // Save submission
     const data = {
       artistName: document.getElementById("artistName").value.trim(),
       releaseTitle: document.getElementById("releaseTitle").value.trim(),
@@ -140,18 +161,20 @@ form.addEventListener("submit", async (e) => {
       userId: currentUser.uid,
       status: "Pending",
       createdAt: Date.now(),
-      coverURL: ""  // will be updated after Tally submission
+      coverURL: ""
     };
 
-    // Save text fields to Firestore
     await addDoc(collection(db, "submissions"), data);
 
-    // Redirect user to Tally form to upload files
+    // Redirect to Tally upload form
     window.location.href = "https://tally.so/r/NpX0pp";
 
   } catch (err) {
     console.error("Failed to submit:", err);
-    alert("Failed to submit release. Check console for details.");
+    alert("Failed to submit release. Please try again.");
   }
 });
 </script>
+
+</body>
+</html>

@@ -3,122 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Distribution</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution • Global Music Distribution</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="view.css">
-<style>
-
-</style>
 </head>
+
 <body>
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="logo">444Music</span>
+  </div>
 
-<!-- Hero Section -->
-<header>
-  <div class="slide active" style="background-image:url(philip-myrtorp-8P3JkZchaYI-unsplash.jpg);"></div>
-  <div class="slide" style="background-image:url(sorin-basangeac-3beMtLPedqI-unsplash.jpg);"></div>
-  <div class="slide" style="background-image:url(xt7-core-4k3ubYsk37Y-unsplash.jpg);"></div>
+  <div class="nav-toggle" id="navToggle">
+    ☰
+  </div>
 
+  <ul class="nav-links" id="navLinks">
+    <li><a href="register.html">Get Started</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#stores">stores</a></li>
+  </ul>
+</nav>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">444Music</div>
+  <div class="nav-links">
+    <a href="register.html">Get Started</a>
+    <a href="login.html">Login</a>
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#stores">Stores</a>
+    <a href="https://wa.me/+233530399523">Help/Support</a>
+  </div>
+</nav>
+ 
+<!-- HERO -->
+<header class="hero">
+  
+  <div class="hero-overlay"></div>
   <div class="hero-content">
-    <h1>Welcome to 444Music Distribution</h1>
-    <p>Distribute your music to all major platforms effortlessly. Reach Spotify, Apple Music, Deezer, and more with a single upload. 444Music Distribution makes releasing your music simple, fast, and professional.</p>
-    <a href="register.html">Create Your Release</a>
+    
+    <h1>Distribute Your Music Worldwide</h1>
+    <p>
+      Release your music on Spotify, Apple Music, Boomplay, Audiomack, TikTok,
+      YouTube Music & 100+ stores worldwide — fast, simple, professional.
+    </p>
+    <div class="hero-buttons">
+      <a href="register.html" class="btn-primary">Start Free</a>
+      <a href="#how" class="btn-secondary">How It Works</a>
+    </div>
   </div>
 </header>
 
-<!-- Music Stores Logos -->
-<section class="stores">
-  <img src="Spotify_logo_without_text.svg" alt="Spotify">
-  <img src="Apple_Music_logo.svg.png" alt="Apple Music">
-
-  <img src="Amazon_Music_2024.png" alt="Amazon Music">
-  <img src="Youtube_Music_icon.svg.png" alt="YouTube Music">
+<!-- TRUST -->
+<section class="trust">
+  <p>Trusted by independent artists worldwide</p>
+  <div class="trust-stats">
+    <div><strong>100+</strong><span>Digital Stores</span></div>
+    <div><strong>50M+</strong><span>Listeners Reached</span></div>
+    <div><strong>100%</strong><span>Royalty Ownership</span></div>
+  </div>
 </section>
 
-<!-- About Section -->
-<section class="about">
-  <p>444Music Distribution is dedicated to independent artists. Upload your songs and we’ll make sure they reach all the major music stores. Our platform is simple, reliable, and trusted by thousands of artists worldwide.
-About .444Music Distribution
+<!-- STORES -->
+<section id="stores" class="stores">
+  <h2>Distribute to all major platforms</h2>
+  <div class="store-grid">
+    <span>Spotify</span>
+    <span>Apple Music</span>
+    <span>Amazon Music</span>
+    <span>YouTube Music</span>
+    <span>TikTok</span>
+    <span>Instagram</span>
+    <span>Facebook</span>
+    <span>Deezer</span>
+    <span>Boomplay</span>
+    <span>Audiomack</span>
+    <span>Shazam</span>
+    <span>Anghami</span>
+  </div>
+</section>
 
-✔ Get Heard Worldwide
-We help independent artists break boundaries and reach fans across the globe. With .444Music Distribution, your music is delivered to over 100 major streaming platforms, giving your sound the power to travel far beyond your local scene.
+<!-- FEATURES -->
+<section id="features" class="features">
+  <h2>Everything You Need As An Artist</h2>
+  <div class="feature-grid">
+    <div class="feature-card">✔ Keep 100% of your royalties</div>
+    <div class="feature-card">✔ Free ISRC & Barcodes</div>
+    <div class="feature-card">✔ Fast worldwide distribution</div>
+    <div class="feature-card">✔ Free pre-saves & smart links</div>
+    <div class="feature-card">✔ Monetize TikTok & Instagram</div>
+    <div class="feature-card">✔ Detailed earnings dashboard</div>
+  </div>
+</section>
 
-✔ Global Music Distribution
-Your releases go live on Spotify, Apple Music, Boomplay, Audiomack, YouTube Music, Deezer, TikTok, Instagram, and many more—instantly placing your music in front of over 50 million listeners worldwide.
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-✔ Reach Millions of Music Lovers
-Whether you’re an upcoming artist or an established act, our network gives you access to a massive global audience ready to discover new sounds.
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+};
 
-✔ Free Barcodes & ISRC Codes
-We provide all the technical essentials for free. Every release comes with industry-standard barcodes and ISRC codes, so your music is professionally registered and tracked everywhere.
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-✔ Free iTunes Pre-Orders
-Build anticipation before your release day. Enable iTunes pre-orders at no extra cost and let your fans secure your music ahead of time.
+// FEATURED RELEASES
+const grid = document.getElementById("featuredGrid");
+const q = query(collection(db, "submissions"), where("status", "==", "Approved"));
+const snap = await getDocs(q);
 
+snap.forEach(doc => {
+  const d = doc.data();
+  const card = document.createElement("div");
+  card.className = "release-card";
+  card.innerHTML = `
+    <img src="${d.coverURL || 'placeholder.jpg'}">
+    <h4>${d.releaseTitle}</h4>
+    <p>${d.artistName}</p>
+  `;
+  grid.appendChild(card);
+});
+
+// COUNTERS
+const counters = document.querySelectorAll(".counter");
+counters.forEach(counter => {
+  const update = () => {
+    const target = +counter.dataset.target;
+    const value = +counter.innerText.replace(/,/g,'');
+    const inc = target / 200;
+
+    if (value < target) {
+      counter.innerText = Math.ceil(value + inc).toLocaleString();
+      setTimeout(update, 10);
+    } else {
+      counter.innerText = target.toLocaleString();
+    }
+  };
+  update();
+});
+</script>
+
+
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <h2>How 444Music Works</h2>
+  <div class="steps">
+    <div class="step">
+      <span>1</span>
+      <h3>Create an account</h3>
+      <p>Sign up for free and access your artist dashboard.</p>
+    </div>
+    <div class="step">
+      <span>2</span>
+      <h3>Upload your music</h3>
+      <p>Add release details and upload cover art & audio.</p>
+    </div>
+    <div class="step">
+      <span>3</span>
+      <h3>Choose platforms</h3>
+      <p>Select where your music should be distributed.</p>
+    </div>
+    <div class="step">
+      <span>4</span>
+      <h3>Get paid</h3>
+      <p>Track streams and earnings in real-time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <h2>Why Artists Choose 444Music</h2>
+  <p>
+    We are built for independent artists. No complicated contracts.
+    No hidden fees. Just powerful tools to help you grow and earn globally.
   </p>
 </section>
 
-<!-- Featured Releases Carousel -->
-<section>
-  <h2 style="text-align:center; margin-bottom:20px; color:#ff6f61;">Featured Releases</h2>
-  <div class="carousel" id="carousel">
-    <!-- Cards will be inserted here by JS -->
+<!-- CTA -->
+<section class="cta">
+  <h2>Your Music Deserves The World</h2>
+  <p>Start distributing your music today — it’s fast, simple and professional.</p>
+  <a href="register.html" class="btn-primary">Create Free Account</a>
+</section>
+
+<section class="stats">
+  <div class="stat">
+    <h3 class="counter" data-target="100">0</h3>
+    <p>Digital Stores</p>
+  </div>
+  <div class="stat">
+    <h3 class="counter" data-target="50000000">0</h3>
+    <p>Global Listeners</p>
+  </div>
+  <div class="stat">
+    <h3 class="counter" data-target="100">0</h3>
+    <p>% Royalty Ownership</p>
   </div>
 </section>
-<div class="carousel">
-  <div class="release-card">
-    <img src="blank-vinyl-record-jacket-2924018.jpg" alt="Release 1">
-    <h3>Street Anthem</h3>
-    <p>kojo kay</p>
-  </div>
 
-  <div class="release-card">
-    <img src="cd-cover-2993231.jpg" alt="Release 2">
-    <h3>Angel Vibes</h3>
-    <p>DEVER</p>
+<section class="testimonials">
+  <h2>What Artists Say</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial">
+      <p>“444Music helped me get my songs on Spotify fast. The dashboard is clean and professional.”</p>
+      <strong>— Kojo Kay 🇬🇭</strong>
+    </div>
+    <div class="testimonial">
+      <p>“Finally a distribution platform that understands African artists.”</p>
+      <strong>— Angel Vibes</strong>
+    </div>
+    <div class="testimonial">
+      <p>“Simple uploads, clear earnings, real support.”</p>
+      <strong>— Dever</strong>
+    </div>
   </div>
+</section>
 
-  <div class="release-card">
-    <img src="music-7687732.png" alt="Release 3">
-    <h3>Night Flow</h3>
-    <p>444 Crew</p>
+<section class="pricing">
+  <h2>Simple & Transparent Pricing</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <h3>Starter</h3>
+      <p class="price">Free</p>
+      <ul>
+        <li>✔ First Single Free</li>
+        <li>✔ 100% Royalties</li>
+        <li>✔ All Major Stores</li>
+      </ul>
+      <a href="register.html" class="btn-primary">Start Free</a>
+    </div>
+
+    <div class="price-card highlight">
+      <h3>Standard</h3>
+      <p class="price">GHS 29</p>
+      <ul>
+        <li>✔ Unlimited Singles</li>
+        <li>✔ Earnings Dashboard</li>
+        <li>✔ Priority Support</li>
+      </ul>
+    </div>
+
+    <div class="price-card">
+      <h3>EP / Album</h3>
+      <p class="price">GHS 39</p>
+      <ul>
+        <li>✔ EP & Albums</li>
+        <li>✔ Global Monetization</li>
+        <li>✔ Full Analytics</li>
+      </ul>
+    </div>
   </div>
+</section>
 
-  <div class="release-card">
-    <img src="sorin-basangeac-3beMtLPedqI-unsplash.jpg" alt="Release 4">
-    <h3>Future Sound</h3>
-    <p>DJ Pulse</p>
-  </div>
-</div>
+<section class="featured">
+  <h2>Featured Releases</h2>
+  <div id="featuredGrid" class="featured-grid"></div>
+</section>
 
-<!-- Footer -->
-<footer>
-  &copy; 2026 444Music Distribution. All rights reserved.
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>© 2026 444Music Distribution. All rights reserved.</p>
 </footer>
+ 
 
-<!-- Scripts -->
 <script>
-  // Hero Slider
-  const slides = document.querySelectorAll('.slide');
-  let current = 0;
-  setInterval(() => {
-    slides[current].classList.remove('active');
-    current = (current + 1) % slides.length;
-    slides[current].classList.add('active');
-  }, 4000);
+  const toggle = document.getElementById("navToggle");
+  const links = document.getElementById("navLinks");
 
-  // Example Featured Releases (replace with Firebase later)
-  
-
-  const carousel = document.getElementById("carousel");
-  featured.forEach(f => {
-    const card = document.createElement("div");
-    card.className = "release-card";
-    card.innerHTML = `
-      <img src="${f.img}" alt="${f.title}">
-      <h3>${f.title}</h3>
-      <p>${f.artist}</p>
-    `;
-    carousel.appendChild(card);
+  toggle.addEventListener("click", () => {
+    links.classList.toggle("show");
   });
 </script>
+
 </body>
 </html>

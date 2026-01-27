@@ -4,17 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Earnings • 444Music</title>
-   <link rel="stylesheet" href="earnings.css">
-  <style>
-   
-  </style>
+  <link rel="stylesheet" href="earnings.css">
 </head>
 <body>
 
   <div class="wrapper">
     <div class="card">
       <h1>Earnings</h1>
-      <p class="subtitle">Track your royalties and withdraw your revenue</p>
+      <p class="subtitle">Withdraw Your earnings at the minimum <strong>$20</strong></p>
 
       <div class="balance-box">
         <div>
@@ -23,10 +20,8 @@
         </div>
 
         <select id="currency" class="currency-select">
-          <option value="GHS">GHS – Ghana Cedi</option>
-          <option value="USD">USD – US Dollar</option>
-          <option value="EUR">EUR – Euro</option>
-          <option value="GBP">GBP – Pound</option>
+          <option value="$">$ – US Dollar</option>
+        
         </select>
       </div>
 
@@ -55,15 +50,15 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
-  measurementId: "G-WCRN117P8P"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+      authDomain: "usersubmissionsportal.firebaseapp.com",
+      projectId: "usersubmissionsportal",
+      storageBucket: "usersubmissionsportal.firebasestorage.app",
+      messagingSenderId: "734783502459",
+      appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
+      measurementId: "G-WCRN117P8P"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -80,9 +75,19 @@
         return;
       }
 
-      const snap = await getDoc(doc(db, "users", user.uid));
-      if (snap.exists()) {
-        currentBalance = snap.data().balance || 0;
+      console.log("Logged-in UID:", user.uid); // Debug: shows logged-in UID
+
+      const userDocRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userDocRef);
+
+      console.log("Document exists:", snap.exists()); // Debug: true or false
+      console.log("Document data:", snap.data()); // Debug: shows all fields
+
+      if (snap.exists() && snap.data().earnings !== undefined) {
+        currentBalance = snap.data().earnings;
+      } else {
+        console.warn("Earnings field missing or document does not exist!");
+        currentBalance = 0;
       }
 
       updateBalance();
