@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insights • 444Music</title>
+<link rel="stylesheet" href="insights.css">
+<style>
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Insights</h1>
+    <select class="range-select" id="range">
+      <option value="week">Last 7 Days</option>
+      <option value="month">Last 30 Days</option>
+      <option value="all">All Time</option>
+    </select>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <h3>Total Streams</h3>
+      <div class="value" id="streams">24</div>
+      <div class="growth">▲ 0.5.4% growth</div>
+    </div>
+
+    <div class="stat">
+      <h3>Listeners</h3>
+      <div class="value" id="listeners">10</div>
+      <div class="growth">▲ 0.1%</div>
+    </div>
+
+    <div class="stat">
+      <h3>Top Country</h3>
+      <div class="value">Ghana 🇬🇭</div>
+      <div class="growth">Most active</div>
+    </div>
+
+    <div class="stat">
+      <h3>Best Platform</h3>
+      <div class="value">Spotify</div>
+      <div class="growth">Highest streams</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart">
+    <h2 style="margin-bottom:12px;">Streaming Trend</h2>
+    <canvas id="trend"></canvas>
+  </div>
+
+  <!-- Platforms -->
+  <div class="platforms">
+    <h2>Platform Breakdown</h2>
+
+    <div class="platform">
+      <strong>Spotify</strong>
+      <span>--------</span>
+    </div>
+
+    <div class="platform">
+      <strong>Apple Music</strong>
+      <span>-----------</span>
+    </div>
+
+    <div class="platform">
+      <strong>Boomplay</strong>
+      <span>----------</span>
+    </div>
+
+    <div class="platform">
+      <strong>Audiomack</strong>
+      <span>----------</span>
+    </div>
+
+    <div class="platform">
+      <strong>YouTube Music</strong>
+      <span>------------</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ctx = document.getElementById("trend").getContext("2d");
+
+const dataSets = {
+  week:[12,18,15,20,24,22,28],
+  month:[80,95,110,130,150,170,190],
+  all:[200,340,500,720,940,1120,1280]
+};
+
+let current="week";
+
+function draw(data){
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  ctx.strokeStyle="#ff6f61";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=i*(ctx.canvas.width/(data.length-1));
+    const y=ctx.canvas.height-(v/Math.max(...data))*ctx.canvas.height;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+}
+
+draw(dataSets.week);
+
+document.getElementById("range").addEventListener("change",e=>{
+  current=e.target.value;
+  draw(dataSets[current]);
+});
+</script>
+
+</body>
+</html>

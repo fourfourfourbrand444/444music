@@ -13,9 +13,11 @@
   <div class="menu">
     <button id="menuBtn">☰</button>
     <ul id="menuList">
-      <li onclick="location.href='submit.html'">Create New Release</li>
+      <li onclick="location.href='pricing.html'">Create New Release</li>
       <li onclick="location.href='earnings.html'">Earnings</li>
       <li onclick="location.href='home.html'">Home</li>
+      <li onclick="location.href='insights.html'">Insights</li>
+      <li onclick="location.href='support.html'">Support/Help</li>
     </ul>
   </div>
 </div>
@@ -56,11 +58,21 @@ menuBtn.onclick = () => {
     menuList.style.display === "block" ? "none" : "block";
 };
 </script>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -69,7 +81,7 @@ const firebaseConfig = {
   storageBucket: "usersubmissionsportal.firebasestorage.app",
   messagingSenderId: "734783502459",
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-};;
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -77,26 +89,64 @@ const db = getFirestore(app);
 
 const container = document.getElementById("submissionsContainer");
 
-let currentUser = null;
-onAuthStateChanged(auth, async (user)=>{
-  if(!user) { window.location.href="login.html"; return; }
-  currentUser=user;
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  try{
-    const q=query(collection(db,"submissions"), where("userId","==",currentUser.uid));
-    const snapshot=await getDocs(q);
+  /* =========================
+     1️⃣ ENSURE USER DOCUMENT
+     ========================= */
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
 
-    if(snapshot.empty){
-      container.innerHTML='<div class="empty">No submissions yet</div>';
+  const name =
+    user.displayName ||
+    user.email.split("@")[0];
+
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      name: name,
+      email: user.email,
+      earnings: 0,
+      createdAt: serverTimestamp()
+    });
+  } else {
+    const updates = {};
+    const data = userSnap.data();
+
+    if (!data.email) updates.email = user.email;
+    if (!data.name) updates.name = name;
+
+    if (Object.keys(updates).length > 0) {
+      await updateDoc(userRef, updates);
+    }
+  }
+
+  /* =========================
+     2️⃣ LOAD USER SUBMISSIONS
+     ========================= */
+  try {
+    const q = query(
+      collection(db, "submissions"),
+      where("userId", "==", user.uid)
+    );
+
+    const snapshot = await getDocs(q);
+
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+      container.innerHTML = '<div class="empty">No submissions yet</div>';
       return;
     }
-    
 
-    snapshot.forEach(docSnap=>{
-      const data=docSnap.data();
-      const card=document.createElement("div");
-      card.className="card";
-      card.innerHTML=`
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
         <img src="${data.coverURL || 'default_cover.png'}" alt="Cover Art">
         <div class="card-body">
           <h3>${data.releaseTitle}</h3>
@@ -106,11 +156,13 @@ onAuthStateChanged(auth, async (user)=>{
       `;
       container.appendChild(card);
     });
-  }catch(err){
+
+  } catch (err) {
     console.error("Error fetching submissions:", err);
-    container.innerHTML='<div class="empty">Failed to load submissions</div>';
+    container.innerHTML = '<div class="empty">Failed to load submissions</div>';
   }
 });
 </script>
+
 </body>
 </html>

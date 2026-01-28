@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Artist Profile • 444Music</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <div class="avatar">🎤</div>
+    <h2 id="artistName">Artist</h2>
+    <p id="artistEmail" class="email"></p>
+
+    <div class="stats">
+      <div>
+        <span id="totalReleases">0</span>
+        <small>Releases</small>
+      </div>
+      <div>
+        <span id="totalEarnings">$ 0.00</span>
+        <small>Earnings</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return location.href = "login.html";
+
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  if (userSnap.exists()) {
+    const data = userSnap.data();
+    document.getElementById("artistName").textContent = data.name;
+    document.getElementById("artistEmail").textContent = data.email;
+    document.getElementById("totalEarnings").textContent = "$ " + (data.earnings || 0).toFixed(2);
+  }
+
+  const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
+  const snap = await getDocs(q);
+  document.getElementById("totalReleases").textContent = snap.size;
+});
+</script>
+
+</body>
+</html>
