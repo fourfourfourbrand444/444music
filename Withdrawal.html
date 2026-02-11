@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution - Withdrawal</title>
+<link rel="stylesheet" href="withdrawal.css">
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+<span class="logo">444Music</span> Withdrawal Request
+<div class="theme-toggle" onclick="toggleTheme()">Toggle Theme</div>
+</header>
+
+<div class="container">
+<div class="card">
+
+<form action="https://formsubmit.co/fourfourfourbrand444@gmail.com" method="POST">
+
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_subject" value="New Withdrawal Request - 444Music">
+
+<label>Artist Name</label>
+<input type="text" name="Artist Name" required>
+
+<label>Full Legal Name</label>
+<input type="text" name="Full Legal Name" placeholder="Enter artist real name" required>
+
+<label>Country</label>
+<select name="Country" required>
+<option value="">Select Country</option>
+<option>Ghana</option>
+<option>Nigeria</option>
+<option>United States</option>
+<option>United Kingdom</option>
+<option>Canada</option>
+<option>South Africa</option>
+<option>Kenya</option>
+<option>Germany</option>
+<option>France</option>
+<option>India</option>
+</select>
+
+<label>Phone Number</label>
+<input type="tel" name="Phone Number" required>
+
+<label>Currency</label>
+<select name="Currency" required>
+<option value="">Select Currency</option>
+<option value="GHS">GHS - Ghana Cedis</option>
+<option value="USD">USD - US Dollar</option>
+<option value="NGN">NGN - Nigerian Naira</option>
+<option value="GBP">GBP - British Pound</option>
+<option value="EUR">EUR - Euro</option>
+</select>
+
+<label>Withdrawal Amount</label>
+<input type="number" id="amount" name="Withdrawal Amount" required>
+<div id="warning" class="warning"></div>
+
+<label>Select Withdrawal Method</label>
+
+<div class="methods">
+<div class="method" onclick="selectMethod('momo', this)">
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/MTN_Logo.svg">
+MTN MoMo
+</div>
+
+<div class="method" onclick="selectMethod('telecel', this)">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Vodafone_logo.svg">
+Telecel Cash
+</div>
+
+<div class="method" onclick="selectMethod('bank', this)">
+<img src="https://cdn-icons-png.flaticon.com/512/483/483356.png">
+Bank Transfer
+</div>
+
+<div class="method" onclick="selectMethod('paypal', this)">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg">
+PayPal
+</div>
+
+<div class="method" onclick="selectMethod('paystack', this)">
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png">
+Paystack
+</div>
+</div>
+
+<input type="hidden" name="Method" id="methodInput">
+
+<div id="dynamicFields"></div>
+
+<label>City / Address</label>
+<input type="text" name="City" required>
+
+<button type="submit">Submit Withdrawal Request</button>
+
+</form>
+
+<div class="footer-note">
+Minimum withdrawal equivalent of $20 required.
+</div>
+
+</div>
+</div>
+
+<script>
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+
+function selectMethod(type, element){
+    document.querySelectorAll(".method").forEach(el=>el.classList.remove("active"));
+    element.classList.add("active");
+    document.getElementById("methodInput").value = type;
+
+    let fields = "";
+
+    if(type === "momo" || type === "telecel"){
+        fields = `
+        <label>Mobile Money Number</label>
+        <input type="text" name="Mobile Money Number" required>
+        `;
+    }
+
+    if(type === "bank"){
+        fields = `
+        <label>Bank Name</label>
+        <input type="text" name="Bank Name" required>
+        <label>Account Number</label>
+        <input type="text" name="Account Number" required>
+        <label>Account Holder Name</label>
+        <input type="text" name="Account Holder Name" required>
+        `;
+    }
+
+    if(type === "paypal"){
+        fields = `
+        <label>PayPal Email</label>
+        <input type="email" name="PayPal Email" required>
+        `;
+    }
+
+    if(type === "paystack"){
+        fields = `
+        <label>Paystack Email</label>
+        <input type="email" name="Paystack Email" required>
+        `;
+    }
+
+    document.getElementById("dynamicFields").innerHTML = fields;
+}
+
+document.getElementById("amount").addEventListener("input", function(){
+    let value = parseFloat(this.value);
+    let warning = document.getElementById("warning");
+
+    if(value < 20){
+        warning.innerText = "Minimum withdrawal is equivalent of $20 or more. Please enter a higher amount.";
+    } else {
+        warning.innerText = "";
+    }
+});
+</script>
+
+</body>
+</html>
