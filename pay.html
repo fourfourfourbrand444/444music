@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution - Release Payment</title>
+<link rel="stylesheet" href="pay.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>444Music Distribution</h1>
+<p>Complete Your Release Payment</p>
+</div>
+
+<div class="card">
+
+<div class="methods">
+
+<div class="method active" onclick="selectMethod('momo',this)">
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/MTN_Logo.svg">
+<p>Mobile Money</p>
+</div>
+
+<div class="method" onclick="selectMethod('bank',this)">
+<img src="https://cdn-icons-png.flaticon.com/512/483/483356.png">
+<p>Bank Transfer</p>
+</div>
+
+<div class="method" onclick="selectMethod('card',this)">
+<img src="https://cdn-icons-png.flaticon.com/512/196/196561.png">
+<p>Credit Card</p>
+</div>
+
+</div>
+
+<div id="paymentSection"></div>
+
+</div>
+</div>
+
+<script>
+
+let currentMethod = "momo";
+renderSection("momo");
+
+function selectMethod(type,element){
+document.querySelectorAll(".method").forEach(el=>el.classList.remove("active"));
+element.classList.add("active");
+currentMethod = type;
+renderSection(type);
+}
+
+function renderSection(type){
+
+let section = document.getElementById("paymentSection");
+
+if(type === "momo"){
+section.innerHTML = `
+<div class="bold-info">
+<h2>Send Payment To</h2>
+<p>0544687966</p>
+<p>MoMo Name: Ayishatu Salifu</p>
+</div>
+
+<input type="text" id="name" placeholder="Your Full Name">
+<input type="text" id="title" placeholder="Enter Song Title">
+<select id="releaseType">
+<option value="">Select Release Type</option>
+<option>Single</option>
+<option>Album</option>
+</select>
+
+<button onclick="sendWhatsApp()">Confirm Payment</button>
+<div class="success-box" id="successBox"></div>
+`;
+}
+
+if(type === "bank"){
+section.innerHTML = `
+<div class="bold-info">
+<h2>Transfer To Bank Account</h2>
+<p>Bank: Zenith Bank</p>
+<p>Account Number: 502983746192</p>
+<p>Account Name: 444Music Distribution</p>
+</div>
+
+<input type="text" id="name" placeholder="Your Full Name">
+<input type="text" id="bankName" placeholder="Your Bank Name">
+<input type="text" id="title" placeholder="Enter Song Title">
+<select id="releaseType">
+<option value="">Select Release Type</option>
+<option>Single</option>
+<option>Album</option>
+</select>
+
+<button onclick="sendWhatsApp()">Confirm Payment</button>
+<div class="success-box" id="successBox"></div>
+`;
+}
+
+if(type === "card"){
+section.innerHTML = `
+<div class="bold-info">
+<h2>Secure Credit Card Payment</h2>
+</div>
+
+<input type="text" placeholder="Card Holder Name">
+<input type="text" placeholder="Card Number">
+<input type="text" placeholder="Expiry Date (MM/YY)">
+<input type="text" placeholder="CVV">
+
+<input type="text" id="name" placeholder="Your Full Name">
+<input type="text" id="title" placeholder="Enter Song Title">
+<select id="releaseType">
+<option value="">Select Release Type</option>
+<option>Single</option>
+<option>Album</option>
+</select>
+
+<button onclick="sendWhatsApp()">Confirm Payment</button>
+<div class="success-box" id="successBox"></div>
+`;
+}
+
+}
+
+function sendWhatsApp(){
+
+let name = document.getElementById("name").value;
+let title = document.getElementById("title").value;
+let releaseType = document.getElementById("releaseType").value;
+
+let message = `Hi 444music Distribution, my name is ${name}. I want to pay for my release titled ${title} (${releaseType}).`;
+
+if(currentMethod === "bank"){
+let bankName = document.getElementById("bankName").value;
+message += ` I sent payment from ${bankName} bank to your account.`;
+}
+
+let url = "https://wa.me/233530399523?text=" + encodeURIComponent(message);
+
+document.getElementById("successBox").style.display="block";
+document.getElementById("successBox").innerHTML="Redirecting to WhatsApp...";
+
+setTimeout(()=>{
+window.open(url, "_blank");
+},1500);
+
+}
+
+</script>
+
+</body>
+</html>
