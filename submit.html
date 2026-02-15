@@ -91,6 +91,32 @@
     <div id="statusMsg"></div>
   </form>
 </div>
+ <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("mwAZ_hDxmnBqkrTfA");
+})();
+
+function sendEmails(artistName, releaseTitle, userEmail){
+
+  // ✅ 1. SEND TO ADMIN
+  emailjs.send("service_ydy0muo", "YOUR_ADMIN_TEMPLATE_ID", {
+      artist_name: artistName,
+      release_title: releaseTitle,
+      email: "fourfourfourbrand444@gmail.com"
+  });
+
+  // ✅ 2. SEND TO USER
+  emailjs.send("service_ydy0muo", "template_m8g8n9q", {
+      artist_name: artistName,
+      release_title: releaseTitle,
+      email: userEmail
+  });
+
+}
+</script>
+  
 <!-- EMAILJS -->
 <!-- EmailJS (NOT module) -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
@@ -201,6 +227,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 </script>
+
 
 
 
