@@ -152,79 +152,68 @@ async function sendEmails(data){
   await emailjs.send("service_ydy0muo", "template_m8g8n9q", templateParams);
 }
 
+(userRef, {
+const form = document.getElementById("releaseForm");
+const submitBtn = document.getElementById("submitBtn");
+
 let isSubmitting = false;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (isSubmitting) return; // 🚫 Prevent double click
+  if (isSubmitting) return;
   isSubmitting = true;
 
-  const submitBtn = document.getElementById("submitBtn");
   submitBtn.disabled = true;
   submitBtn.innerText = "Processing...";
 
-  if (!currentUser) {
-    alert("You must be logged in.");
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Save & Continue";
-    isSubmitting = false;
-    return;
-  }
-
-  const data = {
-  artistName: artistName.value.trim(),
-  releaseTitle: releaseTitle.value.trim(),
-  releaseType: releaseType.value,
-  genre: genre.value.trim(),
-  language: language.value.trim(),
-  releaseDate: releaseDate.value,
-  explicit: explicit.value,
-  email: email.value.trim(),
-  number: number.value.trim(),
-  featuring: featuring.value.trim(),
-  label: label.value.trim(),
-  copyright: copyright.value.trim(),
-  description: description.value.trim(),
-  userId: currentUser.uid,
-  status: "Pending",
-  createdAt: Date.now(),
-  coverURL: ""
-};
-
   try {
 
-    const userRef = doc(db, "users", currentUser.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        earnings: 0,
-        email: currentUser.email,
-        createdAt: Date.now()
-      });
+    if (!currentUser) {
+      alert("You must be logged in.");
+      throw new Error("No user");
     }
 
-    await addDoc(collection(db, "submissions"), data);
+    // ✅ PROPERLY GET ELEMENTS
+    const data = {
+      artistName: document.getElementById("artistName").value.trim(),
+      releaseTitle: document.getElementById("releaseTitle").value.trim(),
+      releaseType: document.getElementById("releaseType").value,
+      genre: document.getElementById("genre").value.trim(),
+      language: document.getElementById("language").value.trim(),
+      releaseDate: document.getElementById("releaseDate").value,
+      explicit: document.getElementById("explicit").value,
+      email: document.getElementById("email").value.trim(),
+      number: document.getElementById("number").value.trim(),
+      featuring: document.getElementById("featuring").value.trim(),
+      label: document.getElementById("label").value.trim(),
+      copyright: document.getElementById("copyright").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      userId: currentUser.uid,
+      status: "Pending",
+      createdAt: Date.now(),
+      coverURL: ""
+    };
 
+    await addDoc(collection(db, "submissions"), data);
     await sendEmails(data);
 
     window.location.href = "select.html";
 
   } catch (err) {
-    console.error(err);
-    alert("Submission failed.");
+    console.error("ERROR:", err);
+    alert("Submission failed. Check console.");
 
-    // 🔓 Re-enable only if error happens
     submitBtn.disabled = false;
     submitBtn.innerText = "Save & Continue";
     isSubmitting = false;
   }
-});
+})
 </script>
 
 </body>
 </html>
+
 
 
 
