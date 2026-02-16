@@ -152,13 +152,23 @@ async function sendEmails(data){
   await emailjs.send("service_ydy0muo", "template_m8g8n9q", templateParams);
 }
 
-const form = document.getElementById("releaseForm");
+let isSubmitting = false;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  if (isSubmitting) return; // 🚫 Prevent double click
+  isSubmitting = true;
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Processing...";
+
   if (!currentUser) {
     alert("You must be logged in.");
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Save & Continue";
+    isSubmitting = false;
     return;
   }
 
@@ -194,7 +204,6 @@ form.addEventListener("submit", async (e) => {
 
     await addDoc(collection(db, "submissions"), data);
 
-    /* 🔥 SEND EMAILS */
     await sendEmails(data);
 
     window.location.href = "select.html";
@@ -202,12 +211,18 @@ form.addEventListener("submit", async (e) => {
   } catch (err) {
     console.error(err);
     alert("Submission failed.");
+
+    // 🔓 Re-enable only if error happens
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Save & Continue";
+    isSubmitting = false;
   }
 });
 </script>
 
 </body>
 </html>
+
 
 
 
