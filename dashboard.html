@@ -146,17 +146,28 @@ onAuthStateChanged(auth, async (user) => {
       const data = docSnap.data();
       const card = document.createElement("div");
       card.className = "card";
+      const releaseDate = data.releaseDate 
+  ? new Date(data.releaseDate).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    })
+  : "Not set";
       card.innerHTML = `
   <img src="${data.coverURL || 'default_cover.png'}" alt="">
   <div class="card-body">
     <h3>${data.releaseTitle}</h3>
-    <p>${data.artistName}</p>
-    
+    <p class="artist-name">${data.artistName}</p>
+
     ${
       data.featuring && data.featuring.trim() !== ""
-        ? `<p><strong>Feat:</strong> ${data.featuring}</p>`
+        ? `<p class="feat">Featuring ${data.featuring}</p>`
         : ""
     }
+
+    <p class="release-date">
+      <strong>Release Date:</strong> ${releaseDate}
+    </p>
 
     <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
       ${data.status}
@@ -175,6 +186,7 @@ onAuthStateChanged(auth, async (user) => {
 
 </body>
 </html>
+
 
 
 
