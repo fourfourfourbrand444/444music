@@ -147,10 +147,26 @@ onAuthStateChanged(auth, async (user) => {
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${data.coverURL || 'default_cover.png'}" alt="">
-        <div class="card-body">
-          <h3>${data.releaseTitle}</h3>
-          <p>${data.artistName}</p>
+  <img src="${data.coverURL || 'default_cover.png'}" alt="">
+  <div class="card-body">
+    <h3>${data.releaseTitle}</h3>
+    <p><strong>Artist:</strong> ${data.artistName}</p>
+    <p><strong>Type:</strong> ${data.releaseType || "-"}</p>
+    <p><strong>Genre:</strong> ${data.genre || "-"}</p>
+    <p><strong>Language:</strong> ${data.language || "-"}</p>
+    <p><strong>Release Date:</strong> ${data.releaseDate || "-"}</p>
+    <p><strong>Phone:</strong> ${data.number || "-"}</p>
+    <p><strong>Email:</strong> ${data.email || "-"}</p>
+    <p><strong>Featuring:</strong> ${data.featuring || "-"}</p>
+    <p><strong>Label:</strong> ${data.label || "-"}</p>
+    <p><strong>Copyright:</strong> ${data.copyright || "-"}</p>
+    <p><strong>Lyrics:</strong> ${data.description || "-"}</p>
+
+    <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
+      ${data.status}
+    </span>
+  </div>
+`;
       
   
           <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">${data.status}</span>
@@ -168,6 +184,7 @@ onAuthStateChanged(auth, async (user) => {
 
 </body>
 </html>
+
 
 
 
