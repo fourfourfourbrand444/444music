@@ -15,6 +15,8 @@
   </div>
 
   <div class="pricing-grid">
+
+    <!-- FREE PLAN -->
     <div class="price-card">
       <h3 class="price-title">Free Single</h3>
       <div class="price">GHS 0</div>
@@ -27,6 +29,7 @@
       <a href="https://tally.so/r/NpX0pp" class="price-btn">Get Started</a>
     </div>
 
+    <!-- PAID SINGLE -->
     <div class="price-card featured">
       <h3 class="price-title">Paid Single</h3>
       <div class="price">GHS 29.99</div>
@@ -36,9 +39,12 @@
         <li>Spotify, Apple Music, Boomplay</li>
         <li>100% Royalties</li>
       </ul>
-      <a href="https://tally.so/r/NpX0pp" class="price-btn">Choose Plan</a>
+      <button class="price-btn" onclick="payWithSikaPay(29.99)">
+        Choose Plan
+      </button>
     </div>
 
+    <!-- EP / ALBUM -->
     <div class="price-card">
       <h3 class="price-title">EP / Album</h3>
       <div class="price">GHS 45.99</div>
@@ -48,11 +54,38 @@
         <li>Artist Dashboard</li>
         <li>Royalty Reports</li>
       </ul>
-      <a href="https://tally.so/r/NpX0pp" class="price-btn">Release Now</a>
+      <button class="price-btn" onclick="payWithSikaPay(45.99)">
+        Release Now
+      </button>
     </div>
+
   </div>
 </section>
 
+<!-- SikaPay Inline Script -->
+<script src="https://checkout.sikapaygh.com/inline.js"></script>
+
+<script>
+  function payWithSikaPay(amount) {
+    var handler = SikaPayCheckout.setup({
+      key: "pk_live_8c578ae5660ecd55301fc2582bb42a864c515391757783b3", // 🔥 Replace with your pk_live key
+      email: "customer@email.com", // Can improve later
+      amount: amount * 100,
+      currency: "GHS",
+
+      callback: function(response) {
+        // Redirect after successful payment
+        window.location.href = "success.html";
+      },
+
+      onClose: function() {
+        alert("Payment window closed.");
+      }
+    });
+
+    handler.openIframe();
+  }
+</script>
+
 </body>
 </html>
-
