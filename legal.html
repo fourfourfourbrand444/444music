@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music – Legal</title>
+<link rel="stylesheet" href="legal.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+</head>
+  
+<body>
 
+<!-- ✅ NAV -->
+
+<nav>
+<a href="#about" class="nav-link active">About</a>
+<a href="#privacy" class="nav-link">Privacy</a>
+<a href="#terms" class="nav-link">Terms</a>
+</nav>
+
+<!-- ✅ ABOUT -->
+
+<section id="about">
+<div class="card">
+<h1>About 444Music Distribution</h1>
+
+<p>
+444Music Distribution helps independent artists release music globally with ease.
+We provide fast, secure and transparent delivery to major streaming platforms.
+</p>
+<p>
+Our mission is to give creators full control over their music, royalties and audience.
+</p>
+
+<p>
+We are committed to building a trusted ecosystem for upcoming and professional artists.
+</p>
+
+</div>
+</section>
+
+<!-- ✅ PRIVACY -->
+
+<section id="privacy">
+<div class="card">
+<h1>Privacy Policy</h1>
+<ul>
+<li>We collect basic user details for account and payment processing.</li>
+<li>Your data is never sold or shared.</li>
+<li>All transactions are securely processed.</li>
+<li>You can request account deletion anytime.</li>
+</ul>
+
+<p>Using our platform means you agree to our privacy practices.</p>
+
+</div>
+</section>
+
+<!-- ✅ TERMS -->
+
+<section id="terms">
+<div class="card">
+<h1>Terms & Conditions</h1>
+
+  <ul>
+<li>You must own rights to all uploaded content.</li>
+<li>No copyright violations allowed.</li>
+<li>Royalties are paid after payout threshold is reached.</li>
+<li>Payout processing: 3 – 7 working days.</li>
+<li>Fraud leads to account suspension.</li>
+</ul>
+
+<p>By using 444Music Distribution, you agree to these terms.</p>
+
+</div>
+</section>
+
+<footer>
+© 2026 444Music Distribution
+</footer>
+<script>
+
+const cards = document.querySelectorAll('.card');
+
+window.addEventListener('scroll', () => {
+
+cards.forEach(card => {
+
+const cardTop = card.getBoundingClientRect().top;
+
+if(cardTop < window.innerHeight - 100){
+card.classList.add('show');
+}
+
+});
+
+});
+  /* ACTIVE NAV LINK */
+
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".nav-link");
+
+window.addEventListener("scroll", () => {
+
+let current = "";
+
+sections.forEach(section => {
+const sectionTop = section.offsetTop;
+if(pageYOffset >= sectionTop - 200){
+current = section.getAttribute("id");
+}
+});
+
+/* ACTIVE NAV LINK */
+  navLinks.forEach(link => {
+link.classList.remove("active");
+if(link.getAttribute("href") === "#" + current){
+link.classList.add("active");
+}
+});
+
+});
+
+</script>
+
+</body>
+</html>
