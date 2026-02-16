@@ -128,22 +128,28 @@ onAuthStateChanged(auth, user => {
 });
 
 /* ✅ EMAIL FUNCTION */
-async function sendEmails(artistName, releaseTitle, userEmail){
+async function sendEmails(data){
 
-  // ADMIN EMAIL
-  await emailjs.send("service_ydy0muo", "template_i6qh7ew", {
-    artist_name: artistName,
-    release_title: releaseTitle,
-    email: "fourfourfourbrand444@gmail.com"
-  });
+  const templateParams = {
+    artist_name: data.artistName,
+    release_title: data.releaseTitle,
+    release_type: data.releaseType,
+    genre: data.genre,
+    language: data.language,
+    release_date: data.releaseDate,
+    explicit: data.explicit,
+    email: data.email,
+    phone: data.number,
+    featuring: data.featuring,
+    label: data.label,
+    copyright: data.copyright,
+    lyrics: data.description
+  };
+// ADMIN EMAIL
+  await emailjs.send("service_ydy0muo", "template_i6qh7ew", templateParams);
 
   // USER EMAIL
-  await emailjs.send("service_ydy0muo", "template_m8g8n9q", {
-    artist_name: artistName,
-    release_title: releaseTitle,
-    email: userEmail, 
-  });
-
+  await emailjs.send("service_ydy0muo", "template_m8g8n9q", templateParams);
 }
 
 const form = document.getElementById("releaseForm");
@@ -189,7 +195,7 @@ form.addEventListener("submit", async (e) => {
     await addDoc(collection(db, "submissions"), data);
 
     /* 🔥 SEND EMAILS */
-    await sendEmails(data.artistName, data.releaseTitle, data.email);
+    await sendEmails(data);
 
     window.location.href = "select.html";
 
@@ -202,6 +208,7 @@ form.addEventListener("submit", async (e) => {
 
 </body>
 </html>
+
 
 
 
