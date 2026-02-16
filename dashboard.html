@@ -147,15 +147,22 @@ onAuthStateChanged(auth, async (user) => {
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${data.coverURL || 'default_cover.png'}" alt="">
-        <div class="card-body">
-          <h3>${data.releaseTitle}</h3>
-          <p>${data.artistName}</p>
-      
-  
-          <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">${data.status}</span>
-        </div>
-      `;
+  <img src="${data.coverURL || 'default_cover.png'}" alt="">
+  <div class="card-body">
+    <h3>${data.releaseTitle}</h3>
+    <p>${data.artistName}</p>
+    
+    ${
+      data.featuring && data.featuring.trim() !== ""
+        ? `<p><strong>Feat:</strong> ${data.featuring}</p>`
+        : ""
+    }
+
+    <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
+      ${data.status}
+    </span>
+  </div>
+`;
       container.appendChild(card);
     });
 
@@ -168,6 +175,7 @@ onAuthStateChanged(auth, async (user) => {
 
 </body>
 </html>
+
 
 
 
