@@ -113,7 +113,7 @@ const db = getFirestore(app);
 let currentUser = null;
 
 /* 🔐 AUTH CHECK */
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
   } else {
@@ -153,17 +153,13 @@ let isSubmitting = false;
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!currentUser) {
-    alert("You must be logged in.");
-    return;
-  }
+  if (isSubmitting) return;
+  if (!currentUser) return;
 
-  if (isSubmitting) return; // 🔒 stop double click
   isSubmitting = true;
 
   submitBtn.disabled = true;
-  submitBtn.style.opacity = "0.6";
-  submitBtn.innerText = "Submitting release...";
+  submitBtn.innerText = "Submitting...";
   statusMsg.innerText = "Please wait...";
 
   const data = {
@@ -181,31 +177,26 @@ form.addEventListener("submit", async (e) => {
     label: document.getElementById("label").value.trim(),
     description: document.getElementById("description").value.trim(),
     userId: currentUser.uid,
-    status: "Pending",
     createdAt: Date.now(),
-    coverURL: ""
+    status: "Pending"
   };
 
   try {
+    // ✅ Wait for Firebase
     await addDoc(collection(db, "submissions"), data);
-    await sendEmails(data);
 
-    submitBtn.innerText = "Submitted ✔";
+    // 🔹 Send emails (do not block redirect)
+    sendEmails(data).catch(() => {});
 
-    setTimeout(() => {
-      window.location.href = "select.html";
-    }, 1500);
+    // ✅ Only redirect if save succeeded
+    window.location.href = "select.html";
 
-  } catch (err) {
-    console.error("Submission error:", err);
-
+  } catch (error) {
+    // ❌ Firebase failed → stay on page
     submitBtn.disabled = false;
-    submitBtn.style.opacity = "1";
     submitBtn.innerText = "Save & Continue";
-    statusMsg.innerText = "";
+    statusMsg.innerText = "Something went wrong. Please try again.";
     isSubmitting = false;
-
-    alert("Submission failed. Check console.");
   }
 });
 </script>
