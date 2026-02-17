@@ -48,7 +48,13 @@
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  where, 
+  getDocs 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -68,11 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const balanceEl = document.getElementById("balanceValue");
   const currencySelect = document.getElementById("currency");
 
-  if (!balanceEl) {
-    console.error("balanceValue element not found in HTML!");
-    return;
-  }
-
   onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
@@ -80,26 +81,27 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    console.log("Logged in UID:", user.uid);
-
     try {
-      const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
+      // 🔎 Find user document by email
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", user.email)
+      );
 
-      if (snap.exists()) {
-        console.log("Document data:", snap.data());
+      const querySnapshot = await getDocs(q);
 
-        const earnings = Number(snap.data().earnings) || 0;
+      if (!querySnapshot.empty) {
+        const data = querySnapshot.docs[0].data();
+        const earnings = Number(data.earnings) || 0;
 
         updateBalance(earnings);
-
       } else {
-        console.warn("User document does not exist!");
+        console.warn("No matching user document found.");
         updateBalance(0);
       }
 
     } catch (error) {
-      console.error("Firestore read error:", error);
+      console.error("Error loading earnings:", error);
       updateBalance(0);
     }
 
@@ -115,9 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = auth.currentUser;
       if (!user) return;
 
-      const snap = await getDoc(doc(db, "users", user.uid));
-      if (snap.exists()) {
-        const earnings = Number(snap.data().earnings) || 0;
+      const q = query(
+        collection(db, "users"),
+        where("email", "==", user.email)
+      );
+
+      const snap = await getDocs(q);
+
+      if (!snap.empty) {
+        const earnings = Number(snap.docs[0].data().earnings) || 0;
         updateBalance(earnings);
       }
     });
@@ -127,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </script>
 </body>
 </html>
+
 
 
 
