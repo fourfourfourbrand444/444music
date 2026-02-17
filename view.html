@@ -15,35 +15,33 @@
   <div class="nav-left">
     <span class="logo">444Music</span>
   </div>
+<!-- OPEN BUTTON -->
+<button id="openNav" class="menu-btn">☰</button>
 
-  <div class="nav-toggle" id="navToggle">
-    ☰
+<!-- OVERLAY -->
+<div id="navOverlay" class="overlay"></div>
+
+<!-- NAV MODAL -->
+<div id="navModal" class="nav-modal">
+
+  <div class="nav-header">
+    <h2>444Music</h2>
+    <button id="closeNav" class="close-btn">✕</button>
   </div>
 
-  <ul class="nav-links" id="navLinks">
-    <li><a href="legal.html">Abous Us</a></li>
-    <li><a href="register.html">Get Started</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#stores">stores</a></li>
-     <a href="support.html">Help/Support</a>
-  </ul>
-</nav>
-
-<!-- NAV -->
-<nav class="nav">
-  <div class="logo">444Music</div>
-  <div class="nav-links">
-    <a href="register.html">Get Started</a>
-    <a href="login.html">Login</a>
-    <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#stores">Stores</a>
-    <a href="support.html">Help/Support</a>
+  <p class="section-title">WHERE TO?</p>
+<div class="nav-grid">
+    <a href="legal.html" class="nav-card">About Us</a>
+    <a href="register.html" class="nav-card">Get Started</a>
+    <a href="login.html" class="nav-card">Login</a>
+    <a href="#features" class="nav-card">Features</a>
+    <a href="#how" class="nav-card">How it works</a>
+    <a href="#stores" class="nav-card">Stores</a>
+    <a href="support.html" class="nav-card">Help / Support</a>
   </div>
-</nav>
- 
+
+</div>
+  
 <!-- HERO -->
 <header class="hero">
   
@@ -313,18 +311,30 @@ counters.forEach(counter => {
 
 </footer>
  
-
 <script>
-  const toggle = document.getElementById("navToggle");
-  const links = document.getElementById("navLinks");
+const openBtn = document.getElementById("openNav");
+const closeBtn = document.getElementById("closeNav");
+const modal = document.getElementById("navModal");
+const overlay = document.getElementById("navOverlay");
 
-  toggle.addEventListener("click", () => {
-    links.classList.toggle("show");
-  });
+openBtn.addEventListener("click", () => {
+  modal.classList.add("active");
+  overlay.classList.add("active");
+});
+
+closeBtn.addEventListener("click", closeNav);
+overlay.addEventListener("click", closeNav);
+
+function closeNav() {
+  modal.classList.remove("active");
+  overlay.classList.remove("active");
+}
 </script>
+
 
 </body>
 </html>
+
 
 
 
