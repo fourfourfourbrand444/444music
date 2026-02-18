@@ -45,16 +45,18 @@
     </div>
   </div>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain: "usersubmissionsportal.firebaseapp.com",
@@ -64,67 +66,64 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
+// 🔥 INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// ELEMENTS
 const balanceEl = document.getElementById("balanceValue");
 const currencySelect = document.getElementById("currency");
 
-let currentAmount = 0;
+// 🟢 FUNCTION TO UPDATE BALANCE
+function updateBalance(amount) {
+  const currency = currencySelect.value;
+  balanceEl.textContent = `${currency} ${amount.toFixed(2)}`;
+}
 
+// 🟢 LOAD USER EARNINGS
 onAuthStateChanged(auth, async (user) => {
-
   if (!user) {
+    // redirect if not logged in
     window.location.href = "login.html";
     return;
   }
 
   try {
+    // Get the user document by UID
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
 
-    console.log("Logged in as:", user.email);
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      const earnings = Number(data.earnings) || 0;
 
-    const q = query(
-      collection(db, "users"),
-      where("email", "==", user.email)
-    );
-
-    const snap = await getDocs(q);
-
-    if (!snap.empty) {
-
-      const data = snap.docs[0].data();
-
-      console.log("Firestore data:", data);
-
-      currentAmount = Number(data.earnings) || 0;
+      updateBalance(earnings);
 
     } else {
-
-      console.warn("No user document matched this email");
-
+      console.warn("No user document found for UID:", user.uid);
+      updateBalance(0);
     }
-
-    updateBalance();
-
   } catch (err) {
-
-    console.error("Error:", err);
-    updateBalance();
-
+    console.error("Error fetching earnings:", err);
+    updateBalance(0);
   }
-
 });
 
-function updateBalance() {
-  const currency = currencySelect.value;
-  balanceEl.textContent = `${currency} ${currentAmount.toFixed(2)}`;
-}
-
-currencySelect.addEventListener("change", updateBalance);
+// Update balance when currency changes (future: add conversion if needed)
+currencySelect.addEventListener("change", () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    const earnings = userSnap.exists() ? Number(userSnap.data().earnings) || 0 : 0;
+    updateBalance(earnings);
+  });
+});
 </script>
 </body>
 </html>
+
 
 
 
