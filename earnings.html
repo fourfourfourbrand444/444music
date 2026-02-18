@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Earnings • 444Music</title>
   <link rel="stylesheet" href="earnings.css">
 </head>
 <body>
 
   <div class="wrapper">
-    <div class="card">
-      <h1>Earnings</h1>
-      <p class="subtitle">Withdraw Your earnings at the minimum <strong>$20</strong></p>
+    <header class="header">
+      <h1>Earnings Dashboard</h1>
+      <p class="subtitle">Withdraw your earnings once your balance reaches <strong>$20</strong></p>
+    </header>
 
-      <div class="balance-box">
+    <div class="balance-section card">
+      <div class="balance-header">
         <div>
-          <div class="balance-label">Account Balance</div>
-          <div id="balanceValue" class="balance-value">GHS 0.00</div>
+          <span class="balance-label">Account Balance</span>
+          <span id="balanceValue" class="balance-value">GHS 0.00</span>
         </div>
-
         <select id="currency" class="currency-select">
           <option value="$">$ – US Dollar</option>
-        
+          <option value="GHS">GHS – Ghana Cedi</option>
         </select>
       </div>
 
@@ -29,20 +30,48 @@
         <a class="btn btn-primary" href="https://444music-distribution.vercel.app/withdrawal.html" target="_blank">
           Withdraw Earnings
         </a>
+        <a class="btn btn-secondary" href="#">
+          Transaction History
+        </a>
       </div>
 
       <div class="info">
         <p>
-          Your earnings are generated from streams, downloads, and platform revenue
-          across all digital stores.
+          Your earnings come from streams, downloads, and platform revenue across all digital stores.
         </p>
         <p>
-          <strong>Note:</strong> Balances are updated by our team after platform reports
-          are received. You can request a withdrawal once your balance is above the
-          minimum payout threshold.
+          <strong>Note:</strong> Balances are updated after platform reports are received. Withdrawals are allowed only after reaching the minimum payout threshold.
         </p>
       </div>
     </div>
+
+    <div class="statistics card">
+      <h2>Recent Activity</h2>
+      <ul class="stats-list">
+        <li>
+          <span class="stat-label">Streams</span>
+          <span class="stat-value">1,245</span>
+        </li>
+        <li>
+          <span class="stat-label">Downloads</span>
+          <span class="stat-value">523</span>
+        </li>
+        <li>
+          <span class="stat-label">Revenue Pending</span>
+          <span class="stat-value">GHS 45.60</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tips card">
+      <h2>Earnings Tips</h2>
+      <ul>
+        <li>Promote your music to increase streams and downloads.</li>
+        <li>Keep your profile up-to-date for better visibility.</li>
+        <li>Check platform reports weekly for accurate revenue tracking.</li>
+      </ul>
+    </div>
+
   </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -123,6 +152,7 @@ currencySelect.addEventListener("change", () => {
 </script>
 </body>
 </html>
+
 
 
 
