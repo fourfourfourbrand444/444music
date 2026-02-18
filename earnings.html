@@ -45,15 +45,13 @@
     </div>
   </div>
 
-  <script type="module">
+    <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { 
   getFirestore, 
-  collection, 
-  query, 
-  where, 
-  getDocs 
+  doc, 
+  getDoc 
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -74,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const balanceEl = document.getElementById("balanceValue");
   const currencySelect = document.getElementById("currency");
 
+  let currentEarnings = 0;
+
+  // 🔐 AUTH STATE
   onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
@@ -82,59 +83,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // 🔎 Find user document by email
-      const q = query(
-        collection(db, "users"),
-        where("email", "==", user.email)
-      );
 
-      const querySnapshot = await getDocs(q);
+      // ✅ GET USER DOC WITH UID
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
 
-      if (!querySnapshot.empty) {
-        const data = querySnapshot.docs[0].data();
-        const earnings = Number(data.earnings) || 0;
+      if (userSnap.exists()) {
 
-        updateBalance(earnings);
+        const data = userSnap.data();
+        currentEarnings = Number(data.earnings) || 0;
+
+        updateBalance();
+
       } else {
-        console.warn("No matching user document found.");
-        updateBalance(0);
+
+        console.warn("User document not found");
+        updateBalance();
+
       }
 
     } catch (error) {
+
       console.error("Error loading earnings:", error);
-      updateBalance(0);
+      updateBalance();
+
     }
 
   });
 
-  function updateBalance(amount) {
+  // 💱 UPDATE BALANCE DISPLAY
+  function updateBalance() {
     const currency = currencySelect ? currencySelect.value : "$";
-    balanceEl.textContent = `${currency} ${amount.toFixed(2)}`;
+    balanceEl.textContent = `${currency} ${currentEarnings.toFixed(2)}`;
   }
 
+  // 🔄 CURRENCY CHANGE
   if (currencySelect) {
-    currencySelect.addEventListener("change", async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const q = query(
-        collection(db, "users"),
-        where("email", "==", user.email)
-      );
-
-      const snap = await getDocs(q);
-
-      if (!snap.empty) {
-        const earnings = Number(snap.docs[0].data().earnings) || 0;
-        updateBalance(earnings);
-      }
-    });
+    currencySelect.addEventListener("change", updateBalance);
   }
 
 });
+              
   </script>
 </body>
 </html>
+
 
 
 
