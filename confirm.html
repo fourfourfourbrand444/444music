@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation Required</title>
+  <link rel="stylesheet" href="confirm.css">
+</head>
+<body>
+
+<div class="overlay">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Confirmation Required</h2>
+      <span class="close-btn">&times;</span>
+    </div>
+
+    <p class="sub-text">Please confirm the following:</p>
+
+    <div class="terms-box">
+      <label class="checkbox-container">
+        <input type="checkbox" class="term-checkbox">
+        <span class="checkmark"></span>
+        <div class="term-text">
+          <strong>I own or have legally licensed</strong> all copyrights to the sound recordings, compositions and artwork embodied in this release and agree to all terms in the distribution agreement.
+        </div>
+      </label>
+    </div>
+
+    <div class="terms-box">
+      <label class="checkbox-container">
+        <input type="checkbox" class="term-checkbox">
+        <span class="checkmark"></span>
+        <div class="term-text">
+          <strong>I confirm that I have truthfully indicated</strong> the Track Origin and Track Properties for each track to ensure compliance with DSP requirements.
+        </div>
+      </label>
+    </div>
+
+    <div class="terms-box">
+      <label class="checkbox-container">
+        <input type="checkbox" class="term-checkbox">
+        <span class="checkmark"></span>
+        <div class="term-text">
+          <strong>I acknowledge and understand</strong> that artificial streaming and misleading promotion may result in removal or penalties.
+        </div>
+      </label>
+    </div>
+
+    <div class="button-group">
+      <button class="cancel-btn">Cancel</button>
+      <button class="confirm-btn" id="confirmBtn" disabled>Confirm</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const checkboxes = document.querySelectorAll(".term-checkbox");
+  const confirmBtn = document.getElementById("confirmBtn");
+
+  function checkAll() {
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    confirmBtn.disabled = !allChecked;
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener("change", checkAll));
+
+  confirmBtn.addEventListener("click", () => {
+    if (!confirmBtn.disabled) {
+      alert("Terms Accepted ✅");
+      // window.location.href = "select.html";
+    }
+  });
+</script>
+
+</body>
+</html>
