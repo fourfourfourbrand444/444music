@@ -90,6 +90,9 @@
     <div id="statusMsg"></div>
   </form>
 </div>
+  <!-- ✅ EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -110,6 +113,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* ✅ INITIALIZE EMAILJS */
+emailjs.init("mwAZ_hDxmnBqkrTfA");
+
 let currentUser = null;
 
 /* 🔐 AUTH CHECK */
@@ -123,6 +129,7 @@ onAuthStateChanged(auth, (user) => {
 
 /* 📧 EMAIL FUNCTION */
 async function sendEmails(data) {
+
   const templateParams = {
     artist_name: data.artistName,
     release_title: data.releaseTitle,
@@ -132,14 +139,17 @@ async function sendEmails(data) {
     release_date: data.releaseDate,
     explicit: data.explicit,
     email: data.email,
-    phone: data.number,
+    phone: data.phone,
     featuring: data.featuring,
     label: data.label,
     copyright: data.copyright,
     lyrics: data.description
   };
 
+  // 🔹 Admin email
   await emailjs.send("service_ydy0muo", "template_i6qh7ew", templateParams);
+
+  // 🔹 Auto reply to user (if you created second template)
   await emailjs.send("service_ydy0muo", "template_m8g8n9q", templateParams);
 }
 
@@ -171,7 +181,7 @@ form.addEventListener("submit", async (e) => {
     releaseDate: document.getElementById("releaseDate").value,
     explicit: document.getElementById("explicit").value,
     email: document.getElementById("email").value.trim(),
-    number: document.getElementById("number").value.trim(),
+    phone: document.getElementById("number").value.trim(),
     featuring: document.getElementById("featuring").value.trim(),
     copyright: document.getElementById("copyright").value.trim(),
     label: document.getElementById("label").value.trim(),
@@ -182,26 +192,32 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    // ✅ Wait for Firebase
+
+    /* ✅ SAVE TO FIRESTORE FIRST */
     await addDoc(collection(db, "submissions"), data);
 
-    // 🔹 Send emails (do not block redirect)
-    sendEmails(data).catch(() => {});
+    /* ✅ THEN SEND EMAIL */
+    await sendEmails(data);
 
-    // ✅ Only redirect if save succeeded
+    /* ✅ SUCCESS */
     window.location.href = "select.html";
 
   } catch (error) {
-    // ❌ Firebase failed → stay on page
+
+    console.error("Submission Error:", error);
+
     submitBtn.disabled = false;
     submitBtn.innerText = "Save & Continue";
     statusMsg.innerText = "Something went wrong. Please try again.";
+
     isSubmitting = false;
   }
+
 });
 </script>
 </body>
 </html>
+
 
 
 
