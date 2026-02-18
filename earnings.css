@@ -72,6 +72,23 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* BADGES */
+.badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cleared { background: #1DB95433; color: #1DB954; }
+.pending { background: #00e0ff33; color: #00e0ff; }
+
 /* SELECT CURRENCY */
 .currency-select {
   background: #0f1220;
@@ -133,9 +150,10 @@ body {
 
 .info strong { color: #fff; }
 
-/* STATISTICS CARD */
+/* STATISTICS & TIPS CARDS */
 .statistics h2,
-.tips h2 {
+.tips h2,
+.earnings-chart h2 {
   font-size: 1.3rem;
   background: linear-gradient(90deg, #1DB954, #00e0ff);
   -webkit-background-clip: text;
@@ -154,28 +172,47 @@ body {
   border-bottom: 1px solid #2a2f55;
 }
 
-.stats-list li:last-child {
-  border-bottom: none;
-}
+.stats-list li:last-child { border-bottom: none; }
 
-.stat-label {
-  color: #aaa;
-}
+.stat-label { color: #aaa; }
+.stat-value { font-weight: 600; color: #fff; }
 
-.stat-value {
-  font-weight: 600;
-  color: #fff;
-}
-
-/* TIPS CARD */
 .tips ul {
   list-style: disc inside;
   color: #ccc;
   line-height: 1.5;
 }
 
+/* EARNINGS CHART */
+.earnings-chart .chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.earnings-chart .bar {
+  flex: 1;
+  background: linear-gradient(180deg, #1DB954, #00e0ff);
+  border-radius: 6px 6px 0 0;
+  transition: 0.3s;
+}
+
+.earnings-chart .bar:hover {
+  opacity: 0.8;
+}
+
+.earnings-chart .chart-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
 /* MEDIA */
 @media (max-width: 600px) {
   .balance-value { font-size: 1.8rem; }
   .stats-list li { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .earnings-chart .chart-labels { font-size: 0.75rem; }
 }
