@@ -1,0 +1,169 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0f0f12;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  width: 100%;
+  padding: 20px;
+}
+
+.modal {
+  background: #18181d;
+  border-radius: 18px;
+  padding: 25px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.close-btn {
+  color: #aaa;
+  font-size: 22px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  color: #ff3b3b;
+}
+
+.sub-text {
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.terms-box {
+  background: #202026;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #2d2d35;
+  transition: 0.3s;
+}
+
+.terms-box:hover {
+  border: 1px solid #ff2e2e;
+  box-shadow: 0 0 10px rgba(255, 46, 46, 0.3);
+}
+
+.checkbox-container {
+  display: flex;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox-container input {
+  display: none;
+}
+
+.checkmark {
+  min-width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  margin-right: 12px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.checkbox-container input:checked + .checkmark {
+  background: #ff2e2e;
+  border-color: #ff2e2e;
+}
+
+.checkbox-container input:checked + .checkmark::after {
+  content: "✔";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  left: 3px;
+  top: -1px;
+}
+
+.term-text {
+  color: #ddd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.term-text strong {
+  color: #fff;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background: #2a2a33;
+  color: #aaa;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #3a3a45;
+}
+
+.confirm-btn {
+  background: #ff2e2e;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  opacity: 0.5;
+}
+
+.confirm-btn:enabled {
+  opacity: 1;
+}
+
+.confirm-btn:enabled:hover {
+  background: #ff4d4d;
+}
+
+.confirm-btn:disabled {
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
