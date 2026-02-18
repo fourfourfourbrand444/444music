@@ -46,67 +46,87 @@
   <!-- Email.js CDN -->
   <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-      authDomain: "usersubmissionsportal.firebaseapp.com",
-      projectId: "usersubmissionsportal",
-      storageBucket: "usersubmissionsportal.firebasestorage.app",
-      messagingSenderId: "734783502459",
-      appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-    };
+// 🔥 FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+// 🔥 INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    // Initialize Email.js with your public key
-    emailjs.init("YdwKKnZpEVzhis4lB");
+// Initialize Email.js
+emailjs.init("YdwKKnZpEVzhis4lB");
 
-    const form = document.getElementById("registerForm");
+const form = document.getElementById("registerForm");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const confirm = document.getElementById("confirmPassword").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirm = document.getElementById("confirmPassword").value.trim();
 
-      if (password !== confirm) {
-        alert("Passwords do not match");
-        return;
-      }
+  if (password !== confirm) {
+    alert("Passwords do not match");
+    return;
+  }
 
-      try {
-        // Create user in Firebase Auth
-        await createUserWithEmailAndPassword(auth, email, password);
+  try {
+    // 1️⃣ Create user in Firebase Auth
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
 
-        // Send Welcome Email
-        emailjs.send(
-          "service_4tj52zt",       // Your Service ID
-          "template_fuaddsx",      // Your Template ID
-          {
-            user_name: name,
-            user_email: email
-          }
-        ).then(response => {
-          console.log("Welcome email sent!", response.status, response.text);
-        }).catch(error => {
-          console.error("Failed to send welcome email", error);
-        });
-
-        // Redirect after successful registration
-        window.location.href = "exp 2.html";
-
-      } catch (err) {
-        alert(err.message);
-      }
+    // 2️⃣ Create Firestore user document
+    await setDoc(doc(db, "users", user.uid), {
+      name: name,
+      email: email,
+      earnings: 0,
+      createdAt: serverTimestamp()
     });
-  </script>
 
+    // 3️⃣ Send Welcome Email
+    emailjs.send(
+      "service_4tj52zt",       // Your Service ID
+      "template_fuaddsx",      // Your Template ID
+      {
+        user_name: name,
+        user_email: email
+      }
+    ).then(response => {
+      console.log("Welcome email sent!", response.status, response.text);
+    }).catch(error => {
+      console.error("Failed to send welcome email", error);
+    });
+
+    // 4️⃣ Redirect to dashboard or landing page
+    window.location.href = "dashboard.html";
+
+  } catch (err) {
+    alert(err.message);
+  }
+});
+</script>
 </body>
 </html>
+
