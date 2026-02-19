@@ -93,9 +93,7 @@ onAuthStateChanged(auth, async (user) => {
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
 
-  const name =
-    user.displayName ||
-    user.email.split("@")[0];
+  const name = user.displayName || user.email.split("@")[0];
 
   if (!userSnap.exists()) {
     await setDoc(userRef, {
@@ -104,16 +102,6 @@ onAuthStateChanged(auth, async (user) => {
       earnings: 0,
       createdAt: serverTimestamp()
     });
-  } else {
-    const updates = {};
-    const data = userSnap.data();
-
-    if (!data.email) updates.email = user.email;
-    if (!data.name) updates.name = name;
-
-    if (Object.keys(updates).length > 0) {
-      await updateDoc(userRef, updates);
-    }
   }
 
   try {
@@ -123,7 +111,6 @@ onAuthStateChanged(auth, async (user) => {
     );
 
     const snapshot = await getDocs(q);
-
     container.innerHTML = "";
 
     if (snapshot.empty) {
@@ -148,12 +135,15 @@ onAuthStateChanged(auth, async (user) => {
 
       card.innerHTML = `
         <div class="image-wrapper">
-          <img 
-            src="${data.coverURL || 'default_cover.png'}" 
-            class="cover-image"
+
+          <div 
+            class="cover-placeholder cover-image"
             data-id="${submissionId}"
             style="cursor:pointer;"
           >
+            CLICK TO ADD COVER ART
+          </div>
+
           <input 
             type="file" 
             accept="image/*" 
@@ -161,6 +151,7 @@ onAuthStateChanged(auth, async (user) => {
             data-id="${submissionId}"
             style="display:none;"
           >
+
         </div>
 
         <div class="card-body">
@@ -186,7 +177,7 @@ onAuthStateChanged(auth, async (user) => {
       container.appendChild(card);
     });
 
-    // Click image → open file picker
+    // Click image area
     container.addEventListener("click", (e) => {
       if (e.target.classList.contains("cover-image")) {
         const id = e.target.dataset.id;
@@ -195,20 +186,34 @@ onAuthStateChanged(auth, async (user) => {
       }
     });
 
-    // Preview image instantly (no saving)
+    // Replace placeholder with image preview
     container.addEventListener("change", (e) => {
       if (e.target.classList.contains("cover-input")) {
         const file = e.target.files[0];
         if (!file) return;
 
         const id = e.target.dataset.id;
-        const imageElement = container.querySelector(`.cover-image[data-id="${id}"]`);
-        if (!imageElement) return;
+        const wrapper = e.target.closest(".image-wrapper");
 
         const reader = new FileReader();
         reader.onload = function(event) {
-          imageElement.src = event.target.result;
+          wrapper.innerHTML = `
+            <img 
+              src="${event.target.result}" 
+              class="cover-image"
+              data-id="${id}"
+              style="cursor:pointer; width:100%; height:220px; object-fit:cover;"
+            >
+            <input 
+              type="file" 
+              accept="image/*" 
+              class="cover-input" 
+              data-id="${id}"
+              style="display:none;"
+            >
+          `;
         };
+
         reader.readAsDataURL(file);
       }
     });
