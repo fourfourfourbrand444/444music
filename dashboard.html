@@ -7,7 +7,8 @@
 <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <div class="navbar">
+
+<div class="navbar">
   <div class="brand">444Music</div>
 
   <div class="menu">
@@ -17,12 +18,12 @@
       <li onclick="location.href='earnings.html'">Royalties</li>
       <li onclick="location.href='home.html'">Home</li>
       <li onclick="location.href='support.html'">Support/Help</li>
-      <li onclick="location.href='playlist.html'">Pitch Playlist </li>
+      <li onclick="location.href='playlist.html'">Pitch Playlist</li>
+    </ul>
   </div>
 </div>
-<div class="notice">
 
- <div class="notice">
+<div class="notice">
   <div class="notice-content">
     <p>
       <strong>NB:</strong> All submitted releases will remain in
@@ -36,17 +37,11 @@
   </div>
 </div>
 
-
-  <a class="pay-btn" href="https://444music-distribution.vercel.app/pay.html" target="_blank">
-    PAY NOW
-  </a>
-</div>
-
 <div class="header">
   <h1>My Releases</h1>
 </div>
-<div class="container" id="submissionsContainer">
-</div>
+
+<div class="container" id="submissionsContainer"></div>
 
 <script>
 const menuBtn = document.getElementById("menuBtn");
@@ -57,6 +52,7 @@ menuBtn.onclick = () => {
     menuList.style.display === "block" ? "none" : "block";
 };
 </script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -94,9 +90,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  /* =========================
-     1️⃣ ENSURE USER DOCUMENT
-     ========================= */
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
 
@@ -123,9 +116,6 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 
-  /* =========================
-     2️⃣ LOAD USER SUBMISSIONS
-     ========================= */
   try {
     const q = query(
       collection(db, "submissions"),
@@ -143,39 +133,84 @@ onAuthStateChanged(auth, async (user) => {
 
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      const submissionId = docSnap.id;
+
       const card = document.createElement("div");
       card.className = "card";
-      const releaseDate = data.releaseDate 
-  ? new Date(data.releaseDate).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    })
-  : "Not set";
+
+      const releaseDate = data.releaseDate
+        ? new Date(data.releaseDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          })
+        : "Not set";
+
       card.innerHTML = `
-  <img src="${data.coverURL || 'default_cover.png'}" alt="">
-  <div class="card-body">
-    <h3>${data.releaseTitle}</h3>
-    <p class="artist-name">${data.artistName}</p>
+        <div class="image-wrapper">
+          <img 
+            src="${data.coverURL || 'default_cover.png'}" 
+            class="cover-image"
+            data-id="${submissionId}"
+            style="cursor:pointer;"
+          >
+          <input 
+            type="file" 
+            accept="image/*" 
+            class="cover-input" 
+            data-id="${submissionId}"
+            style="display:none;"
+          >
+        </div>
 
-    ${
-  data.featuring && data.featuring.trim() !== ""
-    ? `<p class="feat">
-         <strong>Featuring:</strong> ${data.featuring}
-       </p>`
-    : ""
-    }
+        <div class="card-body">
+          <h3>${data.releaseTitle}</h3>
+          <p class="artist-name">${data.artistName}</p>
 
-    <p class="release-date">
-      <strong>Release Date:</strong> ${releaseDate}
-    </p>
+          ${
+            data.featuring && data.featuring.trim() !== ""
+              ? `<p class="feat"><strong>Featuring:</strong> ${data.featuring}</p>`
+              : ""
+          }
 
-    <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
-      ${data.status}
-    </span>
-  </div>
-`;
+          <p class="release-date">
+            <strong>Release Date:</strong> ${releaseDate}
+          </p>
+
+          <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
+            ${data.status}
+          </span>
+        </div>
+      `;
+
       container.appendChild(card);
+    });
+
+    // Click image → open file picker
+    container.addEventListener("click", (e) => {
+      if (e.target.classList.contains("cover-image")) {
+        const id = e.target.dataset.id;
+        const input = container.querySelector(`.cover-input[data-id="${id}"]`);
+        if (input) input.click();
+      }
+    });
+
+    // Preview image instantly (no saving)
+    container.addEventListener("change", (e) => {
+      if (e.target.classList.contains("cover-input")) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const id = e.target.dataset.id;
+        const imageElement = container.querySelector(`.cover-image[data-id="${id}"]`);
+        if (!imageElement) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          imageElement.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
   } catch (err) {
@@ -187,23 +222,3 @@ onAuthStateChanged(auth, async (user) => {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
