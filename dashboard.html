@@ -133,17 +133,24 @@ onAuthStateChanged(auth, async (user) => {
           })
         : "Not set";
 
-      card.innerHTML = `
-        <div class="image-wrapper">
-
-          <div 
+      const imageSection = data.coverURL
+        ? `<img 
+            src="${data.coverURL}" 
+            class="cover-image"
+            data-id="${submissionId}"
+            style="cursor:pointer; width:100%; height:220px; object-fit:cover;"
+          >`
+        : `<div 
             class="cover-placeholder cover-image"
             data-id="${submissionId}"
             style="cursor:pointer;"
           >
             CLICK TO ADD COVER ART
-          </div>
+          </div>`;
 
+      card.innerHTML = `
+        <div class="image-wrapper">
+          ${imageSection}
           <input 
             type="file" 
             accept="image/*" 
@@ -151,7 +158,6 @@ onAuthStateChanged(auth, async (user) => {
             data-id="${submissionId}"
             style="display:none;"
           >
-
         </div>
 
         <div class="card-body">
@@ -177,7 +183,7 @@ onAuthStateChanged(auth, async (user) => {
       container.appendChild(card);
     });
 
-    // Click image area
+    // Click to open picker
     container.addEventListener("click", (e) => {
       if (e.target.classList.contains("cover-image")) {
         const id = e.target.dataset.id;
@@ -186,8 +192,8 @@ onAuthStateChanged(auth, async (user) => {
       }
     });
 
-    // Replace placeholder with image preview
-    container.addEventListener("change", (e) => {
+    // Upload + save to Firestore
+    container.addEventListener("change", async (e) => {
       if (e.target.classList.contains("cover-input")) {
         const file = e.target.files[0];
         if (!file) return;
@@ -196,10 +202,17 @@ onAuthStateChanged(auth, async (user) => {
         const wrapper = e.target.closest(".image-wrapper");
 
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = async function(event) {
+          const base64Image = event.target.result;
+
+          // Save to Firestore
+          await updateDoc(doc(db, "submissions", id), {
+            coverURL: base64Image
+          });
+
           wrapper.innerHTML = `
             <img 
-              src="${event.target.result}" 
+              src="${base64Image}" 
               class="cover-image"
               data-id="${id}"
               style="cursor:pointer; width:100%; height:220px; object-fit:cover;"
