@@ -83,57 +83,6 @@
   </div>
 </section>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// FEATURED RELEASES
-const grid = document.getElementById("featuredGrid");
-const q = query(collection(db, "submissions"), where("status", "==", "Approved"));
-const snap = await getDocs(q);
-
-snap.forEach(doc => {
-  const d = doc.data();
-  const card = document.createElement("div");
-  card.className = "release-card";
-  card.innerHTML = `
-    <img src="${d.coverURL || 'placeholder.jpg'}">
-    <h4>${d.releaseTitle}</h4>
-    <p>${d.artistName}</p>
-  `;
-  grid.appendChild(card);
-});
-
-// COUNTERS
-const counters = document.querySelectorAll(".counter");
-counters.forEach(counter => {
-  const update = () => {
-    const target = +counter.dataset.target;
-    const value = +counter.innerText.replace(/,/g,'');
-    const inc = target / 200;
-
-    if (value < target) {
-      counter.innerText = Math.ceil(value + inc).toLocaleString();
-      setTimeout(update, 10);
-    } else {
-      counter.innerText = target.toLocaleString();
-    }
-  };
-  update();
-});
-</script>
-
-
-
 <!-- HOW IT WORKS -->
 <section id="how" class="how">
   <h2>How 444Music Works</h2>
@@ -291,18 +240,79 @@ counters.forEach(counter => {
   </div>
 
 </footer>
- 
-<script>
-const toggle = document.getElementById("navToggle");
-const links = document.getElementById("navLinks");
 
-toggle.addEventListener("click", () => {
-  links.classList.toggle("show");
+</body>
+  <script>
+const counters = document.querySelectorAll(".counter");
+const speed = 200;
+
+counters.forEach(counter => {
+  const updateCount = () => {
+    const target = +counter.getAttribute("data-target");
+    const count = +counter.innerText;
+
+    const inc = target / speed;
+
+    if (count < target) {
+      counter.innerText = Math.ceil(count + inc);
+      setTimeout(updateCount, 10);
+    } else {
+      counter.innerText = target.toLocaleString();
+    }
+  };
+
+  updateCount();
+});
+</script>
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add("show");
+    }
+  });
+});
+
+document.querySelectorAll("section, .price-card, .testimonial, .stat").forEach(el=>{
+  observer.observe(el);
 });
 </script>
 
-</body>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const grid = document.getElementById("featuredGrid");
+
+async function loadFeatured(){
+  const snapshot = await getDocs(collection(db,"submissions"));
+
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+
+    if(!data.coverURL}">
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+loadFeatured();
+</script>
 </html>
+
 
 
 
