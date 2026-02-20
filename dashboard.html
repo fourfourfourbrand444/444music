@@ -238,5 +238,76 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 
+<script>
+const counters = document.querySelectorAll(".counter");
+const speed = 200;
+
+counters.forEach(counter => {
+  const updateCount = () => {
+    const target = +counter.getAttribute("data-target");
+    const count = +counter.innerText;
+
+    const inc = target / speed;
+
+    if (count < target) {
+      counter.innerText = Math.ceil(count + inc);
+      setTimeout(updateCount, 10);
+    } else {
+      counter.innerText = target.toLocaleString();
+    }
+  };
+
+  updateCount();
+});
+</script>
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add("show");
+    }
+  });
+});
+
+document.querySelectorAll("section, .price-card, .testimonial, .stat").forEach(el=>{
+  observer.observe(el);
+});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const grid = document.getElementById("featuredGrid");
+
+async function loadFeatured(){
+  const snapshot = await getDocs(collection(db,"submissions"));
+
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+
+    if(!data.coverURL}">
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+loadFeatured();
+</script>
+  
 </body>
 </html>
+
