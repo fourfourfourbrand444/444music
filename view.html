@@ -311,7 +311,24 @@ async function loadFeatured(){
 
 loadFeatured();
 </script>
+
+  
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add("show");
+    }
+  });
+});
+
+document.querySelectorAll("section, .price-card, .testimonial, .stat").forEach(el=>{
+  observer.observe(el);
+});
+</script>
+
 </html>
+
 
 
 
