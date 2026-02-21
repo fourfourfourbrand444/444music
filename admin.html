@@ -59,18 +59,18 @@ function display(data){
     div.className="card";
 
     div.innerHTML = `
-      <b>${item.artistName || "Unknown Artist"}</b><br>
-      Song: ${item.songTitle || "Untitled"}<br>
-      Status: ${item.status || "Pending"}<br>
+<b>${item.artistName || "Unknown Artist"}</b><br>
+Song: ${item.releaseTitle || item.songTitle || item.title || "Untitled"}<br>
+Status: ${item.status || "Pending"}<br><br>
 
-      <select onchange="changeStatus('${item.id}', this.value)">
-        <option value="">Change Status</option>
-        <option value="Pending">Pending</option>
-        <option value="In-Review">In-Review</option>
-        <option value="Approved">Approved</option>
-        <option value="Removed">Removed</option>
-      </select>
-    `;
+<select onchange="changeStatus('${item.id}', this.value)">
+<option value="">Change Status</option>
+<option value="Pending">Pending</option>
+<option value="In-Review">In-Review</option>
+<option value="Approved">Approved</option>
+<option value="Removed">Removed</option>
+</select>
+`;
 
     results.appendChild(div);
   });
