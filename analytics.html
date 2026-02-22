@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Analytics • 444Music</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="analytics.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Consumption</h1>
+
+<div class="stats-grid">
+<div class="card">
+<p>Total Streams</p>
+<h2 id="streams">0</h2>
+</div>
+
+<div class="card">
+<p>Ad Supported</p>
+<h2 id="ads">0</h2>
+</div>
+
+<div class="card">
+<p>Premium</p>
+<h2 id="premium">0</h2>
+</div>
+
+<div class="card">
+<p>Downloads</p>
+<h2 id="downloads">0</h2>
+</div>
+</div>
+
+<div class="chart-card">
+<canvas id="streamChart"></canvas>
+</div>
+
+
+<h1>Top Artists</h1>
+<div id="artists" class="grid"></div>
+
+
+<h1>Top Tracks</h1>
+<div id="tracks" class="grid"></div>
+
+
+<h1>Top Markets</h1>
+<div id="markets" class="grid"></div>
+
+
+<h1>Top DSPs</h1>
+<div id="dsps" class="grid"></div>
+
+
+<h1>Discovery</h1>
+<div class="stats-grid">
+<div class="card">
+<p>Active Listeners</p>
+<h2 id="active">0</h2>
+</div>
+
+<div class="card">
+<p>Passive Listeners</p>
+<h2 id="passive">0</h2>
+</div>
+</div>
+
+</div>
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+projectId: "YOUR_PROJECT",
+storageBucket: "YOUR_PROJECT.appspot.com",
+messagingSenderId: "XXXX",
+appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+/* OVERVIEW */
+onSnapshot(doc(db,"analytics","overview"), snap=>{
+const data = snap.data();
+
+document.getElementById("streams").innerText = data.streams || 0;
+document.getElementById("ads").innerText = data.adSupported || 0;
+document.getElementById("premium").innerText = data.premium || 0;
+document.getElementById("downloads").innerText = data.downloads || 0;
+
+document.getElementById("active").innerText = data.activeListeners || 0;
+document.getElementById("passive").innerText = data.passiveListeners || 0;
+
+loadChart(data);
+});
+
+
+/* CHART */
+let chart;
+function loadChart(data){
+const ctx = document.getElementById("streamChart");
+
+if(chart) chart.destroy();
+
+chart = new Chart(ctx,{
+type:"doughnut",
+data:{
+labels:["Ad Supported","Premium"],
+datasets:[{
+data:[
+data.adSupported || 0,
+data.premium || 0
+]
+}]
+}
+});
+}
+
+
+
+/* ARTISTS */
+async function loadArtists(){
+const snap = await getDocs(collection(db,"artists"));
+let html = "";
+
+snap.forEach(doc=>{
+const a = doc.data();
+html += `
+<div class="card">
+<h3>${a.name}</h3>
+<p>${a.streams || 0} streams</p>
+<p>${a.share || 0}% share</p>
+</div>
+`;
+});
+
+document.getElementById("artists").innerHTML = html;
+}
+loadArtists();
+
+
+/* TRACKS */
+async function loadTracks(){
+const snap = await getDocs(collection(db,"tracks"));
+let html = "";
+
+snap.forEach(doc=>{
+const t = doc.data();
+html += `
+<div class="card">
+<h3>${t.title}</h3>
+<p>${t.streams || 0} streams</p>
+</div>
+`;
+});
+
+document.getElementById("tracks").innerHTML = html;
+}
+loadTracks();
+
+
+
+/* MARKETS */
+async function loadMarkets(){
+const snap = await getDocs(collection(db,"markets"));
+let html = "";
+
+snap.forEach(doc=>{
+const m = doc.data();
+html += `
+<div class="card">
+<h3>${m.country}</h3>
+<p>${m.streams || 0} streams</p>
+</div>
+`;
+});
+
+document.getElementById("markets").innerHTML = html;
+}
+loadMarkets();
+
+
+
+/* DSPS */
+async function loadDSPs(){
+const snap = await getDocs(collection(db,"dsps"));
+let html = "";
+
+snap.forEach(doc=>{
+const d = doc.data();
+html += `
+<div class="card">
+<h3>${d.name}</h3>
+<p>${d.streams || 0}</p>
+</div>
+`;
+});
+
+document.getElementById("dsps").innerHTML = html;
+}
+loadDSPs();
+
+</script>
+
+</body>
+</html>
+
