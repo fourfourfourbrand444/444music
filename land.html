@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saving Submission...</title>
+<link rel="stylesheet" href="land.css">
+<style>
+
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>Creating Your Account …</h2>
+  <p>Please wait</p>
+  <div class="loader"></div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+ const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
+  measurementId: "G-WCRN117P8P"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// whatever you already built from the form
+const submission = {
+  title: "Test Release"
+};
+
+let waited = false;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    // Wait once to allow Firebase to restore session
+    if (!waited) {
+      waited = true;
+      return;
+    }
+    // If still not logged in after waiting, go to login
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "sharp"), {
+      ...submission,
+      userId: user.uid,
+      status: "Pending",
+      createdAt: Date.now()
+    });
+
+    window.location.href = "dashboard.html";
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save submission.");
+  }
+});
+
+</script>
+
+</body>
+</html>
+
