@@ -2,116 +2,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Creator Setup</title>
+<title>444Music Onboarding</title>
 <link rel="stylesheet" href="onboarding.css">
 </head>
-
 <body>
 
-<div class="glow-bg"></div>
+<div class="container">
+    <div class="card">
 
-<div class="wrapper">
+        <h1>Welcome to 444Music Distribution</h1>
+        <p class="subtitle">Tell us about you to get started</p>
 
-<div class="progress-bar">
-<div class="progress"></div>
-</div>
+        <form id="onboardingForm">
 
-<h1>Creator Setup</h1>
-<p class="subtitle">Let's prepare your account for music distribution</p>
+            <!-- Country (NOT dropdown) -->
+            <div class="form-group">
+                <label>Country</label>
+                <input type="text" id="countryInput" placeholder="Start typing your country..." required>
+                <div class="suggestions" id="suggestions"></div>
+            </div>
 
-<form id="multiStepForm">
+            <!-- Category -->
+            <div class="form-group">
+                <label>Choose your category</label>
+                <div class="radio-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="category" value="Artist" required>
+                        <span>Artist</span>
+                    </label>
 
-<!-- STEP 1 -->
-<div class="step active">
-<h2>Basic Information</h2>
+                    <label class="radio-card">
+                        <input type="radio" name="category" value="Label">
+                        <span>Label</span>
+                    </label>
 
-<label>Country</label>
-<input type="text" placeholder="Enter your country" required>
+                    <label class="radio-card">
+                        <input type="radio" name="category" value="Producer">
+                        <span>Producer</span>
+                    </label>
 
-<label>Your Role</label>
-<select required>
-<option value="">Select category</option>
-<option>Artist</option>
-<option>Label</option>
-<option>Producer</option>
-<option>Distributor</option>
-<option>Manager</option>
-</select>
+                    <label class="radio-card">
+                        <input type="radio" name="category" value="Distributor">
+                        <span>Distributor</span>
+                    </label>
+                </div>
+            </div>
 
-<button type="button" class="next">Next</button>
-</div>
+            <!-- Experience -->
+            <div class="form-group">
+                <label>How long have you been in music?</label>
+                <select required>
+                    <option value="">Select experience</option>
+                    <option>Just starting</option>
+                    <option>1-2 years</option>
+                    <option>3-5 years</option>
+                    <option>5+ years</option>
+                </select>
+            </div>
 
-<!-- STEP 2 -->
-<div class="step">
-<h2>Music Plans</h2>
+            <!-- How did you hear -->
+            <div class="form-group">
+                <label>How did you hear about us?</label>
+                <div class="radio-grid small">
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="Social Media" required>
+                        <span>Social Media</span>
+                    </label>
 
-<label>What do you plan to release?</label>
-<select>
-<option>Select</option>
-<option>Single</option>
-<option>EP</option>
-<option>Album</option>
-<option>Multiple Releases</option>
-</select>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="Referral">
+                        <span>Referral</span>
+                    </label>
 
-<label>Experience Level</label>
-<select>
-<option>Select</option>
-<option>New Artist</option>
-<option>Growing Artist</option>
-<option>Professional</option>
-</select>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="Google Search">
+                        <span>Google Search</span>
+                    </label>
 
-<button type="button" class="next">Next</button>
-</div>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="YouTube">
+                        <span>YouTube</span>
+                    </label>
 
-<!-- STEP 3 -->
-<div class="step">
-<h2>Discovery</h2>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="TikTok">
+                        <span>TikTok</span>
+                    </label>
 
-<label>How did you hear about us?</label>
-<select>
-<option>Select option</option>
-<option>Social Media</option>
-<option>Referral</option>
-<option>Google Search</option>
-<option>YouTube</option>
-<option>TikTok</option>
-<option>Music Blog</option>
-<option>Advertisement</option>
-</select>
+                    <label class="radio-card">
+                        <input type="radio" name="source" value="Friend">
+                        <span>Friend</span>
+                    </label>
+                </div>
+            </div>
 
-<label>Referral Code (optional)</label>
-<input type="text" placeholder="Enter code">
+            <!-- Artist Goal -->
+            <div class="form-group">
+                <label>What is your main goal with 444Music?</label>
+                <textarea placeholder="Grow audience, distribute music worldwide, monetize streams..." required></textarea>
+            </div>
 
-<a href="https://444music-distribution.vercel.app/thankyou.html" class="submit-btn">
-Finish Setup
-</a>
-</div>
+            <!-- Continue -->
+            <button type="submit" class="continue-btn">
+                Continue
+            </button>
 
-</form>
+        </form>
 
+    </div>
 </div>
 
 <script>
-const steps = document.querySelectorAll(".step");
-const nextBtns = document.querySelectorAll(".next");
-const progress = document.querySelector(".progress");
+const countries = [
+"United States","United Kingdom","Canada","Nigeria","Ghana","South Africa","Kenya",
+"France","Germany","Brazil","India","Australia","Netherlands","Sweden","Norway"
+];
 
-let currentStep = 0;
+const input = document.getElementById("countryInput");
+const suggestions = document.getElementById("suggestions");
 
-nextBtns.forEach((btn) => {
-btn.addEventListener("click", () => {
+input.addEventListener("input", () => {
+    const value = input.value.toLowerCase();
+    suggestions.innerHTML = "";
 
-steps[currentStep].classList.remove("active");
-currentStep++;
+    if (!value) return;
 
-if (currentStep >= steps.length) return;
+    const filtered = countries.filter(country =>
+        country.toLowerCase().includes(value)
+    );
 
-steps[currentStep].classList.add("active");
-progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
-
+    filtered.forEach(country => {
+        const div = document.createElement("div");
+        div.textContent = country;
+        div.onclick = () => {
+            input.value = country;
+            suggestions.innerHTML = "";
+        };
+        suggestions.appendChild(div);
+    });
 });
+
+document.getElementById("onboardingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    window.location.href = "https://444music-distribution.vercel.app/thankyou.html";
 });
 </script>
 
