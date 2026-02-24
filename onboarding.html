@@ -2,39 +2,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Distribution - Creator Setup</title>
+<title>444Music Creator Setup</title>
 <link rel="stylesheet" href="onboarding.css">
 </head>
 
 <body>
 
-<div class="bg-glow"></div>
+<div class="glow-bg"></div>
 
-<div class="container">
+<div class="wrapper">
 
-<h1>Creator Profile Setup</h1>
-<p class="subtitle">Complete your onboarding to start distributing music worldwide.</p>
-
-<form class="form">
-
-<div class="field">
-<label>Country</label>
-<input type="text" placeholder="Enter your country">
+<div class="progress-bar">
+<div class="progress"></div>
 </div>
 
-<div class="field">
-<label>Choose Category</label>
-<select>
-<option>Select category</option>
+<h1>Creator Setup</h1>
+<p class="subtitle">Let's prepare your account for music distribution</p>
+
+<form id="multiStepForm">
+
+<!-- STEP 1 -->
+<div class="step active">
+<h2>Basic Information</h2>
+
+<label>Country</label>
+<input type="text" placeholder="Enter your country" required>
+
+<label>Your Role</label>
+<select required>
+<option value="">Select category</option>
 <option>Artist</option>
 <option>Label</option>
 <option>Producer</option>
 <option>Distributor</option>
 <option>Manager</option>
 </select>
+
+<button type="button" class="next">Next</button>
 </div>
 
-<div class="field">
+<!-- STEP 2 -->
+<div class="step">
+<h2>Music Plans</h2>
+
+<label>What do you plan to release?</label>
+<select>
+<option>Select</option>
+<option>Single</option>
+<option>EP</option>
+<option>Album</option>
+<option>Multiple Releases</option>
+</select>
+
+<label>Experience Level</label>
+<select>
+<option>Select</option>
+<option>New Artist</option>
+<option>Growing Artist</option>
+<option>Professional</option>
+</select>
+
+<button type="button" class="next">Next</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<h2>Discovery</h2>
+
 <label>How did you hear about us?</label>
 <select>
 <option>Select option</option>
@@ -44,21 +78,42 @@
 <option>YouTube</option>
 <option>TikTok</option>
 <option>Music Blog</option>
-<option>Online Ads</option>
+<option>Advertisement</option>
 </select>
-</div>
 
-<div class="field">
 <label>Referral Code (optional)</label>
-<input type="text" placeholder="Enter referral code">
-</div>
+<input type="text" placeholder="Enter code">
 
-<a href="https://444music-distribution.vercel.app/thankyou.html" class="btn">
-Continue
+<a href="https://444music-distribution.vercel.app/thankyou.html" class="submit-btn">
+Finish Setup
 </a>
+</div>
 
 </form>
+
 </div>
+
+<script>
+const steps = document.querySelectorAll(".step");
+const nextBtns = document.querySelectorAll(".next");
+const progress = document.querySelector(".progress");
+
+let currentStep = 0;
+
+nextBtns.forEach((btn) => {
+btn.addEventListener("click", () => {
+
+steps[currentStep].classList.remove("active");
+currentStep++;
+
+if (currentStep >= steps.length) return;
+
+steps[currentStep].classList.add("active");
+progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
+
+});
+});
+</script>
 
 </body>
 </html>
