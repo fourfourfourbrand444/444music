@@ -1,0 +1,207 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Insights</title>
+
+<link rel="stylesheet" href="insights.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, async (user) => {
+if (!user) {
+alert("Please login first.");
+return;
+}
+
+loadDashboard(user.uid);
+});
+
+async function loadDashboard(uid) {
+const streamsRef = collection(db, "streams");
+const q = query(streamsRef, where("artistId", "==", uid));
+const snapshot = await getDocs(q);
+
+let totalStreams = 0;
+let revenue = 0;
+let songs = {};
+let countries = {};
+let platforms = {};
+let recent = [];
+
+snapshot.forEach(doc => {
+const d = doc.data();
+
+totalStreams += d.streams || 0;
+revenue += (d.streams || 0) * 0.003;
+
+songs[d.song] = (songs[d.song] || 0) + d.streams;
+countries[d.country] = (countries[d.country] || 0) + d.streams;
+platforms[d.platform] = (platforms[d.platform] || 0) + d.streams;
+
+recent.push(d);
+});
+
+document.getElementById("totalStreams").innerText = totalStreams.toLocaleString();
+document.getElementById("revenue").innerText = "$" + revenue.toFixed(2);
+
+renderList("topSongs", songs, "fa-music");
+renderList("topCountries", countries, "fa-globe");
+renderList("platforms", platforms, "fa-headphones");
+
+renderChart(songs);
+renderRecent(recent);
+}
+
+function renderList(containerId, data, icon) {
+const el = document.getElementById(containerId);
+el.innerHTML = "";
+
+const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+sorted.forEach(item=>{
+el.innerHTML += `
+<div class="item">
+<i class="fa-solid ${icon}"></i>
+<span>${item[0]}</span>
+<strong>${item[1].toLocaleString()}</strong>
+</div>
+`;
+});
+}
+
+function renderRecent(data){
+const el = document.getElementById("recentActivity");
+el.innerHTML = "";
+
+data.slice(0,6).forEach(d=>{
+el.innerHTML += `
+<div class="activity">
+<i class="fa-solid fa-play"></i>
+${d.song} gained ${d.streams} streams in ${d.country}
+</div>
+`;
+});
+}
+
+function renderChart(songData) {
+const labels = Object.keys(songData).slice(0,7);
+const values = Object.values(songData).slice(0,7);
+
+const ctx = document.getElementById("chart");
+
+new Chart(ctx,{
+type:"line",
+data:{
+labels:labels,
+datasets:[{
+label:"Streams Performance",
+data:values,
+fill:true,
+tension:0.4
+}]
+},
+options:{
+plugins:{legend:{labels:{color:"#fff"}}},
+scales:{
+x:{ticks:{color:"#fff"}},
+y:{ticks:{color:"#fff"}}
+}
+}
+});
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+<div class="logo">444Music Analytics</div>
+</header>
+
+<section class="stats">
+
+<div class="statCard">
+<i class="fa-solid fa-chart-line"></i>
+<div>
+<h4>Total Streams</h4>
+<h2 id="totalStreams">0</h2>
+</div>
+</div>
+
+<div class="statCard">
+<i class="fa-solid fa-dollar-sign"></i>
+<div>
+<h4>Estimated Revenue</h4>
+<h2 id="revenue">$0</h2>
+</div>
+</div>
+
+<div class="statCard">
+<i class="fa-solid fa-users"></i>
+<div>
+<h4>Global Audience</h4>
+<h2>Live Data</h2>
+</div>
+</div>
+
+</section>
+
+<section class="grid">
+
+<div class="panel">
+<h3>Top Songs</h3>
+<div id="topSongs"></div>
+</div>
+
+<div class="panel">
+<h3>Top Countries</h3>
+<div id="topCountries"></div>
+</div>
+
+<div class="panel">
+<h3>Platforms</h3>
+<div id="platforms"></div>
+</div>
+
+</section>
+
+<section class="chartArea">
+<div class="panel large">
+<h3>Streams Growth</h3>
+<canvas id="chart"></canvas>
+</div>
+</section>
+
+<section class="recent">
+<div class="panel">
+<h3>Recent Activity</h3>
+<div id="recentActivity"></div>
+</div>
+</section>
+
+</div>
+
+</body>
+</html>
