@@ -1,9 +1,8 @@
 /* ===============================
-   OG BLUHFACE DISTRIBUTION UI
-   Professional Glass CSS
+   OG BLUHFACE – CLEAN PRO UI
+   Music Distribution Form
 ================================ */
 
-/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -12,89 +11,84 @@
 }
 
 body {
+  background: linear-gradient(135deg, #070816, #0f1027, #1b1d3a);
+  color: white;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, #1b1d3a, #070816 60%);
-  color: #fff;
   overflow-x: hidden;
-  position: relative;
 }
 
-/* ANIMATED BACKGROUND PARTICLES */
+/* Animated background */
 body::before {
   content: "";
   position: fixed;
   width: 200%;
   height: 200%;
-  background-image: radial-gradient(#8b5cf6 1px, transparent 1px);
+  background-image: radial-gradient(rgba(139,92,246,0.4) 1px, transparent 1px);
   background-size: 40px 40px;
-  animation: moveBg 60s linear infinite;
+  animation: bgMove 70s linear infinite;
   opacity: 0.15;
   z-index: -1;
 }
 
-@keyframes moveBg {
-  from {
-    transform: translate(0, 0);
-  }
-  to {
-    transform: translate(-400px, -400px);
-  }
+@keyframes bgMove {
+  from { transform: translate(0,0); }
+  to { transform: translate(-400px,-400px); }
 }
 
-/* WRAPPER */
+/* MAIN WRAPPER */
 .wrapper {
-  width: 92%;
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 35px;
-  border-radius: 20px;
+  width: 94%;
+  max-width: 950px;
+  margin: 40px auto 60px;
+  padding: 35px 28px;
+  border-radius: 22px;
+
   background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
+
   border: 1px solid rgba(255,255,255,0.08);
+
   box-shadow:
-    0 0 40px rgba(139,92,246,0.15),
+    0 20px 60px rgba(0,0,0,0.5),
     inset 0 0 20px rgba(255,255,255,0.03);
 }
 
 /* HEADER */
 h1 {
-  font-size: 30px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  margin-bottom: 6px;
   background: linear-gradient(90deg,#a78bfa,#22d3ee);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  color: #bdbde2;
-  margin-bottom: 30px;
+  color: #b6b7e8;
+  margin-bottom: 28px;
+  font-size: 14px;
 }
 
-/* GRID */
+/* GRID LAYOUT */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 20px;
 }
 
-/* MOBILE */
-@media (max-width: 700px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .wrapper {
-    padding: 25px;
-  }
+/* FULL WIDTH FIELDS */
+.field:nth-last-child(2),
+.field:last-child {
+  grid-column: span 2;
 }
 
 /* FIELD */
 .field {
   display: flex;
   flex-direction: column;
-  position: relative;
-  animation: fadeUp 0.8s ease forwards;
+  gap: 6px;
   opacity: 0;
+  transform: translateY(25px);
+  animation: reveal 0.6s ease forwards;
 }
 
 .field:nth-child(1){animation-delay:.05s}
@@ -107,142 +101,108 @@ h1 {
 .field:nth-child(8){animation-delay:.4s}
 .field:nth-child(9){animation-delay:.45s}
 .field:nth-child(10){animation-delay:.5s}
-.field:nth-child(11){animation-delay:.55s}
-.field:nth-child(12){animation-delay:.6s}
 
-@keyframes fadeUp {
-  from {
-    transform: translateY(25px);
-    opacity: 0;
-  }
+@keyframes reveal {
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
 /* LABEL */
-.field label {
+label {
   font-size: 13px;
-  margin-bottom: 6px;
-  color: #cfd0ff;
+  color: #d4d5ff;
+  font-weight: 500;
 }
 
-/* INPUT STYLE */
+/* INPUTS */
 input,
 select,
 textarea {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
-  padding: 13px 14px;
+  padding: 14px;
   color: white;
-  outline: none;
-  transition: 0.25s ease;
+  font-size: 14px;
+  transition: 0.25s;
   backdrop-filter: blur(10px);
 }
 
-/* TEXTAREA */
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-/* FOCUS EFFECT */
+/* FOCUS */
 input:focus,
 select:focus,
 textarea:focus {
   border-color: #8b5cf6;
-  box-shadow: 0 0 0 2px rgba(139,92,246,0.2);
-  background: rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 0 2px rgba(139,92,246,0.25);
 }
 
-/* PLACEHOLDER */
-input::placeholder,
-textarea::placeholder {
-  color: #aaa;
+/* TEXTAREA */
+textarea {
+  min-height: 130px;
 }
 
 /* BUTTON */
 .btn {
-  width: 100%;
   margin-top: 25px;
-  padding: 14px;
-  border: none;
+  width: 100%;
+  padding: 15px;
   border-radius: 14px;
-  font-size: 16px;
+  border: none;
   font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
+
   background: linear-gradient(90deg,#8b5cf6,#22d3ee);
   color: white;
-  transition: 0.3s ease;
-  position: relative;
-  overflow: hidden;
+
+  transition: 0.3s;
 }
 
-/* BUTTON HOVER */
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 35px rgba(139,92,246,0.4);
+  box-shadow: 0 15px 35px rgba(139,92,246,0.35);
 }
 
-/* BUTTON GLOW */
-.btn::before {
-  content: "";
-  position: absolute;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent);
-  top: -50%;
-  left: -50%;
-  opacity: 0;
-  transition: 0.4s;
-}
-
-.btn:hover::before {
-  opacity: 1;
-}
-
-/* STATUS MESSAGE */
+/* STATUS */
 #statusMsg {
   text-align: center;
-  margin-top: 12px;
-  color: #bfbfff;
-  font-size: 14px;
+  margin-top: 10px;
+  color: #cfd0ff;
+  font-size: 13px;
 }
 
-/* SCROLL SMOOTH */
-html {
-  scroll-behavior: smooth;
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+
+  .wrapper {
+    padding: 26px 20px;
+    margin-top: 25px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .field:nth-last-child(2),
+  .field:last-child {
+    grid-column: span 1;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
 }
 
-/* CUSTOM SCROLLBAR */
+/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(#8b5cf6,#22d3ee);
-  border-radius: 10px;
-}
-
-/* SELECT STYLE */
-select {
-  appearance: none;
-}
-
-/* HOVER CARD EFFECT */
-.wrapper:hover {
-  transform: translateY(-2px);
-  transition: 0.3s;
-}
-
-/* SOFT GLOW */
-.wrapper::after {
-  content: "";
-  position: absolute;
-  inset: 0;
   border-radius: 20px;
-  background: radial-gradient(circle at top, rgba(139,92,246,0.15), transparent);
-  pointer-events: none;
 }
