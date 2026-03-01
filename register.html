@@ -1,65 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Create Account – 444Music</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="register.css">
-  <style>
-    /* Your CSS here */
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music – Create Account</title>
+
+<link rel="stylesheet" href="register.css">
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
 </head>
 <body>
 
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <h1>Join 444Music</h1>
-      <p>Create your artist account and start distributing worldwide</p>
+<div class="container">
 
-      <form id="registerForm">
-        <div class="field">
-          <input type="text" id="name" placeholder="Artist / Full Name" required>
-        </div>
+<!-- LEFT SIDE (Info like UnitedMasters) -->
+<div class="left">
+<div class="logo">444</div>
 
-        <div class="field">
-          <input type="email" id="email" placeholder="Email Address" required>
-        </div>
+<h1>Let's create your 444Music account.</h1>
 
-        <div class="field">
-          <input type="password" id="password" placeholder="Password" required>
-        </div>
+<p class="sub">
+Choose Creator Plan for:
+</p>
 
-        <div class="field">
-          <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-        </div>
+<ul>
+<li>Unlimited releases to 150+ platforms</li>
+<li>Keep 100% of your streaming royalties</li>
+<li>Marketing tools to grow your audience</li>
+<li>Artist analytics dashboard</li>
+</ul>
+</div>
 
-        <button type="submit" class="auth-btn">Create Account</button>
-      </form>
 
-      <div class="auth-links">
-        Already have an account?
-        <a href="login.html">Sign in</a>
-      </div>
-    </div>
-  </div>
+<!-- RIGHT SIDE (Form) -->
+<div class="right">
 
-  <!-- Email.js CDN -->
-  <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<form id="registerForm">
 
+<h2>Create Account</h2>
+
+<div class="field">
+<i class="ri-user-line"></i>
+<input type="text" id="name" placeholder="Artist / Full Name" required>
+</div>
+
+<div class="field">
+<i class="ri-mail-line"></i>
+<input type="email" id="email" placeholder="Email Address" required>
+</div>
+
+<div class="field">
+<i class="ri-lock-line"></i>
+<input type="password" id="password" placeholder="Password" required>
+<span class="toggle"><i class="ri-eye-line"></i></span>
+</div>
+
+<div class="strength">
+<div id="bar1"></div>
+<div id="bar2"></div>
+<div id="bar3"></div>
+<div id="bar4"></div>
+</div>
+
+<div class="field">
+<i class="ri-lock-password-line"></i>
+<input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+</div>
+
+<!-- Questions like real distributor -->
+<div class="questions">
+
+<label>Artist Type</label>
+<select id="artistType">
+<option>Independent Artist</option>
+<option>Record Label</option>
+<option>Producer</option>
+<option>Manager</option>
+</select>
+
+<label>Primary Genre</label>
+<select id="genre">
+<option>Afrobeats</option>
+<option>Hip Hop</option>
+<option>Dancehall</option>
+<option>Gospel</option>
+<option>Other</option>
+</select>
+
+<label>Country</label>
+<select id="country">
+<option>Ghana</option>
+<option>Nigeria</option>
+<option>UK</option>
+<option>USA</option>
+<option>Other</option>
+</select>
+
+</div>
+
+<div class="terms">
+<input type="checkbox" id="agree" required>
+<span>I agree to the terms and privacy policy</span>
+</div>
+
+<button type="submit" class="btn">
+<span id="btnText">Create Account</span>
+<div class="loader"></div>
+</button>
+
+<p class="login">
+Already have an account?
+<a href="login.html">Sign in</a>
+</p>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- Firebase + JS -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔥 FIREBASE CONFIG
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain: "usersubmissionsportal.firebaseapp.com",
@@ -69,66 +137,75 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-// 🔥 INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Initialize Email.js
-emailjs.init("YdwKKnZpEVzhis4lB");
-
 const form = document.getElementById("registerForm");
+const password = document.getElementById("password");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+const bars = [
+document.getElementById("bar1"),
+document.getElementById("bar2"),
+document.getElementById("bar3"),
+document.getElementById("bar4")
+];
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const confirm = document.getElementById("confirmPassword").value.trim();
+password.addEventListener("input", () => {
+let val = password.value.length;
 
-  if (password !== confirm) {
-    alert("Passwords do not match");
-    return;
-  }
+bars.forEach(b => b.classList.remove("active"));
 
-  try {
-    // 1️⃣ Create user in Firebase Auth
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCred.user;
-
-    // 2️⃣ Create Firestore user document
-    await setDoc(doc(db, "users", user.uid), {
-      name: name,
-      email: email,
-      earnings: 0,
-      createdAt: serverTimestamp()
-    });
-
-    // 3️⃣ Send Welcome Email
-    emailjs.send(
-      "service_4tj52zt",       // Your Service ID
-      "template_fuaddsx",      // Your Template ID
-      {
-        user_name: name,
-        user_email: email
-      }
-    ).then(response => {
-      console.log("Welcome email sent!", response.status, response.text);
-    }).catch(error => {
-      console.error("Failed to send welcome email", error);
-    });
-
-    // 4️⃣ Redirect to dashboard or landing page
-    window.location.href = "land.html";
-
-  } catch (err) {
-    alert(err.message);
-  }
+if(val > 4) bars[0].classList.add("active");
+if(val > 6) bars[1].classList.add("active");
+if(val > 8) bars[2].classList.add("active");
+if(val > 10) bars[3].classList.add("active");
 });
+
+
+form.addEventListener("submit", async(e)=>{
+e.preventDefault();
+
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const pass = password.value;
+const confirm = document.getElementById("confirmPassword").value;
+const type = document.getElementById("artistType").value;
+const genre = document.getElementById("genre").value;
+const country = document.getElementById("country").value;
+
+if(pass !== confirm){
+alert("Passwords do not match");
+return;
+}
+
+document.querySelector(".loader").style.display="block";
+document.getElementById("btnText").style.opacity="0";
+
+try{
+
+const userCred = await createUserWithEmailAndPassword(auth,email,pass);
+const user = userCred.user;
+
+await setDoc(doc(db,"users",user.uid),{
+name,
+email,
+artistType:type,
+genre,
+country,
+earnings:0,
+createdAt: serverTimestamp()
+});
+
+window.location.href="dashboard.html";
+
+}catch(err){
+alert(err.message);
+}
+
+});
+
 </script>
+
 </body>
 </html>
-
-
-
