@@ -3,65 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account Created • 444Music</title>
+<title>Welcome to 444Music</title>
 
-<link rel="stylesheet" href="s.css">
+<link rel="stylesheet" href="success.css">
 
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
 
-<div class="background-glow"></div>
+<canvas id="confetti"></canvas>
 
 <div class="container">
 
 <div class="card">
 
-<div class="icon">
-<i class="ri-check-double-line"></i>
+<div class="success-icon">
+<i class="ri-checkbox-circle-fill"></i>
 </div>
 
 <h1>Account Created Successfully</h1>
-<p class="subtitle">
-Welcome to <strong>444Music Distribution</strong> 🚀  
-Your music journey starts now.
-</p>
-
-<div class="features">
-
-<div class="feature">
-<i class="ri-rocket-line"></i>
-<span>Release music worldwide</span>
+<p class="subtitle">Start your music journey with 444Music Distribution</p>
+<div class="artist-badge">
+<i class="ri-verified-badge-fill"></i>
+Verified Artist Account Activated
 </div>
 
-<div class="feature">
-<i class="ri-money-dollar-circle-line"></i>
-<span>Keep 100% of your royalties</span>
+<div class="progress-box">
+
+<div class="step completed">
+<i class="ri-user-line"></i>
+Account Setup
 </div>
 
-<div class="feature">
-<i class="ri-bar-chart-2-line"></i>
-<span>Track your growth & analytics</span>
+<div class="step completed">
+<i class="ri-shield-check-line"></i>
+Security Verified
 </div>
 
-<div class="feature">
+<div class="step">
+<i class="ri-music-2-line"></i>
+Upload First Release
+</div>
+
+</div>
+
+<div class="benefits">
+  <div class="benefit">
 <i class="ri-global-line"></i>
-<span>Reach fans across 150+ platforms</span>
-</div>
+<span>Worldwide distribution</span>
 </div>
 
-<button onclick="goHome()" class="btn">
-<i class="ri-home-4-line"></i> Go to Home
+<div class="benefit">
+<i class="ri-money-dollar-circle-line"></i>
+<span>Keep your royalties</span>
+</div>
+
+<div class="benefit">
+<i class="ri-bar-chart-box-line"></i>
+<span>Real-time analytics</span>
+</div>
+
+</div>
+
+<button class="btn" onclick="goHome()">
+<i class="ri-home-4-line"></i> Go to Dashboard
 </button>
 
-<p class="redirect-text">
-Redirecting automatically...
-</p>
+<p class="redirect">Redirecting in a few seconds...</p>
 
 </div>
-
 </div>
-
 <script>
 function goHome(){
 window.location.href = "home.html";
@@ -69,7 +80,45 @@ window.location.href = "home.html";
 
 setTimeout(()=>{
 window.location.href = "home.html";
-}, 5000);
+},6000);
+
+
+/* confetti */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+for(let i=0;i<120;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*6+2,
+speed:Math.random()*3+1
+});
+}
+
+function update(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+ctx.fillStyle="rgba(180,100,255,0.8)";
+ctx.fillRect(p.x,p.y,p.size,p.size);
+
+p.y += p.speed;
+
+if(p.y > canvas.height){
+p.y = -10;
+}
+});
+
+requestAnimationFrame(update);
+}
+
+update();
 </script>
 
 </body>
