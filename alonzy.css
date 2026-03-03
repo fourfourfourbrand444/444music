@@ -1,0 +1,257 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#050505;
+color:white;
+}
+
+/* NAV */
+.top-nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:65px;
+background:#050505;
+display:flex;
+align-items:center;
+padding:0 25px;
+z-index:1000;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:20px;
+}
+
+.menu-btn{
+font-size:22px;
+cursor:pointer;
+}
+
+.logo{
+font-size:20px;
+font-weight:700;
+}
+
+/* SIDEBAR */
+.sidebar{
+position:fixed;
+left:-300px;
+top:0;
+width:280px;
+height:100vh;
+background:#0d0d0d;
+padding:25px;
+transition:0.4s ease;
+z-index:1001;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
+}
+
+.sidebar-links{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.sidebar-links a{
+text-decoration:none;
+color:#888;
+display:flex;
+gap:15px;
+padding:10px;
+border-radius:8px;
+transition:0.3s;
+}
+
+.sidebar-links a:hover{
+background:#1a1a1a;
+color:white;
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+opacity:0;
+visibility:hidden;
+transition:0.3s;
+z-index:999;
+}
+
+.overlay.active{
+opacity:1;
+visibility:visible;
+}
+
+/* PAGE */
+.page-content{
+padding-top:120px;
+padding-left:25px;
+padding-right:25px;
+}
+
+.upgrade-section h1{
+font-size:42px;
+font-weight:800;
+margin-bottom:40px;
+}
+
+/* TOGGLE */
+.toggle-container{
+position:relative;
+width:260px;
+height:55px;
+background:#111;
+border-radius:60px;
+display:flex;
+align-items:center;
+margin-bottom:60px;
+border:1px solid rgba(255,255,255,0.08);
+overflow:hidden;
+}
+
+.toggle-container button{
+flex:1;
+height:100%;
+border:none;
+background:transparent;
+color:#777;
+font-weight:700;
+font-size:15px;
+cursor:pointer;
+z-index:2;
+transition:0.3s;
+}
+
+.toggle-container button.active{
+color:white;
+}
+
+.toggle-pill{
+position:absolute;
+width:50%;
+height:100%;
+background:black;
+border-radius:60px;
+left:0%;
+transition:0.45s cubic-bezier(.77,0,.18,1);
+z-index:1;
+box-shadow:0 10px 30px rgba(0,0,0,0.7);
+}
+
+/* CARD */
+.big-card{
+position:relative;
+background:linear-gradient(145deg,#1a1a1a,#0f0f0f);
+border-radius:30px;
+padding:50px;
+max-width:650px;
+box-shadow:
+0 0 0 1px rgba(255,255,255,0.05),
+0 30px 80px rgba(0,0,0,0.9);
+transition:0.4s ease;
+overflow:hidden;
+}
+
+/* Gold glow */
+.big-card::before{
+content:"";
+position:absolute;
+inset:-3px;
+border-radius:32px;
+background:radial-gradient(circle at top,
+rgba(255,180,0,0.25),
+transparent 60%);
+z-index:-1;
+filter:blur(35px);
+}
+
+/* Card dots */
+.card-dots{
+position:absolute;
+top:25px;
+right:25px;
+display:flex;
+gap:8px;
+}
+
+.card-dots span{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#333;
+}
+
+.card-dots span.active{
+width:28px;
+border-radius:20px;
+background:#999;
+}
+
+.big-card h2{
+font-size:36px;
+font-weight:800;
+line-height:1.1;
+margin-bottom:40px;
+}
+
+.image-slider{
+height:260px;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:30px;
+}
+
+.image-slider img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.price{
+font-size:22px;
+font-weight:600;
+margin-bottom:25px;
+}
+
+.btn{
+display:inline-block;
+padding:16px 28px;
+background:white;
+color:black;
+font-weight:700;
+text-decoration:none;
+border-radius:12px;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 25px rgba(255,255,255,0.2);
+}
+
+.fade-out{
+opacity:0.3;
+transform:translateX(10px);
+}
