@@ -1,190 +1,187 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Distribution</title>
-<link rel="stylesheet" href="theme.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>444Music Distribution</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
     <h2>444Music</h2>
-
-    <a href="#"><i class="fa fa-right-to-bracket"></i> Login</a>
-    <a href="#"><i class="fa fa-user-plus"></i> Sign Up</a>
-    <a href="#"><i class="fa fa-user"></i> Profile</a>
-    <a href="#"><i class="fa fa-chart-line"></i> Analytics</a>
-    <a href="#"><i class="fa fa-music"></i> Pitch Playlist</a>
-    <a href="#"><i class="fa fa-wallet"></i> Withdrawals</a>
-    <a href="#"><i class="fa fa-toolbox"></i> More Tools</a>
+  </div>
+  <ul>
+    <li><i class="fas fa-sign-in-alt"></i> Login</li>
+    <li><i class="fas fa-user-plus"></i> Sign Up</li>
+    <li><i class="fas fa-user"></i> Profile</li>
+    <li><i class="fas fa-music"></i> Pitch Playlist</li>
+    <li><i class="fas fa-tools"></i> More Tools</li>
+    <li><i class="fas fa-chart-line"></i> Analytics</li>
+    <li><i class="fas fa-bullhorn"></i> Promotion</li>
+  </ul>
 </div>
-
-<div class="overlay" onclick="toggleSidebar()"></div>
 
 <header>
-    <div class="menu-icon" onclick="toggleSidebar()"><i class="fa fa-bars"></i></div>
-    <h2>444Music Distribution</h2>
+  <i class="fas fa-bars menu-btn" onclick="toggleSidebar()"></i>
+  <h1>444Music Distribution</h1>
 </header>
 
-<!-- HERO -->
+<section class="plan-switch">
+  <button class="plan-btn active" onclick="switchPlan('debut')">DEBUT+</button>
+  <button class="plan-btn" onclick="switchPlan('select')">SELECT</button>
+</section>
+
 <section class="hero">
 
-<h1>Grade Your Artist Plan</h1>
+  <div class="slider">
+    <div class="slides" id="slides">
+      <div class="slide">
+        <h2>Grow With Advanced Artist Analytics</h2>
+        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d" />
+      </div>
+      <div class="slide">
+        <h2>Global Distribution To 150+ Platforms</h2>
+        <img src="https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2" />
+      </div>
+      <div class="slide">
+        <h2>AI Smart Music Campaign Tools</h2>
+        <img src="https://images.unsplash.com/photo-1497032205916-ac775f0649ae" />
+      </div>
+    </div>
 
-<div class="switch" onclick="togglePlan()">
-    <div class="slider" id="slider"></div>
-    <span>DEBUT+</span>
-    <span>SELECT</span>
-</div>
+    <div class="dots">
+      <span onclick="currentSlide(0)"></span>
+      <span onclick="currentSlide(1)"></span>
+      <span onclick="currentSlide(2)"></span>
+    </div>
+  </div>
 
-<div class="plan-card" id="card">
-
-<div class="dots">
-<span onclick="goToSlide(0)"></span>
-<span onclick="goToSlide(1)"></span>
-<span onclick="goToSlide(2)"></span>
-</div>
-
-<h2 id="planTitle">Grow With Advanced Artist Analytics</h2>
-
-<div class="image-slider" id="sliderImages">
-<img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4">
-<img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f">
-<img src="https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2">
-</div>
-
-<button class="join-btn" id="joinBtn">JOIN DEBUT+ FOR ₵29.99/YEAR</button>
-
-</div>
 </section>
 
-<!-- FEATURES -->
-<section class="pro-features">
-<h2>Everything You Need To Grow</h2>
+<!-- Professional Features -->
+<section class="features">
+  <h2>Everything You Need To Grow</h2>
 
-<div class="grid">
-<div class="card-glass"><i class="fa fa-globe"></i><h3>Global Distribution</h3><p>150+ platforms worldwide.</p></div>
-<div class="card-glass"><i class="fa fa-robot"></i><h3>AI Campaigns</h3><p>Smart marketing blueprints.</p></div>
-<div class="card-glass"><i class="fa fa-chart-simple"></i><h3>Live Analytics</h3><p>Track growth in real time.</p></div>
-<div class="card-glass"><i class="fa fa-handshake"></i><h3>Brand Deals</h3><p>Sync & licensing access.</p></div>
-<div class="card-glass"><i class="fa fa-money-bill-wave"></i><h3>Instant Withdrawals</h3><p>Fast payouts anytime.</p></div>
-<div class="card-glass"><i class="fa fa-users"></i><h3>Royalty Splits</h3><p>Auto split with collaborators.</p></div>
-</div>
+  <div class="feature-grid">
+    <div class="card glass">
+      <i class="fas fa-globe"></i>
+      <h3>Global Distribution</h3>
+      <p>Release to 150+ platforms worldwide.</p>
+    </div>
+
+    <div class="card glass">
+      <i class="fas fa-robot"></i>
+      <h3>AI Campaign Builder</h3>
+      <p>Auto-generate music marketing campaigns.</p>
+    </div>
+
+    <div class="card glass">
+      <i class="fas fa-chart-pie"></i>
+      <h3>Revenue Analytics</h3>
+      <p>Real-time streaming & revenue tracking.</p>
+    </div>
+
+    <div class="card glass">
+      <i class="fas fa-bullhorn"></i>
+      <h3>Playlist Pitching</h3>
+      <p>Submit to Spotify & Apple curators.</p>
+    </div>
+  </div>
 </section>
 
-<!-- PRICING -->
+<!-- Pricing -->
 <section class="pricing">
-<h2>Choose Your Plan</h2>
+  <h2>Pricing Plans</h2>
 
-<div class="pricing-grid">
-<div class="price-card">
-<h3>Debut+</h3>
-<h1>₵29.99</h1>
-<p>/year</p>
-<ul>
-<li>Unlimited Releases</li>
-<li>100% Royalties</li>
-<li>Basic Analytics</li>
-</ul>
-<button>Get Started</button>
-</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <h3>DEBUT+</h3>
+      <h1>$19.99<span>/year</span></h1>
+      <ul>
+        <li>Unlimited Releases</li>
+        <li>Basic Analytics</li>
+        <li>Email Support</li>
+      </ul>
+      <button>Choose Plan</button>
+    </div>
 
-<div class="price-card featured">
-<h3>Select</h3>
-<h1>₵99.99</h1>
-<p>/year</p>
-<ul>
-<li>All Debut Features</li>
-<li>Advanced Analytics</li>
-<li>AI Promotion</li>
-<li>Priority Support</li>
-</ul>
-<button>Go Premium</button>
-</div>
-</div>
+    <div class="price-card premium">
+      <h3>SELECT</h3>
+      <h1>$49.99<span>/year</span></h1>
+      <ul>
+        <li>Everything in Debut+</li>
+        <li>Advanced AI Tools</li>
+        <li>Priority Support</li>
+        <li>Playlist Boost</li>
+      </ul>
+      <button>Choose Plan</button>
+    </div>
+  </div>
 </section>
 
 <!-- FAQ -->
 <section class="faq">
-<h2>FAQ</h2>
+  <h2>Frequently Asked Questions</h2>
 
-<div class="faq-item">
-<h4 onclick="toggleFaq(this)">How fast is distribution?</h4>
-<p>24-72 hours to major platforms.</p>
-</div>
+  <div class="faq-item">
+    <div class="faq-question">How long does distribution take?</div>
+    <div class="faq-answer">Typically 1–3 business days.</div>
+  </div>
 
-<div class="faq-item">
-<h4 onclick="toggleFaq(this)">Do I keep 100% royalties?</h4>
-<p>Yes. You keep all royalties.</p>
-</div>
-
-<div class="faq-item">
-<h4 onclick="toggleFaq(this)">Can I upgrade anytime?</h4>
-<p>Yes, anytime.</p>
-</div>
-
+  <div class="faq-item">
+    <div class="faq-question">Do I keep 100% royalties?</div>
+    <div class="faq-answer">Yes, 100% of your earnings.</div>
+  </div>
 </section>
 
 <footer>
-<p>© 2026 444Music Distribution</p>
-<a href="#">Terms</a> |
-<a href="#">Privacy</a>
+  <p>© 2026 444Music Distribution</p>
+  <a href="#">Terms</a>
+  <a href="#">Privacy</a>
 </footer>
 
 <script>
+let slideIndex = 0;
+const slides = document.getElementById("slides");
+const totalSlides = 3;
+
+function showSlide(index){
+  slideIndex = index;
+  slides.style.transform = `translateX(-${index * 100}%)`;
+}
+
+function currentSlide(index){
+  showSlide(index);
+}
+
+let startX = 0;
+slides.addEventListener("touchstart", e=>{
+  startX = e.touches[0].clientX;
+});
+
+slides.addEventListener("touchend", e=>{
+  let endX = e.changedTouches[0].clientX;
+  if(startX - endX > 50){
+    slideIndex = (slideIndex + 1) % totalSlides;
+  } else if(endX - startX > 50){
+    slideIndex = (slideIndex - 1 + totalSlides) % totalSlides;
+  }
+  showSlide(slideIndex);
+});
 
 function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("active");
-document.querySelector(".overlay").classList.toggle("active");
+  document.getElementById("sidebar").classList.toggle("active");
 }
 
-/* PLAN SWITCH */
-let selectPlan=false;
-function togglePlan(){
-selectPlan=!selectPlan;
-const slider=document.getElementById("slider");
-const btn=document.getElementById("joinBtn");
-const card=document.getElementById("card");
-const title=document.getElementById("planTitle");
-
-if(selectPlan){
-slider.style.left="50%";
-btn.innerText="JOIN SELECT FOR ₵99.99/YEAR";
-card.classList.add("dark");
-title.innerText="Unlock Premium Artist Growth";
-}else{
-slider.style.left="5px";
-btn.innerText="JOIN DEBUT+ FOR ₵29.99/YEAR";
-card.classList.remove("dark");
-title.innerText="Grow With Advanced Artist Analytics";
+function switchPlan(plan){
+  document.body.className = plan;
 }
-}
-
-/* SLIDER */
-let currentSlide=0;
-const sliderImages=document.getElementById("sliderImages");
-const dots=document.querySelectorAll(".dots span");
-
-function goToSlide(index){
-currentSlide=index;
-sliderImages.style.transform="translateX(-"+(index*100)+"%)";
-dots.forEach(d=>d.classList.remove("active"));
-dots[index].classList.add("active");
-}
-
-goToSlide(0);
-
-/* FAQ */
-function toggleFaq(el){
-let p=el.nextElementSibling;
-p.style.display=p.style.display==="block"?"none":"block";
-}
-
 </script>
 
 </body>
 </html>
+  
