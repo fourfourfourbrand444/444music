@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution</title>
+
+<link rel="stylesheet" href="theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="bg-animation"></div>
+
+<header class="nav">
+<div class="nav-inner">
+<div class="logo">444Music</div>
+
+<nav class="nav-links">
+<a href="theme.html">Home</a>
+<a href="submit.html">Upload</a>
+<a href="dashboard.html">Dashboard</a>
+<a href="pricing.html">Pricing</a>
+<a href="login.html">Login</a>
+</nav>
+</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+
+<div class="hero-content">
+<h1>Distribute Music Worldwide</h1>
+<p>Reach Spotify, Apple Music, TikTok, Boomplay and 100+ platforms.</p>
+
+<div class="hero-buttons">
+<a href="register.html" class="btn-main">Start Free</a>
+<a href="dashboard.html" class="btn-secondary">View Dashboard</a>
+</div>
+</div>
+
+</section>
+
+<!-- STORES AUTO SLIDER -->
+<section class="stores">
+<h2>Global Streaming Platforms</h2>
+
+<div class="store-slider">
+<div class="store-track">
+<div>Spotify</div>
+<div>Apple Music</div>
+<div>TikTok</div>
+<div>YouTube Music</div>
+<div>Boomplay</div>
+<div>Audiomack</div>
+<div>Amazon Music</div>
+<div>Deezer</div>
+
+<div>Spotify</div>
+<div>Apple Music</div>
+<div>TikTok</div>
+<div>YouTube Music</div>
+<div>Boomplay</div>
+<div>Audiomack</div>
+<div>Amazon Music</div>
+<div>Deezer</div>
+</div>
+</div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+<div class="stat">
+<h2 id="artists">0</h2>
+<p>Artists</p>
+</div>
+
+<div class="stat">
+<h2 id="streams">0</h2>
+<p>Streams</p>
+</div>
+
+<div class="stat">
+<h2 id="releases">0</h2>
+<p>Releases</p>
+</div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section class="dashboard-preview">
+
+<div class="dash-left">
+<h2>Real-Time Artist Dashboard</h2>
+<p>Track streams, revenue, and growth from one place.</p>
+
+<ul>
+<li>Streaming analytics</li>
+<li>Royalty tracking</li>
+<li>Release management</li>
+<li>Revenue insights</li>
+</ul>
+
+<a href="register.html" class="btn-main">Get Started</a>
+</div>
+
+<div class="dash-ui">
+<div class="dash-card big"></div>
+<div class="dash-row">
+<div class="dash-card"></div>
+<div class="dash-card"></div>
+</div>
+</div>
+
+</section>
+
+<!-- FEATURED RELEASES -->
+<section class="featured">
+<h2>Latest Releases</h2>
+<div id="featuredGrid" class="featured-grid"></div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+<h2>Start Your Music Career Today</h2>
+<a href="register.html" class="btn-main">Create Artist Account</a>
+</section>
+
+<footer class="footer">
+<p>© 2026 444Music Distribution</p>
+</footer>
+
+<!-- COUNTER ANIMATION -->
+<script>
+function animateValue(id,end,duration){
+let start=0;
+let range=end-start;
+let current=start;
+let increment=end>start?1:-1;
+let stepTime=Math.abs(Math.floor(duration/range));
+let obj=document.getElementById(id);
+
+let timer=setInterval(function(){
+current+=increment;
+obj.textContent=current.toLocaleString();
+if(current==end){
+clearInterval(timer);
+}
+},stepTime);
+}
+
+animateValue("artists",7200,2000);
+animateValue("streams",9500000,2000);
+animateValue("releases",51000,2000);
+</script>
+
+<!-- FIREBASE FEATURED -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBzUD7",
+authDomain:"usersubmissionsportal.firebaseapp.com",
+projectId:"usersubmissionsportal"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+const grid=document.getElementById("featuredGrid");
+
+async function loadFeatured(){
+const snapshot=await getDocs(collection(db,"submissions"));
+
+snapshot.forEach(doc=>{
+const data=doc.data();
+if(!data.coverURL) return;
+
+const card=document.createElement("div");
+card.className="release-card";
+
+card.innerHTML=`
+<img src="${data.coverURL}">
+<h4>${data.title || "Untitled"}</h4>
+<p>${data.artist || "Artist"}</p>
+`;
+
+grid.appendChild(card);
+});
+}
+
+loadFeatured();
+</script>
+
+</body>
+</html>
