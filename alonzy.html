@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music - Upgrade Plan</title>
+
+<link rel="stylesheet" href="alonzy.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+    <div class="nav-left">
+        <i class="fas fa-bars menu-btn" onclick="toggleSidebar()"></i>
+        <div class="logo">444Music</div>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-big">444Music</div>
+        <i class="fas fa-times close-btn" onclick="toggleSidebar()"></i>
+    </div>
+
+    <div class="sidebar-links">
+        <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#"><i class="fas fa-user"></i> Account</a>
+        <a href="#"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="#"><i class="fas fa-music"></i> Pitch Playlist</a>
+        <a href="Register.html"><i class="fas fa-user-plus"></i> Create Account</a>
+        <a href="#"><i class="fas fa-question-circle"></i> FAQ</a>
+        <a href="#"><i class="fas fa-headset"></i> Help</a>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="page-content">
+
+<section class="upgrade-section">
+
+<h1>Upgrade Your Artist Plan</h1>
+
+<div class="toggle-container">
+    <div class="toggle-pill" id="pill"></div>
+    <button onclick="switchPlan('debut')" id="debutBtn" class="active">DEBUT+</button>
+    <button onclick="switchPlan('select')" id="selectBtn">SELECT</button>
+</div>
+
+<div class="big-card" id="card">
+
+<div class="card-dots">
+<span class="active"></span>
+<span></span>
+<span></span>
+</div>
+
+<h2 id="planTitle">Grow With Advanced Artist Analytics</h2>
+
+<div class="image-slider">
+    <img id="slideImage" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4">
+</div>
+
+<div class="price" id="price">
+29.99 GHC – Single Release
+</div>
+
+<a href="Register.html" class="btn">Get Started</a>
+
+</div>
+
+</section>
+</div>
+
+<script>
+
+/* SIDEBAR */
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("active");
+document.getElementById("overlay").classList.toggle("active");
+}
+
+/* PLAN SWITCH */
+function switchPlan(plan){
+
+const pill = document.getElementById("pill");
+const debutBtn = document.getElementById("debutBtn");
+const selectBtn = document.getElementById("selectBtn");
+const price = document.getElementById("price");
+const title = document.getElementById("planTitle");
+const card = document.getElementById("card");
+const image = document.getElementById("slideImage");
+
+card.classList.add("fade-out");
+
+setTimeout(()=>{
+
+if(plan === "debut"){
+pill.style.left = "0%";
+debutBtn.classList.add("active");
+selectBtn.classList.remove("active");
+
+title.innerText = "Grow With Advanced Artist Analytics";
+price.innerText = "29.99 GHC – Single Release";
+image.src = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4";
+}
+else{
+pill.style.left = "50%";
+selectBtn.classList.add("active");
+debutBtn.classList.remove("active");
+
+title.innerText = "Unlock Full Distribution & Premium Tools";
+price.innerText = "45.99 GHC – EP / Album Release";
+image.src = "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2";
+}
+
+card.classList.remove("fade-out");
+
+},250);
+
+}
+
+</script>
+
+</body>
+</html>
