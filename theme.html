@@ -1,187 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>444Music Distribution</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="theme.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution</title>
+
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Sidebar -->
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">444Music</div>
+    <div class="menu-btn" onclick="openSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+</nav>
+
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <h2>444Music</h2>
-  </div>
-  <ul>
-    <li><i class="fas fa-sign-in-alt"></i> Login</li>
-    <li><i class="fas fa-user-plus"></i> Sign Up</li>
-    <li><i class="fas fa-user"></i> Profile</li>
-    <li><i class="fas fa-music"></i> Pitch Playlist</li>
-    <li><i class="fas fa-tools"></i> More Tools</li>
-    <li><i class="fas fa-chart-line"></i> Analytics</li>
-    <li><i class="fas fa-bullhorn"></i> Promotion</li>
-  </ul>
+    <div class="close-btn" onclick="closeSidebar()">×</div>
+    <ul>
+        <li><i class="fas fa-info-circle"></i><a href="#">About</a></li>
+        <li><i class="fas fa-sign-in-alt"></i><a href="#">Login</a></li>
+        <li><i class="fas fa-user-plus"></i><a href="register.html">Register</a></li>
+        <li><i class="fas fa-tools"></i><a href="#">More Tools</a></li>
+        <li><i class="fas fa-tags"></i><a href="#">Pricing</a></li>
+        <li><i class="fas fa-music"></i><a href="#">Pitch Playlist</a></li>
+        <li><i class="fas fa-user"></i><a href="#">Account</a></li>
+    </ul>
 </div>
 
-<header>
-  <i class="fas fa-bars menu-btn" onclick="toggleSidebar()"></i>
-  <h1>444Music Distribution</h1>
-</header>
-
-<section class="plan-switch">
-  <button class="plan-btn active" onclick="switchPlan('debut')">DEBUT+</button>
-  <button class="plan-btn" onclick="switchPlan('select')">SELECT</button>
-</section>
-
+<!-- HERO -->
 <section class="hero">
 
-  <div class="slider">
-    <div class="slides" id="slides">
-      <div class="slide">
-        <h2>Grow With Advanced Artist Analytics</h2>
-        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d" />
-      </div>
-      <div class="slide">
-        <h2>Global Distribution To 150+ Platforms</h2>
-        <img src="https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2" />
-      </div>
-      <div class="slide">
-        <h2>AI Smart Music Campaign Tools</h2>
-        <img src="https://images.unsplash.com/photo-1497032205916-ac775f0649ae" />
-      </div>
+<div class="plan-toggle">
+    <div class="toggle-bg"></div>
+    <button class="active">Début</button>
+    <button>Select</button>
+</div>
+
+<div class="slider" id="slider">
+    <div class="slides">
+        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d">
+        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f">
+        <img src="https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2">
     </div>
+    <div class="overlay"></div>
 
     <div class="dots">
-      <span onclick="currentSlide(0)"></span>
-      <span onclick="currentSlide(1)"></span>
-      <span onclick="currentSlide(2)"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
-  </div>
+</div>
+
+<div class="hero-content">
+    <h1>Own Your Masters. Grow Globally.</h1>
+    <p>Distribute your music worldwide with 444Music Distribution. Keep 100% royalties and grow with powerful analytics.</p>
+    <a href="register.html" class="btn-main">Start Releasing</a>
+</div>
 
 </section>
 
-<!-- Professional Features -->
-<section class="features">
-  <h2>Everything You Need To Grow</h2>
-
-  <div class="feature-grid">
-    <div class="card glass">
-      <i class="fas fa-globe"></i>
-      <h3>Global Distribution</h3>
-      <p>Release to 150+ platforms worldwide.</p>
-    </div>
-
-    <div class="card glass">
-      <i class="fas fa-robot"></i>
-      <h3>AI Campaign Builder</h3>
-      <p>Auto-generate music marketing campaigns.</p>
-    </div>
-
-    <div class="card glass">
-      <i class="fas fa-chart-pie"></i>
-      <h3>Revenue Analytics</h3>
-      <p>Real-time streaming & revenue tracking.</p>
-    </div>
-
-    <div class="card glass">
-      <i class="fas fa-bullhorn"></i>
-      <h3>Playlist Pitching</h3>
-      <p>Submit to Spotify & Apple curators.</p>
-    </div>
-  </div>
-</section>
-
-<!-- Pricing -->
+<!-- PRICING -->
 <section class="pricing">
-  <h2>Pricing Plans</h2>
+<h2>Transparent Pricing</h2>
+<div class="pricing-grid">
 
-  <div class="pricing-grid">
-    <div class="price-card">
-      <h3>DEBUT+</h3>
-      <h1>$19.99<span>/year</span></h1>
-      <ul>
-        <li>Unlimited Releases</li>
-        <li>Basic Analytics</li>
-        <li>Email Support</li>
-      </ul>
-      <button>Choose Plan</button>
-    </div>
+<div class="glass-card">
+<h3>Single Release</h3>
+<p class="price">29.99 GHC</p>
+<p>Per single release</p>
+<a href="register.html" class="btn-outline">Upload Now</a>
+</div>
 
-    <div class="price-card premium">
-      <h3>SELECT</h3>
-      <h1>$49.99<span>/year</span></h1>
-      <ul>
-        <li>Everything in Debut+</li>
-        <li>Advanced AI Tools</li>
-        <li>Priority Support</li>
-        <li>Playlist Boost</li>
-      </ul>
-      <button>Choose Plan</button>
-    </div>
-  </div>
+<div class="glass-card highlight">
+<h3>EP / Album</h3>
+<p class="price">45.99 GHC</p>
+<p>Per EP or Album</p>
+<a href="register.html" class="btn-outline">Upload Now</a>
+</div>
+
+</div>
+</section>
+
+<!-- STORES -->
+<section class="stores">
+<h2>Delivered To 20+ Platforms Worldwide</h2>
+<div class="store-grid">
+
+<div class="glass-small">Spotify</div>
+<div class="glass-small">Apple Music</div>
+<div class="glass-small">Audiomack</div>
+<div class="glass-small">Amazon Music</div>
+<div class="glass-small">YouTube Music</div>
+<div class="glass-small">Deezer</div>
+<div class="glass-small">Boomplay</div>
+<div class="glass-small">Tidal</div>
+<div class="glass-small">Pandora</div>
+<div class="glass-small">Napster</div>
+<div class="glass-small">TikTok</div>
+<div class="glass-small">Instagram</div>
+<div class="glass-small">Facebook Music</div>
+<div class="glass-small">Shazam</div>
+<div class="glass-small">Audius</div>
+<div class="glass-small">Anghami</div>
+<div class="glass-small">JioSaavn</div>
+<div class="glass-small">KKBox</div>
+<div class="glass-small">Tencent</div>
+<div class="glass-small">Claro Música</div>
+
+</div>
 </section>
 
 <!-- FAQ -->
 <section class="faq">
-  <h2>Frequently Asked Questions</h2>
+<h2>Frequently Asked Questions</h2>
 
-  <div class="faq-item">
-    <div class="faq-question">How long does distribution take?</div>
-    <div class="faq-answer">Typically 1–3 business days.</div>
-  </div>
+<div class="glass-faq">
+<h4>How long does upload take?</h4>
+<p>Music is delivered within 2–5 business days after approval.</p>
+</div>
 
-  <div class="faq-item">
-    <div class="faq-question">Do I keep 100% royalties?</div>
-    <div class="faq-answer">Yes, 100% of your earnings.</div>
-  </div>
+<div class="glass-faq">
+<h4>How do I upload?</h4>
+<p>Create an account, upload your track, artwork and metadata, then submit for distribution.</p>
+</div>
+
+<div class="glass-faq">
+<h4>Do I keep 100% royalties?</h4>
+<p>Yes. You keep 100% of your earnings.</p>
+</div>
+
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <p>© 2026 444Music Distribution</p>
-  <a href="#">Terms</a>
-  <a href="#">Privacy</a>
+<div class="footer-links">
+<a href="#">About</a>
+<a href="#">FAQ</a>
+<a href="#">Terms</a>
+<a href="#">Developer</a>
+<a href="#">Questions</a>
+</div>
+
+<div class="socials">
+<i class="fab fa-facebook"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-twitter"></i>
+<i class="fab fa-youtube"></i>
+</div>
+
+<p>© 2026 444Music Distribution</p>
 </footer>
 
 <script>
-let slideIndex = 0;
-const slides = document.getElementById("slides");
-const totalSlides = 3;
 
-function showSlide(index){
-  slideIndex = index;
-  slides.style.transform = `translateX(-${index * 100}%)`;
+function openSidebar(){
+document.getElementById("sidebar").style.left="0";
 }
 
-function currentSlide(index){
-  showSlide(index);
+function closeSidebar(){
+document.getElementById("sidebar").style.left="-280px";
 }
 
-let startX = 0;
-slides.addEventListener("touchstart", e=>{
-  startX = e.touches[0].clientX;
+const buttons=document.querySelectorAll(".plan-toggle button");
+const bg=document.querySelector(".toggle-bg");
+
+buttons.forEach((btn,index)=>{
+btn.addEventListener("click",()=>{
+document.querySelector(".plan-toggle .active").classList.remove("active");
+btn.classList.add("active");
+bg.style.transform=`translateX(${index*100}%)`;
+});
 });
 
-slides.addEventListener("touchend", e=>{
-  let endX = e.changedTouches[0].clientX;
-  if(startX - endX > 50){
-    slideIndex = (slideIndex + 1) % totalSlides;
-  } else if(endX - startX > 50){
-    slideIndex = (slideIndex - 1 + totalSlides) % totalSlides;
-  }
-  showSlide(slideIndex);
-});
+let current=0;
+const slides=document.querySelector(".slides");
+const dots=document.querySelectorAll(".dot");
+const total=3;
 
-function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("active");
+function showSlide(i){
+slides.style.transform=`translateX(-${i*100}%)`;
+dots.forEach(dot=>dot.classList.remove("active"));
+dots[i].classList.add("active");
 }
 
-function switchPlan(plan){
-  document.body.className = plan;
-}
+setInterval(()=>{
+current++;
+if(current>=total) current=0;
+showSlide(current);
+},5000);
+
 </script>
 
 </body>
 </html>
-  
