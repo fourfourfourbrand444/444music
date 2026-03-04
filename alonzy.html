@@ -1,39 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>444Music Distribution</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="alonzy.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution</title>
+<link rel="stylesheet" href="alonzy.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+
+<!-- Animated Background -->
+<div class="bg-animation"></div>
 
 <!-- NAVBAR -->
 <header class="navbar">
     <div class="logo">
-        <span class="logo-icon">◉</span> 444Music
+        <div class="logo-icon"></div>
+        <span>444Music</span>
     </div>
 
+    <nav class="desktop-nav">
+        <a href="#">Home</a>
+        <a href="#">Tools</a>
+        <a href="#">Pricing</a>
+        <a href="#">Analytics</a>
+        <a href="#">Support</a>
+    </nav>
+
     <div class="nav-icons">
-        <div class="search-icon">⌕</div>
-        <div class="menu-toggle" id="menuToggle">☰</div>
+        <i class="fas fa-search"></i>
+        <i class="fas fa-bars" id="menuBtn"></i>
     </div>
 </header>
 
-<!-- MOBILE SIDEBAR -->
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h2>444Music</h2>
-        <span id="closeMenu">✕</span>
+        <i class="fas fa-times" id="closeBtn"></i>
     </div>
     <ul>
-        <li>Dashboard</li>
-        <li>Account</li>
-        <li>Login</li>
-        <li>Pitch Playlist</li>
-        <li>Create Account</li>
-        <li>FAQ</li>
-        <li>Help</li>
+        <li><i class="fas fa-home"></i> Dashboard</li>
+        <li><i class="fas fa-user"></i> Account</li>
+        <li><i class="fas fa-music"></i> Releases</li>
+        <li><i class="fas fa-chart-line"></i> Analytics</li>
+        <li><i class="fas fa-money-bill"></i> Earnings</li>
+        <li><i class="fas fa-tools"></i> Tools</li>
+        <li><i class="fas fa-tag"></i> Pricing</li>
+        <li><i class="fas fa-question-circle"></i> FAQ</li>
+        <li><i class="fas fa-headset"></i> Support</li>
     </ul>
 </div>
 
@@ -41,62 +56,66 @@
 
 <!-- HERO SECTION -->
 <section class="hero">
-    <div class="hero-content">
-        <h1>Cultural + Industry Builder</h1>
+    <div class="hero-inner">
+        <h1>
+            Cultural +<br>
+            Industry Builder
+        </h1>
+
         <p>
             444Music Distribution is powering independent artists 
-            with global reach, real-time analytics, and transparent revenue.
+            with global streaming access and industry-grade tools.
         </p>
 
         <div class="hero-buttons">
-            <button class="btn-primary">
-                Login
-                <span class="circle-arrow">→</span>
-            </button>
 
-            <button class="btn-outline">
+            <a href="login.html" class="btn-primary">
+                Login
+                <span class="circle-arrow white">→</span>
+            </a>
+
+            <a href="register.html" class="btn-outline">
                 Create Account
                 <span class="circle-arrow purple">→</span>
-            </button>
+            </a>
+
         </div>
 
-        <div class="check-list">
-            <p>✔ Start Releasing Music</p>
-            <p>✔ Partner With 444Music</p>
+        <div class="hero-list">
+            <p><i class="fas fa-check"></i> Start Releasing Music</p>
+            <p><i class="fas fa-check"></i> Partner With 444Music</p>
         </div>
     </div>
 </section>
 
 <script>
 
-// Sidebar Toggle
-const menuToggle = document.getElementById("menuToggle");
+// Sidebar controls
+const menuBtn = document.getElementById("menuBtn");
+const closeBtn = document.getElementById("closeBtn");
 const sidebar = document.getElementById("sidebar");
 const overlay = document.getElementById("overlay");
-const closeMenu = document.getElementById("closeMenu");
 
-menuToggle.addEventListener("click", () => {
+menuBtn.onclick = () => {
     sidebar.classList.add("active");
     overlay.classList.add("active");
-});
+};
 
-closeMenu.addEventListener("click", () => {
+closeBtn.onclick = () => {
     sidebar.classList.remove("active");
     overlay.classList.remove("active");
-});
+};
 
-overlay.addEventListener("click", () => {
+overlay.onclick = () => {
     sidebar.classList.remove("active");
     overlay.classList.remove("active");
-});
+};
 
 // Button click animation
-document.querySelectorAll("button").forEach(btn => {
+document.querySelectorAll(".btn-primary, .btn-outline").forEach(btn => {
     btn.addEventListener("click", function() {
         this.classList.add("clicked");
-        setTimeout(() => {
-            this.classList.remove("clicked");
-        }, 150);
+        setTimeout(() => this.classList.remove("clicked"), 150);
     });
 });
 
@@ -104,3 +123,4 @@ document.querySelectorAll("button").forEach(btn => {
 
 </body>
 </html>
+✅
