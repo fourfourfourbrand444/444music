@@ -200,10 +200,24 @@ y:{ticks:{color:"#999"}}
 
 
 /* LOAD RELEASES FROM SUBMISSIONS */
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const auth = getAuth(app);
+
 
 async function loadReleases(){
 
-const snap = await getDocs(collection(db,"submissions"));
+const user = auth.currentUser;
+
+if(!user) return;
+
+const q = query(
+collection(db,"submissions"),
+where("userId","==",user.uid)
+);
+
+const snap = await getDocs(q);
 
 let html="";
 let count=0;
@@ -215,13 +229,19 @@ const r = doc.data();
 html += `
 <div class="release">
 <i class="fa-solid fa-compact-disc"></i>
-<b>${r.artistName || "Artist"}</b> — ${r.releaseTitle || "Release"}
+<b>${r.artistName}</b> — ${r.releaseTitle}
 </div>
 `;
 
 count++;
 
 });
+
+document.getElementById("releases").innerText = count;
+document.getElementById("releasesList").innerHTML = html;
+
+}
+
 
 document.getElementById("releases").innerText = count;
 
