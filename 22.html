@@ -1,65 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Create Analytics</title>
+<title>Create Analytics From Users</title>
 </head>
 
 <body>
 
-<h2>Create Analytics Documents</h2>
-<button onclick="createAnalyticsDocs()">Run Script</button>
+<h2>Create Analytics For All Users</h2>
+<button onclick="createAnalytics()">Run Script</button>
 
 <p id="status"></p>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function createAnalyticsDocs() {
+async function createAnalytics(){
 
-  document.getElementById("status").innerText = "Running...";
+document.getElementById("status").innerText="Running...";
 
-  const usersSnapshot = await getDocs(collection(db, "users"));
+const usersSnap = await getDocs(collection(db,"users"));
 
-  for (const userDoc of usersSnapshot.docs) {
+for(const userDoc of usersSnap.docs){
 
-    const userData = userDoc.data();
-    const uid = userDoc.id;
+const user = userDoc.data();
 
-    await setDoc(doc(db, "analytics", uid), {
+const email = user.email;
+const name = user.name;
 
-      artistName: userData.artistName || "",
-      email: userData.email || "",
+/* check if analytics already exists */
 
-      totalStreams: 0,
-      totalReleases: 0,
+const q = query(
+collection(db,"analytics"),
+where("email","==",email)
+);
 
-      spotifyStreams: 0,
-      appleStreams: 0,
-      youtubeStreams: 0
+const existing = await getDocs(q);
 
-    });
+if(!existing.empty){
+console.log("Analytics already exists for",email);
+continue;
+}
 
-  }
+/* create analytics document */
 
-  document.getElementById("status").innerText = "Analytics created successfully!";
+await setDoc(doc(collection(db,"analytics")),{
+
+artistName: name || "",
+email: email || "",
+
+totalStreams: 0,
+totalReleases: 0,
+
+spotifyStreams: 0,
+appleStreams: 0,
+youtubeStreams: 0
+
+});
+
+console.log("Created analytics for",email);
 
 }
 
-window.createAnalyticsDocs = createAnalyticsDocs;
+document.getElementById("status").innerText="Finished creating analytics documents!";
+
+}
+
+window.createAnalytics = createAnalytics;
 
 </script>
 
