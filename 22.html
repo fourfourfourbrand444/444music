@@ -1,65 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Rebuild Analytics</title>
+<title>Fix Artist Names</title>
 </head>
 <body>
 
-<button id="run">Rebuild Analytics</button>
-<p id="status"></p>
+<h2>Fixing missing artist names...</h2>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc }
-from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-authDomain: "usersubmissionsportal.firebaseapp.com",
-projectId: "usersubmissionsportal",
-storageBucket: "usersubmissionsportal.firebasestorage.app",
-messagingSenderId: "734783502459",
-appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  apiKey: "YOUR_KEY",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.appspot.com",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.getElementById("run").onclick = async ()=>{
+async function fixNames(){
 
-document.getElementById("status").textContent="Running...";
+const users = await getDocs(collection(db,"users"));
+const submissions = await getDocs(collection(db,"submissions"));
 
-const submissionsSnap = await getDocs(collection(db,"submissions"));
+let submissionMap = {};
 
-let count = 0;
+// build map email -> artist name
+submissions.forEach(docSnap=>{
 
-for(const submission of submissionsSnap.docs){
+const data = docSnap.data();
 
-const data = submission.data();
-const id = submission.id;
-
-await setDoc(doc(db,"analytics",id),{
-
-artistName: data.artistName || "Unknown",
-email: data.email || "",
-
-totalStreams: 0,
-spotifyStreams: 0,
-appleStreams: 0,
-youtubeStreams: 0,
-totalReleases: 0
+if(data.email && data.artistName){
+submissionMap[data.email] = data.artistName;
+}
 
 });
 
-count++;
+users.forEach(async(userDoc)=>{
+
+const user = userDoc.data();
+const uid = userDoc.id;
+
+if(!user.name && submissionMap[user.email]){
+
+await updateDoc(doc(db,"users",uid),{
+name: submissionMap[user.email]
+});
+
+console.log("Updated:", submissionMap[user.email]);
 
 }
 
-document.getElementById("status").textContent =
-"Analytics rebuilt for "+count+" submissions.";
+});
 
-};
+alert("Missing artist names fixed");
+
+}
+
+fixNames();
 
 </script>
 
