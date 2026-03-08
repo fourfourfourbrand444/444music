@@ -40,9 +40,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <i class="fa-solid fa-music"></i>
 
-<h2 id="totalReleases">Audiomack</h2>
+<h2 id="totalReleases">0</h2>
 
-<p>Top Platform</p>
+<p>Total Releases</p>
 
 </div>
 
@@ -176,7 +176,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -193,20 +193,34 @@ const db = getFirestore(app);
 
 onAuthStateChanged(auth, async (user)=>{
 
-if(!user) return location.href="login.html";
+if(!user){
+location.href="login.html";
+return;
+}
 
 const userEmail = user.email;
 
-/* total releases */
+
+/* =========================
+   GET ARTIST SUBMISSIONS
+========================= */
 
 const submissionsQuery = query(
 collection(db,"submissions"),
-where("email","==",user.email)
+where("email","==",userEmail)
 );
 
+const submissionsSnap = await getDocs(submissionsQuery);
 
 
-/* analytics data */
+/* total releases */
+
+document.getElementById("totalReleases").textContent = submissionsSnap.size;
+
+
+/* =========================
+   ANALYTICS DATA
+========================= */
 
 const analyticsQuery = query(
 collection(db,"analytics"),
@@ -227,16 +241,20 @@ document.getElementById("youtubeStreams").textContent = data.youtubeStreams || 0
 }
 
 
-/* top releases */
+/* =========================
+   TOP RELEASES LIST
+========================= */
 
 const container = document.getElementById("topReleases");
-container.innerHTML="";
 
-submissionsSnap.forEach(doc=>{
+container.innerHTML = "";
 
-const r = doc.data();
+submissionsSnap.forEach(docSnap=>{
+
+const r = docSnap.data();
 
 const div = document.createElement("div");
+
 div.className="release";
 
 div.innerHTML = `
@@ -251,7 +269,9 @@ container.appendChild(div);
 });
 
 
-/* chart */
+/* =========================
+   STREAM CHART
+========================= */
 
 const ctx = document.getElementById('streamsChart');
 
@@ -272,6 +292,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
