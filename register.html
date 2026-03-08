@@ -68,7 +68,6 @@ Choose Creator Plan for:
 <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
 </div>
 
-<!-- Questions like real distributor -->
 <div class="questions">
 
 <label>Artist Type</label>
@@ -121,7 +120,6 @@ Already have an account?
 </div>
 
 
-<!-- Firebase + JS -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -187,6 +185,8 @@ try{
 const userCred = await createUserWithEmailAndPassword(auth,email,pass);
 const user = userCred.user;
 
+/* USER PROFILE */
+
 await setDoc(doc(db,"users",user.uid),{
 name,
 email,
@@ -196,6 +196,28 @@ country,
 earnings:0,
 createdAt: serverTimestamp()
 });
+
+
+/* AUTOMATIC ANALYTICS DOCUMENT */
+
+await setDoc(doc(db,"analytics",user.uid),{
+
+totalStreams:0,
+spotifyStreams:0,
+appleStreams:0,
+youtubeStreams:0,
+tiktokStreams:0,
+
+topCountry1:"US",
+topCountry2:"UK",
+topCountry3:"GH",
+
+monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+
+createdAt: serverTimestamp()
+
+});
+
 
 window.location.href="s.html";
 
@@ -209,4 +231,3 @@ alert(err.message);
 
 </body>
 </html>
-
