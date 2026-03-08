@@ -93,19 +93,39 @@ const db = getFirestore(app);
 
 
 /* OVERVIEW */
-onSnapshot(doc(db,"analytics","overview"), snap=>{
-const data = snap.data();
+async function loadOverview(){
 
-document.getElementById("streams").innerText = data.streams || 0;
-document.getElementById("ads").innerText = data.adSupported || 0;
-document.getElementById("premium").innerText = data.premium || 0;
-document.getElementById("downloads").innerText = data.downloads || 0;
+const snap = await getDocs(collection(db,"analytics"));
 
-document.getElementById("active").innerText = data.activeListeners || 0;
-document.getElementById("passive").innerText = data.passiveListeners || 0;
+let totalStreams = 0;
+let spotify = 0;
+let apple = 0;
+let youtube = 0;
 
-loadChart(data);
+snap.forEach(doc=>{
+const data = doc.data();
+
+totalStreams += data.totalStreams || 0;
+spotify += data.spotifyStreams || 0;
+apple += data.appleStreams || 0;
+youtube += data.youtubeStreams || 0;
+
 });
+
+document.getElementById("streams").innerText = totalStreams;
+document.getElementById("ads").innerText = youtube;
+document.getElementById("premium").innerText = spotify;
+document.getElementById("downloads").innerText = apple;
+
+loadChart({
+adSupported: youtube,
+premium: spotify
+});
+
+}
+
+loadOverview();
+
 
 
 /* CHART */
