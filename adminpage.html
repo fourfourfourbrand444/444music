@@ -88,7 +88,6 @@ color:#aaa;
 
 </table>
 
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -109,9 +108,18 @@ const db = getFirestore(app);
 const table = document.getElementById("tableBody");
 
 let artists = {};
+let usersMap = {};
 
 async function load(){
 
+// load users
+const users = await getDocs(collection(db,"users"));
+
+users.forEach(docSnap=>{
+usersMap[docSnap.data().email] = docSnap.id;
+});
+
+// load submissions
 const subs = await getDocs(collection(db,"submissions"));
 
 subs.forEach(docSnap=>{
@@ -144,9 +152,11 @@ for(const email in artists){
 
 const artist = artists[email];
 
-const analyticsRef = doc(db,"analytics",email);
-const analyticsSnap = await getDoc(analyticsRef);
+const uid = usersMap[email];
 
+if(!uid) continue;
+
+const analyticsSnap = await getDoc(doc(db,"analytics",uid));
 const analytics = analyticsSnap.exists() ? analyticsSnap.data() : {};
 
 const row = document.createElement("tr");
@@ -157,21 +167,21 @@ row.innerHTML = `
 
 <td class="release">${artist.releases.join("<br>")}</td>
 
-<td><input id="total-${email}" value="${analytics.totalStreams || 0}"></td>
+<td><input id="total-${uid}" value="${analytics.totalStreams || 0}"></td>
 
-<td><input id="spotify-${email}" value="${analytics.spotifyStreams || 0}"></td>
+<td><input id="spotify-${uid}" value="${analytics.spotifyStreams || 0}"></td>
 
-<td><input id="apple-${email}" value="${analytics.appleStreams || 0}"></td>
+<td><input id="apple-${uid}" value="${analytics.appleStreams || 0}"></td>
 
-<td><input id="youtube-${email}" value="${analytics.youtubeStreams || 0}"></td>
+<td><input id="youtube-${uid}" value="${analytics.youtubeStreams || 0}"></td>
 
-<td><input id="c1-${email}" value="${analytics.topCountry1 || ""}"></td>
+<td><input id="c1-${uid}" value="${analytics.topCountry1 || ""}"></td>
 
-<td><input id="c2-${email}" value="${analytics.topCountry2 || ""}"></td>
+<td><input id="c2-${uid}" value="${analytics.topCountry2 || ""}"></td>
 
-<td><input id="c3-${email}" value="${analytics.topCountry3 || ""}"></td>
+<td><input id="c3-${uid}" value="${analytics.topCountry3 || ""}"></td>
 
-<td><button onclick="save('${email}')">Save</button></td>
+<td><button onclick="save('${uid}')">Save</button></td>
 
 `;
 
@@ -181,27 +191,22 @@ table.appendChild(row);
 
 }
 
-window.save = async(email)=>{
+window.save = async(uid)=>{
 
-await updateDoc(doc(db,"analytics",email),{
+await updateDoc(doc(db,"analytics",uid),{
 
-totalStreams:Number(document.getElementById(`total-${email}`).value),
+totalStreams:Number(document.getElementById(`total-${uid}`).value),
+spotifyStreams:Number(document.getElementById(`spotify-${uid}`).value),
+appleStreams:Number(document.getElementById(`apple-${uid}`).value),
+youtubeStreams:Number(document.getElementById(`youtube-${uid}`).value),
 
-spotifyStreams:Number(document.getElementById(`spotify-${email}`).value),
-
-appleStreams:Number(document.getElementById(`apple-${email}`).value),
-
-youtubeStreams:Number(document.getElementById(`youtube-${email}`).value),
-
-topCountry1:document.getElementById(`c1-${email}`).value,
-
-topCountry2:document.getElementById(`c2-${email}`).value,
-
-topCountry3:document.getElementById(`c3-${email}`).value
+topCountry1:document.getElementById(`c1-${uid}`).value,
+topCountry2:document.getElementById(`c2-${uid}`).value,
+topCountry3:document.getElementById(`c3-${uid}`).value
 
 });
 
-alert("Updated");
+alert("Analytics Updated");
 
 };
 
