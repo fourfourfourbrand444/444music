@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Analytics Editor</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f0f0f;
+color:white;
+padding:40px;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+.search{
+width:300px;
+padding:10px;
+border-radius:6px;
+border:none;
+margin-bottom:30px;
+}
+
+.table{
+width:100%;
+border-collapse:collapse;
+}
+
+.table th,.table td{
+padding:12px;
+border-bottom:1px solid #333;
+text-align:left;
+}
+
+input{
+padding:6px;
+width:100px;
+background:#1a1a1a;
+border:1px solid #444;
+color:white;
+}
+
+button{
+padding:8px 14px;
+background:#00c853;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#00e676;
+}
+
+.release{
+font-size:12px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Artist Analytics Editor</h1>
+
+<input class="search" id="search" placeholder="Search artist...">
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Artist</th>
+<th>Releases</th>
+<th>Total Streams</th>
+<th>Monthly Listeners</th>
+<th>Total Releases</th>
+<th>Top Country</th>
+<th>Save</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import { 
+getFirestore,
+collection,
+getDocs,
+doc,
+getDoc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.appspot.com",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const table = document.getElementById("tableBody");
+
+const usersSnap = await getDocs(collection(db,"users"));
+const subsSnap = await getDocs(collection(db,"submissions"));
+
+let releases = {};
+
+subsSnap.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+const email = data.email;
+
+if(!releases[email]) releases[email] = [];
+
+releases[email].push(data.releaseTitle || "Untitled");
+
+});
+
+
+usersSnap.forEach(async userDoc=>{
+
+const user = userDoc.data();
+const uid = userDoc.id;
+
+const analyticsRef = doc(db,"analytics",uid);
+const analyticsSnap = await getDoc(analyticsRef);
+
+let analytics = analyticsSnap.data();
+
+const artistReleases = releases[user.email] || [];
+
+const row = document.createElement("tr");
+
+row.innerHTML = `
+
+<td>${user.name}</td>
+
+<td class="release">${artistReleases.join("<br>")}</td>
+
+<td>
+<input id="streams-${uid}" value="${analytics?.totalStreams || 0}">
+</td>
+
+<td>
+<input id="listeners-${uid}" value="${analytics?.monthlyListeners || 0}">
+</td>
+
+<td>
+<input id="releases-${uid}" value="${analytics?.totalReleases || 0}">
+</td>
+
+<td>
+<input id="country-${uid}" value="${analytics?.topCountry || ""}">
+</td>
+
+<td>
+<button onclick="saveAnalytics('${uid}')">Save</button>
+</td>
+
+`;
+
+table.appendChild(row);
+
+});
+
+
+window.saveAnalytics = async(uid)=>{
+
+const streams = document.getElementById(`streams-${uid}`).value;
+const listeners = document.getElementById(`listeners-${uid}`).value;
+const releases = document.getElementById(`releases-${uid}`).value;
+const country = document.getElementById(`country-${uid}`).value;
+
+await updateDoc(doc(db,"analytics",uid),{
+
+totalStreams:Number(streams),
+monthlyListeners:Number(listeners),
+totalReleases:Number(releases),
+topCountry:country
+
+});
+
+alert("Updated");
+
+}
+
+
+// SEARCH
+
+document.getElementById("search").addEventListener("input",function(){
+
+const term = this.value.toLowerCase();
+
+const rows = table.querySelectorAll("tr");
+
+rows.forEach(row=>{
+
+const artist = row.children[0].innerText.toLowerCase();
+
+row.style.display = artist.includes(term) ? "" : "none";
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
