@@ -176,7 +176,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -233,20 +233,19 @@ let youtubeStreams = 0;
 
 for (const submissionDoc of submissionsSnap.docs) {
 
-const analyticsDoc = await getDocs(
-query(collection(db,"analytics"), where("__name__","==",submissionDoc.id))
-);
+const analyticsRef = doc(db, "analytics", submissionDoc.id);
+const analyticsSnap = await getDoc(analyticsRef);
 
-analyticsDoc.forEach(docSnap => {
+if(analyticsSnap.exists()){
 
-const data = docSnap.data();
+const data = analyticsSnap.data();
 
 totalStreams += data.totalStreams || 0;
 spotifyStreams += data.spotifyStreams || 0;
 appleStreams += data.appleStreams || 0;
 youtubeStreams += data.youtubeStreams || 0;
 
-});
+}
 
 }
 
@@ -309,6 +308,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
