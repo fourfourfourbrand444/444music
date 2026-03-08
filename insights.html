@@ -1,123 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insights • 444Music</title>
+
+<title>Artist Insights • 444Music</title>
+
 <link rel="stylesheet" href="insights.css">
-<style>
-</style>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <!-- Header -->
-  <div class="header">
-    <h1>Insights</h1>
-    <select class="range-select" id="range">
-      <option value="week">Last 7 Days</option>
-      <option value="month">Last 30 Days</option>
-      <option value="all">All Time</option>
-    </select>
-  </div>
+<h1><i class="fa-solid fa-chart-line"></i> Artist Insights</h1>
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat">
-      <h3>Total Streams</h3>
-      <div class="value" id="streams">24</div>
-      <div class="growth">▲ 0.5.4% growth</div>
-    </div>
 
-    <div class="stat">
-      <h3>Listeners</h3>
-      <div class="value" id="listeners">10</div>
-      <div class="growth">▲ 0.1%</div>
-    </div>
+<section class="stats">
 
-    <div class="stat">
-      <h3>Top Country</h3>
-      <div class="value">Ghana 🇬🇭</div>
-      <div class="growth">Most active</div>
-    </div>
+<div class="card">
 
-    <div class="stat">
-      <h3>Best Platform</h3>
-      <div class="value">Spotify</div>
-      <div class="growth">Highest streams</div>
-    </div>
-  </div>
+<i class="fa-solid fa-headphones"></i>
 
-  <!-- Chart -->
-  <div class="chart">
-    <h2 style="margin-bottom:12px;">Streaming Trend</h2>
-    <canvas id="trend"></canvas>
-  </div>
+<h2 id="totalStreams">0</h2>
 
-  <!-- Platforms -->
-  <div class="platforms">
-    <h2>Platform Breakdown</h2>
-
-    <div class="platform">
-      <strong>Spotify</strong>
-      <span>--------</span>
-    </div>
-
-    <div class="platform">
-      <strong>Apple Music</strong>
-      <span>-----------</span>
-    </div>
-
-    <div class="platform">
-      <strong>Boomplay</strong>
-      <span>----------</span>
-    </div>
-
-    <div class="platform">
-      <strong>Audiomack</strong>
-      <span>----------</span>
-    </div>
-
-    <div class="platform">
-      <strong>YouTube Music</strong>
-      <span>------------</span>
-    </div>
-  </div>
+<p>Total Streams</p>
 
 </div>
 
-<script>
-const ctx = document.getElementById("trend").getContext("2d");
 
-const dataSets = {
-  week:[12,18,15,20,24,22,28],
-  month:[80,95,110,130,150,170,190],
-  all:[200,340,500,720,940,1120,1280]
+<div class="card">
+
+<i class="fa-solid fa-music"></i>
+
+<h2 id="totalReleases">0</h2>
+
+<p>Total Releases</p>
+
+</div>
+
+
+<div class="card">
+
+<i class="fa-solid fa-globe"></i>
+
+<h2>50+</h2>
+
+<p>Stores Distributed</p>
+
+</div>
+
+</section>
+
+
+
+<section class="chart-section">
+
+<h2>Streaming Growth</h2>
+
+<canvas id="streamsChart"></canvas>
+
+</section>
+
+
+
+<section class="countries">
+
+<h2>Top Countries</h2>
+
+<div class="country-list">
+
+<div class="country">
+
+<img src="https://flagcdn.com/us.svg">
+
+<span>United States</span>
+
+</div>
+
+<div class="country">
+
+<img src="https://flagcdn.com/gb.svg">
+
+<span>United Kingdom</span>
+
+</div>
+
+<div class="country">
+
+<img src="https://flagcdn.com/ng.svg">
+
+<span>Nigeria</span>
+
+</div>
+
+<div class="country">
+
+<img src="https://flagcdn.com/gh.svg">
+
+<span>Ghana</span>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="stores">
+
+<h2>Top Streaming Stores</h2>
+
+<div class="store-grid">
+
+<div class="store">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg">
+
+<p>Spotify</p>
+
+<span id="spotifyStreams">0</span>
+
+</div>
+
+
+<div class="store">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Apple_Music_icon.svg">
+
+<p>Apple Music</p>
+
+<span id="appleStreams">0</span>
+
+</div>
+
+
+<div class="store">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg">
+
+<p>YouTube</p>
+
+<span id="youtubeStreams">0</span>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="top-releases">
+
+<h2>Top Releases</h2>
+
+<div id="topReleases"></div>
+
+</section>
+
+
+</div>
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+
+authDomain: "usersubmissionsportal.firebaseapp.com",
+
+projectId: "usersubmissionsportal",
+
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+
+messagingSenderId: "734783502459",
+
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+
 };
 
-let current="week";
 
-function draw(data){
-  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  ctx.strokeStyle="#ff6f61";
-  ctx.lineWidth=3;
-  ctx.beginPath();
-  data.forEach((v,i)=>{
-    const x=i*(ctx.canvas.width/(data.length-1));
-    const y=ctx.canvas.height-(v/Math.max(...data))*ctx.canvas.height;
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-  });
-  ctx.stroke();
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user) return location.href="login.html";
+
+
+
+/* total releases */
+
+const q=query(collection(db,"submissions"),where("userId","==",user.uid));
+
+const snap=await getDocs(q);
+
+document.getElementById("totalReleases").textContent=snap.size;
+
+
+
+/* analytics data */
+
+const analyticsDoc=await getDoc(doc(db,"analytics",user.uid));
+
+if(analyticsDoc.exists()){
+
+const data=analyticsDoc.data();
+
+document.getElementById("totalStreams").textContent=data.totalStreams || 0;
+
+document.getElementById("spotifyStreams").textContent=data.spotifyStreams || 0;
+
+document.getElementById("appleStreams").textContent=data.appleStreams || 0;
+
+document.getElementById("youtubeStreams").textContent=data.youtubeStreams || 0;
+
 }
 
-draw(dataSets.week);
 
-document.getElementById("range").addEventListener("change",e=>{
-  current=e.target.value;
-  draw(dataSets[current]);
+
+/* top releases */
+
+const container=document.getElementById("topReleases");
+
+snap.forEach(doc=>{
+
+const r=doc.data();
+
+const div=document.createElement("div");
+
+div.className="release";
+
+div.innerHTML=`
+
+<i class="fa-solid fa-compact-disc"></i>
+
+<b>${r.releaseTitle || "Untitled Release"}</b>
+
+`;
+
+container.appendChild(div);
+
 });
+
+});
+
+
+
+/* chart */
+
+const ctx=document.getElementById('streamsChart');
+
+new Chart(ctx,{
+
+type:'line',
+
+data:{
+
+labels:["Jan","Feb","Mar","Apr","May","Jun","Jul"],
+
+datasets:[{
+
+label:"Streams",
+
+data:[200,500,900,1200,1800,2300,3000],
+
+borderColor:"#ff2e63",
+
+tension:.4
+
+}]
+
+}
+
+});
+
 </script>
 
 </body>
