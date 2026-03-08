@@ -1,63 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Create Analytics</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#111;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-flex-direction:column;
-}
-
-button{
-padding:15px 30px;
-font-size:18px;
-border:none;
-border-radius:10px;
-background:#ff2e63;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-opacity:.9;
-}
-
-#status{
-margin-top:20px;
-}
-
-</style>
-
+<title>Rebuild Analytics</title>
 </head>
-
 <body>
 
-<h2>Create Analytics For Existing Artists</h2>
-
-<button id="run">Run Script</button>
-
+<button id="run">Rebuild Analytics</button>
 <p id="status"></p>
-
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-
-import { getFirestore, collection, getDocs, addDoc, query, where }
+import { getFirestore, collection, getDocs, doc, setDoc }
 from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -71,58 +26,38 @@ appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
 document.getElementById("run").onclick = async ()=>{
 
 document.getElementById("status").textContent="Running...";
 
 const submissionsSnap = await getDocs(collection(db,"submissions"));
 
-let created = 0;
+let count = 0;
 
-for(const docSnap of submissionsSnap.docs){
+for(const submission of submissionsSnap.docs){
 
-const data = docSnap.data();
+const data = submission.data();
+const id = submission.id;
 
-const email = data.email;
-const artistName = data.artistName || "Unknown Artist";
+await setDoc(doc(db,"analytics",id),{
 
-if(!email) continue;
-
-
-/* check if analytics already exists */
-
-const checkQuery = query(
-collection(db,"analytics"),
-where("email","==",email)
-);
-
-const checkSnap = await getDocs(checkQuery);
-
-if(checkSnap.empty){
-
-await addDoc(collection(db,"analytics"),{
-
-artistName: artistName,
-email: email,
+artistName: data.artistName || "Unknown",
+email: data.email || "",
 
 totalStreams: 0,
 spotifyStreams: 0,
 appleStreams: 0,
 youtubeStreams: 0,
-
 totalReleases: 0
 
 });
 
-created++;
-
-}
+count++;
 
 }
 
 document.getElementById("status").textContent =
-"Finished. Analytics created for "+created+" artists.";
+"Analytics rebuilt for "+count+" submissions.";
 
 };
 
