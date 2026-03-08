@@ -6,7 +6,7 @@
 
 <body>
 
-<h2>Create Analytics for All Users</h2>
+<h2>Create Analytics for Artists</h2>
 <button onclick="createAnalyticsDocs()">Run Script</button>
 
 <p id="status"></p>
@@ -16,8 +16,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-
-// 🔹 REPLACE THIS WITH YOUR FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain: "usersubmissionsportal.firebaseapp.com",
@@ -35,16 +33,24 @@ async function createAnalyticsDocs() {
 
   document.getElementById("status").innerText = "Running...";
 
-  const usersSnapshot = await getDocs(collection(db, "users"));
+  const submissionsSnapshot = await getDocs(collection(db, "submissions"));
 
-  for (const userDoc of usersSnapshot.docs) {
+  const processedEmails = new Set();
 
-    const userData = userDoc.data();
+  for (const submissionDoc of submissionsSnapshot.docs) {
 
-    await setDoc(doc(db, "analytics", userDoc.id), {
+    const data = submissionDoc.data();
 
-      artistName: userData.artistName || "",
-      email: userData.email || "",
+    const email = data.email;
+
+    if (!email || processedEmails.has(email)) continue;
+
+    processedEmails.add(email);
+
+    await setDoc(doc(db, "analytics", email), {
+
+      artistName: data.artistName || "",
+      email: email,
 
       totalStreams: 0,
       totalReleases: 0,
@@ -57,7 +63,7 @@ async function createAnalyticsDocs() {
 
   }
 
-  document.getElementById("status").innerText = "Analytics created for all users!";
+  document.getElementById("status").innerText = "Analytics created successfully!";
 
 }
 
