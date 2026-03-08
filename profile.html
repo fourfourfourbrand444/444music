@@ -2,64 +2,318 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Artist Profile • 444Music</title>
+<title>444Music Artist Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link rel="stylesheet" href="profile.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
+
 <body>
 
-<div class="profile-wrapper">
-  <div class="profile-card">
-    <div class="avatar">🎤</div>
-    <h2 id="artistName">Artist</h2>
-    <p id="artistEmail" class="email"></p>
+<div class="dashboard">
 
-    <div class="stats">
-      <div>
-        <span id="totalReleases">0</span>
-        <small>Releases</small>
-      </div>
-      <div>
-        <span id="totalEarnings">$ 0.00</span>
-        <small>Earnings</small>
-      </div>
-    </div>
-  </div>
+<header class="header">
+
+<div class="avatar">
+
+<img id="profilePic" src="https://i.imgur.com/2DhmtJ4.png">
+
+<label for="uploadPic">
+<i class="fa-solid fa-camera"></i>
+</label>
+
+<input type="file" id="uploadPic" accept="image/*">
+
 </div>
 
+<div>
+
+<h2 id="artistName">Artist</h2>
+<p id="artistEmail"></p>
+
+</div>
+
+</header>
+
+
+
+<section class="stats">
+
+<div class="stat">
+
+<i class="fa-solid fa-music"></i>
+
+<h3 id="totalReleases">0</h3>
+
+<p>Releases</p>
+
+</div>
+
+
+<div class="stat">
+
+<i class="fa-solid fa-dollar-sign"></i>
+
+<h3 id="totalEarnings">$0.00</h3>
+
+<p>Earnings</p>
+
+</div>
+
+
+<div class="stat">
+
+<i class="fa-solid fa-headphones"></i>
+
+<h3>0</h3>
+
+<p>Streams</p>
+
+</div>
+
+
+<div class="stat">
+
+<i class="fa-solid fa-globe"></i>
+
+<h3>50+</h3>
+
+<p>Stores</p>
+
+</div>
+
+</section>
+
+
+
+<section class="tools">
+
+<button><i class="fa-solid fa-upload"></i> Upload Release</button>
+
+<button><i class="fa-solid fa-chart-line"></i> Analytics</button>
+
+<button><i class="fa-solid fa-wallet"></i> Withdraw</button>
+
+<button><i class="fa-solid fa-gear"></i> Settings</button>
+
+</section>
+
+
+
+<section class="releases">
+
+<h3>Recent Submissions</h3>
+
+<div id="releaseList"></div>
+
+</section>
+
+
+
+<section class="player">
+
+<h3>Music Preview</h3>
+
+<div class="player-box">
+
+<button id="playBtn">
+
+<i class="fa-solid fa-play"></i>
+
+</button>
+
+<div class="song-info">
+
+<p>Preview Track</p>
+
+<small>Artist</small>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="analytics">
+
+<h3>Streaming Analytics</h3>
+
+<canvas id="chart"></canvas>
+
+</section>
+
+
+
+<section class="notifications">
+
+<h3>Notifications</h3>
+
+<div class="notice">
+
+<i class="fa-solid fa-bell"></i>
+
+Your latest release is being reviewed.
+
+</div>
+
+</section>
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
 import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+
+authDomain: "usersubmissionsportal.firebaseapp.com",
+
+projectId: "usersubmissionsportal",
+
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+
+messagingSenderId: "734783502459",
+
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+
 };
 
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+
 const db = getFirestore(app);
 
+
+
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return location.href = "login.html";
 
-  const userSnap = await getDoc(doc(db, "users", user.uid));
-  if (userSnap.exists()) {
-    const data = userSnap.data();
-    document.getElementById("artistName").textContent = data.name;
-    document.getElementById("artistEmail").textContent = data.email;
-    document.getElementById("totalEarnings").textContent = "$ " + (data.earnings || 0).toFixed(2);
-  }
+if (!user) return location.href="login.html";
 
-  const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
-  const snap = await getDocs(q);
-  document.getElementById("totalReleases").textContent = snap.size;
+
+const userSnap = await getDoc(doc(db,"users",user.uid));
+
+if(userSnap.exists()){
+
+const data = userSnap.data();
+
+document.getElementById("artistName").textContent=data.name;
+
+document.getElementById("artistEmail").textContent=data.email;
+
+document.getElementById("totalEarnings").textContent="$ "+(data.earnings||0).toFixed(2);
+
+}
+
+
+const q=query(collection(db,"submissions"),where("userId","==",user.uid));
+
+const snap=await getDocs(q);
+
+document.getElementById("totalReleases").textContent=snap.size;
+
+
+
+const container=document.getElementById("releaseList");
+
+snap.forEach(doc=>{
+
+const r=doc.data();
+
+const div=document.createElement("div");
+
+div.className="release";
+
+div.innerHTML=`
+
+<i class="fa-solid fa-compact-disc"></i>
+
+<div>
+
+<b>${r.title || "Untitled Release"}</b>
+
+<p>Status: Pending</p>
+
+</div>
+
+`;
+
+container.appendChild(div);
+
 });
+
+});
+
+
+
+document.getElementById("uploadPic").addEventListener("change",function(){
+
+const file=this.files[0];
+
+if(file){
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+document.getElementById("profilePic").src=e.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+});
+
+
+
+const ctx=document.getElementById('chart');
+
+new Chart(ctx,{
+
+type:'line',
+
+data:{
+
+labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+
+datasets:[{
+
+label:"Streams",
+
+data:[0,0,0,0,0,0,0],
+
+borderColor:"#ff2e63",
+
+tension:.4
+
+}]
+
+}
+
+});
+
 </script>
 
 </body>
