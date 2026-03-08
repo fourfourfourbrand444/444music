@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Create Analytics Documents</title>
+<title>Create Analytics</title>
 </head>
 
 <body>
 
-<h2>Create Analytics for Artists</h2>
+<h2>Create Analytics Documents</h2>
 <button onclick="createAnalyticsDocs()">Run Script</button>
 
 <p id="status"></p>
@@ -28,29 +28,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
 async function createAnalyticsDocs() {
 
   document.getElementById("status").innerText = "Running...";
 
-  const submissionsSnapshot = await getDocs(collection(db, "submissions"));
+  const usersSnapshot = await getDocs(collection(db, "users"));
 
-  const processedEmails = new Set();
+  for (const userDoc of usersSnapshot.docs) {
 
-  for (const submissionDoc of submissionsSnapshot.docs) {
+    const userData = userDoc.data();
+    const uid = userDoc.id;
 
-    const data = submissionDoc.data();
+    await setDoc(doc(db, "analytics", uid), {
 
-    const email = data.email;
-
-    if (!email || processedEmails.has(email)) continue;
-
-    processedEmails.add(email);
-
-    await setDoc(doc(db, "analytics", email), {
-
-      artistName: data.artistName || "",
-      email: email,
+      artistName: userData.artistName || "",
+      email: userData.email || "",
 
       totalStreams: 0,
       totalReleases: 0,
