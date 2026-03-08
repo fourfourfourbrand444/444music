@@ -175,91 +175,76 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
 import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-
 const firebaseConfig = {
-
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-
 authDomain: "usersubmissionsportal.firebaseapp.com",
-
 projectId: "usersubmissionsportal",
-
 storageBucket: "usersubmissionsportal.firebasestorage.app",
-
 messagingSenderId: "734783502459",
-
 appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
-
-
 
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user) return location.href="login.html";
 
-
+const userEmail = user.email;
 
 /* total releases */
 
-const q=query(collection(db,"submissions"),where("userId","==",user.uid));
+const submissionsQuery = query(
+collection(db,"submissions"),
+where("email","==",userEmail)
+);
 
-const snap=await getDocs(q);
+const submissionsSnap = await getDocs(submissionsQuery);
 
-document.getElementById("totalReleases").textContent=snap.size;
-
+document.getElementById("totalReleases").textContent = submissionsSnap.size;
 
 
 /* analytics data */
 
-const analyticsDoc=await getDoc(doc(db,"analytics",user.uid));
+const analyticsQuery = query(
+collection(db,"analytics"),
+where("email","==",userEmail)
+);
 
-if(analyticsDoc.exists()){
+const analyticsSnap = await getDocs(analyticsQuery);
 
-const data=analyticsDoc.data();
+if(!analyticsSnap.empty){
 
-document.getElementById("totalStreams").textContent=data.totalStreams || 0;
+const data = analyticsSnap.docs[0].data();
 
-document.getElementById("spotifyStreams").textContent=data.spotifyStreams || 0;
-
-document.getElementById("appleStreams").textContent=data.appleStreams || 0;
-
-document.getElementById("youtubeStreams").textContent=data.youtubeStreams || 0;
+document.getElementById("totalStreams").textContent = data.totalStreams || 0;
+document.getElementById("spotifyStreams").textContent = data.spotifyStreams || 0;
+document.getElementById("appleStreams").textContent = data.appleStreams || 0;
+document.getElementById("youtubeStreams").textContent = data.youtubeStreams || 0;
 
 }
 
 
-
 /* top releases */
 
-const container=document.getElementById("topReleases");
+const container = document.getElementById("topReleases");
+container.innerHTML="";
 
-snap.forEach(doc=>{
+submissionsSnap.forEach(doc=>{
 
-const r=doc.data();
+const r = doc.data();
 
-const div=document.createElement("div");
-
+const div = document.createElement("div");
 div.className="release";
 
-div.innerHTML=`
-
+div.innerHTML = `
 <i class="fa-solid fa-compact-disc"></i>
-
 <b>${r.releaseTitle || "Untitled Release"}</b>
-
 `;
 
 container.appendChild(div);
@@ -269,37 +254,26 @@ container.appendChild(div);
 });
 
 
-
 /* chart */
 
-const ctx=document.getElementById('streamsChart');
+const ctx = document.getElementById('streamsChart');
 
 new Chart(ctx,{
-
 type:'line',
-
 data:{
-
 labels:["Jan","Feb","Mar","Apr","May","Jun","Jul"],
-
 datasets:[{
-
 label:"Streams",
-
 data:[200,500,900,1200,1800,2300,3000],
-
 borderColor:"#ff2e63",
-
 tension:.4
-
 }]
-
 }
-
 });
 
 </script>
 
 </body>
 </html>
+
 
