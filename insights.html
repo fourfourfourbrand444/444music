@@ -222,23 +222,36 @@ document.getElementById("totalReleases").textContent = submissionsSnap.size;
    ANALYTICS DATA
 ========================= */
 
-const analyticsQuery = query(
-collection(db,"analytics"),
-where("email","==",userEmail)
-);
+const analyticsSnap = await getDocs(collection(db,"analytics"));
 
-const analyticsSnap = await getDocs(analyticsQuery);
+let analyticsData = null;
 
-if(!analyticsSnap.empty){
+analyticsSnap.forEach(docSnap => {
 
-const data = analyticsSnap.docs[0].data();
+const data = docSnap.data();
 
-document.getElementById("totalStreams").textContent = data.totalStreams || 0;
-document.getElementById("spotifyStreams").textContent = data.spotifyStreams || 0;
-document.getElementById("appleStreams").textContent = data.appleStreams || 0;
-document.getElementById("youtubeStreams").textContent = data.youtubeStreams || 0;
+if(data.email === userEmail){
+analyticsData = data;
+}
+
+});
+
+if(analyticsData){
+
+document.getElementById("totalStreams").textContent =
+analyticsData.totalStreams || 0;
+
+document.getElementById("spotifyStreams").textContent =
+analyticsData.spotifyStreams || 0;
+
+document.getElementById("appleStreams").textContent =
+analyticsData.appleStreams || 0;
+
+document.getElementById("youtubeStreams").textContent =
+analyticsData.youtubeStreams || 0;
 
 }
+
 
 
 /* =========================
@@ -292,6 +305,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
