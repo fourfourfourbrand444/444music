@@ -1,15 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Artist Analytics Editor</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>444Music Admin • Analytics</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
 body{
+font-family:Arial;
 background:#0f0f0f;
 color:white;
-font-family:Arial;
-padding:40px;
+margin:0;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
 }
 
 h1{
@@ -17,44 +30,54 @@ margin-bottom:20px;
 }
 
 .search{
-padding:10px;
-width:300px;
-margin-bottom:30px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+margin-bottom:25px;
+font-size:16px;
+}
+
+.card{
+background:#1c1c1c;
+padding:20px;
+border-radius:12px;
+margin-bottom:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.artist{
+font-size:18px;
+font-weight:bold;
+}
+
+.fields{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
+}
+
+input{
+width:100%;
+padding:8px;
 border-radius:6px;
 border:none;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #333;
-text-align:left;
-}
-
-input{
-width:90px;
-background:#1a1a1a;
-border:1px solid #333;
-color:white;
-padding:6px;
-}
-
 button{
-background:#00c853;
+background:#ff2e63;
 border:none;
-padding:8px 14px;
-border-radius:5px;
+padding:10px;
+border-radius:8px;
 color:white;
 cursor:pointer;
+margin-top:10px;
 }
 
-.release{
-font-size:12px;
-color:#aaa;
+button:hover{
+opacity:.9;
 }
 
 </style>
@@ -63,166 +86,146 @@ color:#aaa;
 
 <body>
 
-<h1>Artist Analytics Editor</h1>
+<div class="container">
 
-<input id="search" class="search" placeholder="Search artist">
+<h1><i class="fa-solid fa-sliders"></i> Analytics Manager</h1>
 
-<table>
+<input type="text" id="search" class="search"
+placeholder="Search artist or email...">
 
-<thead>
-<tr>
-<th>Artist</th>
-<th>Releases</th>
-<th>Total Streams</th>
-<th>Spotify</th>
-<th>Apple</th>
-<th>YouTube</th>
-<th>Country 1</th>
-<th>Country 2</th>
-<th>Country 3</th>
-<th>Save</th>
-</tr>
-</thead>
+<div id="artists"></div>
 
-<tbody id="tableBody"></tbody>
-
-</table>
+</div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
+import { getFirestore, collection, getDocs, doc, updateDoc }
+from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.appspot.com",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const table = document.getElementById("tableBody");
+const container = document.getElementById("artists");
 
-let artists = {};
-let usersMap = {};
+let artists=[];
 
-async function load(){
+async function loadArtists(){
 
-// load users
-const users = await getDocs(collection(db,"users"));
+const snap = await getDocs(collection(db,"analytics"));
 
-users.forEach(docSnap=>{
-usersMap[docSnap.data().email] = docSnap.id;
-});
-
-// load submissions
-const subs = await getDocs(collection(db,"submissions"));
-
-subs.forEach(docSnap=>{
+snap.forEach(docSnap=>{
 
 const data = docSnap.data();
 
-const name = data.artistName || "Unknown Artist";
-const email = data.email || "no-email";
-
-if(!artists[email]){
-
-artists[email] = {
-artistName:name,
-releases:[]
-};
-
-}
-
-artists[email].releases.push(data.releaseTitle || data.songTitle || "Untitled");
+artists.push({
+id:docSnap.id,
+...data
+});
 
 });
 
-display();
+renderArtists(artists);
 
 }
 
-async function display(){
+function renderArtists(list){
 
-for(const email in artists){
+container.innerHTML="";
 
-const artist = artists[email];
+list.forEach(a=>{
 
-const uid = usersMap[email];
+const div=document.createElement("div");
 
-if(!uid) continue;
+div.className="card";
 
-const analyticsSnap = await getDoc(doc(db,"analytics",uid));
-const analytics = analyticsSnap.exists() ? analyticsSnap.data() : {};
+div.innerHTML=`
 
-const row = document.createElement("tr");
+<div class="artist">${a.artistName}</div>
+<div>${a.email}</div>
 
-row.innerHTML = `
+<div class="fields">
 
-<td>${artist.artistName}</td>
+<div>
+<label>Total Streams</label>
+<input id="streams-${a.id}" type="number" value="${a.totalStreams || 0}">
+</div>
 
-<td class="release">${artist.releases.join("<br>")}</td>
+<div>
+<label>Spotify</label>
+<input id="spotify-${a.id}" type="number" value="${a.spotifyStreams || 0}">
+</div>
 
-<td><input id="total-${uid}" value="${analytics.totalStreams || 0}"></td>
+<div>
+<label>Apple</label>
+<input id="apple-${a.id}" type="number" value="${a.appleStreams || 0}">
+</div>
 
-<td><input id="spotify-${uid}" value="${analytics.spotifyStreams || 0}"></td>
+<div>
+<label>YouTube</label>
+<input id="youtube-${a.id}" type="number" value="${a.youtubeStreams || 0}">
+</div>
 
-<td><input id="apple-${uid}" value="${analytics.appleStreams || 0}"></td>
+<div>
+<label>Total Releases</label>
+<input id="releases-${a.id}" type="number" value="${a.totalReleases || 0}">
+</div>
 
-<td><input id="youtube-${uid}" value="${analytics.youtubeStreams || 0}"></td>
+</div>
 
-<td><input id="c1-${uid}" value="${analytics.topCountry1 || ""}"></td>
-
-<td><input id="c2-${uid}" value="${analytics.topCountry2 || ""}"></td>
-
-<td><input id="c3-${uid}" value="${analytics.topCountry3 || ""}"></td>
-
-<td><button onclick="save('${uid}')">Save</button></td>
+<button onclick="save('${a.id}')">
+<i class="fa-solid fa-floppy-disk"></i> Save
+</button>
 
 `;
 
-table.appendChild(row);
+container.appendChild(div);
+
+});
 
 }
 
-}
+window.save = async function(id){
 
-window.save = async(uid)=>{
+const ref = doc(db,"analytics",id);
 
-await updateDoc(doc(db,"analytics",uid),{
-
-totalStreams:Number(document.getElementById(`total-${uid}`).value),
-spotifyStreams:Number(document.getElementById(`spotify-${uid}`).value),
-appleStreams:Number(document.getElementById(`apple-${uid}`).value),
-youtubeStreams:Number(document.getElementById(`youtube-${uid}`).value),
-
-topCountry1:document.getElementById(`c1-${uid}`).value,
-topCountry2:document.getElementById(`c2-${uid}`).value,
-topCountry3:document.getElementById(`c3-${uid}`).value
-
+await updateDoc(ref,{
+totalStreams:Number(document.getElementById(`streams-${id}`).value),
+spotifyStreams:Number(document.getElementById(`spotify-${id}`).value),
+appleStreams:Number(document.getElementById(`apple-${id}`).value),
+youtubeStreams:Number(document.getElementById(`youtube-${id}`).value),
+totalReleases:Number(document.getElementById(`releases-${id}`).value)
 });
 
 alert("Analytics Updated");
 
-};
+}
 
 document.getElementById("search").addEventListener("input",function(){
 
-const term = this.value.toLowerCase();
+const value=this.value.toLowerCase();
 
-document.querySelectorAll("#tableBody tr").forEach(row=>{
+const filtered = artists.filter(a=>
+(a.artistName || "").toLowerCase().includes(value) ||
+(a.email || "").toLowerCase().includes(value)
+);
 
-row.style.display = row.innerText.toLowerCase().includes(term) ? "" : "none";
+renderArtists(filtered);
 
 });
 
-});
-
-load();
+loadArtists();
 
 </script>
 
