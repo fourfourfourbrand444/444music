@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Analytics</title>
+</head>
+<body>
+
+<h2>Creating analytics documents...</h2>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function createAnalytics(){
+
+const users = await getDocs(collection(db,"users"));
+
+users.forEach(async(userDoc)=>{
+
+const uid = userDoc.id;
+
+await setDoc(doc(db,"analytics",uid),{
+
+totalStreams: 0,
+spotifyStreams: 0,
+appleStreams: 0,
+youtubeStreams: 0,
+
+topCountry1: "US",
+topCountry2: "UK",
+topCountry3: "NG"
+
+});
+
+});
+
+alert("Analytics created for all users");
+
+}
+
+createAnalytics();
+
+</script>
+
+</body>
+</html>
