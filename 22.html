@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Analytics Documents</title>
+</head>
+
+<body>
+
+<h2>Create Analytics for All Users</h2>
+<button onclick="createAnalyticsDocs()">Run Script</button>
+
+<p id="status"></p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+// 🔹 REPLACE THIS WITH YOUR FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+async function createAnalyticsDocs() {
+
+  document.getElementById("status").innerText = "Running...";
+
+  const usersSnapshot = await getDocs(collection(db, "users"));
+
+  for (const userDoc of usersSnapshot.docs) {
+
+    const userData = userDoc.data();
+
+    await setDoc(doc(db, "analytics", userDoc.id), {
+
+      artistName: userData.artistName || "",
+      email: userData.email || "",
+
+      totalStreams: 0,
+      totalReleases: 0,
+
+      spotifyStreams: 0,
+      appleStreams: 0,
+      youtubeStreams: 0
+
+    });
+
+  }
+
+  document.getElementById("status").innerText = "Analytics created for all users!";
+
+}
+
+window.createAnalyticsDocs = createAnalyticsDocs;
+
+</script>
+
+</body>
+</html>
