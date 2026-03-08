@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Analytics Docs</title>
+</head>
+<body>
+
+<h2>Generating Analytics Documents...</h2>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+getFirestore, 
+collection, 
+getDocs, 
+doc, 
+setDoc,
+serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function createAnalytics(){
+
+const usersSnapshot = await getDocs(collection(db,"users"));
+
+usersSnapshot.forEach(async (userDoc)=>{
+
+const uid = userDoc.id;
+
+await setDoc(doc(db,"analytics",uid),{
+
+totalStreams: 0,
+monthlyListeners: 0,
+totalReleases: 0,
+
+topCountry: "None",
+topStore: "Spotify",
+
+countries:{
+USA:0,
+UK:0,
+Nigeria:0,
+Ghana:0
+},
+
+stores:{
+Spotify:0,
+AppleMusic:0,
+Audiomack:0,
+Boomplay:0
+},
+
+createdAt: serverTimestamp()
+
+});
+
+});
+
+alert("Analytics documents created successfully!");
+
+}
+
+createAnalytics();
+
+</script>
+
+</body>
+</html>
+
+
