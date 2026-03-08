@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insights • 444Music</title>
+
+<link rel="stylesheet" href="insights2.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1><i class="fa-solid fa-chart-line"></i> Artist Insights</h1>
+
+<div class="stats">
+
+<div class="card">
+<i class="fa-solid fa-headphones"></i>
+<h2 id="streams">0</h2>
+<p>Total Streams</p>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-music"></i>
+<h2 id="releases">0</h2>
+<p>Total Releases</p>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-globe"></i>
+<h2>50+</h2>
+<p>Stores Distributed</p>
+</div>
+
+</div>
+
+
+<div class="chart-section">
+<h2>Streaming Growth</h2>
+<canvas id="growthChart"></canvas>
+</div>
+
+
+<div class="countries">
+<h2>Top Countries</h2>
+
+<div class="country-list">
+
+<div class="country">
+<img src="https://flagcdn.com/us.svg">
+<span>United States</span>
+</div>
+
+<div class="country">
+<img src="https://flagcdn.com/gb.svg">
+<span>United Kingdom</span>
+</div>
+
+<div class="country">
+<img src="https://flagcdn.com/ng.svg">
+<span>Nigeria</span>
+</div>
+
+<div class="country">
+<img src="https://flagcdn.com/gh.svg">
+<span>Ghana</span>
+</div>
+
+</div>
+</div>
+
+
+<div class="stores">
+<h2>Top Streaming Stores</h2>
+
+<div class="store-grid">
+
+<div class="store">
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg">
+<h3>Spotify</h3>
+<p id="spotify">0</p>
+</div>
+
+<div class="store">
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Apple_Music_icon.svg">
+<h3>Apple Music</h3>
+<p id="apple">0</p>
+</div>
+
+<div class="store">
+<img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg">
+<h3>YouTube</h3>
+<p id="youtube">0</p>
+</div>
+
+</div>
+</div>
+
+
+<div class="top-releases">
+
+<h2>Top Releases</h2>
+
+<div id="releasesList"></div>
+
+</div>
+
+</div>
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.appspot.com",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+
+/* LOAD INSIGHTS DATA */
+
+async function loadInsights(){
+
+const ref = doc(db,"insights","overview");
+const snap = await getDoc(ref);
+
+if(!snap.exists()) return;
+
+const data = snap.data();
+
+document.getElementById("streams").innerText =
+Number(data.totalStreams).toLocaleString();
+
+document.getElementById("spotify").innerText =
+Number(data.spotifyStreams).toLocaleString();
+
+document.getElementById("apple").innerText =
+Number(data.appleStreams).toLocaleString();
+
+document.getElementById("youtube").innerText =
+Number(data.youtubeStreams).toLocaleString();
+
+loadChart(data.growth);
+
+}
+
+loadInsights();
+
+
+
+/* STREAM CHART */
+
+function loadChart(growth){
+
+const ctx = document.getElementById("growthChart");
+
+new Chart(ctx,{
+type:"line",
+data:{
+labels:["Jan","Feb","Mar","Apr","May","Jun","Jul"],
+datasets:[{
+label:"Streams",
+data:growth,
+borderColor:"#ff2e63",
+backgroundColor:"transparent",
+tension:0.4
+}]
+},
+options:{
+plugins:{
+legend:{display:true}
+},
+scales:{
+x:{ticks:{color:"#999"}},
+y:{ticks:{color:"#999"}}
+}
+}
+});
+
+}
+
+
+
+/* LOAD RELEASES FROM SUBMISSIONS */
+
+async function loadReleases(){
+
+const snap = await getDocs(collection(db,"submissions"));
+
+let html="";
+let count=0;
+
+snap.forEach(doc=>{
+
+const r = doc.data();
+
+html += `
+<div class="release">
+<i class="fa-solid fa-compact-disc"></i>
+<b>${r.artistName || "Artist"}</b> — ${r.releaseTitle || "Release"}
+</div>
+`;
+
+count++;
+
+});
+
+document.getElementById("releases").innerText = count;
+
+document.getElementById("releasesList").innerHTML = html;
+
+}
+
+loadReleases();
+
+</script>
+
+</body>
+</html>
