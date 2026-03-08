@@ -1,70 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Fix Artist Names</title>
+<title>444Music Analytics Generator</title>
 </head>
+
 <body>
 
-<h2>Fixing missing artist names...</h2>
+<h2>444Music Analytics Generator</h2>
+<button id="generate">Generate Analytics Collection</button>
+
+<p id="status"></p>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
+import { 
+getFirestore,
+collection,
+getDocs,
+doc,
+getDoc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+
 };
 
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function fixNames(){
 
-const users = await getDocs(collection(db,"users"));
+document.getElementById("generate").onclick = async ()=>{
+
+const status = document.getElementById("status");
+
+status.innerText="Scanning submissions...";
+
 const submissions = await getDocs(collection(db,"submissions"));
 
-let submissionMap = {};
+let created = 0;
 
-// build map email -> artist name
-submissions.forEach(docSnap=>{
+for(const submission of submissions.docs){
 
-const data = docSnap.data();
+const analyticsRef = doc(db,"analytics",submission.id);
 
-if(data.email && data.artistName){
-submissionMap[data.email] = data.artistName;
-}
+const existing = await getDoc(analyticsRef);
 
-});
+if(!existing.exists()){
 
-users.forEach(async(userDoc)=>{
+await setDoc(analyticsRef,{
 
-const user = userDoc.data();
-const uid = userDoc.id;
-
-if(!user.name && submissionMap[user.email]){
-
-await updateDoc(doc(db,"users",uid),{
-name: submissionMap[user.email]
-});
-
-console.log("Updated:", submissionMap[user.email]);
-
-}
+totalStreams:0,
+spotifyStreams:0,
+appleStreams:0,
+youtubeStreams:0
 
 });
 
-alert("Missing artist names fixed");
+created++;
 
 }
 
-fixNames();
+}
+
+status.innerText = "Finished. "+created+" analytics documents created.";
+
+}
 
 </script>
 
