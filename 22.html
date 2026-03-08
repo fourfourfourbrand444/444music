@@ -1,20 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Create Analytics From Users</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Analytics</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#111;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+flex-direction:column;
+}
+
+button{
+padding:15px 30px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#ff2e63;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.9;
+}
+
+#status{
+margin-top:20px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h2>Create Analytics For All Users</h2>
-<button onclick="createAnalytics()">Run Script</button>
+<h2>Create Analytics For Existing Artists</h2>
 
-<p id="status">Idle</p>
+<button id="run">Run Script</button>
+
+<p id="status"></p>
+
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+import { getFirestore, collection, getDocs, addDoc, query, where }
+from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -28,51 +71,60 @@ appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function createAnalytics(){
 
-const status = document.getElementById("status");
-status.innerText = "Fetching users...";
+document.getElementById("run").onclick = async ()=>{
 
-try{
+document.getElementById("status").textContent="Running...";
 
-const usersSnap = await getDocs(collection(db,"users"));
+const submissionsSnap = await getDocs(collection(db,"submissions"));
 
-status.innerText = "Users found: " + usersSnap.size;
+let created = 0;
 
-for(const userDoc of usersSnap.docs){
+for(const docSnap of submissionsSnap.docs){
 
-const user = userDoc.data();
+const data = docSnap.data();
+
+const email = data.email;
+const artistName = data.artistName || "Unknown Artist";
+
+if(!email) continue;
+
+
+/* check if analytics already exists */
+
+const checkQuery = query(
+collection(db,"analytics"),
+where("email","==",email)
+);
+
+const checkSnap = await getDocs(checkQuery);
+
+if(checkSnap.empty){
 
 await addDoc(collection(db,"analytics"),{
 
-artistName: user.name || "",
-email: user.email || "",
+artistName: artistName,
+email: email,
 
 totalStreams: 0,
-totalReleases: 0,
-
 spotifyStreams: 0,
 appleStreams: 0,
-youtubeStreams: 0
+youtubeStreams: 0,
+
+totalReleases: 0
 
 });
 
-console.log("Created analytics for", user.email);
-
-}
-
-status.innerText = "Finished creating analytics for all users!";
-
-}catch(error){
-
-console.error(error);
-status.innerText = "Error: " + error.message;
+created++;
 
 }
 
 }
 
-window.createAnalytics = createAnalytics;
+document.getElementById("status").textContent =
+"Finished. Analytics created for "+created+" artists.";
+
+};
 
 </script>
 
