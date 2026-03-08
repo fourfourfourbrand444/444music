@@ -9,12 +9,12 @@
 <h2>Create Analytics For All Users</h2>
 <button onclick="createAnalytics()">Run Script</button>
 
-<p id="status"></p>
+<p id="status">Idle</p>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -30,37 +30,23 @@ const db = getFirestore(app);
 
 async function createAnalytics(){
 
-document.getElementById("status").innerText="Running...";
+const status = document.getElementById("status");
+status.innerText = "Fetching users...";
+
+try{
 
 const usersSnap = await getDocs(collection(db,"users"));
+
+status.innerText = "Users found: " + usersSnap.size;
 
 for(const userDoc of usersSnap.docs){
 
 const user = userDoc.data();
 
-const email = user.email;
-const name = user.name;
+await addDoc(collection(db,"analytics"),{
 
-/* check if analytics already exists */
-
-const q = query(
-collection(db,"analytics"),
-where("email","==",email)
-);
-
-const existing = await getDocs(q);
-
-if(!existing.empty){
-console.log("Analytics already exists for",email);
-continue;
-}
-
-/* create analytics document */
-
-await setDoc(doc(collection(db,"analytics")),{
-
-artistName: name || "",
-email: email || "",
+artistName: user.name || "",
+email: user.email || "",
 
 totalStreams: 0,
 totalReleases: 0,
@@ -71,11 +57,18 @@ youtubeStreams: 0
 
 });
 
-console.log("Created analytics for",email);
+console.log("Created analytics for", user.email);
 
 }
 
-document.getElementById("status").innerText="Finished creating analytics documents!";
+status.innerText = "Finished creating analytics for all users!";
+
+}catch(error){
+
+console.error(error);
+status.innerText = "Error: " + error.message;
+
+}
 
 }
 
