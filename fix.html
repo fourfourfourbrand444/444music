@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fix Artist Names</title>
+</head>
+<body>
+
+<h2>Fixing missing artist names...</h2>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.appspot.com",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function fixNames(){
+
+const users = await getDocs(collection(db,"users"));
+const submissions = await getDocs(collection(db,"submissions"));
+
+let submissionMap = {};
+
+// build map email -> artist name
+submissions.forEach(docSnap=>{
+
+const data = docSnap.data();
+
+if(data.email && data.artistName){
+submissionMap[data.email] = data.artistName;
+}
+
+});
+
+users.forEach(async(userDoc)=>{
+
+const user = userDoc.data();
+const uid = userDoc.id;
+
+if(!user.name && submissionMap[user.email]){
+
+await updateDoc(doc(db,"users",uid),{
+name: submissionMap[user.email]
+});
+
+console.log("Updated:", submissionMap[user.email]);
+
+}
+
+});
+
+alert("Missing artist names fixed");
+
+}
+
+fixNames();
+
+</script>
+
+</body>
+</html>
