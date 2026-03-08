@@ -103,20 +103,20 @@ let spotify = 0;
 let apple = 0;
 let youtube = 0;
 
-snap.forEach(doc=>{
-const data = doc.data();
+snap.forEach((document)=>{
+const data = document.data();
 
-totalStreams += data.totalStreams || 0;
-spotify += data.spotifyStreams || 0;
-apple += data.appleStreams || 0;
-youtube += data.youtubeStreams || 0;
+totalStreams += Number(data.totalStreams || 0);
+spotify += Number(data.spotifyStreams || 0);
+apple += Number(data.appleStreams || 0);
+youtube += Number(data.youtubeStreams || 0);
 
 });
 
-document.getElementById("streams").innerText = totalStreams;
-document.getElementById("ads").innerText = youtube;
-document.getElementById("premium").innerText = spotify;
-document.getElementById("downloads").innerText = apple;
+document.getElementById("streams").innerText = totalStreams.toLocaleString();
+document.getElementById("ads").innerText = youtube.toLocaleString();
+document.getElementById("premium").innerText = spotify.toLocaleString();
+document.getElementById("downloads").innerText = apple.toLocaleString();
 
 loadChart({
 adSupported: youtube,
@@ -126,7 +126,6 @@ premium: spotify
 }
 
 loadOverview();
-
 
 
 /* CHART */
