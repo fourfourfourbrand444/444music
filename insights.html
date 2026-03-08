@@ -222,35 +222,39 @@ document.getElementById("totalReleases").textContent = submissionsSnap.size;
    ANALYTICS DATA
 ========================= */
 
-const analyticsSnap = await getDocs(collection(db,"analytics"));
+/* =========================
+   ANALYTICS DATA
+========================= */
 
-let analyticsData = null;
+let totalStreams = 0;
+let spotifyStreams = 0;
+let appleStreams = 0;
+let youtubeStreams = 0;
 
-analyticsSnap.forEach(docSnap => {
+for (const submissionDoc of submissionsSnap.docs) {
+
+const analyticsDoc = await getDocs(
+query(collection(db,"analytics"), where("__name__","==",submissionDoc.id))
+);
+
+analyticsDoc.forEach(docSnap => {
 
 const data = docSnap.data();
 
-if(data.email === userEmail){
-analyticsData = data;
-}
+totalStreams += data.totalStreams || 0;
+spotifyStreams += data.spotifyStreams || 0;
+appleStreams += data.appleStreams || 0;
+youtubeStreams += data.youtubeStreams || 0;
 
 });
 
-if(analyticsData){
-
-document.getElementById("totalStreams").textContent =
-analyticsData.totalStreams || 0;
-
-document.getElementById("spotifyStreams").textContent =
-analyticsData.spotifyStreams || 0;
-
-document.getElementById("appleStreams").textContent =
-analyticsData.appleStreams || 0;
-
-document.getElementById("youtubeStreams").textContent =
-analyticsData.youtubeStreams || 0;
-
 }
+
+document.getElementById("totalStreams").textContent = totalStreams;
+document.getElementById("spotifyStreams").textContent = spotifyStreams;
+document.getElementById("appleStreams").textContent = appleStreams;
+document.getElementById("youtubeStreams").textContent = youtubeStreams;
+
 
 
 
@@ -305,6 +309,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
