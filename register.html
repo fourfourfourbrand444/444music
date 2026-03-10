@@ -126,8 +126,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
 import { 
 getAuth, 
-createUserWithEmailAndPassword,
-sendEmailVerification
+createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import { 
@@ -204,14 +203,6 @@ const userCred = await createUserWithEmailAndPassword(auth,email,pass);
 const user = userCred.user;
 
 
-/* SEND EMAIL VERIFICATION */
-
-await sendEmailVerification(user);
-
-alert("Account created successfully! A verification email has been sent to your inbox. Please verify your email before logging in.");
-
-
-
 /* USER PROFILE */
 
 await setDoc(doc(db,"users",user.uid),{
@@ -246,6 +237,8 @@ createdAt: serverTimestamp()
 });
 
 
+alert("Account created successfully!");
+
 window.location.href="s.html";
 
 }catch(err){
@@ -260,4 +253,5 @@ alert(err.message);
 
 </body>
 </html>
+
 
