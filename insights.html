@@ -217,37 +217,37 @@ const submissionsSnap = await getDocs(submissionsQuery);
 
 document.getElementById("totalReleases").textContent = submissionsSnap.size;
 
-
 /* =========================
-   ANALYTICS DATA
+   ANALYTICS DATA (USING UID)
 ========================= */
 
-/* =========================
-   ANALYTICS DATA
-========================= */
+const uid = user.uid;
 
 let totalStreams = 0;
 let spotifyStreams = 0;
 let appleStreams = 0;
 let youtubeStreams = 0;
 
-for (const submissionDoc of submissionsSnap.docs) {
+const analyticsRef = doc(db,"analytics",uid);
 
-const analyticsRef = doc(db, "analytics", submissionDoc.id);
 const analyticsSnap = await getDoc(analyticsRef);
 
 if(analyticsSnap.exists()){
 
 const data = analyticsSnap.data();
 
-totalStreams += data.totalStreams || 0;
-spotifyStreams += data.spotifyStreams || 0;
-appleStreams += data.appleStreams || 0;
-youtubeStreams += data.youtubeStreams || 0;
+totalStreams = data.totalStreams || 0;
+spotifyStreams = data.spotifyStreams || 0;
+appleStreams = data.appleStreams || 0;
+youtubeStreams = data.youtubeStreams || 0;
 
 }
 
-}
+document.getElementById("totalStreams").textContent = totalStreams;
+document.getElementById("spotifyStreams").textContent = spotifyStreams;
+document.getElementById("appleStreams").textContent = appleStreams;
+document.getElementById("youtubeStreams").textContent = youtubeStreams;
+
 
 document.getElementById("totalStreams").textContent = totalStreams;
 document.getElementById("spotifyStreams").textContent = spotifyStreams;
@@ -308,6 +308,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
