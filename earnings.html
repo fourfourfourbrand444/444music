@@ -21,17 +21,19 @@
       <div class="balance-header">
         <div>
           <span class="balance-label">Account Balance</span>
-          <span id="balanceValue" class="balance-value">GHS 0.00</span>
+         <span id="balanceValue" class="balance-value">$ 0.00</span>
+
         </div>
-        <select id="currency" class="currency-select">
-          <option value="$">$ – US Dollar</option>
-          <option value="GHS">GHS – Ghana Cedi</option>
-        </select>
+      <select id="currency" class="currency-select" disabled>
+      <option value="$" selected>$ – US Dollar</option>
+      </select>
+  
       </div>
 
       <div class="badges">
-        <span class="badge cleared">Cleared: GHS 0.00</span>
-        <span class="badge pending">Pending: GHS 0.00</span>
+      <span class="badge cleared">Cleared: $ 0.00</span>
+      <span class="badge pending">Pending: $ 0.00</span>
+
       </div>
 
       <div class="actions">
@@ -139,9 +141,9 @@ const currencySelect = document.getElementById("currency");
 
 // 🟢 FUNCTION TO UPDATE BALANCE
 function updateBalance(amount) {
-  const currency = currencySelect.value;
-  balanceEl.textContent = `${currency} ${amount.toFixed(2)}`;
+  balanceEl.textContent = `$ ${amount.toFixed(2)}`;
 }
+
 
 // 🟢 LOAD USER EARNINGS
 onAuthStateChanged(auth, async (user) => {
@@ -185,6 +187,7 @@ currencySelect.addEventListener("change", () => {
 </script>
 </body>
 </html>
+
 
 
 
