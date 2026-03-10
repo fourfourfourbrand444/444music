@@ -5,24 +5,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>444Music Admin • Analytics</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>444Music Admin Analytics</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#0f0f0f;
-color:white;
+background:#f4f6fb;
 margin:0;
+padding:30px;
 }
 
 .container{
-max-width:1100px;
+max-width:900px;
 margin:auto;
-padding:20px;
 }
 
 h1{
@@ -32,52 +28,59 @@ margin-bottom:20px;
 .search{
 width:100%;
 padding:12px;
-border:none;
-border-radius:8px;
-margin-bottom:25px;
 font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+margin-bottom:20px;
 }
 
 .card{
-background:#1c1c1c;
+background:white;
 padding:20px;
-border-radius:12px;
+border-radius:10px;
 margin-bottom:15px;
-display:flex;
-flex-direction:column;
-gap:10px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
 }
 
 .artist{
-font-size:18px;
 font-weight:bold;
+margin-bottom:10px;
 }
 
-.fields{
+.grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
 gap:10px;
+margin-top:10px;
 }
 
 input{
-width:100%;
 padding:8px;
+width:100%;
 border-radius:6px;
-border:none;
+border:1px solid #ccc;
 }
 
 button{
+margin-top:15px;
+padding:10px 15px;
 background:#ff2e63;
 border:none;
-padding:10px;
-border-radius:8px;
 color:white;
+border-radius:6px;
 cursor:pointer;
-margin-top:10px;
 }
 
 button:hover{
 opacity:.9;
+}
+
+@media(max-width:600px){
+
+body{
+padding:15px;
+}
+
 }
 
 </style>
@@ -88,22 +91,28 @@ opacity:.9;
 
 <div class="container">
 
-<h1><i class="fa-solid fa-sliders"></i> Analytics Manager</h1>
+<h1>Analytics Manager</h1>
 
-<input type="text" id="search" class="search"
-placeholder="Search artist or email...">
+<input type="text" id="search" class="search" placeholder="Search by email...">
 
-<div id="artists"></div>
+<div id="results"></div>
 
 </div>
 
+
+
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 
-import { getFirestore, collection, getDocs, doc, updateDoc }
-from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+getFirestore,
+collection,
+getDocs,
+doc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -117,115 +126,115 @@ appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const container = document.getElementById("artists");
 
-let artists=[];
+let analyticsData = [];
 
-async function loadArtists(){
+
+/* LOAD ALL ANALYTICS */
+
+async function loadAnalytics(){
 
 const snap = await getDocs(collection(db,"analytics"));
 
+analyticsData = [];
+
 snap.forEach(docSnap=>{
 
-const data = docSnap.data();
-
-artists.push({
-id:docSnap.id,
-...data
+analyticsData.push({
+id: docSnap.id,
+...docSnap.data()
 });
 
 });
-
-renderArtists(artists);
 
 }
 
-function renderArtists(list){
+loadAnalytics();
 
-container.innerHTML="";
 
-list.forEach(a=>{
+/* SEARCH */
 
-const div=document.createElement("div");
+const search = document.getElementById("search");
+const results = document.getElementById("results");
 
+search.addEventListener("input",()=>{
+
+const value = search.value.toLowerCase();
+
+results.innerHTML="";
+
+if(value.length < 3) return;
+
+const filtered = analyticsData.filter(a =>
+a.email.toLowerCase().includes(value)
+);
+
+filtered.forEach(a=>{
+
+const div = document.createElement("div");
 div.className="card";
 
-div.innerHTML=`
+div.innerHTML = `
 
-<div class="artist">${a.artistName}</div>
+<div class="artist">${a.name}</div>
 <div>${a.email}</div>
 
-<div class="fields">
+<div class="grid">
 
 <div>
 <label>Total Streams</label>
-<input id="streams-${a.id}" type="number" value="${a.totalStreams || 0}">
+<input id="total-${a.id}" value="${a.totalStreams || 0}">
 </div>
 
 <div>
 <label>Spotify</label>
-<input id="spotify-${a.id}" type="number" value="${a.spotifyStreams || 0}">
+<input id="spotify-${a.id}" value="${a.spotifyStreams || 0}">
 </div>
 
 <div>
-<label>Apple</label>
-<input id="apple-${a.id}" type="number" value="${a.appleStreams || 0}">
+<label>Apple Music</label>
+<input id="apple-${a.id}" value="${a.appleStreams || 0}">
 </div>
 
 <div>
 <label>YouTube</label>
-<input id="youtube-${a.id}" type="number" value="${a.youtubeStreams || 0}">
-</div>
-
-<div>
-<label>Total Releases</label>
-<input id="releases-${a.id}" type="number" value="${a.totalReleases || 0}">
+<input id="youtube-${a.id}" value="${a.youtubeStreams || 0}">
 </div>
 
 </div>
 
-<button onclick="save('${a.id}')">
-<i class="fa-solid fa-floppy-disk"></i> Save
-</button>
+<button onclick="save('${a.id}')">Save</button>
 
 `;
 
-container.appendChild(div);
+results.appendChild(div);
 
 });
 
-}
+});
+
+
+/* SAVE FUNCTION */
 
 window.save = async function(id){
 
-const ref = doc(db,"analytics",id);
+const total = document.getElementById(`total-${id}`).value;
+const spotify = document.getElementById(`spotify-${id}`).value;
+const apple = document.getElementById(`apple-${id}`).value;
+const youtube = document.getElementById(`youtube-${id}`).value;
 
-await updateDoc(ref,{
-totalStreams:Number(document.getElementById(`streams-${id}`).value),
-spotifyStreams:Number(document.getElementById(`spotify-${id}`).value),
-appleStreams:Number(document.getElementById(`apple-${id}`).value),
-youtubeStreams:Number(document.getElementById(`youtube-${id}`).value),
-totalReleases:Number(document.getElementById(`releases-${id}`).value)
+await updateDoc(doc(db,"analytics",id),{
+
+totalStreams:Number(total),
+spotifyStreams:Number(spotify),
+appleStreams:Number(apple),
+youtubeStreams:Number(youtube)
+
 });
 
-alert("Analytics Updated");
+alert("Streams updated");
 
 }
-
-document.getElementById("search").addEventListener("input",function(){
-
-const value=this.value.toLowerCase();
-
-const filtered = artists.filter(a=>
-(a.artistName || "").toLowerCase().includes(value) ||
-(a.email || "").toLowerCase().includes(value)
-);
-
-renderArtists(filtered);
-
-});
-
-loadArtists();
 
 </script>
 
