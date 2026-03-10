@@ -191,6 +191,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+
 onAuthStateChanged(auth, async (user)=>{
 
 if(!user){
@@ -200,31 +201,27 @@ return;
 
 const uid = user.uid;
 
-const submissionsQuery = query(
-collection(db,"submissions"),
-where("userId","==",uid)
-);
+
 /* =========================
    GET ARTIST SUBMISSIONS
 ========================= */
 
 const submissionsQuery = query(
 collection(db,"submissions"),
-where("email","==",userEmail)
+where("userId","==",uid)
 );
 
 const submissionsSnap = await getDocs(submissionsQuery);
 
 
-/* total releases */
+/* TOTAL RELEASES */
 
 document.getElementById("totalReleases").textContent = submissionsSnap.size;
 
-/* =========================
-   ANALYTICS DATA (USING UID)
-========================= */
 
-const uid = user.uid;
+/* =========================
+   ANALYTICS DATA
+========================= */
 
 let totalStreams = 0;
 let spotifyStreams = 0;
@@ -232,7 +229,6 @@ let appleStreams = 0;
 let youtubeStreams = 0;
 
 const analyticsRef = doc(db,"analytics",uid);
-
 const analyticsSnap = await getDoc(analyticsRef);
 
 if(analyticsSnap.exists()){
@@ -252,20 +248,11 @@ document.getElementById("appleStreams").textContent = appleStreams;
 document.getElementById("youtubeStreams").textContent = youtubeStreams;
 
 
-document.getElementById("totalStreams").textContent = totalStreams;
-document.getElementById("spotifyStreams").textContent = spotifyStreams;
-document.getElementById("appleStreams").textContent = appleStreams;
-document.getElementById("youtubeStreams").textContent = youtubeStreams;
-
-
-
-
 /* =========================
    TOP RELEASES LIST
 ========================= */
 
 const container = document.getElementById("topReleases");
-
 container.innerHTML = "";
 
 submissionsSnap.forEach(docSnap=>{
@@ -311,6 +298,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
