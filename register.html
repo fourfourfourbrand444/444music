@@ -123,8 +123,20 @@ Already have an account?
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { 
+getAuth, 
+createUserWithEmailAndPassword,
+sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { 
+getFirestore, 
+doc, 
+setDoc, 
+serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -135,9 +147,11 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 
 const form = document.getElementById("registerForm");
 const password = document.getElementById("password");
@@ -149,7 +163,9 @@ document.getElementById("bar3"),
 document.getElementById("bar4")
 ];
 
+
 password.addEventListener("input", () => {
+
 let val = password.value.length;
 
 bars.forEach(b => b.classList.remove("active"));
@@ -158,10 +174,12 @@ if(val > 4) bars[0].classList.add("active");
 if(val > 6) bars[1].classList.add("active");
 if(val > 8) bars[2].classList.add("active");
 if(val > 10) bars[3].classList.add("active");
+
 });
 
 
 form.addEventListener("submit", async(e)=>{
+
 e.preventDefault();
 
 const name = document.getElementById("name").value;
@@ -184,6 +202,15 @@ try{
 
 const userCred = await createUserWithEmailAndPassword(auth,email,pass);
 const user = userCred.user;
+
+
+/* SEND EMAIL VERIFICATION */
+
+await sendEmailVerification(user);
+
+alert("Account created successfully! A verification email has been sent to your inbox. Please verify your email before logging in.");
+
+
 
 /* USER PROFILE */
 
@@ -222,7 +249,9 @@ createdAt: serverTimestamp()
 window.location.href="s.html";
 
 }catch(err){
+
 alert(err.message);
+
 }
 
 });
@@ -231,3 +260,4 @@ alert(err.message);
 
 </body>
 </html>
+
