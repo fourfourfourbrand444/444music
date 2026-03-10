@@ -59,11 +59,11 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup,
-  sendEmailVerification,
-  signOut
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -74,74 +74,53 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
+
+/* INITIALIZE FIREBASE */
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+
+/* ELEMENTS */
 
 const loginForm = document.getElementById("loginForm");
 const errorMsg = document.getElementById("errorMsg");
 const forgotPass = document.getElementById("forgotPass");
 const googleBtn = document.getElementById("googleLoginBtn");
-const resendBtn = document.getElementById("resendVerification");
-const resendBox = document.getElementById("resendBox");
 
 
 /* EMAIL LOGIN */
 
 loginForm.addEventListener("submit", async (e) => {
 
-e.preventDefault();
-errorMsg.textContent="";
+  e.preventDefault();
+  errorMsg.textContent = "";
 
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-try{
+  if (!email || !password) {
 
-const userCred=await signInWithEmailAndPassword(auth,email,password);
-const user=userCred.user;
+    errorMsg.style.color = "#ffb347";
+    errorMsg.textContent = "Please enter your email and password.";
+    return;
 
-if(!user.emailVerified){
+  }
 
-await sendEmailVerification(user);
+  try {
 
-resendBox.style.display="block";
+    await signInWithEmailAndPassword(auth, email, password);
 
-await signOut(auth);
+    window.location.href = "aa.html";
 
-errorMsg.style.color="#ffb347";
-errorMsg.textContent="Email not verified. A new verification link has been sent.";
+  } catch (error) {
 
-return;
-}
+    console.error(error);
 
-window.location.href="aa.html";
+    errorMsg.style.color = "#ff6b6b";
+    errorMsg.textContent = "Invalid email or password.";
 
-}catch(error){
-
-errorMsg.style.color="#ff6b6b";
-errorMsg.textContent="Invalid email or password.";
-
-}
-
-});
-
-
-/* RESEND EMAIL */
-
-resendBtn.addEventListener("click", async(e)=>{
-
-e.preventDefault();
-
-const user=auth.currentUser;
-
-if(user){
-
-await sendEmailVerification(user);
-
-errorMsg.style.color="#1DB954";
-errorMsg.textContent="Verification email sent again.";
-
-}
+  }
 
 });
 
@@ -150,59 +129,69 @@ errorMsg.textContent="Verification email sent again.";
 
 forgotPass.addEventListener("click", async (e) => {
 
-e.preventDefault();
+  e.preventDefault();
 
-const email=document.getElementById("email").value.trim();
+  const email = document.getElementById("email").value.trim();
 
-if(!email){
-errorMsg.style.color="#ffb347";
-errorMsg.textContent="Enter your email first.";
-return;
-}
+  if (!email) {
 
-try{
+    errorMsg.style.color = "#ffb347";
+    errorMsg.textContent = "Enter your email first to reset password.";
+    return;
 
-await sendPasswordResetEmail(auth,email);
+  }
 
-errorMsg.style.color="#1DB954";
-errorMsg.textContent="Reset link sent. Check your email.";
+  try {
 
-}catch(error){
+    await sendPasswordResetEmail(auth, email);
 
-errorMsg.style.color="#ff6b6b";
-errorMsg.textContent=error.message;
+    errorMsg.style.color = "#1DB954";
+    errorMsg.textContent =
+      "Reset link sent! Check your email inbox or Spam/Junk folder.";
 
-}
+  } catch (error) {
+
+    console.error(error);
+
+    errorMsg.style.color = "#ff6b6b";
+    errorMsg.textContent = error.message;
+
+  }
 
 });
 
 
 /* GOOGLE LOGIN */
 
-const provider=new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
 
-googleBtn.addEventListener("click",async()=>{
+googleBtn.addEventListener("click", async () => {
 
-try{
+  try {
 
-await signInWithPopup(auth,provider);
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-window.location.href="aa.html";
+    console.log("Google user:", user);
 
-}catch(error){
+    window.location.href = "aa.html";
 
-errorMsg.style.color="#ff6b6b";
-errorMsg.textContent="Google login failed.";
+  } catch (error) {
 
-}
+    console.error(error);
+
+    errorMsg.style.color = "#ff6b6b";
+    errorMsg.textContent = "Google login failed.";
+
+  }
 
 });
 
 </script>
 
-
 </body>
 </html>
+
 
 
 
