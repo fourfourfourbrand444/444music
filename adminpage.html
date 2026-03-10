@@ -5,12 +5,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>444Music Admin Analytics</title>
+<title>444Music Analytics Manager</title>
 
 <style>
 
 body{
-font-family:Arial;
+font-family:Arial, sans-serif;
 background:#f4f6fb;
 margin:0;
 padding:30px;
@@ -29,9 +29,9 @@ margin-bottom:20px;
 width:100%;
 padding:12px;
 font-size:16px;
-border-radius:6px;
+border-radius:8px;
 border:1px solid #ccc;
-margin-bottom:20px;
+margin-bottom:25px;
 }
 
 .card{
@@ -39,17 +39,22 @@ background:white;
 padding:20px;
 border-radius:10px;
 margin-bottom:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.05);
+box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 
 .artist{
+font-size:18px;
 font-weight:bold;
+}
+
+.email{
+color:#777;
 margin-bottom:10px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
 gap:10px;
 margin-top:10px;
 }
@@ -63,7 +68,7 @@ border:1px solid #ccc;
 
 button{
 margin-top:15px;
-padding:10px 15px;
+padding:10px 16px;
 background:#ff2e63;
 border:none;
 color:white;
@@ -93,12 +98,11 @@ padding:15px;
 
 <h1>Analytics Manager</h1>
 
-<input type="text" id="search" class="search" placeholder="Search by email...">
+<input id="search" class="search" placeholder="Search artist email (min 3 letters)">
 
 <div id="results"></div>
 
 </div>
-
 
 
 <script type="module">
@@ -114,6 +118,8 @@ updateDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 
+/* FIREBASE CONFIG */
+
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
 authDomain: "usersubmissionsportal.firebaseapp.com",
@@ -127,10 +133,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
+/* GLOBAL DATA */
+
 let analyticsData = [];
 
 
-/* LOAD ALL ANALYTICS */
+/* LOAD ANALYTICS */
 
 async function loadAnalytics(){
 
@@ -147,37 +155,39 @@ id: docSnap.id,
 
 });
 
+console.log("Analytics Loaded:",analyticsData);
+
 }
 
-loadAnalytics();
+await loadAnalytics();
 
 
 /* SEARCH */
 
-const search = document.getElementById("search");
+const searchInput = document.getElementById("search");
 const results = document.getElementById("results");
 
-search.addEventListener("input",()=>{
+searchInput.addEventListener("input",()=>{
 
-const value = search.value.toLowerCase();
+const value = searchInput.value.toLowerCase();
 
 results.innerHTML="";
 
 if(value.length < 3) return;
 
 const filtered = analyticsData.filter(a =>
-a.email.toLowerCase().includes(value)
+a.email && a.email.toLowerCase().includes(value)
 );
 
 filtered.forEach(a=>{
 
-const div = document.createElement("div");
-div.className="card";
+const card = document.createElement("div");
+card.className="card";
 
-div.innerHTML = `
+card.innerHTML = `
 
-<div class="artist">${a.name}</div>
-<div>${a.email}</div>
+<div class="artist">${a.name || "Artist"}</div>
+<div class="email">${a.email}</div>
 
 <div class="grid">
 
@@ -203,11 +213,11 @@ div.innerHTML = `
 
 </div>
 
-<button onclick="save('${a.id}')">Save</button>
+<button onclick="saveAnalytics('${a.id}')">Save</button>
 
 `;
 
-results.appendChild(div);
+results.appendChild(card);
 
 });
 
@@ -216,12 +226,14 @@ results.appendChild(div);
 
 /* SAVE FUNCTION */
 
-window.save = async function(id){
+window.saveAnalytics = async function(id){
 
 const total = document.getElementById(`total-${id}`).value;
 const spotify = document.getElementById(`spotify-${id}`).value;
 const apple = document.getElementById(`apple-${id}`).value;
 const youtube = document.getElementById(`youtube-${id}`).value;
+
+try{
 
 await updateDoc(doc(db,"analytics",id),{
 
@@ -232,7 +244,15 @@ youtubeStreams:Number(youtube)
 
 });
 
-alert("Streams updated");
+alert("Streams updated successfully");
+
+}catch(err){
+
+alert("Error updating streams");
+
+console.error(err);
+
+}
 
 }
 
