@@ -54,7 +54,8 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signOut
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 
@@ -104,7 +105,22 @@ loginForm.addEventListener("submit", async (e) => {
 
   try {
 
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+
+    /* BLOCK UNVERIFIED USERS */
+
+    if (!user.emailVerified) {
+
+      await signOut(auth);
+
+      errorMsg.style.color = "#ffb347";
+      errorMsg.textContent =
+        "Please verify your email before logging in. Check your inbox.";
+
+      return;
+
+    }
 
     window.location.href = "aa.html";
 
@@ -169,6 +185,8 @@ googleBtn.addEventListener("click", async () => {
 
     console.log("Google user:", user);
 
+    /* GOOGLE USERS ARE ALREADY VERIFIED */
+
     window.location.href = "aa.html";
 
   } catch (error) {
@@ -187,6 +205,7 @@ googleBtn.addEventListener("click", async () => {
 
 </body>
 </html>
+
 
 
 
