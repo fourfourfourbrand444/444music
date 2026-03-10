@@ -230,30 +230,33 @@ console.log("Analytics already exists — no overwrite");
 
 const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
+const closeMenu = document.getElementById("closeMenu");
 
 navToggle.addEventListener("click", () => {
+navMenu.classList.add("active");
+});
 
-navMenu.style.display =
-navMenu.style.display === "flex" ? "none" : "flex";
-
+closeMenu.addEventListener("click", () => {
+navMenu.classList.remove("active");
 });
 
 document.addEventListener("click", (e) => {
 
-if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
-
-navMenu.style.display = "none";
-
+if(
+!navMenu.contains(e.target) &&
+!navToggle.contains(e.target)
+){
+navMenu.classList.remove("active");
 }
 
 });
 
-</script>
 
 
 
 </body>
 </html>
+
 
 
 
