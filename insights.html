@@ -198,9 +198,12 @@ location.href="login.html";
 return;
 }
 
-const userEmail = user.email;
+const uid = user.uid;
 
-
+const submissionsQuery = query(
+collection(db,"submissions"),
+where("userId","==",uid)
+);
 /* =========================
    GET ARTIST SUBMISSIONS
 ========================= */
@@ -308,6 +311,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
