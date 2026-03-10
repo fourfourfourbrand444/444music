@@ -223,29 +223,25 @@ document.getElementById("totalReleases").textContent = submissionsSnap.size;
    ANALYTICS DATA
 ========================= */
 
-let totalStreams = 0;
-let spotifyStreams = 0;
-let appleStreams = 0;
-let youtubeStreams = 0;
-
 const analyticsRef = doc(db,"analytics",uid);
+
 const analyticsSnap = await getDoc(analyticsRef);
 
-if(analyticsSnap.exists()){
+if(!analyticsSnap.exists()){
 
-const data = analyticsSnap.data();
+console.log("No analytics document found");
 
-totalStreams = data.totalStreams || 0;
-spotifyStreams = data.spotifyStreams || 0;
-appleStreams = data.appleStreams || 0;
-youtubeStreams = data.youtubeStreams || 0;
+return;
 
 }
 
-document.getElementById("totalStreams").textContent = totalStreams;
-document.getElementById("spotifyStreams").textContent = spotifyStreams;
-document.getElementById("appleStreams").textContent = appleStreams;
-document.getElementById("youtubeStreams").textContent = youtubeStreams;
+const data = analyticsSnap.data();
+
+document.getElementById("totalStreams").textContent = data.totalStreams ?? 0;
+document.getElementById("spotifyStreams").textContent = data.spotifyStreams ?? 0;
+document.getElementById("appleStreams").textContent = data.appleStreams ?? 0;
+document.getElementById("youtubeStreams").textContent = data.youtubeStreams ?? 0;
+
 
 
 /* =========================
@@ -298,6 +294,7 @@ tension:.4
 
 </body>
 </html>
+
 
 
 
