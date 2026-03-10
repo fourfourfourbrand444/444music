@@ -86,7 +86,85 @@
   © 2026 444Music Distribution — All Rights Reserved
 </footer>
 
-<script>
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+
+import { 
+getAuth, 
+onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+import { 
+getFirestore,
+doc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+/* =========================
+   USER LOGIN CHECK
+========================= */
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+
+location.href="login.html";
+return;
+
+}
+
+const uid = user.uid;
+const email = user.email;
+
+
+/* =========================
+   CREATE / UPDATE ANALYTICS
+========================= */
+
+await setDoc(doc(db,"analytics",uid),{
+
+name: user.displayName || "Artist",
+email: email,
+
+totalStreams: 0,
+spotifyStreams: 0,
+appleStreams: 0,
+youtubeStreams: 0
+
+},{ merge:true });
+
+});
+
+
+/* =========================
+   NAVIGATION MENU SCRIPT
+========================= */
+
 const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 
@@ -100,10 +178,13 @@ document.addEventListener("click", (e) => {
     navMenu.style.display = "none";
   }
 });
+
 </script>
+
 
 </body>
 </html>
+
 
 
 
