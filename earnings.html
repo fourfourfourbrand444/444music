@@ -37,9 +37,10 @@
       </div>
 
       <div class="actions">
-        <a class="btn btn-primary" href="https://444music-distribution.vercel.app/withdrawal.html" target="_blank">
-          Withdraw Earnings
-        </a>
+       <a class="btn btn-primary" href="withdrawal.html" id="withdrawBtn">
+      Withdraw Earnings
+      </a>
+
         <a class="btn btn-secondary" href="#">
           Transaction History
         </a>
@@ -108,6 +109,28 @@
     </div>
 
   </div>
+
+  <!-- WITHDRAW WARNING POPUP -->
+<div id="withdrawPopup" class="popup-overlay">
+  <div class="popup-box">
+    <h2>Minimum Withdrawal Not Reached</h2>
+    <p>
+      Your current balance is below the minimum withdrawal threshold.
+      To request a payout, your earnings must reach at least
+      <strong>$20.00</strong>.
+    </p>
+
+    <p class="popup-note">
+      Continue promoting your music to increase streams and downloads.
+      Your balance will update automatically as new earnings are reported.
+    </p>
+
+    <button id="closePopup" class="popup-btn">Okay, Got It</button>
+  </div>
+</div>
+
+
+  
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -184,9 +207,39 @@ currencySelect.addEventListener("change", () => {
     updateBalance(earnings);
   });
 });
+
+
+
+const withdrawBtn = document.getElementById("withdrawBtn");
+const popup = document.getElementById("withdrawPopup");
+const closePopup = document.getElementById("closePopup");
+
+let userBalance = 0;
+
+function updateBalance(amount){
+  userBalance = amount;
+  balanceEl.textContent = `$ ${amount.toFixed(2)}`;
+}
+
+withdrawBtn.addEventListener("click", function(e){
+
+  if(userBalance < 20){
+
+    e.preventDefault(); // stop redirect
+    popup.classList.add("active");
+
+  }
+
+});
+
+closePopup.addEventListener("click", () => {
+  popup.classList.remove("active");
+});
+
 </script>
 </body>
 </html>
+
 
 
 
