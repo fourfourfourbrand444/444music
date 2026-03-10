@@ -103,7 +103,8 @@ onAuthStateChanged
 import { 
 getFirestore,
 doc,
-setDoc
+setDoc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 
@@ -144,10 +145,16 @@ const email = user.email;
 
 
 /* =========================
-   CREATE / UPDATE ANALYTICS
+   CREATE ANALYTICS ONLY IF NOT EXISTS
 ========================= */
 
-await setDoc(doc(db,"analytics",uid),{
+const analyticsRef = doc(db,"analytics",uid);
+
+const analyticsSnap = await getDoc(analyticsRef);
+
+if(!analyticsSnap.exists()){
+
+await setDoc(analyticsRef,{
 
 name: user.displayName || "Artist",
 email: email,
@@ -157,7 +164,15 @@ spotifyStreams: 0,
 appleStreams: 0,
 youtubeStreams: 0
 
-},{ merge:true });
+});
+
+console.log("Analytics document created");
+
+}else{
+
+console.log("Analytics already exists — no overwrite");
+
+}
 
 });
 
@@ -170,21 +185,29 @@ const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 
 navToggle.addEventListener("click", () => {
-  navMenu.style.display =
-    navMenu.style.display === "flex" ? "none" : "flex";
+
+navMenu.style.display =
+navMenu.style.display === "flex" ? "none" : "flex";
+
 });
 
 document.addEventListener("click", (e) => {
-  if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
-    navMenu.style.display = "none";
-  }
+
+if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+
+navMenu.style.display = "none";
+
+}
+
 });
 
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
