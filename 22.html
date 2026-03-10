@@ -6,8 +6,9 @@
 
 <body>
 
-<h2>444Music Analytics Generator</h2>
-<button id="generate">Generate Analytics Collection</button>
+<h2>Generate Analytics for All Artists</h2>
+
+<button id="generate">Create Analytics</button>
 
 <p id="status"></p>
 
@@ -15,27 +16,24 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 
-import { 
+import {
 getFirestore,
 collection,
 getDocs,
 doc,
-getDoc,
-setDoc
+setDoc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 
 const firebaseConfig = {
-
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
 authDomain: "usersubmissionsportal.firebaseapp.com",
 projectId: "usersubmissionsportal",
 storageBucket: "usersubmissionsportal.firebasestorage.app",
 messagingSenderId: "734783502459",
 appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-
 };
-
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -45,26 +43,35 @@ document.getElementById("generate").onclick = async ()=>{
 
 const status = document.getElementById("status");
 
-status.innerText="Scanning submissions...";
+status.innerText = "Scanning submissions...";
 
-const submissions = await getDocs(collection(db,"submissions"));
+const submissionsSnap = await getDocs(collection(db,"submissions"));
 
 let created = 0;
 
-for(const submission of submissions.docs){
+for(const docSnap of submissionsSnap.docs){
 
-const analyticsRef = doc(db,"analytics",submission.id);
+const data = docSnap.data();
 
-const existing = await getDoc(analyticsRef);
+const uid = data.userId;
 
-if(!existing.exists()){
+if(!uid) continue;
+
+const analyticsRef = doc(db,"analytics",uid);
+
+const analyticsCheck = await getDoc(analyticsRef);
+
+if(!analyticsCheck.exists()){
 
 await setDoc(analyticsRef,{
 
-totalStreams:0,
-spotifyStreams:0,
-appleStreams:0,
-youtubeStreams:0
+name: data.artistName || "Artist",
+email: data.email || "",
+
+totalStreams: 0,
+spotifyStreams: 0,
+appleStreams: 0,
+youtubeStreams: 0
 
 });
 
@@ -74,7 +81,7 @@ created++;
 
 }
 
-status.innerText = "Finished. "+created+" analytics documents created.";
+status.innerText = "Done! "+created+" analytics documents created.";
 
 }
 
