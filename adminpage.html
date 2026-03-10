@@ -80,14 +80,6 @@ button:hover{
 opacity:.9;
 }
 
-@media(max-width:600px){
-
-body{
-padding:15px;
-}
-
-}
-
 </style>
 
 </head>
@@ -98,7 +90,7 @@ padding:15px;
 
 <h1>Analytics Manager</h1>
 
-<input id="search" class="search" placeholder="Search artist email (min 3 letters)">
+<input id="search" class="search" placeholder="Search artist email...">
 
 <div id="results"></div>
 
@@ -118,8 +110,6 @@ updateDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 
-/* FIREBASE CONFIG */
-
 const firebaseConfig = {
 apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
 authDomain: "usersubmissionsportal.firebaseapp.com",
@@ -133,12 +123,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-/* GLOBAL DATA */
-
 let analyticsData = [];
 
 
-/* LOAD ANALYTICS */
+/* LOAD DATA */
 
 async function loadAnalytics(){
 
@@ -155,31 +143,23 @@ id: docSnap.id,
 
 });
 
-console.log("Analytics Loaded:",analyticsData);
+renderResults(analyticsData);
 
 }
 
-await loadAnalytics();
+loadAnalytics();
 
 
-/* SEARCH */
 
-const searchInput = document.getElementById("search");
+/* RENDER FUNCTION */
+
+function renderResults(data){
+
 const results = document.getElementById("results");
-
-searchInput.addEventListener("input",()=>{
-
-const value = searchInput.value.toLowerCase();
 
 results.innerHTML="";
 
-if(value.length < 3) return;
-
-const filtered = analyticsData.filter(a =>
-a.email && a.email.toLowerCase().includes(value)
-);
-
-filtered.forEach(a=>{
+data.forEach(a=>{
 
 const card = document.createElement("div");
 card.className="card";
@@ -187,7 +167,7 @@ card.className="card";
 card.innerHTML = `
 
 <div class="artist">${a.name || "Artist"}</div>
-<div class="email">${a.email}</div>
+<div class="email">${a.email || ""}</div>
 
 <div class="grid">
 
@@ -202,7 +182,7 @@ card.innerHTML = `
 </div>
 
 <div>
-<label>Apple Music</label>
+<label>Apple</label>
 <input id="apple-${a.id}" value="${a.appleStreams || 0}">
 </div>
 
@@ -221,10 +201,27 @@ results.appendChild(card);
 
 });
 
+}
+
+
+
+/* SEARCH FILTER */
+
+document.getElementById("search").addEventListener("input",e=>{
+
+const value = e.target.value.toLowerCase();
+
+const filtered = analyticsData.filter(a =>
+(a.email || "").toLowerCase().includes(value)
+);
+
+renderResults(filtered);
+
 });
 
 
-/* SAVE FUNCTION */
+
+/* SAVE */
 
 window.saveAnalytics = async function(id){
 
@@ -232,8 +229,6 @@ const total = document.getElementById(`total-${id}`).value;
 const spotify = document.getElementById(`spotify-${id}`).value;
 const apple = document.getElementById(`apple-${id}`).value;
 const youtube = document.getElementById(`youtube-${id}`).value;
-
-try{
 
 await updateDoc(doc(db,"analytics",id),{
 
@@ -244,15 +239,7 @@ youtubeStreams:Number(youtube)
 
 });
 
-alert("Streams updated successfully");
-
-}catch(err){
-
-alert("Error updating streams");
-
-console.error(err);
-
-}
+alert("Streams updated");
 
 }
 
