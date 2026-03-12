@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Processing Submission • 444Music</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Processing Release • 444Music</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
@@ -13,183 +16,194 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+font-family: "Inter", sans-serif;
 }
 
 body{
-font-family:'Inter',sans-serif;
-background:#0b0b0b;
-color:white;
+
 height:100vh;
+
+background:
+linear-gradient(135deg,#2a0845,#6441a5);
+
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
+
+color:white;
+
 }
 
-/* Card */
+/* Glass Container */
 
-.card{
-width:420px;
-max-width:90%;
-background:#121212;
-border-radius:16px;
-padding:40px 35px;
+.glass{
+
+width:92%;
+max-width:420px;
+
+padding:40px 30px;
+
+border-radius:25px;
+
+background:rgba(255,255,255,0.08);
+
+backdrop-filter: blur(25px);
+
+border:1px solid rgba(255,255,255,0.15);
+
+box-shadow:0 10px 50px rgba(0,0,0,0.6);
+
 text-align:center;
-border:1px solid rgba(255,255,255,0.05);
-box-shadow:0 20px 60px rgba(0,0,0,0.7);
+
 }
 
-/* Logo */
+/* Icon */
 
-.logo{
-font-size:22px;
-font-weight:600;
-margin-bottom:18px;
-color:#00ffc3;
+.top-icon{
+
+font-size:50px;
+
+color:#a66cff;
+
+margin-bottom:20px;
+
 }
 
 /* Title */
 
-h2{
-font-size:20px;
-margin-bottom:8px;
+h1{
+
+font-size:26px;
+
+margin-bottom:10px;
+
 }
+
+/* Description */
 
 p{
+
+color:#d1cfe5;
+
 font-size:14px;
-color:#aaa;
+
+line-height:1.5;
+
 margin-bottom:30px;
+
 }
 
-/* Loader */
+/* Loading spinner */
 
-.loader{
-width:55px;
-height:55px;
-border-radius:50%;
-border:4px solid rgba(255,255,255,0.08);
-border-top:4px solid #00ffc3;
+.spinner{
+
+width:60px;
+height:60px;
+
 margin:auto;
+
+border-radius:50%;
+
+border:4px solid rgba(255,255,255,0.2);
+
+border-top:4px solid #a66cff;
+
 animation:spin 1s linear infinite;
+
+margin-bottom:25px;
+
 }
 
 @keyframes spin{
-to{transform:rotate(360deg);}
+
+to{
+transform:rotate(360deg);
 }
 
-/* Progress */
-
-.progress{
-margin-top:30px;
-height:6px;
-background:#1c1c1c;
-border-radius:20px;
-overflow:hidden;
 }
 
-.bar{
-height:100%;
-width:70%;
-background:linear-gradient(90deg,#00ffc3,#00aaff);
-animation:move 2s infinite;
+/* Steps */
+
+.steps{
+
+text-align:left;
+
 }
 
-@keyframes move{
-0%{transform:translateX(-100%)}
-100%{transform:translateX(300%)}
+.step{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+padding:14px;
+
+border-radius:12px;
+
+margin-bottom:12px;
+
+background:rgba(255,255,255,0.05);
+
+border:1px solid rgba(255,255,255,0.08);
+
+font-size:14px;
+
 }
 
-.status{
-margin-top:15px;
-font-size:13px;
-color:#888;
+.step i{
+
+color:#a66cff;
+
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="card">
+<div class="glass">
 
-<div class="logo">444Music</div>
-
-<h2>Saving your submission</h2>
-
-<p>Please wait while we process your release</p>
-
-<div class="loader"></div>
-
-<div class="progress">
-<div class="bar"></div>
+<div class="top-icon">
+<i class="fa-solid fa-cloud-arrow-up"></i>
 </div>
 
-<div class="status">
-Uploading release information...
+<h1>Saving Your Release</h1>
+
+<p>
+Please wait while we securely process your submission
+and prepare it for distribution.
+</p>
+
+<div class="spinner"></div>
+
+<div class="steps">
+
+<div class="step">
+<i class="fa-solid fa-upload"></i>
+Uploading release files
+</div>
+
+<div class="step">
+<i class="fa-solid fa-check-circle"></i>
+Checking metadata
+</div>
+
+<div class="step">
+<i class="fa-solid fa-globe"></i>
+Preparing distribution
+</div>
+
+<div class="step">
+<i class="fa-solid fa-rocket"></i>
+Finalizing submission
 </div>
 
 </div>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-authDomain: "usersubmissionsportal.firebaseapp.com",
-projectId: "usersubmissionsportal",
-storageBucket: "usersubmissionsportal.firebasestorage.app",
-messagingSenderId: "734783502459",
-appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
-measurementId: "G-WCRN117P8P"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const submission = {
-title: "Test Release"
-};
-
-let waited = false;
-
-onAuthStateChanged(auth, async (user) => {
-
-if (!user) {
-
-if (!waited) {
-waited = true;
-return;
-}
-
-window.location.href = "login.html";
-return;
-
-}
-
-try {
-
-await addDoc(collection(db, "sharp"), {
-...submission,
-userId: user.uid,
-status: "Pending",
-createdAt: Date.now()
-});
-
-window.location.href = "a.html";
-
-} catch (err) {
-
-console.error(err);
-alert("Failed to save submission.");
-
-}
-
-});
-
-</script>
+</div>
 
 </body>
 </html>
