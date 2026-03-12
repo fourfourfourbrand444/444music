@@ -27,27 +27,62 @@ background:#f2f2f2;
 
 }
 
-/* Loader circle */
+/* spinner */
 
 .loader{
 
 width:70px;
 height:70px;
 
-border-radius:50%;
-
-border:6px solid #dcdcdc;
-
-border-bottom:6px solid #3f3cff;
-
-animation:spin 1s linear infinite;
+animation:rotate 2s linear infinite;
 
 }
 
-@keyframes spin{
+.loader circle{
 
-to{
+fill:none;
+
+stroke:#3f51ff;
+
+stroke-width:6;
+
+stroke-linecap:round;
+
+stroke-dasharray:1,200;
+
+stroke-dashoffset:0;
+
+animation:dash 1.5s ease-in-out infinite;
+
+}
+
+/* rotation */
+
+@keyframes rotate{
+
+100%{
 transform:rotate(360deg);
+}
+
+}
+
+/* arc animation */
+
+@keyframes dash{
+
+0%{
+stroke-dasharray:1,200;
+stroke-dashoffset:0;
+}
+
+50%{
+stroke-dasharray:90,200;
+stroke-dashoffset:-35;
+}
+
+100%{
+stroke-dasharray:90,200;
+stroke-dashoffset:-124;
 }
 
 }
@@ -58,9 +93,13 @@ transform:rotate(360deg);
 
 <body>
 
-<div class="loader"></div>
+<svg class="loader" viewBox="25 25 50 50">
+<circle cx="50" cy="50" r="20"></circle>
+</svg>
 
 <script>
+
+/* redirect after loading */
 
 setTimeout(()=>{
 
@@ -72,4 +111,3 @@ window.location.href="aa.html"
 
 </body>
 </html>
-
