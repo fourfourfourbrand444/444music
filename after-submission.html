@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Processing Release • 444Music</title>
+<title>Saving Release • 444Music</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -16,25 +16,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family: "Inter", sans-serif;
+font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
 
 height:100vh;
 
-background:
-linear-gradient(135deg,#2a0845,#6441a5);
+background:linear-gradient(135deg,#3a0d5d,#5f2c82);
 
 display:flex;
-justify-content:center;
 align-items:center;
+justify-content:center;
 
 color:white;
 
 }
 
-/* Glass Container */
+/* Glass container */
 
 .glass{
 
@@ -47,11 +46,11 @@ border-radius:25px;
 
 background:rgba(255,255,255,0.08);
 
-backdrop-filter: blur(25px);
+backdrop-filter:blur(20px);
 
 border:1px solid rgba(255,255,255,0.15);
 
-box-shadow:0 10px 50px rgba(0,0,0,0.6);
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
 
 text-align:center;
 
@@ -63,13 +62,13 @@ text-align:center;
 
 font-size:50px;
 
-color:#a66cff;
+color:#c084ff;
 
 margin-bottom:20px;
 
 }
 
-/* Title */
+/* Text */
 
 h1{
 
@@ -79,56 +78,43 @@ margin-bottom:10px;
 
 }
 
-/* Description */
-
 p{
 
-color:#d1cfe5;
+color:#ddd;
 
 font-size:14px;
-
-line-height:1.5;
 
 margin-bottom:30px;
 
 }
 
-/* Loading spinner */
+/* Spinner */
 
 .spinner{
 
 width:60px;
 height:60px;
 
-margin:auto;
-
 border-radius:50%;
 
 border:4px solid rgba(255,255,255,0.2);
 
-border-top:4px solid #a66cff;
+border-top:4px solid #c084ff;
 
 animation:spin 1s linear infinite;
 
+margin:auto;
 margin-bottom:25px;
 
 }
 
 @keyframes spin{
 
-to{
-transform:rotate(360deg);
-}
+to{transform:rotate(360deg);}
 
 }
 
 /* Steps */
-
-.steps{
-
-text-align:left;
-
-}
 
 .step{
 
@@ -144,17 +130,27 @@ border-radius:12px;
 
 margin-bottom:12px;
 
-background:rgba(255,255,255,0.05);
+background:rgba(255,255,255,0.06);
 
-border:1px solid rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.1);
 
 font-size:14px;
+
+opacity:.6;
+
+}
+
+.step.active{
+
+opacity:1;
+
+background:rgba(192,132,255,0.15);
 
 }
 
 .step i{
 
-color:#a66cff;
+color:#c084ff;
 
 }
 
@@ -172,38 +168,117 @@ color:#a66cff;
 
 <h1>Saving Your Release</h1>
 
-<p>
-Please wait while we securely process your submission
-and prepare it for distribution.
-</p>
+<p>Please wait while we process your submission.</p>
 
 <div class="spinner"></div>
 
-<div class="steps">
-
-<div class="step">
+<div class="step active" id="s1">
 <i class="fa-solid fa-upload"></i>
 Uploading release files
 </div>
 
-<div class="step">
-<i class="fa-solid fa-check-circle"></i>
+<div class="step" id="s2">
+<i class="fa-solid fa-check"></i>
 Checking metadata
 </div>
 
-<div class="step">
+<div class="step" id="s3">
 <i class="fa-solid fa-globe"></i>
 Preparing distribution
 </div>
 
-<div class="step">
+<div class="step" id="s4">
 <i class="fa-solid fa-rocket"></i>
 Finalizing submission
 </div>
 
 </div>
 
-</div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function step(id){
+
+document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+
+document.getElementById(id).classList.add("active");
+
+}
+
+const submission = {
+title:"Test Release"
+};
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+window.location.href="login.html";
+return;
+
+}
+
+try{
+
+step("s1");
+
+await new Promise(r=>setTimeout(r,1000));
+
+step("s2");
+
+await new Promise(r=>setTimeout(r,1000));
+
+step("s3");
+
+await new Promise(r=>setTimeout(r,1000));
+
+await addDoc(collection(db,"sharp"),{
+
+...submission,
+
+userId:user.uid,
+
+status:"Pending",
+
+createdAt:Date.now()
+
+});
+
+step("s4");
+
+setTimeout(()=>{
+
+window.location.href="a.html";
+
+},1200);
+
+}catch(err){
+
+console.error(err);
+
+alert("Submission failed");
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
