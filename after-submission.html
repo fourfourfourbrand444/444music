@@ -3,74 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saving Submission...</title>
-<link rel="stylesheet" href="aftter-submittion.css">
+<title>Processing Submission • 444Music</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:#0b0b0b;
+color:white;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* Card */
+
+.card{
+width:420px;
+max-width:90%;
+background:#121212;
+border-radius:16px;
+padding:40px 35px;
+text-align:center;
+border:1px solid rgba(255,255,255,0.05);
+box-shadow:0 20px 60px rgba(0,0,0,0.7);
+}
+
+/* Logo */
+
+.logo{
+font-size:22px;
+font-weight:600;
+margin-bottom:18px;
+color:#00ffc3;
+}
+
+/* Title */
+
+h2{
+font-size:20px;
+margin-bottom:8px;
+}
+
+p{
+font-size:14px;
+color:#aaa;
+margin-bottom:30px;
+}
+
+/* Loader */
+
+.loader{
+width:55px;
+height:55px;
+border-radius:50%;
+border:4px solid rgba(255,255,255,0.08);
+border-top:4px solid #00ffc3;
+margin:auto;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+/* Progress */
+
+.progress{
+margin-top:30px;
+height:6px;
+background:#1c1c1c;
+border-radius:20px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:70%;
+background:linear-gradient(90deg,#00ffc3,#00aaff);
+animation:move 2s infinite;
+}
+
+@keyframes move{
+0%{transform:translateX(-100%)}
+100%{transform:translateX(300%)}
+}
+
+.status{
+margin-top:15px;
+font-size:13px;
+color:#888;
+}
 
 </style>
 </head>
+
 <body>
-<div class="box">
-  <h2>Saving your submission…</h2>
-  <p>Please wait</p>
-  <div class="loader"></div>
+
+<div class="card">
+
+<div class="logo">444Music</div>
+
+<h2>Saving your submission</h2>
+
+<p>Please wait while we process your release</p>
+
+<div class="loader"></div>
+
+<div class="progress">
+<div class="bar"></div>
 </div>
+
+<div class="status">
+Uploading release information...
+</div>
+
+</div>
+
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
-  measurementId: "G-WCRN117P8P"
+const firebaseConfig = {
+apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+authDomain: "usersubmissionsportal.firebaseapp.com",
+projectId: "usersubmissionsportal",
+storageBucket: "usersubmissionsportal.firebasestorage.app",
+messagingSenderId: "734783502459",
+appId: "1:734783502459:web:cfa2cc5de6976003b24ade",
+measurementId: "G-WCRN117P8P"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// whatever you already built from the form
 const submission = {
-  title: "Test Release"
+title: "Test Release"
 };
 
 let waited = false;
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    // Wait once to allow Firebase to restore session
-    if (!waited) {
-      waited = true;
-      return;
-    }
-    // If still not logged in after waiting, go to login
-    window.location.href = "login.html";
-    return;
-  }
 
-  try {
-    await addDoc(collection(db, "sharp"), {
-      ...submission,
-      userId: user.uid,
-      status: "Pending",
-      createdAt: Date.now()
-    });
+if (!user) {
 
-    window.location.href = "a.html";
-  } catch (err) {
-    console.error(err);
-    alert("Failed to save submission.");
-  }
+if (!waited) {
+waited = true;
+return;
+}
+
+window.location.href = "login.html";
+return;
+
+}
+
+try {
+
+await addDoc(collection(db, "sharp"), {
+...submission,
+userId: user.uid,
+status: "Pending",
+createdAt: Date.now()
+});
+
+window.location.href = "a.html";
+
+} catch (err) {
+
+console.error(err);
+alert("Failed to save submission.");
+
+}
+
 });
 
 </script>
 
 </body>
 </html>
-
-
