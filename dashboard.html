@@ -85,6 +85,7 @@ const db = getFirestore(app);
 const container = document.getElementById("submissionsContainer");
 
 onAuthStateChanged(auth, async (user) => {
+
   if (!user) {
     window.location.href = "login.html";
     return;
@@ -96,21 +97,25 @@ onAuthStateChanged(auth, async (user) => {
   const name = user.displayName || user.email.split("@")[0];
 
   if (!userSnap.exists()) {
+
     await setDoc(userRef, {
       name: name,
       email: user.email,
       earnings: 0,
       createdAt: serverTimestamp()
     });
+
   }
 
   try {
+
     const q = query(
       collection(db, "submissions"),
       where("userId", "==", user.uid)
     );
 
     const snapshot = await getDocs(q);
+
     container.innerHTML = "";
 
     if (snapshot.empty) {
@@ -118,9 +123,21 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    snapshot.forEach(docSnap => {
+    snapshot.forEach(async (docSnap) => {
+
       const data = docSnap.data();
       const submissionId = docSnap.id;
+
+      /* AUTO ADD PAYMENT FIELD TO OLD SUBMISSIONS */
+
+      if (data.paymentVerified === undefined) {
+
+        await updateDoc(doc(db,"submissions",submissionId),{
+          paymentVerified:false
+        });
+
+        data.paymentVerified = false;
+      }
 
       const card = document.createElement("div");
       card.className = "card";
@@ -149,8 +166,11 @@ onAuthStateChanged(auth, async (user) => {
           </div>`;
 
       card.innerHTML = `
+
         <div class="image-wrapper">
+
           ${imageSection}
+
           <input 
             type="file" 
             accept="image/*" 
@@ -158,10 +178,13 @@ onAuthStateChanged(auth, async (user) => {
             data-id="${submissionId}"
             style="display:none;"
           >
+
         </div>
 
         <div class="card-body">
+
           <h3>${data.releaseTitle}</h3>
+
           <p class="artist-name">${data.artistName}</p>
 
           ${
@@ -174,49 +197,79 @@ onAuthStateChanged(auth, async (user) => {
             <strong>Release Date:</strong> ${releaseDate}
           </p>
 
-          <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
-            ${data.status}
-          </span>
+          <div class="status-row">
+
+            <span class="badge ${data.status.toLowerCase().replace(/\s+/g, '-')}">
+              ${data.status}
+            </span>
+
+            <div class="payment-toggle ${data.paymentVerified ? 'on' : ''}">
+              <div class="toggle-circle"></div>
+            </div>
+
+          </div>
+
         </div>
+
       `;
 
       container.appendChild(card);
+
     });
 
-    // Click to open picker
+
+    /* COVER IMAGE CLICK */
+
     container.addEventListener("click", (e) => {
+
       if (e.target.classList.contains("cover-image")) {
+
         const id = e.target.dataset.id;
+
         const input = container.querySelector(`.cover-input[data-id="${id}"]`);
+
         if (input) input.click();
+
       }
+
     });
 
-    // Upload + save to Firestore
+
+    /* COVER UPLOAD */
+
     container.addEventListener("change", async (e) => {
+
       if (e.target.classList.contains("cover-input")) {
+
         const file = e.target.files[0];
+
         if (!file) return;
 
         const id = e.target.dataset.id;
+
         const wrapper = e.target.closest(".image-wrapper");
 
         const reader = new FileReader();
+
         reader.onload = async function(event) {
+
           const base64Image = event.target.result;
 
-          // Save to Firestore
           await updateDoc(doc(db, "submissions", id), {
+
             coverURL: base64Image
+
           });
 
           wrapper.innerHTML = `
+
             <img 
               src="${base64Image}" 
               class="cover-image"
               data-id="${id}"
               style="cursor:pointer; width:100%; height:220px; object-fit:cover;"
             >
+
             <input 
               type="file" 
               accept="image/*" 
@@ -224,90 +277,27 @@ onAuthStateChanged(auth, async (user) => {
               data-id="${id}"
               style="display:none;"
             >
+
           `;
+
         };
 
         reader.readAsDataURL(file);
+
       }
+
     });
 
   } catch (err) {
+
     console.error("Error fetching submissions:", err);
+
     container.innerHTML = '<div class="empty">Failed to load submissions</div>';
+
   }
+
 });
 </script>
 
-<script>
-const counters = document.querySelectorAll(".counter");
-const speed = 200;
-
-counters.forEach(counter => {
-  const updateCount = () => {
-    const target = +counter.getAttribute("data-target");
-    const count = +counter.innerText;
-
-    const inc = target / speed;
-
-    if (count < target) {
-      counter.innerText = Math.ceil(count + inc);
-      setTimeout(updateCount, 10);
-    } else {
-      counter.innerText = target.toLocaleString();
-    }
-  };
-
-  updateCount();
-});
-</script>
-<script>
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add("show");
-    }
-  });
-});
-
-document.querySelectorAll("section, .price-card, .testimonial, .stat").forEach(el=>{
-  observer.observe(el);
-});
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const grid = document.getElementById("featuredGrid");
-
-async function loadFeatured(){
-  const snapshot = await getDocs(collection(db,"submissions"));
-
-  snapshot.forEach(doc=>{
-    const data = doc.data();
-
-    if(!data.coverURL}">
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-loadFeatured();
-</script>
-  
 </body>
 </html>
-
