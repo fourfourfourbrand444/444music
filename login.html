@@ -5,199 +5,140 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | .444Music</title>
   <link rel="stylesheet" href="login.css">
-  <style>
-   
-  </style>
+  <style></style>
 </head>
 <body>
 
   <div class="wrapper">
-    <h1>Login</h1>
+    <h1>.444Music</h1>
     <div class="subtitle">Access your artist dashboard</div>
 
     <form id="loginForm">
+      <div class="google-login">
+        <button id="googleLoginBtn" type="button">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+          Login with Google
+        </button>
+      </div>
+
       <div class="field">
         <label for="email">Email</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" placeholder="enter your email" required>
       </div>
       <div class="field">
         <label for="password">Password</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" placeholder="enter your password" required>
       </div>
-      <button type="submit" class="btn">Login</button>
-      <div class="google-login">
-  <button id="googleLoginBtn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-    Login with Google
-  </button>
-</div>
+      <div class="link">
+        <a href="#" id="forgotPass">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn">Log in</button>
 
       <div class="error-msg" id="errorMsg"></div>
       <div class="link" id="resendBox" style="display:none;">
-  Didn't receive verification email?
-  <a href="#" id="resendVerification">Resend Email</a>
-</div>
-
-     <div class="link">
-       <a href="#" id="forgotPass">Forgot password?</a>
-     </div>
+        Didn't receive verification email?
+        <a href="#" id="resendVerification">Resend Email</a>
+      </div>
     </form>
 
     <div class="link">
-      Don't have an account? <a href="register.html">Register</a>
+      Don't have an account? <a href="register.html">Sign up</a>
     </div>
   </div>
 
-
   <!-- Firebase JS -->
-<script type="module">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    /* FIREBASE CONFIG */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+      authDomain: "usersubmissionsportal.firebaseapp.com",
+      projectId: "usersubmissionsportal",
+      storageBucket: "usersubmissionsportal.firebasestorage.app",
+      messagingSenderId: "734783502459",
+      appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+    };
 
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  GoogleAuthProvider,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    /* INITIALIZE FIREBASE */
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
+    /* ELEMENTS */
+    const loginForm = document.getElementById("loginForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const forgotPass = document.getElementById("forgotPass");
+    const googleBtn = document.getElementById("googleLoginBtn");
 
-/* FIREBASE CONFIG */
+    /* EMAIL LOGIN */
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.textContent = "";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-};
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
+      if (!email || !password) {
+        errorMsg.style.color = "#ffb347";
+        errorMsg.textContent = "Please enter your email and password.";
+        return;
+      }
 
-/* INITIALIZE FIREBASE */
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "asap.html";
+      } catch (error) {
+        console.error(error);
+        errorMsg.style.color = "#ff6b6b";
+        errorMsg.textContent = "Invalid email or password.";
+      }
+    });
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    /* FORGOT PASSWORD */
+    forgotPass.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
 
+      if (!email) {
+        errorMsg.style.color = "#ffb347";
+        errorMsg.textContent = "Enter your email first to reset password.";
+        return;
+      }
 
-/* ELEMENTS */
+      try {
+        await sendPasswordResetEmail(auth, email);
+        errorMsg.style.color = "#1DB954";
+        errorMsg.textContent = "Reset link sent! Check your email inbox or Spam/Junk folder.";
+      } catch (error) {
+        console.error(error);
+        errorMsg.style.color = "#ff6b6b";
+        errorMsg.textContent = error.message;
+      }
+    });
 
-const loginForm = document.getElementById("loginForm");
-const errorMsg = document.getElementById("errorMsg");
-const forgotPass = document.getElementById("forgotPass");
-const googleBtn = document.getElementById("googleLoginBtn");
+    /* GOOGLE LOGIN */
+    const provider = new GoogleAuthProvider();
 
-
-/* EMAIL LOGIN */
-
-loginForm.addEventListener("submit", async (e) => {
-
-  e.preventDefault();
-  errorMsg.textContent = "";
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-
-    errorMsg.style.color = "#ffb347";
-    errorMsg.textContent = "Please enter your email and password.";
-    return;
-
-  }
-
-  try {
-
-    await signInWithEmailAndPassword(auth, email, password);
-
-    window.location.href = "asap.html";
-
-  } catch (error) {
-
-    console.error(error);
-
-    errorMsg.style.color = "#ff6b6b";
-    errorMsg.textContent = "Invalid email or password.";
-
-  }
-
-});
-
-
-/* FORGOT PASSWORD */
-
-forgotPass.addEventListener("click", async (e) => {
-
-  e.preventDefault();
-
-  const email = document.getElementById("email").value.trim();
-
-  if (!email) {
-
-    errorMsg.style.color = "#ffb347";
-    errorMsg.textContent = "Enter your email first to reset password.";
-    return;
-
-  }
-
-  try {
-
-    await sendPasswordResetEmail(auth, email);
-
-    errorMsg.style.color = "#1DB954";
-    errorMsg.textContent =
-      "Reset link sent! Check your email inbox or Spam/Junk folder.";
-
-  } catch (error) {
-
-    console.error(error);
-
-    errorMsg.style.color = "#ff6b6b";
-    errorMsg.textContent = error.message;
-
-  }
-
-});
-
-
-/* GOOGLE LOGIN */
-
-const provider = new GoogleAuthProvider();
-
-googleBtn.addEventListener("click", async () => {
-
-  try {
-
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    console.log("Google user:", user);
-
-    window.location.href = "asap.html";
-
-  } catch (error) {
-
-    console.error(error);
-
-    errorMsg.style.color = "#ff6b6b";
-    errorMsg.textContent = "Google login failed.";
-
-  }
-
-});
-
-</script>
+    googleBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("Google user:", user);
+        window.location.href = "asap.html";
+      } catch (error) {
+        console.error(error);
+        errorMsg.style.color = "#ff6b6b";
+        errorMsg.textContent = "Google login failed.";
+      }
+    });
+  </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
