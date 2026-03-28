@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<!-- Fallback fonts via Google -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================
+   RESET & ROOT
+   ========================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Pure blacks - no tint */
+  --bg:        #080808;
+  --bg2:       #0e0e0e;
+  --surface:   #111111;
+  --surface2:  #161616;
+  --surface3:  #1c1c1c;
+
+  /* Borders */
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.05);
+  --border-p:  rgba(147,51,234,0.3);
+
+  /* Purple accent - only for buttons & accents */
+  --purple:    #9333ea;
+  --purple2:   #7c22d4;
+  --purple3:   #a855f7;
+  --purple-bg: rgba(147,51,234,0.08);
+  --purple-border: rgba(147,51,234,0.25);
+
+  /* Text */
+  --text:      #f5f5f5;
+  --text2:     #a3a3a3;
+  --text3:     #525252;
+  --green:     #22c55e;
+
+  --radius:    12px;
+  --radius2:   16px;
+  --radius3:   20px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Display font */
+.display {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+}
+
+/* =========================================
+   SUBTLE NOISE TEXTURE
+   ========================================= */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+/* =========================================
+   NAVBAR
+   ========================================= */
+.navbar {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%;
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(24px) saturate(140%);
+  border-bottom: 1px solid var(--border2);
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: 18px; letter-spacing: -0.3px;
+}
+.nav-logo-img {
+  height: 36px; width: auto;
+}
+.nav-logo-fallback {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: white;
+  font-family: 'Outfit', sans-serif;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+}
+.nav-links a {
+  padding: 7px 13px; border-radius: 8px;
+  color: var(--text2); text-decoration: none;
+  font-size: 13.5px; font-weight: 500;
+  transition: color 0.15s, background 0.15s;
+}
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+.nav-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-login {
+  color: var(--text2); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  padding: 8px 14px; border-radius: 8px;
+  transition: 0.15s;
+}
+.nav-login:hover { color: var(--text); }
+.nav-cta {
+  background: var(--purple);
+  color: white; padding: 9px 20px; border-radius: 9px;
+  text-decoration: none; font-size: 13.5px; font-weight: 700;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: -0.1px;
+}
+.nav-cta:hover { background: var(--purple2); transform: translateY(-1px); }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 4px;
+}
+.hamburger span { width: 21px; height: 1.5px; background: var(--text2); border-radius: 2px; }
+
+/* =========================================
+   HERO
+   ========================================= */
+.hero {
+  min-height: 100vh;
+  padding: 130px 5% 90px;
+  display: flex; align-items: center;
+  position: relative;
+}
+
+/* Single subtle purple orb - no gradients everywhere */
+.hero::before {
+  content: '';
+  position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(147,51,234,0.09) 0%, transparent 70%);
+  pointer-events: none; filter: blur(40px);
+}
+
+.hero-inner {
+  max-width: 1200px; margin: auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 440px; gap: 64px;
+  align-items: center; position: relative; z-index: 1;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 5px 12px 5px 6px;
+  font-size: 12.5px; color: var(--text2); font-weight: 500;
+  margin-bottom: 28px;
+}
+.hero-eyebrow .dot {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--purple);
+  display: flex; align-items: center; justify-content: center; font-size: 10px;
+}
+.hero-eyebrow .dot::after {
+  content: ''; display: block;
+  width: 6px; height: 6px; border-radius: 50%; background: white;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+.hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(44px, 5.8vw, 72px);
+  font-weight: 800; line-height: 1.04;
+  letter-spacing: -2px; margin-bottom: 20px; color: var(--text);
+}
+.hero-title .accent { color: var(--purple3); }
+
+.hero-sub {
+  font-size: 16px; color: var(--text2); line-height: 1.75;
+  max-width: 460px; margin-bottom: 40px; font-weight: 400;
+}
+
+.hero-btns {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 52px;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--purple); color: white;
+  padding: 14px 28px; border-radius: 11px;
+  font-size: 14.5px; font-weight: 700; text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: -0.2px;
+}
+.btn-primary:hover { background: var(--purple2); transform: translateY(-2px); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--text); padding: 13px 24px; border-radius: 11px;
+  font-size: 14.5px; font-weight: 500; text-decoration: none;
+  border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.15); background: var(--surface2); }
+
+.hero-social-proof {
+  display: flex; align-items: center; gap: 14px;
+}
+.proof-avatars { display: flex; }
+.proof-av {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid var(--bg); margin-right: -8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: white;
+}
+.av1{background:#7c22d4} .av2{background:#9333ea} .av3{background:#a855f7} .av4{background:#c084fc} .av5{background:#6b21a8}
+.proof-text { font-size: 13px; color: var(--text2); margin-left: 14px; }
+.proof-text strong { color: var(--text); }
+
+/* =========================================
+   HERO CARD
+   ========================================= */
+.hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius3);
+  padding: 24px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  animation: float 6s ease-in-out infinite;
+  position: relative;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.card-header-left { display: flex; align-items: center; gap: 10px; }
+.card-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--purple); display: flex; align-items: center;
+  justify-content: center; font-size: 15px; color: white;
+}
+.card-header-text h4 { font-size: 13.5px; font-weight: 700; }
+.card-header-text p { font-size: 11.5px; color: var(--text2); }
+.card-live {
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
+  color: #4ade80; font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 100px;
+  display: flex; align-items: center; gap: 5px;
+}
+.card-live::before {
+  content:''; width:5px; height:5px; border-radius:50%; background:#4ade80;
+  animation: blink 2s infinite;
+}
+
+.dropzone {
+  border: 1.5px dashed rgba(147,51,234,0.25);
+  border-radius: var(--radius); padding: 24px;
+  text-align: center; background: var(--purple-bg);
+  margin-bottom: 16px; cursor: pointer; transition: 0.2s;
+}
+.dropzone:hover { border-color: var(--purple); background: rgba(147,51,234,0.12); }
+.dropzone i { font-size: 22px; color: var(--purple3); margin-bottom: 8px; }
+.dropzone p { font-size: 12px; color: var(--text2); }
+.dropzone strong { color: var(--text); font-size: 13px; }
+
+.track-row {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 11px 13px; margin-bottom: 8px;
+}
+.track-art {
+  width: 38px; height: 38px; border-radius: 7px;
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 16px;
+}
+.track-info { flex: 1; min-width: 0; }
+.track-info h5 { font-size: 12.5px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-info p { font-size: 11px; color: var(--text2); }
+.track-badge {
+  font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 100px;
+}
+.t-live { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+.t-proc { background: var(--purple-bg); color: var(--purple3); border: 1px solid var(--purple-border); }
+.t-pend { background: rgba(234,179,8,0.1); color: #fbbf24; border: 1px solid rgba(234,179,8,0.2); }
+
+.card-progress { margin-top: 14px; }
+.prog-header { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+.prog-track { width: 100%; height: 4px; background: var(--surface3); border-radius: 4px; }
+.prog-fill { height: 100%; background: var(--purple); border-radius: 4px; animation: fillup 3s ease forwards; }
+@keyframes fillup { from{width:0} to{width:78%} }
+
+/* Floating chips */
+.chip {
+  position: absolute; border-radius: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 10px 14px; font-size: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.chip.stores { top: -18px; right: -16px; display: flex; align-items: center; gap: 7px; }
+.chip.stores i { color: var(--green); }
+.chip.royalty { bottom: 16px; left: -24px; }
+.chip.royalty .amount {
+  font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #4ade80; line-height: 1;
+}
+.chip.royalty .label { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* =========================================
+   TICKER
+   ========================================= */
+.ticker {
+  border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+  background: var(--surface); padding: 14px 0; overflow: hidden;
+}
+.ticker-inner { display: flex; animation: tick 30s linear infinite; }
+.ticker-inner:hover { animation-play-state: paused; }
+.tick-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 28px; white-space: nowrap;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  border-right: 1px solid var(--border2); flex-shrink: 0;
+}
+.tick-item i { color: var(--purple3); font-size: 15px; }
+@keyframes tick { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* =========================================
+   SHARED SECTION STYLES
+   ========================================= */
+.section {
+  padding: 80px 5%;
+  max-width: 1200px; margin: 0 auto;
+}
+.section-full { padding: 80px 5%; }
+
+.label-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--purple3);
+  margin-bottom: 16px;
+}
+.label-tag::before {
+  content: ''; width: 18px; height: 1.5px; background: var(--purple3);
+}
+
+.section-h {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(30px, 3.8vw, 44px); font-weight: 800;
+  letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 14px;
+}
+.section-p {
+  font-size: 15px; color: var(--text2); line-height: 1.7;
+  max-width: 500px; margin-bottom: 48px;
+}
+.centered { text-align: center; }
+.centered .section-p { margin-left: auto; margin-right: auto; }
+.centered .label-tag { justify-content: center; }
+.centered .label-tag::before { display: none; }
+
+/* =========================================
+   STATS
+   ========================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: var(--radius2);
+  overflow: hidden;
+}
+.stat-item {
+  background: var(--surface); padding: 36px 28px;
+  transition: background 0.2s;
+}
+.stat-item:hover { background: var(--surface2); }
+.stat-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 44px; font-weight: 900; letter-spacing: -2px;
+  color: var(--text); line-height: 1; margin-bottom: 8px;
+}
+.stat-label { font-size: 13.5px; color: var(--text2); font-weight: 400; }
+
+/* =========================================
+   PLATFORMS
+   ========================================= */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: var(--radius2);
+  overflow: hidden;
+}
+.platform-item {
+  background: var(--surface); padding: 24px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  font-size: 12.5px; font-weight: 500; color: var(--text2);
+  cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.platform-item:hover { background: var(--surface2); color: var(--text); }
+.platform-item i { font-size: 24px; }
+
+/* =========================================
+   HOW IT WORKS
+   ========================================= */
+.steps-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border2); border: 1px solid var(--border2);
+  border-radius: var(--radius2); overflow: hidden; margin-top: 48px;
+}
+.step {
+  background: var(--surface); padding: 36px 28px;
+  transition: background 0.2s; position: relative;
+}
+.step:hover { background: var(--surface2); }
+.step-num {
+  width: 40px; height: 40px; border-radius: 9px; background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; color: white;
+  margin-bottom: 20px;
+}
+.step h3 {
+  font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+  margin-bottom: 10px; letter-spacing: -0.3px;
+}
+.step p { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
+.step-connector {
+  position: absolute; top: 56px; right: -1px;
+  width: 1px; height: 1px;
+}
+
+/* =========================================
+   TOOLS
+   ========================================= */
+.tools-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border2);
+  border: 1px solid var(--border2); border-radius: var(--radius2);
+  overflow: hidden; margin-top: 48px;
+}
+.tool {
+  background: var(--surface); padding: 36px 32px;
+  transition: background 0.2s;
+}
+.tool:hover { background: var(--surface2); }
+.tool-ico {
+  width: 48px; height: 48px; border-radius: 11px;
+  background: var(--surface3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 20px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.tool:hover .tool-ico { background: var(--purple-bg); border-color: var(--purple-border); }
+.tool h3 {
+  font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700;
+  margin-bottom: 10px; letter-spacing: -0.3px;
+}
+.tool p { font-size: 13.5px; color: var(--text2); line-height: 1.65; margin-bottom: 18px; }
+.tool-link {
+  font-size: 13px; color: var(--purple3); font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  transition: gap 0.15s;
+}
+.tool-link:hover { gap: 9px; }
+
+/* =========================================
+   TESTIMONIALS
+   ========================================= */
+.testi-overflow { overflow: hidden; }
+.testi-track {
+  display: flex; gap: 16px;
+  animation: scroll 40s linear infinite;
+}
+.testi-track:hover { animation-play-state: paused; }
+@keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+.testi-card {
+  flex-shrink: 0; width: 300px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius2); padding: 24px;
+  transition: border-color 0.2s;
+}
+.testi-card:hover { border-color: var(--border); }
+.testi-stars { color: var(--purple3); font-size: 12px; margin-bottom: 12px; letter-spacing: 1px; }
+.testi-quote { font-size: 13.5px; color: var(--text2); line-height: 1.7; margin-bottom: 18px; }
+.testi-author { display: flex; align-items: center; gap: 11px; }
+.testi-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--purple); display: flex; align-items: center;
+  justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.testi-name { font-size: 13.5px; font-weight: 600; }
+.testi-role { font-size: 11.5px; color: var(--text2); }
+
+/* =========================================
+   PRICING
+   ========================================= */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 48px;
+}
+.price-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius3); padding: 36px 32px;
+  position: relative; transition: border-color 0.2s;
+}
+.price-card:hover { border-color: rgba(255,255,255,0.12); }
+.price-card.featured {
+  background: var(--surface2); border-color: var(--purple-border);
+}
+.price-card.featured:hover { border-color: rgba(147,51,234,0.5); }
+.price-popular {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--purple); color: white; font-size: 11px; font-weight: 700;
+  padding: 5px 16px; border-radius: 100px; white-space: nowrap;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.price-tier {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--purple3); margin-bottom: 6px;
+}
+.price-name {
+  font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800;
+  margin-bottom: 24px; letter-spacing: -0.5px;
+}
+.price-amount {
+  display: flex; align-items: flex-start; gap: 2px; margin-bottom: 5px;
+}
+.price-cur { font-size: 15px; color: var(--text2); padding-top: 10px; font-weight: 500; }
+.price-num {
+  font-family: 'Outfit', sans-serif; font-size: 52px; font-weight: 900;
+  line-height: 1; letter-spacing: -3px;
+}
+.price-period { font-size: 12.5px; color: var(--text2); margin-bottom: 28px; }
+.price-divider { height: 1px; background: var(--border2); margin: 24px 0; }
+.price-list { list-style: none; margin-bottom: 28px; }
+.price-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13.5px; color: var(--text2); margin-bottom: 12px;
+}
+.price-list li i { color: var(--green); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+.price-btn-fill {
+  display: block; text-align: center;
+  padding: 14px 24px; border-radius: 10px;
+  font-weight: 700; font-size: 14px; text-decoration: none;
+  background: var(--purple); color: white;
+  transition: background 0.2s, transform 0.15s;
+}
+.price-btn-fill:hover { background: var(--purple2); transform: translateY(-1px); }
+.price-btn-ghost {
+  display: block; text-align: center;
+  padding: 13px 24px; border-radius: 10px;
+  font-weight: 600; font-size: 14px; text-decoration: none;
+  color: var(--text); border: 1px solid var(--border);
+  transition: border-color 0.2s, background 0.2s;
+}
+.price-btn-ghost:hover { border-color: rgba(255,255,255,0.15); background: var(--surface3); }
+
+/* =========================================
+   UPLOAD FLOW
+   ========================================= */
+.upload-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: start; margin-top: 48px;
+}
+.steps-list { display: flex; flex-direction: column; gap: 4px; }
+.step-item {
+  display: flex; gap: 16px; padding: 18px 20px; border-radius: var(--radius);
+  border: 1px solid transparent; cursor: pointer; transition: 0.2s;
+}
+.step-item:hover, .step-item.active {
+  background: var(--surface); border-color: var(--border);
+}
+.step-item.active { border-color: var(--purple-border); background: var(--purple-bg); }
+.step-n {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: var(--surface3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--text2);
+}
+.step-item.active .step-n { background: var(--purple-bg); border-color: var(--purple-border); color: var(--purple3); }
+.step-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.2px; }
+.step-text p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.upload-form-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius3); padding: 28px;
+}
+.form-tabs {
+  display: flex; gap: 6px; margin-bottom: 22px;
+  padding-bottom: 16px; border-bottom: 1px solid var(--border2);
+}
+.form-tab {
+  font-size: 13px; padding: 7px 14px; border-radius: 7px;
+  cursor: pointer; font-weight: 500; color: var(--text2); transition: 0.15s;
+}
+.form-tab.active { background: var(--purple-bg); color: var(--purple3); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { margin-bottom: 14px; }
+.form-field label {
+  display: block; font-size: 11.5px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px;
+}
+.form-input {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 9px; padding: 11px 13px;
+  color: var(--text); font-size: 13.5px; font-family: 'Plus Jakarta Sans', sans-serif;
+  outline: none; transition: 0.15s;
+}
+.form-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(147,51,234,0.1); }
+.cover-drop {
+  width: 96px; height: 96px; border: 1.5px dashed rgba(147,51,234,0.25);
+  border-radius: 11px; background: var(--purple-bg);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; cursor: pointer; gap: 6px;
+  font-size: 11px; color: var(--text2); transition: 0.2s;
+}
+.cover-drop:hover { border-color: var(--purple); }
+.cover-drop i { font-size: 20px; color: var(--purple3); }
+.form-submit {
+  width: 100%; padding: 13px; border: none; border-radius: 10px;
+  background: var(--purple); color: white; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background 0.2s, transform 0.15s; margin-top: 4px;
+}
+.form-submit:hover { background: var(--purple2); transform: translateY(-1px); }
+
+/* =========================================
+   FAQ
+   ========================================= */
+.faq-wrap { max-width: 740px; margin: 0 auto; }
+.faq-filters {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 28px 0 36px; justify-content: center;
+}
+.faq-filters button {
+  padding: 8px 18px; border-radius: 100px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: 0.15s; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.faq-filters button:hover, .faq-filters button.active {
+  background: var(--purple-bg); color: var(--purple3);
+  border-color: var(--purple-border);
+}
+.faq-items { display: flex; flex-direction: column; gap: 6px; }
+.faq-item {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s;
+}
+.faq-item:hover { border-color: var(--border); }
+.faq-item.open { border-color: var(--purple-border); }
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 20px; cursor: pointer; font-size: 14.5px; font-weight: 500;
+  gap: 12px;
+}
+.faq-icon {
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  background: var(--surface3); display: flex; align-items: center;
+  justify-content: center; color: var(--text2); font-size: 17px; font-weight: 300;
+  transition: background 0.2s, transform 0.25s;
+}
+.faq-item.open .faq-icon { background: var(--purple-bg); color: var(--purple3); transform: rotate(45deg); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.faq-answer p { padding: 0 20px 18px; font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+.faq-item.open .faq-answer { max-height: 300px; }
+
+/* =========================================
+   RELEASES
+   ========================================= */
+.release-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 12px; margin-top: 40px;
+}
+.release-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius2); overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.release-card:hover { border-color: var(--border); transform: translateY(-4px); }
+.release-card img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+.release-placeholder {
+  width:100%; aspect-ratio:1; background: var(--surface2);
+  display:flex; align-items:center; justify-content:center; font-size:36px;
+}
+.release-body { padding: 12px; }
+.release-body h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.release-body p { font-size: 11.5px; color: var(--text2); }
+.release-new {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(34,197,94,0.1); color: #4ade80;
+  border: 1px solid rgba(34,197,94,0.2);
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+}
+
+/* =========================================
+   CTA BANNER
+   ========================================= */
+.cta-banner {
+  margin: 0 5%; border-radius: var(--radius3);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 72px 60px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(147,51,234,0.12) 0%, transparent 70%);
+  filter: blur(60px); pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 900;
+  letter-spacing: -1.5px; margin-bottom: 14px; position: relative;
+}
+.cta-banner h2 .accent { color: var(--purple3); }
+.cta-banner p {
+  font-size: 15px; color: var(--text2); margin-bottom: 36px;
+  position: relative;
+}
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.footer {
+  padding: 64px 5% 32px;
+  border-top: 1px solid var(--border2);
+  margin-top: 80px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; max-width: 1200px; margin: 0 auto 52px;
+}
+.footer-brand-text {
+  font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 260px; margin: 14px 0 22px;
+}
+.footer-socials { display: flex; gap: 8px; }
+.social-ico {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2); font-size: 14px;
+  text-decoration: none; transition: 0.15s;
+}
+.social-ico:hover { border-color: var(--border); color: var(--purple3); }
+.footer-col h4 {
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700;
+  margin-bottom: 18px; letter-spacing: -0.2px;
+}
+.footer-col a {
+  display: block; font-size: 13.5px; color: var(--text2);
+  text-decoration: none; margin-bottom: 11px; transition: color 0.15s;
+}
+.footer-col a:hover { color: var(--text); }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  border-top: 1px solid var(--border2); padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12.5px; color: var(--text3); flex-wrap: wrap; gap: 10px;
+}
+
+/* =========================================
+   FADE-IN
+   ========================================= */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* =========================================
+   RESPONSIVE — TABLET
+   ========================================= */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .platform-grid { grid-template-columns: repeat(4, 1fr); }
+  .steps-row { grid-template-columns: repeat(2, 1fr); }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+  .hero-inner { gap: 40px; }
+}
+
+/* =========================================
+   RESPONSIVE — MOBILE
+   ========================================= */
+@media (max-width: 768px) {
+  /* Nav */
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .navbar { padding: 0 4%; height: 58px; }
+
+  /* Hero */
+  .hero { padding: 90px 4% 56px; min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr; gap: 0; }
+  .hero-card { display: none; }
+  .hero-title { font-size: clamp(36px, 9vw, 52px); letter-spacing: -1.5px; margin-bottom: 16px; }
+  .hero-sub { font-size: 15px; margin-bottom: 32px; }
+  .hero-btns { gap: 10px; margin-bottom: 36px; }
+  .hero-eyebrow { margin-bottom: 20px; font-size: 12px; }
+
+  /* Sections */
+  .section { padding: 56px 4%; }
+  .section-full { padding: 56px 4%; }
+  .section-h { font-size: clamp(26px, 7vw, 36px); letter-spacing: -0.8px; }
+  .section-p { font-size: 14px; margin-bottom: 36px; }
+  .label-tag { font-size: 11px; }
+
+  /* Stats - 2 col on mobile */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-num { font-size: 36px; }
+  .stat-item { padding: 24px 18px; }
+
+  /* Platforms - 3 col */
+  .platform-grid { grid-template-columns: repeat(3, 1fr); }
+  .platform-item { padding: 18px 8px; font-size: 11.5px; }
+  .platform-item i { font-size: 20px; }
+
+  /* Steps - single col */
+  .steps-row { grid-template-columns: 1fr; }
+  .step { padding: 28px 22px; }
+
+  /* Upload flow */
+  .upload-grid { grid-template-columns: 1fr; gap: 0; }
+  .upload-form-card { display: none; }
+  .steps-list { gap: 2px; }
+  .step-item { padding: 15px 16px; }
+  .step-text h4 { font-size: 14px; }
+  .step-text p { font-size: 12.5px; }
+
+  /* Tools - single col */
+  .tools-grid { grid-template-columns: 1fr; }
+  .tool { padding: 28px 22px; }
+
+  /* Testimonials */
+  .testi-overflow { padding: 0 4% !important; }
+  .testi-card { width: 270px; padding: 20px; }
+  .testi-quote { font-size: 13px; }
+
+  /* Pricing */
+  .pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
+  .price-card { padding: 28px 24px; }
+  .price-num { font-size: 44px; }
+
+  /* Releases */
+  .release-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* FAQ */
+  .faq-wrap { padding: 0; }
+  .faq-q { font-size: 13.5px; padding: 16px 16px; }
+  .faq-answer p { padding: 0 16px 16px; font-size: 13px; }
+  .faq-filters { gap: 6px; margin: 20px 0 28px; }
+  .faq-filters button { padding: 7px 14px; font-size: 12.5px; }
+
+  /* CTA banner */
+  .cta-banner { margin: 0 4%; padding: 44px 24px; border-radius: 16px; }
+  .cta-banner h2 { font-size: clamp(28px, 7vw, 38px); letter-spacing: -1px; }
+  .cta-banner p { font-size: 14px; }
+
+  /* Footer */
+  .footer { padding: 48px 4% 28px; margin-top: 56px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-col h4 { font-size: 13px; margin-bottom: 14px; }
+  .footer-col a { font-size: 13px; }
+  .footer-bottom { font-size: 12px; }
+}
+
+/* =========================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================= */
+@media (max-width: 480px) {
+  .navbar { padding: 0 4%; }
+
+  /* Hero */
+  .hero { padding: 80px 4% 48px; }
+  .hero-title { font-size: clamp(32px, 10vw, 44px); letter-spacing: -1.2px; }
+  .hero-btns { flex-direction: column; gap: 8px; }
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; padding: 14px 20px; }
+  .hero-sub { font-size: 14.5px; }
+  .proof-text { font-size: 12.5px; }
+
+  /* Stats 2x2 */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-num { font-size: 32px; letter-spacing: -1.5px; }
+  .stat-label { font-size: 12px; }
+
+  /* Platforms 3 col */
+  .platform-grid { grid-template-columns: repeat(3, 1fr); }
+  .platform-item { padding: 16px 6px; gap: 6px; }
+  .platform-item i { font-size: 18px; }
+
+  /* Pricing full width */
+  .pricing-grid { max-width: 100%; }
+  .price-card { padding: 24px 20px; }
+
+  /* Releases 2 col */
+  .release-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Footer stacked */
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+
+  /* CTA */
+  .cta-btns { flex-direction: column; align-items: center; }
+  .cta-btns .btn-primary,
+  .cta-btns .btn-secondary { width: 100%; max-width: 300px; justify-content: center; }
+}
+.testi-overflow-padded { padding: 0 5%; }
+.testi-header-pad { padding: 0 5%; }
+@media (max-width: 768px) { 
+  .testi-header-pad { padding: 0 4%; }
+  .testi-overflow-padded { padding: 0 4%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <a href="#" class="nav-logo">
+    <!-- Logo image — swap src to "logo.png" once file is available -->
+    <img src="logo.png" alt="444Music" class="nav-logo-img"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="nav-logo-fallback" style="display:none;">4</div>
+    444Music
+  </a>
+
+  <nav class="nav-links">
+    <a href="#">Home</a>
+    <a href="#tools">Tools</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#">Analytics</a>
+    <a href="#">Partners</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <div class="nav-right">
+    <a href="login.html" class="nav-login">Login</a>
+    <a href="register.html" class="nav-cta">Get Started</a>
+    <div class="hamburger" id="menuBtn">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="dot"></div>
+        Now live on 100+ global stores
+      </div>
+
+      <h1 class="hero-title display">
+        Distribution +<br>
+        Industry<br>
+        <span class="accent">Building</span>
+      </h1>
+
+      <p class="hero-sub">
+        444Music Distribution powers independent artists with global streaming access,
+        real-time royalty tracking, and industry-grade tools — all in one place.
+      </p>
+
+      <div class="hero-btns">
+        <a href="register.html" class="btn-primary">
+          <i class="fa-solid fa-rocket"></i>
+          Create Account
+        </a>
+        <a href="login.html" class="btn-secondary">
+          <i class="fa-solid fa-arrow-right"></i>
+          Sign In
+        </a>
+      </div>
+
+      <div class="hero-social-proof">
+        <div class="proof-avatars">
+          <div class="proof-av av1">A</div>
+          <div class="proof-av av2">K</div>
+          <div class="proof-av av3">M</div>
+          <div class="proof-av av4">J</div>
+          <div class="proof-av av5">T</div>
+        </div>
+        <div class="proof-text" style="margin-left:18px;">
+          <strong>7,000+</strong> artists already distributing
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Dashboard Card -->
+    <div class="hero-card">
+      <div class="chip stores">
+        <i class="fa-solid fa-circle-check"></i>
+        <span style="color:var(--text);font-weight:600;">Live on 100+ stores</span>
+      </div>
+
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon"><i class="fa-solid fa-music"></i></div>
+          <div class="card-header-text">
+            <h4>New Release Upload</h4>
+            <p>Artist Dashboard</p>
+          </div>
+        </div>
+        <div class="card-live">Live</div>
+      </div>
+
+      <div class="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p><strong>Drop your audio here</strong><br>WAV · FLAC · MP3 supported</p>
+      </div>
+
+      <div class="track-row">
+        <div class="track-art" style="background:linear-gradient(135deg,#7c22d4,#9333ea);">🎵</div>
+        <div class="track-info"><h5>Better Days</h5><p>Uploaded · 3.2 MB · WAV</p></div>
+        <span class="track-badge t-live">Live</span>
+      </div>
+      <div class="track-row">
+        <div class="track-art" style="background:linear-gradient(135deg,#6b21a8,#7c22d4);">🔥</div>
+        <div class="track-info"><h5>Rise Up (feat. Kojo)</h5><p>Processing · 4.1 MB · WAV</p></div>
+        <span class="track-badge t-proc">Processing</span>
+      </div>
+      <div class="track-row">
+        <div class="track-art" style="background:linear-gradient(135deg,#581c87,#6b21a8);">✨</div>
+        <div class="track-info"><h5>Midnight Drive</h5><p>Queued · 3.8 MB · WAV</p></div>
+        <span class="track-badge t-pend">Pending</span>
+      </div>
+
+      <div class="card-progress">
+        <div class="prog-header"><span>Distributing to stores…</span><span>78%</span></div>
+        <div class="prog-track"><div class="prog-fill"></div></div>
+      </div>
+
+      <div class="chip royalty">
+        <div class="amount">GHS 4,280</div>
+        <div class="label">Royalties this month</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="tick-item"><i class="fa-brands fa-spotify"></i> Spotify</div>
+    <div class="tick-item"><i class="fa-brands fa-apple"></i> Apple Music</div>
+    <div class="tick-item"><i class="fa-brands fa-amazon"></i> Amazon Music</div>
+    <div class="tick-item"><i class="fa-brands fa-youtube"></i> YouTube Music</div>
+    <div class="tick-item"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+    <div class="tick-item"><i class="fa-brands fa-instagram"></i> Instagram</div>
+    <div class="tick-item"><i class="fa-solid fa-music"></i> Boomplay</div>
+    <div class="tick-item"><i class="fa-solid fa-headphones"></i> Audiomack</div>
+    <div class="tick-item"><i class="fa-solid fa-circle-play"></i> Deezer</div>
+    <div class="tick-item"><i class="fa-solid fa-magnifying-glass"></i> Shazam</div>
+    <div class="tick-item"><i class="fa-solid fa-globe"></i> Anghami</div>
+    <div class="tick-item"><i class="fa-solid fa-compact-disc"></i> Trebel</div>
+    <!-- duplicate -->
+    <div class="tick-item"><i class="fa-brands fa-spotify"></i> Spotify</div>
+    <div class="tick-item"><i class="fa-brands fa-apple"></i> Apple Music</div>
+    <div class="tick-item"><i class="fa-brands fa-amazon"></i> Amazon Music</div>
+    <div class="tick-item"><i class="fa-brands fa-youtube"></i> YouTube Music</div>
+    <div class="tick-item"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+    <div class="tick-item"><i class="fa-brands fa-instagram"></i> Instagram</div>
+    <div class="tick-item"><i class="fa-solid fa-music"></i> Boomplay</div>
+    <div class="tick-item"><i class="fa-solid fa-headphones"></i> Audiomack</div>
+    <div class="tick-item"><i class="fa-solid fa-circle-play"></i> Deezer</div>
+    <div class="tick-item"><i class="fa-solid fa-magnifying-glass"></i> Shazam</div>
+    <div class="tick-item"><i class="fa-solid fa-globe"></i> Anghami</div>
+    <div class="tick-item"><i class="fa-solid fa-compact-disc"></i> Trebel</div>
+  </div>
+</div>
+
+<!-- ===== STATS ===== -->
+<div class="section reveal">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-num">7K+</div>
+      <div class="stat-label">Artists Using 444Music</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">50K+</div>
+      <div class="stat-label">Releases Distributed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">Digital Stores</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Royalties Kept by Artists</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLATFORMS ===== -->
+<div class="section reveal">
+  <div style="max-width:1200px;margin:auto;">
+    <div class="label-tag centered" style="justify-content:center;">Distribution Network</div>
+    <h2 class="section-h centered display">Distribute to all major platforms</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Your music, everywhere your fans are. One upload, infinite reach across 100+ global stores.</p>
+
+    <div class="platform-grid">
+      <div class="platform-item"><i class="fa-brands fa-spotify" style="color:#1DB954;"></i>Spotify</div>
+      <div class="platform-item"><i class="fa-brands fa-apple" style="color:#fc3c44;"></i>Apple Music</div>
+      <div class="platform-item"><i class="fa-brands fa-amazon" style="color:#FF9900;"></i>Amazon</div>
+      <div class="platform-item"><i class="fa-brands fa-youtube" style="color:#FF0000;"></i>YouTube</div>
+      <div class="platform-item"><i class="fa-brands fa-tiktok" style="color:#69C9D0;"></i>TikTok</div>
+      <div class="platform-item"><i class="fa-brands fa-instagram" style="color:#E1306C;"></i>Instagram</div>
+      <div class="platform-item"><i class="fa-solid fa-music" style="color:#00B4D8;"></i>Boomplay</div>
+      <div class="platform-item"><i class="fa-solid fa-headphones" style="color:#FF6600;"></i>Audiomack</div>
+      <div class="platform-item"><i class="fa-solid fa-circle-play" style="color:#EF5466;"></i>Deezer</div>
+      <div class="platform-item"><i class="fa-solid fa-magnifying-glass" style="color:#08B4E5;"></i>Shazam</div>
+      <div class="platform-item"><i class="fa-solid fa-globe" style="color:#00C4CC;"></i>Anghami</div>
+      <div class="platform-item"><i class="fa-solid fa-compact-disc" style="color:var(--purple3);"></i>Trebel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOW IT WORKS ===== -->
+<div class="section reveal" id="how">
+  <div class="label-tag">The Process</div>
+  <h2 class="section-h display">How 444Music Works</h2>
+  <p class="section-p">From upload to global — four simple steps to get your music everywhere.</p>
+
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Create an Account</h3>
+      <p>Sign up in minutes and access your full artist dashboard with all tools ready to use.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Upload Your Music</h3>
+      <p>Add your audio files, cover artwork, and metadata. ISRC codes are included automatically.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Select Platforms</h3>
+      <p>Choose from 100+ stores and streaming services. Set your release date and schedule ahead.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Start Earning</h3>
+      <p>Track streams, downloads, and royalties in real-time. Withdraw your earnings anytime.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== UPLOAD FLOW ===== -->
+<div class="section reveal">
+  <div class="label-tag">Release Manager</div>
+  <h2 class="section-h display">The easiest release workflow</h2>
+  <p class="section-p">Upload once and we handle delivery, metadata, and store submission for you.</p>
+
+  <div class="upload-grid">
+    <div class="steps-list">
+      <div class="step-item active">
+        <div class="step-n">1</div>
+        <div class="step-text">
+          <h4>Add Track Info</h4>
+          <p>Enter title, artist name, genre, release date, and credits. Auto-generate ISRC codes.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-n">2</div>
+        <div class="step-text">
+          <h4>Upload Audio & Cover Art</h4>
+          <p>Drop your WAV or FLAC file and a 3000×3000px cover image. Quality check included.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-n">3</div>
+        <div class="step-text">
+          <h4>Choose Your Stores</h4>
+          <p>Select from 100+ platforms or go global with one click. Territory restrictions available.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-n">4</div>
+        <div class="step-text">
+          <h4>Review & Submit</h4>
+          <p>Our team reviews your release and delivers it on schedule. Track status in dashboard.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-form-card">
+      <div class="form-tabs">
+        <div class="form-tab active">Track Info</div>
+        <div class="form-tab">Cover Art</div>
+        <div class="form-tab">Platforms</div>
+      </div>
+
+      <div style="display:flex;gap:14px;margin-bottom:14px;">
+        <div class="cover-drop">
+          <i class="fa-solid fa-image"></i>
+          <span>Cover</span>
+        </div>
+        <div style="flex:1;">
+          <div class="form-field">
+            <label>Track Title</label>
+            <input class="form-input" value="Better Days" readonly>
+          </div>
+          <div class="form-field">
+            <label>Primary Artist</label>
+            <input class="form-input" value="Kwame Asante" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field"><label>Genre</label><input class="form-input" value="Afrobeats" readonly></div>
+        <div class="form-field"><label>Release Date</label><input class="form-input" value="2026-04-15" readonly></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Language</label><input class="form-input" value="English" readonly></div>
+        <div class="form-field"><label>ISRC Code</label><input class="form-input" value="Auto-generated" readonly style="color:var(--text2);"></div>
+      </div>
+
+      <button class="form-submit"><i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Release</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOOLS ===== -->
+<div class="section reveal" id="tools">
+  <div style="max-width:1200px;margin:auto;">
+    <div class="label-tag">Artist Tools</div>
+    <h2 class="section-h display">Powerful tools for every artist</h2>
+    <p class="section-p">Everything you need to grow, protect, and monetize your music — in one platform.</p>
+
+    <div class="tools-grid">
+      <div class="tool">
+        <div class="tool-ico">💰</div>
+        <h3>Music Monetization</h3>
+        <p>Earn from streaming platforms, social media, and digital music services worldwide. Transparent royalty splits.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="tool">
+        <div class="tool-ico">🛡️</div>
+        <h3>Rights Protection</h3>
+        <p>Protect your music from unauthorized use and ensure you receive accurate royalties from every platform globally.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="tool">
+        <div class="tool-ico">🚀</div>
+        <h3>Artist Growth</h3>
+        <p>Promote releases, pitch to editorial playlists, and reach new fans across global platforms with real analytics.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="tool">
+        <div class="tool-ico">📊</div>
+        <h3>Real-Time Analytics</h3>
+        <p>Track streams, saves, playlists, and audience demographics live across all your releases and platforms.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="tool">
+        <div class="tool-ico">🎤</div>
+        <h3>Label Management</h3>
+        <p>Manage multiple artists and releases from one dashboard. Perfect for labels, collectives, and managers.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="tool">
+        <div class="tool-ico">🔗</div>
+        <h3>Referral Program</h3>
+        <p>Invite other artists and earn rewards when they release music through 444Music. Build passive income.</p>
+        <a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TESTIMONIALS ===== -->
+<div class="section-full reveal" style="padding-top:80px;padding-bottom:80px;">
+  <div style="max-width:1200px;margin:0 auto 40px;" class="testi-header-pad">
+    <div class="label-tag centered" style="justify-content:center;">Artist Stories</div>
+    <h2 class="section-h centered display">Artists love 444Music</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Thousands of independent artists trust us to get their music to the world.</p>
+  </div>
+
+  <div class="testi-overflow testi-overflow-padded">
+    <div class="testi-track">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"444Music got my EP on Spotify and Apple Music within 3 days. The dashboard is so clean and easy to use."</p>
+        <div class="testi-author">
+          <div class="testi-av">KA</div>
+          <div><div class="testi-name">Kwame Asante</div><div class="testi-role">Afrobeats Artist · Accra</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I love that I keep 100% of my royalties. No hidden fees, no drama. Just pure distribution."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#6b21a8;">MA</div>
+          <div><div class="testi-name">Maame Akosua</div><div class="testi-role">Gospel Artist · Kumasi</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The analytics tool helped me understand where my fans are. Now I know exactly who to target."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#581c87;">JB</div>
+          <div><div class="testi-name">Jay Blaze</div><div class="testi-role">Hip-Hop Artist · Lagos</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Best music distribution for African artists. The Boomplay and Audiomack integration is top tier."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#7c22d4;">TA</div>
+          <div><div class="testi-name">Temi A.</div><div class="testi-role">Afropop Artist · Abuja</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"444Music is the real deal. My single hit 100K streams in two weeks after I uploaded through them."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#a855f7;">DK</div>
+          <div><div class="testi-name">DJ Kofi</div><div class="testi-role">DJ / Producer · Tema</div></div>
+        </div>
+      </div>
+      <!-- duplicate -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"444Music got my EP on Spotify and Apple Music within 3 days. The dashboard is so clean and easy to use."</p>
+        <div class="testi-author">
+          <div class="testi-av">KA</div>
+          <div><div class="testi-name">Kwame Asante</div><div class="testi-role">Afrobeats Artist · Accra</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"I love that I keep 100% of my royalties. No hidden fees, no drama. Just pure distribution."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#6b21a8;">MA</div>
+          <div><div class="testi-name">Maame Akosua</div><div class="testi-role">Gospel Artist · Kumasi</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The analytics tool helped me understand where my fans are. Now I know exactly who to target."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#581c87;">JB</div>
+          <div><div class="testi-name">Jay Blaze</div><div class="testi-role">Hip-Hop Artist · Lagos</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Best music distribution for African artists. The Boomplay and Audiomack integration is top tier."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#7c22d4;">TA</div>
+          <div><div class="testi-name">Temi A.</div><div class="testi-role">Afropop Artist · Abuja</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"444Music is the real deal. My single hit 100K streams in two weeks after I uploaded through them."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#a855f7;">DK</div>
+          <div><div class="testi-name">DJ Kofi</div><div class="testi-role">DJ / Producer · Tema</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRICING ===== -->
+<div class="section reveal" id="pricing">
+  <div class="label-tag centered" style="justify-content:center;">Pricing</div>
+  <h2 class="section-h centered display">Simple & Transparent Pricing</h2>
+  <p class="section-p centered" style="margin-left:auto;margin-right:auto;">No hidden fees. Keep 100% of your royalties on every plan.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-name">Release & Pay Later</div>
+      <div class="price-amount">
+        <span class="price-cur">GHS</span>
+        <span class="price-num">0</span>
+      </div>
+      <div class="price-period">No upfront payment required</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>1 free upload</li>
+        <li><i class="fa-solid fa-check"></i>100+ stores</li>
+        <li><i class="fa-solid fa-check"></i>Free ISRC & Barcode</li>
+        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
+        <li><i class="fa-solid fa-check"></i>Basic analytics</li>
+      </ul>
+      <a href="register.html" class="price-btn-ghost">Get Started Free</a>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-popular">Most Popular</div>
+      <div class="price-tier">Single</div>
+      <div class="price-name">Single Release</div>
+      <div class="price-amount">
+        <span class="price-cur">GHS</span>
+        <span class="price-num">29.99</span>
+      </div>
+      <div class="price-period">Per single release</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>Spotify & Apple priority delivery</li>
+        <li><i class="fa-solid fa-check"></i>Global distribution</li>
+        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
+        <li><i class="fa-solid fa-check"></i>Fast release (2–5 days)</li>
+        <li><i class="fa-solid fa-check"></i>Full analytics dashboard</li>
+      </ul>
+      <a href="register.html" class="price-btn-fill">Release Single</a>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Pro</div>
+      <div class="price-name">EP / Album</div>
+      <div class="price-amount">
+        <span class="price-cur">GHS</span>
+        <span class="price-num">45.99</span>
+      </div>
+      <div class="price-period">Per project release</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>Up to 20 tracks</li>
+        <li><i class="fa-solid fa-check"></i>Global release everywhere</li>
+        <li><i class="fa-solid fa-check"></i>Detailed royalty reports</li>
+        <li><i class="fa-solid fa-check"></i>Priority support</li>
+        <li><i class="fa-solid fa-check"></i>Playlist pitching support</li>
+      </ul>
+      <a href="register.html" class="price-btn-ghost">Release Project</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RELEASES ===== -->
+<div class="section reveal">
+  <div class="label-tag">Latest</div>
+  <h2 class="section-h display">Latest Releases</h2>
+  <p class="section-p">Fresh music distributed through 444Music. Every day, new artists go global.</p>
+
+  <div id="featuredGrid" class="release-grid">
+    <div class="release-card" style="position:relative;">
+      <div class="release-placeholder">🎵</div>
+      <div class="release-body"><h4>Loading...</h4><p>Artist</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ ===== -->
+<div class="section-full reveal" style="padding:80px 5%;">
+  <div class="faq-wrap">
+    <div class="label-tag centered" style="justify-content:center;">FAQ</div>
+    <h2 class="section-h centered display">Frequently Asked Questions</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Everything you need to know about releasing music with 444Music.</p>
+
+    <div class="faq-filters">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="distribution">Distribution</button>
+      <button data-cat="payments">Payments</button>
+      <button data-cat="account">Account</button>
+      <button data-cat="referrals">Referrals</button>
+    </div>
+
+    <div class="faq-items">
+      <div class="faq-item" data-cat="distribution">
+        <div class="faq-q"><span>How do I upload my music to 444Music?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Log in to your dashboard, create a new release, upload your audio file, cover art, and fill in the required details such as artist name, release date, and genre.</p></div>
+      </div>
+      <div class="faq-item" data-cat="distribution">
+        <div class="faq-q"><span>Which stores will my music be sent to?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Your music can be delivered to major streaming platforms including Spotify, Apple Music, TikTok, YouTube Music, Audiomack, Boomplay, and many more global stores — 100+ in total.</p></div>
+      </div>
+      <div class="faq-item" data-cat="distribution">
+        <div class="faq-q"><span>How long does it take for my release to go live?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Most releases are processed within 2–5 business days. We recommend submitting at least 7 days before your target release date.</p></div>
+      </div>
+      <div class="faq-item" data-cat="distribution">
+        <div class="faq-q"><span>What audio format should I upload?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>We recommend WAV files (16-bit or 24-bit) for best quality. FLAC is also accepted. We transcode to the required format for each store automatically.</p></div>
+      </div>
+      <div class="faq-item" data-cat="payments">
+        <div class="faq-q"><span>How do I earn money from my music?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>You earn royalties whenever people stream or download your music on supported platforms. Earnings are collected and shown in your dashboard — you keep 100% of what's yours.</p></div>
+      </div>
+      <div class="faq-item" data-cat="payments">
+        <div class="faq-q"><span>When will I receive my royalties?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Streaming platforms usually report earnings monthly, but some may take 2–3 months before the first royalties appear in your dashboard.</p></div>
+      </div>
+      <div class="faq-item" data-cat="account">
+        <div class="faq-q"><span>Can labels use 444Music Distribution?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Yes. Labels can manage multiple artists and releases from a single dashboard, with separate royalty tracking for each artist.</p></div>
+      </div>
+      <div class="faq-item" data-cat="account">
+        <div class="faq-q"><span>Is my music ownership protected?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Yes. You keep 100% ownership of your music. We only distribute your content to digital stores — we never claim any ownership or rights.</p></div>
+      </div>
+      <div class="faq-item" data-cat="referrals">
+        <div class="faq-q"><span>How does the referral program work?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Share your referral link with new artists. When they join and release music through 444Music, you earn referral rewards from their activity — passively.</p></div>
+      </div>
+      <div class="faq-item" data-cat="referrals">
+        <div class="faq-q"><span>Where can I find my referral link?</span><div class="faq-icon">+</div></div>
+        <div class="faq-answer"><p>Your referral link is inside your dashboard under the Referrals section. You can share it directly or copy it for social media.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="section-full reveal" style="padding:0 0 80px;">
+  <div class="cta-banner">
+    <h2 class="display">Ready to go global?<br><span class="accent">Start distributing today.</span></h2>
+    <p>Join 7,000+ independent artists who trust 444Music to reach their fans worldwide.</p>
+    <div class="cta-btns">
+      <a href="register.html" class="btn-primary"><i class="fa-solid fa-rocket"></i>Create Free Account</a>
+      <a href="login.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i>Sign In</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="text-decoration:none;">
+        <img src="logo.png" alt="444Music" class="nav-logo-img"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="nav-logo-fallback" style="display:none;">4</div>
+        444Music
+      </a>
+      <p class="footer-brand-text">Global music distribution platform for independent artists. Upload once — distribute everywhere.</p>
+      <div class="footer-socials">
+        <a class="social-ico" href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a class="social-ico" href="#"><i class="fa-brands fa-twitter"></i></a>
+        <a class="social-ico" href="#"><i class="fa-brands fa-facebook"></i></a>
+        <a class="social-ico" href="#"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="legal.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="support.html">Contact</a>
+      <a href="faq.html">FAQ</a>
+      <a href="https://ofbluhface.vercel.app/">Developer</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="legal.html">Terms of Service</a>
+      <a href="legal.html">Privacy Policy</a>
+      <a href="legal.html">Cookie Policy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Artists</h4>
+      <a href="register.html">Create Account</a>
+      <a href="login.html">Login</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Analytics</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 444Music Distribution. All rights reserved.</span>
+    <span style="display:flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-shield-halved" style="color:var(--purple3);"></i>
+      Secured & Independent
+    </span>
+  </div>
+</footer>
+
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const grid = document.getElementById("featuredGrid");
+
+async function loadFeatured() {
+  try {
+    const snapshot = await getDocs(collection(db, "submissions"));
+    grid.innerHTML = '';
+    let count = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (!data.coverURL) return;
+      count++;
+      const card = document.createElement("div");
+      card.className = "release-card";
+      card.style.position = "relative";
+      card.innerHTML = `
+        <img src="${data.coverURL}" alt="${data.title || 'Release'}" loading="lazy">
+        <div class="release-new">New</div>
+        <div class="release-body">
+          <h4>${data.title || "New Release"}</h4>
+          <p>${data.artist || "Artist"}</p>
+        </div>`;
+      grid.appendChild(card);
+    });
+    if (count === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:48px 0;">
+        <i class="fa-solid fa-music" style="font-size:28px;margin-bottom:12px;display:block;opacity:0.2;"></i>
+        No releases yet. Be the first to upload.
+      </div>`;
+    }
+  } catch(err) {
+    grid.innerHTML = '';
+    console.log("Firebase:", err);
+  }
+}
+loadFeatured();
+</script>
+
+<script>
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-icon').textContent = '+';
+    });
+    if (!isOpen) { item.classList.add('open'); }
+  });
+});
+
+// FAQ filter
+document.querySelectorAll('.faq-filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.faq-filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.style.display = (cat === 'all' || item.dataset.cat === cat) ? 'block' : 'none';
+    });
+  });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Upload step highlight
+document.querySelectorAll('.step-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// Form tabs
+document.querySelectorAll('.form-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
