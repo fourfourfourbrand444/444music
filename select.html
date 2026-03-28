@@ -3,127 +3,995 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Select Distribution Platforms</title>
-<link rel="stylesheet" href="select.css">
+<title>Distribute Your Music — Select Platforms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+
+/* ─── RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --brand:        #7c3aed;
+  --brand-2:      #a855f7;
+  --brand-glow:   rgba(124, 58, 237, 0.55);
+  --accent:       #06d6a0;
+  --bg:           #080810;
+  --bg-2:         #0e0e1a;
+  --glass:        rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.09);
+  --glass-hover:  rgba(255,255,255,0.07);
+  --text:         #f0f0f8;
+  --text-muted:   rgba(240,240,248,0.45);
+  --text-dim:     rgba(240,240,248,0.25);
+  --radius-card:  18px;
+  --radius-btn:   14px;
+  --transition:   0.28s cubic-bezier(0.34,1.4,0.64,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── BACKGROUND MESH ──────────────────────────────────────── */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-mesh::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 55%;
+  height: 70%;
+  background: radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%);
+  animation: meshDrift1 14s ease-in-out infinite alternate;
+}
+.bg-mesh::after {
+  content: '';
+  position: absolute;
+  bottom: -15%;
+  right: -5%;
+  width: 50%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(6,214,160,0.10) 0%, transparent 70%);
+  animation: meshDrift2 18s ease-in-out infinite alternate;
+}
+.bg-orb {
+  position: absolute;
+  top: 40%;
+  left: 55%;
+  width: 40%;
+  height: 45%;
+  background: radial-gradient(ellipse, rgba(168,85,247,0.08) 0%, transparent 65%);
+  animation: meshDrift3 22s ease-in-out infinite alternate;
+}
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.6;
+}
+
+@keyframes meshDrift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(5%,8%) scale(1.12); } }
+@keyframes meshDrift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-6%,-5%) scale(1.1); } }
+@keyframes meshDrift3 { from { transform: translate(0,0) scale(1); } to { transform: translate(4%,6%) scale(0.92); } }
+
+/* ─── WRAPPER ──────────────────────────────────────────────── */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 56px 24px 100px;
+}
+
+/* ─── HEADER ───────────────────────────────────────────────── */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeUp 0.7s ease both;
+}
+.header .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-2);
+  margin-bottom: 22px;
+}
+.header .badge svg { width:14px; height:14px; }
+h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff 30%, var(--brand-2) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+.subtitle {
+  color: var(--text-muted);
+  font-size: 16px;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* ─── CONTROLS BAR ─────────────────────────────────────────── */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+#searchInput {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(12px);
+}
+#searchInput::placeholder { color: var(--text-dim); }
+#searchInput:focus {
+  border-color: rgba(124,58,237,0.55);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+}
+
+.count-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+}
+.count-badge .count-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--brand-2);
+  min-width: 22px;
+  text-align: center;
+  transition: transform 0.25s var(--transition), color 0.2s;
+}
+.count-badge .count-num.bump {
+  animation: bump 0.4s cubic-bezier(0.34,1.6,0.64,1);
+}
+
+@keyframes bump {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.55); }
+  100% { transform: scale(1); }
+}
+
+/* ─── SECTION LABEL ────────────────────────────────────────── */
+.section-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  padding-left: 2px;
+}
+
+/* ─── GRID ─────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 14px;
+  animation: fadeUp 0.8s 0.15s ease both;
+}
+
+/* ─── PLATFORM CARD ────────────────────────────────────────── */
+.platform {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 14px 20px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition:
+    transform var(--transition),
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.25s ease;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* shimmer on card */
+.platform::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.platform:hover::before { opacity: 1; }
+
+.platform:hover {
+  transform: translateY(-4px) scale(1.03);
+  background: var(--glass-hover);
+  border-color: rgba(124,58,237,0.35);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(124,58,237,0.15);
+}
+
+.platform:active { transform: translateY(0) scale(0.97); }
+
+/* SELECTED STATE */
+.platform.selected {
+  background: rgba(124,58,237,0.14);
+  border-color: var(--brand);
+  box-shadow:
+    0 0 0 1px var(--brand),
+    0 0 24px rgba(124,58,237,0.3),
+    0 8px 32px rgba(124,58,237,0.2),
+    inset 0 0 30px rgba(124,58,237,0.06);
+  animation: selectPop 0.38s cubic-bezier(0.34,1.6,0.64,1);
+}
+
+@keyframes selectPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+/* CHECKMARK BADGE */
+.checkmark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  background: var(--brand);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+  transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34,1.6,0.64,1);
+  box-shadow: 0 0 12px rgba(124,58,237,0.7);
+}
+.checkmark svg { width: 12px; height: 12px; color: #fff; stroke-width: 2.5; }
+
+.platform.selected .checkmark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* PLATFORM ICON */
+.platform-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.28s var(--transition);
+}
+.platform:hover .platform-icon { transform: scale(1.08); }
+.platform.selected .platform-icon { transform: scale(1.05); }
+
+.platform-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Fallback icon (letter avatar) */
+.platform-icon.avatar {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* PLATFORM NAME */
+.platform span {
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--text-muted);
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+.platform:hover span { color: var(--text); }
+.platform.selected span { color: #fff; font-weight: 600; }
+
+/* POPULAR tag */
+.tag-popular {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(6,214,160,0.18);
+  color: var(--accent);
+  border: 1px solid rgba(6,214,160,0.3);
+}
+
+/* ─── DIVIDER ──────────────────────────────────────────────── */
+.more-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 38px 0 28px;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+.more-label::before,
+.more-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+.more-label span {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ─── ACTIONS ──────────────────────────────────────────────── */
+.actions-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 18px 0 0;
+  animation: fadeUp 0.8s 0.25s ease both;
+}
+.actions-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(8,8,16,0.82);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.actions-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+.actions-left span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.actions-left strong {
+  font-family: 'Outfit', sans-serif;
+  color: var(--brand-2);
+  font-size: 15px;
+}
+
+.btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 13px 26px;
+  border-radius: var(--radius-btn);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.22s var(--transition), box-shadow 0.22s ease, background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.95) !important; }
+
+.btn-ghost {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  backdrop-filter: blur(8px);
+}
+.btn-ghost:hover {
+  background: var(--glass-hover);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(124,58,237,0.45);
+  color: var(--brand-2);
+}
+.btn-outline:hover {
+  background: rgba(124,58,237,0.1);
+  border-color: var(--brand-2);
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(124,58,237,0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: rgba(255,255,255,0.15);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.btn-primary:hover::after { left: 120%; }
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(124,58,237,0.6);
+}
+
+/* ─── EMPTY STATE ──────────────────────────────────────────── */
+.empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  gap: 12px;
+  font-size: 14px;
+}
+.empty-state svg { width: 40px; height: 40px; opacity: 0.3; }
+.empty-state.visible { display: flex; }
+
+/* ─── CARD STAGGER ANIMATION ───────────────────────────────── */
+.platform {
+  opacity: 0;
+  animation: cardIn 0.5s ease forwards;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.platform:hover { opacity: 1; }
+
+/* ─── FADE UP ───────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(124,58,237,0.5); }
+
+/* ─── DESELECT ALL BTN ──────────────────────────────────────── */
+#deselect-btn { display: none; }
+
+/* ─── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .wrapper { padding: 36px 14px 80px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+  .platform { padding: 18px 10px 15px; }
+  .platform-icon { width: 44px; height: 44px; }
+  h1 { font-size: 26px; }
+  .subtitle { font-size: 14px; }
+  .actions-inner { gap: 8px; }
+  .btn { padding: 12px 18px; font-size: 13px; }
+}
 
 </style>
 </head>
-
 <body>
-<div class="wrapper">
-  <h1>Select Distribution Platforms</h1>
-  <p class="subtitle">Choose where your music will be distributed. You can select all or only the stores you prefer.</p>
 
+<!-- Background effects -->
+<div class="bg-mesh"><div class="bg-orb"></div></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Step 2 of 4 — Distribution
+    </div>
+    <h1>Where should your<br>music live?</h1>
+    <p class="subtitle">Select every platform you want to reach. Your music will go live simultaneously across all chosen stores within 24–72 hours.</p>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-bar">
+    <div class="search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search platforms…" autocomplete="off">
+    </div>
+    <div class="count-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="count-num" id="countNum">0</span>
+      <span>selected</span>
+    </div>
+  </div>
+
+  <!-- MAJOR PLATFORMS -->
+  <div class="section-label">🔥 Major Streaming Platforms</div>
   <div class="grid" id="platformGrid">
 
-    <!-- You can replace these image URLs with your own local icons if you want -->
-   <div class="platform" data-name="Spotify">
-  <img src="spotify.svg">
-  <span>Spotify</span>
-</div>
+    <div class="platform" data-name="Spotify">
+      <div class="tag-popular">Top</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="spotify.svg" alt="Spotify" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#1DB954,#157a38)';this.parentNode.textContent='S'"></div>
+      <span>Spotify</span>
+    </div>
 
-<div class="platform" data-name="Apple Music">
-  <img src="apple-music (1).svg">
-  <span>Apple Music</span>
-</div>
+    <div class="platform" data-name="Apple Music">
+      <div class="tag-popular">Top</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="apple-music (1).svg" alt="Apple Music" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#fc3c44,#b0003a)';this.parentNode.textContent='A'"></div>
+      <span>Apple Music</span>
+    </div>
 
-<div class="platform" data-name="YouTube Music">
-  <img src="Youtube_Music_icon.svg.png">
-  <span>YouTube Music</span>
-</div>
+    <div class="platform" data-name="YouTube Music">
+      <div class="tag-popular">Top</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="Youtube_Music_icon.svg.png" alt="YouTube Music" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#FF0000,#800000)';this.parentNode.textContent='YT'"></div>
+      <span>YouTube Music</span>
+    </div>
 
-<div class="platform" data-name="Amazon Music">
-  <img src="amazon-music.svg">
-  <span>Amazon Music</span>
-</div>
+    <div class="platform" data-name="Amazon Music">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="amazon-music.svg" alt="Amazon Music" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#FF9900,#cc6600)';this.parentNode.textContent='A'"></div>
+      <span>Amazon Music</span>
+    </div>
 
-<div class="platform" data-name="Tidal">
-  <img src="tidal.svg">
-  <span>Tidal</span>
-</div>
+    <div class="platform" data-name="Tidal">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="tidal.svg" alt="Tidal" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#00FFFF,#008888)';this.parentNode.textContent='T'"></div>
+      <span>Tidal</span>
+    </div>
 
-<div class="platform" data-name="Pandora">
-  <img src="pandora.svg">
-  <span>Pandora</span>
-</div>
+    <div class="platform" data-name="Deezer">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#A238FF,#5c00c7)">D</div>
+      <span>Deezer</span>
+    </div>
 
-<div class="platform" data-name="SoundCloud">
-  <img src="soundcloud.svg">
-  <span>SoundCloud</span>
-</div>
+    <div class="platform" data-name="Pandora">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="pandora.svg" alt="Pandora" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#005483,#00244d)';this.parentNode.textContent='P'"></div>
+      <span>Pandora</span>
+    </div>
 
-<div class="platform" data-name="Napster">
-  <img src="napster.svg">
-  <span>Napster</span>
-</div>
+    <div class="platform" data-name="SoundCloud">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="soundcloud.svg" alt="SoundCloud" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#FF5500,#c73c00)';this.parentNode.textContent='SC'"></div>
+      <span>SoundCloud</span>
+    </div>
 
-<div class="platform" data-name="Napster">
-  <img src="instagram.svg">
-  <span>instagram</span>
-</div>
+    <div class="platform" data-name="Napster">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="napster.svg" alt="Napster" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#21a0ab,#136e75)';this.parentNode.textContent='N'"></div>
+      <span>Napster</span>
+    </div>
 
+    <div class="platform" data-name="Qobuz">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#0b5fff,#0040cc)">Q</div>
+      <span>Qobuz</span>
+    </div>
 
-<div class="platform" data-name="Napster">
-  <img src="tiktok.svg">
-  <span>Tiktok</span>
-</div>
+    <div class="platform" data-name="iHeart Radio">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#c8102e,#8a0019)">iH</div>
+      <span>iHeart Radio</span>
+    </div>
 
-<div class="platform" data-name="Napster">
-  <img src="icons8-boomplay-50.png">
-  <span>Boomplay</span>
-</div>
+    <div class="platform" data-name="Anghami">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#7d3cff,#4a00cc)">AN</div>
+      <span>Anghami</span>
+    </div>
 
-<div class="platform" data-name="Napster">
-  <img src="icons8-audiomack-48.png">
-  <span>Audiomack</span>
-</div>
-
-<div class="platform" data-name="Napster">
-  <img src="icons8-facebook-logo-48.png">
-  <span>FaceBook</span>
-</div>
-<div class="wrapper">
-  <h1>200+ stores More.... </h1>
-</div>
   </div>
 
-  <div class="actions">
-    <button class="btn btn-outline" onclick="selectAll()">Select All</button>
-    <button class="btn btn-primary" onclick="continueNext()">Continue</button>
+  <!-- SOCIAL PLATFORMS -->
+  <div class="more-label"><span>Social & Video Platforms</span></div>
+  <div class="grid" id="socialGrid">
+
+    <div class="platform" data-name="TikTok">
+      <div class="tag-popular">Viral</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="tiktok.svg" alt="TikTok" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#010101,#333)';this.parentNode.textContent='TT'"></div>
+      <span>TikTok</span>
+    </div>
+
+    <div class="platform" data-name="Instagram">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="instagram.svg" alt="Instagram" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)';this.parentNode.textContent='IG'"></div>
+      <span>Instagram</span>
+    </div>
+
+    <div class="platform" data-name="Facebook">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="icons8-facebook-logo-48.png" alt="Facebook" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#1877F2,#0c4f9f)';this.parentNode.textContent='FB'"></div>
+      <span>Facebook</span>
+    </div>
+
+    <div class="platform" data-name="YouTube">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#FF0000,#a00000)">▶</div>
+      <span>YouTube</span>
+    </div>
+
+    <div class="platform" data-name="Snapchat">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#FFFC00,#ccca00);color:#111">👻</div>
+      <span>Snapchat</span>
+    </div>
+
+    <div class="platform" data-name="Triller">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#e91e63,#880e4f)">TR</div>
+      <span>Triller</span>
+    </div>
+
   </div>
-</div>
+
+  <!-- AFRICAN PLATFORMS -->
+  <div class="more-label"><span>🌍 African Platforms</span></div>
+  <div class="grid" id="africaGrid">
+
+    <div class="platform" data-name="Boomplay">
+      <div class="tag-popular">Africa</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="icons8-boomplay-50.png" alt="Boomplay" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#ff6b35,#c73e00)';this.parentNode.textContent='BP'"></div>
+      <span>Boomplay</span>
+    </div>
+
+    <div class="platform" data-name="Audiomack">
+      <div class="tag-popular">Africa</div>
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon"><img src="icons8-audiomack-48.png" alt="Audiomack" onerror="this.parentNode.classList.add('avatar');this.parentNode.style.background='linear-gradient(135deg,#FFA500,#cc7000)';this.parentNode.textContent='AM'"></div>
+      <span>Audiomack</span>
+    </div>
+
+    <div class="platform" data-name="Mdundo">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#00a878,#006f4f)">MD</div>
+      <span>Mdundo</span>
+    </div>
+
+    <div class="platform" data-name="Aftown">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#e63946,#9b001a)">AF</div>
+      <span>Aftown</span>
+    </div>
+
+    <div class="platform" data-name="Spinlet">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#457b9d,#1d3557)">SP</div>
+      <span>Spinlet</span>
+    </div>
+
+    <div class="platform" data-name="Iroking">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#f4a261,#7d3100)">IK</div>
+      <span>iROKING</span>
+    </div>
+
+  </div>
+
+  <!-- RADIO & SYNC -->
+  <div class="more-label"><span>📻 Radio, Sync & More</span></div>
+  <div class="grid" id="radioGrid">
+
+    <div class="platform" data-name="Shazam">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#0088ff,#004fcc)">SZ</div>
+      <span>Shazam</span>
+    </div>
+
+    <div class="platform" data-name="Beatport">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#00cc00,#006600)">BP</div>
+      <span>Beatport</span>
+    </div>
+
+    <div class="platform" data-name="Bandcamp">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#629aa9,#1da0c3)">BC</div>
+      <span>Bandcamp</span>
+    </div>
+
+    <div class="platform" data-name="7digital">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#e91e8c,#94005b)">7D</div>
+      <span>7digital</span>
+    </div>
+
+    <div class="platform" data-name="Resso">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#ff4e6a,#9b001a)">RS</div>
+      <span>Resso</span>
+    </div>
+
+    <div class="platform" data-name="NetEase Music">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#c62828,#7f0000)">NE</div>
+      <span>NetEase</span>
+    </div>
+
+    <div class="platform" data-name="KKBox">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#00bcd4,#006064)">KK</div>
+      <span>KKBox</span>
+    </div>
+
+    <div class="platform" data-name="Joox">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#43a047,#1b5e20)">JX</div>
+      <span>Joox</span>
+    </div>
+
+    <div class="platform" data-name="Claro Música">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#e53935,#7b1111)">CM</div>
+      <span>Claro Música</span>
+    </div>
+
+    <div class="platform" data-name="Fizy">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#ff6d00,#e65100)">FZ</div>
+      <span>Fizy</span>
+    </div>
+
+    <div class="platform" data-name="Yandex Music">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#ffcc00,#cc9900);color:#111">YX</div>
+      <span>Yandex Music</span>
+    </div>
+
+    <div class="platform" data-name="Gaana">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#e53935,#b71c1c)">GA</div>
+      <span>Gaana</span>
+    </div>
+
+    <div class="platform" data-name="JioSaavn">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#29b6f6,#0277bd)">JS</div>
+      <span>JioSaavn</span>
+    </div>
+
+    <div class="platform" data-name="Hungama">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#ff6f00,#bf360c)">HU</div>
+      <span>Hungama</span>
+    </div>
+
+    <div class="platform" data-name="Nuuday">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#7e57c2,#4527a0)">NU</div>
+      <span>Nuuday</span>
+    </div>
+
+    <div class="platform" data-name="MediaNet">
+      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="platform-icon avatar" style="background:linear-gradient(135deg,#546e7a,#263238)">MN</div>
+      <span>MediaNet</span>
+    </div>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>No platforms match your search</span>
+  </div>
+
+  <!-- STICKY ACTIONS BAR -->
+  <div class="actions-bar">
+    <div class="actions-inner">
+      <div class="actions-left">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span><strong id="countNum2">0</strong> platform<span id="pluralText">s</span> selected</span>
+      </div>
+      <button class="btn btn-ghost" id="deselect-btn" onclick="deselectAll()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        Clear All
+      </button>
+      <button class="btn btn-outline" onclick="selectAll()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Select All
+      </button>
+      <button class="btn btn-primary" onclick="continueNext()">
+        Continue
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
 
 <script>
-const items = document.querySelectorAll('.platform');
+/* ─── STAGGER ANIMATION ────────────────────────────────────── */
+document.querySelectorAll('.platform').forEach((el, i) => {
+  el.style.animationDelay = `${i * 0.04}s`;
+});
 
-items.forEach(item => {
+/* ─── STATE ────────────────────────────────────────────────── */
+const allItems = () => document.querySelectorAll('.platform:not([style*="display: none"]):not(.hidden)');
+let selectedCount = 0;
+
+function updateCount() {
+  const n = document.querySelectorAll('.platform.selected').length;
+  selectedCount = n;
+
+  const el  = document.getElementById('countNum');
+  const el2 = document.getElementById('countNum2');
+  const pl  = document.getElementById('pluralText');
+  const desBtn = document.getElementById('deselect-btn');
+
+  el.textContent  = n;
+  el2.textContent = n;
+  pl.textContent  = n === 1 ? '' : 's';
+
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+
+  desBtn.style.display = n > 0 ? 'flex' : 'none';
+}
+
+/* ─── TOGGLE SELECT ────────────────────────────────────────── */
+document.querySelectorAll('.platform').forEach(item => {
   item.addEventListener('click', () => {
     item.classList.toggle('selected');
+    updateCount();
   });
 });
 
+/* ─── SELECT ALL / DESELECT ALL ────────────────────────────── */
 function selectAll() {
-  items.forEach(i => i.classList.add('selected'));
+  document.querySelectorAll('.platform').forEach(i => i.classList.add('selected'));
+  updateCount();
 }
 
+function deselectAll() {
+  document.querySelectorAll('.platform').forEach(i => i.classList.remove('selected'));
+  updateCount();
+}
+
+/* ─── SEARCH FILTER ────────────────────────────────────────── */
+const searchInput  = document.getElementById('searchInput');
+const emptyState   = document.getElementById('emptyState');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  let visible = 0;
+
+  document.querySelectorAll('.platform').forEach(item => {
+    const name = item.dataset.name.toLowerCase();
+    const match = !q || name.includes(q);
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+
+  emptyState.classList.toggle('visible', visible === 0 && q.length > 0);
+});
+
+/* ─── CONTINUE ──────────────────────────────────────────────── */
 function continueNext() {
-  const selected = [...items]
-    .filter(i => i.classList.contains('selected'))
+  const selected = [...document.querySelectorAll('.platform.selected')]
     .map(i => i.dataset.name);
 
   if (selected.length === 0) {
-    alert("Please select at least one platform.");
+    const btn = document.querySelector('.btn-primary');
+    btn.style.animation = 'shake 0.4s ease';
+    btn.addEventListener('animationend', () => btn.style.animation = '', { once: true });
     return;
   }
 
-  // You can save this in localStorage or send to Firebase later
-  localStorage.setItem("selectedPlatforms", JSON.stringify(selected));
-
-  // Go to next step (upload or dashboard)
-  window.location.href = "confirm.html";
+  localStorage.setItem('selectedPlatforms', JSON.stringify(selected));
+  window.location.href = 'confirm.html';
 }
+
+/* ─── SHAKE KEYFRAME ────────────────────────────────────────── */
+const style = document.createElement('style');
+style.textContent = `@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}`;
+document.head.appendChild(style);
+
+/* ─── INIT ──────────────────────────────────────────────────── */
+updateCount();
 </script>
 </body>
 </html>
-
