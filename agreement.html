@@ -3,89 +3,625 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Agreement • 444Music Distribution</title>
-<link rel="stylesheet" href="agreement.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-</head>
+<title>Release Agreement • 444Music</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+  :root {
+    --bg:        #0c0c0e;
+    --surface:   #141416;
+    --surface2:  #1a1a1d;
+    --border:    #232328;
+    --purple:    #a78bfa;
+    --purple-dk: #7c3aed;
+    --text:      #e8e8f0;
+    --muted:     #6b6b7a;
+    --dim:       #3a3a45;
+    --amber:     #f59e0b;
+    --green:     #34d399;
+  }
+
+  html, body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(12,12,14,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 30px; height: 30px;
+    background: var(--purple-dk);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: 0.2px;
+  }
+
+  .nav-tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  /* PAGE */
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 90px 20px 60px;
+  }
+
+  /* STEP */
+  .step-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .step-dots {
+    display: flex;
+    gap: 5px;
+  }
+  .step-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--dim);
+  }
+  .step-dot.on { background: var(--purple); }
+  .step-text {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  /* HEADING */
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+
+  /* DIVIDER */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* WARNING */
+  .notice {
+    padding: 16px 18px;
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-left: 3px solid var(--amber);
+    border-radius: 10px;
+    margin-bottom: 28px;
+  }
+  .notice-head {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+  }
+  .notice p {
+    font-size: 13.5px;
+    color: #c4a44a;
+    line-height: 1.55;
+  }
+  .notice strong { color: var(--amber); font-weight: 600; }
+
+  /* SECTION LABEL */
+  .label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  /* TERMS */
+  .terms {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .terms li {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: #aaaabb;
+    line-height: 1.5;
+  }
+  .terms li .ico {
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 1px;
+  }
+  .terms li strong { color: var(--text); font-weight: 500; }
+
+  /* ALERT */
+  .alert {
+    padding: 13px 16px;
+    background: rgba(167,139,250,0.06);
+    border: 1px solid rgba(167,139,250,0.18);
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: var(--purple);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* COMPARISON */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .col.highlight { border-color: rgba(167,139,250,0.3); }
+  .col-title {
+    padding: 11px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background: var(--surface2);
+  }
+  .col.highlight .col-title { color: var(--purple); }
+  .badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .b-later { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .b-now   { background: rgba(52,211,153,0.1);  color: var(--green); }
+  .col ul {
+    list-style: none;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .col ul li {
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .col ul li.y { color: #aaaabb; }
+  .col ul li.n { text-decoration: line-through; color: var(--dim); }
+
+  /* AGREEMENT BOX */
+  .agree-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .check-row:hover { background: rgba(255,255,255,0.025); border-color: var(--border); }
+  .check-row.on { background: rgba(167,139,250,0.05); border-color: rgba(167,139,250,0.2); }
+
+  .box {
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--dim);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .box.on {
+    border-color: var(--purple);
+    background: var(--purple-dk);
+  }
+  .box svg { display: none; }
+  .box.on svg { display: block; }
+
+  .check-label {
+    font-size: 13.5px;
+    color: #aaaabb;
+    line-height: 1.55;
+    user-select: none;
+  }
+  .check-label strong { color: var(--text); font-weight: 500; }
+
+  /* INPUT */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 12px;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+  }
+  .field input {
+    padding: 10px 13px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input::placeholder { color: var(--dim); }
+  .field input:focus {
+    border-color: rgba(167,139,250,0.4);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+  }
+
+  /* TIMESTAMP */
+  .ts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 9px 13px;
+    border-radius: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0 12px;
+  }
+  .ts-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 4px;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* WARN MSG */
+  .warn-msg {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 13px;
+    border-radius: 8px;
+    background: rgba(245,158,11,0.06);
+    border: 1px solid rgba(245,158,11,0.18);
+    font-size: 12.5px;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+
+  /* BUTTON */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--purple-dk), var(--purple));
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-bottom: 10px;
+  }
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(124,58,237,0.35);
+  }
+  .btn:active:not(:disabled) { transform: none; }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .btn-hint {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 0 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .foot-links {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .foot-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .foot-links a:hover { color: var(--purple); }
+  .foot-copy { font-size: 11.5px; color: var(--dim); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    nav { padding: 0 18px; }
+    .page { padding: 80px 16px 50px; }
+    h1 { font-size: 26px; }
+    .compare { grid-template-columns: 1fr; }
+    .agree-box { padding: 16px 14px; }
+    .field, .ts { margin: 0; }
+  }
+</style>
+</head>
 <body>
 
-<div class="background-animation"></div>
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-mark">🎵</div>
+    <span class="logo-text">444Music</span>
+  </a>
+  <span class="nav-tag">Distribution Portal</span>
+</nav>
 
-<div class="agreement-container">
+<main class="page">
 
-    <div class="agreement-card">
+  <!-- step -->
+  <div class="step-line">
+    <div class="step-dots">
+      <div class="step-dot on"></div>
+      <div class="step-dot on"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+    <span class="step-text">Step 2 of 4</span>
+  </div>
 
-        <h1>Release Payment Agreement</h1>
+  <!-- heading -->
+  <h1>Release Payment<br>Agreement</h1>
+  <p class="sub">Read through the terms below and confirm before uploading your release.</p>
 
-        <p class="intro">
-            Please read this carefully before continuing.
-        </p>
+  <!-- notice -->
+  <div class="notice">
+    <div class="notice-head">⚠ Important Notice</div>
+    <p>If you selected <strong>"Release &amp; Pay Later (GHS 0)"</strong>, your music <strong>will NOT go live</strong> on digital stores immediately. Distribution only begins after payment is confirmed.</p>
+  </div>
 
-        <div class="notice-box">
-            <p>
-                <strong>IMPORTANT:</strong> If you selected <strong>“Release & Pay Later (GHS 0)”</strong>, 
-                your music <strong>WILL NOT go live</strong> on digital stores immediately.
-            </p>
-        </div>
+  <hr>
 
-        <div class="agreement-text">
+  <!-- terms -->
+  <p class="label">What happens with Pay Later</p>
+  <ul class="terms">
+    <li><span class="ico">📋</span> Your release will be reviewed and metadata prepared by our team.</li>
+    <li><span class="ico">⏸</span> Your music stays in <strong>pending status</strong> — not visible on any store.</li>
+    <li><span class="ico">💳</span> <strong>Distribution only begins after payment is made and confirmed.</strong></li>
+    <li><span class="ico">🚀</span> Once paid, your music goes out to <strong>100+ stores immediately.</strong></li>
+    <li><span class="ico">📅</span> Stores may take <strong>3–7 business days</strong> to reflect the release.</li>
+    <li><span class="ico">🔒</span> Your content and ownership rights are always fully yours.</li>
+  </ul>
 
-            <p>
-                When you choose <strong>GHS 0 – Release & Pay Later</strong>:
-            </p>
+  <!-- alert -->
+  <div class="alert">
+    🚫 Your release will <strong>not go live</strong> on any store until payment is completed and verified.
+  </div>
 
-            <ul>
-                <li>Your release will be reviewed and prepared.</li>
-                <li>Your music will be held in pending status.</li>
-                <li><strong>Your release will only be distributed after payment has been made and confirmed successfully.</strong></li>
-                <li>Distribution begins immediately after confirmation.</li>
-            </ul>
+  <!-- comparison -->
+  <p class="label">Plan comparison</p>
+  <div class="compare">
+    <div class="col">
+      <div class="col-title">Pay Later <span class="badge b-later">GHS 0</span></div>
+      <ul>
+        <li class="y">✓ Instant submission</li>
+        <li class="y">✓ Reviewed &amp; prepared</li>
+        <li class="n">✗ Distributed right away</li>
+        <li class="n">✗ Goes live today</li>
+        <li class="y">✓ Live after payment</li>
+      </ul>
+    </div>
+    <div class="col highlight">
+      <div class="col-title">Paid Plan <span class="badge b-now">Immediate</span></div>
+      <ul>
+        <li class="y">✓ Payment confirmed first</li>
+        <li class="y">✓ Reviewed &amp; prepared</li>
+        <li class="y">✓ Distributed right away</li>
+        <li class="y">✓ Goes live ASAP</li>
+        <li class="y">✓ 100+ store coverage</li>
+      </ul>
+    </div>
+  </div>
 
-            <div class="highlight">
-                ⚠️ <strong>Your release will NOT go live on stores until payment is completed.</strong>
-            </div>
+  <hr>
 
-            <p>
-                If you prefer your music to be distributed immediately after submission,
-                please choose the <strong>Paid Single Plan</strong> instead.
-            </p>
+  <!-- agreement -->
+  <p class="label">Acknowledgement</p>
+  <div class="agree-box">
 
-            <p>
-                The Paid Plan confirms payment first, then distributes directly to 100+ stores.
-            </p>
-
-        </div>
-
-        <div class="checkbox-section">
-            <input type="checkbox" id="agree">
-            <label for="agree">
-                I understand that my release will only go live after payment confirmation.
-            </label>
-        </div>
-
-        <button id="continueBtn" disabled>
-            Continue to Upload
-        </button>
-
+    <div class="check-row" id="row1" onclick="toggle('b1','row1')">
+      <div class="box" id="b1">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5.5l2 2 5-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="check-label">I understand my release will only go live <strong>after payment confirmation</strong> and stays pending until then.</span>
     </div>
 
-</div>
+    <div class="check-row" id="row2" onclick="toggle('b2','row2')">
+      <div class="box" id="b2">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5.5l2 2 5-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="check-label">I agree to the <strong>444Music Distribution Terms of Service</strong> and confirm that uploading alone does not activate my release.</span>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Type your full name to sign</span>
+      <input id="sig" type="text" placeholder="e.g. Kwame Asante" autocomplete="off" />
+    </div>
+
+    <div class="ts">
+      <span><span class="ts-dot"></span>Session active</span>
+      <span id="clock">—</span>
+      <span>Logged for compliance</span>
+    </div>
+
+  </div>
+
+  <!-- validation -->
+  <div class="warn-msg" id="warnMsg">⚠ Please check both boxes and enter your full name to continue.</div>
+
+  <!-- button -->
+  <button class="btn" id="btn" disabled>
+    Continue to Upload &nbsp;→
+  </button>
+  <p class="btn-hint">🔒 Secured by SSL · Your data is never sold</p>
+
+</main>
+
+<footer>
+  <hr style="width:100%;border-color:#1e1e22;margin-bottom:28px;">
+  <div class="foot-links">
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+    <a href="#">FAQ</a>
+    <a href="#">Support</a>
+  </div>
+  <p class="foot-copy">© 2024 444Music Distribution. All rights reserved.</p>
+</footer>
 
 <script>
-const checkbox = document.getElementById("agree");
-const button = document.getElementById("continueBtn");
+  // Clock
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    const t = new Date();
+    document.getElementById('clock').textContent =
+      `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())} GMT`;
+  }
+  tick(); setInterval(tick, 1000);
 
-checkbox.addEventListener("change", function(){
-    button.disabled = !this.checked;
-});
+  // Checkboxes
+  const s = { b1: false, b2: false };
+  function toggle(id, rowId){
+    s[id] = !s[id];
+    document.getElementById(id).classList.toggle('on', s[id]);
+    document.getElementById(rowId).classList.toggle('on', s[id]);
+    validate();
+  }
 
-button.addEventListener("click", function(){
-    if(checkbox.checked){
-        window.location.href = "https://tally.so/r/NpX0pp";
-    }
-});
+  // Sig
+  document.getElementById('sig').addEventListener('input', validate);
+
+  // Validate
+  const btn = document.getElementById('btn');
+  function validate(){
+    btn.disabled = !(s.b1 && s.b2 && document.getElementById('sig').value.trim().length >= 2);
+    document.getElementById('warnMsg').style.display = 'none';
+  }
+
+  // Submit
+  btn.addEventListener('click', function(){
+    if(btn.disabled){ document.getElementById('warnMsg').style.display='flex'; return; }
+    btn.textContent = 'Redirecting…';
+    btn.disabled = true;
+    setTimeout(() => { window.location.href = 'https://tally.so/r/NpX0pp'; }, 600);
+  });
 </script>
-
 </body>
 </html>
