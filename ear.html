@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earnings • 444Music</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="earnings.css">
+</head>
+<body>
+
+  <!-- Ambient background orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-top">
+        <div class="header-eyebrow">
+          <span class="eyebrow-dot"></span>
+          <span>444Music · Royalties Portal</span>
+        </div>
+        <h1>Earnings Dashboard</h1>
+        <p class="subtitle">Withdraw your earnings once your balance reaches <strong>$20.00</strong></p>
+      </div>
+    </header>
+
+    <!-- BALANCE CARD -->
+    <div class="card balance-section">
+
+      <!-- Shimmer top line -->
+      <div class="card-glow-line"></div>
+
+      <div class="balance-header">
+        <div class="balance-left">
+          <span class="balance-label">Account Balance</span>
+          <span id="balanceValue" class="balance-value">$ 0.00</span>
+          <div class="balance-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Live · Updates automatically</span>
+          </div>
+        </div>
+
+        <select id="currency" class="currency-select" disabled>
+          <option value="$" selected>$ – USD</option>
+        </select>
+      </div>
+
+      <div class="badges">
+        <span class="badge cleared">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>
+          Cleared: $ 0.00
+        </span>
+        <span class="badge pending">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="currentColor"/></svg>
+          Pending: $ 0.00
+        </span>
+      </div>
+
+      <div class="threshold-bar">
+        <div class="threshold-track">
+          <div class="threshold-fill" id="thresholdFill" style="width: 0%"></div>
+        </div>
+        <div class="threshold-labels">
+          <span class="threshold-label">$0</span>
+          <span class="threshold-mid" id="thresholdPct">0% to payout</span>
+          <span class="threshold-label">$20</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="withdrawal.html" id="withdrawBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v14M5 9l7 7 7-7"/><path d="M3 20h18"/></svg>
+          Withdraw Earnings
+        </a>
+        <a class="btn btn-secondary" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Transaction History
+        </a>
+      </div>
+
+      <div class="info">
+        <div class="info-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <div class="info-text">
+          <p>Earnings are generated from streams, downloads, and platform revenue across all digital stores.</p>
+          <p><strong>Note:</strong> Balances update after platform reports are received. Minimum payout threshold is <strong>$20.00</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+
+      <!-- EARNINGS OVER TIME CARD -->
+      <div class="card earnings-chart">
+        <div class="card-head">
+          <h2>Earnings Over Time</h2>
+          <span class="card-tag">This Week</span>
+        </div>
+        <div class="chart">
+          <div class="bar" style="--h: 20%"><div class="bar-fill"></div><span class="bar-tip">Mon</span></div>
+          <div class="bar" style="--h: 35%"><div class="bar-fill"></div><span class="bar-tip">Tue</span></div>
+          <div class="bar" style="--h: 50%"><div class="bar-fill"></div><span class="bar-tip">Wed</span></div>
+          <div class="bar" style="--h: 65%"><div class="bar-fill"></div><span class="bar-tip">Thu</span></div>
+          <div class="bar" style="--h: 40%"><div class="bar-fill"></div><span class="bar-tip">Fri</span></div>
+          <div class="bar" style="--h: 75%"><div class="bar-fill"></div><span class="bar-tip">Sat</span></div>
+          <div class="bar" style="--h: 90%"><div class="bar-fill"></div><span class="bar-tip">Sun</span></div>
+        </div>
+        <div class="chart-labels">
+          <span>Mon</span><span>Tue</span><span>Wed</span>
+          <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- STATISTICS CARD -->
+        <div class="card statistics">
+          <div class="card-head">
+            <h2>Recent Activity</h2>
+            <span class="card-tag">Live</span>
+          </div>
+          <ul class="stats-list">
+            <li>
+              <div class="stat-icon stat-icon-streams">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <span class="stat-label">Streams</span>
+              <span class="stat-value stat-dash">— —</span>
+            </li>
+            <li>
+              <div class="stat-icon stat-icon-downloads">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v14M5 9l7 7 7-7"/><path d="M3 20h18"/></svg>
+              </div>
+              <span class="stat-label">Downloads</span>
+              <span class="stat-value stat-dash">— —</span>
+            </li>
+            <li>
+              <div class="stat-icon stat-icon-pending">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <span class="stat-label">Revenue Pending</span>
+              <span class="stat-value stat-dash">— —</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- TIPS CARD -->
+        <div class="card tips">
+          <div class="card-head">
+            <h2>Earnings Tips</h2>
+          </div>
+          <ul>
+            <li>
+              <span class="tip-num">01</span>
+              <span>Promote your music to increase streams and downloads.</span>
+            </li>
+            <li>
+              <span class="tip-num">02</span>
+              <span>Keep your profile up-to-date for better platform visibility.</span>
+            </li>
+            <li>
+              <span class="tip-num">03</span>
+              <span>Check platform reports weekly for accurate revenue tracking.</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /wrapper -->
+
+  <!-- WITHDRAW WARNING POPUP -->
+  <div id="withdrawPopup" class="popup-overlay">
+    <div class="popup-box">
+      <div class="popup-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h2>Minimum Not Reached</h2>
+      <p>Your balance is below the minimum withdrawal threshold of <strong>$20.00</strong>.</p>
+      <p class="popup-note">Keep promoting your music — your balance updates automatically as new earnings arrive.</p>
+      <button id="closePopup" class="popup-btn">Got It</button>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { getFirestore, doc, getDoc }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const balanceEl = document.getElementById("balanceValue");
+const withdrawBtn = document.getElementById("withdrawBtn");
+const popup = document.getElementById("withdrawPopup");
+const closePopup = document.getElementById("closePopup");
+const thresholdFill = document.getElementById("thresholdFill");
+const thresholdPct = document.getElementById("thresholdPct");
+
+let userBalance = 0;
+
+function updateBalance(amount){
+  userBalance = amount;
+  balanceEl.textContent = `$ ${amount.toFixed(2)}`;
+
+  // Update threshold bar
+  const pct = Math.min((amount / 20) * 100, 100);
+  thresholdFill.style.width = pct + "%";
+  thresholdPct.textContent = pct >= 100
+    ? "Ready to withdraw!"
+    : `${pct.toFixed(0)}% to payout`;
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+
+  try{
+    const userRef = doc(db,"users",user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      const earnings = Number(data.earnings) || 0;
+      updateBalance(earnings);
+    }else{
+      updateBalance(0);
+    }
+  }catch(err){
+    console.error("Error fetching earnings:",err);
+    updateBalance(0);
+  }
+});
+
+withdrawBtn.addEventListener("click",(e)=>{
+  if(userBalance < 20){
+    e.preventDefault();
+    popup.classList.add("active");
+  }
+});
+
+closePopup.addEventListener("click",()=>{
+  popup.classList.remove("active");
+});
+</script>
+</body>
+</html>
