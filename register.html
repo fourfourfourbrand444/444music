@@ -4,138 +4,1027 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>444Music – Create Account</title>
-
-<link rel="stylesheet" href="register.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
+<style>
+/* ─── RESET & ROOT ─────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:       #04020a;
+  --surface:  #0b0715;
+  --card:     rgba(255,255,255,0.035);
+  --border:   rgba(255,255,255,0.08);
+  --violet:   #8b5cf6;
+  --violet2:  #c026ff;
+  --gold:     #f5c842;
+  --gold2:    #e8a800;
+  --text:     #f0ecff;
+  --muted:    #7b7490;
+  --success:  #22d3a5;
+  --danger:   #f87171;
+  --warn:     #fb923c;
+  --glow:     rgba(139,92,246,0.25);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── ANIMATED BACKGROUND ──────────────────────────────── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.18;
+  animation: drift 18s ease-in-out infinite;
+}
+.orb1 { width:600px; height:600px; background:radial-gradient(circle,#7c3aed,transparent); top:-100px; left:-150px; animation-delay:0s; }
+.orb2 { width:500px; height:500px; background:radial-gradient(circle,#c026ff,transparent); bottom:-80px; right:-120px; animation-delay:-7s; }
+.orb3 { width:350px; height:350px; background:radial-gradient(circle,#f5c842,transparent); top:40%; left:35%; animation-delay:-13s; opacity:0.09; }
+
+@keyframes drift {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%      { transform: translate(40px,-30px) scale(1.05); }
+  66%      { transform: translate(-20px,40px) scale(0.95); }
+}
+
+/* Grid lines */
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--violet);
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  0%   { opacity:0; transform: translateY(0) scale(0); }
+  15%  { opacity:0.8; }
+  85%  { opacity:0.4; }
+  100% { opacity:0; transform: translateY(-100vh) scale(1.5); }
+}
+
+/* ─── LAYOUT ────────────────────────────────────────────── */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ─── LEFT PANEL ────────────────────────────────────────── */
+.left {
+  position: relative;
+  padding: 60px 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 15%; bottom: 15%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+}
+
+/* Logo */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 64px;
+  animation: slideDown 0.8s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.logo-mark {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #000;
+  box-shadow: 0 0 24px rgba(245,200,66,0.35);
+}
+
+.logo-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+}
+.logo-name span { color: var(--gold); }
+
+/* Headline */
+.left-headline {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(32px, 3.5vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  animation: slideDown 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+}
+
+.left-headline .accent { color: var(--gold); }
+.left-headline .purple { color: var(--violet); }
+
+.left-sub {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 44px;
+  max-width: 340px;
+  animation: slideDown 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+}
+
+/* Feature list */
+.features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feat-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s, transform 0.3s;
+  animation: slideRight 0.8s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.feat-item:nth-child(1) { animation-delay: 0.25s; }
+.feat-item:nth-child(2) { animation-delay: 0.35s; }
+.feat-item:nth-child(3) { animation-delay: 0.45s; }
+.feat-item:nth-child(4) { animation-delay: 0.55s; }
+
+.feat-item:hover {
+  border-color: rgba(139,92,246,0.35);
+  transform: translateX(6px);
+}
+
+.feat-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+
+.feat-icon.v { background: rgba(139,92,246,0.15); color: var(--violet); }
+.feat-icon.g { background: rgba(34,211,165,0.12); color: var(--success); }
+.feat-icon.o { background: rgba(248,144,113,0.12); color: #fb923c; }
+.feat-icon.y { background: rgba(245,200,66,0.12); color: var(--gold); }
+
+.feat-text { font-size: 14px; color: #c4bde0; font-weight: 500; }
+.feat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Waveform decoration */
+.waveform {
+  position: absolute;
+  bottom: 40px; left: 70px;
+  display: flex; align-items: flex-end; gap: 3px;
+  opacity: 0.2;
+}
+.waveform span {
+  display: block;
+  width: 3px;
+  background: var(--violet);
+  border-radius: 2px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.waveform span:nth-child(1)  { height:10px; }
+.waveform span:nth-child(2)  { height:22px; animation-delay:0.1s; }
+.waveform span:nth-child(3)  { height:16px; animation-delay:0.2s; }
+.waveform span:nth-child(4)  { height:30px; animation-delay:0.05s; }
+.waveform span:nth-child(5)  { height:20px; animation-delay:0.15s; }
+.waveform span:nth-child(6)  { height:36px; animation-delay:0.25s; }
+.waveform span:nth-child(7)  { height:24px; animation-delay:0.3s; }
+.waveform span:nth-child(8)  { height:14px; animation-delay:0.1s; }
+.waveform span:nth-child(9)  { height:28px; animation-delay:0.2s; }
+.waveform span:nth-child(10) { height:18px; animation-delay:0.35s; }
+.waveform span:nth-child(11) { height:32px; animation-delay:0.05s; }
+.waveform span:nth-child(12) { height:12px; animation-delay:0.15s; }
+.waveform span:nth-child(13) { height:22px; animation-delay:0.25s; }
+.waveform span:nth-child(14) { height:16px; animation-delay:0.4s; }
+.waveform span:nth-child(15) { height:28px; animation-delay:0.1s; }
+.waveform span:nth-child(16) { height:10px; animation-delay:0.2s; }
+.waveform span:nth-child(17) { height:20px; animation-delay:0.3s; }
+.waveform span:nth-child(18) { height:14px; animation-delay:0.05s; }
+.waveform span:nth-child(19) { height:26px; animation-delay:0.15s; }
+.waveform span:nth-child(20) { height:8px; animation-delay:0.35s; }
+
+@keyframes wave {
+  0%,100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.45); }
+}
+
+/* ─── RIGHT PANEL ────────────────────────────────────────── */
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 50px;
+  overflow-y: auto;
+}
+
+/* ─── FORM CARD ──────────────────────────────────────────── */
+.form-card {
+  width: 100%;
+  max-width: 460px;
+  animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s both;
+}
+
+.form-header {
+  margin-bottom: 36px;
+}
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--violet);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.step-badge i { font-size: 12px; }
+
+.form-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+}
+
+.form-sub {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ─── FIELD GROUP ─────────────────────────────────────────── */
+.field-group {
+  display: flex;
+  gap: 14px;
+}
+
+.field-group .field { flex: 1; }
+
+/* ─── FIELD ───────────────────────────────────────────────── */
+.field {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+  transition: color 0.25s;
+}
+
+.field:focus-within label { color: var(--violet); }
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap .icon {
+  position: absolute;
+  left: 14px;
+  font-size: 16px;
+  color: var(--muted);
+  z-index: 1;
+  transition: color 0.25s;
+  pointer-events: none;
+}
+
+.field:focus-within .icon { color: var(--violet); }
+
+.input-wrap input,
+.input-wrap select {
+  width: 100%;
+  padding: 13px 14px 13px 42px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input-wrap input::placeholder { color: rgba(123,116,144,0.6); }
+
+.input-wrap input:focus,
+.input-wrap select:focus {
+  border-color: var(--violet);
+  background: rgba(139,92,246,0.06);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+}
+
+/* Input states */
+.input-wrap input.valid   { border-color: rgba(34,211,165,0.45); }
+.input-wrap input.invalid { border-color: rgba(248,113,113,0.45); }
+
+.validation-icon {
+  position: absolute;
+  right: 14px;
+  font-size: 15px;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.validation-icon.show { opacity:1; transform:scale(1); }
+.validation-icon.ok  { color: var(--success); }
+.validation-icon.err { color: var(--danger); }
+
+/* Eye toggle */
+.eye-btn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  transition: color 0.2s;
+  z-index: 2;
+}
+.eye-btn:hover { color: var(--text); }
+
+/* Select arrow */
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: '\ea4e';
+  font-family: 'remixicon';
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  font-size: 14px;
+}
+.select-wrap select { padding-right: 38px; cursor: pointer; }
+.select-wrap select option { background: #1a0f2e; color: var(--text); }
+
+/* ─── PASSWORD STRENGTH ────────────────────────────────────── */
+.strength-wrap {
+  margin: -4px 0 14px;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.strength-bar {
+  flex: 1; height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  transition: background 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.3s;
+  transform-origin: left;
+}
+.strength-bar.s1 { background: var(--danger); }
+.strength-bar.s2 { background: var(--warn); }
+.strength-bar.s3 { background: #facc15; }
+.strength-bar.s4 { background: var(--success); }
+
+.strength-label {
+  font-size: 11px;
+  color: var(--muted);
+  height: 14px;
+  transition: color 0.3s;
+}
+.strength-label.s1 { color: var(--danger); }
+.strength-label.s2 { color: var(--warn); }
+.strength-label.s3 { color: #facc15; }
+.strength-label.s4 { color: var(--success); }
+
+/* ─── MATCH INDICATOR ──────────────────────────────────────── */
+.match-hint {
+  font-size: 11px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+  height: 14px;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.match-hint.ok  { color: var(--success); }
+.match-hint.err { color: var(--danger); }
+
+/* ─── SECTION DIVIDER ──────────────────────────────────────── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+.section-divider span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── TERMS ─────────────────────────────────────────────────── */
+.terms-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.custom-check {
+  position: relative;
+  width: 18px; height: 18px; flex-shrink: 0;
+}
+.custom-check input {
+  position: absolute;
+  opacity: 0; width: 0; height: 0;
+}
+.custom-check .checkmark {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.custom-check input:checked ~ .checkmark {
+  background: var(--violet);
+  border-color: var(--violet);
+  box-shadow: 0 0 8px rgba(139,92,246,0.4);
+}
+.custom-check .checkmark i {
+  font-size: 12px;
+  color: white;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.custom-check input:checked ~ .checkmark i {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.terms-text { font-size: 13px; color: var(--muted); }
+.terms-text a { color: var(--violet); text-decoration: none; }
+.terms-text a:hover { text-decoration: underline; }
+
+/* ─── SUBMIT BUTTON ─────────────────────────────────────────── */
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--violet) 0%, var(--violet2) 100%);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.2px;
+  transition: transform 0.2s, box-shadow 0.3s, opacity 0.3s;
+  box-shadow: 0 4px 24px rgba(139,92,246,0.3);
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(139,92,246,0.45);
+}
+.submit-btn:hover::before { opacity: 1; }
+.submit-btn:active:not(:disabled) { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Shimmer effect */
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 50%; height: 200%;
+  background: rgba(255,255,255,0.12);
+  transform: skewX(-20deg);
+  transition: none;
+}
+.submit-btn:hover::after {
+  transition: left 0.6s ease;
+  left: 130%;
+}
+
+.btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-loader {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 22px; height: 22px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.submit-btn.loading .btn-inner { opacity: 0; }
+.submit-btn.loading .btn-loader { display: flex; }
+
+/* ─── SIGNIN LINK ────────────────────────────────────────────── */
+.signin-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.signin-link a {
+  color: var(--violet);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.signin-link a:hover { color: var(--violet2); }
+
+/* ─── SOCIAL PROOF STRIP ──────────────────────────────────────── */
+.proof-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.proof-avatars {
+  display: flex;
+}
+.proof-avatars img {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  margin-left: -8px;
+  background: #2d1b5e;
+}
+.proof-avatars img:first-child { margin-left: 0; }
+
+.proof-text { font-size: 12px; color: var(--muted); }
+.proof-text b { color: var(--text); }
+
+/* ─── TOAST ───────────────────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #16102a;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 320px;
+}
+
+.toast.removing { animation: toastOut 0.3s ease forwards; }
+.toast.success { border-color: rgba(34,211,165,0.3); }
+.toast.error   { border-color: rgba(248,113,113,0.3); }
+
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+.toast.success .toast-icon { color: var(--success); }
+.toast.error   .toast-icon { color: var(--danger); }
+.toast-msg { font-size: 13px; color: var(--text); font-weight: 500; }
+
+@keyframes toastIn {
+  from { opacity:0; transform: translateX(60px) scale(0.9); }
+  to   { opacity:1; transform: translateX(0) scale(1); }
+}
+@keyframes toastOut {
+  to { opacity:0; transform: translateX(60px) scale(0.9); }
+}
+
+/* ─── KEYFRAME ANIMATIONS ───────────────────────────────────── */
+@keyframes slideDown {
+  from { opacity:0; transform: translateY(-24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes slideRight {
+  from { opacity:0; transform: translateX(-32px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(40px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ─── PROGRESS STEPS ─────────────────────────────────────────── */
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.step {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.step.active {
+  width: 28px;
+  border-radius: 4px;
+  background: var(--violet);
+  box-shadow: 0 0 8px rgba(139,92,246,0.5);
+}
+.step.done {
+  background: rgba(34,211,165,0.6);
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .wrapper { grid-template-columns: 1fr; }
+  .left { display: none; }
+  .right { padding: 30px 20px; }
+}
+
+@media (max-width: 480px) {
+  .field-group { flex-direction: column; gap: 0; }
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #2d1f4e; border-radius: 3px; }
+</style>
 </head>
 <body>
 
-<div class="container">
-
-<!-- LEFT SIDE (Info like UnitedMasters) -->
-<div class="left">
-<div class="logo">444</div>
-
-<h1>Let's create your 444Music account.</h1>
-
-<p class="sub">
-Choose Creator Plan for:
-</p>
-
-<ul>
-<li>Unlimited releases to 150+ platforms</li>
-<li>Keep 100% of your streaming royalties</li>
-<li>Marketing tools to grow your audience</li>
-<li>Artist analytics dashboard</li>
-</ul>
+<!-- BACKGROUND -->
+<div class="bg-canvas">
+  <div class="grid-lines"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <!-- Particles injected by JS -->
+  <div id="particles"></div>
 </div>
 
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
-<!-- RIGHT SIDE (Form) -->
-<div class="right">
+<div class="wrapper">
 
-<form id="registerForm">
+  <!-- ─── LEFT PANEL ─── -->
+  <div class="left">
+    <div class="logo-wrap">
+      <div class="logo-mark">444</div>
+      <span class="logo-name">444<span>Music</span></span>
+    </div>
 
-<h2>Create Account</h2>
+    <h1 class="left-headline">
+      Distribute your<br>
+      music to the<br>
+      <span class="accent">world.</span>
+    </h1>
 
-<div class="field">
-<i class="ri-user-line"></i>
-<input type="text" id="name" placeholder="Artist / Full Name" required>
-</div>
+    <p class="left-sub">
+      Join thousands of independent artists earning real money from their music — no label needed.
+    </p>
 
-<div class="field">
-<i class="ri-mail-line"></i>
-<input type="email" id="email" placeholder="Email Address" required>
-</div>
+    <ul class="features">
+      <li class="feat-item">
+        <div class="feat-icon v"><i class="ri-global-line"></i></div>
+        <div>
+          <div class="feat-text">Unlimited Releases</div>
+          <div class="feat-label">150+ streaming platforms worldwide</div>
+        </div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-icon g"><i class="ri-money-dollar-circle-line"></i></div>
+        <div>
+          <div class="feat-text">100% Royalties Yours</div>
+          <div class="feat-label">Keep every cent you earn</div>
+        </div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-icon o"><i class="ri-rocket-2-line"></i></div>
+        <div>
+          <div class="feat-text">Smart Marketing Tools</div>
+          <div class="feat-label">Pitch, promote and grow your fanbase</div>
+        </div>
+      </li>
+      <li class="feat-item">
+        <div class="feat-icon y"><i class="ri-bar-chart-2-line"></i></div>
+        <div>
+          <div class="feat-text">Artist Analytics</div>
+          <div class="feat-label">Real-time stream data & insights</div>
+        </div>
+      </li>
+    </ul>
 
-<div class="field">
-<i class="ri-lock-line"></i>
-<input type="password" id="password" placeholder="Password" required>
-<span class="toggle"><i class="ri-eye-line"></i></span>
-</div>
+    <!-- Waveform deco -->
+    <div class="waveform">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
 
-<div class="strength">
-<div id="bar1"></div>
-<div id="bar2"></div>
-<div id="bar3"></div>
-<div id="bar4"></div>
-</div>
+  <!-- ─── RIGHT PANEL ─── -->
+  <div class="right">
+    <div class="form-card">
 
-<div class="field">
-<i class="ri-lock-password-line"></i>
-<input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-</div>
+      <div class="form-header">
+        <div class="step-badge">
+          <i class="ri-shield-star-line"></i>
+          Creator Account
+        </div>
 
-<div class="questions">
+        <!-- Progress dots -->
+        <div class="progress-steps" id="progressSteps">
+          <div class="step active" id="s1"></div>
+          <div class="step" id="s2"></div>
+          <div class="step" id="s3"></div>
+        </div>
 
-<label>Artist Type</label>
-<select id="artistType">
-<option>Independent Artist</option>
-<option>Record Label</option>
-<option>Producer</option>
-<option>Manager</option>
-</select>
+        <h2 class="form-title">Create Account</h2>
+        <p class="form-sub">Start distributing your music in minutes.</p>
+      </div>
 
-<label>Primary Genre</label>
-<select id="genre">
-<option>Afrobeats</option>
-<option>Hip Hop</option>
-<option>Dancehall</option>
-<option>Gospel</option>
-<option>Other</option>
-</select>
+      <form id="registerForm" novalidate autocomplete="off">
 
-<label>Country</label>
-<select id="country">
-<option>Ghana</option>
-<option>Nigeria</option>
-<option>UK</option>
-<option>USA</option>
-<option>Other</option>
-</select>
+        <!-- NAME + EMAIL row -->
+        <div class="field-group">
+          <div class="field">
+            <label for="name">Artist / Full Name</label>
+            <div class="input-wrap">
+              <i class="ri-user-line icon"></i>
+              <input type="text" id="name" placeholder="e.g. Kwame Beats" autocomplete="off" required>
+              <i class="validation-icon ri-check-line ok" id="nameOk"></i>
+            </div>
+          </div>
 
-</div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <div class="input-wrap">
+              <i class="ri-mail-line icon"></i>
+              <input type="email" id="email" placeholder="you@email.com" required>
+              <i class="validation-icon ri-check-line ok" id="emailOk"></i>
+            </div>
+          </div>
+        </div>
 
-<div class="terms">
-<input type="checkbox" id="agree" required>
-<span>I agree to the terms and privacy policy</span>
-</div>
+        <!-- PASSWORD -->
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <i class="ri-lock-line icon"></i>
+            <input type="password" id="password" placeholder="Create a strong password" required>
+            <button type="button" class="eye-btn" id="eyeBtn1">
+              <i class="ri-eye-line" id="eyeIcon1"></i>
+            </button>
+          </div>
+        </div>
 
-<button type="submit" class="btn">
-<span id="btnText">Create Account</span>
-<div class="loader"></div>
-</button>
+        <!-- STRENGTH METER -->
+        <div class="strength-wrap">
+          <div class="strength-bars">
+            <div class="strength-bar" id="sb1"></div>
+            <div class="strength-bar" id="sb2"></div>
+            <div class="strength-bar" id="sb3"></div>
+            <div class="strength-bar" id="sb4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel">Enter a password</div>
+        </div>
 
-<p class="login">
-Already have an account?
-<a href="login.html">Sign in</a>
-</p>
+        <!-- CONFIRM PASSWORD -->
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-wrap">
+            <i class="ri-lock-password-line icon"></i>
+            <input type="password" id="confirmPassword" placeholder="Re-enter your password" required>
+            <button type="button" class="eye-btn" id="eyeBtn2">
+              <i class="ri-eye-line" id="eyeIcon2"></i>
+            </button>
+          </div>
+        </div>
 
-</form>
+        <!-- MATCH HINT -->
+        <div class="match-hint" id="matchHint"></div>
 
-</div>
+        <!-- SECTION DIVIDER -->
+        <div class="section-divider"><span>Artist Profile</span></div>
 
+        <!-- SELECTS ROW 1 -->
+        <div class="field-group">
+          <div class="field">
+            <label for="artistType">Artist Type</label>
+            <div class="input-wrap select-wrap">
+              <i class="ri-user-star-line icon"></i>
+              <select id="artistType">
+                <option>Independent Artist</option>
+                <option>Record Label</option>
+                <option>Producer</option>
+                <option>Manager</option>
+                <option>DJ</option>
+                <option>Band / Group</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="country">Country</label>
+            <div class="input-wrap select-wrap">
+              <i class="ri-map-pin-2-line icon"></i>
+              <select id="country">
+                <option>Ghana</option>
+                <option>Nigeria</option>
+                <option>Kenya</option>
+                <option>South Africa</option>
+                <option>UK</option>
+                <option>USA</option>
+                <option>Canada</option>
+                <option>France</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- GENRE -->
+        <div class="field">
+          <label for="genre">Primary Genre</label>
+          <div class="input-wrap select-wrap">
+            <i class="ri-music-2-line icon"></i>
+            <select id="genre">
+              <option>Afrobeats</option>
+              <option>Afropop</option>
+              <option>Hip Hop / Rap</option>
+              <option>Dancehall</option>
+              <option>Gospel</option>
+              <option>R&amp;B / Soul</option>
+              <option>Highlife</option>
+              <option>Amapiano</option>
+              <option>Pop</option>
+              <option>Electronic</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TERMS -->
+        <div class="terms-row">
+          <label class="custom-check">
+            <input type="checkbox" id="agree" required>
+            <span class="checkmark"><i class="ri-check-line"></i></span>
+          </label>
+          <span class="terms-text">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </span>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="submit-btn" id="submitBtn" disabled>
+          <div class="btn-inner" id="btnInner">
+            <i class="ri-user-add-line"></i>
+            Create My Account
+          </div>
+          <div class="btn-loader">
+            <div class="spinner"></div>
+          </div>
+        </button>
+
+        <!-- SOCIAL PROOF -->
+        <div class="proof-strip">
+          <div class="proof-avatars">
+            <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=a1" alt="">
+            <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=b2" alt="">
+            <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=c3" alt="">
+            <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=d4" alt="">
+          </div>
+          <p class="proof-text"><b>12,000+</b> artists already distributing with us</p>
+        </div>
+
+        <p class="signin-link">
+          Already have an account? <a href="login.html">Sign in →</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
 </div>
 
 
 <script type="module">
 
+/* ─────────────────────────────────────────────────────────
+   FIREBASE INIT
+──────────────────────────────────────────────────────────── */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import { 
-getAuth, 
-createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import { 
-getFirestore, 
-doc, 
-setDoc, 
-serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -146,113 +1035,245 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* ─────────────────────────────────────────────────────────
+   PARTICLES
+──────────────────────────────────────────────────────────── */
+const pContainer = document.getElementById("particles");
+for(let i=0; i<28; i++){
+  const p = document.createElement("div");
+  p.className = "particle";
+  p.style.cssText = `
+    left:${Math.random()*100}%;
+    top:${Math.random()*100+100}%;
+    animation-duration:${8+Math.random()*14}s;
+    animation-delay:${Math.random()*10}s;
+    opacity:${0.3+Math.random()*0.5};
+    width:${1+Math.random()*2}px;
+    height:${1+Math.random()*2}px;
+    background:${Math.random()>0.5?'#8b5cf6':'#f5c842'};
+  `;
+  pContainer.appendChild(p);
+}
 
-const form = document.getElementById("registerForm");
-const password = document.getElementById("password");
+/* ─────────────────────────────────────────────────────────
+   TOAST
+──────────────────────────────────────────────────────────── */
+function toast(msg, type="success"){
+  const c = document.getElementById("toastContainer");
+  const t = document.createElement("div");
+  t.className = `toast ${type}`;
+  t.innerHTML = `
+    <i class="toast-icon ri-${type==="success"?"checkbox-circle-line":"error-warning-line"}"></i>
+    <span class="toast-msg">${msg}</span>
+  `;
+  c.appendChild(t);
+  setTimeout(()=>{ t.classList.add("removing"); setTimeout(()=>t.remove(),300); }, 3800);
+}
 
-const bars = [
-document.getElementById("bar1"),
-document.getElementById("bar2"),
-document.getElementById("bar3"),
-document.getElementById("bar4")
+/* ─────────────────────────────────────────────────────────
+   PASSWORD TOGGLE
+──────────────────────────────────────────────────────────── */
+function setupEye(btnId, iconId, inputId){
+  document.getElementById(btnId).addEventListener("click",()=>{
+    const inp = document.getElementById(inputId);
+    const ico = document.getElementById(iconId);
+    if(inp.type==="password"){
+      inp.type="text";
+      ico.className="ri-eye-off-line";
+    } else {
+      inp.type="password";
+      ico.className="ri-eye-line";
+    }
+  });
+}
+setupEye("eyeBtn1","eyeIcon1","password");
+setupEye("eyeBtn2","eyeIcon2","confirmPassword");
+
+/* ─────────────────────────────────────────────────────────
+   PASSWORD STRENGTH
+──────────────────────────────────────────────────────────── */
+const passwordInput = document.getElementById("password");
+const bars = [1,2,3,4].map(n=>document.getElementById("sb"+n));
+const strengthLabel = document.getElementById("strengthLabel");
+const levels = [
+  { label:"Too short",   cls:"s1" },
+  { label:"Weak",        cls:"s2" },
+  { label:"Fair",        cls:"s3" },
+  { label:"Strong 💪",  cls:"s4" },
 ];
 
-
-password.addEventListener("input", () => {
-
-let val = password.value.length;
-
-bars.forEach(b => b.classList.remove("active"));
-
-if(val > 4) bars[0].classList.add("active");
-if(val > 6) bars[1].classList.add("active");
-if(val > 8) bars[2].classList.add("active");
-if(val > 10) bars[3].classList.add("active");
-
-});
-
-
-form.addEventListener("submit", async(e)=>{
-
-e.preventDefault();
-
-const name = document.getElementById("name").value;
-const email = document.getElementById("email").value;
-const pass = password.value;
-const confirm = document.getElementById("confirmPassword").value;
-const type = document.getElementById("artistType").value;
-const genre = document.getElementById("genre").value;
-const country = document.getElementById("country").value;
-
-if(pass !== confirm){
-alert("Passwords do not match");
-return;
+function getStrength(v){
+  let score = 0;
+  if(v.length > 5) score++;
+  if(v.length > 8) score++;
+  if(/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  return score;
 }
 
-document.querySelector(".loader").style.display="block";
-document.getElementById("btnText").style.opacity="0";
+passwordInput.addEventListener("input", ()=>{
+  const val = passwordInput.value;
+  const score = val.length ? getStrength(val) : 0;
 
-try{
+  bars.forEach((b,i)=>{
+    b.className = "strength-bar";
+    if(i < score && score > 0) b.classList.add(levels[score-1].cls);
+  });
 
-const userCred = await createUserWithEmailAndPassword(auth,email,pass);
-const user = userCred.user;
-
-
-/* USER PROFILE */
-
-await setDoc(doc(db,"users",user.uid),{
-name,
-email,
-artistType:type,
-genre,
-country,
-earnings:0,
-createdAt: serverTimestamp()
+  if(!val.length){
+    strengthLabel.className = "strength-label";
+    strengthLabel.textContent = "Enter a password";
+  } else {
+    strengthLabel.className = "strength-label " + levels[score-1].cls;
+    strengthLabel.textContent = levels[score-1].label;
+  }
+  checkMatch();
+  updateProgress();
 });
 
+/* ─────────────────────────────────────────────────────────
+   CONFIRM PASSWORD MATCH
+──────────────────────────────────────────────────────────── */
+const confirmInput = document.getElementById("confirmPassword");
+const matchHint    = document.getElementById("matchHint");
 
-/* AUTOMATIC ANALYTICS DOCUMENT */
+function checkMatch(){
+  const p = passwordInput.value;
+  const c = confirmInput.value;
+  if(!c){ matchHint.textContent=""; matchHint.className="match-hint"; return; }
+  if(p===c){
+    matchHint.innerHTML = `<i class="ri-check-line"></i> Passwords match`;
+    matchHint.className = "match-hint ok";
+  } else {
+    matchHint.innerHTML = `<i class="ri-close-line"></i> Passwords don't match`;
+    matchHint.className = "match-hint err";
+  }
+}
+confirmInput.addEventListener("input", checkMatch);
 
-await setDoc(doc(db,"analytics",user.uid),{
+/* ─────────────────────────────────────────────────────────
+   INLINE VALIDATION
+──────────────────────────────────────────────────────────── */
+function validateEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
-totalStreams:0,
-spotifyStreams:0,
-appleStreams:0,
-youtubeStreams:0,
-tiktokStreams:0,
-
-topCountry1:"US",
-topCountry2:"UK",
-topCountry3:"GH",
-
-monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
-
-createdAt: serverTimestamp()
-
-});
-
-
-alert("Account created successfully!");
-
-window.location.href="loading.html";
-
-}catch(err){
-
-alert(err.message);
-
+function setupValidation(inputId, okId, checkFn){
+  const inp = document.getElementById(inputId);
+  const ok  = document.getElementById(okId);
+  inp.addEventListener("blur",()=>{
+    const valid = checkFn(inp.value.trim());
+    inp.className = valid ? "valid" : (inp.value ? "invalid" : "");
+    ok.className = "validation-icon ri-" + (valid?"check-line ok":"close-line err") + (inp.value?" show":"");
+  });
+  inp.addEventListener("input",()=>{ inp.className=""; ok.className="validation-icon"; updateProgress(); });
 }
 
+setupValidation("name","nameOk", v=>v.length>=2);
+setupValidation("email","emailOk", validateEmail);
+
+/* ─────────────────────────────────────────────────────────
+   PROGRESS DOTS
+──────────────────────────────────────────────────────────── */
+function updateProgress(){
+  const name  = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const pass  = passwordInput.value;
+  const conf  = confirmInput.value;
+
+  const s1Done = name.length>=2 && validateEmail(email);
+  const s2Done = s1Done && pass.length>=6 && pass===conf;
+
+  const s1el = document.getElementById("s1");
+  const s2el = document.getElementById("s2");
+  const s3el = document.getElementById("s3");
+
+  s1el.className = "step active";
+  if(s1Done){ s1el.className="step done"; s2el.className="step active"; }
+  else { s2el.className="step"; }
+  if(s2Done){ s2el.className="step done"; s3el.className="step active"; }
+  else { if(!s1Done) s3el.className="step"; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   TERMS → ENABLE BUTTON
+──────────────────────────────────────────────────────────── */
+const agreeCheck = document.getElementById("agree");
+const submitBtn  = document.getElementById("submitBtn");
+
+agreeCheck.addEventListener("change",()=>{
+  submitBtn.disabled = !agreeCheck.checked;
+});
+
+/* ─────────────────────────────────────────────────────────
+   FORM SUBMIT
+──────────────────────────────────────────────────────────── */
+document.getElementById("registerForm").addEventListener("submit", async(e)=>{
+  e.preventDefault();
+
+  const name    = document.getElementById("name").value.trim();
+  const email   = document.getElementById("email").value.trim();
+  const pass    = passwordInput.value;
+  const confirm = confirmInput.value;
+  const type    = document.getElementById("artistType").value;
+  const genre   = document.getElementById("genre").value;
+  const country = document.getElementById("country").value;
+
+  // Validations
+  if(name.length < 2){ toast("Please enter your artist/full name.","error"); return; }
+  if(!validateEmail(email)){ toast("Please enter a valid email address.","error"); return; }
+  if(pass.length < 6){ toast("Password must be at least 6 characters.","error"); return; }
+  if(pass !== confirm){ toast("Passwords do not match.","error"); return; }
+  if(!agreeCheck.checked){ toast("Please accept the terms to continue.","error"); return; }
+
+  // Loading state
+  submitBtn.classList.add("loading");
+  submitBtn.disabled = true;
+
+  try{
+    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+    const uid = userCred.user.uid;
+
+    await setDoc(doc(db,"users",uid),{
+      name, email,
+      artistType: type,
+      genre, country,
+      earnings: 0,
+      createdAt: serverTimestamp()
+    });
+
+    await setDoc(doc(db,"analytics",uid),{
+      totalStreams:0,
+      spotifyStreams:0,
+      appleStreams:0,
+      youtubeStreams:0,
+      tiktokStreams:0,
+      topCountry1:"US",
+      topCountry2:"UK",
+      topCountry3:"GH",
+      monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+      createdAt: serverTimestamp()
+    });
+
+    toast("Account created! Welcome to 444Music 🎵","success");
+    setTimeout(()=>{ window.location.href="loading.html"; }, 1800);
+
+  } catch(err){
+    submitBtn.classList.remove("loading");
+    submitBtn.disabled = false;
+
+    const msgs = {
+      "auth/email-already-in-use":  "An account with this email already exists.",
+      "auth/invalid-email":          "That email address doesn't look right.",
+      "auth/weak-password":          "Choose a stronger password (min 6 chars).",
+      "auth/network-request-failed": "Network error. Check your connection.",
+    };
+    toast(msgs[err.code] || err.message, "error");
+  }
 });
 
 </script>
-
 </body>
 </html>
-
-
-
