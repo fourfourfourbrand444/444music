@@ -1,105 +1,803 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creator Tools</title>
-<link rel="stylesheet" href="tools.css">
+<title>444Music – Creator Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #080808;
+  --surface: #0f0f0f;
+  --surface2: #131313;
+  --surface3: #181818;
+  --border: rgba(255,255,255,0.065);
+  --border-h: rgba(255,255,255,0.13);
+  --accent: #7c3aed;
+  --accent2: #a78bfa;
+  --accent-glow: rgba(124,58,237,0.22);
+  --text: #f0f0f0;
+  --muted: #5e5e5e;
+  --muted2: #999;
+  --danger: #ef4444;
+  --danger-dim: rgba(239,68,68,0.1);
+  --success: #22c55e;
+  --success-dim: rgba(34,197,94,0.1);
+  --warn: #f59e0b;
+  --warn-dim: rgba(245,158,11,0.1);
+  --white: #ffffff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Noise texture */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.025;
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* ── SCROLL PROGRESS ── */
+.progress-bar {
+  position:fixed; top:0; left:0; height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  width:0; z-index:1001;
+  box-shadow:0 0 10px rgba(124,58,237,0.7);
+  transition:width .1s linear;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 48px; height:66px;
+  background:rgba(8,8,8,0.88);
+  backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--accent); display:flex; align-items:center;
+  justify-content:center; color:#fff; font-size:14px;
+  box-shadow:0 0 18px rgba(124,58,237,0.45);
+  animation: pulse-logo 3s infinite;
+}
+@keyframes pulse-logo {
+  0%,100%{box-shadow:0 0 18px rgba(124,58,237,0.45);}
+  50%{box-shadow:0 0 30px rgba(124,58,237,0.7);}
+}
+.nav-logo-text { font-family:'Sora',sans-serif; font-weight:700; font-size:16px; color:var(--white); }
+
+.nav-center { display:flex; align-items:center; gap:4px; }
+.nav-link {
+  color:var(--muted2); text-decoration:none; font-size:13.5px;
+  font-weight:500; padding:6px 15px; border-radius:8px; transition:all .2s;
+}
+.nav-link:hover,.nav-link.active { color:var(--white); background:var(--surface2); }
+
+.nav-right { display:flex; align-items:center; gap:10px; }
+.nav-badge {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2);
+  color:#4ade80; font-size:11.5px; font-weight:600;
+  padding:5px 12px; border-radius:100px;
+}
+.nav-badge .dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--success); animation:blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.nav-cta {
+  display:flex; align-items:center; gap:7px;
+  background:var(--accent); color:#fff; text-decoration:none;
+  font-size:13px; font-weight:600; padding:8px 18px; border-radius:9px;
+  transition:all .2s; box-shadow:0 0 18px rgba(124,58,237,0.3);
+}
+.nav-cta:hover { background:#6d28d9; transform:translateY(-1px); box-shadow:0 0 28px rgba(124,58,237,0.5); }
+
+/* ── HERO ── */
+.hero {
+  padding: 148px 24px 64px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute;
+  top:80px; left:50%; transform:translateX(-50%);
+  width:700px; height:320px;
+  background:radial-gradient(ellipse at center,rgba(124,58,237,0.11) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* Animated grid background */
+.hero-grid {
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:0.04;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:gridMove 20s linear infinite;
+}
+@keyframes gridMove { to { background-position:60px 60px; } }
+
+.hero-badge {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.25);
+  color:var(--accent2); font-size:11.5px; font-weight:600;
+  padding:5px 14px; border-radius:100px;
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:24px;
+  animation:fadeUp .5s ease both;
+}
+.hero h1 {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(30px,5.5vw,56px); font-weight:800;
+  letter-spacing:-1.5px; line-height:1.08; color:var(--white);
+  animation:fadeUp .5s .1s ease both;
+}
+.hero h1 em { font-style:normal; color:var(--accent2); }
+.hero p {
+  color:var(--muted2); font-size:15.5px; max-width:440px; margin:16px auto 32px;
+  animation:fadeUp .5s .2s ease both;
+}
+
+.hero-stats {
+  display:inline-flex; gap:32px; align-items:center;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:14px 28px;
+  animation:fadeUp .5s .3s ease both;
+}
+.h-stat { text-align:center; }
+.h-stat strong { display:block; font-family:'Sora',sans-serif; font-size:22px; font-weight:800; color:var(--white); }
+.h-stat span { font-size:11.5px; color:var(--muted); }
+.h-divider { width:1px; height:32px; background:var(--border); }
+
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── FILTER TABS ── */
+.filter-wrap {
+  display:flex; justify-content:center; gap:6px;
+  padding:0 24px 40px; flex-wrap:wrap;
+  animation:fadeUp .5s .35s ease both;
+}
+.filter-btn {
+  display:flex; align-items:center; gap:7px;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--muted2); font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:500; padding:8px 17px;
+  border-radius:9px; cursor:pointer; transition:all .2s;
+}
+.filter-btn:hover { color:var(--white); border-color:var(--border-h); }
+.filter-btn.active {
+  background:var(--accent); border-color:var(--accent);
+  color:#fff; box-shadow:0 0 16px rgba(124,58,237,0.35);
+}
+
+/* ── TOOLS GRID ── */
+.tools-wrap {
+  max-width:1100px; margin:0 auto;
+  padding:0 24px 100px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+  gap:16px;
+}
+
+/* ── TOOL CARD ── */
+.tool-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px; padding:26px;
+  display:flex; flex-direction:column; gap:0;
+  opacity:0; transform:translateY(30px);
+  transition:opacity .55s ease, transform .55s ease, border-color .25s, box-shadow .25s;
+  position:relative; overflow:hidden;
+}
+.tool-card::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 80% 20%,rgba(124,58,237,0.06),transparent 60%);
+  pointer-events:none; opacity:0; transition:opacity .3s;
+}
+.tool-card:hover::before { opacity:1; }
+.tool-card.visible { opacity:1; transform:translateY(0); }
+.tool-card:hover {
+  border-color:rgba(124,58,237,0.28);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(124,58,237,0.12);
+  transform:translateY(-3px);
+}
+
+/* danger card */
+.tool-card.danger { border-color:rgba(239,68,68,0.18); }
+.tool-card.danger:hover { border-color:rgba(239,68,68,0.38); box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(239,68,68,0.15); }
+.tool-card.danger .card-icon { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2); color:#f87171; }
+
+/* card top */
+.card-top {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; margin-bottom:18px;
+}
+.card-icon {
+  width:46px; height:46px; border-radius:13px;
+  background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--accent2); font-size:18px; flex-shrink:0;
+  transition:transform .2s;
+}
+.tool-card:hover .card-icon { transform:scale(1.08) rotate(-4deg); }
+
+.card-meta { display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+.card-tag {
+  font-size:10.5px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; padding:3px 9px; border-radius:100px;
+}
+.tag-free { background:var(--success-dim); color:#4ade80; }
+.tag-guide { background:rgba(124,58,237,0.1); color:var(--accent2); }
+.tag-tool { background:rgba(255,255,255,0.06); color:var(--muted2); }
+.tag-warn { background:var(--warn-dim); color:#fbbf24; }
+.tag-danger { background:var(--danger-dim); color:#f87171; }
+
+.card-ext {
+  width:24px; height:24px; border-radius:6px;
+  background:var(--surface2); display:flex; align-items:center;
+  justify-content:center; color:var(--muted); font-size:10px;
+}
+
+/* card body */
+.card-body { flex:1; }
+.card-body h2 {
+  font-family:'Sora',sans-serif; font-size:15.5px; font-weight:700;
+  color:var(--white); margin-bottom:8px; letter-spacing:-0.2px;
+}
+.card-body p {
+  font-size:13.5px; color:var(--muted2); line-height:1.65; margin-bottom:20px;
+}
+
+/* feature chips */
+.card-chips {
+  display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px;
+}
+.chip {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--surface2); border:1px solid var(--border);
+  font-size:11px; color:var(--muted2); padding:4px 10px;
+  border-radius:100px; white-space:nowrap;
+}
+.chip i { font-size:9px; color:var(--accent2); }
+
+/* card footer */
+.card-footer {
+  display:flex; align-items:center;
+  justify-content:space-between; margin-top:auto;
+}
+.tool-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--accent); color:#fff; text-decoration:none;
+  font-size:13px; font-weight:600; padding:9px 18px; border-radius:9px;
+  transition:all .2s; box-shadow:0 0 14px rgba(124,58,237,0.25);
+}
+.tool-btn:hover { background:#6d28d9; transform:translateY(-1px); box-shadow:0 0 22px rgba(124,58,237,0.45); }
+.tool-btn.outline {
+  background:transparent; border:1px solid var(--border);
+  color:var(--muted2); box-shadow:none;
+}
+.tool-btn.outline:hover { border-color:var(--border-h); color:var(--white); }
+.tool-btn.danger-btn { background:rgba(239,68,68,0.12); color:#f87171; border:1px solid rgba(239,68,68,0.25); box-shadow:none; }
+.tool-btn.danger-btn:hover { background:rgba(239,68,68,0.22); box-shadow:0 0 16px rgba(239,68,68,0.25); }
+
+.card-rating {
+  display:flex; align-items:center; gap:4px;
+  font-size:12px; color:var(--muted);
+}
+.card-rating i { color:#f59e0b; font-size:10px; }
+
+/* ── FEATURED CARD (full-width) ── */
+.tool-card.featured {
+  grid-column:1 / -1;
+  flex-direction:row; gap:28px; align-items:center;
+  background:linear-gradient(120deg,rgba(124,58,237,0.08) 0%,var(--surface) 60%);
+  border-color:rgba(124,58,237,0.22);
+  padding:32px 36px;
+}
+.featured-left { flex:1; }
+.featured-right {
+  flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:12px;
+}
+.featured-badge {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.25);
+  color:var(--accent2); font-size:11px; font-weight:700;
+  padding:4px 12px; border-radius:100px; text-transform:uppercase;
+  letter-spacing:.07em; margin-bottom:14px;
+}
+.featured .card-body h2 { font-size:20px; letter-spacing:-0.5px; }
+.featured-steps {
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;
+}
+.step-pill {
+  display:flex; align-items:center; gap:8px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; padding:10px 14px; font-size:12.5px;
+  color:var(--muted2);
+}
+.step-num {
+  width:22px; height:22px; border-radius:50%;
+  background:rgba(124,58,237,0.15); color:var(--accent2);
+  font-size:11px; font-weight:700; display:flex;
+  align-items:center; justify-content:center; flex-shrink:0;
+}
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  grid-column:1/-1; display:flex; align-items:center; gap:12px;
+  padding-top:16px; margin-bottom:4px;
+  opacity:0; transform:translateY(12px); transition:.5s;
+}
+.sec-label.visible { opacity:1; transform:translateY(0); }
+.sec-label-icon {
+  width:34px; height:34px; border-radius:9px;
+  background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--accent2); font-size:13px;
+}
+.sec-label h3 {
+  font-family:'Sora',sans-serif; font-size:12px;
+  font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--muted2);
+}
+.sec-line { flex:1; height:1px; background:var(--border); }
+
+/* ── NOTICE CARD ── */
+.notice-card {
+  grid-column:1/-1;
+  display:flex; gap:14px; align-items:flex-start;
+  background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.18);
+  border-radius:14px; padding:16px 20px;
+  opacity:0; transition:.5s;
+}
+.notice-card.visible { opacity:1; }
+.notice-card i { color:#fbbf24; font-size:15px; margin-top:2px; flex-shrink:0; }
+.notice-card p { font-size:13px; color:var(--muted2); line-height:1.65; }
+.notice-card p strong { color:#fbbf24; }
+
+/* ── FOOTER ── */
+footer {
+  border-top:1px solid var(--border);
+  padding:36px 48px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.footer-brand {
+  display:flex; align-items:center; gap:10px;
+}
+.footer-icon {
+  width:30px; height:30px; background:var(--accent); border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; color:#fff;
+}
+.footer-name { font-family:'Sora',sans-serif; font-weight:700; font-size:14px; color:var(--white); }
+.footer-copy { font-size:12px; color:var(--muted); margin-top:2px; }
+.footer-links { display:flex; gap:22px; }
+.footer-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:var(--white); }
+.footer-socials { display:flex; gap:8px; }
+.soc-btn {
+  width:33px; height:33px; border-radius:9px;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--muted2); display:flex; align-items:center; justify-content:center;
+  font-size:13px; text-decoration:none; transition:all .2s;
+}
+.soc-btn:hover { color:var(--white); background:var(--surface2); border-color:var(--border-h); }
+
+/* ── BACK TO TOP ── */
+.btt {
+  position:fixed; bottom:26px; right:26px;
+  width:40px; height:40px; border-radius:11px;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--muted2); display:flex; align-items:center;
+  justify-content:center; font-size:13px; text-decoration:none;
+  opacity:0; pointer-events:none; z-index:998; transition:all .3s;
+}
+.btt.show { opacity:1; pointer-events:all; }
+.btt:hover { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 18px rgba(124,58,237,0.4); transform:translateY(-2px); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav { padding:0 20px; }
+  .nav-center,.nav-badge { display:none; }
+  .hero { padding:120px 20px 48px; }
+  .hero-stats { gap:18px; padding:12px 18px; }
+  .tools-wrap { grid-template-columns:1fr; padding:0 16px 80px; }
+  .tool-card.featured { flex-direction:column; padding:22px; }
+  .featured-right { align-items:flex-start; }
+  footer { flex-direction:column; align-items:flex-start; padding:28px 20px; }
+}
+</style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
+<div class="progress-bar" id="pbar"></div>
 
-<header class="header">
-    <h1>Creator Tools</h1>
-    <p>Professional music distribution tools for artists and labels.</p>
-</header>
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-music"></i></div>
+    <span class="nav-logo-text">444Music</span>
+  </a>
+  <div class="nav-center">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="tools.html" class="nav-link active">Tools</a>
+    <a href="legal.html" class="nav-link">Legal</a>
+    <a href="#" class="nav-link">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-badge"><div class="dot"></div> 9 Tools Live</div>
+    <a href="https://wa.me/233530399523" class="nav-cta"><i class="fa-brands fa-whatsapp"></i> Get Support</a>
+  </div>
+</nav>
 
-<section class="tools-container">
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Artist Toolkit</div>
+  <h1>Every Tool You Need<br>to <em>Release Right</em></h1>
+  <p>Professional-grade resources built for independent artists who take their craft seriously.</p>
+  <div class="hero-stats">
+    <div class="h-stat"><strong>9</strong><span>Tools Available</span></div>
+    <div class="h-divider"></div>
+    <div class="h-stat"><strong>Free</strong><span>No Hidden Fees</span></div>
+    <div class="h-divider"></div>
+    <div class="h-stat"><strong>24/7</strong><span>Artist Support</span></div>
+  </div>
+</div>
 
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-image"></i></div>
-        <h2>Cover Art Generator</h2>
-        <p>Create professional cover artwork optimized for streaming platforms and distribution requirements.</p>
-        <a href="https://www.postermywall.com/index.php/sizes/cover-art/album-cover-maker?safe_content=safe" class="tool-btn">Open Tool</a>
+<!-- FILTER TABS -->
+<div class="filter-wrap">
+  <button class="filter-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i> All Tools</button>
+  <button class="filter-btn" data-filter="artwork"><i class="fa-solid fa-image"></i> Artwork</button>
+  <button class="filter-btn" data-filter="audio"><i class="fa-solid fa-waveform-lines"></i> Audio</button>
+  <button class="filter-btn" data-filter="growth"><i class="fa-solid fa-chart-line"></i> Growth</button>
+  <button class="filter-btn" data-filter="management"><i class="fa-solid fa-gear"></i> Management</button>
+</div>
+
+<!-- TOOLS GRID -->
+<div class="tools-wrap">
+
+  <!-- SECTION LABEL: Artwork -->
+  <div class="sec-label" id="sl1">
+    <div class="sec-label-icon"><i class="fa-solid fa-palette"></i></div>
+    <h3>Artwork & Visuals</h3>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- Cover Art -->
+  <div class="tool-card" data-cat="artwork" data-delay="0">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-image"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-free">Free</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
     </div>
-
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-waveform"></i></div>
-        <h2>Audio Mastering</h2>
-        <p>Improve loudness, clarity and balance so your music meets industry mastering standards.</p>
-        <a href="https://majordecibel.com/" class="tool-btn">Open Tool</a>
+    <div class="card-body">
+      <h2>Cover Art Generator</h2>
+      <p>Design professional album and single cover artwork that meets streaming platform specs — no design experience needed.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> 3000×3000px output</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Templates included</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Export PNG/JPG</span>
+      </div>
     </div>
-
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-user-check"></i></div>
-        <h2>How to Claim Artist Profile</h2>
-        <p>Step-by-step guide to verify and claim your official artist pages on streaming services.</p>
-        <a href="https://wa.me/233530399523" class="tool-btn">Open Guide</a>
+    <div class="card-footer">
+      <a href="https://www.postermywall.com/index.php/sizes/cover-art/album-cover-maker" target="_blank" class="tool-btn"><i class="fa-solid fa-paintbrush"></i> Open Tool</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9</span></div>
     </div>
+  </div>
 
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-handshake"></i></div>
-        <h2>Become a Referral</h2>
-        <p>Invite artists and earn rewards through our music distribution referral program.</p>
-        <a href="https://wa.me/233530399523" class="tool-btn">Join Program</a>
+  <!-- Image Converter -->
+  <div class="tool-card" data-cat="artwork" data-delay="80">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-free">Free</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
     </div>
-
-    <div class="tool-card reveal warning">
-        <div class="icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <h2>Take Down Song / Delete ⚠️</h2>
-        <p>Submit requests to remove or take down releases from digital platforms safely.</p>
-        <a href="takedown.html" class="tool-btn">Open Tool</a>
+    <div class="card-body">
+      <h2>3000px Image Resizer</h2>
+      <p>Instantly upscale or convert your cover art to the required 3000×3000 pixel resolution accepted by all major DSPs.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> Exact 3000×3000</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Lossless output</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Drag & drop</span>
+      </div>
     </div>
-
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-expand"></i></div>
-        <h2>3000px Image Converter</h2>
-        <p>Automatically convert artwork to the required 3000x3000 resolution for stores.</p>
-        <a href="https://www.imageresizer.work/resize-image-to-3000x3000" class="tool-btn">Convert Image</a>
+    <div class="card-footer">
+      <a href="https://www.imageresizer.work/resize-image-to-3000x3000" target="_blank" class="tool-btn"><i class="fa-solid fa-expand"></i> Convert Image</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.4</span></div>
     </div>
+  </div>
 
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-music"></i></div>
-        <h2>Audio Converter</h2>
-        <p>Convert audio files into WAV, FLAC or distribution-ready formats.</p>
-        <a href="https://www.freeconvert.com/mp3-converter" class="tool-btn">Convert Audio</a>
+  <!-- SECTION LABEL: Audio -->
+  <div class="sec-label" id="sl2">
+    <div class="sec-label-icon"><i class="fa-solid fa-waveform-lines"></i></div>
+    <h3>Audio Tools</h3>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- Audio Mastering -->
+  <div class="tool-card" data-cat="audio" data-delay="0">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-free">Free</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
     </div>
-
-    <!-- Extra professional tools -->
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-calendar"></i></div>
-        <h2>Release Planner</h2>
-        <p>Plan marketing campaigns, release schedules and rollout strategy.</p>
-        <a href="https://cyberprmusic.com/music-release-plan/" class="tool-btn">Open Tool</a>
+    <div class="card-body">
+      <h2>Audio Mastering</h2>
+      <p>Enhance loudness, clarity, stereo balance and dynamic range so your track meets industry standards across all platforms.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> Loudness normalisation</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> AI mastering</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> WAV output</span>
+      </div>
     </div>
+    <div class="card-footer">
+      <a href="https://majordecibel.com/" target="_blank" class="tool-btn"><i class="fa-solid fa-sliders"></i> Open Tool</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.8</span></div>
+    </div>
+  </div>
 
-    <div class="tool-card reveal">
-        <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+  <!-- Audio Converter -->
+  <div class="tool-card" data-cat="audio" data-delay="80">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-free">Free</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Audio Format Converter</h2>
+      <p>Convert MP3, AAC, AIFF and other audio files into WAV or FLAC — the formats required for lossless distribution submissions.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> MP3 → WAV/FLAC</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Batch convert</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> 320kbps support</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://www.freeconvert.com/mp3-converter" target="_blank" class="tool-btn"><i class="fa-solid fa-arrows-rotate"></i> Convert Audio</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.3</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION LABEL: Growth -->
+  <div class="sec-label" id="sl3">
+    <div class="sec-label-icon"><i class="fa-solid fa-chart-line"></i></div>
+    <h3>Growth & Revenue</h3>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- FEATURED: Royalty Calculator -->
+  <div class="tool-card featured" data-cat="growth" data-delay="0">
+    <div class="featured-left">
+      <div class="card-top" style="margin-bottom:12px;">
+        <div>
+          <div class="featured-badge"><i class="fa-solid fa-star"></i> Staff Pick</div>
+        </div>
+        <div class="card-meta">
+          <span class="card-tag tag-free">Free</span>
+          <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+        </div>
+      </div>
+      <div class="card-body">
         <h2>Royalty Calculator</h2>
-        <p>Estimate potential streaming earnings across platforms.</p>
-        <a href="https://www.royalties-calculator.com/" class="tool-btn">Open Tool</a>
+        <p>Estimate your potential streaming royalties across Spotify, Apple Music, Tidal, YouTube Music and more — before you release. Plan smarter.</p>
+        <div class="featured-steps">
+          <div class="step-pill"><div class="step-num">1</div> Enter your expected streams</div>
+          <div class="step-pill"><div class="step-num">2</div> Select your target platforms</div>
+          <div class="step-pill"><div class="step-num">3</div> View estimated earnings</div>
+        </div>
+      </div>
     </div>
+    <div class="featured-right">
+      <a href="https://www.royalties-calculator.com/" target="_blank" class="tool-btn"><i class="fa-solid fa-circle-dollar-to-slot"></i> Calculate Royalties</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0</span></div>
+    </div>
+  </div>
 
-</section>
+  <!-- Release Planner -->
+  <div class="tool-card" data-cat="growth" data-delay="80">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-guide">Guide</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Release Planner</h2>
+      <p>Build a full release campaign — timeline, marketing strategy, pre-save setup and rollout schedule — to maximise your first-week impact.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> Pre-save strategy</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Rollout checklist</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Playlist pitching</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://cyberprmusic.com/music-release-plan/" target="_blank" class="tool-btn"><i class="fa-solid fa-calendar-days"></i> Plan Release</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span>4.5</span></div>
+    </div>
+  </div>
 
-<footer class="footer">
-    © 2026 444Music Distribution
+  <!-- Referral Program -->
+  <div class="tool-card" data-cat="growth" data-delay="120">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-handshake"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-free">Earn</span>
+        <div class="card-ext"><i class="fa-brands fa-whatsapp"></i></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Referral Program</h2>
+      <p>Invite fellow artists to 444Music and earn rewards for every successful signup. No cap on earnings — the more you share, the more you make.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-check"></i> Instant rewards</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> No earning cap</span>
+        <span class="chip"><i class="fa-solid fa-check"></i> Track referrals</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://wa.me/233530399523" target="_blank" class="tool-btn"><i class="fa-brands fa-whatsapp"></i> Join Program</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION LABEL: Management -->
+  <div class="sec-label" id="sl4">
+    <div class="sec-label-icon"><i class="fa-solid fa-gear"></i></div>
+    <h3>Account Management</h3>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- Claim Artist Profile -->
+  <div class="tool-card" data-cat="management" data-delay="0">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-user-check"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-guide">Guide</span>
+        <div class="card-ext"><i class="fa-brands fa-whatsapp"></i></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Claim Artist Profile</h2>
+      <p>Step-by-step walkthrough to verify and claim your official artist pages on Spotify for Artists, Apple Music for Artists and Amazon Music.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-brands fa-spotify"></i> Spotify for Artists</span>
+        <span class="chip"><i class="fa-brands fa-apple"></i> Apple Music</span>
+        <span class="chip"><i class="fa-brands fa-amazon"></i> Amazon Music</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://wa.me/233530399523" target="_blank" class="tool-btn"><i class="fa-brands fa-whatsapp"></i> Get Guide</a>
+      <div class="card-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9</span></div>
+    </div>
+  </div>
+
+  <!-- WARNING NOTICE -->
+  <div class="notice-card" id="noticeCard">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <p>The takedown tool permanently removes your release from all connected streaming platforms. <strong>This action cannot be undone.</strong> Ensure you have downloaded your analytics and confirmed any pending royalties before submitting a request.</p>
+  </div>
+
+  <!-- Takedown -->
+  <div class="tool-card danger" data-cat="management" data-delay="0">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-trash-can"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-danger">⚠ Destructive</span>
+        <div class="card-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Song Takedown / Delete</h2>
+      <p>Submit a formal takedown request to remove a release from all digital platforms. Allow 5–14 business days for full removal across all DSPs.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-clock"></i> 5–14 business days</span>
+        <span class="chip"><i class="fa-solid fa-globe"></i> All platforms</span>
+        <span class="chip"><i class="fa-solid fa-file-signature"></i> Confirmation email</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="takedown.html" class="tool-btn danger-btn"><i class="fa-solid fa-trash-can"></i> Submit Takedown</a>
+      <div class="card-rating" style="color:var(--muted)"><i class="fa-solid fa-shield-halved" style="color:#f87171;font-size:12px;"></i><span style="font-size:11px;">Irreversible</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">
+      <div class="footer-icon"><i class="fa-solid fa-music"></i></div>
+      <span class="footer-name">444Music Distribution</span>
+    </div>
+    <div class="footer-copy">© 2026 444Music Distribution. All rights reserved.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">Home</a>
+    <a href="#">Tools</a>
+    <a href="#">Legal</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-socials">
+    <a href="#" class="soc-btn"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="soc-btn"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="#" class="soc-btn"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" class="soc-btn"><i class="fa-brands fa-discord"></i></a>
+  </div>
 </footer>
 
+<a href="#" class="btt" id="btt"><i class="fa-solid fa-chevron-up"></i></a>
+
 <script>
-const reveals = document.querySelectorAll(".reveal");
+  /* Scroll progress + back-to-top */
+  const pbar = document.getElementById('pbar');
+  const btt  = document.getElementById('btt');
+  window.addEventListener('scroll', () => {
+    const s = window.scrollY, t = document.body.scrollHeight - window.innerHeight;
+    pbar.style.width = (s/t*100)+'%';
+    btt.classList.toggle('show', s > 300);
+  });
 
-window.addEventListener("scroll", () => {
-    reveals.forEach(card => {
-        const top = card.getBoundingClientRect().top;
-        if(top < window.innerHeight - 80){
-            card.classList.add("active");
-        }
+  /* IntersectionObserver: reveal cards */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const d = +e.target.dataset.delay || 0;
+        setTimeout(() => e.target.classList.add('visible'), d);
+      }
     });
-});
-</script>
+  }, { threshold: 0.07 });
 
+  document.querySelectorAll('.tool-card, .sec-label, .notice-card').forEach(el => obs.observe(el));
+
+  /* Filter tabs */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const allCards   = document.querySelectorAll('.tool-card[data-cat]');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      allCards.forEach(card => {
+        const match = f === 'all' || card.dataset.cat === f;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>
 </body>
 </html>
-
