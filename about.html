@@ -3,44 +3,613 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Distribution – Legal</title>
-<link rel="stylesheet" href="about.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+<title>444Music Distribution – About Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg-deep: #07090f;
+    --bg-card: rgba(255,255,255,0.04);
+    --purple: #9333ea;
+    --purple-light: #c084fc;
+    --purple-dim: rgba(147,51,234,0.14);
+    --purple-border: rgba(147,51,234,0.22);
+    --accent: #e879f9;
+    --text: #f1f5f9;
+    --text-muted: rgba(241,245,249,0.55);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BACKGROUND ─── */
+  .bg-wrap {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.16;
+    animation: orbDrift 14s ease-in-out infinite alternate;
+  }
+  .orb-1 { width:520px; height:520px; background:#6d28d9; top:-160px; left:-140px; animation-delay:0s; }
+  .orb-2 { width:420px; height:420px; background:#9333ea; bottom:-120px; right:-120px; animation-delay:-5s; }
+  .orb-3 { width:260px; height:260px; background:#c084fc; top:42%; left:58%; animation-delay:-9s; }
+
+  @keyframes orbDrift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(38px,28px) scale(1.07); }
+  }
+
+  .bg-wrap::after {
+    content:''; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(147,51,234,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(147,51,234,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    animation: gridMove 24s linear infinite;
+  }
+  @keyframes gridMove { to { background-position: 56px 56px; } }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(7,9,15,0.78);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--purple-border);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 16px rgba(147,51,234,0.45);
+  }
+  .nav-logo-mark i { font-size: 14px; color: #fff; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-links a i { font-size: 11px; }
+  .nav-links a:hover, .nav-links a.active { color: var(--purple-light); }
+  .nav-cta {
+    background: linear-gradient(135deg, #6d28d9, #9333ea) !important;
+    color: #fff !important; padding: 8px 20px; border-radius: 999px;
+    box-shadow: 0 0 18px rgba(147,51,234,0.3);
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .nav-cta:hover { box-shadow: 0 0 30px rgba(147,51,234,0.55) !important; transform: translateY(-1px) !important; color: #fff !important; }
+
+  /* ─── LAYOUT ─── */
+  .container {
+    position: relative; z-index: 1;
+    max-width: 1020px; margin: 0 auto; padding: 64px 24px 80px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    text-align: center; padding: 20px 0 52px;
+    opacity: 0; transform: translateY(30px);
+    animation: fadeUp 0.8s 0.1s ease forwards;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--purple-dim); border: 1px solid var(--purple-border);
+    border-radius: 999px; padding: 7px 20px;
+    font-size: 11px; font-weight: 600; color: var(--purple-light);
+    letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 30px;
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  .hero-badge i { font-size: 9px; }
+  @keyframes badgePulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(147,51,234,0); }
+    50%      { box-shadow: 0 0 18px 4px rgba(147,51,234,0.22); }
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5.5vw, 56px); font-weight: 700; line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, #9333ea, #e879f9, #c084fc, #9333ea);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; background-size: 300% auto;
+    animation: shimmer 4s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 300% center; } }
+  .hero-sub {
+    max-width: 520px; margin: 0 auto 38px;
+    font-size: 15px; color: var(--text-muted); font-weight: 300; line-height: 1.8;
+  }
+  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    color: #fff; padding: 13px 30px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    box-shadow: 0 0 28px rgba(147,51,234,0.38);
+    transition: transform 0.22s, box-shadow 0.22s;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 44px rgba(147,51,234,0.56); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 9px;
+    border: 1px solid var(--purple-border); color: var(--text-muted);
+    padding: 12px 28px; border-radius: 999px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--purple-light); color: var(--purple-light); }
+
+  /* ─── STATS ─── */
+  .stats-strip {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+    margin-bottom: 48px;
+    opacity: 0; transform: translateY(24px);
+    animation: fadeUp 0.8s 0.3s ease forwards;
+  }
+  .stat-box {
+    background: var(--bg-card); border: 1px solid var(--purple-border);
+    border-radius: 16px; padding: 28px 20px; text-align: center;
+    backdrop-filter: blur(10px); position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    cursor: default;
+  }
+  .stat-box::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, var(--purple), transparent);
+    opacity:0; transition: opacity 0.3s;
+  }
+  .stat-box:hover { transform: translateY(-5px); border-color: rgba(147,51,234,0.5); }
+  .stat-box:hover::before { opacity: 1; }
+  .stat-icon { font-size: 22px; color: var(--purple-light); margin-bottom: 10px; }
+  .stat-num { font-size: 30px; font-weight: 700; color: #fff; display: block; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* ─── CARD BASE ─── */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--purple-border);
+    border-radius: 20px; padding: 36px; margin-bottom: 22px;
+    backdrop-filter: blur(14px); position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(24px);
+    transition: border-color 0.3s;
+  }
+  .card.visible {
+    opacity:1; transform:translateY(0);
+    transition: opacity 0.65s ease, transform 0.65s ease, border-color 0.3s;
+  }
+  .card:hover { border-color: rgba(147,51,234,0.42); }
+  .card-glow {
+    position:absolute; top:-50px; right:-50px; width:200px; height:200px;
+    background: radial-gradient(circle, rgba(147,51,234,0.09), transparent 65%);
+    pointer-events:none;
+  }
+  .card-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+  }
+  .card-icon {
+    width: 48px; height: 48px; flex-shrink: 0; border-radius: 13px;
+    background: linear-gradient(135deg, rgba(109,40,217,0.35), rgba(147,51,234,0.2));
+    border: 1px solid var(--purple-border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon i { font-size: 19px; color: var(--purple-light); }
+  .card-header h2 { font-size: 19px; font-weight: 600; color: #fff; }
+  .card p { font-size: 14.5px; color: var(--text-muted); font-weight: 300; line-height: 1.85; margin-bottom: 14px; }
+  .card p:last-of-type { margin-bottom: 0; }
+
+  /* ─── WHY ROW ─── */
+  .why-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px;
+  }
+  .why-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(147,51,234,0.06); border: 1px solid var(--purple-border);
+    border-radius: 14px; padding: 20px;
+    transition: background 0.22s, transform 0.22s;
+  }
+  .why-item:hover { background: rgba(147,51,234,0.12); transform: translateY(-3px); }
+  .why-icon {
+    width: 38px; height: 38px; flex-shrink:0; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(109,40,217,0.4), rgba(147,51,234,0.25));
+    border: 1px solid var(--purple-border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .why-icon i { font-size: 15px; color: var(--purple-light); }
+  .why-title { font-size: 13.5px; font-weight: 600; color: #e9d5ff; margin-bottom: 4px; }
+  .why-desc  { font-size: 12.5px; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+
+  /* ─── VALUES ─── */
+  .values-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px; margin-top: 8px;
+  }
+  .value-item {
+    background: rgba(147,51,234,0.07); border: 1px solid var(--purple-border);
+    border-radius: 14px; padding: 22px 18px;
+    transition: background 0.25s, transform 0.25s, border-color 0.25s;
+  }
+  .value-item:hover { background: rgba(147,51,234,0.14); transform: translateY(-4px); border-color: rgba(147,51,234,0.45); }
+  .value-icon-wrap {
+    width: 40px; height: 40px; border-radius: 10px; margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(109,40,217,0.4), rgba(147,51,234,0.25));
+    border: 1px solid var(--purple-border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .value-icon-wrap i { font-size: 16px; color: var(--purple-light); }
+  .value-title { font-size: 13.5px; font-weight: 600; color: #e9d5ff; margin-bottom: 6px; }
+  .value-desc  { font-size: 12.5px; color: var(--text-muted); font-weight: 300; line-height: 1.65; }
+
+  /* ─── PLATFORMS ─── */
+  .platforms-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+    gap: 12px; margin-top: 20px;
+  }
+  .platform-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 16px 14px;
+    display: flex; align-items: center; gap: 11px;
+    transition: background 0.22s, border-color 0.22s, transform 0.22s;
+    cursor: default;
+  }
+  .platform-card:hover { background: var(--purple-dim); border-color: var(--purple-border); transform: translateY(-2px); }
+  .platform-icon { font-size: 18px; flex-shrink: 0; width: 22px; text-align: center; }
+  .platform-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .platform-more {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--purple-dim); border: 1px dashed var(--purple-border);
+    border-radius: 12px; padding: 16px 14px;
+    font-size: 13px; color: var(--purple-light); font-weight: 600;
+  }
+
+  /* ─── TEAM ─── */
+  .team-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px; margin-top: 8px;
+  }
+  .team-card {
+    background: rgba(147,51,234,0.06); border: 1px solid var(--purple-border);
+    border-radius: 16px; padding: 26px 16px; text-align: center;
+    transition: transform 0.25s, border-color 0.25s, background 0.25s;
+  }
+  .team-card:hover { transform: translateY(-5px); border-color: rgba(147,51,234,0.55); background: rgba(147,51,234,0.1); }
+  .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, #6d28d9, #c084fc);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    box-shadow: 0 0 20px rgba(147,51,234,0.38);
+  }
+  .avatar i { font-size: 22px; color: #fff; }
+  .team-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .team-role { font-size: 12px; color: var(--purple-light); font-weight: 400; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1; text-align: center;
+    padding: 32px 24px; border-top: 1px solid var(--purple-border);
+  }
+  .footer-logo {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px;
+  }
+  .footer-logo-mark {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-logo-mark i { font-size: 12px; color: #fff; }
+  .footer-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; }
+  .footer-socials { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+  .social-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(147,51,234,0.12); border: 1px solid var(--purple-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); text-decoration: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .social-btn:hover { background: var(--purple-dim); color: var(--purple-light); border-color: var(--purple-light); }
+  .social-btn i { font-size: 14px; }
+  .footer-copy { font-size: 11.5px; color: rgba(241,245,249,0.35); }
+
+  /* ─── KEYFRAMES ─── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width:700px) {
+    nav { padding: 0 18px; }
+    .nav-links { gap: 14px; }
+    .nav-links a span { display: none; }
+    .stats-strip { grid-template-columns: 1fr 1fr; }
+    .stats-strip .stat-box:last-child { grid-column: span 2; }
+    .card { padding: 24px 18px; }
+    .why-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+    .hero-actions { flex-direction: column; }
+  }
+</style>
 </head>
-
-
-
 <body>
+
+<div class="bg-wrap">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark"><i class="fa-solid fa-music"></i></div>
+    444Music
+  </a>
+  <div class="nav-links">
+    <a href="#" class="active"><i class="fa-solid fa-house"></i> <span>About</span></a>
+    <a href="#"><i class="fa-solid fa-satellite-dish"></i> <span>Distribution</span></a>
+    <a href="#"><i class="fa-solid fa-tag"></i> <span>Pricing</span></a>
+    <a href="#" class="nav-cta"><i class="fa-solid fa-rocket"></i> <span>Get Started</span></a>
+  </div>
+</nav>
 
 <div class="container">
 
-<h1>444Music Distribution</h1>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">
+      <i class="fa-solid fa-star"></i> Independent Artist Platform
+    </div>
+    <h1>Distribute Your Music<br>to the <span class="grad">World</span></h1>
+    <p class="hero-sub">Fast, reliable and affordable music distribution to every major streaming platform — built for independent artists who demand more.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary"><i class="fa-solid fa-rocket"></i> Get Started Free</a>
+      <a href="#" class="btn-ghost"><i class="fa-solid fa-circle-play"></i> How It Works</a>
+    </div>
+  </div>
 
-<!-- ABOUT US -->
-<div class="card">
-<h2>About Us</h2>
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+      <span class="stat-num" data-target="150" data-suffix="+">0+</span>
+      <span class="stat-label">Streaming Platforms</span>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+      <span class="stat-num" data-target="100" data-suffix="%">0%</span>
+      <span class="stat-label">Royalties to Artists</span>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fa-solid fa-headset"></i></div>
+      <span class="stat-num">24/7</span>
+      <span class="stat-label">Artist Support</span>
+    </div>
+  </div>
 
-<p>
-444Music Distribution is a digital music distribution platform dedicated to helping independent artists
-release their music globally. We provide fast, reliable and affordable delivery of music to major streaming platforms.
-</p>
+  <!-- About -->
+  <div class="card reveal">
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon"><i class="fa-solid fa-building"></i></div>
+      <h2>About Us</h2>
+    </div>
+    <p>444Music Distribution is a digital music distribution platform dedicated to helping independent artists release their music globally. We provide fast, reliable and affordable delivery of music to all major streaming platforms.</p>
+    <p>Our mission is to empower creators by giving them full control over their content, earnings, and audience reach. We support upcoming and professional artists with the tools needed to grow in the modern music industry.</p>
+    <p>We are committed to transparency, secure payments, and artist satisfaction — because your art deserves to be heard everywhere.</p>
+  </div>
 
-<p>
-Our mission is to empower creators by giving them full control over their content, earnings, and audience reach.
-We support upcoming and professional artists with tools needed to grow in the modern music industry.
-</p>
-<p>
-Our mission is to empower creators by giving them full control over their content, earnings, and audience reach.
-We support upcoming and professional artists with tools needed to grow in the modern music industry.
-</p>
+  <!-- Why Us -->
+  <div class="card reveal">
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2>Why Choose 444Music</h2>
+    </div>
+    <div class="why-row">
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div>
+          <div class="why-title">Lightning Fast Delivery</div>
+          <div class="why-desc">Your release goes live on all platforms within 24–48 hours of submission.</div>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-coins"></i></div>
+        <div>
+          <div class="why-title">Keep 100% Royalties</div>
+          <div class="why-desc">Every cent earned from your music goes directly to you. No cuts, no catches.</div>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div>
+          <div class="why-title">Real-Time Analytics</div>
+          <div class="why-desc">Track streams, revenue and audience growth with a clear artist dashboard.</div>
+        </div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon"><i class="fa-solid fa-lock"></i></div>
+        <div>
+          <div class="why-title">Secure Payments</div>
+          <div class="why-desc">Monthly payouts via secure channels with full earnings transparency.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<p>
-We are committed to transparency, secure payments, and artist satisfaction.
-</p>
+  <!-- Values -->
+  <div class="card reveal">
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon"><i class="fa-solid fa-gem"></i></div>
+      <h2>Our Core Values</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-icon-wrap"><i class="fa-solid fa-user-check"></i></div>
+        <div class="value-title">Artist First</div>
+        <div class="value-desc">Every decision we make starts and ends with what's best for our artists.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon-wrap"><i class="fa-solid fa-eye"></i></div>
+        <div class="value-title">Transparency</div>
+        <div class="value-desc">Clear pricing, honest reporting, and no hidden fees — ever.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon-wrap"><i class="fa-solid fa-bolt-lightning"></i></div>
+        <div class="value-title">Speed</div>
+        <div class="value-desc">Your releases go live fast. We don't keep the world waiting.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon-wrap"><i class="fa-solid fa-globe"></i></div>
+        <div class="value-title">Global Reach</div>
+        <div class="value-desc">Reach listeners on every continent, on every major platform.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platforms -->
+  <div class="card reveal">
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon"><i class="fa-solid fa-headphones"></i></div>
+      <h2>Platforms We Distribute To</h2>
+    </div>
+    <p>Your music gets delivered to all the places your fans are already listening.</p>
+    <div class="platforms-grid">
+      <div class="platform-card">
+        <i class="fa-brands fa-spotify platform-icon" style="color:#1db954"></i>
+        <span class="platform-name">Spotify</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-apple platform-icon" style="color:#f5f5f5"></i>
+        <span class="platform-name">Apple Music</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-youtube platform-icon" style="color:#ff0000"></i>
+        <span class="platform-name">YouTube Music</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-soundcloud platform-icon" style="color:#ff6600"></i>
+        <span class="platform-name">SoundCloud</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-amazon platform-icon" style="color:#ff9900"></i>
+        <span class="platform-name">Amazon Music</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-tiktok platform-icon" style="color:#e8e8e8"></i>
+        <span class="platform-name">TikTok</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-solid fa-music platform-icon" style="color:#00b4d8"></i>
+        <span class="platform-name">Deezer</span>
+      </div>
+      <div class="platform-card">
+        <i class="fa-brands fa-facebook platform-icon" style="color:#1877f2"></i>
+        <span class="platform-name">Meta / FB</span>
+      </div>
+      <div class="platform-more">
+        <i class="fa-solid fa-plus"></i> 140+ more platforms
+      </div>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="card reveal">
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+      <h2>Meet the Team</h2>
+    </div>
+    <p>A passionate crew of music lovers and tech builders working to put independent artists first.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="avatar"><i class="fa-solid fa-microphone"></i></div>
+        <div class="team-name">Kofi Mensah</div>
+        <div class="team-role">Founder &amp; CEO</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar"><i class="fa-solid fa-handshake"></i></div>
+        <div class="team-name">Ama Owusu</div>
+        <div class="team-role">Artist Relations</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar"><i class="fa-solid fa-code"></i></div>
+        <div class="team-name">Kwame Asante</div>
+        <div class="team-role">Lead Developer</div>
+      </div>
+      <div class="team-card">
+        <div class="avatar"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="team-name">Abena Boateng</div>
+        <div class="team-role">Finance &amp; Royalties</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
+<!-- Footer -->
 <footer>
-© 2026 444Music Distribution. All Rights Reserved.
+  <div class="footer-logo">
+    <div class="footer-logo-mark"><i class="fa-solid fa-music"></i></div>
+    444Music Distribution
+  </div>
+  <p class="footer-sub">Empowering Independent Artists Worldwide</p>
+  <div class="footer-socials">
+    <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+  </div>
+  <div class="footer-copy">© 2026 444Music Distribution. All Rights Reserved.</div>
 </footer>
+
+<script>
+  // Scroll reveal for cards
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.card.reveal').forEach(c => revealObserver.observe(c));
+
+  // Animated counters
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = Math.max(1, Math.ceil(target / 55));
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current + suffix;
+        if (current >= target) clearInterval(timer);
+      }, 22);
+      counterObserver.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.stat-num[data-target]').forEach(n => counterObserver.observe(n));
+</script>
 </body>
 </html>
