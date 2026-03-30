@@ -4,124 +4,1193 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>444Music – Legal</title>
-<link rel="stylesheet" href="legal.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --surface2: #141414;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.12);
+    --accent: #7c3aed;
+    --accent2: #a78bfa;
+    --accent-glow: rgba(124,58,237,0.18);
+    --text: #f5f5f5;
+    --muted: #6b6b6b;
+    --muted2: #9a9a9a;
+    --success: #22c55e;
+    --white: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 68px;
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(124,58,237,0.4);
+  }
+
+  .nav-logo-text {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-link {
+    color: var(--muted2);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-link:hover { color: var(--white); background: var(--surface2); }
+  .nav-link.active { color: var(--white); background: var(--surface2); }
+
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+  }
+
+  .nav-cta:hover { background: #6d28d9; box-shadow: 0 0 30px rgba(124,58,237,0.5); transform: translateY(-1px); }
+
+  /* ── HERO BANNER ── */
+  .page-hero {
+    padding: 160px 48px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse at center, rgba(124,58,237,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.25);
+    color: var(--accent2);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .page-hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    color: var(--white);
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .page-hero p {
+    color: var(--muted2);
+    font-size: 16px;
+    max-width: 480px;
+    margin: 18px auto 0;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  /* ── BREADCRUMB NAV ── */
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 48px 60px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 9px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+
+  .tab-btn:hover { color: var(--white); border-color: var(--border-hover); background: var(--surface2); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(124,58,237,0.3); }
+
+  /* ── MAIN CONTENT ── */
+  .content-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* ── SECTION ── */
+  section { scroll-margin-top: 100px; }
+
+  .section-block {
+    margin-bottom: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+  }
+
+  .section-block.visible { opacity: 1; transform: translateY(0); }
+  .section-block:hover { border-color: var(--border-hover); }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 26px 32px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .block-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: rgba(124,58,237,0.12);
+    border: 1px solid rgba(124,58,237,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent2);
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .block-header h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    flex: 1;
+    letter-spacing: -0.3px;
+  }
+
+  .block-header .chevron {
+    color: var(--muted);
+    transition: transform 0.3s;
+    font-size: 13px;
+  }
+
+  .block-header.open .chevron { transform: rotate(180deg); }
+
+  .block-body {
+    padding: 28px 32px;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+
+  .block-body.collapsed { grid-template-rows: 0fr; padding-top: 0; padding-bottom: 0; }
+  .block-body-inner { overflow: hidden; }
+
+  .block-body p {
+    color: var(--muted2);
+    font-size: 14.5px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .block-body p:last-child { margin-bottom: 0; }
+
+  /* ── FEATURE GRID ── */
+  .feat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .feat-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .feat-item:hover { border-color: var(--border-hover); background: rgba(124,58,237,0.04); }
+
+  .feat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(124,58,237,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent2);
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .feat-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+
+  .feat-text span {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── POLICY LIST ── */
+  .policy-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .policy-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--muted2);
+    line-height: 1.6;
+  }
+
+  .policy-list li .li-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: rgba(34,197,94,0.1);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .policy-list li .li-icon.warn {
+    background: rgba(239,68,68,0.1);
+    color: #f87171;
+  }
+
+  .policy-list li .li-icon.info {
+    background: rgba(124,58,237,0.1);
+    color: var(--accent2);
+  }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s 0.15s ease, transform 0.6s 0.15s ease;
+  }
+
+  .stat-row.visible { opacity: 1; transform: translateY(0); }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .stat-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
+
+  .stat-card .stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -1px;
+  }
+
+  .stat-card .stat-num span { color: var(--accent2); }
+  .stat-card .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card .stat-icon { font-size: 20px; color: var(--accent2); margin-bottom: 10px; }
+
+  /* ── NOTICE BOX ── */
+  .notice {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: rgba(124,58,237,0.06);
+    border: 1px solid rgba(124,58,237,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 20px;
+  }
+
+  .notice i { color: var(--accent2); font-size: 15px; margin-top: 2px; flex-shrink: 0; }
+  .notice p { font-size: 13px; color: var(--muted2); margin: 0; line-height: 1.6; }
+  .notice p strong { color: var(--accent2); }
+
+  /* ── TERMS TABLE ── */
+  .terms-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .terms-table th {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terms-table td {
+    font-size: 13.5px;
+    color: var(--muted2);
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .terms-table tr:last-child td { border-bottom: none; }
+  .terms-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .terms-table td:first-child { color: var(--white); font-weight: 500; font-size: 13px; white-space: nowrap; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 100px;
+  }
+
+  .badge-green { background: rgba(34,197,94,0.1); color: #4ade80; }
+  .badge-red { background: rgba(239,68,68,0.1); color: #f87171; }
+  .badge-purple { background: rgba(124,58,237,0.12); color: var(--accent2); }
+
+  /* ── CONTACT BLOCK ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+  }
+
+  .contact-card:hover { border-color: rgba(124,58,237,0.3); background: rgba(124,58,237,0.04); transform: translateY(-1px); }
+
+  .contact-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(124,58,237,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent2);
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .contact-info strong { display: block; font-size: 13px; font-weight: 600; color: var(--white); }
+  .contact-info span { font-size: 12px; color: var(--muted); }
+
+  /* ── SECTION DIVIDER ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 52px 0 20px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .section-label.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent2);
+    font-size: 14px;
+  }
+
+  .section-label h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-logo-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #fff;
+  }
+
+  .footer-brand {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--white);
+  }
+
+  .footer-copy { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  .footer-socials {
+    display: flex;
+    gap: 10px;
+  }
+
+  .social-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .social-btn:hover { background: var(--surface2); color: var(--white); border-color: var(--border-hover); }
+
+  /* ── SCROLL PROGRESS ── */
+  .progress-bar {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(124,58,237,0.6);
+  }
+
+  /* ── BACK TO TOP ── */
+  .btt {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 42px;
+    height: 42px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 998;
+  }
+
+  .btt.show { opacity: 1; pointer-events: all; }
+  .btt:hover { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(124,58,237,0.4); transform: translateY(-2px); }
+
+  /* ── KEYFRAME ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(124,58,237,0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(124,58,237,0); }
+    100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .page-hero { padding: 130px 20px 60px; }
+    .tab-nav { padding: 0 20px 48px; flex-wrap: wrap; }
+    .content-wrap { padding: 0 16px 80px; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .block-header { padding: 20px 20px; }
+    .block-body { padding: 20px 20px; }
+    footer { flex-direction: column; align-items: flex-start; padding: 32px 20px; }
+    .footer-links { flex-wrap: wrap; gap: 16px; }
+  }
+</style>
 </head>
-  
 <body>
 
-<!-- ✅ NAV -->
+<!-- SCROLL PROGRESS -->
+<div class="progress-bar" id="progressBar"></div>
 
+<!-- NAVBAR -->
 <nav>
-<a href="#about" class="nav-link active">About</a>
-<a href="#privacy" class="nav-link">Privacy</a>
-<a href="#terms" class="nav-link">Terms</a>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-music"></i></div>
+    <span class="nav-logo-text">444Music</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about" class="nav-link active">About</a>
+    <a href="#privacy" class="nav-link">Privacy</a>
+    <a href="#terms" class="nav-link">Terms</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </div>
+  <a href="#" class="nav-cta">
+    <i class="fa-solid fa-rocket"></i>
+    Get Started
+  </a>
 </nav>
 
-<!-- ✅ ABOUT -->
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-badge">
+    <i class="fa-solid fa-shield-halved"></i>
+    Legal & Trust Center
+  </div>
+  <h1>Transparent by Default</h1>
+  <p>Everything you need to know about how we operate, protect your data, and support your music career.</p>
+</div>
 
-<section id="about">
-<div class="card">
-<h1>About 444Music Distribution</h1>
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <a href="#about" class="tab-btn active" data-target="about">
+    <i class="fa-solid fa-circle-info"></i> About
+  </a>
+  <a href="#privacy" class="tab-btn" data-target="privacy">
+    <i class="fa-solid fa-lock"></i> Privacy Policy
+  </a>
+  <a href="#terms" class="tab-btn" data-target="terms">
+    <i class="fa-solid fa-file-contract"></i> Terms & Conditions
+  </a>
+  <a href="#contact" class="tab-btn" data-target="contact">
+    <i class="fa-solid fa-headset"></i> Contact
+  </a>
+</div>
 
-<p>
-444Music Distribution helps independent artists release music globally with ease.
-We provide fast, secure and transparent delivery to major streaming platforms.
-</p>
-<p>
-Our mission is to give creators full control over their music, royalties and audience.
-</p>
+<!-- CONTENT -->
+<div class="content-wrap">
 
-<p>
-We are committed to building a trusted ecosystem for upcoming and professional artists.
-</p>
+  <!-- ── ABOUT ── -->
+  <section id="about">
+
+    <div class="stat-row" id="statRow">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+        <div class="stat-num">150<span>+</span></div>
+        <div class="stat-label">Streaming Platforms</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+        <div class="stat-num">100<span>%</span></div>
+        <div class="stat-label">Royalties to Artists</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-earth-africa"></i></div>
+        <div class="stat-num">190<span>+</span></div>
+        <div class="stat-label">Countries Reached</div>
+      </div>
+    </div>
+
+    <div class="section-label" id="labelAbout">
+      <div class="section-label-icon"><i class="fa-solid fa-circle-info"></i></div>
+      <h3>About Us</h3>
+    </div>
+
+    <div class="section-block" data-delay="0">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-record-vinyl"></i></div>
+        <h2>Who We Are</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <p>444Music Distribution is an independent artist platform built to close the gap between emerging talent and global audiences. We give you the infrastructure that major labels have — without the gatekeeping.</p>
+          <p>Founded by music lovers and technology builders, our mission is simple: put artists in control of their careers, their royalties, and their fanbase — completely and without compromise.</p>
+
+          <div class="feat-grid">
+            <div class="feat-item">
+              <div class="feat-icon"><i class="fa-solid fa-rocket"></i></div>
+              <div class="feat-text">
+                <strong>Fast Delivery</strong>
+                <span>Your music live on Spotify, Apple Music & more within 24–48 hours.</span>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <div class="feat-text">
+                <strong>Real-Time Analytics</strong>
+                <span>Track streams, saves, and revenue across all platforms in one dashboard.</span>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon"><i class="fa-solid fa-shield-check"></i></div>
+              <div class="feat-text">
+                <strong>Rights Protection</strong>
+                <span>Content ID and ISRC registration included with every release.</span>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-icon"><i class="fa-solid fa-headphones-simple"></i></div>
+              <div class="feat-text">
+                <strong>Artist Support</strong>
+                <span>Dedicated support team available 7 days a week for all plan tiers.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" data-delay="80">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-bullseye"></i></div>
+        <h2>Our Mission</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <p>We believe that great music deserves to be heard — regardless of budget, connections, or geography. 444Music exists to make professional-grade distribution accessible to every independent artist on the planet.</p>
+          <p>Our platform is built on three pillars: <strong style="color:var(--white)">Speed</strong>, <strong style="color:var(--white)">Transparency</strong>, and <strong style="color:var(--white)">Fair Compensation</strong>. We take nothing from your royalties. Every stream, every playlist add, every download — 100% of your earnings flow back to you.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── PRIVACY ── -->
+  <section id="privacy">
+
+    <div class="section-label" id="labelPrivacy">
+      <div class="section-label-icon"><i class="fa-solid fa-lock"></i></div>
+      <h3>Privacy Policy</h3>
+    </div>
+
+    <div class="section-block" data-delay="0">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-database"></i></div>
+        <h2>Data We Collect</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <ul class="policy-list">
+            <li>
+              <div class="li-icon info"><i class="fa-solid fa-user"></i></div>
+              <div>Account registration details — name, email address, and artist profile information.</div>
+            </li>
+            <li>
+              <div class="li-icon info"><i class="fa-solid fa-credit-card"></i></div>
+              <div>Payment information processed securely via PCI-DSS compliant third-party providers. We never store your card details.</div>
+            </li>
+            <li>
+              <div class="li-icon info"><i class="fa-solid fa-chart-bar"></i></div>
+              <div>Platform usage analytics to improve your experience and optimize our distribution network.</div>
+            </li>
+            <li>
+              <div class="li-icon info"><i class="fa-solid fa-music"></i></div>
+              <div>Music metadata — title, ISRC, release date, genre — required to distribute your content accurately.</div>
+            </li>
+          </ul>
+          <div class="notice">
+            <i class="fa-solid fa-circle-info"></i>
+            <p><strong>Important:</strong> Your data is never sold, rented, or shared with third parties for advertising purposes. We collect only what is necessary to operate our service.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" data-delay="80">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2>Your Rights & Protections</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <ul class="policy-list">
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div><strong style="color:var(--white)">Right to Access:</strong> Request a full export of your personal data at any time via your account settings.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div><strong style="color:var(--white)">Right to Deletion:</strong> Close your account and request permanent deletion of all personal data within 30 days.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div><strong style="color:var(--white)">Right to Correction:</strong> Update or correct any inaccurate personal information from your profile dashboard.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div><strong style="color:var(--white)">Security:</strong> All data is encrypted at rest (AES-256) and in transit (TLS 1.3). We conduct regular third-party security audits.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div><strong style="color:var(--white)">GDPR & CCPA Compliant:</strong> We honour all applicable data protection regulations globally, including for EU and California residents.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" data-delay="120">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-cookie-bite"></i></div>
+        <h2>Cookies & Tracking</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <p>We use essential cookies necessary for the platform to function, and optional analytics cookies to improve our product. You can manage cookie preferences at any time through your browser settings or our cookie consent panel.</p>
+          <p>We do not use cross-site advertising trackers or sell browsing data to any third party. By continuing to use 444Music Distribution, you agree to our minimal, privacy-respecting cookie policy.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── TERMS ── -->
+  <section id="terms">
+
+    <div class="section-label" id="labelTerms">
+      <div class="section-label-icon"><i class="fa-solid fa-file-contract"></i></div>
+      <h3>Terms & Conditions</h3>
+    </div>
+
+    <div class="section-block" data-delay="0">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Artist Eligibility & Content Rules</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <ul class="policy-list">
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div>You must hold full copyright ownership or exclusive distribution rights to any content you upload.</div>
+            </li>
+            <li>
+              <div class="li-icon warn"><i class="fa-solid fa-xmark"></i></div>
+              <div>No copyrighted samples, cover songs (without a licence), or AI-generated content presented as original are permitted.</div>
+            </li>
+            <li>
+              <div class="li-icon warn"><i class="fa-solid fa-xmark"></i></div>
+              <div>Content violating our community standards — including hate speech, explicit violence, or illegal material — will be removed without notice.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div>Each release must include accurate metadata: correct artist name, title, genre, and release date.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" data-delay="80">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
+        <h2>Royalties & Payouts</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <table class="terms-table">
+            <thead>
+              <tr>
+                <th>Rule</th>
+                <th>Detail</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Royalty Rate</td>
+                <td>100% of net royalties passed to the artist — no platform cut.</td>
+                <td><span class="badge badge-green"><i class="fa-solid fa-check"></i> Guaranteed</span></td>
+              </tr>
+              <tr>
+                <td>Payout Threshold</td>
+                <td>Minimum balance of $10 USD required to trigger a payout.</td>
+                <td><span class="badge badge-purple"><i class="fa-solid fa-info"></i> Standard</span></td>
+              </tr>
+              <tr>
+                <td>Processing Time</td>
+                <td>3 – 7 working days after withdrawal request is submitted.</td>
+                <td><span class="badge badge-purple"><i class="fa-solid fa-clock"></i> Variable</span></td>
+              </tr>
+              <tr>
+                <td>Payment Methods</td>
+                <td>Bank transfer, PayPal, and Mobile Money (select regions).</td>
+                <td><span class="badge badge-green"><i class="fa-solid fa-check"></i> Available</span></td>
+              </tr>
+              <tr>
+                <td>Reporting Lag</td>
+                <td>Streaming platforms typically report earnings 45–60 days after the month end.</td>
+                <td><span class="badge badge-purple"><i class="fa-solid fa-info"></i> Industry Norm</span></td>
+              </tr>
+              <tr>
+                <td>Account Fraud</td>
+                <td>Artificially inflated streams result in permanent suspension and forfeiture of withheld royalties.</td>
+                <td><span class="badge badge-red"><i class="fa-solid fa-xmark"></i> Zero Tolerance</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="notice">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>Royalties from streaming platforms may take up to <strong>60 days</strong> to appear in your 444Music dashboard due to reporting cycles outside our control.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" data-delay="120">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-gavel"></i></div>
+        <h2>Account Suspension & Termination</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <ul class="policy-list">
+            <li>
+              <div class="li-icon warn"><i class="fa-solid fa-xmark"></i></div>
+              <div>Accounts found to be using stream-farming services, bots, or any form of artificial engagement will be permanently banned.</div>
+            </li>
+            <li>
+              <div class="li-icon warn"><i class="fa-solid fa-xmark"></i></div>
+              <div>Repeated copyright infringement violations will result in account suspension and takedown requests filed with all platforms.</div>
+            </li>
+            <li>
+              <div class="li-icon"><i class="fa-solid fa-check"></i></div>
+              <div>Artists may voluntarily close their accounts at any time. Pending royalties will be paid out after verification.</div>
+            </li>
+            <li>
+              <div class="li-icon info"><i class="fa-solid fa-circle-info"></i></div>
+              <div>444Music reserves the right to update these terms with 30 days' notice via email to registered artists.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+
+    <div class="section-label" id="labelContact">
+      <div class="section-label-icon"><i class="fa-solid fa-headset"></i></div>
+      <h3>Contact & Support</h3>
+    </div>
+
+    <div class="section-block" data-delay="0">
+      <div class="block-header open">
+        <div class="block-header-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <h2>Get in Touch</h2>
+        <i class="fa-solid fa-chevron-down chevron"></i>
+      </div>
+      <div class="block-body">
+        <div class="block-body-inner">
+          <p>Our team is available seven days a week to support artists with distribution queries, royalty questions, and technical issues. Choose the channel that works best for you.</p>
+          <div class="contact-grid">
+            <a href="mailto:support@444music.com" class="contact-card">
+              <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div class="contact-info">
+                <strong>Email Support</strong>
+                <span>support@444music.com</span>
+              </div>
+            </a>
+            <a href="#" class="contact-card">
+              <div class="contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+              <div class="contact-info">
+                <strong>WhatsApp Chat</strong>
+                <span>Quick response · 9am–9pm</span>
+              </div>
+            </a>
+            <a href="#" class="contact-card">
+              <div class="contact-icon"><i class="fa-brands fa-instagram"></i></div>
+              <div class="contact-info">
+                <strong>Instagram DMs</strong>
+                <span>@444musicdist</span>
+              </div>
+            </a>
+            <a href="#" class="contact-card">
+              <div class="contact-icon"><i class="fa-brands fa-discord"></i></div>
+              <div class="contact-info">
+                <strong>Artist Community</strong>
+                <span>Join our Discord server</span>
+              </div>
+            </a>
+          </div>
+          <div class="notice" style="margin-top:20px">
+            <i class="fa-solid fa-clock"></i>
+            <p>Average response time is <strong>under 4 hours</strong> on business days. For urgent takedown or copyright issues, use the email channel and mark the subject as <strong>URGENT</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
 
 </div>
-</section>
 
-<!-- ✅ PRIVACY -->
-
-<section id="privacy">
-<div class="card">
-<h1>Privacy Policy</h1>
-<ul>
-<li>We collect basic user details for account and payment processing.</li>
-<li>Your data is never sold or shared.</li>
-<li>All transactions are securely processed.</li>
-<li>You can request account deletion anytime.</li>
-</ul>
-
-<p>Using our platform means you agree to our privacy practices.</p>
-
-</div>
-</section>
-
-<!-- ✅ TERMS -->
-
-<section id="terms">
-<div class="card">
-<h1>Terms & Conditions</h1>
-
-  <ul>
-<li>You must own rights to all uploaded content.</li>
-<li>No copyright violations allowed.</li>
-<li>Royalties are paid after payout threshold is reached.</li>
-<li>Payout processing: 3 – 7 working days.</li>
-<li>Fraud leads to account suspension.</li>
-</ul>
-
-<p>By using 444Music Distribution, you agree to these terms.</p>
-
-</div>
-</section>
-
+<!-- FOOTER -->
 <footer>
-© 2026 444Music Distribution
+  <div>
+    <div class="footer-left">
+      <div class="footer-logo-icon"><i class="fa-solid fa-music"></i></div>
+      <span class="footer-brand">444Music Distribution</span>
+    </div>
+    <div class="footer-copy">© 2026 444Music Distribution. All rights reserved.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#terms">Terms</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="footer-socials">
+    <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-discord"></i></a>
+  </div>
 </footer>
+
+<!-- BACK TO TOP -->
+<a href="#" class="btt" id="btt"><i class="fa-solid fa-chevron-up"></i></a>
+
 <script>
+  /* ── SCROLL PROGRESS ── */
+  const bar = document.getElementById('progressBar');
+  const btt = document.getElementById('btt');
 
-const cards = document.querySelectorAll('.card');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (scrolled / total * 100) + '%';
+    btt.classList.toggle('show', scrolled > 300);
+  });
 
-window.addEventListener('scroll', () => {
+  /* ── INTERSECTION OBSERVER (animate on scroll) ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        setTimeout(() => entry.target.classList.add('visible'), +delay);
+      }
+    });
+  }, { threshold: 0.08 });
 
-cards.forEach(card => {
+  document.querySelectorAll('.section-block, .stat-row, .section-label').forEach(el => observer.observe(el));
 
-const cardTop = card.getBoundingClientRect().top;
+  /* ── ACTIVE NAV ── */
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const tabBtns  = document.querySelectorAll('.tab-btn');
 
-if(cardTop < window.innerHeight - 100){
-card.classList.add('show');
-}
+  function setActive(id) {
+    navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    tabBtns.forEach(b  => b.classList.toggle('active', b.dataset.target === id));
+  }
 
-});
+  const secObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+  }, { rootMargin: '-30% 0px -60% 0px' });
 
-});
-  /* ACTIVE NAV LINK */
+  sections.forEach(s => secObserver.observe(s));
 
-const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll(".nav-link");
-
-window.addEventListener("scroll", () => {
-
-let current = "";
-
-sections.forEach(section => {
-const sectionTop = section.offsetTop;
-if(pageYOffset >= sectionTop - 200){
-current = section.getAttribute("id");
-}
-});
-
-/* ACTIVE NAV LINK */
-  navLinks.forEach(link => {
-link.classList.remove("active");
-if(link.getAttribute("href") === "#" + current){
-link.classList.add("active");
-}
-});
-
-});
-
+  /* ── ACCORDION ── */
+  document.querySelectorAll('.block-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const body = header.nextElementSibling;
+      const isOpen = header.classList.contains('open');
+      header.classList.toggle('open', !isOpen);
+      body.classList.toggle('collapsed', isOpen);
+    });
+  });
 </script>
-
 </body>
 </html>
