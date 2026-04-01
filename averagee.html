@@ -4,7 +4,624 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create New Release</title>
-<link rel="stylesheet" href="averagee.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   AVERAGEE.CSS — ULTRA-DARK PURPLE MUSIC DISTRIBUTION UI
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-void:        #05050a;
+  --bg-surface:     #080810;
+  --bg-card:        #0c0c16;
+  --bg-input:       #111120;
+  --bg-input-hover: #14142a;
+  --bg-modal:       #0e0e1e;
+
+  --border:         rgba(140,120,255,0.1);
+  --border-focus:   rgba(160,130,255,0.55);
+  --border-modal:   rgba(160,130,255,0.18);
+
+  --purple:         #a278f5;
+  --purple-bright:  #c4a8ff;
+  --purple-deep:    #7c55d4;
+  --purple-dim:     rgba(162,120,245,0.15);
+  --purple-glow:    0 0 28px rgba(162,120,245,0.28);
+  --purple-glow-sm: 0 0 12px rgba(162,120,245,0.18);
+
+  --text-primary:   #eeedf5;
+  --text-secondary: #7b7a8e;
+  --text-muted:     #3a3a52;
+
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  18px;
+  --radius-xl:  24px;
+
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% -5%,  rgba(162,120,245,0.09) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 28% at 85% 95%,  rgba(100,70,200,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 10% 80%,  rgba(120,90,230,0.04) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Noise overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.7;
+}
+
+/* ── WRAPPER ────────────────────────────── */
+.wrapper {
+  position: relative; z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 52px 24px 90px;
+  animation: wrapperIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── HEADER ─────────────────────────────── */
+.site-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 52px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-logo {
+  height: 42px; width: auto; object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(162,120,245,0.35));
+}
+
+/* ── PAGE TITLE ─────────────────────────── */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  animation: fadeInUp 0.5s 0.1s ease both;
+}
+
+.subtitle {
+  font-size: 0.93rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  margin-bottom: 34px;
+  animation: fadeInUp 0.5s 0.18s ease both;
+}
+
+/* ── STEP INDICATOR ─────────────────────── */
+.step-indicator {
+  display: flex; align-items: center;
+  margin-bottom: 44px;
+  animation: fadeInUp 0.5s 0.22s ease both;
+}
+
+.step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.step.active { color: var(--purple); }
+
+.step-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem;
+  font-family: var(--font-display); font-weight: 700;
+  flex-shrink: 0; transition: all var(--transition);
+}
+
+.step.active .step-num {
+  background: var(--purple); border-color: var(--purple);
+  color: #07070f; box-shadow: var(--purple-glow);
+}
+
+.step-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+  margin: 0 14px; max-width: 80px;
+}
+
+/* ── SECTION LABELS ─────────────────────── */
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--purple);
+  margin: 36px 0 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, rgba(162,120,245,0.28), transparent);
+}
+
+/* ── FORM CARD ──────────────────────────── */
+#releaseForm {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 5vw, 52px);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(100,70,200,0.06) inset;
+  position: relative; overflow: hidden;
+  animation: cardIn 0.55s 0.08s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+#releaseForm::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%);
+  opacity: 0.65;
+}
+
+#releaseForm::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 150px;
+  background: linear-gradient(to bottom, rgba(162,120,245,0.04), transparent);
+  pointer-events: none;
+}
+
+/* ── GRID ───────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* ── FIELD ──────────────────────────────── */
+.field {
+  display: flex; flex-direction: column; gap: 9px;
+}
+
+.field:has(textarea) { grid-column: 1 / -1; }
+
+.field label {
+  font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ── INPUTS BASE ────────────────────────── */
+.field input,
+.field select,
+.field textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem; font-weight: 400;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  width: 100%;
+  appearance: none; -webkit-appearance: none;
+}
+
+.field input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
+
+.field input:hover, .field select:hover, .field textarea:hover {
+  background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15);
+}
+
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--purple); background: var(--bg-input-hover);
+  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
+}
+
+/* ── SELECT WRAPPER ─────────────────────── */
+.select-wrapper, .flag-select-wrapper { position: relative; }
+
+.select-wrapper::after, .flag-select-wrapper::after {
+  content: '';
+  position: absolute; right: 14px; top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary);
+  pointer-events: none;
+  transition: border-top-color var(--transition), transform var(--transition);
+}
+
+.select-wrapper:focus-within::after, .flag-select-wrapper:focus-within::after {
+  border-top-color: var(--purple);
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.select-wrapper select { padding-right: 40px; cursor: pointer; }
+
+.flag-select-wrapper .flag-icon {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  font-size: 1.15rem; line-height: 1; pointer-events: none; z-index: 1;
+}
+
+.flag-select-wrapper select { padding-left: 44px; padding-right: 40px; cursor: pointer; }
+
+/* ── TEXTAREA ───────────────────────────── */
+.field textarea { min-height: 130px; resize: vertical; line-height: 1.65; }
+
+/* ── DATE ───────────────────────────────── */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) hue-rotate(215deg) saturate(2);
+  cursor: pointer; opacity: 0.6;
+  transition: opacity var(--transition);
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+
+/* ── SUBMIT BUTTON ──────────────────────── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 38px; width: 100%;
+  padding: 17px 32px;
+  border-radius: var(--radius-sm); border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.83rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #09090f;
+  background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 55%, var(--purple-deep) 100%);
+  box-shadow: 0 4px 32px rgba(162,120,245,0.38), 0 1px 0 rgba(255,255,255,0.1) inset;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  position: relative; overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(162,120,245,0.5); filter: brightness(1.06); }
+.btn:active:not(:disabled) { transform: translateY(0); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
+
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* ── STATUS ─────────────────────────────── */
+#statusMsg {
+  margin-top: 16px; text-align: center;
+  font-size: 0.84rem; color: var(--text-secondary); min-height: 22px;
+}
+
+/* ── FOOTER NOTE ────────────────────────── */
+.form-footer-note {
+  margin-top: 24px; text-align: center;
+  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.form-footer-note svg { width: 14px; height: 14px; opacity: 0.6; }
+
+/* ── OPTIONS DARK ───────────────────────── */
+option { background: #111120; color: var(--text-primary); }
+
+/* ── AUTOFILL ───────────────────────────── */
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-input-hover) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary);
+  border-color: var(--border) !important;
+}
+
+/* ════════════════════════════════════════════
+   ARTIST FIELD — CUSTOM SEARCH + SELECT
+   ════════════════════════════════════════════ */
+
+.artist-field { position: relative; }
+
+.artist-pill-box {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  cursor: text; min-height: 48px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.artist-pill-box:focus-within {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
+}
+
+.artist-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(162,120,245,0.14);
+  border: 1px solid rgba(162,120,245,0.3);
+  border-radius: 999px;
+  padding: 4px 12px 4px 10px;
+  font-size: 0.82rem; color: var(--purple-bright);
+  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.artist-pill .pill-avatar {
+  width: 20px; height: 20px; border-radius: 50%;
+  object-fit: cover; background: rgba(162,120,245,0.2);
+  font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+  color: var(--purple);
+}
+
+.artist-pill .pill-avatar.has-img { background: none; }
+.artist-pill .pill-avatar.has-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+
+.artist-pill-remove {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(162,120,245,0.25); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--purple-bright); padding: 0;
+  transition: background var(--transition), transform var(--transition);
+  font-size: 0.7rem; line-height: 1;
+}
+.artist-pill-remove:hover { background: rgba(162,120,245,0.45); transform: scale(1.15); }
+
+.artist-search-input {
+  background: none !important; border: none !important;
+  box-shadow: none !important; outline: none !important;
+  padding: 4px 6px !important;
+  flex: 1; min-width: 140px;
+  font-size: 0.88rem !important;
+  color: var(--text-primary);
+}
+
+.artist-search-input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.84rem; }
+
+/* Dropdown */
+.artist-dropdown {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 9000;
+  background: var(--bg-modal);
+  border: 1px solid var(--border-modal);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.5);
+  display: none;
+  animation: dropIn 0.2s cubic-bezier(0.22,1,0.36,1) both;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.artist-dropdown.open { display: block; }
+
+.dropdown-section-title {
+  padding: 10px 16px 6px;
+  font-size: 0.62rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-muted);
+  font-family: var(--font-display); font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+.artist-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid rgba(140,120,255,0.06);
+}
+
+.artist-option:last-child { border-bottom: none; }
+.artist-option:hover, .artist-option.focused { background: rgba(162,120,245,0.1); }
+
+.artist-option-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  flex-shrink: 0; overflow: hidden;
+  background: rgba(162,120,245,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--purple);
+}
+
+.artist-option-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.artist-option-info { flex: 1; min-width: 0; }
+.artist-option-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.artist-option-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+
+.artist-option-badge {
+  font-size: 0.6rem; padding: 2px 7px;
+  border-radius: 999px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; flex-shrink: 0;
+}
+.badge-spotify { background: rgba(30,215,96,0.15); color: #1ed760; border: 1px solid rgba(30,215,96,0.25); }
+.badge-apple  { background: rgba(252,60,68,0.12);  color: #fc3c44; border: 1px solid rgba(252,60,68,0.2);  }
+.badge-new    { background: rgba(162,120,245,0.15); color: var(--purple-bright); border: 1px solid rgba(162,120,245,0.3); }
+
+.dropdown-loading, .dropdown-empty {
+  padding: 18px 16px; text-align: center;
+  font-size: 0.83rem; color: var(--text-muted); font-style: italic;
+}
+
+.dropdown-loading { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+/* ── ARTIST MODAL ───────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(4,4,10,0.85);
+  backdrop-filter: blur(8px) saturate(0.7);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: overlayIn 0.25s ease both;
+}
+
+.modal-overlay.closing { animation: overlayOut 0.2s ease both; }
+
+.modal-card {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-modal);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px 32px;
+  width: 100%; max-width: 440px;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.5), 0 0 60px rgba(100,70,200,0.08) inset;
+  animation: modalIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+
+.modal-card.closing { animation: modalOut 0.2s ease both; }
+
+.modal-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%);
+  opacity: 0.5; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 26px;
+}
+
+.modal-title {
+  font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(162,120,245,0.08); border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); font-size: 1rem; transition: all var(--transition);
+}
+.modal-close:hover { background: rgba(162,120,245,0.18); color: var(--text-primary); }
+
+.modal-field { margin-bottom: 20px; }
+
+.modal-label {
+  display: block; margin-bottom: 8px;
+  font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-secondary); font-family: var(--font-display);
+}
+
+.modal-input, .modal-select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+}
+
+.modal-input:focus, .modal-select:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
+}
+
+.modal-select-wrap { position: relative; }
+.modal-select-wrap::after {
+  content: '';
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none;
+}
+.modal-select-wrap:focus-within::after { border-top-color: var(--purple); }
+
+.modal-hint {
+  margin-top: 8px; padding: 10px 14px;
+  background: rgba(162,120,245,0.07);
+  border: 1px solid rgba(162,120,245,0.15);
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
+}
+
+.modal-hint strong { color: var(--purple-bright); }
+
+.modal-btns {
+  display: flex; gap: 12px; margin-top: 26px;
+}
+
+.modal-btn-save, .modal-btn-cancel {
+  flex: 1; padding: 13px 20px;
+  border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: all var(--transition);
+}
+
+.modal-btn-save {
+  background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 100%);
+  color: #07070f;
+  box-shadow: 0 4px 20px rgba(162,120,245,0.3);
+}
+.modal-btn-save:hover { box-shadow: 0 8px 28px rgba(162,120,245,0.45); transform: translateY(-1px); }
+
+.modal-btn-cancel {
+  background: rgba(162,120,245,0.06);
+  border: 1px solid var(--border); color: var(--text-secondary);
+}
+.modal-btn-cancel:hover { background: rgba(162,120,245,0.12); color: var(--text-primary); }
+
+/* Scrollbar */
+.artist-dropdown::-webkit-scrollbar { width: 4px; }
+.artist-dropdown::-webkit-scrollbar-track { background: transparent; }
+.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(162,120,245,0.3); border-radius: 2px; }
+
+/* ── ANIMATIONS ─────────────────────────── */
+@keyframes wrapperIn  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes cardIn     { from { opacity: 0; transform: translateY(16px) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes fadeInUp   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes dropIn     { from { opacity: 0; transform: translateY(-6px) scaleY(0.96); transform-origin: top; } to { opacity: 1; transform: none; } }
+@keyframes pillPop    { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes overlayIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlayOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes modalIn    { from { opacity: 0; transform: scale(0.92) translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes modalOut   { from { opacity: 1; transform: none; } to { opacity: 0; transform: scale(0.94) translateY(8px); } }
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes pulse      { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* ── RESPONSIVE ─────────────────────────── */
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; gap: 18px; }
+  .wrapper { padding: 30px 14px 64px; }
+  #releaseForm { padding: 22px 16px; }
+  .step-line { max-width: 28px; margin: 0 8px; }
+  .step { font-size: 0.64rem; gap: 7px; }
+  h1 { font-size: 1.65rem; }
+  .modal-card { padding: 28px 20px 24px; }
+  .modal-btns { flex-direction: column; }
+}
+
+@media (max-width: 380px) {
+  h1 { font-size: 1.35rem; }
+  .btn { font-size: 0.78rem; padding: 14px 18px; }
+  .site-logo { height: 30px; }
+}
+</style>
 </head>
 
 <body>
@@ -44,9 +661,30 @@
     <div class="section-label">Artist Info</div>
     <div class="grid">
 
-      <div class="field">
-        <label>Artist Name</label>
-        <input id="artistName" name="artistName" placeholder="Your stage name" required>
+      <!-- ★ ARTIST NAME — SEARCH + SELECT -->
+      <div class="field artist-field" id="artistFieldWrap" style="grid-column: 1 / -1;">
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
+          Main Artist (Primary)
+        </label>
+
+        <div class="artist-pill-box" id="artistPillBox">
+          <!-- pills rendered here -->
+          <input
+            type="text"
+            id="artistSearchInput"
+            class="artist-search-input"
+            placeholder="Search artist on Spotify / Apple Music…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+
+        <!-- Hidden backing input that stores the final artist name -->
+        <input type="hidden" id="artistName" name="artistName">
+
+        <!-- Dropdown -->
+        <div class="artist-dropdown" id="artistDropdown"></div>
       </div>
 
       <div class="field">
@@ -245,6 +883,7 @@
             <option value="Ukraine" data-flag="🇺🇦">🇺🇦 Ukraine</option>
             <option value="United Arab Emirates, The" data-flag="🇦🇪">🇦🇪 United Arab Emirates</option>
             <option value="United Kingdom, The" data-flag="🇬🇧">🇬🇧 United Kingdom</option>
+            <option value="United States of America" data-flag="🇺🇸">🇺🇸 United States</option>
             <option value="Uruguay" data-flag="🇺🇾">🇺🇾 Uruguay</option>
             <option value="Uzbekistan" data-flag="🇺🇿">🇺🇿 Uzbekistan</option>
             <option value="Vanuatu" data-flag="🇻🇺">🇻🇺 Vanuatu</option>
@@ -288,215 +927,21 @@
         <label>Genre</label>
         <div class="select-wrapper">
           <select id="genre">
-            <!-- Pop -->
-            <optgroup label="🎵 Pop">
-              <option>Pop</option>
-              <option>Indie Pop</option>
-              <option>Synth-Pop</option>
-              <option>Electropop</option>
-              <option>Dream Pop</option>
-              <option>Art Pop</option>
-              <option>K-Pop</option>
-              <option>Afropop</option>
-              <option>Teen Pop</option>
-              <option>Power Pop</option>
-            </optgroup>
-            <!-- Hip-Hop & Rap -->
-            <optgroup label="🎤 Hip-Hop / Rap">
-              <option>Hip-Hop</option>
-              <option>Rap</option>
-              <option>Trap</option>
-              <option>Drill</option>
-              <option>UK Drill</option>
-              <option>Boom Bap</option>
-              <option>Cloud Rap</option>
-              <option>Mumble Rap</option>
-              <option>Conscious Hip-Hop</option>
-              <option>Gangsta Rap</option>
-              <option>Lo-Fi Hip-Hop</option>
-              <option>Emo Rap</option>
-              <option>Afro Trap</option>
-              <option>Grime</option>
-            </optgroup>
-            <!-- R&B & Soul -->
-            <optgroup label="🎶 R&B / Soul">
-              <option>R&amp;B</option>
-              <option>Soul</option>
-              <option>Neo Soul</option>
-              <option>Contemporary R&amp;B</option>
-              <option>Funk</option>
-              <option>Motown</option>
-              <option>Gospel</option>
-              <option>Quiet Storm</option>
-            </optgroup>
-            <!-- Electronic & Dance -->
-            <optgroup label="🎧 Electronic / Dance">
-              <option>Electronic</option>
-              <option>EDM</option>
-              <option>House</option>
-              <option>Deep House</option>
-              <option>Tech House</option>
-              <option>Afro House</option>
-              <option>Progressive House</option>
-              <option>Techno</option>
-              <option>Trance</option>
-              <option>Drum and Bass</option>
-              <option>Dubstep</option>
-              <option>Jungle</option>
-              <option>Garage</option>
-              <option>UK Garage</option>
-              <option>Ambient</option>
-              <option>Downtempo</option>
-              <option>Trip-Hop</option>
-              <option>IDM</option>
-              <option>Future Bass</option>
-              <option>Liquid DnB</option>
-              <option>Minimal Techno</option>
-              <option>Psytrance</option>
-            </optgroup>
-            <!-- Rock & Alternative -->
-            <optgroup label="🎸 Rock / Alternative">
-              <option>Rock</option>
-              <option>Alternative Rock</option>
-              <option>Indie Rock</option>
-              <option>Classic Rock</option>
-              <option>Hard Rock</option>
-              <option>Soft Rock</option>
-              <option>Progressive Rock</option>
-              <option>Psychedelic Rock</option>
-              <option>Grunge</option>
-              <option>Punk Rock</option>
-              <option>Post-Punk</option>
-              <option>New Wave</option>
-              <option>Math Rock</option>
-              <option>Shoegaze</option>
-              <option>Emo</option>
-            </optgroup>
-            <!-- Metal -->
-            <optgroup label="🤘 Metal">
-              <option>Metal</option>
-              <option>Heavy Metal</option>
-              <option>Death Metal</option>
-              <option>Black Metal</option>
-              <option>Thrash Metal</option>
-              <option>Doom Metal</option>
-              <option>Nu-Metal</option>
-              <option>Metalcore</option>
-              <option>Deathcore</option>
-              <option>Power Metal</option>
-              <option>Symphonic Metal</option>
-            </optgroup>
-            <!-- Afrobeats & African -->
-            <optgroup label="🌍 Afrobeats / African">
-              <option>Afrobeats</option>
-              <option>Afroswing</option>
-              <option>Highlife</option>
-              <option>Afro-R&amp;B</option>
-              <option>Amapiano</option>
-              <option>Jùjú</option>
-              <option>Fuji</option>
-              <option>Azonto</option>
-              <option>Kuduro</option>
-              <option>Kizomba</option>
-              <option>Bongo Flava</option>
-              <option>Soukous</option>
-              <option>Ndombolo</option>
-              <option>Afro-Jazz</option>
-            </optgroup>
-            <!-- Reggae & Dancehall -->
-            <optgroup label="🌴 Reggae / Dancehall">
-              <option>Reggae</option>
-              <option>Dancehall</option>
-              <option>Reggaeton</option>
-              <option>Ska</option>
-              <option>Rocksteady</option>
-              <option>Dub</option>
-              <option>Roots Reggae</option>
-            </optgroup>
-            <!-- Latin -->
-            <optgroup label="💃 Latin">
-              <option>Latin Pop</option>
-              <option>Salsa</option>
-              <option>Merengue</option>
-              <option>Bachata</option>
-              <option>Cumbia</option>
-              <option>Bossa Nova</option>
-              <option>Samba</option>
-              <option>Tango</option>
-              <option>Flamenco</option>
-              <option>Latin Jazz</option>
-              <option>Urbano Latino</option>
-              <option>Corrido</option>
-            </optgroup>
-            <!-- Jazz & Blues -->
-            <optgroup label="🎷 Jazz / Blues">
-              <option>Jazz</option>
-              <option>Blues</option>
-              <option>Smooth Jazz</option>
-              <option>Bebop</option>
-              <option>Swing</option>
-              <option>Cool Jazz</option>
-              <option>Fusion Jazz</option>
-              <option>Delta Blues</option>
-              <option>Soul Blues</option>
-              <option>Rhythm and Blues</option>
-            </optgroup>
-            <!-- Classical & Orchestral -->
-            <optgroup label="🎻 Classical / Orchestral">
-              <option>Classical</option>
-              <option>Orchestral</option>
-              <option>Opera</option>
-              <option>Chamber Music</option>
-              <option>Neoclassical</option>
-              <option>Contemporary Classical</option>
-              <option>Choral</option>
-              <option>Film Score</option>
-              <option>Soundtrack</option>
-            </optgroup>
-            <!-- Country & Folk -->
-            <optgroup label="🤠 Country / Folk">
-              <option>Country</option>
-              <option>Folk</option>
-              <option>Bluegrass</option>
-              <option>Americana</option>
-              <option>Outlaw Country</option>
-              <option>Country Pop</option>
-              <option>Indie Folk</option>
-              <option>Singer-Songwriter</option>
-            </optgroup>
-            <!-- World Music -->
-            <optgroup label="🌐 World Music">
-              <option>World Music</option>
-              <option>Afro-Cuban</option>
-              <option>Celtic</option>
-              <option>Bollywood</option>
-              <option>Qawwali</option>
-              <option>Fado</option>
-              <option>Mbalax</option>
-              <option>Gnawa</option>
-              <option>Soca</option>
-              <option>Calypso</option>
-            </optgroup>
-            <!-- Gospel & Worship -->
-            <optgroup label="✝️ Gospel / Worship">
-              <option>Gospel</option>
-              <option>Contemporary Christian</option>
-              <option>Worship</option>
-              <option>Christian Hip-Hop</option>
-              <option>Praise &amp; Worship</option>
-            </optgroup>
-            <!-- Other -->
-            <optgroup label="⚡ Other">
-              <option>Experimental</option>
-              <option>Noise</option>
-              <option>Industrial</option>
-              <option>Spoken Word</option>
-              <option>Podcast</option>
-              <option>Comedy</option>
-              <option>ASMR</option>
-              <option>Lo-Fi</option>
-              <option>Other</option>
-            </optgroup>
+            <optgroup label="🎵 Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>Dream Pop</option><option>Art Pop</option><option>K-Pop</option><option>Afropop</option><option>Teen Pop</option><option>Power Pop</option></optgroup>
+            <optgroup label="🎤 Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Cloud Rap</option><option>Mumble Rap</option><option>Conscious Hip-Hop</option><option>Gangsta Rap</option><option>Lo-Fi Hip-Hop</option><option>Emo Rap</option><option>Afro Trap</option><option>Grime</option></optgroup>
+            <optgroup label="🎶 R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Contemporary R&amp;B</option><option>Funk</option><option>Motown</option><option>Gospel</option><option>Quiet Storm</option></optgroup>
+            <optgroup label="🎧 Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Tech House</option><option>Afro House</option><option>Progressive House</option><option>Techno</option><option>Trance</option><option>Drum and Bass</option><option>Dubstep</option><option>Jungle</option><option>Garage</option><option>UK Garage</option><option>Ambient</option><option>Downtempo</option><option>Trip-Hop</option><option>IDM</option><option>Future Bass</option></optgroup>
+            <optgroup label="🎸 Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Hard Rock</option><option>Soft Rock</option><option>Progressive Rock</option><option>Psychedelic Rock</option><option>Grunge</option><option>Punk Rock</option><option>Post-Punk</option><option>New Wave</option><option>Shoegaze</option><option>Emo</option></optgroup>
+            <optgroup label="🤘 Metal"><option>Metal</option><option>Heavy Metal</option><option>Death Metal</option><option>Black Metal</option><option>Thrash Metal</option><option>Doom Metal</option><option>Nu-Metal</option><option>Metalcore</option><option>Deathcore</option><option>Power Metal</option><option>Symphonic Metal</option></optgroup>
+            <optgroup label="🌍 Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Afro-R&amp;B</option><option>Amapiano</option><option>Jùjú</option><option>Fuji</option><option>Azonto</option><option>Kuduro</option><option>Kizomba</option><option>Bongo Flava</option><option>Soukous</option><option>Ndombolo</option><option>Afro-Jazz</option></optgroup>
+            <optgroup label="🌴 Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option><option>Ska</option><option>Rocksteady</option><option>Dub</option><option>Roots Reggae</option></optgroup>
+            <optgroup label="💃 Latin"><option>Latin Pop</option><option>Salsa</option><option>Merengue</option><option>Bachata</option><option>Cumbia</option><option>Bossa Nova</option><option>Samba</option><option>Tango</option><option>Flamenco</option><option>Latin Jazz</option><option>Urbano Latino</option><option>Corrido</option></optgroup>
+            <optgroup label="🎷 Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Smooth Jazz</option><option>Bebop</option><option>Swing</option><option>Cool Jazz</option><option>Fusion Jazz</option><option>Delta Blues</option><option>Soul Blues</option><option>Rhythm and Blues</option></optgroup>
+            <optgroup label="🎻 Classical / Orchestral"><option>Classical</option><option>Orchestral</option><option>Opera</option><option>Chamber Music</option><option>Neoclassical</option><option>Contemporary Classical</option><option>Choral</option><option>Film Score</option><option>Soundtrack</option></optgroup>
+            <optgroup label="🤠 Country / Folk"><option>Country</option><option>Folk</option><option>Bluegrass</option><option>Americana</option><option>Outlaw Country</option><option>Country Pop</option><option>Indie Folk</option><option>Singer-Songwriter</option></optgroup>
+            <optgroup label="🌐 World Music"><option>World Music</option><option>Afro-Cuban</option><option>Celtic</option><option>Bollywood</option><option>Qawwali</option><option>Fado</option><option>Mbalax</option><option>Gnawa</option><option>Soca</option><option>Calypso</option></optgroup>
+            <optgroup label="✝️ Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option><option>Praise &amp; Worship</option></optgroup>
+            <optgroup label="⚡ Other"><option>Experimental</option><option>Noise</option><option>Industrial</option><option>Spoken Word</option><option>Podcast</option><option>Comedy</option><option>ASMR</option><option>Lo-Fi</option><option>Other</option></optgroup>
           </select>
         </div>
       </div>
@@ -526,43 +971,37 @@
     <!-- LABEL & RIGHTS -->
     <div class="section-label">Label & Rights</div>
     <div class="grid">
-
       <div class="field">
         <label>Label Name</label>
         <input id="label" placeholder="Independent or label name">
       </div>
-
       <div class="field">
         <label>Copyright Holder</label>
         <input id="copyright" placeholder="© 2025 Your Name or Company">
       </div>
-
-    </div><!-- /grid -->
+    </div>
 
     <!-- CONTACT & ACCOUNT -->
     <div class="section-label">Contact & Account</div>
     <div class="grid">
-
       <div class="field">
         <label>Email</label>
         <input id="email" type="email" placeholder="your@email.com" required>
       </div>
-
       <div class="field">
         <label>Enter Referral Code</label>
         <input id="refferal" placeholder="Leave blank if you don't have one">
       </div>
-
-    </div><!-- /grid -->
+    </div>
 
     <!-- LYRICS -->
     <div class="section-label">Lyrics</div>
     <div class="grid">
       <div class="field">
         <label>Add Lyrics (Optional)</label>
-        <textarea id="description" placeholder="Paste your lyrics here..."></textarea>
+        <textarea id="description" placeholder="Paste your lyrics here…"></textarea>
       </div>
-    </div><!-- /grid -->
+    </div>
 
     <button class="btn" id="submitBtn" type="submit">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -574,152 +1013,440 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Your data is encrypted and stored securely
     </p>
-
   </form>
 </div>
 
-<!-- ✅ EMAILJS -->
+<!-- ── ARTIST MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="artistModal" style="display:none;" aria-modal="true" role="dialog">
+  <div class="modal-card" id="artistModalCard">
+    <div class="modal-header">
+      <span class="modal-title">Add New Artist</span>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">New Artist Name</label>
+      <input class="modal-input" id="modalArtistName" placeholder="Please enter the artist's name" autocomplete="off">
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Main Artist Type</label>
+      <div class="modal-select-wrap">
+        <select class="modal-select" id="modalArtistType">
+          <option value="primary">Primary Artist</option>
+          <option value="collaborating">Collaborating Main Artist</option>
+        </select>
+      </div>
+      <div class="modal-hint">
+        <strong>Primary artists</strong> count toward your subscription limit.<br>
+        Collaborating artists do not affect your limit.
+      </div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="modal-btn-save" id="modalSave">Save Artist</button>
+      <button class="modal-btn-cancel" id="modalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-<!-- ── FLAG UPDATER ─────────────────────────── -->
+<!-- ─────────────── COUNTRY FLAG UPDATER ──────────────── -->
 <script>
-  const countrySelect = document.getElementById('country');
-  const flagIcon = document.getElementById('countryFlag');
-
-  function updateFlag() {
-    const selected = countrySelect.options[countrySelect.selectedIndex];
-    const flag = selected ? selected.getAttribute('data-flag') : '🌍';
-    flagIcon.textContent = flag || '🌍';
-  }
-
-  countrySelect.addEventListener('change', updateFlag);
-  updateFlag();
+const countrySelect = document.getElementById('country');
+const flagIcon      = document.getElementById('countryFlag');
+function updateFlag() {
+  const sel = countrySelect.options[countrySelect.selectedIndex];
+  flagIcon.textContent = (sel && sel.getAttribute('data-flag')) || '🌍';
+}
+countrySelect.addEventListener('change', updateFlag);
+updateFlag();
 </script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc } 
-from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+<!-- ─────────────── ARTIST SEARCH ENGINE ──────────────── -->
+<script>
+(function() {
+  /* ── State ── */
+  const selectedArtists = []; // [{name, imageUrl, source}]
 
-/* 🔥 FIREBASE CONFIG */
+  /* ── DOM refs ── */
+  const searchInput   = document.getElementById('artistSearchInput');
+  const pillBox       = document.getElementById('artistPillBox');
+  const dropdown      = document.getElementById('artistDropdown');
+  const hiddenInput   = document.getElementById('artistName');
+  const modal         = document.getElementById('artistModal');
+  const modalCard     = document.getElementById('artistModalCard');
+  const modalNameInput= document.getElementById('modalArtistName');
+  const modalTypeSelect=document.getElementById('modalArtistType');
+  const modalSaveBtn  = document.getElementById('modalSave');
+  const modalCancelBtn= document.getElementById('modalCancel');
+  const modalCloseBtn = document.getElementById('modalClose');
+
+  let searchTimer = null;
+  let lastQuery   = '';
+  let focused     = -1;
+  let dropdownItems = [];
+
+  /* ── Debounce search ── */
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(searchTimer);
+    if (q.length < 2) { closeDropdown(); return; }
+    searchTimer = setTimeout(() => fetchArtists(q), 380);
+    showLoading();
+  });
+
+  searchInput.addEventListener('keydown', handleKeyNav);
+
+  /* Click outside closes dropdown */
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
+  });
+
+  /* Focus opens if has value */
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim().length >= 2) fetchArtists(searchInput.value.trim());
+  });
+
+  /* ── iTunes Search (no auth needed) ── */
+  async function fetchArtists(query) {
+    showLoading();
+    try {
+      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=musicArtist&limit=7&media=music`;
+      const res = await fetch(url);
+      const data = await res.json();
+      renderResults(query, data.results || []);
+    } catch(e) {
+      renderResults(query, []);
+    }
+  }
+
+  function showLoading() {
+    dropdown.innerHTML = `<div class="dropdown-loading"><div class="spin"></div> Searching…</div>`;
+    openDropdown();
+  }
+
+  function renderResults(query, results) {
+    dropdownItems = [];
+    let html = '';
+
+    /* Existing artists from Spotify/Apple */
+    const found = results.filter(r => r.artistName);
+    if (found.length > 0) {
+      html += `<div class="dropdown-section-title">Found on Apple Music</div>`;
+      found.forEach((artist, i) => {
+        const name    = artist.artistName;
+        const genre   = artist.primaryGenreName || '';
+        const imgUrl  = artist.artworkUrl100 || '';
+        dropdownItems.push({ name, imageUrl: imgUrl, source: 'apple', genre });
+        const avatarHtml = imgUrl
+          ? `<div class="artist-option-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`
+          : `<div class="artist-option-avatar">${name.charAt(0).toUpperCase()}</div>`;
+        html += `
+          <div class="artist-option" data-index="${i}" tabindex="-1">
+            ${avatarHtml}
+            <div class="artist-option-info">
+              <div class="artist-option-name">${escHtml(name)}</div>
+              ${genre ? `<div class="artist-option-meta">${escHtml(genre)}</div>` : ''}
+            </div>
+            <span class="artist-option-badge badge-apple">Apple Music</span>
+          </div>`;
+      });
+    }
+
+    /* "Create New" option always at bottom */
+    const newIdx = dropdownItems.length;
+    dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
+    html += `<div class="dropdown-section-title">Not on Apple Music?</div>`;
+    html += `
+      <div class="artist-option" data-index="${newIdx}" tabindex="-1">
+        <div class="artist-option-avatar" style="background:rgba(162,120,245,0.18);color:#c4a8ff;font-size:1.1rem;">+</div>
+        <div class="artist-option-info">
+          <div class="artist-option-name">Add "${escHtml(query)}" as new artist</div>
+          <div class="artist-option-meta">Not on streaming platforms yet</div>
+        </div>
+        <span class="artist-option-badge badge-new">New</span>
+      </div>`;
+
+    dropdown.innerHTML = html;
+    openDropdown();
+    focused = -1;
+
+    /* Bind click handlers */
+    dropdown.querySelectorAll('.artist-option').forEach(el => {
+      el.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        const idx = parseInt(el.dataset.index);
+        selectItem(idx);
+      });
+    });
+  }
+
+  function selectItem(idx) {
+    const item = dropdownItems[idx];
+    if (!item) return;
+
+    if (item.source === 'new') {
+      /* Open modal to add new artist */
+      modalNameInput.value = item.name;
+      openModal();
+      closeDropdown();
+      searchInput.value = '';
+      lastQuery = '';
+      return;
+    }
+
+    /* Already on Apple Music — add directly */
+    addArtistPill(item.name, item.imageUrl, item.source);
+    closeDropdown();
+    searchInput.value = '';
+    lastQuery = '';
+  }
+
+  function addArtistPill(name, imageUrl, source) {
+    /* Prevent duplicates */
+    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
+    selectedArtists.push({ name, imageUrl, source });
+    syncHiddenInput();
+    renderPills();
+  }
+
+  function removeArtist(idx) {
+    selectedArtists.splice(idx, 1);
+    syncHiddenInput();
+    renderPills();
+  }
+
+  function renderPills() {
+    /* Remove all existing pills */
+    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
+
+    selectedArtists.forEach((artist, i) => {
+      const pill = document.createElement('div');
+      pill.className = 'artist-pill';
+
+      let avatarHtml;
+      if (artist.imageUrl) {
+        avatarHtml = `<span class="pill-avatar has-img"><img src="${artist.imageUrl}" alt=""></span>`;
+      } else {
+        avatarHtml = `<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
+      }
+
+      pill.innerHTML = `
+        ${avatarHtml}
+        <span>${escHtml(artist.name)}</span>
+        <button class="artist-pill-remove" title="Remove" aria-label="Remove ${escHtml(artist.name)}">✕</button>`;
+
+      pill.querySelector('.artist-pill-remove').addEventListener('click', () => removeArtist(i));
+      pillBox.insertBefore(pill, searchInput);
+    });
+
+    /* Update placeholder */
+    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Spotify / Apple Music…';
+  }
+
+  function syncHiddenInput() {
+    hiddenInput.value = selectedArtists.map(a => a.name).join(', ');
+  }
+
+  /* Keyboard navigation */
+  function handleKeyNav(e) {
+    const items = dropdown.querySelectorAll('.artist-option');
+    if (!dropdown.classList.contains('open') || items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      focused = Math.min(focused + 1, items.length - 1);
+      highlightItem(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      focused = Math.max(focused - 1, 0);
+      highlightItem(items);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focused >= 0 && focused < dropdownItems.length) selectItem(focused);
+    } else if (e.key === 'Escape') {
+      closeDropdown();
+    }
+  }
+
+  function highlightItem(items) {
+    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
+    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
+  }
+
+  function openDropdown()  { dropdown.classList.add('open'); }
+  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
+
+  /* ── MODAL ── */
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.classList.remove('closing');
+    modalCard.classList.remove('closing');
+    setTimeout(() => modalNameInput.focus(), 100);
+  }
+
+  function closeModal(cb) {
+    modal.classList.add('closing');
+    modalCard.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      modalCard.classList.remove('closing');
+      if (cb) cb();
+    }, 200);
+  }
+
+  modalSaveBtn.addEventListener('click', () => {
+    const name = modalNameInput.value.trim();
+    if (!name) { modalNameInput.focus(); return; }
+    addArtistPill(name, '', 'new');
+    closeModal(() => {
+      modalNameInput.value = '';
+      modalTypeSelect.value = 'primary';
+    });
+  });
+
+  modalCancelBtn.addEventListener('click', () => closeModal());
+  modalCloseBtn.addEventListener('click',  () => closeModal());
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  modalNameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); modalSaveBtn.click(); }
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* ── Pill box click focuses input ── */
+  pillBox.addEventListener('click', (e) => {
+    if (!e.target.closest('.artist-pill')) searchInput.focus();
+  });
+
+  /* ── Utils ── */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+})();
+</script>
+
+<!-- ─────────────── FIREBASE + EMAILJS ──────────────────── -->
+<script type="module">
+import { initializeApp }            from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
   messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app = initializeApp(firebaseConfig);
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db   = getFirestore(app);
 
-/* ✅ INITIALIZE EMAILJS */
 emailjs.init("mwAZ_hDxmnBqkrTfA");
 
 let currentUser = null;
 
-/* 🔐 AUTH CHECK */
 onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-  } else {
-    currentUser = user;
-  }
+  if (!user) { window.location.href = "login.html"; }
+  else       { currentUser = user; }
 });
 
-/* 📧 EMAIL FUNCTION */
 async function sendEmails(data) {
-
-  const templateParams = {
-    artist_name: data.artistName,
+  const params = {
+    artist_name:   data.artistName,
     release_title: data.releaseTitle,
-    release_type: data.releaseType,
-    country: data.country,
-    genre: data.genre,
-    language: data.language,
-    release_date: data.releaseDate,
-    explicit: data.explicit,
-    email: data.email,
-    phone: data.phone,
-    featuring: data.featuring,
-    label: data.label,
-    copyright: data.copyright,
-    refferal: data.refferal,
-    lyrics: data.description
+    release_type:  data.releaseType,
+    country:       data.country,
+    genre:         data.genre,
+    language:      data.language,
+    release_date:  data.releaseDate,
+    explicit:      data.explicit,
+    email:         data.email,
+    phone:         data.phone,
+    featuring:     data.featuring,
+    label:         data.label,
+    copyright:     data.copyright,
+    refferal:      data.refferal,
+    lyrics:        data.description
   };
-
-  // 🔹 Admin email
-  await emailjs.send("service_ydy0muo", "template_i6qh7ew", templateParams);
-
-  // 🔹 Auto reply to user (if you created second template)
-  await emailjs.send("service_ydy0muo", "template_m8g8n9q", templateParams);
+  await emailjs.send("service_ydy0muo", "template_i6qh7ew", params);
+  await emailjs.send("service_ydy0muo", "template_m8g8n9q", params);
 }
 
-/* 📝 FORM SUBMIT */
-const form = document.getElementById("releaseForm");
+const form      = document.getElementById("releaseForm");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
-
 let isSubmitting = false;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  if (isSubmitting) return;
-  if (!currentUser) return;
-
+  if (isSubmitting || !currentUser) return;
   isSubmitting = true;
 
   submitBtn.disabled = true;
-  submitBtn.innerText = "Submitting...";
-  statusMsg.innerText = "Please wait...";
+  submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…`;
+  statusMsg.textContent = "Please wait…";
+
+  /* ← reads the hidden input which is kept in sync with pills */
+  const artistName = document.getElementById("artistName").value.trim();
+
+  if (!artistName) {
+    statusMsg.textContent = "Please add at least one artist before submitting.";
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue`;
+    isSubmitting = false;
+    return;
+  }
 
   const data = {
-    artistName: document.getElementById("artistName").value.trim(),
+    artistName,
     releaseTitle: document.getElementById("releaseTitle").value.trim(),
-    releaseType: document.getElementById("releaseType").value,
-    country: document.getElementById("country").value,
-    genre: document.getElementById("genre").value.trim(),
-    language: document.getElementById("language").value.trim(),
-    releaseDate: document.getElementById("releaseDate").value,
-    explicit: document.getElementById("explicit").value,
-    email: document.getElementById("email").value.trim(),
-    phone: document.getElementById("number").value.trim(),
-    featuring: document.getElementById("featuring").value.trim(),
-    copyright: document.getElementById("copyright").value.trim(),
-    label: document.getElementById("label").value.trim(),
-    refferal: document.getElementById("refferal").value.trim(),
-    description: document.getElementById("description").value.trim(),
-    userId: currentUser.uid,
-    createdAt: Date.now(),
-    status: "Pending"
+    releaseType:  document.getElementById("releaseType").value,
+    country:      document.getElementById("country").value,
+    genre:        document.getElementById("genre").value.trim(),
+    language:     document.getElementById("language").value.trim(),
+    releaseDate:  document.getElementById("releaseDate").value,
+    explicit:     document.getElementById("explicit").value,
+    email:        document.getElementById("email").value.trim(),
+    phone:        document.getElementById("number").value.trim(),
+    featuring:    document.getElementById("featuring").value.trim(),
+    copyright:    document.getElementById("copyright").value.trim(),
+    label:        document.getElementById("label").value.trim(),
+    refferal:     document.getElementById("refferal").value.trim(),
+    description:  document.getElementById("description").value.trim(),
+    userId:       currentUser.uid,
+    createdAt:    Date.now(),
+    status:       "Pending"
   };
 
   try {
-
-    /* ✅ SAVE TO FIRESTORE FIRST */
     await addDoc(collection(db, "submissions"), data);
-
-    /* ✅ THEN SEND EMAIL */
     await sendEmails(data);
-
-    /* ✅ SUCCESS */
     window.location.href = "select.html";
-
   } catch (error) {
-
     console.error("Submission Error:", error);
-
     submitBtn.disabled = false;
-    submitBtn.innerText = "Save & Continue";
-    statusMsg.innerText = "Something went wrong. Please try again.";
-
+    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue`;
+    statusMsg.textContent = "Something went wrong. Please try again.";
     isSubmitting = false;
   }
-
 });
 </script>
 </body>
