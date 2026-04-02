@@ -3,184 +3,869 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music Admin Panel</title>
-
+<title>444Music — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+ 
 <style>
-
-body{
-background:#0b0b10;
-font-family:Arial;
-color:white;
-padding:20px;
+/* ════════════════════════════════
+   BASE
+════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --void:       #06060d;
+  --surface:    #0c0c18;
+  --card:       #0f0f1e;
+  --card-hover: #131326;
+  --input-bg:   #13132a;
+  --border:     rgba(120,100,255,0.12);
+  --border-md:  rgba(120,100,255,0.22);
+ 
+  --purple:       #a278f5;
+  --purple-soft:  #c4a8ff;
+  --purple-dim:   rgba(162,120,245,0.12);
+  --purple-glow:  0 0 24px rgba(162,120,245,0.22);
+ 
+  --green:   #34d399;
+  --yellow:  #fbbf24;
+  --red:     #f87171;
+  --blue:    #60a5fa;
+ 
+  --text:     #eeedf5;
+  --text-sec: #7b7a8e;
+  --text-mut: #3d3d58;
+ 
+  --radius: 12px;
+  --trans:  0.2s ease;
+  --ff-head: 'Syne', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
 }
-
-h2{
-margin-bottom:10px;
+ 
+html { -webkit-font-smoothing: antialiased; }
+ 
+body {
+  font-family: var(--ff-body);
+  background: var(--void);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% -8%, rgba(100,70,200,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 95%, rgba(100,70,200,0.05) 0%, transparent 55%);
+  background-attachment: fixed;
 }
-
-#search{
-width:100%;
-padding:10px;
-margin-bottom:20px;
-border-radius:8px;
-border:none;
+ 
+/* noise */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.6;
 }
-
-.card{
-background:#121222;
-padding:20px;
-border-radius:12px;
-margin-bottom:15px;
+ 
+/* ════════════════════════════════
+   LAYOUT
+════════════════════════════════ */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  animation: pageIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
 }
-
-select{
-margin-top:10px;
-padding:6px;
-border-radius:6px;
+ 
+/* ════════════════════════════════
+   HEADER
+════════════════════════════════ */
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 36px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; gap: 14px;
 }
-
+ 
+.admin-brand { display: flex; align-items: center; gap: 14px; }
+ 
+.brand-badge {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, #7c55d4, #a278f5);
+  box-shadow: var(--purple-glow);
+  font-family: var(--ff-head); font-size: 1rem; font-weight: 800;
+  color: #fff; flex-shrink: 0;
+}
+ 
+.brand-text { font-family: var(--ff-head); }
+.brand-name { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.brand-sub  { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-sec); margin-top: 1px; }
+ 
+.header-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+ 
+.stat-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.78rem; color: var(--text-sec);
+}
+ 
+.stat-chip .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+.dot-all     { background: var(--purple); box-shadow: 0 0 8px rgba(162,120,245,0.5); }
+.dot-paid    { background: var(--green);  box-shadow: 0 0 8px rgba(52,211,153,0.5); }
+.dot-pending { background: var(--yellow); box-shadow: 0 0 8px rgba(251,191,36,0.5); }
+ 
+.stat-chip strong { color: var(--text); font-weight: 600; }
+ 
+/* ════════════════════════════════
+   TOOLBAR
+════════════════════════════════ */
+.toolbar {
+  display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+}
+ 
+.search-wrap {
+  flex: 1; min-width: 220px;
+  position: relative;
+}
+ 
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text-mut); pointer-events: none;
+  display: flex; align-items: center;
+}
+ 
+.search-wrap input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--ff-body);
+  font-size: 0.9rem;
+  padding: 12px 16px 12px 42px;
+  outline: none;
+  transition: border-color var(--trans), box-shadow var(--trans);
+}
+ 
+.search-wrap input::placeholder { color: var(--text-mut); }
+.search-wrap input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(162,120,245,0.1);
+}
+ 
+.filter-select {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-sec);
+  font-family: var(--ff-body);
+  font-size: 0.85rem;
+  padding: 11px 14px;
+  outline: none; cursor: pointer;
+  appearance: none;
+  transition: border-color var(--trans);
+  min-width: 140px;
+}
+.filter-select:focus { border-color: var(--purple); }
+option { background: #13132a; }
+ 
+.refresh-btn {
+  background: var(--purple-dim);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius);
+  color: var(--purple-soft);
+  font-family: var(--ff-head);
+  font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 11px 18px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  transition: all var(--trans);
+}
+.refresh-btn:hover { background: rgba(162,120,245,0.2); border-color: rgba(162,120,245,0.4); }
+.refresh-btn svg { transition: transform 0.5s ease; }
+.refresh-btn:hover svg { transform: rotate(180deg); }
+ 
+/* ════════════════════════════════
+   COUNT BAR
+════════════════════════════════ */
+.count-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 0.78rem; color: var(--text-sec);
+}
+ 
+.count-bar span { color: var(--purple-soft); font-weight: 600; }
+ 
+/* ════════════════════════════════
+   GRID
+════════════════════════════════ */
+#results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+ 
+/* ════════════════════════════════
+   SUBMISSION CARD
+════════════════════════════════ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  position: relative; overflow: hidden;
+  transition: border-color var(--trans), transform var(--trans), box-shadow var(--trans);
+  animation: cardIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+ 
+.card:hover {
+  border-color: var(--border-md);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+ 
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(162,120,245,0.3), transparent);
+}
+ 
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px; gap: 10px;
+}
+ 
+.artist-avatar {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(162,120,245,0.25), rgba(100,70,200,0.15));
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-head); font-size: 1.1rem; font-weight: 800;
+  color: var(--purple-soft);
+}
+ 
+.artist-info { flex: 1; min-width: 0; }
+.artist-name {
+  font-family: var(--ff-head); font-size: 0.97rem; font-weight: 700;
+  color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.song-title { font-size: 0.8rem; color: var(--text-sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+ 
+/* ── STATUS + PAYMENT BADGES ── */
+.badge-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+ 
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; border: 1px solid;
+}
+ 
+.badge-pending  { background: rgba(251,191,36,0.1);  color: #fbbf24; border-color: rgba(251,191,36,0.25); }
+.badge-approved { background: rgba(52,211,153,0.1);  color: #34d399; border-color: rgba(52,211,153,0.25); }
+.badge-review   { background: rgba(96,165,250,0.1);  color: #60a5fa; border-color: rgba(96,165,250,0.25); }
+.badge-rejected { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
+.badge-paid     { background: rgba(52,211,153,0.1);  color: #34d399; border-color: rgba(52,211,153,0.25); }
+.badge-unpaid   { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
+ 
+/* ── META DETAILS ── */
+.meta-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 16px;
+}
+ 
+.meta-item { display: flex; flex-direction: column; gap: 2px; }
+.meta-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mut); font-family: var(--ff-head); }
+.meta-value { font-size: 0.8rem; color: var(--text-sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.meta-value.email { color: var(--purple-soft); }
+ 
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+ 
+/* ── CONTROLS ── */
+.controls { display: flex; flex-direction: column; gap: 10px; }
+ 
+.control-row { display: flex; gap: 10px; align-items: center; }
+.control-label {
+  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-mut); font-family: var(--ff-head); font-weight: 600;
+  min-width: 56px;
+}
+ 
+.ctrl-select {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-sec);
+  font-family: var(--ff-body);
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  outline: none; cursor: pointer; appearance: none;
+  transition: border-color var(--trans), color var(--trans);
+}
+.ctrl-select:focus { border-color: var(--purple); color: var(--text); }
+option { background: #13132a; }
+ 
+/* ── DELETE BUTTON ── */
+.delete-btn {
+  width: 100%; margin-top: 6px;
+  padding: 10px;
+  background: rgba(248,113,113,0.06);
+  border: 1px solid rgba(248,113,113,0.18);
+  border-radius: 8px;
+  color: var(--red);
+  font-family: var(--ff-head); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--trans);
+}
+.delete-btn:hover {
+  background: rgba(248,113,113,0.15);
+  border-color: rgba(248,113,113,0.4);
+  box-shadow: 0 4px 16px rgba(248,113,113,0.12);
+}
+.delete-btn:active { transform: scale(0.98); }
+ 
+/* ════════════════════════════════
+   EMPTY STATE
+════════════════════════════════ */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center; padding: 60px 20px;
+  color: var(--text-mut);
+}
+.empty-state svg { margin-bottom: 16px; opacity: 0.35; }
+.empty-state p { font-size: 0.9rem; }
+ 
+/* ════════════════════════════════
+   LOADING
+════════════════════════════════ */
+.loading-state {
+  grid-column: 1 / -1;
+  text-align: center; padding: 60px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.loader {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.85s linear infinite;
+}
+.loading-state p { font-size: 0.85rem; color: var(--text-mut); }
+ 
+/* ════════════════════════════════
+   TOAST
+════════════════════════════════ */
+#toast-container {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+}
+ 
+.toast {
+  background: var(--card);
+  border: 1px solid var(--border-md);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 0.84rem; color: var(--text);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  display: flex; align-items: center; gap: 10px;
+  animation: toastIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
+  pointer-events: all; min-width: 240px;
+}
+ 
+.toast.out { animation: toastOut 0.25s ease both; }
+.toast-icon { font-size: 1rem; flex-shrink: 0; }
+ 
+/* ════════════════════════════════
+   CONFIRM DIALOG
+════════════════════════════════ */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(4,4,12,0.82);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease both;
+}
+ 
+.confirm-overlay.hide { animation: fadeOut 0.18s ease both; }
+ 
+.confirm-card {
+  background: #0f0f20;
+  border: 1px solid rgba(248,113,113,0.25);
+  border-radius: 18px;
+  padding: 34px 28px 28px;
+  max-width: 380px; width: 100%;
+  text-align: center;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.5);
+  animation: scaleIn 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+ 
+.confirm-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.22);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px; font-size: 1.4rem;
+}
+ 
+.confirm-title {
+  font-family: var(--ff-head); font-size: 1.05rem; font-weight: 700;
+  color: var(--text); margin-bottom: 8px;
+}
+ 
+.confirm-msg {
+  font-size: 0.84rem; color: var(--text-sec); line-height: 1.6;
+  margin-bottom: 26px;
+}
+ 
+.confirm-btns { display: flex; gap: 12px; }
+ 
+.confirm-del, .confirm-cancel {
+  flex: 1; padding: 13px;
+  border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--ff-head); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  transition: all var(--trans);
+}
+ 
+.confirm-del {
+  background: #f87171; color: #0a0a0a;
+  box-shadow: 0 4px 20px rgba(248,113,113,0.3);
+}
+.confirm-del:hover { background: #ef4444; box-shadow: 0 8px 28px rgba(248,113,113,0.45); transform: translateY(-1px); }
+ 
+.confirm-cancel {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-md); color: var(--text-sec);
+}
+.confirm-cancel:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+ 
+/* ════════════════════════════════
+   ANIMATIONS
+════════════════════════════════ */
+@keyframes pageIn  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes cardIn  { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes pulse   { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes toastIn { from { opacity: 0; transform: translateX(24px) scale(0.95); } to { opacity: 1; transform: none; } }
+@keyframes toastOut{ from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(24px); } }
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: none; } }
+ 
+/* ════════════════════════════════
+   RESPONSIVE
+════════════════════════════════ */
+@media (max-width: 600px) {
+  #results { grid-template-columns: 1fr; }
+  .admin-header { flex-direction: column; align-items: flex-start; }
+  .toolbar { flex-direction: column; }
+  .search-wrap { min-width: 100%; }
+  .filter-select { width: 100%; }
+  .refresh-btn { width: 100%; justify-content: center; }
+  .meta-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
-
+ 
 <body>
-
-<h2>444Music Admin Panel</h2>
-
-<input type="text" id="search" placeholder="Search artist name...">
-
-<div id="results"></div>
-
+ 
+<!-- ── PAGE ──────────────────────────────────── -->
+<div class="page">
+ 
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="brand-badge">4</div>
+      <div class="brand-text">
+        <div class="brand-name">444Music</div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-chip"><div class="dot dot-all"></div> Total: <strong id="statTotal">—</strong></div>
+      <div class="stat-chip"><div class="dot dot-paid"></div> Paid: <strong id="statPaid">—</strong></div>
+      <div class="stat-chip"><div class="dot dot-pending"></div> Pending: <strong id="statPending">—</strong></div>
+    </div>
+  </header>
+ 
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="text" id="search" placeholder="Search by artist, title, email…">
+    </div>
+ 
+    <select class="filter-select" id="statusFilter">
+      <option value="">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="review">Review</option>
+      <option value="Approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+ 
+    <select class="filter-select" id="paymentFilter">
+      <option value="">All Payments</option>
+      <option value="paid">Paid</option>
+      <option value="unpaid">Unpaid</option>
+    </select>
+ 
+    <button class="refresh-btn" id="refreshBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+      Refresh
+    </button>
+  </div>
+ 
+  <!-- COUNT -->
+  <div class="count-bar">
+    <div>Showing <span id="countShown">0</span> of <span id="countTotal">0</span> submissions</div>
+    <div style="font-size:0.72rem;color:var(--text-mut);">Click any card to expand details</div>
+  </div>
+ 
+  <!-- RESULTS GRID -->
+  <div id="results">
+    <div class="loading-state">
+      <div class="loader"></div>
+      <p>Loading submissions…</p>
+    </div>
+  </div>
+ 
+</div>
+ 
+<!-- ── TOAST CONTAINER ──────────────────────── -->
+<div id="toast-container"></div>
+ 
+<!-- ── CONFIRM DIALOG ───────────────────────── -->
+<div class="confirm-overlay" id="confirmOverlay" style="display:none;">
+  <div class="confirm-card">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">Delete Submission?</div>
+    <div class="confirm-msg" id="confirmMsg">
+      This will permanently remove the submission from the database. This action cannot be undone.
+    </div>
+    <div class="confirm-btns">
+      <button class="confirm-del"    id="confirmYes">Yes, Delete</button>
+      <button class="confirm-cancel" id="confirmNo">Cancel</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ── FIREBASE ──────────────────────────────── -->
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+ 
 const firebaseConfig = {
-apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-authDomain: "usersubmissionsportal.firebaseapp.com",
-projectId: "usersubmissionsportal",
-storageBucket: "usersubmissionsportal.firebasestorage.app",
-messagingSenderId: "734783502459",
-appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
-
+ 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const results = document.getElementById("results");
-const search = document.getElementById("search");
-
-let submissions = [];
-
-async function loadSubmissions(){
-
-const querySnapshot = await getDocs(collection(db,"submissions"));
-
-submissions=[];
-
-querySnapshot.forEach((docSnap)=>{
-
-submissions.push({
-id:docSnap.id,
-...docSnap.data()
-});
-
-});
-
-display(submissions);
-
+const db  = getFirestore(app);
+ 
+const resultsEl       = document.getElementById("results");
+const searchEl        = document.getElementById("search");
+const statusFilterEl  = document.getElementById("statusFilter");
+const paymentFilterEl = document.getElementById("paymentFilter");
+const refreshBtn      = document.getElementById("refreshBtn");
+const confirmOverlay  = document.getElementById("confirmOverlay");
+const confirmMsg      = document.getElementById("confirmMsg");
+const confirmYes      = document.getElementById("confirmYes");
+const confirmNo       = document.getElementById("confirmNo");
+ 
+let submissions   = [];
+let pendingDelete = null;
+ 
+/* ═══════════════════════════════════
+   LOAD
+═══════════════════════════════════ */
+async function loadSubmissions() {
+  resultsEl.innerHTML = `<div class="loading-state"><div class="loader"></div><p>Loading submissions…</p></div>`;
+  try {
+    const snap = await getDocs(collection(db, "submissions"));
+    submissions = [];
+    snap.forEach(d => submissions.push({ id: d.id, ...d.data() }));
+    // Newest first
+    submissions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    updateStats();
+    applyFilters();
+  } catch(e) {
+    resultsEl.innerHTML = `<div class="empty-state"><p style="color:#f87171;">Failed to load: ${e.message}</p></div>`;
+  }
 }
-
-function display(data){
-
-results.innerHTML="";
-
-data.forEach(item=>{
-
-const div=document.createElement("div");
-div.className="card";
-
-div.innerHTML=`
-
-<b>${item.artistName || "Unknown Artist"}</b><br>
-Song: ${item.releaseTitle || item.songTitle || item.title || "Untitled"}<br>
-
-Status: <b>${item.status || "Pending"}</b><br>
-Payment: <b>${item.paymentVerified ? "Paid" : "Unpaid"}</b><br><br>
-
-<label>Status</label><br>
-
-<select onchange="changeStatus('${item.id}',this.value)">
-
-<option value="">Change Status</option>
-<option value="Pending">Pending</option>
-<option value="review">Review</option>
-<option value="Approved">Approved</option>
-<option value="rejected">Rejected</option>
-
-</select>
-
-<br><br>
-
-<label>Payment</label><br>
-
-<select onchange="verifyPayment('${item.id}',this.value)">
-
-<option value="">Verify Payment</option>
-<option value="false">Unpaid</option>
-<option value="true">Paid</option>
-
-</select>
-
-`;
-
-results.appendChild(div);
-
-});
-
+ 
+/* ═══════════════════════════════════
+   STATS
+═══════════════════════════════════ */
+function updateStats() {
+  document.getElementById("statTotal").textContent   = submissions.length;
+  document.getElementById("statPaid").textContent    = submissions.filter(s => s.paymentVerified).length;
+  document.getElementById("statPending").textContent = submissions.filter(s => (s.status || "").toLowerCase() === "pending").length;
 }
-
-search.addEventListener("input",()=>{
-
-const value=search.value.toLowerCase();
-
-const filtered=submissions.filter(item=>
-(item.artistName || "").toLowerCase().includes(value)
-);
-
-display(filtered);
-
+ 
+/* ═══════════════════════════════════
+   FILTER
+═══════════════════════════════════ */
+function applyFilters() {
+  const q       = searchEl.value.toLowerCase().trim();
+  const sFilter = statusFilterEl.value;
+  const pFilter = paymentFilterEl.value;
+ 
+  const filtered = submissions.filter(item => {
+    const name  = (item.artistName || "").toLowerCase();
+    const title = (item.releaseTitle || item.songTitle || item.title || "").toLowerCase();
+    const email = (item.email || "").toLowerCase();
+    const matchQ = !q || name.includes(q) || title.includes(q) || email.includes(q);
+    const matchS = !sFilter || (item.status || "Pending") === sFilter;
+    const matchP = !pFilter ||
+      (pFilter === "paid"   && item.paymentVerified) ||
+      (pFilter === "unpaid" && !item.paymentVerified);
+    return matchQ && matchS && matchP;
+  });
+ 
+  document.getElementById("countShown").textContent = filtered.length;
+  document.getElementById("countTotal").textContent = submissions.length;
+  display(filtered);
+}
+ 
+/* ═══════════════════════════════════
+   DISPLAY
+═══════════════════════════════════ */
+function display(data) {
+  if (data.length === 0) {
+    resultsEl.innerHTML = `
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <p>No submissions found.</p>
+      </div>`;
+    return;
+  }
+ 
+  resultsEl.innerHTML = "";
+ 
+  data.forEach((item, delay) => {
+    const name    = item.artistName || "Unknown Artist";
+    const title   = item.releaseTitle || item.songTitle || item.title || "Untitled";
+    const status  = item.status || "Pending";
+    const isPaid  = !!item.paymentVerified;
+    const initial = name.charAt(0).toUpperCase();
+    const date    = item.createdAt
+      ? new Date(item.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+      : '—';
+ 
+    const statusClass = {
+      'Pending':  'badge-pending',
+      'review':   'badge-review',
+      'Approved': 'badge-approved',
+      'rejected': 'badge-rejected'
+    }[status] || 'badge-pending';
+ 
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(delay * 0.04, 0.4)}s`;
+ 
+    card.innerHTML = `
+      <div class="card-top">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+          <div class="artist-avatar">${initial}</div>
+          <div class="artist-info">
+            <div class="artist-name">${escHtml(name)}</div>
+            <div class="song-title">🎵 ${escHtml(title)}</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="badge-row">
+        <span class="badge ${statusClass}">${escHtml(status)}</span>
+        <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? '✓ Paid' : '✗ Unpaid'}</span>
+        ${item.releaseType ? `<span class="badge" style="background:rgba(162,120,245,0.1);color:#c4a8ff;border-color:rgba(162,120,245,0.25);">${escHtml(item.releaseType)}</span>` : ''}
+      </div>
+ 
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Email</span>
+          <span class="meta-value email">${escHtml(item.email || '—')}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Phone</span>
+          <span class="meta-value">${escHtml(item.phone || '—')}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Genre</span>
+          <span class="meta-value">${escHtml(item.genre || '—')}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Country</span>
+          <span class="meta-value">${escHtml(item.country || '—')}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Submitted</span>
+          <span class="meta-value">${date}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Referral</span>
+          <span class="meta-value">${escHtml(item.refferal || '—')}</span>
+        </div>
+      </div>
+ 
+      <div class="divider"></div>
+ 
+      <div class="controls">
+        <div class="control-row">
+          <span class="control-label">Status</span>
+          <select class="ctrl-select" data-id="${item.id}" data-type="status">
+            <option value="">— Change Status —</option>
+            <option value="Pending"  ${status==='Pending'  ?'selected':''}>Pending</option>
+            <option value="review"   ${status==='review'   ?'selected':''}>Review</option>
+            <option value="Approved" ${status==='Approved' ?'selected':''}>Approved</option>
+            <option value="rejected" ${status==='rejected' ?'selected':''}>Rejected</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Payment</span>
+          <select class="ctrl-select" data-id="${item.id}" data-type="payment">
+            <option value="">— Verify Payment —</option>
+            <option value="false" ${!isPaid?'selected':''}>Unpaid</option>
+            <option value="true"  ${isPaid ?'selected':''}>Paid</option>
+          </select>
+        </div>
+        <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Delete Submission
+        </button>
+      </div>`;
+ 
+    /* Status change */
+    card.querySelector('[data-type="status"]').addEventListener('change', async function() {
+      if (!this.value) return;
+      await safeUpdate(this.dataset.id, { status: this.value });
+      toast('✅', `Status updated to "${this.value}"`);
+      loadSubmissions();
+    });
+ 
+    /* Payment change */
+    card.querySelector('[data-type="payment"]').addEventListener('change', async function() {
+      if (this.value === '') return;
+      await safeUpdate(this.dataset.id, { paymentVerified: this.value === 'true' });
+      toast('💳', `Payment marked as ${this.value === 'true' ? 'Paid' : 'Unpaid'}`);
+      loadSubmissions();
+    });
+ 
+    /* Delete */
+    card.querySelector('.delete-btn').addEventListener('click', function() {
+      openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
+    });
+ 
+    resultsEl.appendChild(card);
+  });
+}
+ 
+/* ═══════════════════════════════════
+   UPDATE HELPER
+═══════════════════════════════════ */
+async function safeUpdate(id, data) {
+  try {
+    await updateDoc(doc(db, "submissions", id), data);
+  } catch(e) {
+    toast('❌', 'Update failed: ' + e.message);
+  }
+}
+ 
+/* ═══════════════════════════════════
+   DELETE FLOW
+═══════════════════════════════════ */
+function openConfirm(id, name, title) {
+  pendingDelete = id;
+  confirmMsg.innerHTML = `You are about to permanently delete the submission for <strong style="color:#f0eff2;">${escHtml(name)}</strong> — <em>${escHtml(title)}</em>.<br><br>This cannot be undone.`;
+  confirmOverlay.style.display = 'flex';
+  confirmOverlay.classList.remove('hide');
+}
+ 
+function closeConfirm() {
+  confirmOverlay.classList.add('hide');
+  setTimeout(() => {
+    confirmOverlay.style.display = 'none';
+    confirmOverlay.classList.remove('hide');
+    pendingDelete = null;
+  }, 200);
+}
+ 
+confirmYes.addEventListener('click', async () => {
+  if (!pendingDelete) return;
+  confirmYes.textContent = 'Deleting…';
+  confirmYes.disabled = true;
+  try {
+    await deleteDoc(doc(db, "submissions", pendingDelete));
+    closeConfirm();
+    toast('🗑️', 'Submission deleted successfully');
+    await loadSubmissions();
+  } catch(e) {
+    toast('❌', 'Delete failed: ' + e.message);
+    closeConfirm();
+  } finally {
+    confirmYes.textContent = 'Yes, Delete';
+    confirmYes.disabled = false;
+  }
 });
-
-window.changeStatus = async function(id,status){
-
-if(!status) return;
-
-await updateDoc(doc(db,"submissions",id),{
-status:status
-});
-
+ 
+confirmNo.addEventListener('click', closeConfirm);
+confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) closeConfirm(); });
+ 
+/* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+function toast(icon, message) {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span class="toast-icon">${icon}</span><span>${escHtml(message)}</span>`;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
+}
+ 
+/* ═══════════════════════════════════
+   UTILS
+═══════════════════════════════════ */
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+ 
+/* ═══════════════════════════════════
+   EVENTS
+═══════════════════════════════════ */
+searchEl.addEventListener('input', applyFilters);
+statusFilterEl.addEventListener('change', applyFilters);
+paymentFilterEl.addEventListener('change', applyFilters);
+refreshBtn.addEventListener('click', loadSubmissions);
+ 
+/* ═══════════════════════════════════
+   INIT
+═══════════════════════════════════ */
 loadSubmissions();
-
-}
-
-window.verifyPayment = async function(id,value){
-
-if(value==="") return;
-
-const paid = value==="true";
-
-await updateDoc(doc(db,"submissions",id),{
-paymentVerified:paid
-});
-
-loadSubmissions();
-
-}
-
-loadSubmissions();
-
 </script>
-
+ 
 </body>
 </html>
