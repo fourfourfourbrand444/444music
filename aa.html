@@ -4,80 +4,519 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login Successful • 444Music</title>
-
-<link rel="stylesheet" href="aa.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<div class="icon">
-<i class="ri-shield-check-fill"></i>
-</div>
-
-<h1>Login Successful</h1>
-<p class="subtitle">
-Welcome back to 444Music Distribution.  
-Your dashboard is ready.
-</p>
-<div class="status">
-
-<div class="item">
-<i class="ri-user-line"></i>
-Account Verified
-</div>
-
-<div class="item">
-<i class="ri-lock-2-line"></i>
-Secure Session Started
-</div>
-
-<div class="item">
-<i class="ri-dashboard-line"></i>
-Dashboard Ready
-</div>
-
-</div>
-
-<div class="features">
-
-<div class="box">
-<i class="ri-music-2-line"></i>
-Upload Music
-</div>
-<div class="box">
-<i class="ri-bar-chart-line"></i>
-Track Streams
-</div>
-
-<div class="box">
-<i class="ri-global-line"></i>
-Global Distribution
-</div>
-
-<div class="box">
-<i class="ri-money-dollar-circle-line"></i>
-Royalties
-</div>
-
-</div>
-
-<button onclick="goHome()" class="btn">
-<i class="ri-arrow-right-line"></i>
-Go to Home
-</button>
-
-</div>
-</div>
-<script>
-function goHome(){
-window.location.href = "home.html";
+ 
+<style>
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+:root {
+  --void:          #05050b;
+  --surface:       #0a0a15;
+  --card-bg:       #0d0d1a;
+  --card-border:   rgba(162,120,245,0.14);
+  --inner-bg:      rgba(162,120,245,0.05);
+  --inner-border:  rgba(162,120,245,0.1);
+ 
+  --purple:        #a278f5;
+  --purple-bright: #c4a8ff;
+  --purple-deep:   #7c55d4;
+  --purple-mid:    #8b5cf6;
+  --purple-glow:   rgba(162,120,245,0.28);
+ 
+  --green:         #34d399;
+  --green-dim:     rgba(52,211,153,0.12);
+  --green-border:  rgba(52,211,153,0.22);
+ 
+  --text:          #f0eefa;
+  --text-sec:      #9491a8;
+  --text-mut:      #44435a;
+ 
+  --ff-head: 'Outfit', sans-serif;
+  --ff-body: 'Manrope', sans-serif;
+  --trans:   0.22s ease;
 }
+ 
+html { -webkit-font-smoothing: antialiased; font-size: 16px; }
+ 
+body {
+  font-family: var(--ff-body);
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--void);
+  color: var(--text);
+  overflow-y: auto;
+  padding: 28px 16px;
+  background-image:
+    radial-gradient(ellipse 75% 55% at 50% -5%,  rgba(124,85,212,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 35% at 85% 100%, rgba(100,70,200,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 5%  60%,  rgba(120,80,220,0.06) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+ 
+/* noise */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+ 
+/* ═══════════════════════════════════════
+   FLOATING ORBS
+═══════════════════════════════════════ */
+.orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(90px); pointer-events: none; z-index: 0;
+  animation: orbDrift 10s ease-in-out infinite;
+}
+.orb-a {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(124,85,212,0.15), transparent 70%);
+  top: -100px; right: -100px;
+}
+.orb-b {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(162,120,245,0.1), transparent 70%);
+  bottom: -80px; left: -80px;
+  animation-delay: -5s;
+}
+ 
+/* ═══════════════════════════════════════
+   CARD
+═══════════════════════════════════════ */
+.card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 480px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 42px 36px 36px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 40px 100px rgba(0,0,0,0.6),
+    0 0 80px rgba(100,70,200,0.07) inset;
+  overflow: hidden;
+  animation: cardRise 0.7s cubic-bezier(0.22,1,0.36,1) both;
+}
+ 
+/* top glow line */
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 30%, var(--purple-bright) 50%, var(--purple-deep) 70%, transparent 100%);
+  opacity: 0.7;
+}
+ 
+/* inner top wash */
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 160px;
+  background: linear-gradient(to bottom, rgba(162,120,245,0.04), transparent);
+  pointer-events: none;
+}
+ 
+/* ── HEADER SECTION ── */
+.card-header {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: fadeInUp 0.5s 0.15s ease both;
+}
+ 
+/* ── SHIELD ICON ── */
+.shield-wrap {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 22px;
+}
+ 
+.shield-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(162,120,245,0.2);
+  animation: ringPulse 2.6s ease-in-out infinite;
+}
+.ring-1 { width: 72px;  height: 72px;  }
+.ring-2 { width: 90px;  height: 90px;  animation-delay: 0.65s; border-color: rgba(162,120,245,0.12); }
+.ring-3 { width: 108px; height: 108px; animation-delay: 1.3s;  border-color: rgba(162,120,245,0.07); }
+ 
+.shield-icon {
+  width: 58px; height: 58px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(162,120,245,0.22), rgba(124,85,212,0.14));
+  border: 1px solid rgba(162,120,245,0.3);
+  box-shadow: 0 0 32px var(--purple-glow), inset 0 1px 0 rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.55rem; color: var(--purple-bright);
+  animation: shieldPop 0.6s 0.1s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+ 
+/* ── CHECKMARK BURST ── */
+.check-burst {
+  position: absolute; top: -6px; right: -6px;
+  width: 22px; height: 22px;
+  background: var(--green);
+  border: 2px solid var(--card-bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; color: #06090d;
+  animation: checkBurst 0.4s 0.55s cubic-bezier(0.34,1.5,0.64,1) both;
+  transform-origin: center; scale: 0;
+}
+ 
+h1 {
+  font-family: var(--ff-head);
+  font-size: 1.55rem; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+ 
+.subtitle {
+  font-size: 0.875rem; font-weight: 400;
+  color: var(--text-sec); line-height: 1.65;
+  max-width: 320px; margin: 0 auto;
+}
+ 
+/* ── VERIFIED PILL ── */
+.verified-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: 14px;
+  background: var(--green-dim);
+  border: 1px solid var(--green-border);
+  border-radius: 999px;
+  padding: 5px 14px 5px 8px;
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--green);
+  animation: pillSlide 0.4s 0.7s cubic-bezier(0.34,1.3,0.64,1) both;
+  scale: 0;
+}
+ 
+.pill-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(52,211,153,0.6);
+  animation: dotBlink 1.8s ease-in-out infinite;
+}
+ 
+/* ── STATUS ITEMS ── */
+.status-list {
+  display: flex; flex-direction: column; gap: 9px;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.5s 0.3s ease both;
+}
+ 
+.status-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--inner-bg);
+  border: 1px solid var(--inner-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  transition: border-color var(--trans), background var(--trans);
+}
+ 
+.status-item:hover {
+  border-color: rgba(162,120,245,0.2);
+  background: rgba(162,120,245,0.08);
+}
+ 
+.status-icon {
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  background: rgba(162,120,245,0.1);
+  border: 1px solid rgba(162,120,245,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; color: var(--purple-bright);
+}
+ 
+.status-text { flex: 1; }
+.status-label {
+  font-size: 0.83rem; font-weight: 600;
+  color: var(--text); line-height: 1;
+  margin-bottom: 2px;
+}
+.status-sub {
+  font-size: 0.7rem; color: var(--text-mut); font-weight: 400;
+}
+ 
+.status-check {
+  color: var(--green); font-size: 1rem; flex-shrink: 0;
+}
+ 
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0;
+  animation: fadeInUp 0.5s 0.38s ease both;
+}
+.divider-line { flex: 1; height: 1px; background: rgba(162,120,245,0.1); }
+.divider-text {
+  font-size: 0.65rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--text-mut);
+  font-family: var(--ff-head); font-weight: 600;
+}
+ 
+/* ── FEATURES GRID ── */
+.features {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 26px;
+  animation: fadeInUp 0.5s 0.42s ease both;
+}
+ 
+.feat-box {
+  background: var(--inner-bg);
+  border: 1px solid var(--inner-border);
+  border-radius: 14px;
+  padding: 18px 14px;
+  text-align: center;
+  cursor: default;
+  transition: border-color var(--trans), background var(--trans), transform var(--trans), box-shadow var(--trans);
+}
+ 
+.feat-box:hover {
+  transform: translateY(-3px);
+  background: rgba(162,120,245,0.1);
+  border-color: rgba(162,120,245,0.25);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}
+ 
+.feat-icon {
+  width: 38px; height: 38px; border-radius: 10px; margin: 0 auto 10px;
+  background: rgba(162,120,245,0.12);
+  border: 1px solid rgba(162,120,245,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: var(--purple-bright);
+  transition: background var(--trans), box-shadow var(--trans);
+}
+ 
+.feat-box:hover .feat-icon {
+  background: rgba(162,120,245,0.22);
+  box-shadow: 0 0 16px rgba(162,120,245,0.25);
+}
+ 
+.feat-label {
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--text-sec);
+  font-family: var(--ff-head);
+  line-height: 1.2;
+}
+ 
+/* ── BUTTON ── */
+.btn-wrap { animation: fadeInUp 0.5s 0.5s ease both; }
+ 
+.btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none; cursor: pointer;
+  border-radius: 14px;
+  font-family: var(--ff-head);
+  font-size: 0.92rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #08070f;
+  background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 55%, var(--purple-deep) 100%);
+  box-shadow: 0 6px 30px rgba(162,120,245,0.38), inset 0 1px 0 rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  position: relative; overflow: hidden;
+  transition: transform var(--trans), box-shadow var(--trans), filter var(--trans);
+}
+ 
+.btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%);
+  pointer-events: none;
+}
+ 
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(162,120,245,0.5);
+  filter: brightness(1.06);
+}
+.btn:active { transform: translateY(0); }
+ 
+.btn i { font-size: 1rem; }
+ 
+/* ── FOOTER ── */
+.card-footer {
+  text-align: center; margin-top: 18px;
+  font-size: 0.7rem; color: var(--text-mut);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  animation: fadeInUp 0.5s 0.56s ease both;
+}
+ 
+.card-footer i { font-size: 0.75rem; opacity: 0.6; }
+ 
+/* ═══════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════ */
+@keyframes cardRise {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+ 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+ 
+@keyframes shieldPop {
+  from { opacity: 0; scale: 0.6; }
+  to   { opacity: 1; scale: 1; }
+}
+ 
+@keyframes checkBurst {
+  from { scale: 0; }
+  to   { scale: 1; }
+}
+ 
+@keyframes pillSlide {
+  from { scale: 0; }
+  to   { scale: 1; }
+}
+ 
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.07); opacity: 1; }
+}
+ 
+@keyframes dotBlink {
+  0%, 100% { opacity: 0.5; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.15); }
+}
+ 
+@keyframes orbDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(-18px, -22px) scale(1.05); }
+}
+ 
+/* ── STAGGER status items ── */
+.status-item:nth-child(1) { animation: fadeInUp 0.4s 0.32s ease both; }
+.status-item:nth-child(2) { animation: fadeInUp 0.4s 0.4s  ease both; }
+.status-item:nth-child(3) { animation: fadeInUp 0.4s 0.48s ease both; }
+ 
+.feat-box:nth-child(1) { animation: fadeInUp 0.35s 0.44s ease both; }
+.feat-box:nth-child(2) { animation: fadeInUp 0.35s 0.49s ease both; }
+.feat-box:nth-child(3) { animation: fadeInUp 0.35s 0.54s ease both; }
+.feat-box:nth-child(4) { animation: fadeInUp 0.35s 0.59s ease both; }
+ 
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .card { padding: 32px 20px 28px; }
+  h1 { font-size: 1.3rem; }
+  .features { gap: 8px; }
+  .feat-box { padding: 14px 10px; }
+}
+</style>
+</head>
+ 
+<body>
+ 
+<div class="orb orb-a"></div>
+<div class="orb orb-b"></div>
+ 
+<div class="card">
+ 
+  <!-- ── HEADER ── -->
+  <div class="card-header">
+    <div class="shield-wrap">
+      <div class="shield-ring ring-3"></div>
+      <div class="shield-ring ring-2"></div>
+      <div class="shield-ring ring-1"></div>
+      <div class="shield-icon">
+        <i class="ri-shield-check-fill"></i>
+      </div>
+      <div class="check-burst"><i class="ri-check-line"></i></div>
+    </div>
+ 
+    <h1>Login Successful</h1>
+    <p class="subtitle">Welcome back to 444Music Distribution. Your dashboard is fully loaded and ready.</p>
+ 
+    <div class="verified-pill">
+      <span class="pill-dot"></span>
+      Session Active
+    </div>
+  </div>
+ 
+  <!-- ── STATUS ── -->
+  <div class="status-list">
+    <div class="status-item">
+      <div class="status-icon"><i class="ri-user-line"></i></div>
+      <div class="status-text">
+        <div class="status-label">Account Verified</div>
+        <div class="status-sub">Identity confirmed successfully</div>
+      </div>
+      <i class="ri-checkbox-circle-fill status-check"></i>
+    </div>
+    <div class="status-item">
+      <div class="status-icon"><i class="ri-lock-2-line"></i></div>
+      <div class="status-text">
+        <div class="status-label">Secure Session Started</div>
+        <div class="status-sub">Encrypted & protected</div>
+      </div>
+      <i class="ri-checkbox-circle-fill status-check"></i>
+    </div>
+    <div class="status-item">
+      <div class="status-icon"><i class="ri-dashboard-line"></i></div>
+      <div class="status-text">
+        <div class="status-label">Dashboard Ready</div>
+        <div class="status-sub">All systems operational</div>
+      </div>
+      <i class="ri-checkbox-circle-fill status-check"></i>
+    </div>
+  </div>
+ 
+  <!-- ── DIVIDER ── -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">Your Features</span>
+    <div class="divider-line"></div>
+  </div>
+ 
+  <!-- ── FEATURES ── -->
+  <div class="features">
+    <div class="feat-box">
+      <div class="feat-icon"><i class="ri-music-2-line"></i></div>
+      <div class="feat-label">Upload Music</div>
+    </div>
+    <div class="feat-box">
+      <div class="feat-icon"><i class="ri-bar-chart-line"></i></div>
+      <div class="feat-label">Track Streams</div>
+    </div>
+    <div class="feat-box">
+      <div class="feat-icon"><i class="ri-global-line"></i></div>
+      <div class="feat-label">Global Distribution</div>
+    </div>
+    <div class="feat-box">
+      <div class="feat-icon"><i class="ri-money-dollar-circle-line"></i></div>
+      <div class="feat-label">Royalties</div>
+    </div>
+  </div>
+ 
+  <!-- ── BUTTON ── -->
+  <div class="btn-wrap">
+    <button class="btn" onclick="goHome()">
+      <i class="ri-layout-grid-line"></i>
+      Enter Dashboard
+      <i class="ri-arrow-right-line"></i>
+    </button>
+  </div>
+ 
+  <!-- ── FOOTER ── -->
+  <div class="card-footer">
+    <i class="ri-lock-line"></i>
+    Secured by 444Music · End-to-end encrypted session
+  </div>
+ 
+</div>
+ 
+<script>
+  function goHome() {
+    window.location.href = "home.html";
+  }
 </script>
-
+ 
 </body>
 </html>
