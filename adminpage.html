@@ -1,249 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>444Music Analytics Manager</title>
-
+<title>444Music — Analytics Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-
-body{
-font-family:Arial, sans-serif;
-background:#f4f6fb;
-margin:0;
-padding:30px;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-}
-
-h1{
-margin-bottom:20px;
-}
-
-.search{
-width:100%;
-padding:12px;
-font-size:16px;
-border-radius:8px;
-border:1px solid #ccc;
-margin-bottom:25px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
-}
-
-.artist{
-font-size:18px;
-font-weight:bold;
-}
-
-.email{
-color:#777;
-margin-bottom:10px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-gap:10px;
-margin-top:10px;
-}
-
-input{
-padding:8px;
-width:100%;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-button{
-margin-top:15px;
-padding:10px 16px;
-background:#ff2e63;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-opacity:.9;
-}
-
+ 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --bg-void:    #080a0f;
+    --bg-base:    #0d1018;
+    --bg-card:    #111520;
+    --bg-card2:   #161b28;
+    --bg-input:   #0c101a;
+    --border:     rgba(255,255,255,0.06);
+    --border-glow:rgba(255,46,99,0.35);
+    --accent:     #ff2e63;
+    --accent2:    #ff6b35;
+    --spotify:    #1db954;
+    --apple:      #fc3c44;
+    --youtube:    #ff0000;
+    --total:      #a78bfa;
+    --text-pri:   #f0f2f8;
+    --text-sec:   #8892a4;
+    --text-dim:   #404b5e;
+    --success:    #10b981;
+    --radius:     12px;
+    --radius-sm:  8px;
+  }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg-void);
+    color: var(--text-pri);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+ 
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 0;
+  }
+ 
+  /* ── TOP GLOW ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(255,46,99,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+ 
+  /* ── HEADER ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,10,15,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+ 
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+ 
+  .logo-badge {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 0 16px rgba(255,46,99,0.5);
+  }
+ 
+  .logo-text span { color: var(--accent); }
+ 
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+ 
+  .dot-live {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: pulse-dot 2s infinite;
+  }
+ 
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+ 
+  /* ── MAIN ── */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+ 
+  /* ── PAGE TITLE ── */
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+ 
+  .page-sub {
+    color: var(--text-sec);
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+ 
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+ 
+  .stat-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.2s;
+  }
+ 
+  .stat-pill:hover { border-color: rgba(255,255,255,0.12); }
+ 
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+  }
+ 
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-pri);
+  }
+ 
+  .stat-value.accent { color: var(--accent); }
+ 
+  /* ── SEARCH ── */
+  .search-wrapper {
+    position: relative;
+    margin-bottom: 28px;
+  }
+ 
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 15px;
+    pointer-events: none;
+  }
+ 
+  .search-input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px 14px 44px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-pri);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+ 
+  .search-input::placeholder { color: var(--text-dim); }
+ 
+  .search-input:focus {
+    border-color: var(--border-glow);
+    box-shadow: 0 0 0 3px rgba(255,46,99,0.08);
+  }
+ 
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+ 
+  .count-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+ 
+  .count-label span {
+    color: var(--accent);
+    font-weight: 700;
+  }
+ 
+  /* ── CARDS ── */
+  .results { display: flex; flex-direction: column; gap: 12px; }
+ 
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+    animation: fadeUp 0.3s ease both;
+  }
+ 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+ 
+  .card:hover {
+    border-color: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+ 
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+ 
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,46,99,0.3), rgba(255,107,53,0.2));
+    border: 1px solid rgba(255,46,99,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+ 
+  .card-info { flex: 1; min-width: 0; }
+ 
+  .artist-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-pri);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+ 
+  .artist-email {
+    font-size: 12px;
+    color: var(--text-sec);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+ 
+  .card-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,46,99,0.12);
+    border: 1px solid rgba(255,46,99,0.2);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+ 
+  /* ── STREAM GRID ── */
+  .stream-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+ 
+  .stream-field { display: flex; flex-direction: column; gap: 6px; }
+ 
+  .field-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+ 
+  .platform-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+ 
+  .dot-total   { background: var(--total); box-shadow: 0 0 6px var(--total); }
+  .dot-spotify { background: var(--spotify); box-shadow: 0 0 6px var(--spotify); }
+  .dot-apple   { background: var(--apple); box-shadow: 0 0 6px var(--apple); }
+  .dot-youtube { background: var(--youtube); box-shadow: 0 0 6px var(--youtube); }
+ 
+  .field-label.total-lbl   { color: var(--total); }
+  .field-label.spotify-lbl { color: var(--spotify); }
+  .field-label.apple-lbl   { color: var(--apple); }
+  .field-label.youtube-lbl { color: var(--youtube); }
+ 
+  .stream-input {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-pri);
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+ 
+  .stream-input:focus {
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.04);
+  }
+ 
+  .stream-input.total-inp:focus   { border-color: rgba(167,139,250,0.4); box-shadow: 0 0 0 2px rgba(167,139,250,0.07); }
+  .stream-input.spotify-inp:focus { border-color: rgba(29,185,84,0.4);   box-shadow: 0 0 0 2px rgba(29,185,84,0.07); }
+  .stream-input.apple-inp:focus   { border-color: rgba(252,60,68,0.4);   box-shadow: 0 0 0 2px rgba(252,60,68,0.07); }
+  .stream-input.youtube-inp:focus { border-color: rgba(255,0,0,0.4);     box-shadow: 0 0 0 2px rgba(255,0,0,0.07); }
+ 
+  /* ── CARD FOOTER ── */
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+ 
+  .card-id {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+  }
+ 
+  .save-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+  }
+ 
+  .save-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(255,46,99,0.4);
+  }
+ 
+  .save-btn:active { transform: scale(0.98); }
+ 
+  .save-btn.saving {
+    background: var(--text-dim);
+    pointer-events: none;
+  }
+ 
+  .save-btn.saved {
+    background: var(--success);
+    pointer-events: none;
+  }
+ 
+  /* ── TOAST ── */
+  .toast-container {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+  }
+ 
+  .toast {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    min-width: 260px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  }
+ 
+  .toast.success { border-left: 3px solid var(--success); }
+  .toast.error   { border-left: 3px solid var(--accent); }
+ 
+  .toast-icon { font-size: 16px; }
+ 
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; transform: translateX(30px); }
+  }
+ 
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-dim);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-family: 'Syne', sans-serif; font-size: 16px; }
+ 
+  /* ── LOADING ── */
+  .loading-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 60px;
+    color: var(--text-sec);
+    font-size: 13px;
+  }
+ 
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+ 
+  @keyframes spin { to { transform: rotate(360deg); } }
+ 
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .header { padding: 0 20px; }
+    .main { padding: 24px 16px 60px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .stream-grid { grid-template-columns: repeat(2, 1fr); }
+    .page-title { font-size: 26px; }
+  }
+ 
+  @media (max-width: 440px) {
+    .stream-grid { grid-template-columns: 1fr 1fr; }
+  }
+ 
 </style>
-
 </head>
-
 <body>
-
-<div class="container">
-
-<h1>Analytics Manager</h1>
-
-<input id="search" class="search" placeholder="Search artist email...">
-
-<div id="results"></div>
-
-</div>
-
-
+ 
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-badge">♪</div>
+    <div class="logo-text">444<span>Music</span></div>
+  </div>
+  <div class="header-meta">
+    <div class="dot-live"></div>
+    <span>Admin · Analytics</span>
+  </div>
+</header>
+ 
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toasts"></div>
+ 
+<!-- MAIN -->
+<main class="main">
+  <div class="page-title">Analytics Manager</div>
+  <div class="page-sub">Manage stream counts across all connected platforms</div>
+ 
+  <!-- STATS BAR -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-pill">
+      <div class="stat-label">Total Artists</div>
+      <div class="stat-value accent" id="statArtists">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Total Streams</div>
+      <div class="stat-value" id="statTotal">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Spotify</div>
+      <div class="stat-value" id="statSpotify">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">YouTube</div>
+      <div class="stat-value" id="statYT">—</div>
+    </div>
+  </div>
+ 
+  <!-- SEARCH -->
+  <div class="search-wrapper">
+    <span class="search-icon">⌕</span>
+    <input
+      type="text"
+      class="search-input"
+      id="search"
+      placeholder="Search by name or email..."
+      autocomplete="off"
+      spellcheck="false"
+    >
+  </div>
+ 
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="count-label" id="countLabel">Loading…</div>
+  </div>
+ 
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>Connecting to database…</span>
+    </div>
+  </div>
+</main>
+ 
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-
+ 
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-getFirestore,
-collection,
-getDocs,
-doc,
-updateDoc
+  getFirestore, collection,
+  getDocs, doc, updateDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-
-const firebaseConfig = {
-apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-authDomain: "usersubmissionsportal.firebaseapp.com",
-projectId: "usersubmissionsportal",
-storageBucket: "usersubmissionsportal.firebasestorage.app",
-messagingSenderId: "734783502459",
-appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-};
-
-const app = initializeApp(firebaseConfig);
+ 
+/* ── FIREBASE ── */
+const app = initializeApp({
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+});
+ 
 const db = getFirestore(app);
-
-
 let analyticsData = [];
-
-
-/* LOAD DATA */
-
-async function loadAnalytics(){
-
-const snap = await getDocs(collection(db,"analytics"));
-
-analyticsData = [];
-
-snap.forEach(docSnap=>{
-
-analyticsData.push({
-id: docSnap.id,
-...docSnap.data()
-});
-
-});
-
-renderResults(analyticsData);
-
+ 
+/* ── HELPERS ── */
+function fmt(n) {
+  const num = Number(n) || 0;
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
+  if (num >= 1_000)     return (num / 1_000).toFixed(1) + 'K';
+  return num.toLocaleString();
 }
-
+ 
+/* Resolve artist name from any possible field */
+function resolveName(data) {
+  return (
+    data.name         ||
+    data.artistName   ||
+    data.displayName  ||
+    data.artist       ||
+    data.fullName     ||
+    data.username     ||
+    data.Name         ||
+    data.ArtistName   ||
+    ''
+  ).trim();
+}
+ 
+/* Resolve email from any possible field */
+function resolveEmail(data) {
+  return (
+    data.email        ||
+    data.Email        ||
+    data.userEmail    ||
+    data.gmail        ||
+    ''
+  ).trim();
+}
+ 
+function initials(name, email) {
+  if (name) {
+    const parts = name.trim().split(' ');
+    return parts.length >= 2
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : name.slice(0, 2).toUpperCase();
+  }
+  if (email) return email.slice(0, 2).toUpperCase();
+  return '??';
+}
+ 
+/* ── TOAST ── */
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+ 
+/* ── UPDATE STATS BAR ── */
+function updateStats(data) {
+  const totStr  = data.reduce((s, a) => s + (Number(a.totalStreams)   || 0), 0);
+  const spotStr = data.reduce((s, a) => s + (Number(a.spotifyStreams) || 0), 0);
+  const ytStr   = data.reduce((s, a) => s + (Number(a.youtubeStreams) || 0), 0);
+  document.getElementById('statArtists').textContent = data.length;
+  document.getElementById('statTotal').textContent   = fmt(totStr);
+  document.getElementById('statSpotify').textContent = fmt(spotStr);
+  document.getElementById('statYT').textContent      = fmt(ytStr);
+}
+ 
+/* ── LOAD ── */
+async function loadAnalytics() {
+  try {
+    const snap = await getDocs(collection(db, 'analytics'));
+    analyticsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render(analyticsData);
+    updateStats(analyticsData);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('results').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-text">Failed to load data.<br>Check your connection.</div></div>`;
+    document.getElementById('countLabel').textContent = 'Error loading data';
+  }
+}
+ 
 loadAnalytics();
-
-
-
-/* RENDER FUNCTION */
-
-function renderResults(data){
-
-const results = document.getElementById("results");
-
-results.innerHTML="";
-
-data.forEach(a=>{
-
-const card = document.createElement("div");
-card.className="card";
-
-card.innerHTML = `
-
-<div class="artist">${a.name || "Artist"}</div>
-<div class="email">${a.email || ""}</div>
-
-<div class="grid">
-
-<div>
-<label>Total Streams</label>
-<input id="total-${a.id}" value="${a.totalStreams || 0}">
-</div>
-
-<div>
-<label>Spotify</label>
-<input id="spotify-${a.id}" value="${a.spotifyStreams || 0}">
-</div>
-
-<div>
-<label>Apple</label>
-<input id="apple-${a.id}" value="${a.appleStreams || 0}">
-</div>
-
-<div>
-<label>YouTube</label>
-<input id="youtube-${a.id}" value="${a.youtubeStreams || 0}">
-</div>
-
-</div>
-
-<button onclick="saveAnalytics('${a.id}')">Save</button>
-
-`;
-
-results.appendChild(card);
-
-});
-
+ 
+/* ── RENDER ── */
+function render(data) {
+  const el = document.getElementById('results');
+  const lbl = document.getElementById('countLabel');
+ 
+  lbl.innerHTML = `Showing <span>${data.length}</span> of ${analyticsData.length} artist${analyticsData.length !== 1 ? 's' : ''}`;
+ 
+  if (!data.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◎</div><div class="empty-text">No artists found.</div></div>`;
+    return;
+  }
+ 
+  el.innerHTML = '';
+ 
+  data.forEach((a, i) => {
+    const name  = resolveName(a)  || 'Unknown Artist';
+    const email = resolveEmail(a) || '—';
+    const ini   = initials(resolveName(a), resolveEmail(a));
+ 
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = `${i * 40}ms`;
+ 
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="avatar">${ini}</div>
+        <div class="card-info">
+          <div class="artist-name" title="${name}">${name}</div>
+          <div class="artist-email" title="${email}">${email}</div>
+        </div>
+        <div class="card-badge">Artist</div>
+      </div>
+ 
+      <div class="stream-grid">
+        <div class="stream-field">
+          <div class="field-label total-lbl">
+            <div class="platform-dot dot-total"></div>Total Streams
+          </div>
+          <input
+            class="stream-input total-inp"
+            id="total-${a.id}"
+            type="number"
+            min="0"
+            value="${Number(a.totalStreams) || 0}"
+          >
+        </div>
+        <div class="stream-field">
+          <div class="field-label spotify-lbl">
+            <div class="platform-dot dot-spotify"></div>Spotify
+          </div>
+          <input
+            class="stream-input spotify-inp"
+            id="spotify-${a.id}"
+            type="number"
+            min="0"
+            value="${Number(a.spotifyStreams) || 0}"
+          >
+        </div>
+        <div class="stream-field">
+          <div class="field-label apple-lbl">
+            <div class="platform-dot dot-apple"></div>Apple Music
+          </div>
+          <input
+            class="stream-input apple-inp"
+            id="apple-${a.id}"
+            type="number"
+            min="0"
+            value="${Number(a.appleStreams) || 0}"
+          >
+        </div>
+        <div class="stream-field">
+          <div class="field-label youtube-lbl">
+            <div class="platform-dot dot-youtube"></div>YouTube
+          </div>
+          <input
+            class="stream-input youtube-inp"
+            id="youtube-${a.id}"
+            type="number"
+            min="0"
+            value="${Number(a.youtubeStreams) || 0}"
+          >
+        </div>
+      </div>
+ 
+      <div class="card-footer">
+        <div class="card-id">ID: ${a.id}</div>
+        <button class="save-btn" onclick="window.saveAnalytics('${a.id}', this)">
+          Save Changes
+        </button>
+      </div>
+    `;
+ 
+    el.appendChild(card);
+  });
 }
-
-
-
-/* SEARCH FILTER */
-
-document.getElementById("search").addEventListener("input",e=>{
-
-const value = e.target.value.toLowerCase();
-
-const filtered = analyticsData.filter(a =>
-(a.email || "").toLowerCase().includes(value)
-);
-
-renderResults(filtered);
-
+ 
+/* ── SEARCH ── */
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  const filtered = q
+    ? analyticsData.filter(a => {
+        const name  = resolveName(a).toLowerCase();
+        const email = resolveEmail(a).toLowerCase();
+        return name.includes(q) || email.includes(q);
+      })
+    : analyticsData;
+  render(filtered);
+  updateStats(filtered);
 });
-
-
-
-/* SAVE */
-
-window.saveAnalytics = async function(id){
-
-const total = document.getElementById(`total-${id}`).value;
-const spotify = document.getElementById(`spotify-${id}`).value;
-const apple = document.getElementById(`apple-${id}`).value;
-const youtube = document.getElementById(`youtube-${id}`).value;
-
-await updateDoc(doc(db,"analytics",id),{
-
-totalStreams:Number(total),
-spotifyStreams:Number(spotify),
-appleStreams:Number(apple),
-youtubeStreams:Number(youtube)
-
-});
-
-alert("Streams updated");
-
-}
-
+ 
+/* ── SAVE ── */
+window.saveAnalytics = async function(id, btn) {
+  const total   = document.getElementById(`total-${id}`)?.value;
+  const spotify = document.getElementById(`spotify-${id}`)?.value;
+  const apple   = document.getElementById(`apple-${id}`)?.value;
+  const youtube = document.getElementById(`youtube-${id}`)?.value;
+ 
+  if (total === undefined) { toast('Could not find fields.', 'error'); return; }
+ 
+  btn.textContent = 'Saving…';
+  btn.classList.add('saving');
+ 
+  try {
+    await updateDoc(doc(db, 'analytics', id), {
+      totalStreams:   Number(total),
+      spotifyStreams: Number(spotify),
+      appleStreams:   Number(apple),
+      youtubeStreams: Number(youtube)
+    });
+ 
+    /* update local cache */
+    const idx = analyticsData.findIndex(a => a.id === id);
+    if (idx !== -1) {
+      analyticsData[idx].totalStreams   = Number(total);
+      analyticsData[idx].spotifyStreams = Number(spotify);
+      analyticsData[idx].appleStreams   = Number(apple);
+      analyticsData[idx].youtubeStreams = Number(youtube);
+    }
+ 
+    btn.textContent = '✓ Saved';
+    btn.classList.remove('saving');
+    btn.classList.add('saved');
+    toast(`Streams updated successfully`, 'success');
+    updateStats(analyticsData);
+ 
+    setTimeout(() => {
+      btn.textContent = 'Save Changes';
+      btn.classList.remove('saved');
+    }, 2500);
+ 
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Save Changes';
+    btn.classList.remove('saving');
+    toast('Failed to save. Check permissions.', 'error');
+  }
+};
+ 
 </script>
-
 </body>
 </html>
