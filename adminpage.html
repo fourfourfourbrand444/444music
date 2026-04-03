@@ -569,7 +569,7 @@
       type="text"
       class="search-input"
       id="search"
-      placeholder="Search by name or email..."
+      placeholder="Search by name, email or ID..."
       autocomplete="off"
       spellcheck="false"
     >
@@ -796,7 +796,8 @@ document.getElementById('search').addEventListener('input', e => {
     ? analyticsData.filter(a => {
         const name  = resolveName(a).toLowerCase();
         const email = resolveEmail(a).toLowerCase();
-        return name.includes(q) || email.includes(q);
+        const id    = (a.id || '').toLowerCase();
+        return name.includes(q) || email.includes(q) || id.includes(q);
       })
     : analyticsData;
   render(filtered);
