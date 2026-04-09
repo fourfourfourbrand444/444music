@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  /* ── CSS VARIABLES ── */
   :root {
     --bg:       #07070b;
     --surface:  #0f0f16;
@@ -76,7 +75,7 @@
     min-height:100vh;
   }
 
-  /* ── SIDEBAR ── */
+  /* SIDEBAR */
   .sidebar {
     background: var(--surface);
     border-right: 1px solid var(--border);
@@ -124,7 +123,6 @@
     margin-bottom:8px;
   }
 
-  /* ── NAV LINK — ENHANCED ACTIVE STATE ── */
   .nav-link {
     display:flex;
     align-items:center;
@@ -141,7 +139,6 @@
     overflow:hidden;
   }
 
-  /* Shimmer layer on active links */
   .nav-link::before {
     content:'';
     position:absolute;
@@ -152,7 +149,6 @@
     pointer-events:none;
   }
 
-  /* Glow dot on the left edge for active */
   .nav-link::after {
     content:'';
     position:absolute;
@@ -181,37 +177,26 @@
     z-index:1;
   }
 
-  /* HOVER state */
   .nav-link:hover {
     color: var(--text);
     background: linear-gradient(90deg, rgba(155,109,255,0.07) 0%, transparent 100%);
     border-left-color: rgba(155,109,255,0.4);
   }
-  .nav-link:hover::before {
-    transform: translateX(100%);
-  }
-  .nav-link:hover i {
-    color: var(--accent3);
-    transform: translateX(2px);
-  }
+  .nav-link:hover::before { transform: translateX(100%); }
+  .nav-link:hover i { color: var(--accent3); transform: translateX(2px); }
 
-  /* ACTIVE state — full glow treatment */
   .nav-link.active {
     color: var(--text);
     background: linear-gradient(90deg, rgba(155,109,255,0.13) 0%, rgba(155,109,255,0.03) 60%, transparent 100%);
     border-left-color: var(--accent);
     font-weight: 600;
   }
-  .nav-link.active::after {
-    transform: translateY(-50%) scaleY(1);
-  }
+  .nav-link.active::after { transform: translateY(-50%) scaleY(1); }
   .nav-link.active i {
     color: var(--accent);
     filter: drop-shadow(0 0 6px rgba(155,109,255,0.7));
     transform: scale(1.1);
   }
-
-  /* Active link text glow */
   .nav-link.active > span:not(.badge) {
     background: linear-gradient(90deg, var(--text), var(--accent3));
     -webkit-background-clip: text;
@@ -219,7 +204,6 @@
     background-clip: text;
   }
 
-  /* Animated active indicator pill */
   .nav-active-pill {
     position: absolute;
     right: 14px;
@@ -234,9 +218,7 @@
     transition: opacity 0.3s ease;
     animation: pulseDot 2s ease-in-out infinite;
   }
-  .nav-link.active .nav-active-pill {
-    opacity: 1;
-  }
+  .nav-link.active .nav-active-pill { opacity: 1; }
   @keyframes pulseDot {
     0%, 100% { box-shadow: 0 0 6px var(--accent), 0 0 12px rgba(155,109,255,0.4); transform: translateY(-50%) scale(1); }
     50%       { box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(155,109,255,0.7); transform: translateY(-50%) scale(1.3); }
@@ -271,7 +253,7 @@
   .plan-badge strong { color:var(--accent3); display:block; font-family:'Syne',sans-serif; font-size:13px; margin-bottom:3px; }
   .plan-badge a { color:var(--accent); text-decoration:none; font-weight:600; }
 
-  /* ── MAIN ── */
+  /* MAIN */
   .main { display:flex; flex-direction:column; overflow:hidden; }
 
   .topbar {
@@ -353,6 +335,7 @@
     to   { transform:translateY(0);    opacity:1; }
   }
 
+  /* PROFILE HERO */
   .profile-hero {
     background: linear-gradient(135deg, #10102060 0%, #0d0d1a 100%);
     border:1px solid var(--border);
@@ -393,7 +376,106 @@
   #uploadPic { display:none; }
 
   .hero-info { flex:1; }
-  .hero-name { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
+
+  /* Name row */
+  .hero-name-row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:4px;
+    flex-wrap:wrap;
+  }
+  .hero-name {
+    font-family:'Syne',sans-serif;
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-.5px;
+  }
+
+  /* Edit name button */
+  .edit-name-btn {
+    background:rgba(155,109,255,.12);
+    border:1px solid rgba(155,109,255,.25);
+    color:var(--accent3);
+    width:28px; height:28px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:11px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .edit-name-btn:hover {
+    background:rgba(155,109,255,.22);
+    border-color:var(--accent);
+    color:var(--accent);
+    transform:scale(1.08);
+  }
+
+  /* Inline edit row */
+  .name-edit-row {
+    display:none;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .name-edit-row.visible { display:flex; }
+
+  .name-input {
+    background:var(--subtle);
+    border:1px solid var(--accent);
+    color:var(--text);
+    font-family:'Syne',sans-serif;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.5px;
+    padding:5px 12px;
+    border-radius:8px;
+    outline:none;
+    width:220px;
+    transition:border-color var(--transition);
+  }
+  .name-input:focus { border-color:var(--accent3); box-shadow:0 0 0 3px rgba(155,109,255,.15); }
+  .name-input.error { border-color:var(--red); box-shadow:0 0 0 3px rgba(255,62,108,.12); }
+
+  .name-save-btn {
+    background:var(--accent);
+    border:none;
+    color:white;
+    width:32px; height:32px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .name-save-btn:hover { background:var(--accent2); transform:scale(1.08); }
+  .name-save-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .name-cancel-btn {
+    background:rgba(255,62,108,.1);
+    border:1px solid rgba(255,62,108,.2);
+    color:var(--red);
+    width:32px; height:32px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .name-cancel-btn:hover { background:rgba(255,62,108,.2); transform:scale(1.08); }
+
+  .name-save-status {
+    font-size:12px;
+    font-weight:600;
+    min-width:60px;
+  }
+  .name-save-status.saving { color:var(--muted); }
+  .name-save-status.saved  { color:#34c759; }
+  .name-save-status.error  { color:var(--red); }
+
   .hero-email { color:var(--muted); font-size:13px; margin-bottom:10px; }
   .hero-tags { display:flex; gap:8px; flex-wrap:wrap; }
   .tag {
@@ -630,6 +712,8 @@
     .stats-grid { grid-template-columns:repeat(2,1fr); }
     .profile-hero { padding:20px; }
     .topbar { padding:14px 16px; }
+    .name-input { width:160px; font-size:18px; }
+    .hero-name { font-size:22px; }
   }
   @media (max-width:400px) {
     .stats-grid { grid-template-columns:1fr 1fr; }
@@ -647,7 +731,7 @@
 
 <div class="shell">
 
-  <!-- ── SIDEBAR ── -->
+  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="logo-area">
       <img src="logo.png" alt="444Music" onerror="this.style.display='none'">
@@ -726,7 +810,7 @@
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
+  <!-- MAIN -->
   <div class="main">
 
     <header class="topbar">
@@ -749,13 +833,42 @@
 
     <div class="content">
 
+      <!-- PROFILE HERO -->
       <div class="profile-hero">
         <div class="avatar-wrap">
           <img id="profilePic" src="https://i.imgur.com/2DhmtJ4.png" alt="Artist">
           <label class="cam-btn" for="uploadPic"><i class="fa-solid fa-camera"></i></label>
         </div>
+
         <div class="hero-info">
-          <div class="hero-name" id="artistName">Artist</div>
+
+          <!-- Name display row -->
+          <div class="hero-name-row">
+            <div class="hero-name" id="artistName">Artist</div>
+            <button class="edit-name-btn" id="editNameBtn" title="Edit artist name">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+
+          <!-- Inline edit row (hidden until edit clicked) -->
+          <div class="name-edit-row" id="nameEditRow">
+            <input
+              class="name-input"
+              id="nameInput"
+              type="text"
+              placeholder="Enter artist name…"
+              maxlength="60"
+              autocomplete="off"
+            >
+            <button class="name-save-btn" id="saveNameBtn" title="Save name">
+              <i class="fa-solid fa-check"></i>
+            </button>
+            <button class="name-cancel-btn" id="cancelNameBtn" title="Cancel">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span class="name-save-status" id="nameSaveStatus"></span>
+          </div>
+
           <div class="hero-email" id="artistEmail">—</div>
           <div class="hero-tags">
             <span class="tag verified"><i class="fa-solid fa-circle-check"></i> Verified</span>
@@ -763,12 +876,14 @@
             <span class="tag">Free Plan</span>
           </div>
         </div>
+
         <div class="hero-actions">
           <a href="pricing.html" class="upload-btn"><i class="fa-solid fa-circle-plus"></i> New Release</a>
           <a href="ear.html" class="upload-btn" style="background:transparent;border:1px solid var(--accent);box-shadow:none;color:var(--accent3);"><i class="fa-solid fa-arrow-up-right-from-square"></i> Withdraw</a>
         </div>
       </div>
 
+      <!-- STATS -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon"><i class="fa-solid fa-compact-disc"></i></div>
@@ -796,6 +911,7 @@
         </div>
       </div>
 
+      <!-- ANALYTICS + QUICK TOOLS -->
       <div class="two-col">
         <div class="panel">
           <div class="panel-head">
@@ -828,6 +944,7 @@
         </div>
       </div>
 
+      <!-- RELEASES + NOTIFICATIONS -->
       <div class="two-col">
         <div class="panel">
           <div class="panel-head">
@@ -870,6 +987,7 @@
         </div>
       </div>
 
+      <!-- PLAYER + EARNINGS + STORES -->
       <div class="bottom-row">
         <div>
           <div class="player-card">
@@ -943,7 +1061,16 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -954,22 +1081,18 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app = initializeApp(firebaseConfig);
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db   = getFirestore(app);
 
-// ── ACTIVE NAV DETECTION ──────────────────────────────────────────────────────
+// ── ACTIVE NAV ────────────────────────────────────────────────────────────────
 function setActiveNav() {
-  // Get current page filename
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
   const links = document.querySelectorAll('.nav-link[data-page]');
-
   links.forEach(link => {
     const page = link.getAttribute('data-page');
     if (page === currentPage) {
       link.classList.add('active');
-
-      // Update topbar title to match the active link text
       const labelEl = link.querySelector('span:not(.badge):not(.nav-active-pill)');
       if (labelEl) {
         const titleEl = document.getElementById('topbarPageTitle');
@@ -979,49 +1102,43 @@ function setActiveNav() {
       link.classList.remove('active');
     }
   });
-
-  // Fallback: if nothing matched (e.g. on index with no filename), activate Dashboard
   const anyActive = document.querySelector('.nav-link.active');
   if (!anyActive) {
     const dashLink = document.querySelector('.nav-link[data-page="index.html"]');
     if (dashLink) dashLink.classList.add('active');
   }
 }
-
 setActiveNav();
-
-// ── RE-HIGHLIGHT ON SPA NAVIGATION (popstate) ────────────────────────────────
 window.addEventListener('popstate', setActiveNav);
 
-// Intercept nav-link clicks to immediately apply active class before page loads
 document.querySelectorAll('.nav-link[data-page]').forEach(link => {
-  link.addEventListener('click', function() {
+  link.addEventListener('click', function () {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     this.classList.add('active');
-    // Close mobile sidebar if open
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
   });
 });
 
-// ── FIREBASE AUTH ─────────────────────────────────────────────────────────────
+// ── AUTH + LOAD DATA ──────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
 
   const userSnap = await getDoc(doc(db, "users", user.uid));
   if (userSnap.exists()) {
     const data = userSnap.data();
-    document.getElementById("artistName").textContent = data.name || "Artist";
-    document.getElementById("artistName2").textContent = data.name || "Artist";
+    const name = data.name || "Artist";
+    document.getElementById("artistName").textContent  = name;
+    document.getElementById("artistName2").textContent = name;
     document.getElementById("artistEmail").textContent = data.email || "";
     document.getElementById("totalEarnings").textContent = "$" + (data.earnings || 0).toFixed(2);
     if (data.profilePic) {
-      document.getElementById("profilePic").src = data.profilePic;
+      document.getElementById("profilePic").src    = data.profilePic;
       document.getElementById("profilePicTop").src = data.profilePic;
     }
   }
 
-  const q = query(collection(db, "submissions"), where("userId", "==", user.uid));
+  const q    = query(collection(db, "submissions"), where("userId", "==", user.uid));
   const snap = await getDocs(q);
   document.getElementById("totalReleases").textContent = snap.size;
 
@@ -1048,20 +1165,120 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// Profile picture change
+// ── ARTIST NAME EDIT ──────────────────────────────────────────────────────────
+const editNameBtn   = document.getElementById("editNameBtn");
+const artistNameEl  = document.getElementById("artistName");
+const nameEditRow   = document.getElementById("nameEditRow");
+const nameInput     = document.getElementById("nameInput");
+const saveNameBtn   = document.getElementById("saveNameBtn");
+const cancelNameBtn = document.getElementById("cancelNameBtn");
+const nameSaveStatus = document.getElementById("nameSaveStatus");
+
+function openEdit() {
+  // Pre-fill with current name
+  nameInput.value = artistNameEl.textContent.trim();
+  // Hide static name + edit button, show edit row
+  artistNameEl.style.display  = "none";
+  editNameBtn.style.display   = "none";
+  nameEditRow.classList.add("visible");
+  // Reset status
+  nameSaveStatus.textContent  = "";
+  nameSaveStatus.className    = "name-save-status";
+  nameInput.classList.remove("error");
+  // Focus input
+  setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
+}
+
+function closeEdit() {
+  nameEditRow.classList.remove("visible");
+  artistNameEl.style.display = "";
+  editNameBtn.style.display  = "";
+  nameSaveStatus.textContent = "";
+  nameSaveStatus.className   = "name-save-status";
+  nameInput.classList.remove("error");
+}
+
+async function saveName() {
+  const newName = nameInput.value.trim();
+
+  // Validation
+  if (!newName) {
+    nameInput.classList.add("error");
+    nameSaveStatus.textContent = "Name can't be empty.";
+    nameSaveStatus.className   = "name-save-status error";
+    nameInput.focus();
+    return;
+  }
+
+  // No change — just close
+  if (newName === artistNameEl.textContent.trim()) {
+    closeEdit();
+    return;
+  }
+
+  // Saving state
+  saveNameBtn.disabled        = true;
+  nameSaveStatus.textContent  = "Saving…";
+  nameSaveStatus.className    = "name-save-status saving";
+
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Not signed in.");
+
+    await updateDoc(doc(db, "users", user.uid), { name: newName });
+
+    // Update all name displays
+    artistNameEl.textContent  = newName;
+    document.getElementById("artistName2").textContent = newName;
+
+    nameSaveStatus.textContent = "✓ Saved";
+    nameSaveStatus.className   = "name-save-status saved";
+
+    // Close edit row after brief confirmation
+    setTimeout(closeEdit, 900);
+
+  } catch (err) {
+    nameSaveStatus.textContent = "Error: " + err.message;
+    nameSaveStatus.className   = "name-save-status error";
+  } finally {
+    saveNameBtn.disabled = false;
+  }
+}
+
+// Button listeners
+editNameBtn.addEventListener("click", openEdit);
+saveNameBtn.addEventListener("click", saveName);
+cancelNameBtn.addEventListener("click", closeEdit);
+
+// Keyboard shortcuts inside input
+nameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter")  { e.preventDefault(); saveName(); }
+  if (e.key === "Escape") closeEdit();
+});
+
+// Clear error styling when user types
+nameInput.addEventListener("input", () => {
+  nameInput.classList.remove("error");
+  if (nameSaveStatus.className.includes("error")) {
+    nameSaveStatus.textContent = "";
+    nameSaveStatus.className   = "name-save-status";
+  }
+});
+
+// ── PROFILE PICTURE ───────────────────────────────────────────────────────────
 document.getElementById("uploadPic").addEventListener("change", function () {
   const file = this.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = e => {
-      document.getElementById("profilePic").src = e.target.result;
+      document.getElementById("profilePic").src    = e.target.result;
       document.getElementById("profilePicTop").src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 });
 
-// Chart
+// ── CHART ─────────────────────────────────────────────────────────────────────
 const ctx = document.getElementById("chart");
 new Chart(ctx, {
   type: "line",
@@ -1078,16 +1295,15 @@ new Chart(ctx, {
     }]
   },
   options: {
-    responsive:true,
-    plugins: { legend:{ display:false } },
+    responsive: true,
+    plugins: { legend: { display: false } },
     scales: {
-      x: { grid:{ color:"rgba(255,255,255,.04)" }, ticks:{ color:"#6b6b8a", font:{size:11} } },
-      y: { grid:{ color:"rgba(255,255,255,.04)" }, ticks:{ color:"#6b6b8a", font:{size:11} }, beginAtZero:true }
+      x: { grid: { color:"rgba(255,255,255,.04)" }, ticks: { color:"#6b6b8a", font:{size:11} } },
+      y: { grid: { color:"rgba(255,255,255,.04)" }, ticks: { color:"#6b6b8a", font:{size:11} }, beginAtZero:true }
     }
   }
 });
 
-// Chart tabs
 document.querySelectorAll(".chart-tab").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".chart-tab").forEach(b => b.classList.remove("active"));
@@ -1095,13 +1311,13 @@ document.querySelectorAll(".chart-tab").forEach(btn => {
   });
 });
 
-// Player
+// ── PLAYER ────────────────────────────────────────────────────────────────────
 let playing = false, progress = 35, timer = null;
-const playBtn = document.getElementById("playBtn");
+const playBtn  = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
-const disc = document.getElementById("playerDisc");
-const fill = document.getElementById("progressFill");
-const curr = document.getElementById("currentTime");
+const disc     = document.getElementById("playerDisc");
+const fill     = document.getElementById("progressFill");
+const curr     = document.getElementById("currentTime");
 
 playBtn.addEventListener("click", () => {
   playing = !playing;
@@ -1109,16 +1325,24 @@ playBtn.addEventListener("click", () => {
   disc.classList.toggle("playing", playing);
   if (playing) {
     timer = setInterval(() => {
-      if (progress >= 100) { progress = 0; playing = false; playIcon.className = "fa-solid fa-play"; disc.classList.remove("playing"); clearInterval(timer); return; }
+      if (progress >= 100) {
+        progress = 0; playing = false;
+        playIcon.className = "fa-solid fa-play";
+        disc.classList.remove("playing");
+        clearInterval(timer);
+        return;
+      }
       progress += .2;
       fill.style.width = progress + "%";
       const secs = Math.floor((progress / 100) * 204);
-      curr.textContent = Math.floor(secs/60) + ":" + String(secs%60).padStart(2,"0");
+      curr.textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
     }, 100);
-  } else { clearInterval(timer); }
+  } else {
+    clearInterval(timer);
+  }
 });
 
-// Sidebar toggle
+// ── SIDEBAR TOGGLE ────────────────────────────────────────────────────────────
 window.toggleSidebar = function () {
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("open");
