@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600&family=Big+Shoulders+Display:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -27,6 +27,8 @@
     --radius:   14px;
     --radius-sm:8px;
     --transition: .28s cubic-bezier(.4,0,.2,1);
+    --font-display: 'Big Shoulders Display', sans-serif;
+    --font-body:    'Lexend Deca', sans-serif;
   }
 
   *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
@@ -34,7 +36,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 15px;
     min-height: 100vh;
     overflow-x: hidden;
@@ -103,10 +105,10 @@
     margin-bottom:24px;
   }
   .logo-text {
-    font-family:'Syne',sans-serif;
+    font-family: var(--font-display);
     font-weight:800;
-    font-size:20px;
-    letter-spacing:-.5px;
+    font-size:22px;
+    letter-spacing:.5px;
     background: linear-gradient(135deg, var(--accent3), var(--accent));
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
@@ -130,8 +132,9 @@
     padding:11px 24px;
     color:var(--muted);
     text-decoration:none;
-    font-size:14px;
+    font-size:13px;
     font-weight:500;
+    letter-spacing:.2px;
     border-left:3px solid transparent;
     transition: all var(--transition);
     position:relative;
@@ -250,7 +253,14 @@
     padding:12px;
     font-size:12px;
   }
-  .plan-badge strong { color:var(--accent3); display:block; font-family:'Syne',sans-serif; font-size:13px; margin-bottom:3px; }
+  .plan-badge strong {
+    color:var(--accent3);
+    display:block;
+    font-family: var(--font-display);
+    font-size:14px;
+    letter-spacing:.5px;
+    margin-bottom:3px;
+  }
   .plan-badge a { color:var(--accent); text-decoration:none; font-weight:600; }
 
   /* MAIN */
@@ -285,10 +295,10 @@
     padding:4px;
   }
   .page-title {
-    font-family:'Syne',sans-serif;
+    font-family: var(--font-display);
     font-weight:700;
-    font-size:18px;
-    letter-spacing:-.3px;
+    font-size:20px;
+    letter-spacing:.5px;
   }
 
   .topbar-right { display:flex; align-items:center; gap:12px; }
@@ -375,6 +385,17 @@
   .cam-btn:hover { background:var(--accent2); transform:scale(1.1); }
   #uploadPic { display:none; }
 
+  /* Upload progress overlay */
+  .pic-uploading {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.55);
+    border-radius:50%;
+    display:none;
+    align-items:center; justify-content:center;
+    font-size:10px; color:white; font-weight:600;
+  }
+  .pic-uploading.show { display:flex; }
+
   .hero-info { flex:1; }
 
   /* Name row */
@@ -386,10 +407,10 @@
     flex-wrap:wrap;
   }
   .hero-name {
-    font-family:'Syne',sans-serif;
-    font-size:26px;
+    font-family: var(--font-display);
+    font-size:30px;
     font-weight:800;
-    letter-spacing:-.5px;
+    letter-spacing:.5px;
   }
 
   /* Edit name button */
@@ -425,10 +446,10 @@
     background:var(--subtle);
     border:1px solid var(--accent);
     color:var(--text);
-    font-family:'Syne',sans-serif;
-    font-size:22px;
+    font-family: var(--font-display);
+    font-size:24px;
     font-weight:800;
-    letter-spacing:-.5px;
+    letter-spacing:.5px;
     padding:5px 12px;
     border-radius:8px;
     outline:none;
@@ -491,10 +512,11 @@
     display:inline-flex; align-items:center; gap:8px;
     background:var(--accent); color:white;
     padding:10px 20px; border-radius:var(--radius-sm);
-    font-weight:700; font-size:13px;
+    font-weight:600; font-size:13px;
     text-decoration:none; transition:var(--transition);
-    border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+    border:none; cursor:pointer; font-family: var(--font-body);
     box-shadow:0 4px 24px rgba(155,109,255,.3);
+    letter-spacing:.2px;
   }
   .upload-btn:hover { background:var(--accent2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(155,109,255,.4); }
 
@@ -535,7 +557,11 @@
     display:flex; align-items:center; justify-content:center;
     font-size:14px; color:var(--accent); margin-bottom:12px;
   }
-  .stat-val { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; letter-spacing:-1px; margin-bottom:2px; }
+  .stat-val {
+    font-family: var(--font-display);
+    font-size:30px; font-weight:800;
+    letter-spacing:.5px; margin-bottom:2px;
+  }
   .stat-label { font-size:12px; color:var(--muted); font-weight:500; }
   .stat-delta {
     position:absolute; top:18px; right:18px;
@@ -556,11 +582,14 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:18px 22px 14px; border-bottom:1px solid var(--border);
   }
-  .panel-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; letter-spacing:-.2px; }
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight:700; font-size:15px; letter-spacing:.3px;
+  }
   .panel-action {
     color:var(--accent); font-size:12px; font-weight:600;
     text-decoration:none; cursor:pointer; transition:var(--transition);
-    background:none; border:none; font-family:'DM Sans',sans-serif;
+    background:none; border:none; font-family: var(--font-body);
   }
   .panel-action:hover { color:var(--accent3); }
   .panel-body { padding:16px 22px; }
@@ -571,7 +600,7 @@
     font-size:12px; font-weight:600; padding:5px 12px;
     border-radius:20px; cursor:pointer; border:1px solid var(--border);
     background:transparent; color:var(--muted); transition:var(--transition);
-    font-family:'DM Sans',sans-serif;
+    font-family: var(--font-body);
   }
   .chart-tab.active, .chart-tab:hover { background:var(--accent); color:white; border-color:var(--accent); }
   canvas#chart { width:100% !important; max-height:200px; }
@@ -608,6 +637,7 @@
     background:var(--subtle); border:1px solid var(--border);
     text-decoration:none; color:var(--text); font-size:12px; font-weight:600;
     text-align:center; transition:var(--transition); cursor:pointer;
+    letter-spacing:.2px;
   }
   .tool-card i { font-size:20px; color:var(--accent); transition:var(--transition); }
   .tool-card:hover { border-color:var(--accent); background:rgba(155,109,255,.08); transform:translateY(-3px); }
@@ -619,7 +649,11 @@
     padding:20px 22px; margin-bottom:20px;
     animation: cardPop .5s var(--transition) .3s both;
   }
-  .player-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; margin-bottom:14px; }
+  .player-label {
+    font-size:10px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:2px; font-weight:600; margin-bottom:14px;
+    font-family: var(--font-display);
+  }
   .player-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
   .player-disc {
     width:52px; height:52px; border-radius:50%;
@@ -632,7 +666,11 @@
   .player-disc.playing { animation-play-state:running; }
   @keyframes spin { to { transform:rotate(360deg); } }
   .player-meta { flex:1; }
-  .player-track { font-weight:700; font-size:14px; font-family:'Syne',sans-serif; }
+  .player-track {
+    font-weight:700; font-size:14px;
+    font-family: var(--font-display);
+    letter-spacing:.3px;
+  }
   .player-artist { font-size:12px; color:var(--muted); margin-top:2px; }
   #playBtn {
     width:42px; height:42px; border-radius:50%;
@@ -675,7 +713,11 @@
   .store-chip:hover { border-color:var(--accent); color:var(--accent3); }
 
   .earn-table { width:100%; border-collapse:collapse; }
-  .earn-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; padding:8px 0; border-bottom:1px solid var(--border); text-align:left; font-weight:600; }
+  .earn-table th {
+    font-size:11px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:1px; padding:8px 0; border-bottom:1px solid var(--border);
+    text-align:left; font-weight:600; font-family: var(--font-display);
+  }
   .earn-table td { padding:10px 0; font-size:13px; border-bottom:1px solid rgba(255,255,255,.04); }
   .earn-table tr:last-child td { border-bottom:none; }
   .earn-table td:last-child { text-align:right; color:#34c759; font-weight:700; }
@@ -712,12 +754,12 @@
     .stats-grid { grid-template-columns:repeat(2,1fr); }
     .profile-hero { padding:20px; }
     .topbar { padding:14px 16px; }
-    .name-input { width:160px; font-size:18px; }
-    .hero-name { font-size:22px; }
+    .name-input { width:160px; font-size:20px; }
+    .hero-name { font-size:24px; }
   }
   @media (max-width:400px) {
     .stats-grid { grid-template-columns:1fr 1fr; }
-    .stat-val { font-size:22px; }
+    .stat-val { font-size:24px; }
   }
 </style>
 </head>
@@ -837,6 +879,10 @@
       <div class="profile-hero">
         <div class="avatar-wrap">
           <img id="profilePic" src="https://i.imgur.com/2DhmtJ4.png" alt="Artist">
+          <!-- uploading spinner overlay -->
+          <div class="pic-uploading" id="picUploading">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
           <label class="cam-btn" for="uploadPic"><i class="fa-solid fa-camera"></i></label>
         </div>
 
@@ -1059,18 +1105,16 @@
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { initializeApp }       from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc,
-  collection,
-  query,
-  where,
-  getDocs
+  getFirestore, doc, getDoc, updateDoc,
+  collection, query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getStorage, ref as storageRef,
+  uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1081,31 +1125,28 @@ const firebaseConfig = {
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
 // ── ACTIVE NAV ────────────────────────────────────────────────────────────────
 function setActiveNav() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  const links = document.querySelectorAll('.nav-link[data-page]');
-  links.forEach(link => {
+  document.querySelectorAll('.nav-link[data-page]').forEach(link => {
     const page = link.getAttribute('data-page');
+    link.classList.toggle('active', page === currentPage);
     if (page === currentPage) {
-      link.classList.add('active');
       const labelEl = link.querySelector('span:not(.badge):not(.nav-active-pill)');
       if (labelEl) {
         const titleEl = document.getElementById('topbarPageTitle');
         if (titleEl) titleEl.textContent = labelEl.textContent.trim();
       }
-    } else {
-      link.classList.remove('active');
     }
   });
-  const anyActive = document.querySelector('.nav-link.active');
-  if (!anyActive) {
-    const dashLink = document.querySelector('.nav-link[data-page="index.html"]');
-    if (dashLink) dashLink.classList.add('active');
+  if (!document.querySelector('.nav-link.active')) {
+    const dash = document.querySelector('.nav-link[data-page="index.html"]');
+    if (dash) dash.classList.add('active');
   }
 }
 setActiveNav();
@@ -1132,6 +1173,8 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("artistName2").textContent = name;
     document.getElementById("artistEmail").textContent = data.email || "";
     document.getElementById("totalEarnings").textContent = "$" + (data.earnings || 0).toFixed(2);
+
+    // Load saved profile picture from Firestore URL
     if (data.profilePic) {
       document.getElementById("profilePic").src    = data.profilePic;
       document.getElementById("profilePicTop").src = data.profilePic;
@@ -1166,26 +1209,22 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ── ARTIST NAME EDIT ──────────────────────────────────────────────────────────
-const editNameBtn   = document.getElementById("editNameBtn");
-const artistNameEl  = document.getElementById("artistName");
-const nameEditRow   = document.getElementById("nameEditRow");
-const nameInput     = document.getElementById("nameInput");
-const saveNameBtn   = document.getElementById("saveNameBtn");
-const cancelNameBtn = document.getElementById("cancelNameBtn");
+const editNameBtn    = document.getElementById("editNameBtn");
+const artistNameEl   = document.getElementById("artistName");
+const nameEditRow    = document.getElementById("nameEditRow");
+const nameInput      = document.getElementById("nameInput");
+const saveNameBtn    = document.getElementById("saveNameBtn");
+const cancelNameBtn  = document.getElementById("cancelNameBtn");
 const nameSaveStatus = document.getElementById("nameSaveStatus");
 
 function openEdit() {
-  // Pre-fill with current name
   nameInput.value = artistNameEl.textContent.trim();
-  // Hide static name + edit button, show edit row
   artistNameEl.style.display  = "none";
   editNameBtn.style.display   = "none";
   nameEditRow.classList.add("visible");
-  // Reset status
   nameSaveStatus.textContent  = "";
   nameSaveStatus.className    = "name-save-status";
   nameInput.classList.remove("error");
-  // Focus input
   setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
 }
 
@@ -1200,8 +1239,6 @@ function closeEdit() {
 
 async function saveName() {
   const newName = nameInput.value.trim();
-
-  // Validation
   if (!newName) {
     nameInput.classList.add("error");
     nameSaveStatus.textContent = "Name can't be empty.";
@@ -1209,14 +1246,8 @@ async function saveName() {
     nameInput.focus();
     return;
   }
+  if (newName === artistNameEl.textContent.trim()) { closeEdit(); return; }
 
-  // No change — just close
-  if (newName === artistNameEl.textContent.trim()) {
-    closeEdit();
-    return;
-  }
-
-  // Saving state
   saveNameBtn.disabled        = true;
   nameSaveStatus.textContent  = "Saving…";
   nameSaveStatus.className    = "name-save-status saving";
@@ -1224,19 +1255,12 @@ async function saveName() {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error("Not signed in.");
-
     await updateDoc(doc(db, "users", user.uid), { name: newName });
-
-    // Update all name displays
     artistNameEl.textContent  = newName;
     document.getElementById("artistName2").textContent = newName;
-
     nameSaveStatus.textContent = "✓ Saved";
     nameSaveStatus.className   = "name-save-status saved";
-
-    // Close edit row after brief confirmation
     setTimeout(closeEdit, 900);
-
   } catch (err) {
     nameSaveStatus.textContent = "Error: " + err.message;
     nameSaveStatus.className   = "name-save-status error";
@@ -1245,18 +1269,13 @@ async function saveName() {
   }
 }
 
-// Button listeners
 editNameBtn.addEventListener("click", openEdit);
 saveNameBtn.addEventListener("click", saveName);
 cancelNameBtn.addEventListener("click", closeEdit);
-
-// Keyboard shortcuts inside input
 nameInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter")  { e.preventDefault(); saveName(); }
   if (e.key === "Escape") closeEdit();
 });
-
-// Clear error styling when user types
 nameInput.addEventListener("input", () => {
   nameInput.classList.remove("error");
   if (nameSaveStatus.className.includes("error")) {
@@ -1265,16 +1284,47 @@ nameInput.addEventListener("input", () => {
   }
 });
 
-// ── PROFILE PICTURE ───────────────────────────────────────────────────────────
-document.getElementById("uploadPic").addEventListener("change", function () {
+// ── PROFILE PICTURE — permanent via Firebase Storage ─────────────────────────
+document.getElementById("uploadPic").addEventListener("change", async function () {
   const file = this.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById("profilePic").src    = e.target.result;
-      document.getElementById("profilePicTop").src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  if (!file) return;
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  // Show preview immediately while uploading
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById("profilePic").src    = e.target.result;
+    document.getElementById("profilePicTop").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // Show spinner on avatar
+  const spinner = document.getElementById("picUploading");
+  spinner.classList.add("show");
+
+  try {
+    // Upload file to Firebase Storage at profilePics/{uid}
+    const picRef  = storageRef(storage, `profilePics/${user.uid}`);
+    await uploadBytes(picRef, file);
+
+    // Get permanent download URL
+    const downloadURL = await getDownloadURL(picRef);
+
+    // Save URL to Firestore so it loads on next sign-in / page refresh
+    await updateDoc(doc(db, "users", user.uid), { profilePic: downloadURL });
+
+    // Update both avatars with the permanent URL
+    document.getElementById("profilePic").src    = downloadURL;
+    document.getElementById("profilePicTop").src = downloadURL;
+
+  } catch (err) {
+    console.error("Profile picture upload failed:", err);
+  } finally {
+    spinner.classList.remove("show");
+    // Reset input so the same file can be re-selected if needed
+    this.value = "";
   }
 });
 
