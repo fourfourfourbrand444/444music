@@ -19,34 +19,28 @@
   --bg-input:       #111120;
   --bg-input-hover: #14142a;
   --bg-modal:       #0e0e1e;
- 
   --border:         rgba(140,120,255,0.1);
   --border-focus:   rgba(160,130,255,0.55);
   --border-modal:   rgba(160,130,255,0.18);
- 
   --purple:         #a278f5;
   --purple-bright:  #c4a8ff;
   --purple-deep:    #7c55d4;
   --purple-dim:     rgba(162,120,245,0.15);
   --purple-glow:    0 0 28px rgba(162,120,245,0.28);
   --purple-glow-sm: 0 0 12px rgba(162,120,245,0.18);
- 
   --text-primary:   #eeedf5;
   --text-secondary: #7b7a8e;
   --text-muted:     #3a3a52;
- 
   --radius-sm:  6px;
   --radius-md:  12px;
   --radius-lg:  18px;
   --radius-xl:  24px;
- 
   --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   --font-display: 'Syne', sans-serif;
   --font-body:    'DM Sans', sans-serif;
 }
  
 html { font-size: 16px; -webkit-font-smoothing: antialiased; }
- 
 body {
   font-family: var(--font-body);
   background-color: var(--bg-void);
@@ -58,733 +52,161 @@ body {
     radial-gradient(ellipse 50% 35% at 10% 80%,  rgba(120,90,230,0.04) 0%, transparent 60%);
   background-attachment: fixed;
 }
- 
 body::before {
   content: '';
   position: fixed; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none; z-index: 0; opacity: 0.7;
 }
- 
 .wrapper {
   position: relative; z-index: 1;
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: 900px; margin: 0 auto;
   padding: 52px 24px 90px;
   animation: wrapperIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
 }
- 
 .site-header {
   display: flex; align-items: center; gap: 14px;
-  margin-bottom: 52px;
-  padding-bottom: 28px;
+  margin-bottom: 52px; padding-bottom: 28px;
   border-bottom: 1px solid var(--border);
 }
- 
-.site-logo {
-  height: 42px; width: auto; object-fit: contain;
-  filter: drop-shadow(0 0 14px rgba(162,120,245,0.35));
-}
- 
+.site-logo { height: 42px; width: auto; object-fit: contain; filter: drop-shadow(0 0 14px rgba(162,120,245,0.35)); }
 h1 {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-  color: var(--text-primary);
-  margin-bottom: 10px;
-  animation: fadeInUp 0.5s 0.1s ease both;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1.1; color: var(--text-primary);
+  margin-bottom: 10px; animation: fadeInUp 0.5s 0.1s ease both;
 }
- 
-.subtitle {
-  font-size: 0.93rem;
-  color: var(--text-secondary);
-  font-weight: 300;
-  letter-spacing: 0.01em;
-  margin-bottom: 34px;
-  animation: fadeInUp 0.5s 0.18s ease both;
-}
- 
-.step-indicator {
-  display: flex; align-items: center;
-  margin-bottom: 44px;
-  animation: fadeInUp 0.5s 0.22s ease both;
-}
- 
-.step {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-muted); white-space: nowrap;
-  transition: color var(--transition);
-}
- 
+.subtitle { font-size: 0.93rem; color: var(--text-secondary); font-weight: 300; letter-spacing: 0.01em; margin-bottom: 34px; animation: fadeInUp 0.5s 0.18s ease both; }
+.step-indicator { display: flex; align-items: center; margin-bottom: 44px; animation: fadeInUp 0.5s 0.22s ease both; }
+.step { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; transition: color var(--transition); }
 .step.active { color: var(--purple); }
- 
-.step-num {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  border: 1.5px solid currentColor;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.68rem;
-  font-family: var(--font-display); font-weight: 700;
-  flex-shrink: 0; transition: all var(--transition);
-}
- 
-.step.active .step-num {
-  background: var(--purple); border-color: var(--purple);
-  color: #07070f; box-shadow: var(--purple-glow);
-}
- 
-.step-line {
-  flex: 1; height: 1px;
-  background: linear-gradient(90deg, var(--border), transparent);
-  margin: 0 14px; max-width: 80px;
-}
- 
-.section-label {
-  font-family: var(--font-display);
-  font-size: 0.65rem; font-weight: 700;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--purple);
-  margin: 36px 0 18px;
-  display: flex; align-items: center; gap: 12px;
-}
- 
-.section-label::after {
-  content: '';
-  flex: 1; height: 1px;
-  background: linear-gradient(to right, rgba(162,120,245,0.28), transparent);
-}
- 
+.step-num { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-family: var(--font-display); font-weight: 700; flex-shrink: 0; transition: all var(--transition); }
+.step.active .step-num { background: var(--purple); border-color: var(--purple); color: #07070f; box-shadow: var(--purple-glow); }
+.step-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin: 0 14px; max-width: 80px; }
+.section-label { font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--purple); margin: 36px 0 18px; display: flex; align-items: center; gap: 12px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(162,120,245,0.28), transparent); }
 #releaseForm {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);
   padding: clamp(24px, 5vw, 52px);
   box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(100,70,200,0.06) inset;
-  position: relative; overflow: hidden;
-  animation: cardIn 0.55s 0.08s cubic-bezier(0.22,1,0.36,1) both;
+  position: relative; overflow: hidden; animation: cardIn 0.55s 0.08s cubic-bezier(0.22,1,0.36,1) both;
 }
- 
-#releaseForm::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%);
-  opacity: 0.65;
-}
- 
-#releaseForm::after {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 150px;
-  background: linear-gradient(to bottom, rgba(162,120,245,0.04), transparent);
-  pointer-events: none;
-}
- 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px;
-}
- 
-.field {
-  display: flex; flex-direction: column; gap: 9px;
-}
- 
+#releaseForm::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%); opacity: 0.65; }
+#releaseForm::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(162,120,245,0.04), transparent); pointer-events: none; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.field { display: flex; flex-direction: column; gap: 9px; }
 .field:has(textarea) { grid-column: 1 / -1; }
- 
-.field label {
-  font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.13em; text-transform: uppercase;
-  color: var(--text-secondary);
-  font-family: var(--font-display);
-  display: flex; align-items: center; gap: 6px;
-}
- 
-.field input,
-.field select,
-.field textarea {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem; font-weight: 400;
-  padding: 13px 16px;
-  outline: none;
-  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
-  width: 100%;
-  appearance: none; -webkit-appearance: none;
-}
- 
+.field label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-secondary); font-family: var(--font-display); display: flex; align-items: center; gap: 6px; }
+.field input, .field select, .field textarea { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; font-weight: 400; padding: 13px 16px; outline: none; transition: border-color var(--transition), background var(--transition), box-shadow var(--transition); width: 100%; appearance: none; -webkit-appearance: none; }
 .field input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
- 
-.field input:hover, .field select:hover, .field textarea:hover {
-  background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15);
-}
- 
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--purple); background: var(--bg-input-hover);
-  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
-}
- 
+.field input:hover, .field select:hover, .field textarea:hover { background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--purple); background: var(--bg-input-hover); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
 .select-wrapper, .flag-select-wrapper { position: relative; }
- 
-.select-wrapper::after, .flag-select-wrapper::after {
-  content: '';
-  position: absolute; right: 14px; top: 50%;
-  transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary);
-  pointer-events: none;
-  transition: border-top-color var(--transition), transform var(--transition);
-}
- 
-.select-wrapper:focus-within::after, .flag-select-wrapper:focus-within::after {
-  border-top-color: var(--purple);
-  transform: translateY(-50%) rotate(180deg);
-}
- 
+.select-wrapper::after, .flag-select-wrapper::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; transition: border-top-color var(--transition), transform var(--transition); }
+.select-wrapper:focus-within::after, .flag-select-wrapper:focus-within::after { border-top-color: var(--purple); transform: translateY(-50%) rotate(180deg); }
 .select-wrapper select { padding-right: 40px; cursor: pointer; }
- 
-.flag-select-wrapper .flag-icon {
-  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  font-size: 1.15rem; line-height: 1; pointer-events: none; z-index: 1;
-}
- 
+.flag-select-wrapper .flag-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 1.15rem; line-height: 1; pointer-events: none; z-index: 1; }
 .flag-select-wrapper select { padding-left: 44px; padding-right: 40px; cursor: pointer; }
- 
 .field textarea { min-height: 130px; resize: vertical; line-height: 1.65; }
- 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.5) sepia(1) hue-rotate(215deg) saturate(2);
-  cursor: pointer; opacity: 0.6;
-  transition: opacity var(--transition);
-}
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5) sepia(1) hue-rotate(215deg) saturate(2); cursor: pointer; opacity: 0.6; transition: opacity var(--transition); }
 input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
- 
-.btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin-top: 38px; width: 100%;
-  padding: 17px 32px;
-  border-radius: var(--radius-sm); border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 0.83rem; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: #09090f;
-  background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 55%, var(--purple-deep) 100%);
-  box-shadow: 0 4px 32px rgba(162,120,245,0.38), 0 1px 0 rgba(255,255,255,0.1) inset;
-  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
-  position: relative; overflow: hidden;
-}
- 
-.btn::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%);
-  pointer-events: none;
-}
- 
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 38px; width: 100%; padding: 17px 32px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: var(--font-display); font-size: 0.83rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #09090f; background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 55%, var(--purple-deep) 100%); box-shadow: 0 4px 32px rgba(162,120,245,0.38), 0 1px 0 rgba(255,255,255,0.1) inset; transition: transform var(--transition), box-shadow var(--transition), filter var(--transition); position: relative; overflow: hidden; }
+.btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%); pointer-events: none; }
 .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(162,120,245,0.5); filter: brightness(1.06); }
 .btn:active:not(:disabled) { transform: translateY(0); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
- 
-#statusMsg {
-  margin-top: 16px; text-align: center;
-  font-size: 0.84rem; color: var(--text-secondary); min-height: 22px;
-}
- 
-.form-footer-note {
-  margin-top: 24px; text-align: center;
-  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
+#statusMsg { margin-top: 16px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 22px; }
+.form-footer-note { margin-top: 24px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .form-footer-note svg { width: 14px; height: 14px; opacity: 0.6; }
- 
 option { background: #111120; color: var(--text-primary); }
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 100px var(--bg-input-hover) inset !important; -webkit-text-fill-color: var(--text-primary) !important; caret-color: var(--text-primary); border-color: var(--border) !important; }
  
-input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 100px var(--bg-input-hover) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
-  caret-color: var(--text-primary);
-  border-color: var(--border) !important;
-}
- 
-/* ════════════════════════════════════════
-   ARTIST PILL FIELD
-   ════════════════════════════════════════ */
+/* ARTIST PILL FIELD */
 .artist-field { position: relative; }
- 
-.artist-pill-box {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-  cursor: text; min-height: 48px;
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
- 
-.artist-pill-box:focus-within {
-  border-color: var(--purple);
-  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
-}
- 
-.artist-pill {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(162,120,245,0.14);
-  border: 1px solid rgba(162,120,245,0.3);
-  border-radius: 999px;
-  padding: 4px 12px 4px 10px;
-  font-size: 0.82rem; color: var(--purple-bright);
-  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
-}
- 
-.artist-pill .pill-avatar {
-  width: 20px; height: 20px; border-radius: 50%;
-  object-fit: cover; background: rgba(162,120,245,0.2);
-  font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
-  color: var(--purple);
-}
- 
+.artist-pill-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; cursor: text; min-height: 48px; transition: border-color var(--transition), box-shadow var(--transition); }
+.artist-pill-box:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
+.artist-pill { display: inline-flex; align-items: center; gap: 7px; background: rgba(162,120,245,0.14); border: 1px solid rgba(162,120,245,0.3); border-radius: 999px; padding: 4px 12px 4px 10px; font-size: 0.82rem; color: var(--purple-bright); animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
+.artist-pill .pill-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: rgba(162,120,245,0.2); font-size: 0.65rem; display: flex; align-items: center; justify-content: center; color: var(--purple); }
 .artist-pill .pill-avatar.has-img { background: none; }
 .artist-pill .pill-avatar.has-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
- 
-.artist-pill-remove {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(162,120,245,0.25); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--purple-bright); padding: 0;
-  transition: background var(--transition), transform var(--transition);
-  font-size: 0.7rem; line-height: 1;
-}
+.artist-pill-remove { width: 16px; height: 16px; border-radius: 50%; background: rgba(162,120,245,0.25); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--purple-bright); padding: 0; transition: background var(--transition), transform var(--transition); font-size: 0.7rem; line-height: 1; }
 .artist-pill-remove:hover { background: rgba(162,120,245,0.45); transform: scale(1.15); }
- 
-.artist-search-input {
-  background: none !important; border: none !important;
-  box-shadow: none !important; outline: none !important;
-  padding: 4px 6px !important;
-  flex: 1; min-width: 140px;
-  font-size: 0.88rem !important;
-  color: var(--text-primary);
-}
- 
+.artist-search-input { background: none !important; border: none !important; box-shadow: none !important; outline: none !important; padding: 4px 6px !important; flex: 1; min-width: 140px; font-size: 0.88rem !important; color: var(--text-primary); }
 .artist-search-input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.84rem; }
- 
-.artist-dropdown {
-  position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 9000;
-  background: var(--bg-modal);
-  border: 1px solid var(--border-modal);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.5);
-  display: none;
-  animation: dropIn 0.2s cubic-bezier(0.22,1,0.36,1) both;
-  max-height: 320px;
-  overflow-y: auto;
-}
- 
+.artist-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 9000; background: var(--bg-modal); border: 1px solid var(--border-modal); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.5); display: none; animation: dropIn 0.2s cubic-bezier(0.22,1,0.36,1) both; max-height: 320px; overflow-y: auto; }
 .artist-dropdown.open { display: block; }
- 
-.dropdown-section-title {
-  padding: 10px 16px 6px;
-  font-size: 0.62rem; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--text-muted);
-  font-family: var(--font-display); font-weight: 600;
-  border-bottom: 1px solid var(--border);
-}
- 
-.artist-option {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px; cursor: pointer;
-  transition: background var(--transition);
-  border-bottom: 1px solid rgba(140,120,255,0.06);
-}
- 
+.dropdown-section-title { padding: 10px 16px 6px; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; border-bottom: 1px solid var(--border); }
+.artist-option { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background var(--transition); border-bottom: 1px solid rgba(140,120,255,0.06); }
 .artist-option:last-child { border-bottom: none; }
 .artist-option:hover, .artist-option.focused { background: rgba(162,120,245,0.1); }
- 
-.artist-option-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  flex-shrink: 0; overflow: hidden;
-  background: rgba(162,120,245,0.12);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; color: var(--purple);
-}
- 
+.artist-option-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; background: rgba(162,120,245,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--purple); }
 .artist-option-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
- 
 .artist-option-info { flex: 1; min-width: 0; }
 .artist-option-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .artist-option-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
- 
-.artist-option-badge {
-  font-size: 0.6rem; padding: 2px 7px;
-  border-radius: 999px; font-weight: 600; letter-spacing: 0.05em;
-  text-transform: uppercase; flex-shrink: 0;
-}
-.badge-spotify { background: rgba(30,215,96,0.15); color: #1ed760; border: 1px solid rgba(30,215,96,0.25); }
-.badge-apple   { background: rgba(252,60,68,0.12);  color: #fc3c44; border: 1px solid rgba(252,60,68,0.2); }
-.badge-new     { background: rgba(162,120,245,0.15); color: var(--purple-bright); border: 1px solid rgba(162,120,245,0.3); }
- 
-.dropdown-loading, .dropdown-empty {
-  padding: 18px 16px; text-align: center;
-  font-size: 0.83rem; color: var(--text-muted); font-style: italic;
-}
- 
-.dropdown-loading { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.artist-option-badge { font-size: 0.6rem; padding: 2px 7px; border-radius: 999px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; flex-shrink: 0; }
+.badge-apple { background: rgba(252,60,68,0.12); color: #fc3c44; border: 1px solid rgba(252,60,68,0.2); }
+.badge-new   { background: rgba(162,120,245,0.15); color: var(--purple-bright); border: 1px solid rgba(162,120,245,0.3); }
+.dropdown-loading { padding: 18px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
- 
 .artist-dropdown::-webkit-scrollbar { width: 4px; }
 .artist-dropdown::-webkit-scrollbar-track { background: transparent; }
 .artist-dropdown::-webkit-scrollbar-thumb { background: rgba(162,120,245,0.3); border-radius: 2px; }
  
-/* ════════════════════════════════════════
-   MODAL
-   ════════════════════════════════════════ */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 99999;
-  background: rgba(4,4,10,0.85);
-  backdrop-filter: blur(8px) saturate(0.7);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-  animation: overlayIn 0.25s ease both;
-}
- 
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(4,4,10,0.85); backdrop-filter: blur(8px) saturate(0.7); display: flex; align-items: center; justify-content: center; padding: 20px; animation: overlayIn 0.25s ease both; }
 .modal-overlay.closing { animation: overlayOut 0.2s ease both; }
- 
-.modal-card {
-  background: var(--bg-modal);
-  border: 1px solid var(--border-modal);
-  border-radius: var(--radius-xl);
-  padding: 36px 32px 32px;
-  width: 100%; max-width: 440px;
-  position: relative;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.5), 0 0 60px rgba(100,70,200,0.08) inset;
-  animation: modalIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
-}
- 
+.modal-card { background: var(--bg-modal); border: 1px solid var(--border-modal); border-radius: var(--radius-xl); padding: 36px 32px 32px; width: 100%; max-width: 440px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.5), 0 0 60px rgba(100,70,200,0.08) inset; animation: modalIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both; }
 .modal-card.closing { animation: modalOut 0.2s ease both; }
- 
-.modal-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%);
-  opacity: 0.5; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
- 
-.modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 26px;
-}
- 
+.modal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%); opacity: 0.5; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
 .modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
- 
-.modal-close {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(162,120,245,0.08); border: 1px solid var(--border);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); font-size: 1rem; transition: all var(--transition);
-}
+.modal-close { width: 30px; height: 30px; border-radius: 50%; background: rgba(162,120,245,0.08); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 1rem; transition: all var(--transition); }
 .modal-close:hover { background: rgba(162,120,245,0.18); color: var(--text-primary); }
- 
 .modal-field { margin-bottom: 20px; }
- 
-.modal-label {
-  display: block; margin-bottom: 8px;
-  font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.13em; text-transform: uppercase;
-  color: var(--text-secondary); font-family: var(--font-display);
-}
- 
-.modal-input, .modal-select {
-  width: 100%;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  padding: 13px 16px;
-  outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  appearance: none;
-}
- 
-.modal-input:focus, .modal-select:focus {
-  border-color: var(--purple);
-  box-shadow: 0 0 0 3px rgba(162,120,245,0.12);
-}
- 
+.modal-label { display: block; margin-bottom: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-secondary); font-family: var(--font-display); }
+.modal-input, .modal-select { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; padding: 13px 16px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); appearance: none; }
+.modal-input:focus, .modal-select:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
 .modal-select-wrap { position: relative; }
-.modal-select-wrap::after {
-  content: '';
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none;
-}
+.modal-select-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
 .modal-select-wrap:focus-within::after { border-top-color: var(--purple); }
- 
-.modal-hint {
-  margin-top: 8px; padding: 10px 14px;
-  background: rgba(162,120,245,0.07);
-  border: 1px solid rgba(162,120,245,0.15);
-  border-radius: var(--radius-sm);
-  font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
-}
- 
+.modal-hint { margin-top: 8px; padding: 10px 14px; background: rgba(162,120,245,0.07); border: 1px solid rgba(162,120,245,0.15); border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
 .modal-hint strong { color: var(--purple-bright); }
- 
 .modal-btns { display: flex; gap: 12px; margin-top: 26px; }
- 
-.modal-btn-save, .modal-btn-cancel {
-  flex: 1; padding: 13px 20px;
-  border-radius: 999px; border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  transition: all var(--transition);
-}
- 
-.modal-btn-save {
-  background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 100%);
-  color: #07070f;
-  box-shadow: 0 4px 20px rgba(162,120,245,0.3);
-}
+.modal-btn-save, .modal-btn-cancel { flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer; font-family: var(--font-display); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; transition: all var(--transition); }
+.modal-btn-save { background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 100%); color: #07070f; box-shadow: 0 4px 20px rgba(162,120,245,0.3); }
 .modal-btn-save:hover { box-shadow: 0 8px 28px rgba(162,120,245,0.45); transform: translateY(-1px); }
- 
-.modal-btn-cancel {
-  background: rgba(162,120,245,0.06);
-  border: 1px solid var(--border); color: var(--text-secondary);
-}
+.modal-btn-cancel { background: rgba(162,120,245,0.06); border: 1px solid var(--border); color: var(--text-secondary); }
 .modal-btn-cancel:hover { background: rgba(162,120,245,0.12); color: var(--text-primary); }
  
-/* ════════════════════════════════════════
-   CREDITS SYSTEM
-   ════════════════════════════════════════ */
- 
-/* Credits list container */
-.credits-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 14px;
-}
- 
-/* Individual credit row */
-.credit-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 10px;
-  align-items: center;
-  background: rgba(162,120,245,0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  transition: border-color var(--transition), background var(--transition);
-  animation: rowIn 0.28s cubic-bezier(0.34,1.4,0.64,1) both;
-  position: relative;
-}
- 
-.credit-row:hover {
-  border-color: rgba(162,120,245,0.18);
-  background: rgba(162,120,245,0.06);
-}
- 
-/* Row number badge */
-.credit-row::before {
-  content: attr(data-num);
-  position: absolute;
-  top: -8px;
-  left: 14px;
-  font-size: 0.58rem;
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--purple);
-  background: var(--bg-card);
-  padding: 1px 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(162,120,245,0.25);
-}
- 
+/* CREDITS */
+.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.credit-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; background: rgba(162,120,245,0.04); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; transition: border-color var(--transition), background var(--transition); animation: rowIn 0.28s cubic-bezier(0.34,1.4,0.64,1) both; position: relative; }
+.credit-row:hover { border-color: rgba(162,120,245,0.18); background: rgba(162,120,245,0.06); }
+.credit-row::before { content: attr(data-num); position: absolute; top: -8px; left: 14px; font-size: 0.58rem; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); background: var(--bg-card); padding: 1px 7px; border-radius: 999px; border: 1px solid rgba(162,120,245,0.25); }
 .credit-input-wrap { display: flex; flex-direction: column; gap: 5px; }
- 
-.credit-input-label {
-  font-size: 0.6rem;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
- 
-.credit-input {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  padding: 10px 13px;
-  outline: none;
-  width: 100%;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  appearance: none;
-}
- 
+.credit-input-label { font-size: 0.6rem; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.credit-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 13px; outline: none; width: 100%; transition: border-color var(--transition), box-shadow var(--transition); appearance: none; }
 .credit-input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.83rem; }
- 
 .credit-input:hover { background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15); }
- 
-.credit-input:focus {
-  border-color: var(--purple);
-  background: var(--bg-input-hover);
-  box-shadow: 0 0 0 3px rgba(162,120,245,0.1);
-}
- 
+.credit-input:focus { border-color: var(--purple); background: var(--bg-input-hover); box-shadow: 0 0 0 3px rgba(162,120,245,0.1); }
 .credit-select-wrap { position: relative; }
- 
-.credit-select-wrap::after {
-  content: '';
-  position: absolute; right: 12px; top: 50%;
-  transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary);
-  pointer-events: none;
-}
- 
+.credit-select-wrap::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
 .credit-select-wrap:focus-within::after { border-top-color: var(--purple); }
 .credit-select-wrap select { padding-right: 34px; cursor: pointer; }
- 
-/* Remove button */
-.credit-remove {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: rgba(255,60,60,0.08);
-  border: 1px solid rgba(255,60,60,0.18);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,100,100,0.6);
-  font-size: 1rem; line-height: 1;
-  transition: all var(--transition);
-  flex-shrink: 0;
-  align-self: flex-end;
-  margin-bottom: 1px;
-}
- 
-.credit-remove:hover {
-  background: rgba(255,60,60,0.18);
-  border-color: rgba(255,80,80,0.4);
-  color: #ff6b6b;
-  transform: scale(1.08);
-}
- 
-/* "Add Credit" button */
-.add-credit-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(162,120,245,0.07);
-  border: 1px dashed rgba(162,120,245,0.25);
-  border-radius: var(--radius-sm);
-  padding: 11px 18px;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  cursor: pointer;
-  width: 100%;
-  justify-content: center;
-  transition: all var(--transition);
-}
- 
-.add-credit-btn:hover {
-  background: rgba(162,120,245,0.13);
-  border-color: rgba(162,120,245,0.45);
-  color: var(--purple-bright);
-}
- 
+.credit-remove { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,60,60,0.18); cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.6); font-size: 1rem; line-height: 1; transition: all var(--transition); flex-shrink: 0; align-self: flex-end; margin-bottom: 1px; }
+.credit-remove:hover { background: rgba(255,60,60,0.18); border-color: rgba(255,80,80,0.4); color: #ff6b6b; transform: scale(1.08); }
+.add-credit-btn { display: flex; align-items: center; gap: 8px; background: rgba(162,120,245,0.07); border: 1px dashed rgba(162,120,245,0.25); border-radius: var(--radius-sm); padding: 11px 18px; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); cursor: pointer; width: 100%; justify-content: center; transition: all var(--transition); }
+.add-credit-btn:hover { background: rgba(162,120,245,0.13); border-color: rgba(162,120,245,0.45); color: var(--purple-bright); }
 .add-credit-btn svg { width: 14px; height: 14px; }
+.credits-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.credits-panel { background: rgba(162,120,245,0.025); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+.credits-panel-title { font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.credits-panel-title .panel-icon { width: 22px; height: 22px; background: rgba(162,120,245,0.12); border: 1px solid rgba(162,120,245,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
  
-/* Credits empty state */
-.credits-empty {
-  text-align: center;
-  padding: 28px 16px;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  border: 1px dashed rgba(162,120,245,0.12);
-  border-radius: var(--radius-md);
-  margin-bottom: 14px;
-  font-style: italic;
-}
- 
-/* Section split for 2 credits lists */
-.credits-panels {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
- 
-.credits-panel {
-  background: rgba(162,120,245,0.025);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-}
- 
-.credits-panel-title {
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--purple);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
- 
-.credits-panel-title .panel-icon {
-  width: 22px; height: 22px;
-  background: rgba(162,120,245,0.12);
-  border: 1px solid rgba(162,120,245,0.2);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem;
-}
- 
-/* Inline credit rows in panel (single column) */
-.credit-row.compact {
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
- 
-.credit-row.compact .credit-row-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
- 
-/* ISRC / Publishing row */
-.grid-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 22px;
-}
- 
-/* ════════════════════════════════════════
-   ANIMATIONS
-   ════════════════════════════════════════ */
+/* ANIMATIONS */
 @keyframes wrapperIn  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 @keyframes cardIn     { from { opacity: 0; transform: translateY(16px) scale(0.99); } to { opacity: 1; transform: none; } }
 @keyframes fadeInUp   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -797,71 +219,34 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 @keyframes modalOut   { from { opacity: 1; transform: none; } to { opacity: 0; transform: scale(0.94) translateY(8px); } }
 @keyframes spin       { to { transform: rotate(360deg); } }
  
-/* ════════════════════════════════════════
-   RESPONSIVE
-   ════════════════════════════════════════ */
-@media (max-width: 700px) {
-  .grid { grid-template-columns: 1fr; gap: 18px; }
-  .credits-panels { grid-template-columns: 1fr; }
-  .grid-3 { grid-template-columns: 1fr 1fr; }
-  .credit-row { grid-template-columns: 1fr auto; }
-  .credit-row .credit-input-wrap:last-of-type { display: none; } /* hide role on tiny screens only if needed */
-  .credit-row.compact .credit-row-fields { grid-template-columns: 1fr; }
-}
- 
-@media (max-width: 640px) {
-  .wrapper { padding: 30px 14px 64px; }
-  #releaseForm { padding: 22px 16px; }
-  .step-line { max-width: 28px; margin: 0 8px; }
-  .step { font-size: 0.64rem; gap: 7px; }
-  h1 { font-size: 1.65rem; }
-  .modal-card { padding: 28px 20px 24px; }
-  .modal-btns { flex-direction: column; }
-  .grid-3 { grid-template-columns: 1fr; }
-  .credit-row { grid-template-columns: 1fr auto; }
-}
- 
-@media (max-width: 380px) {
-  h1 { font-size: 1.35rem; }
-  .btn { font-size: 0.78rem; padding: 14px 18px; }
-  .site-logo { height: 30px; }
-}
+@media (max-width: 700px) { .grid { grid-template-columns: 1fr; gap: 18px; } .credits-panels { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr 1fr; } .credit-row { grid-template-columns: 1fr auto; } }
+@media (max-width: 640px) { .wrapper { padding: 30px 14px 64px; } #releaseForm { padding: 22px 16px; } .step-line { max-width: 28px; margin: 0 8px; } .step { font-size: 0.64rem; gap: 7px; } h1 { font-size: 1.65rem; } .modal-card { padding: 28px 20px 24px; } .modal-btns { flex-direction: column; } .grid-3 { grid-template-columns: 1fr; } .credit-row { grid-template-columns: 1fr auto; } }
+@media (max-width: 380px) { h1 { font-size: 1.35rem; } .btn { font-size: 0.78rem; padding: 14px 18px; } .site-logo { height: 30px; } }
 </style>
 </head>
  
 <body>
 <div class="wrapper">
- 
   <header class="site-header">
     <img src="logo.png" alt="Logo" class="site-logo">
   </header>
  
   <h1>Create New Release</h1>
-  <p class="subtitle">Enter your release details.Select Stores on the next step.</p>
+  <p class="subtitle">Enter your release details. Select Stores on the next step.</p>
  
   <div class="step-indicator">
-    <div class="step active">
-      <div class="step-num">1</div>
-      <span>Release Info</span>
-    </div>
+    <div class="step active"><div class="step-num">1</div><span>Release Info</span></div>
     <div class="step-line"></div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <span>Select Stores</span>
-    </div>
+    <div class="step"><div class="step-num">2</div><span>Select Stores</span></div>
     <div class="step-line"></div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <span>Review</span>
-    </div>
+    <div class="step"><div class="step-num">3</div><span>Review</span></div>
   </div>
  
   <form id="releaseForm">
  
-    <!-- ── ARTIST INFO ── -->
+    <!-- ARTIST INFO -->
     <div class="section-label">Artist Info</div>
     <div class="grid">
- 
       <div class="field artist-field" id="artistFieldWrap" style="grid-column: 1 / -1;">
         <label>
           <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
@@ -873,291 +258,128 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         <input type="hidden" id="artistName" name="artistName">
         <div class="artist-dropdown" id="artistDropdown"></div>
       </div>
- 
       <div class="field">
         <label>Featuring Artist</label>
         <input id="featuring" placeholder="ft. Artist Name (optional)">
       </div>
- 
       <div class="field">
         <label>Country</label>
         <div class="flag-select-wrapper">
           <span class="flag-icon" id="countryFlag">🌍</span>
           <select id="country">
-            <option value="Afghanistan" data-flag="🇦🇫">🇦🇫 Afghanistan</option>
-            <option value="Albania" data-flag="🇦🇱">🇦🇱 Albania</option>
-            <option value="Algeria" data-flag="🇩🇿">🇩🇿 Algeria</option>
-            <option value="Andorra" data-flag="🇦🇩">🇦🇩 Andorra</option>
-            <option value="Angola" data-flag="🇦🇴">🇦🇴 Angola</option>
-            <option value="Antigua and Barbuda" data-flag="🇦🇬">🇦🇬 Antigua and Barbuda</option>
-            <option value="Argentina" data-flag="🇦🇷">🇦🇷 Argentina</option>
-            <option value="Armenia" data-flag="🇦🇲">🇦🇲 Armenia</option>
-            <option value="Australia" data-flag="🇦🇺">🇦🇺 Australia</option>
-            <option value="Austria" data-flag="🇦🇹">🇦🇹 Austria</option>
-            <option value="Azerbaijan" data-flag="🇦🇿">🇦🇿 Azerbaijan</option>
-            <option value="Bahamas, The" data-flag="🇧🇸">🇧🇸 Bahamas</option>
-            <option value="Bahrain" data-flag="🇧🇭">🇧🇭 Bahrain</option>
-            <option value="Bangladesh" data-flag="🇧🇩">🇧🇩 Bangladesh</option>
-            <option value="Barbados" data-flag="🇧🇧">🇧🇧 Barbados</option>
-            <option value="Belarus" data-flag="🇧🇾">🇧🇾 Belarus</option>
-            <option value="Belgium" data-flag="🇧🇪">🇧🇪 Belgium</option>
-            <option value="Belize" data-flag="🇧🇿">🇧🇿 Belize</option>
-            <option value="Benin" data-flag="🇧🇯">🇧🇯 Benin</option>
-            <option value="Bolivia" data-flag="🇧🇴">🇧🇴 Bolivia</option>
-            <option value="Brazil" data-flag="🇧🇷">🇧🇷 Brazil</option>
-            <option value="Brunei" data-flag="🇧🇳">🇧🇳 Brunei</option>
-            <option value="Bulgaria" data-flag="🇧🇬">🇧🇬 Bulgaria</option>
-            <option value="Cameroon" data-flag="🇨🇲">🇨🇲 Cameroon</option>
-            <option value="Canada" data-flag="🇨🇦">🇨🇦 Canada</option>
-            <option value="Chile" data-flag="🇨🇱">🇨🇱 Chile</option>
-            <option value="China" data-flag="🇨🇳">🇨🇳 China</option>
-            <option value="Colombia" data-flag="🇨🇴">🇨🇴 Colombia</option>
-            <option value="Democratic Republic of the Congo" data-flag="🇨🇩">🇨🇩 DR Congo</option>
-            <option value="Denmark" data-flag="🇩🇰">🇩🇰 Denmark</option>
-            <option value="Dominican Republic" data-flag="🇩🇴">🇩🇴 Dominican Republic</option>
-            <option value="Ecuador" data-flag="🇪🇨">🇪🇨 Ecuador</option>
-            <option value="Egypt" data-flag="🇪🇬">🇪🇬 Egypt</option>
-            <option value="Ethiopia" data-flag="🇪🇹">🇪🇹 Ethiopia</option>
-            <option value="France" data-flag="🇫🇷">🇫🇷 France</option>
-            <option value="Germany" data-flag="🇩🇪">🇩🇪 Germany</option>
-            <option value="Ghana" data-flag="🇬🇭">🇬🇭 Ghana</option>
-            <option value="Greece" data-flag="🇬🇷">🇬🇷 Greece</option>
-            <option value="Guatemala" data-flag="🇬🇹">🇬🇹 Guatemala</option>
-            <option value="Haiti" data-flag="🇭🇹">🇭🇹 Haiti</option>
-            <option value="Honduras" data-flag="🇭🇳">🇭🇳 Honduras</option>
-            <option value="India" data-flag="🇮🇳">🇮🇳 India</option>
-            <option value="Indonesia" data-flag="🇮🇩">🇮🇩 Indonesia</option>
-            <option value="Iran" data-flag="🇮🇷">🇮🇷 Iran</option>
-            <option value="Iraq" data-flag="🇮🇶">🇮🇶 Iraq</option>
-            <option value="Ireland" data-flag="🇮🇪">🇮🇪 Ireland</option>
-            <option value="Israel" data-flag="🇮🇱">🇮🇱 Israel</option>
-            <option value="Italy" data-flag="🇮🇹">🇮🇹 Italy</option>
-            <option value="Jamaica" data-flag="🇯🇲">🇯🇲 Jamaica</option>
-            <option value="Japan" data-flag="🇯🇵">🇯🇵 Japan</option>
-            <option value="Kenya" data-flag="🇰🇪">🇰🇪 Kenya</option>
-            <option value="Malaysia" data-flag="🇲🇾">🇲🇾 Malaysia</option>
-            <option value="Mexico" data-flag="🇲🇽">🇲🇽 Mexico</option>
-            <option value="Morocco" data-flag="🇲🇦">🇲🇦 Morocco</option>
-            <option value="Netherlands, The" data-flag="🇳🇱">🇳🇱 Netherlands</option>
-            <option value="New Zealand" data-flag="🇳🇿">🇳🇿 New Zealand</option>
-            <option value="Nigeria" data-flag="🇳🇬">🇳🇬 Nigeria</option>
-            <option value="Norway" data-flag="🇳🇴">🇳🇴 Norway</option>
-            <option value="Pakistan" data-flag="🇵🇰">🇵🇰 Pakistan</option>
-            <option value="Panama" data-flag="🇵🇦">🇵🇦 Panama</option>
-            <option value="Peru" data-flag="🇵🇪">🇵🇪 Peru</option>
-            <option value="Philippines" data-flag="🇵🇭">🇵🇭 Philippines</option>
-            <option value="Poland" data-flag="🇵🇱">🇵🇱 Poland</option>
-            <option value="Portugal" data-flag="🇵🇹">🇵🇹 Portugal</option>
-            <option value="Republic of Korea (South Korea)" data-flag="🇰🇷">🇰🇷 South Korea</option>
-            <option value="Romania" data-flag="🇷🇴">🇷🇴 Romania</option>
-            <option value="Russia" data-flag="🇷🇺">🇷🇺 Russia</option>
-            <option value="Saudi Arabia" data-flag="🇸🇦">🇸🇦 Saudi Arabia</option>
-            <option value="Senegal" data-flag="🇸🇳">🇸🇳 Senegal</option>
-            <option value="Serbia" data-flag="🇷🇸">🇷🇸 Serbia</option>
-            <option value="Singapore" data-flag="🇸🇬">🇸🇬 Singapore</option>
-            <option value="South Africa" data-flag="🇿🇦">🇿🇦 South Africa</option>
-            <option value="Spain" data-flag="🇪🇸">🇪🇸 Spain</option>
-            <option value="Sri Lanka" data-flag="🇱🇰">🇱🇰 Sri Lanka</option>
-            <option value="Sweden" data-flag="🇸🇪">🇸🇪 Sweden</option>
-            <option value="Switzerland" data-flag="🇨🇭">🇨🇭 Switzerland</option>
-            <option value="Tanzania" data-flag="🇹🇿">🇹🇿 Tanzania</option>
-            <option value="Thailand" data-flag="🇹🇭">🇹🇭 Thailand</option>
-            <option value="Trinidad and Tobago" data-flag="🇹🇹">🇹🇹 Trinidad and Tobago</option>
-            <option value="Tunisia" data-flag="🇹🇳">🇹🇳 Tunisia</option>
-            <option value="Turkey" data-flag="🇹🇷">🇹🇷 Turkey</option>
-            <option value="Uganda" data-flag="🇺🇬">🇺🇬 Uganda</option>
-            <option value="Ukraine" data-flag="🇺🇦">🇺🇦 Ukraine</option>
-            <option value="United Arab Emirates, The" data-flag="🇦🇪">🇦🇪 United Arab Emirates</option>
-            <option value="United Kingdom, The" data-flag="🇬🇧">🇬🇧 United Kingdom</option>
-            <option value="United States of America" data-flag="🇺🇸">🇺🇸 United States</option>
-            <option value="Uruguay" data-flag="🇺🇾">🇺🇾 Uruguay</option>
-            <option value="Venezuela" data-flag="🇻🇪">🇻🇪 Venezuela</option>
-            <option value="Vietnam" data-flag="🇻🇳">🇻🇳 Vietnam</option>
-            <option value="Zambia" data-flag="🇿🇲">🇿🇲 Zambia</option>
-            <option value="Zimbabwe" data-flag="🇿🇼">🇿🇼 Zimbabwe</option>
+            <option value="Afghanistan" data-flag="🇦🇫">🇦🇫 Afghanistan</option><option value="Albania" data-flag="🇦🇱">🇦🇱 Albania</option><option value="Algeria" data-flag="🇩🇿">🇩🇿 Algeria</option><option value="Angola" data-flag="🇦🇴">🇦🇴 Angola</option><option value="Argentina" data-flag="🇦🇷">🇦🇷 Argentina</option><option value="Australia" data-flag="🇦🇺">🇦🇺 Australia</option><option value="Austria" data-flag="🇦🇹">🇦🇹 Austria</option><option value="Bangladesh" data-flag="🇧🇩">🇧🇩 Bangladesh</option><option value="Belgium" data-flag="🇧🇪">🇧🇪 Belgium</option><option value="Bolivia" data-flag="🇧🇴">🇧🇴 Bolivia</option><option value="Brazil" data-flag="🇧🇷">🇧🇷 Brazil</option><option value="Cameroon" data-flag="🇨🇲">🇨🇲 Cameroon</option><option value="Canada" data-flag="🇨🇦">🇨🇦 Canada</option><option value="Chile" data-flag="🇨🇱">🇨🇱 Chile</option><option value="China" data-flag="🇨🇳">🇨🇳 China</option><option value="Colombia" data-flag="🇨🇴">🇨🇴 Colombia</option><option value="Democratic Republic of the Congo" data-flag="🇨🇩">🇨🇩 DR Congo</option><option value="Denmark" data-flag="🇩🇰">🇩🇰 Denmark</option><option value="Dominican Republic" data-flag="🇩🇴">🇩🇴 Dominican Republic</option><option value="Ecuador" data-flag="🇪🇨">🇪🇨 Ecuador</option><option value="Egypt" data-flag="🇪🇬">🇪🇬 Egypt</option><option value="Ethiopia" data-flag="🇪🇹">🇪🇹 Ethiopia</option><option value="France" data-flag="🇫🇷">🇫🇷 France</option><option value="Germany" data-flag="🇩🇪">🇩🇪 Germany</option><option value="Ghana" data-flag="🇬🇭">🇬🇭 Ghana</option><option value="Greece" data-flag="🇬🇷">🇬🇷 Greece</option><option value="India" data-flag="🇮🇳">🇮🇳 India</option><option value="Indonesia" data-flag="🇮🇩">🇮🇩 Indonesia</option><option value="Iran" data-flag="🇮🇷">🇮🇷 Iran</option><option value="Iraq" data-flag="🇮🇶">🇮🇶 Iraq</option><option value="Ireland" data-flag="🇮🇪">🇮🇪 Ireland</option><option value="Israel" data-flag="🇮🇱">🇮🇱 Israel</option><option value="Italy" data-flag="🇮🇹">🇮🇹 Italy</option><option value="Jamaica" data-flag="🇯🇲">🇯🇲 Jamaica</option><option value="Japan" data-flag="🇯🇵">🇯🇵 Japan</option><option value="Kenya" data-flag="🇰🇪">🇰🇪 Kenya</option><option value="Malaysia" data-flag="🇲🇾">🇲🇾 Malaysia</option><option value="Mexico" data-flag="🇲🇽">🇲🇽 Mexico</option><option value="Morocco" data-flag="🇲🇦">🇲🇦 Morocco</option><option value="Netherlands, The" data-flag="🇳🇱">🇳🇱 Netherlands</option><option value="New Zealand" data-flag="🇳🇿">🇳🇿 New Zealand</option><option value="Nigeria" data-flag="🇳🇬">🇳🇬 Nigeria</option><option value="Norway" data-flag="🇳🇴">🇳🇴 Norway</option><option value="Pakistan" data-flag="🇵🇰">🇵🇰 Pakistan</option><option value="Peru" data-flag="🇵🇪">🇵🇪 Peru</option><option value="Philippines" data-flag="🇵🇭">🇵🇭 Philippines</option><option value="Poland" data-flag="🇵🇱">🇵🇱 Poland</option><option value="Portugal" data-flag="🇵🇹">🇵🇹 Portugal</option><option value="Republic of Korea (South Korea)" data-flag="🇰🇷">🇰🇷 South Korea</option><option value="Romania" data-flag="🇷🇴">🇷🇴 Romania</option><option value="Russia" data-flag="🇷🇺">🇷🇺 Russia</option><option value="Saudi Arabia" data-flag="🇸🇦">🇸🇦 Saudi Arabia</option><option value="Senegal" data-flag="🇸🇳">🇸🇳 Senegal</option><option value="Singapore" data-flag="🇸🇬">🇸🇬 Singapore</option><option value="South Africa" data-flag="🇿🇦">🇿🇦 South Africa</option><option value="Spain" data-flag="🇪🇸">🇪🇸 Spain</option><option value="Sweden" data-flag="🇸🇪">🇸🇪 Sweden</option><option value="Switzerland" data-flag="🇨🇭">🇨🇭 Switzerland</option><option value="Tanzania" data-flag="🇹🇿">🇹🇿 Tanzania</option><option value="Thailand" data-flag="🇹🇭">🇹🇭 Thailand</option><option value="Trinidad and Tobago" data-flag="🇹🇹">🇹🇹 Trinidad and Tobago</option><option value="Tunisia" data-flag="🇹🇳">🇹🇳 Tunisia</option><option value="Turkey" data-flag="🇹🇷">🇹🇷 Turkey</option><option value="Uganda" data-flag="🇺🇬">🇺🇬 Uganda</option><option value="Ukraine" data-flag="🇺🇦">🇺🇦 Ukraine</option><option value="United Arab Emirates, The" data-flag="🇦🇪">🇦🇪 United Arab Emirates</option><option value="United Kingdom, The" data-flag="🇬🇧">🇬🇧 United Kingdom</option><option value="United States of America" data-flag="🇺🇸">🇺🇸 United States</option><option value="Uruguay" data-flag="🇺🇾">🇺🇾 Uruguay</option><option value="Venezuela" data-flag="🇻🇪">🇻🇪 Venezuela</option><option value="Vietnam" data-flag="🇻🇳">🇻🇳 Vietnam</option><option value="Zambia" data-flag="🇿🇲">🇿🇲 Zambia</option><option value="Zimbabwe" data-flag="🇿🇼">🇿🇼 Zimbabwe</option>
           </select>
         </div>
       </div>
- 
       <div class="field">
         <label>Phone Number</label>
         <input id="number" placeholder="+1 000 000 0000" required>
       </div>
     </div>
  
-    <!-- ── RELEASE DETAILS ── -->
+    <!-- RELEASE DETAILS -->
     <div class="section-label">Release Details</div>
     <div class="grid">
-      <div class="field">
-        <label>Release Title</label>
-        <input id="releaseTitle" placeholder="Name of your single, EP or album" required>
-      </div>
-      <div class="field">
-        <label>Release Type</label>
-        <div class="select-wrapper">
-          <select id="releaseType">
-            <option>Single</option>
-            <option>EP</option>
-            <option>Album</option>
-          </select>
-        </div>
-      </div>
+      <div class="field"><label>Release Title</label><input id="releaseTitle" placeholder="Name of your single, EP or album" required></div>
+      <div class="field"><label>Release Type</label><div class="select-wrapper"><select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select></div></div>
       <div class="field">
         <label>Genre</label>
         <div class="select-wrapper">
           <select id="genre">
-            <optgroup label="🎵 Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>Dream Pop</option><option>Art Pop</option><option>K-Pop</option><option>Afropop</option></optgroup>
-            <optgroup label="🎤 Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Cloud Rap</option><option>Conscious Hip-Hop</option><option>Gangsta Rap</option><option>Lo-Fi Hip-Hop</option><option>Emo Rap</option><option>Afro Trap</option><option>Grime</option></optgroup>
-            <optgroup label="🎶 R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Contemporary R&amp;B</option><option>Funk</option><option>Gospel</option></optgroup>
-            <optgroup label="🎧 Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Tech House</option><option>Afro House</option><option>Techno</option><option>Trance</option><option>Drum and Bass</option><option>Dubstep</option><option>Ambient</option><option>Trip-Hop</option><option>Future Bass</option></optgroup>
-            <optgroup label="🎸 Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Hard Rock</option><option>Punk Rock</option><option>Grunge</option><option>Shoegaze</option><option>Emo</option></optgroup>
-            <optgroup label="🌍 Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Afro-R&amp;B</option><option>Amapiano</option><option>Jùjú</option><option>Fuji</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
-            <optgroup label="🌴 Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option><option>Ska</option><option>Dub</option></optgroup>
-            <optgroup label="💃 Latin"><option>Latin Pop</option><option>Salsa</option><option>Merengue</option><option>Bachata</option><option>Cumbia</option><option>Bossa Nova</option><option>Samba</option></optgroup>
-            <optgroup label="🎷 Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Smooth Jazz</option><option>Bebop</option><option>Swing</option><option>Soul Blues</option></optgroup>
-            <optgroup label="🎻 Classical / Orchestral"><option>Classical</option><option>Orchestral</option><option>Opera</option><option>Neoclassical</option><option>Film Score</option><option>Soundtrack</option></optgroup>
-            <optgroup label="🤠 Country / Folk"><option>Country</option><option>Folk</option><option>Bluegrass</option><option>Americana</option><option>Indie Folk</option><option>Singer-Songwriter</option></optgroup>
+            <optgroup label="🎵 Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>K-Pop</option><option>Afropop</option></optgroup>
+            <optgroup label="🎤 Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Grime</option><option>Afro Trap</option></optgroup>
+            <optgroup label="🎶 R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Funk</option><option>Gospel</option></optgroup>
+            <optgroup label="🎧 Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Afro House</option><option>Techno</option><option>Ambient</option></optgroup>
+            <optgroup label="🎸 Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Punk Rock</option></optgroup>
+            <optgroup label="🌍 Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Amapiano</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
+            <optgroup label="🌴 Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option></optgroup>
+            <optgroup label="💃 Latin"><option>Latin Pop</option><option>Salsa</option><option>Bachata</option><option>Bossa Nova</option></optgroup>
+            <optgroup label="🎷 Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Soul Blues</option></optgroup>
+            <optgroup label="🎻 Classical"><option>Classical</option><option>Orchestral</option><option>Film Score</option></optgroup>
             <optgroup label="✝️ Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option></optgroup>
-            <optgroup label="⚡ Other"><option>Experimental</option><option>Spoken Word</option><option>Lo-Fi</option><option>Other</option></optgroup>
+            <optgroup label="⚡ Other"><option>Experimental</option><option>Lo-Fi</option><option>Spoken Word</option><option>Other</option></optgroup>
           </select>
         </div>
       </div>
-      <div class="field">
-        <label>Language</label>
-        <input id="language" placeholder="e.g. English, French, Twi">
-      </div>
-      <div class="field">
-        <label>Release Date</label>
-        <input id="releaseDate" type="date">
-      </div>
-      <div class="field">
-        <label>Explicit Content</label>
-        <div class="select-wrapper">
-          <select id="explicit">
-            <option>No</option>
-            <option>Yes</option>
-          </select>
-        </div>
-      </div>
+      <div class="field"><label>Language</label><input id="language" placeholder="e.g. English, French, Twi"></div>
+      <div class="field"><label>Release Date</label><input id="releaseDate" type="date"></div>
+      <div class="field"><label>Explicit Content</label><div class="select-wrapper"><select id="explicit"><option>No</option><option>Yes</option></select></div></div>
     </div>
  
-    <!-- ── LABEL & RIGHTS ── -->
+    <!-- LABEL & RIGHTS -->
     <div class="section-label">Label & Rights</div>
     <div class="grid">
-      <div class="field">
-        <label>Label Name</label>
-        <input id="label" placeholder="Independent or label name">
-      </div>
-      <div class="field">
-        <label>Copyright Holder</label>
-        <input id="copyright" placeholder="© 2025 Your Name or Company">
-      </div>
+      <div class="field"><label>Label Name</label><input id="label" placeholder="Independent or label name"></div>
+      <div class="field"><label>Copyright Holder</label><input id="copyright" placeholder="© 2025 Your Name or Company"></div>
     </div>
  
-    <!-- ── ISRC / CATALOG ── -->
+    <!-- IDENTIFIERS -->
     <div class="section-label">Identifiers</div>
     <div class="grid-3">
-      <div class="field">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h5"/></svg>
-          ISRC Code
-        </label>
-        <input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.08em;">
-      </div>
-      <div class="field">
-        <label>UPC / EAN Barcode</label>
-        <input id="upc" placeholder="Leave blank to auto-assign" maxlength="14">
-      </div>
-      <div class="field">
-        <label>Catalog Number</label>
-        <input id="catalogNumber" placeholder="e.g. LAB-001 (optional)">
-      </div>
+      <div class="field"><label>ISRC Code</label><input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.08em;"></div>
+      <div class="field"><label>UPC / EAN Barcode</label><input id="upc" placeholder="Leave blank to auto-assign" maxlength="14"></div>
+      <div class="field"><label>Catalog Number</label><input id="catalogNumber" placeholder="e.g. LAB-001 (optional)"></div>
     </div>
  
-    <!-- ══════════════════════════════════
-         CREDITS — PRODUCTION TEAM
-         ══════════════════════════════════ -->
+    <!-- PRODUCTION CREDITS -->
     <div class="section-label">
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       Production Credits
     </div>
- 
     <div class="credits-panels">
- 
-      <!-- PRODUCERS / ENGINEERS PANEL -->
       <div class="credits-panel">
-        <div class="credits-panel-title">
-          <span class="panel-icon"></span>
-          Producers &amp; Engineers
-        </div>
+        <div class="credits-panel-title"><span class="panel-icon">🎛️</span>Producers &amp; Engineers</div>
         <div class="credits-list" id="producerList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('producer')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           Add Producer / Engineer
         </button>
       </div>
+      <div class="credits-panel">
+        <div class="credits-panel-title"><span class="panel-icon">🎸</span>Musicians &amp; Session Artists</div>
+        <div class="credits-list" id="musicianList"></div>
+        <button type="button" class="add-credit-btn" onclick="addCredit('musician')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Musician / Session Artist
+        </button>
+      </div>
+    </div>
  
-      <!-- MUSICIANS / SESSION PANEL -->
-    
- 
-    <!-- ══════════════════════════════════
-         CREDITS — SONGWRITING / PUBLISHING
-         ══════════════════════════════════ -->
+    <!-- SONGWRITING & PUBLISHING -->
     <div class="section-label">
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       Songwriting &amp; Publishing
     </div>
- 
     <div class="credits-panels">
- 
-      <!-- WRITERS PANEL -->
       <div class="credits-panel">
-        <div class="credits-panel-title">
-          <span class="panel-icon"></span>
-          Songwriters &amp; Composers
-        </div>
+        <div class="credits-panel-title"><span class="panel-icon">✍️</span>Songwriters &amp; Composers</div>
         <div class="credits-list" id="writerList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           Add Songwriter / Composer
         </button>
       </div>
- 
-      <!-- PUBLISHING PANEL -->
       <div class="credits-panel">
-        <div class="credits-panel-title">
-          <span class="panel-icon"></span>
-          Publishing &amp; PRO
-        </div>
+        <div class="credits-panel-title"><span class="panel-icon">📋</span>Publishing &amp; PRO</div>
         <div class="credits-list" id="publishingList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('publishing')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           Add Publisher / PRO Info
         </button>
       </div>
- 
     </div>
  
-    <!-- ── CONTACT & ACCOUNT ── -->
+    <!-- CONTACT -->
     <div class="section-label">Contact & Account</div>
     <div class="grid">
-      <div class="field">
-        <label>Email</label>
-        <input id="email" type="email" placeholder="your@email.com" required>
-      </div>
-      <div class="field">
-        <label>Enter Referral Code</label>
-        <input id="refferal" placeholder="Leave blank if you don't have one">
-      </div>
+      <div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com" required></div>
+      <div class="field"><label>Enter Referral Code</label><input id="refferal" placeholder="Leave blank if you don't have one"></div>
     </div>
  
-    <!-- ── LYRICS ── -->
+    <!-- LYRICS -->
     <div class="section-label">Lyrics</div>
     <div class="grid">
-      <div class="field">
-        <label>Add Lyrics (Optional)</label>
-        <textarea id="description" placeholder="Paste your lyrics here…"></textarea>
-      </div>
+      <div class="field"><label>Add Lyrics (Optional)</label><textarea id="description" placeholder="Paste your lyrics here…"></textarea></div>
     </div>
  
     <button class="btn" id="submitBtn" type="submit">
@@ -1165,7 +387,6 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       Save &amp; Continue
     </button>
     <div id="statusMsg"></div>
- 
     <p class="form-footer-note">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Your data is encrypted and stored securely
@@ -1173,7 +394,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   </form>
 </div>
  
-<!-- ── ARTIST MODAL ── -->
+<!-- ARTIST MODAL -->
 <div class="modal-overlay" id="artistModal" style="display:none;" aria-modal="true" role="dialog">
   <div class="modal-card" id="artistModalCard">
     <div class="modal-header">
@@ -1207,7 +428,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
  
-<!-- ── COUNTRY FLAG ── -->
+<!-- COUNTRY FLAG -->
 <script>
 const countrySelect = document.getElementById('country');
 const flagIcon      = document.getElementById('countryFlag');
@@ -1219,420 +440,192 @@ countrySelect.addEventListener('change', updateFlag);
 updateFlag();
 </script>
  
-<!-- ══════════════════════════════════════════
-     CREDITS ENGINE
-     ══════════════════════════════════════════ -->
+<!-- CREDITS ENGINE -->
 <script>
-/* ── Role definitions ── */
 const ROLES = {
-  producer: [
-    'Producer',
-    'Executive Producer',
-    'Co-Producer',
-    'Beat Maker / Beatmaker',
-    'Mixing Engineer',
-    'Mastering Engineer',
-    'Recording Engineer',
-    'Assistant Recording Engineer',
-    'Assistant Mixing Engineer',
-    'Vocal Producer',
-    'Sound Designer',
-    'Re-mixer',
-    'Programmer',
-    'Audio Editor',
-    'Vocal Tuning Engineer',
-    'Drum Programmer',
-    'Synthesizer Programmer',
-  ],
-  musician: [
-    'Vocalist',
-    'Background Vocalist',
-    'Lead Vocalist',
-    'Rapper',
-    'Guitarist',
-    'Lead Guitarist',
-    'Rhythm Guitarist',
-    'Bassist',
-    'Drummer',
-    'Percussionist',
-    'Pianist',
-    'Keyboardist',
-    'Organist',
-    'Violinist',
-    'Cellist',
-    'Violist',
-    'Trumpeter',
-    'Saxophonist',
-    'Trombonist',
-    'Flutist',
-    'Harpist',
-    'DJ / Turntablist',
-    'Session Musician',
-    'String Arranger',
-    'Horn Arranger',
-    'Choir Director',
-    'Conductor',
-  ],
-  writer: [
-    'Songwriter',
-    'Lyricist',
-    'Composer',
-    'Co-Writer',
-    'Melody Writer',
-    'Arranger',
-    'Translator / Adaptor',
-    'Top-Liner',
-    'Concept Writer',
-    'Traditional / Public Domain',
-  ],
-  publishing: [
-    'Publishing Company',
-    'Sub-Publisher',
-    'Music Publisher',
-    'PRO Affiliation (ASCAP)',
-    'PRO Affiliation (BMI)',
-    'PRO Affiliation (SESAC)',
-    'PRO Affiliation (SOCAN)',
-    'PRO Affiliation (PRS)',
-    'PRO Affiliation (GEMA)',
-    'PRO Affiliation (APRA)',
-    'PRO Affiliation (Other)',
-    'Self-Published',
-  ]
+  producer: ['Producer','Executive Producer','Co-Producer','Beat Maker / Beatmaker','Mixing Engineer','Mastering Engineer','Recording Engineer','Assistant Recording Engineer','Assistant Mixing Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor','Vocal Tuning Engineer','Drum Programmer','Synthesizer Programmer'],
+  musician: ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Lead Guitarist','Rhythm Guitarist','Bassist','Drummer','Percussionist','Pianist','Keyboardist','Organist','Violinist','Cellist','Trumpeter','Saxophonist','Trombonist','Flutist','Harpist','DJ / Turntablist','Session Musician','String Arranger','Horn Arranger','Choir Director','Conductor'],
+  writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Translator / Adaptor','Top-Liner','Concept Writer','Traditional / Public Domain'],
+  publishing: ['Publishing Company','Sub-Publisher','Music Publisher','PRO Affiliation (ASCAP)','PRO Affiliation (BMI)','PRO Affiliation (SESAC)','PRO Affiliation (SOCAN)','PRO Affiliation (PRS)','PRO Affiliation (GEMA)','PRO Affiliation (APRA)','PRO Affiliation (Other)','Self-Published']
 };
- 
 const PLACEHOLDERS = {
-  producer:   { name: 'e.g. Metro Boomin',       role: 'Select role…' },
-  musician:   { name: 'e.g. John Mayer',          role: 'Select role…' },
-  writer:     { name: 'e.g. Max Martin',          role: 'Select role…' },
-  publishing: { name: 'e.g. Sony Music Publishing', role: 'Select type…' }
+  producer:   { name: 'e.g. Metro Boomin',           role: 'Select role…' },
+  musician:   { name: 'e.g. John Mayer',              role: 'Select role…' },
+  writer:     { name: 'e.g. Max Martin',              role: 'Select role…' },
+  publishing: { name: 'e.g. Sony Music Publishing',   role: 'Select type…' }
 };
+const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList', publishing:'publishingList' };
+const credits = { producer:[], musician:[], writer:[], publishing:[] };
  
-const LIST_IDS = {
-  producer:   'producerList',
-  musician:   'musicianList',
-  writer:     'writerList',
-  publishing: 'publishingList',
-};
- 
-/* ── State ── */
-const credits = { producer: [], musician: [], writer: [], publishing: [] };
- 
-/* ── Add a new credit row ── */
 window.addCredit = function(type) {
-  const list    = document.getElementById(LIST_IDS[type]);
-  const idx     = credits[type].length;
-  const entry   = { name: '', role: '', ipi: '' };
-  credits[type].push(entry);
- 
+  const list  = document.getElementById(LIST_IDS[type]);
+  const idx   = credits[type].length;
+  credits[type].push({ name:'', role:'', ipi:'' });
   const row = document.createElement('div');
   row.className = 'credit-row';
-  row.dataset.type = type;
-  row.dataset.idx  = idx;
-  row.dataset.num  = `${type.charAt(0).toUpperCase() + type.slice(1)} ${idx + 1}`;
- 
-  const roleOptions = ROLES[type].map(r =>
-    `<option value="${r}">${r}</option>`
-  ).join('');
- 
-  const showIPI = (type === 'writer' || type === 'publishing');
- 
+  row.dataset.type = type; row.dataset.idx = idx;
+  row.dataset.num = `${type.charAt(0).toUpperCase()+type.slice(1)} ${idx+1}`;
+  const roleOptions = ROLES[type].map(r=>`<option value="${r}">${r}</option>`).join('');
+  const showIPI = (type==='writer'||type==='publishing');
   row.innerHTML = `
     <div class="credit-input-wrap">
       <div class="credit-input-label">Full Name</div>
-      <input
-        class="credit-input"
-        type="text"
-        placeholder="${PLACEHOLDERS[type].name}"
-        oninput="updateCredit('${type}',${idx},'name',this.value)"
-      >
+      <input class="credit-input" type="text" placeholder="${PLACEHOLDERS[type].name}" oninput="updateCredit('${type}',${idx},'name',this.value)">
     </div>
     <div class="credit-input-wrap">
       <div class="credit-input-label">Role</div>
       <div class="credit-select-wrap">
-        <select
-          class="credit-input"
-          onchange="updateCredit('${type}',${idx},'role',this.value)"
-        >
-          <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>
-          ${roleOptions}
+        <select class="credit-input" onchange="updateCredit('${type}',${idx},'role',this.value)">
+          <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>${roleOptions}
         </select>
       </div>
     </div>
-    ${showIPI ? `
-    <div class="credit-input-wrap" style="grid-column:1 / -1;">
-      <div class="credit-input-label">${type === 'writer' ? 'IPI / CAE Number (optional)' : 'Publisher IPI / Account No. (optional)'}</div>
-      <input
-        class="credit-input"
-        type="text"
-        placeholder="${type === 'writer' ? 'e.g. 00000000497' : 'e.g. 00000000497'}"
-        oninput="updateCredit('${type}',${idx},'ipi',this.value)"
-      >
-    </div>` : ''}
-    <button
-      type="button"
-      class="credit-remove"
-      title="Remove"
-      onclick="removeCredit('${type}',this.closest('.credit-row'))"
-    >✕</button>
-  `;
- 
-  /* Adjust grid for rows with IPI */
-  if (showIPI) {
-    row.style.gridTemplateColumns = '1fr 1fr auto';
-    row.style.flexWrap = 'wrap';
-  }
- 
+    ${showIPI?`<div class="credit-input-wrap" style="grid-column:1/-1;"><div class="credit-input-label">${type==='writer'?'IPI / CAE Number (optional)':'Publisher IPI / Account No. (optional)'}</div><input class="credit-input" type="text" placeholder="e.g. 00000000497" oninput="updateCredit('${type}',${idx},'ipi',this.value)"></div>`:''}
+    <button type="button" class="credit-remove" title="Remove" onclick="removeCredit('${type}',this.closest('.credit-row'))">✕</button>`;
   list.appendChild(row);
   row.querySelector('input.credit-input')?.focus();
 };
  
-window.updateCredit = function(type, idx, field, value) {
-  if (credits[type][idx]) credits[type][idx][field] = value;
-};
+window.updateCredit = function(type,idx,field,value) { if(credits[type][idx]) credits[type][idx][field]=value; };
  
-window.removeCredit = function(type, row) {
-  const idx = parseInt(row.dataset.idx);
-  credits[type].splice(idx, 1);
-  row.style.animation = 'rowIn 0.2s ease reverse';
-  setTimeout(() => {
+window.removeCredit = function(type,row) {
+  const idx=parseInt(row.dataset.idx);
+  credits[type].splice(idx,1);
+  row.style.animation='rowIn 0.2s ease reverse';
+  setTimeout(()=>{
     row.remove();
-    /* Re-number remaining rows */
-    document.getElementById(LIST_IDS[type])
-      .querySelectorAll('.credit-row')
-      .forEach((r, i) => {
-        r.dataset.idx = i;
-        r.dataset.num = `${type.charAt(0).toUpperCase() + type.slice(1)} ${i + 1}`;
-      });
-  }, 180);
+    document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r,i)=>{
+      r.dataset.idx=i; r.dataset.num=`${type.charAt(0).toUpperCase()+type.slice(1)} ${i+1}`;
+    });
+  },180);
 };
  
-/* ── Collect credits for Firebase ── */
-function collectCredits() {
+/* Format credits array → readable multiline string for email */
+window.formatCreditsForEmail = function(arr) {
+  if (!arr || arr.length === 0) return 'None';
+  const lines = arr
+    .filter(c => c.name && c.name.trim() !== '')
+    .map(c => {
+      let line = `• ${c.name}`;
+      if (c.role) line += ` — ${c.role}`;
+      if (c.ipi)  line += ` (IPI: ${c.ipi})`;
+      return line;
+    });
+  return lines.length > 0 ? lines.join('\n') : 'None';
+};
+ 
+/* Collect credits for Firestore */
+window.collectCredits = function() {
   const result = {};
   ['producer','musician','writer','publishing'].forEach(type => {
-    result[type] = credits[type].filter(c => c.name.trim() !== '');
+    result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
   });
   return result;
-}
+};
 </script>
  
-<!-- ── ARTIST SEARCH ENGINE ── -->
+<!-- ARTIST SEARCH ENGINE -->
 <script>
-(function() {
-  const selectedArtists = [];
-  const searchInput    = document.getElementById('artistSearchInput');
-  const pillBox        = document.getElementById('artistPillBox');
-  const dropdown       = document.getElementById('artistDropdown');
-  const hiddenInput    = document.getElementById('artistName');
-  const modal          = document.getElementById('artistModal');
-  const modalCard      = document.getElementById('artistModalCard');
-  const modalNameInput = document.getElementById('modalArtistName');
-  const modalTypeSelect= document.getElementById('modalArtistType');
-  const modalSaveBtn   = document.getElementById('modalSave');
-  const modalCancelBtn = document.getElementById('modalCancel');
-  const modalCloseBtn  = document.getElementById('modalClose');
+(function(){
+  const selectedArtists=[];
+  const searchInput=document.getElementById('artistSearchInput');
+  const pillBox=document.getElementById('artistPillBox');
+  const dropdown=document.getElementById('artistDropdown');
+  const hiddenInput=document.getElementById('artistName');
+  const modal=document.getElementById('artistModal');
+  const modalCard=document.getElementById('artistModalCard');
+  const modalNameInput=document.getElementById('modalArtistName');
+  const modalTypeSelect=document.getElementById('modalArtistType');
+  const modalSaveBtn=document.getElementById('modalSave');
+  const modalCancelBtn=document.getElementById('modalCancel');
+  const modalCloseBtn=document.getElementById('modalClose');
+  let searchTimer=null,lastQuery='',focused=-1,dropdownItems=[];
  
-  let searchTimer = null;
-  let lastQuery   = '';
-  let focused     = -1;
-  let dropdownItems = [];
- 
-  searchInput.addEventListener('input', () => {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
+  searchInput.addEventListener('input',()=>{
+    const q=searchInput.value.trim();
+    if(q===lastQuery)return; lastQuery=q;
     clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => fetchArtists(q), 380);
+    if(q.length<2){closeDropdown();return;}
+    searchTimer=setTimeout(()=>fetchArtists(q),380); showLoading();
+  });
+  searchInput.addEventListener('keydown',handleKeyNav);
+  document.addEventListener('click',(e)=>{if(!e.target.closest('#artistFieldWrap'))closeDropdown();});
+  searchInput.addEventListener('focus',()=>{if(searchInput.value.trim().length>=2)fetchArtists(searchInput.value.trim());});
+ 
+  async function fetchArtists(query){
     showLoading();
-  });
- 
-  searchInput.addEventListener('keydown', handleKeyNav);
- 
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  });
- 
-  searchInput.addEventListener('focus', () => {
-    if (searchInput.value.trim().length >= 2) fetchArtists(searchInput.value.trim());
-  });
- 
-  async function fetchArtists(query) {
-    showLoading();
-    try {
-      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=musicArtist&limit=7&media=music`;
-      const res  = await fetch(url);
-      const data = await res.json();
-      renderResults(query, data.results || []);
-    } catch(e) {
-      renderResults(query, []);
-    }
+    try{
+      const url=`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=musicArtist&limit=7&media=music`;
+      const res=await fetch(url); const data=await res.json();
+      renderResults(query,data.results||[]);
+    }catch(e){renderResults(query,[]);}
   }
- 
-  function showLoading() {
-    dropdown.innerHTML = `<div class="dropdown-loading"><div class="spin"></div> Searching…</div>`;
-    openDropdown();
-  }
- 
-  function renderResults(query, results) {
-    dropdownItems = [];
-    let html = '';
-    const found = results.filter(r => r.artistName);
-    if (found.length > 0) {
-      html += `<div class="dropdown-section-title">Found on Apple Music</div>`;
-      found.forEach((artist, i) => {
-        const name   = artist.artistName;
-        const genre  = artist.primaryGenreName || '';
-        const imgUrl = artist.artworkUrl100 || '';
-        dropdownItems.push({ name, imageUrl: imgUrl, source: 'apple', genre });
-        const avatarHtml = imgUrl
-          ? `<div class="artist-option-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`
-          : `<div class="artist-option-avatar">${name.charAt(0).toUpperCase()}</div>`;
-        html += `<div class="artist-option" data-index="${i}" tabindex="-1">
-          ${avatarHtml}
-          <div class="artist-option-info">
-            <div class="artist-option-name">${escHtml(name)}</div>
-            ${genre ? `<div class="artist-option-meta">${escHtml(genre)}</div>` : ''}
-          </div>
-          <span class="artist-option-badge badge-apple">Apple Music</span>
-        </div>`;
+  function showLoading(){dropdown.innerHTML=`<div class="dropdown-loading"><div class="spin"></div> Searching…</div>`;openDropdown();}
+  function renderResults(query,results){
+    dropdownItems=[];let html='';
+    const found=results.filter(r=>r.artistName);
+    if(found.length>0){
+      html+=`<div class="dropdown-section-title">Found on Apple Music</div>`;
+      found.forEach((artist,i)=>{
+        const name=artist.artistName,genre=artist.primaryGenreName||'',imgUrl=artist.artworkUrl100||'';
+        dropdownItems.push({name,imageUrl:imgUrl,source:'apple',genre});
+        const avatarHtml=imgUrl?`<div class="artist-option-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`:`<div class="artist-option-avatar">${name.charAt(0).toUpperCase()}</div>`;
+        html+=`<div class="artist-option" data-index="${i}" tabindex="-1">${avatarHtml}<div class="artist-option-info"><div class="artist-option-name">${escHtml(name)}</div>${genre?`<div class="artist-option-meta">${escHtml(genre)}</div>`:''}</div><span class="artist-option-badge badge-apple">Apple Music</span></div>`;
       });
     }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
-    html += `<div class="dropdown-section-title">Not on Apple Music?</div>`;
-    html += `<div class="artist-option" data-index="${newIdx}" tabindex="-1">
-      <div class="artist-option-avatar" style="background:rgba(162,120,245,0.18);color:#c4a8ff;font-size:1.1rem;">+</div>
-      <div class="artist-option-info">
-        <div class="artist-option-name">Add "${escHtml(query)}" as new artist</div>
-        <div class="artist-option-meta">Not on streaming platforms yet</div>
-      </div>
-      <span class="artist-option-badge badge-new">New</span>
-    </div>`;
-    dropdown.innerHTML = html;
-    openDropdown();
-    focused = -1;
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        selectItem(parseInt(el.dataset.index));
-      });
+    const newIdx=dropdownItems.length;
+    dropdownItems.push({name:query,imageUrl:'',source:'new'});
+    html+=`<div class="dropdown-section-title">Not on Apple Music?</div>`;
+    html+=`<div class="artist-option" data-index="${newIdx}" tabindex="-1"><div class="artist-option-avatar" style="background:rgba(162,120,245,0.18);color:#c4a8ff;font-size:1.1rem;">+</div><div class="artist-option-info"><div class="artist-option-name">Add "${escHtml(query)}" as new artist</div><div class="artist-option-meta">Not on streaming platforms yet</div></div><span class="artist-option-badge badge-new">New</span></div>`;
+    dropdown.innerHTML=html; openDropdown(); focused=-1;
+    dropdown.querySelectorAll('.artist-option').forEach(el=>{el.addEventListener('mousedown',(e)=>{e.preventDefault();selectItem(parseInt(el.dataset.index));});});
+  }
+  function selectItem(idx){
+    const item=dropdownItems[idx]; if(!item)return;
+    if(item.source==='new'){modalNameInput.value=item.name;openModal();closeDropdown();searchInput.value='';lastQuery='';return;}
+    addArtistPill(item.name,item.imageUrl,item.source);closeDropdown();searchInput.value='';lastQuery='';
+  }
+  function addArtistPill(name,imageUrl,source){
+    if(selectedArtists.find(a=>a.name.toLowerCase()===name.toLowerCase()))return;
+    selectedArtists.push({name,imageUrl,source}); syncHiddenInput(); renderPills();
+  }
+  function removeArtist(idx){selectedArtists.splice(idx,1);syncHiddenInput();renderPills();}
+  function renderPills(){
+    pillBox.querySelectorAll('.artist-pill').forEach(p=>p.remove());
+    selectedArtists.forEach((artist,i)=>{
+      const pill=document.createElement('div'); pill.className='artist-pill';
+      const avatarHtml=artist.imageUrl?`<span class="pill-avatar has-img"><img src="${artist.imageUrl}" alt=""></span>`:`<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
+      pill.innerHTML=`${avatarHtml}<span>${escHtml(artist.name)}</span><button class="artist-pill-remove" title="Remove" aria-label="Remove ${escHtml(artist.name)}">✕</button>`;
+      pill.querySelector('.artist-pill-remove').addEventListener('click',()=>removeArtist(i));
+      pillBox.insertBefore(pill,searchInput);
     });
+    searchInput.placeholder=selectedArtists.length>0?'Add another artist…':'Search artist on Spotify / Apple Music…';
   }
- 
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    if (item.source === 'new') {
-      modalNameInput.value = item.name;
-      openModal();
-      closeDropdown();
-      searchInput.value = '';
-      lastQuery = '';
-      return;
-    }
-    addArtistPill(item.name, item.imageUrl, item.source);
-    closeDropdown();
-    searchInput.value = '';
-    lastQuery = '';
+  function syncHiddenInput(){hiddenInput.value=selectedArtists.map(a=>a.name).join(', ');}
+  function handleKeyNav(e){
+    const items=dropdown.querySelectorAll('.artist-option');
+    if(!dropdown.classList.contains('open')||items.length===0)return;
+    if(e.key==='ArrowDown'){e.preventDefault();focused=Math.min(focused+1,items.length-1);highlightItem(items);}
+    else if(e.key==='ArrowUp'){e.preventDefault();focused=Math.max(focused-1,0);highlightItem(items);}
+    else if(e.key==='Enter'){e.preventDefault();if(focused>=0)selectItem(focused);}
+    else if(e.key==='Escape')closeDropdown();
   }
- 
-  function addArtistPill(name, imageUrl, source) {
-    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    selectedArtists.push({ name, imageUrl, source });
-    syncHiddenInput();
-    renderPills();
-  }
- 
-  function removeArtist(idx) {
-    selectedArtists.splice(idx, 1);
-    syncHiddenInput();
-    renderPills();
-  }
- 
-  function renderPills() {
-    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
-    selectedArtists.forEach((artist, i) => {
-      const pill = document.createElement('div');
-      pill.className = 'artist-pill';
-      const avatarHtml = artist.imageUrl
-        ? `<span class="pill-avatar has-img"><img src="${artist.imageUrl}" alt=""></span>`
-        : `<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
-      pill.innerHTML = `${avatarHtml}<span>${escHtml(artist.name)}</span><button class="artist-pill-remove" title="Remove" aria-label="Remove ${escHtml(artist.name)}">✕</button>`;
-      pill.querySelector('.artist-pill-remove').addEventListener('click', () => removeArtist(i));
-      pillBox.insertBefore(pill, searchInput);
-    });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Spotify / Apple Music…';
-  }
- 
-  function syncHiddenInput() {
-    hiddenInput.value = selectedArtists.map(a => a.name).join(', ');
-  }
- 
-  function handleKeyNav(e) {
-    const items = dropdown.querySelectorAll('.artist-option');
-    if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlightItem(items); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); focused = Math.max(focused - 1, 0); highlightItem(items); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (focused >= 0) selectItem(focused); }
-    else if (e.key === 'Escape') closeDropdown();
-  }
- 
-  function highlightItem(items) {
-    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
-    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
-  }
- 
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
- 
-  function openModal() {
-    modal.style.display = 'flex';
-    modal.classList.remove('closing');
-    modalCard.classList.remove('closing');
-    setTimeout(() => modalNameInput.focus(), 100);
-  }
- 
-  function closeModal(cb) {
-    modal.classList.add('closing');
-    modalCard.classList.add('closing');
-    setTimeout(() => {
-      modal.style.display = 'none';
-      modal.classList.remove('closing');
-      modalCard.classList.remove('closing');
-      if (cb) cb();
-    }, 200);
-  }
- 
-  modalSaveBtn.addEventListener('click', () => {
-    const name = modalNameInput.value.trim();
-    if (!name) { modalNameInput.focus(); return; }
-    addArtistPill(name, '', 'new');
-    closeModal(() => { modalNameInput.value = ''; modalTypeSelect.value = 'primary'; });
-  });
- 
-  modalCancelBtn.addEventListener('click', () => closeModal());
-  modalCloseBtn.addEventListener('click',  () => closeModal());
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  modalNameInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); modalSaveBtn.click(); }
-    if (e.key === 'Escape') closeModal();
-  });
- 
-  pillBox.addEventListener('click', (e) => {
-    if (!e.target.closest('.artist-pill')) searchInput.focus();
-  });
- 
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  function highlightItem(items){items.forEach((el,i)=>el.classList.toggle('focused',i===focused));if(focused>=0)items[focused].scrollIntoView({block:'nearest'});}
+  function openDropdown(){dropdown.classList.add('open');}
+  function closeDropdown(){dropdown.classList.remove('open');focused=-1;}
+  function openModal(){modal.style.display='flex';modal.classList.remove('closing');modalCard.classList.remove('closing');setTimeout(()=>modalNameInput.focus(),100);}
+  function closeModal(cb){modal.classList.add('closing');modalCard.classList.add('closing');setTimeout(()=>{modal.style.display='none';modal.classList.remove('closing');modalCard.classList.remove('closing');if(cb)cb();},200);}
+  modalSaveBtn.addEventListener('click',()=>{const name=modalNameInput.value.trim();if(!name){modalNameInput.focus();return;}addArtistPill(name,'','new');closeModal(()=>{modalNameInput.value='';modalTypeSelect.value='primary';});});
+  modalCancelBtn.addEventListener('click',()=>closeModal());
+  modalCloseBtn.addEventListener('click',()=>closeModal());
+  modal.addEventListener('click',(e)=>{if(e.target===modal)closeModal();});
+  modalNameInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();modalSaveBtn.click();}if(e.key==='Escape')closeModal();});
+  pillBox.addEventListener('click',(e)=>{if(!e.target.closest('.artist-pill'))searchInput.focus();});
+  function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 })();
 </script>
  
-<!-- ── FIREBASE + EMAILJS ── -->
+<!-- FIREBASE + EMAILJS -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -1651,35 +644,68 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
- 
 emailjs.init("mwAZ_hDxmnBqkrTfA");
  
 let currentUser = null;
- 
 onAuthStateChanged(auth, (user) => {
   if (!user) { window.location.href = "login.html"; }
   else       { currentUser = user; }
 });
  
+/* ════════════════════════════════════════════
+   SEND EMAILS — EVERY FIELD INCLUDED
+   ════════════════════════════════════════════ */
 async function sendEmails(data) {
+ 
+  /* formatCreditsForEmail is defined in the non-module script above */
+  const fmt = window.formatCreditsForEmail;
+ 
   const params = {
-    artist_name:   data.artistName,
-    release_title: data.releaseTitle,
-    release_type:  data.releaseType,
-    country:       data.country,
-    genre:         data.genre,
-    language:      data.language,
-    release_date:  data.releaseDate,
-    explicit:      data.explicit,
-    email:         data.email,
-    phone:         data.phone,
-    featuring:     data.featuring,
-    label:         data.label,
-    copyright:     data.copyright,
-    refferal:      data.refferal,
-    lyrics:        data.description
+ 
+    /* ── Artist & Release ── */
+    artist_name:    data.artistName,
+    featuring:      data.featuring      || 'None',
+    release_title:  data.releaseTitle,
+    release_type:   data.releaseType,
+    genre:          data.genre,
+    language:       data.language       || 'Not specified',
+    release_date:   data.releaseDate    || 'Not set',
+    explicit:       data.explicit,
+ 
+    /* ── Location & Contact ── */
+    country:        data.country,
+    phone:          data.phone          || 'Not provided',
+    email:          data.email,
+ 
+    /* ── Label & Rights ── */
+    label:          data.label          || 'Independent',
+    copyright:      data.copyright      || 'Not provided',
+ 
+    /* ── Identifiers ── */
+    isrc:           data.isrc           || 'Not provided',
+    upc:            data.upc            || 'Auto-assign',
+    catalog_number: data.catalogNumber  || 'Not provided',
+ 
+    /* ── Production Credits (formatted as bullet lists) ── */
+    producers:      fmt(data.credits?.producer),
+    musicians:      fmt(data.credits?.musician),
+ 
+    /* ── Songwriting & Publishing Credits ── */
+    songwriters:    fmt(data.credits?.writer),
+    publishers:     fmt(data.credits?.publishing),
+ 
+    /* ── Extras ── */
+    refferal:       data.refferal       || 'None',
+    lyrics:         data.description    || 'Not provided',
+ 
+    /* ── Submission Meta ── */
+    submitted_at:   new Date(data.createdAt).toLocaleString(),
+    status:         data.status
   };
+ 
+  /* Admin notification email */
   await emailjs.send("service_ydy0muo", "template_i6qh7ew", params);
+  /* Auto-reply to artist */
   await emailjs.send("service_ydy0muo", "template_m8g8n9q", params);
 }
  
@@ -1692,13 +718,11 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (isSubmitting || !currentUser) return;
   isSubmitting = true;
- 
   submitBtn.disabled = true;
   submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…`;
   statusMsg.textContent = "Please wait…";
  
   const artistName = document.getElementById("artistName").value.trim();
- 
   if (!artistName) {
     statusMsg.textContent = "Please add at least one artist before submitting.";
     submitBtn.disabled = false;
@@ -1707,15 +731,14 @@ form.addEventListener("submit", async (e) => {
     return;
   }
  
-  /* Collect credits from the global credits object */
-  const creditsData = typeof collectCredits === 'function' ? collectCredits() : {};
+  const creditsData = typeof window.collectCredits === 'function' ? window.collectCredits() : {};
  
   const data = {
     artistName,
     releaseTitle:  document.getElementById("releaseTitle").value.trim(),
     releaseType:   document.getElementById("releaseType").value,
     country:       document.getElementById("country").value,
-    genre:         document.getElementById("genre").value.trim(),
+    genre:         document.getElementById("genre").value,
     language:      document.getElementById("language").value.trim(),
     releaseDate:   document.getElementById("releaseDate").value,
     explicit:      document.getElementById("explicit").value,
@@ -1729,11 +752,10 @@ form.addEventListener("submit", async (e) => {
     isrc:          document.getElementById("isrc").value.trim(),
     upc:           document.getElementById("upc").value.trim(),
     catalogNumber: document.getElementById("catalogNumber").value.trim(),
-    /* ── Credits (arrays) ── */
-    credits: creditsData,
-    userId:  currentUser.uid,
-    createdAt: Date.now(),
-    status: "Pending"
+    credits:       creditsData,
+    userId:        currentUser.uid,
+    createdAt:     Date.now(),
+    status:        "Pending"
   };
  
   try {
