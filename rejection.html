@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Was My Release Rejected? — 444Music Distribution</title>
+ 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ 
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --black:       #000000;
+  --bg-page:     #060606;
+  --bg-card:     #0d0d0d;
+  --bg-card-open:#111111;
+  --bg-note:     #0a0a0a;
+  --border:      #1e1e1e;
+  --border-hover:#2e2e2e;
+  --accent:      #8b5cf6;
+  --accent-dim:  #5b3fd1;
+  --accent-muted:rgba(139,92,246,0.12);
+  --text:        #f0eef8;
+  --text-sub:    #6b6b7e;
+  --text-muted:  #3a3a4a;
+  --gold:        #c9a84c;
+  --red-soft:    #e05252;
+  --green-soft:  #4caf82;
+  --radius:      10px;
+  --font-display:'Bebas Neue', sans-serif;
+  --font-body:   'Figtree', sans-serif;
+  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
+}
+ 
+html { scroll-behavior: smooth; }
+ 
+body {
+  font-family: var(--font-body);
+  background: var(--bg-page);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+ 
+/* ─── NOISE LAYER ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.55;
+}
+ 
+/* ─── SCAN LINE ─── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+ 
+/* ─── WRAPPER ─── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+ 
+/* ─── TOP BAR ─── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 0 0;
+  margin-bottom: 80px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+  animation: fadeDown 0.6s var(--ease) both;
+}
+ 
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+ 
+.brand-mark {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: 14px; color: #fff; letter-spacing: 0.5px;
+}
+ 
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 1px;
+  color: var(--text);
+}
+ 
+.topbar-tag {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 100px;
+}
+ 
+/* ─── HERO ─── */
+.hero {
+  padding: 10px 0 56px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+ 
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 22px;
+  animation: fadeUp 0.6s 0.1s var(--ease) both;
+}
+ 
+.hero-eyebrow::before {
+  content: '';
+  display: block; width: 24px; height: 1px;
+  background: var(--accent);
+}
+ 
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 9vw, 96px);
+  line-height: 0.95;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s 0.15s var(--ease) both;
+}
+ 
+.hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+ 
+.hero-sub {
+  max-width: 560px;
+  font-size: 15px; font-weight: 300;
+  line-height: 1.8;
+  color: var(--text-sub);
+  animation: fadeUp 0.6s 0.2s var(--ease) both;
+}
+ 
+/* ─── NOTICE BOX ─── */
+.notice {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: var(--bg-note);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 52px;
+  animation: fadeUp 0.6s 0.25s var(--ease) both;
+}
+ 
+.notice-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: var(--accent-muted);
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-size: 14px;
+}
+ 
+.notice-text {
+  flex: 1;
+}
+ 
+.notice-text strong {
+  display: block;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+ 
+.notice-text p {
+  font-size: 13.5px; font-weight: 300;
+  line-height: 1.7; color: var(--text-sub);
+}
+ 
+/* ─── SECTION HEADER ─── */
+.section-header {
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s 0.3s var(--ease) both;
+}
+ 
+.section-eyebrow {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+ 
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 38px);
+  letter-spacing: 1.5px; color: var(--text);
+  line-height: 1;
+}
+ 
+/* ─── CARDS ─── */
+.cards { display: flex; flex-direction: column; gap: 2px; }
+ 
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.25s var(--ease);
+  animation: fadeUp 0.6s var(--ease) both;
+}
+ 
+.card:nth-child(1) { animation-delay: 0.35s; }
+.card:nth-child(2) { animation-delay: 0.40s; }
+.card:nth-child(3) { animation-delay: 0.45s; }
+.card:nth-child(4) { animation-delay: 0.50s; }
+.card:nth-child(5) { animation-delay: 0.55s; }
+.card:nth-child(6) { animation-delay: 0.60s; }
+.card:nth-child(7) { animation-delay: 0.65s; }
+ 
+.card:hover { border-color: var(--border-hover); }
+.card.open   { border-color: rgba(139,92,246,0.28); background: var(--bg-card-open); }
+ 
+/* CARD HEADER */
+.card-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 22px 24px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s var(--ease);
+}
+ 
+.card-header:hover { background: rgba(255,255,255,0.015); }
+ 
+.card-num {
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--text-muted);
+  width: 28px; flex-shrink: 0;
+}
+ 
+.card-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  font-size: 16px;
+  background: var(--bg-note);
+  border: 1px solid var(--border);
+  transition: all 0.25s var(--ease);
+}
+ 
+.card.open .card-icon {
+  background: var(--accent-muted);
+  border-color: rgba(139,92,246,0.25);
+}
+ 
+.card-title {
+  flex: 1;
+  font-size: 15px; font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+ 
+.card-chevron {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all 0.3s var(--ease);
+  flex-shrink: 0;
+}
+ 
+.card.open .card-chevron {
+  background: var(--accent-muted);
+  border-color: rgba(139,92,246,0.25);
+  color: var(--accent);
+  transform: rotate(180deg);
+}
+ 
+.card-chevron svg { width: 12px; height: 12px; }
+ 
+/* CARD BODY */
+.card-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.38s var(--ease);
+}
+ 
+.card.open .card-body { grid-template-rows: 1fr; }
+ 
+.card-body-inner {
+  overflow: hidden;
+}
+ 
+.card-content {
+  padding: 0 24px 0 86px;
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.3s 0.05s var(--ease), transform 0.3s 0.05s var(--ease);
+}
+ 
+.card.open .card-content {
+  opacity: 1;
+  transform: translateY(0);
+  padding-bottom: 26px;
+}
+ 
+.card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 24px 22px;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+ 
+.card.open .card-divider { opacity: 1; }
+ 
+/* EXPLANATION & FIX */
+.content-block { margin-bottom: 18px; }
+.content-block:last-child { margin-bottom: 0; }
+ 
+.block-label {
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  margin-bottom: 7px;
+  display: flex; align-items: center; gap: 7px;
+}
+ 
+.block-label.explain { color: var(--text-muted); }
+.block-label.fix     { color: var(--green-soft); }
+ 
+.block-label::before {
+  content: '';
+  display: block; width: 16px; height: 1px;
+}
+.block-label.explain::before { background: var(--text-muted); }
+.block-label.fix::before     { background: var(--green-soft); }
+ 
+.block-text {
+  font-size: 13.5px; font-weight: 300;
+  line-height: 1.75; color: var(--text-sub);
+}
+ 
+.fix-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px;
+  padding: 7px 14px;
+  background: rgba(76,175,130,0.07);
+  border: 1px solid rgba(76,175,130,0.18);
+  border-radius: 6px;
+  font-size: 12px; font-weight: 500;
+  color: var(--green-soft);
+}
+ 
+.fix-tag svg { width: 12px; height: 12px; flex-shrink: 0; }
+ 
+/* ─── BOTTOM MESSAGE ─── */
+.bottom-message {
+  margin-top: 56px;
+  padding: 36px 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  text-align: center;
+  animation: fadeUp 0.6s 0.7s var(--ease) both;
+}
+ 
+.bottom-message p {
+  font-size: 15px; font-weight: 300;
+  line-height: 1.8; color: var(--text-sub);
+  max-width: 500px; margin: 0 auto 28px;
+}
+ 
+.bottom-message p strong {
+  color: var(--text); font-weight: 600;
+}
+ 
+/* ─── BUTTONS ─── */
+.btn-row {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+ 
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 14px 28px; border-radius: 8px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.04em; text-decoration: none;
+  cursor: pointer; border: none;
+  transition: all 0.25s var(--ease);
+  position: relative; overflow: hidden;
+}
+ 
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.06);
+  opacity: 0; transition: opacity 0.2s;
+}
+ 
+.btn:hover::after { opacity: 1; }
+ 
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(139,92,246,0.5), 0 8px 24px rgba(139,92,246,0.2);
+}
+ 
+.btn-primary:hover {
+  background: #7c4ef3;
+  box-shadow: 0 0 0 1px rgba(139,92,246,0.7), 0 12px 32px rgba(139,92,246,0.3);
+  transform: translateY(-2px);
+}
+ 
+.btn-secondary {
+  background: transparent;
+  color: var(--text-sub);
+  border: 1px solid var(--border);
+}
+ 
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+ 
+.btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+ 
+/* ─── FOOTER ─── */
+.footer {
+  margin-top: 80px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  animation: fadeUp 0.6s 0.8s var(--ease) both;
+}
+ 
+.footer-copy {
+  font-size: 12px; color: var(--text-muted);
+}
+ 
+.footer-copy span { color: var(--accent); }
+ 
+.footer-link {
+  font-size: 12px; color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-link:hover { color: var(--text-sub); }
+ 
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .page { padding: 0 16px 80px; }
+  .topbar { margin-bottom: 52px; }
+  .topbar-tag { display: none; }
+  .hero { padding-bottom: 40px; }
+  .card-content { padding-left: 24px; }
+  .card-num { display: none; }
+  .bottom-message { padding: 28px 20px; }
+  .btn-row { flex-direction: column; align-items: stretch; }
+  .btn { justify-content: center; }
+  .footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+</style>
+</head>
+<body>
+ 
+<div class="page">
+ 
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a href="#" class="brand">
+      <div class="brand-mark">444</div>
+      <span class="brand-name">444MUSIC</span>
+    </a>
+    <span class="topbar-tag">Help Center</span>
+  </div>
+ 
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Release Status</div>
+    <h1>WHY WAS MY<br>RELEASE <em>REJECTED?</em></h1>
+    <p class="hero-sub">
+      We understand how frustrating this can be. The good news —
+      most rejections follow clear store guidelines and can be fixed quickly.
+      We're here to walk you through exactly what to do.
+    </p>
+  </section>
+ 
+  <!-- NOTICE -->
+  <div class="notice">
+    <div class="notice-icon">ℹ️</div>
+    <div class="notice-text">
+      <strong>Important Notice</strong>
+      <p>
+        444Music does not randomly reject releases. All rejections are strictly based on
+        content policies and technical guidelines enforced by stores like Spotify, Apple Music,
+        Boomplay, and others. We are simply the messenger — and we're here to help you resolve it.
+      </p>
+    </div>
+  </div>
+ 
+  <!-- SECTION HEADER -->
+  <div class="section-header">
+    <div class="section-eyebrow">Common Reasons</div>
+    <h2>WHAT WENT WRONG</h2>
+  </div>
+ 
+  <!-- CARDS -->
+  <div class="cards" id="cards">
+ 
+    <!-- 1 -->
+    <div class="card" data-index="0">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">01</span>
+        <div class="card-icon">©️</div>
+        <span class="card-title">Copyright Infringement</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">Your release contains beats, samples, melodies, or instrumentals that belong to another artist or rights holder — and were used without proper authorization. Digital stores have automated detection systems (like ContentID) that flag this instantly.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Only upload content you have created, own, or have a valid license for. If you're using a purchased beat, ensure your license explicitly grants distribution rights.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Use original, licensed, or royalty-free content only
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 2 -->
+    <div class="card" data-index="1">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">02</span>
+        <div class="card-icon">📝</div>
+        <span class="card-title">Metadata Errors</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">Your release contains inconsistent or incorrect information — such as a misspelled artist name, wrong song title, mismatched album name, or metadata that contradicts the audio file itself. Stores require all details to be accurate and consistent.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Review every field carefully before submitting. Your artist name, song title, and release title must be spelled identically across all platforms and match the submitted audio exactly.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Double-check all metadata fields before resubmitting
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 3 -->
+    <div class="card" data-index="2">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">03</span>
+        <div class="card-icon">🎚️</div>
+        <span class="card-title">Low Audio Quality</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">The uploaded audio file does not meet the technical standards required by digital stores. This can include excessive background noise, distortion, clipping, poor mixing or mastering, or an unsupported file format (e.g. MP3 instead of WAV).</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Ensure your tracks are professionally mixed and mastered. Export your audio as a WAV file at a minimum of 16-bit / 44.1kHz. Avoid over-compression and ensure there is no clipping in your master.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Upload WAV files — 16-bit / 44.1kHz minimum
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 4 -->
+    <div class="card" data-index="3">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">04</span>
+        <div class="card-icon">🔁</div>
+        <span class="card-title">Duplicate or Previously Released Content</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">This song has already been distributed to stores — either through another distributor, a different account, or a previous submission. Stores do not allow the same content to appear twice in their catalog under different accounts or listings.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">If you previously released this through another platform, you must request a full takedown of that release before resubmitting through 444Music. Only submit fresh, unreleased material unless migrating from another distributor with proper removal documentation.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Remove existing release first, then resubmit
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 5 -->
+    <div class="card" data-index="4">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">05</span>
+        <div class="card-icon">⚠️</div>
+        <span class="card-title">Misleading or Fraudulent Content</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">Your release was flagged for using a fake artist name, impersonating an established artist, or containing misleading titles and descriptions designed to trick listeners or search algorithms. Stores take this very seriously and may permanently suspend accounts for repeat violations.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Always use your real artist name or your registered stage name. Never mimic another artist's branding. Titles must accurately reflect the content of the release.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Use accurate, truthful artist names and titles
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 6 -->
+    <div class="card" data-index="5">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">06</span>
+        <div class="card-icon">🖼️</div>
+        <span class="card-title">Artwork Does Not Meet Standards</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">Your cover artwork was rejected because it is blurry or low resolution, contains copyrighted images (e.g. photos taken from Google), includes social media handles, URLs, or store logos, or does not meet the required dimensions. Some stores also reject artwork with sexually explicit imagery.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Create or commission high-quality original artwork. It must be a perfect square at 3000×3000 pixels (minimum), in JPG or PNG format, with no text that matches the artist/title metadata exactly — and absolutely no third-party logos or social media links.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Minimum 3000×3000px, original artwork only
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 7 -->
+    <div class="card" data-index="6">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="card-num">07</span>
+        <div class="card-icon">🔞</div>
+        <span class="card-title">Explicit Content Mislabeling</span>
+        <div class="card-chevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <div class="card-divider"></div>
+          <div class="card-content">
+            <div class="content-block">
+              <div class="block-label explain">What happened</div>
+              <p class="block-text">Your release contains explicit language, profanity, or mature themes but was submitted without the correct explicit content label. Conversely, marking a completely clean track as explicit can also cause issues with store editorial placement and algorithmic recommendations.</p>
+            </div>
+            <div class="content-block">
+              <div class="block-label fix">How to fix it</div>
+              <p class="block-text">Listen through your entire track before submitting. If it contains any profanity, sexual language, or mature themes — select "Yes" for explicit content in your submission. Clean versions must be entirely free of explicit content to be labeled as such.</p>
+              <div class="fix-tag">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Label explicit content correctly on every track
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div><!-- /cards -->
+ 
+  <!-- BOTTOM MESSAGE -->
+  <div class="bottom-message">
+    <p>
+      If your release falls under any of the reasons above,
+      <strong>don't worry</strong> — simply correct the issue and resubmit your release.
+      Our team reviews every submission carefully and we're always here to help
+      you get your music live.
+    </p>
+    <div class="btn-row">
+      <a href="averagee.html" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Fix &amp; Resubmit
+      </a>
+      <a href="mailto:444musicdistro@gmail.com" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Contact Support
+      </a>
+    </div>
+  </div>
+ 
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer-copy">© 2026 <span>444Music Distribution</span> — All Rights Reserved</span>
+    <a href="mailto:444musicdistro@gmail.com" class="footer-link">444musicdistro@gmail.com</a>
+  </footer>
+ 
+</div><!-- /page -->
+ 
+<script>
+function toggleCard(header) {
+  const card = header.closest('.card');
+  const isOpen = card.classList.contains('open');
+ 
+  /* Close all cards */
+  document.querySelectorAll('.card.open').forEach(c => c.classList.remove('open'));
+ 
+  /* Open this one if it was closed */
+  if (!isOpen) card.classList.add('open');
+}
+ 
+/* Animate cards in on scroll */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08 });
+ 
+document.querySelectorAll('.card').forEach(card => {
+  observer.observe(card);
+});
+</script>
+ 
+</body>
+</html>
