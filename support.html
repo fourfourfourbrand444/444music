@@ -1,42 +1,1086 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Support • 444Music</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="support.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support • 444Music Distribution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+ 
+<style>
+/* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ 
+:root {
+  --black:        #000000;
+  --bg-page:      #050505;
+  --bg-section:   #080808;
+  --bg-card:      #0c0c0c;
+  --bg-card-open: #0f0f0f;
+  --bg-input:     #101010;
+  --border:       #1a1a1a;
+  --border-mid:   #222222;
+  --border-hover: #2d2d2d;
+  --purple:       #7c5cfc;
+  --purple-light: #9b7fff;
+  --purple-dim:   rgba(124,92,252,0.1);
+  --purple-border:rgba(124,92,252,0.22);
+  --rose:         #ef4444;
+  --rose-dim:     rgba(239,68,68,0.08);
+  --rose-border:  rgba(239,68,68,0.2);
+  --green:        #22c55e;
+  --green-dim:    rgba(34,197,94,0.08);
+  --green-border: rgba(34,197,94,0.2);
+  --amber:        #f59e0b;
+  --amber-dim:    rgba(245,158,11,0.08);
+  --amber-border: rgba(245,158,11,0.2);
+  --text:         #f2f2f2;
+  --text-2:       #8a8a8a;
+  --text-3:       #484848;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+  --radius:       10px;
+  --radius-lg:    16px;
+}
+ 
+html { font-size: 16px; scroll-behavior: smooth; }
+ 
+body {
+  font-family: var(--font-body);
+  background: var(--bg-page);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+ 
+a { text-decoration: none; color: inherit; }
+ 
+/* ─────────────────────────────────────────
+   PAGE WRAPPER
+───────────────────────────────────────── */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+ 
+/* ─────────────────────────────────────────
+   TOP NAV BAR
+───────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 72px;
+  animation: fadeDown 0.5s var(--ease) both;
+}
+ 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ 
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  background: var(--purple);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+ 
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+ 
+.nav-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+ 
+/* ─────────────────────────────────────────
+   HELP CENTER SECTION
+───────────────────────────────────────── */
+.support-section {
+  margin-bottom: 80px;
+  animation: fadeUp 0.5s 0.05s var(--ease) both;
+}
+ 
+.support-header {
+  margin-bottom: 36px;
+}
+ 
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--purple);
+}
+ 
+.support-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+ 
+.support-header p {
+  font-size: 14px;
+  color: var(--text-2);
+  font-weight: 300;
+  max-width: 480px;
+}
+ 
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+ 
+.support-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  animation: fadeUp 0.5s var(--ease) both;
+}
+ 
+.support-card:nth-child(1) { animation-delay: 0.08s; }
+.support-card:nth-child(2) { animation-delay: 0.13s; }
+.support-card:nth-child(3) { animation-delay: 0.18s; }
+.support-card:nth-child(4) { animation-delay: 0.23s; }
+ 
+.support-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+}
+ 
+.card-icon-wrap {
+  width: 38px;
+  height: 38px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-mid);
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  font-size: 17px;
+}
+ 
+.support-card h3 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+ 
+.support-card p {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.65;
+  font-weight: 300;
+}
+ 
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 8px 16px;
+  background: var(--purple-dim);
+  border: 1px solid var(--purple-border);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--purple-light);
+  transition: all 0.18s var(--ease);
+}
+ 
+.support-link:hover {
+  background: rgba(124,92,252,0.18);
+  border-color: rgba(124,92,252,0.4);
+  color: #fff;
+}
+ 
+/* ─────────────────────────────────────────
+   DIVIDER
+───────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 0 72px;
+}
+ 
+/* ─────────────────────────────────────────
+   FAQ SECTION HEADER
+───────────────────────────────────────── */
+.faq-section {
+  animation: fadeUp 0.5s 0.1s var(--ease) both;
+}
+ 
+.faq-header {
+  margin-bottom: 32px;
+}
+ 
+.faq-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+ 
+.faq-header h2 span {
+  color: var(--purple-light);
+}
+ 
+/* ─────────────────────────────────────────
+   REASSURE BOX
+───────────────────────────────────────── */
+.reassure-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 36px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  animation: fadeUp 0.5s 0.15s var(--ease) both;
+}
+ 
+.reassure-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+ 
+.reassure-box p {
+  font-size: 13.5px;
+  color: var(--text-2);
+  font-weight: 300;
+  line-height: 1.75;
+}
+ 
+.reassure-box p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+ 
+/* ─────────────────────────────────────────
+   PLATFORM EXPLANATION BOXES
+───────────────────────────────────────── */
+.platform-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 36px;
+  animation: fadeUp 0.5s 0.18s var(--ease) both;
+}
+ 
+.platform-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+ 
+.platform-box-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+ 
+.platform-box-label.streaming { color: var(--green); }
+.platform-box-label.ugc       { color: var(--amber); }
+ 
+.platform-box-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+ 
+.platform-box-label.streaming::before { background: var(--green); }
+.platform-box-label.ugc::before       { background: var(--amber); }
+ 
+.platform-box p {
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.7;
+  font-weight: 300;
+}
+ 
+.platform-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+ 
+.ptag {
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-weight: 500;
+  border: 1px solid;
+}
+ 
+.ptag.green { background: var(--green-dim); border-color: var(--green-border); color: var(--green); }
+.ptag.amber { background: var(--amber-dim); border-color: var(--amber-border); color: var(--amber); }
+ 
+/* ─────────────────────────────────────────
+   REASON CARDS (ACCORDION)
+───────────────────────────────────────── */
+.reasons-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+ 
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 36px;
+}
+ 
+.faq-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.22s var(--ease);
+  animation: fadeUp 0.5s var(--ease) both;
+}
+ 
+.faq-card:nth-child(1) { animation-delay: 0.22s; }
+.faq-card:nth-child(2) { animation-delay: 0.27s; }
+.faq-card:nth-child(3) { animation-delay: 0.32s; }
+.faq-card:nth-child(4) { animation-delay: 0.37s; }
+.faq-card:nth-child(5) { animation-delay: 0.42s; }
+ 
+.faq-card:hover        { border-color: var(--border-mid); }
+.faq-card.open         { border-color: var(--purple-border); background: var(--bg-card-open); }
+ 
+/* CARD TRIGGER */
+.faq-trigger {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.18s var(--ease);
+}
+ 
+.faq-trigger:hover { background: rgba(255,255,255,0.015); }
+ 
+.faq-num {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  width: 22px;
+  flex-shrink: 0;
+}
+ 
+.faq-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-mid);
+  flex-shrink: 0;
+  transition: all 0.22s var(--ease);
+}
+ 
+.faq-card.open .faq-icon {
+  background: var(--purple-dim);
+  border-color: var(--purple-border);
+}
+ 
+.faq-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+ 
+.faq-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+  flex-shrink: 0;
+  transition: all 0.28s var(--ease);
+}
+ 
+.faq-card.open .faq-arrow {
+  transform: rotate(180deg);
+  background: var(--purple-dim);
+  border-color: var(--purple-border);
+  color: var(--purple-light);
+}
+ 
+.faq-arrow svg { width: 11px; height: 11px; }
+ 
+/* CARD BODY — CSS grid trick for smooth height */
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.36s var(--ease);
+}
+ 
+.faq-card.open .faq-body { grid-template-rows: 1fr; }
+ 
+.faq-body-inner { overflow: hidden; }
+ 
+.faq-content {
+  padding: 0 20px 0 70px;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.28s 0.06s var(--ease), transform 0.28s 0.06s var(--ease);
+}
+ 
+.faq-card.open .faq-content {
+  opacity: 1;
+  transform: translateY(0);
+  padding-bottom: 22px;
+}
+ 
+.faq-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 0 20px 18px;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+ 
+.faq-card.open .faq-sep { opacity: 1; }
+ 
+/* CONTENT BLOCKS */
+.block { margin-bottom: 14px; }
+.block:last-child { margin-bottom: 0; }
+ 
+.block-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+ 
+.block-label.why  { color: var(--text-3); }
+.block-label.fix  { color: var(--green); }
+ 
+.block-label::before {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 1px;
+}
+ 
+.block-label.why::before { background: var(--text-3); }
+.block-label.fix::before { background: var(--green); }
+ 
+.block p {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 300;
+  line-height: 1.75;
+}
+ 
+.fix-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 6px 13px;
+  background: var(--green-dim);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--green);
+}
+ 
+.fix-pill svg { width: 11px; height: 11px; flex-shrink: 0; }
+ 
+/* ─────────────────────────────────────────
+   IMPORTANT NOTE BOX
+───────────────────────────────────────── */
+.note-box {
+  background: var(--bg-card);
+  border: 1px solid var(--amber-border);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 32px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  animation: fadeUp 0.5s 0.45s var(--ease) both;
+}
+ 
+.note-icon-wrap {
+  width: 34px;
+  height: 34px;
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-border);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 15px;
+}
+ 
+.note-box-text strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+ 
+.note-box-text p {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 300;
+  line-height: 1.7;
+}
+ 
+/* ─────────────────────────────────────────
+   ACTION MESSAGE
+───────────────────────────────────────── */
+.action-message {
+  font-size: 13.5px;
+  color: var(--text-2);
+  font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: fadeUp 0.5s 0.48s var(--ease) both;
+}
+ 
+.action-message strong { color: var(--text); font-weight: 500; }
+ 
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.5s 0.52s var(--ease) both;
+}
+ 
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+}
+ 
+.btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+ 
+.btn-primary {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(124,92,252,0.4), 0 6px 20px rgba(124,92,252,0.15);
+}
+ 
+.btn-primary:hover {
+  background: #6b4ef0;
+  box-shadow: 0 0 0 1px rgba(124,92,252,0.6), 0 10px 28px rgba(124,92,252,0.25);
+  transform: translateY(-2px);
+}
+ 
+.btn-secondary {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-mid);
+}
+ 
+.btn-secondary:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+ 
+/* ─────────────────────────────────────────
+   FOOTER NOTE
+───────────────────────────────────────── */
+.footer-note {
+  margin-top: 60px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  animation: fadeUp 0.5s 0.55s var(--ease) both;
+}
+ 
+.footer-note p {
+  font-size: 11.5px;
+  color: var(--text-3);
+  font-weight: 300;
+  max-width: 520px;
+  line-height: 1.6;
+}
+ 
+.footer-note p span { color: var(--purple); }
+ 
+.footer-contact {
+  font-size: 11.5px;
+  color: var(--text-3);
+  transition: color 0.15s;
+}
+ 
+.footer-contact:hover { color: var(--text-2); }
+ 
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page { padding: 0 16px 80px; }
+  .topbar { margin-bottom: 48px; }
+  .nav-tag { display: none; }
+  .platform-compare { grid-template-columns: 1fr; }
+  .support-grid { grid-template-columns: 1fr; }
+  .faq-content { padding-left: 20px; }
+  .faq-num { display: none; }
+  .btn-row { flex-direction: column; }
+  .btn { justify-content: center; }
+  .footer-note { flex-direction: column; align-items: flex-start; }
+}
+</style>
 </head>
 <body>
-
-<section class="support-section">
-  <div class="support-header">
-    <h2>Help Center</h2>
-    <p>Everything you need to know about distributing with 444Music</p>
+ 
+<div class="page">
+ 
+  <!-- ─── TOP BAR ─── -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">444</div>
+      <span class="brand-name">444Music</span>
+    </div>
+    <span class="nav-tag">Support</span>
   </div>
-
-  <div class="support-grid">
-    <div class="support-card">
-      <h3>How long does approval take?</h3>
-      <p>Releases are reviewed within 3–7 business days after submission.</p>
+ 
+  <!-- ═══════════════════════════════════════
+       HELP CENTER SECTION
+  ════════════════════════════════════════ -->
+  <section class="support-section">
+ 
+    <div class="support-header">
+      <div class="eyebrow">Help Center</div>
+      <h2>How can we help you?</h2>
+      <p>Everything you need to know about distributing with 444Music</p>
     </div>
-
-    <div class="support-card">
-      <h3>How do I get paid?</h3>
-      <p>Royalties are paid directly to your bank or mobile money once eligible.</p>
+ 
+    <div class="support-grid">
+ 
+      <div class="support-card">
+        <div class="card-icon-wrap">⏱️</div>
+        <h3>How long does approval take?</h3>
+        <p>Releases are reviewed within 3–7 business days after submission. You'll receive an email update once processed.</p>
+      </div>
+ 
+      <div class="support-card">
+        <div class="card-icon-wrap">💸</div>
+        <h3>How do I get paid?</h3>
+        <p>Royalties are paid directly to your bank or mobile money account once you've reached the minimum payout threshold.</p>
+      </div>
+ 
+      <div class="support-card">
+        <div class="card-icon-wrap">🔐</div>
+        <h3>Do I keep my rights?</h3>
+        <p>Yes — always. You keep 100% ownership and full control of your music. 444Music simply distributes on your behalf.</p>
+      </div>
+ 
+      <div class="support-card">
+        <div class="card-icon-wrap">💬</div>
+        <h3>Need direct help?</h3>
+        <p>Contact our support team anytime for fast, personal assistance with your release or account.</p>
+        <a href="mailto:444musicdistro@gmail.com?subject=Support Request&body=Hello 444Music Team," class="support-link">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Contact Support
+        </a>
+      </div>
+ 
     </div>
-
-    <div class="support-card">
-      <h3>Do I keep my rights?</h3>
-      <p>Yes. You keep 100% ownership and full control of your music.</p>
+  </section>
+ 
+  <!-- DIVIDER -->
+  <div class="section-divider"></div>
+ 
+  <!-- ═══════════════════════════════════════
+       FAQ — UGC / TIKTOK SECTION
+  ════════════════════════════════════════ -->
+  <section class="faq-section">
+ 
+    <div class="faq-header">
+      <div class="eyebrow">Frequently Asked</div>
+      <h2>Why is my song approved but not available on<br><span>TikTok, Snapchat or social platforms?</span></h2>
     </div>
-
-    <div class="support-card">
-      <h3>Need direct help?</h3>
-      <p>Contact our support team anytime for fast assistance.</p>
-      <a href="mailto:444musicdistro@gmail.com?subject=support Request&body=Hello 444Music Team," class=support-link">Contact Support</a>
+ 
+    <!-- REASSURE BOX -->
+    <div class="reassure-box">
+      <div class="reassure-icon">✅</div>
+      <p>
+        <strong>Your release has been successfully approved and delivered to major streaming platforms.</strong>
+        However, distribution to social platforms such as TikTok, Snapchat, WhatsApp, Instagram and Facebook
+        follows additional eligibility requirements that go beyond standard streaming approval.
+        This is completely normal and does not reflect on the quality of your music.
+      </p>
     </div>
-  </div>
-</section>
-
+ 
+    <!-- PLATFORM COMPARE -->
+    <div class="platform-compare">
+      <div class="platform-box">
+        <div class="platform-box-label streaming">Streaming Platforms</div>
+        <p>These platforms accept a broader range of licensed content and have a more straightforward approval process.</p>
+        <div class="platform-tags">
+          <span class="ptag green">Spotify</span>
+          <span class="ptag green">Apple Music</span>
+          <span class="ptag green">Boomplay</span>
+          <span class="ptag green">Audiomack</span>
+          <span class="ptag green">Deezer</span>
+        </div>
+      </div>
+      <div class="platform-box">
+        <div class="platform-box-label ugc">UGC &amp; CID Platforms</div>
+        <p>These platforms enforce stricter ownership, originality and monetization requirements before accepting content.</p>
+        <div class="platform-tags">
+          <span class="ptag amber">TikTok</span>
+          <span class="ptag amber">Snapchat</span>
+          <span class="ptag amber">Instagram</span>
+          <span class="ptag amber">Facebook</span>
+          <span class="ptag amber">WhatsApp</span>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- REASONS LABEL -->
+    <div class="reasons-label">Common Reasons</div>
+ 
+    <!-- ACCORDION CARDS -->
+    <div class="cards-list" id="faqList">
+ 
+      <!-- 1 -->
+      <div class="faq-card" data-index="0">
+        <div class="faq-trigger" onclick="toggleFAQ(this)">
+          <span class="faq-num">01</span>
+          <div class="faq-icon">©️</div>
+          <span class="faq-title">Ownership &amp; Rights Issues</span>
+          <div class="faq-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="faq-body">
+          <div class="faq-body-inner">
+            <div class="faq-sep"></div>
+            <div class="faq-content">
+              <div class="block">
+                <div class="block-label why">Why this happens</div>
+                <p>UGC platforms require that you hold 100% exclusive ownership of every element in your release — including the beat, melody, lyrics and any additional sounds. Shared or partially-owned content is automatically flagged.</p>
+              </div>
+              <div class="block">
+                <div class="block-label fix">How to fix it</div>
+                <p>Use only original or exclusively licensed instrumentals and sounds. Ensure you have written documentation of full ownership before resubmitting.</p>
+                <div class="fix-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Submit only 100% owned content
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- 2 -->
+      <div class="faq-card" data-index="1">
+        <div class="faq-trigger" onclick="toggleFAQ(this)">
+          <span class="faq-num">02</span>
+          <div class="faq-icon">🎹</div>
+          <span class="faq-title">Non-Exclusive or Leased Beats</span>
+          <div class="faq-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="faq-body">
+          <div class="faq-body-inner">
+            <div class="faq-sep"></div>
+            <div class="faq-content">
+              <div class="block">
+                <div class="block-label why">Why this happens</div>
+                <p>Leased beats are sold to multiple artists simultaneously. Because the same instrumental already exists under different releases, UGC and Content ID platforms cannot safely assign ownership to a single artist and will reject the submission.</p>
+              </div>
+              <div class="block">
+                <div class="block-label fix">How to fix it</div>
+                <p>Purchase an exclusive license for your instrumental, or work with a producer to create a beat specifically for your release that no one else has access to.</p>
+                <div class="fix-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Use exclusive instrumentals only
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- 3 -->
+      <div class="faq-card" data-index="2">
+        <div class="faq-trigger" onclick="toggleFAQ(this)">
+          <span class="faq-num">03</span>
+          <div class="faq-icon">🤖</div>
+          <span class="faq-title">AI-Generated or Low Originality Content</span>
+          <div class="faq-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="faq-body">
+          <div class="faq-body-inner">
+            <div class="faq-sep"></div>
+            <div class="faq-content">
+              <div class="block">
+                <div class="block-label why">Why this happens</div>
+                <p>Platforms are increasingly detecting AI-generated audio, repetitive loops and content with very low creative originality. TikTok and similar platforms prioritize music that adds genuine artistic value for their creator community.</p>
+              </div>
+              <div class="block">
+                <div class="block-label fix">How to fix it</div>
+                <p>Ensure your music is uniquely and creatively produced with original artistic input. If AI tools were used as part of your process, your final output should still demonstrate clear human artistry and originality.</p>
+                <div class="fix-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Ensure genuine creative originality
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- 4 -->
+      <div class="faq-card" data-index="3">
+        <div class="faq-trigger" onclick="toggleFAQ(this)">
+          <span class="faq-num">04</span>
+          <div class="faq-icon">⚡</div>
+          <span class="faq-title">Copyright &amp; Content ID Conflicts</span>
+          <div class="faq-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="faq-body">
+          <div class="faq-body-inner">
+            <div class="faq-sep"></div>
+            <div class="faq-content">
+              <div class="block">
+                <div class="block-label why">Why this happens</div>
+                <p>If another party has already claimed ownership of the same audio — or a portion of it — through Content ID or a rights organization, this creates a conflict. The platforms cannot resolve competing ownership claims and will block the content from their CID system.</p>
+              </div>
+              <div class="block">
+                <div class="block-label fix">How to fix it</div>
+                <p>Avoid using uncleared samples, interpolations or any portion of copyrighted recordings. If a conflict exists, you must formally clear all rights before resubmitting.</p>
+                <div class="fix-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Clear all rights before submitting
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- 5 -->
+      <div class="faq-card" data-index="4">
+        <div class="faq-trigger" onclick="toggleFAQ(this)">
+          <span class="faq-num">05</span>
+          <div class="faq-icon">🛡️</div>
+          <span class="faq-title">Platform-Specific Restrictions</span>
+          <div class="faq-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="faq-body">
+          <div class="faq-body-inner">
+            <div class="faq-sep"></div>
+            <div class="faq-content">
+              <div class="block">
+                <div class="block-label why">Why this happens</div>
+                <p>Each social platform operates its own content policies independently of streaming services. Some platforms only accept music that can be safely and exclusively monetized — meaning they run their own background checks on ownership, originality and prior claims before granting access.</p>
+              </div>
+              <div class="block">
+                <div class="block-label fix">How to fix it</div>
+                <p>Ensure your release is fully compliant — 100% original, exclusively owned, and free from any prior claims or conflicts. Review the platform's current content guidelines before resubmitting.</p>
+                <div class="fix-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                  Ensure full ownership and compliance
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+    </div><!-- /cards-list -->
+ 
+    <!-- IMPORTANT NOTE BOX -->
+    <div class="note-box">
+      <div class="note-icon-wrap">⚠️</div>
+      <div class="note-box-text">
+        <strong>Important Note</strong>
+        <p>
+          This does <em>not</em> mean your song has been rejected from 444Music or from streaming platforms.
+          It simply means your release does not currently meet the additional eligibility requirements
+          set by social media distribution platforms. Your music remains live on all approved stores.
+        </p>
+      </div>
+    </div>
+ 
+    <!-- ACTION MESSAGE -->
+    <div class="action-message">
+      <strong>Ready to resubmit?</strong> If you believe your release now meets all the requirements listed above —
+      original content, exclusive ownership and no copyright conflicts — you're welcome to update your release details and resubmit for review.
+    </div>
+ 
+    <!-- BUTTONS -->
+    <div class="btn-row">
+      <a href="averagee.html" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Fix &amp; Resubmit
+      </a>
+      <a href="mailto:444musicdistro@gmail.com" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Contact Support
+      </a>
+    </div>
+ 
+    <!-- FOOTER NOTE -->
+    <div class="footer-note">
+      <p>
+        <span>444Music</span> does not control social platform eligibility.
+        Decisions on TikTok, Snapchat, Instagram and WhatsApp are made entirely
+        by each platform's independent content and monetization policies.
+      </p>
+      <a href="mailto:444musicdistro@gmail.com" class="footer-contact">444musicdistro@gmail.com</a>
+    </div>
+ 
+  </section>
+ 
+</div><!-- /page -->
+ 
+<script>
+function toggleFAQ(trigger) {
+  const card   = trigger.closest('.faq-card');
+  const isOpen = card.classList.contains('open');
+ 
+  /* Close all */
+  document.querySelectorAll('.faq-card.open').forEach(c => c.classList.remove('open'));
+ 
+  /* Open this one if it was closed */
+  if (!isOpen) card.classList.add('open');
+}
+</script>
+ 
 </body>
 </html>
