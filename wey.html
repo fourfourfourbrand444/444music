@@ -476,6 +476,214 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .stat-value { font-size: 1.6rem; }
   .topbar-title { font-size: 0.95rem; }
 }
+ 
+ 
+/* ═══════════════════════════════════════════════
+   NEW: CARD BODY CLICKABLE HINT
+   ═══════════════════════════════════════════════ */
+.card-body-clickable {
+  cursor: pointer;
+  position: relative;
+}
+.card-body-clickable::after {
+  content: 'View Details';
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text-3);
+  display: flex; align-items: center; gap: 4px;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+.card:hover .card-body-clickable::after { opacity: 1; }
+.card-body-clickable h3 { transition: color 0.15s; }
+.card:hover .card-body-clickable h3 { color: var(--purple-light); }
+/* Small expand icon hint next to title */
+.expand-hint {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 500; color: var(--text-3);
+  vertical-align: middle; margin-left: 6px;
+  opacity: 0; transition: opacity 0.15s;
+}
+.card:hover .expand-hint { opacity: 1; }
+.expand-hint svg { width: 10px; height: 10px; }
+ 
+ 
+/* ═══════════════════════════════════════════════
+   NEW: META VIEW MODAL
+   ═══════════════════════════════════════════════ */
+.meta-overlay {
+  position: fixed; inset: 0; z-index: 6000;
+  background: rgba(0,0,0,0.84);
+  backdrop-filter: blur(8px) saturate(0.7);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.meta-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+.meta-modal {
+  background: var(--black-2);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  width: 100%; max-width: 600px;
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: translateY(22px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1);
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--black-5) transparent;
+}
+.meta-overlay.open .meta-modal {
+  transform: translateY(0) scale(1);
+}
+.meta-modal::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--purple) 40%, var(--purple-light) 50%, var(--purple) 60%, transparent 100%);
+  border-radius: 18px 18px 0 0;
+  z-index: 2;
+}
+.meta-modal::-webkit-scrollbar { width: 4px; }
+.meta-modal::-webkit-scrollbar-track { background: transparent; }
+.meta-modal::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
+ 
+/* Modal header — sticky */
+.meta-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--black-2);
+  z-index: 3;
+  border-radius: 18px 18px 0 0;
+}
+.meta-modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text);
+}
+.meta-modal-title svg { width: 15px; height: 15px; color: var(--purple-light); }
+.meta-modal-subtitle {
+  font-size: 11px; color: var(--text-3); font-weight: 400;
+  margin-top: 1px;
+}
+.meta-modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--black-4); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); cursor: pointer; font-size: 0.9rem; line-height: 1;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.meta-modal-close:hover { background: var(--black-5); color: var(--text); border-color: var(--border-light); }
+ 
+/* Cover strip */
+.meta-cover-strip {
+  width: 100%; height: 180px; overflow: hidden; position: relative;
+}
+.meta-cover-strip img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.meta-cover-strip-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--black-3) 0%, var(--black-4) 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.meta-cover-strip-placeholder svg { width: 44px; height: 44px; color: var(--text-3); opacity: 0.2; }
+/* gradient fade at bottom of cover */
+.meta-cover-strip::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+  background: linear-gradient(to top, var(--black-2), transparent);
+}
+ 
+/* Body */
+.meta-modal-body { padding: 20px 22px 26px; }
+ 
+/* Section */
+.meta-section { margin-bottom: 20px; }
+.meta-section:last-child { margin-bottom: 0; }
+ 
+.meta-section-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 1.4px; text-transform: uppercase;
+  color: var(--purple-light);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.meta-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--purple-border), transparent);
+}
+ 
+/* Grid of fields */
+.meta-fields-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.meta-field {
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px;
+}
+.meta-field.full { grid-column: 1 / -1; }
+.meta-field-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 4px;
+}
+.meta-field-value {
+  font-size: 13px; color: var(--text); font-weight: 500;
+  word-break: break-word; line-height: 1.4;
+}
+.meta-field-value.none { color: var(--text-3); font-weight: 400; font-style: italic; font-size: 12px; }
+ 
+/* Credit items */
+.meta-credits-list { display: flex; flex-direction: column; gap: 6px; }
+.meta-credit-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px;
+  transition: border-color 0.15s;
+}
+.meta-credit-item:hover { border-color: var(--border-light); }
+.meta-credit-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple); flex-shrink: 0; margin-top: 4px;
+}
+.meta-credit-info { min-width: 0; flex: 1; }
+.meta-credit-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.meta-credit-role { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.meta-credit-ipi  { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: monospace; }
+.meta-no-credits  { font-size: 12px; color: var(--text-3); font-style: italic; padding: 4px 0; }
+ 
+/* Lyrics box */
+.meta-lyrics {
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 13px;
+  font-size: 12px; line-height: 1.8; color: var(--text-2);
+  white-space: pre-wrap; word-break: break-word;
+  max-height: 220px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--black-5) transparent;
+}
+.meta-lyrics::-webkit-scrollbar { width: 3px; }
+.meta-lyrics::-webkit-scrollbar-thumb { background: var(--black-5); }
+ 
+/* Status badges inside modal */
+.meta-status-row {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  margin-top: 4px;
+}
+ 
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .meta-modal { max-height: 92vh; border-radius: 14px 14px 0 0; align-self: flex-end; width: 100%; }
+  .meta-overlay { align-items: flex-end; padding: 0; }
+  .meta-fields-grid { grid-template-columns: 1fr; }
+  .meta-field.full { grid-column: 1; }
+}
 </style>
 </head>
 <body>
@@ -731,6 +939,32 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <span id="toastMsg">Cover art updated!</span>
 </div>
  
+ 
+<!-- ═══════════════════════════════════════════════
+     NEW: METADATA VIEW MODAL
+     ═══════════════════════════════════════════════ -->
+<div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true" aria-label="Release Details">
+  <div class="meta-modal" id="metaModal">
+ 
+    <div class="meta-modal-header">
+      <div>
+        <div class="meta-modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          </svg>
+          Release Details
+        </div>
+        <div class="meta-modal-subtitle" id="metaModalSubtitle">View-only metadata</div>
+      </div>
+      <button class="meta-modal-close" id="metaModalClose" aria-label="Close">✕</button>
+    </div>
+ 
+    <!-- Dynamic content injected here -->
+    <div id="metaModalContent"></div>
+ 
+  </div>
+</div>
+ 
 <!-- ===== SCRIPTS ===== -->
 <script>
 /* --- SIDEBAR TOGGLE --- */
@@ -802,6 +1036,274 @@ function getProgress(status) {
     default:         return { pct: 10,  label: "Processing",         isRejected: false };
   }
 }
+ 
+ 
+/* ═══════════════════════════════════════════════
+   NEW: META MODAL LOGIC
+   ═══════════════════════════════════════════════ */
+window._releaseMeta = {};
+ 
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+ 
+function metaVal(v, fallback) {
+  const f = fallback !== undefined ? fallback : '—';
+  return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f;
+}
+ 
+function renderCreditsSection(arr) {
+  if (!arr || arr.length === 0) {
+    return '<p class="meta-no-credits">None added</p>';
+  }
+  const filtered = arr.filter(c => c && c.name && c.name.trim());
+  if (filtered.length === 0) return '<p class="meta-no-credits">None added</p>';
+  return '<div class="meta-credits-list">' + filtered.map(c => `
+    <div class="meta-credit-item">
+      <div class="meta-credit-dot"></div>
+      <div class="meta-credit-info">
+        <div class="meta-credit-name">${escHtml(c.name)}</div>
+        ${c.role ? `<div class="meta-credit-role">${escHtml(c.role)}</div>` : ''}
+        ${c.ipi  ? `<div class="meta-credit-ipi">IPI / CAE: ${escHtml(c.ipi)}</div>` : ''}
+      </div>
+    </div>`).join('') + '</div>';
+}
+ 
+function openMetaModal(releaseId) {
+  const data = window._releaseMeta[releaseId];
+  if (!data) return;
+ 
+  const content  = document.getElementById('metaModalContent');
+  const subtitle = document.getElementById('metaModalSubtitle');
+ 
+  subtitle.textContent = data.releaseTitle || 'Release Details';
+ 
+  const releaseDate = data.releaseDate
+    ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
+    : '—';
+ 
+  const submittedAt = data.createdAt
+    ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : '—';
+ 
+  const rawStatus   = (data.status || 'Pending').trim();
+  const statusClass = rawStatus.toLowerCase().replace(/\s+/g, '-');
+ 
+  const credits = data.credits || {};
+ 
+  /* Cover */
+  const coverHtml = data.coverURL
+    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </div></div>`;
+ 
+  /* Has credits? */
+  const hasProducers   = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
+  const hasMusicians   = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
+  const hasWriters     = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
+  const hasPublishers  = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
+  const hasAnyCredits  = hasProducers || hasMusicians || hasWriters || hasPublishers;
+ 
+  content.innerHTML = `
+ 
+    ${coverHtml}
+ 
+    <div class="meta-modal-body">
+ 
+      <!-- STATUS -->
+      <div class="meta-section">
+        <div class="meta-section-label">Status</div>
+        <div class="meta-status-row">
+          <span class="badge ${statusClass}">${escHtml(rawStatus)}</span>
+          <span class="badge ${data.paymentVerified ? 'paid' : 'unpaid'}">
+            ${data.paymentVerified ? 'Paid' : 'Unpaid'}
+          </span>
+          ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--text-3);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
+        </div>
+      </div>
+ 
+      <!-- ARTIST & RELEASE -->
+      <div class="meta-section">
+        <div class="meta-section-label">Artist & Release</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field full">
+            <div class="meta-field-label">Main Artist</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div>
+          </div>
+          ${data.featuring && data.featuring.trim() ? `
+          <div class="meta-field full">
+            <div class="meta-field-label">Featuring</div>
+            <div class="meta-field-value">${escHtml(data.featuring)}</div>
+          </div>` : ''}
+          <div class="meta-field full">
+            <div class="meta-field-label">Release Title</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Type</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Genre</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.genre))}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Language</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.language))}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Release Date</div>
+            <div class="meta-field-value">${escHtml(releaseDate)}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Explicit Content</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- LABEL & RIGHTS -->
+      <div class="meta-section">
+        <div class="meta-section-label">Label & Rights</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field">
+            <div class="meta-field-label">Label Name</div>
+            <div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">
+              ${escHtml(metaVal(data.label, 'Independent'))}
+            </div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Copyright Holder</div>
+            <div class="meta-field-value ${!data.copyright || !data.copyright.trim() ? 'none' : ''}">
+              ${escHtml(metaVal(data.copyright))}
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- IDENTIFIERS -->
+      <div class="meta-section">
+        <div class="meta-section-label">Identifiers</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field">
+            <div class="meta-field-label">ISRC Code</div>
+            <div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">
+              ${escHtml(metaVal(data.isrc))}
+            </div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">UPC / EAN Barcode</div>
+            <div class="meta-field-value ${!data.upc || !data.upc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">
+              ${escHtml(metaVal(data.upc, 'Auto-assign'))}
+            </div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Catalog Number</div>
+            <div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">
+              ${escHtml(metaVal(data.catalogNumber))}
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- CONTACT -->
+      <div class="meta-section">
+        <div class="meta-section-label">Contact & Location</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field">
+            <div class="meta-field-label">Country</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.country))}</div>
+          </div>
+          <div class="meta-field">
+            <div class="meta-field-label">Phone</div>
+            <div class="meta-field-value ${!data.phone || !data.phone.trim() ? 'none' : ''}">
+              ${escHtml(metaVal(data.phone))}
+            </div>
+          </div>
+          <div class="meta-field full">
+            <div class="meta-field-label">Email</div>
+            <div class="meta-field-value">${escHtml(metaVal(data.email))}</div>
+          </div>
+          ${data.refferal && data.refferal.trim() ? `
+          <div class="meta-field">
+            <div class="meta-field-label">Referral Code</div>
+            <div class="meta-field-value">${escHtml(data.refferal)}</div>
+          </div>` : ''}
+        </div>
+      </div>
+ 
+      ${hasAnyCredits ? `
+      <!-- PRODUCTION CREDITS -->
+      <div class="meta-section">
+        <div class="meta-section-label">Production Credits</div>
+        ${hasProducers ? `
+          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>
+          ${renderCreditsSection(credits.producer)}
+        ` : ''}
+        ${hasMusicians ? `
+          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Musicians</div>
+          ${renderCreditsSection(credits.musician)}
+        ` : ''}
+      </div>` : ''}
+ 
+      ${(hasWriters || hasPublishers) ? `
+      <!-- SONGWRITING -->
+      <div class="meta-section">
+        <div class="meta-section-label">Songwriting & Publishing</div>
+        ${hasWriters ? `
+          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>
+          ${renderCreditsSection(credits.writer)}
+        ` : ''}
+        ${hasPublishers ? `
+          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>
+          ${renderCreditsSection(credits.publishing)}
+        ` : ''}
+      </div>` : ''}
+ 
+      ${data.description && data.description.trim() ? `
+      <!-- LYRICS -->
+      <div class="meta-section">
+        <div class="meta-section-label">Lyrics</div>
+        <div class="meta-lyrics">${escHtml(data.description)}</div>
+      </div>` : ''}
+ 
+    </div>
+  `;
+ 
+  document.getElementById('metaOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+ 
+function closeMetaModal() {
+  document.getElementById('metaOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+ 
+/* Close handlers */
+document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
+document.getElementById('metaOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeMetaModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeMetaModal();
+});
+ 
+/* Click delegation — card body area opens modal */
+document.getElementById('submissionsContainer').addEventListener('click', function(e) {
+  const cardBody = e.target.closest('.card-body-clickable');
+  if (!cardBody) return;
+  /* Don't open modal when clicking action buttons */
+  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn')) return;
+  const releaseId = cardBody.dataset.releaseId;
+  if (releaseId) openMetaModal(releaseId);
+});
 </script>
  
 <script type="module">
@@ -865,6 +1367,9 @@ onAuthStateChanged(auth, async (user) => {
       const data = docSnap.data();
       const id   = docSnap.id;
  
+      /* ── NEW: store full data in global map for meta modal ── */
+      window._releaseMeta[id] = { ...data, _id: id };
+ 
       /* Ensure paymentVerified field exists */
       if (data.paymentVerified === undefined) {
         await updateDoc(doc(db, "submissions", id), { paymentVerified: false });
@@ -924,8 +1429,8 @@ onAuthStateChanged(auth, async (user) => {
           <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
         </div>
  
-        <div class="card-body">
-          <h3>${data.releaseTitle || "Untitled Release"}</h3>
+        <div class="card-body card-body-clickable" data-release-id="${id}">
+          <h3>${data.releaseTitle || "Untitled Release"}<span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/></svg></span></h3>
           <p class="artist-name">${data.artistName || "Unknown Artist"}</p>
  
           ${data.featuring && data.featuring.trim()
@@ -1025,6 +1530,8 @@ onAuthStateChanged(auth, async (user) => {
       reader.onload = async (ev) => {
         const base64 = ev.target.result;
         await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
+        /* Also update global meta map so modal shows new cover */
+        if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
         wrapper.innerHTML = `
           <img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art"
                style="width:100%;height:200px;object-fit:cover;">
@@ -1055,4 +1562,3 @@ onAuthStateChanged(auth, async (user) => {
  
 </body>
 </html>
- 
