@@ -619,7 +619,7 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <input type="hidden" id="artistName" name="artistName">
         <div class="artist-dropdown" id="artistDropdown"></div>
-        <div class="field-hint">add artist name  &amp; MusicBrainz</div>
+        <div class="field-hint">Search by artist name — results pulled from Apple Music</div>
       </div>
 
       <div class="field">
@@ -1042,25 +1042,13 @@ window.collectCredits = function() {
   let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [];
   let activeCtrl = null;
 
-  // ── Strategy: race iTunes proxies + MusicBrainz in parallel, merge & deduplicate results
-  // iTunes has every artist on streaming. MusicBrainz is the fallback for coverage.
-  // We fire ALL sources simultaneously and show whoever responds first with results.
-
+  // ── iTunes Search API via parallel CORS proxies — works on iOS, desktop & Android
   async function fetchArtists(query) {
     showLoading();
     if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
     activeCtrl = new AbortController();
     const signal = activeCtrl.signal;
-    let rendered = false;
 
-    function tryRender(artists, source) {
-      if (rendered || !artists || artists.length === 0) return false;
-      rendered = true;
-      renderResults(query, artists, source);
-      return true;
-    }
-
-    // ── Source 1: iTunes via multiple CORS proxies fired in parallel
     const itunesUrl = 'https://itunes.apple.com/search?term=' +
       encodeURIComponent(query) + '&entity=musicArtist&limit=10&media=music';
 
@@ -1071,17 +1059,16 @@ window.collectCredits = function() {
       'https://api.codetabs.com/v1/proxy?quest=' + itunesUrl
     ];
 
-    async function tryiTunes(proxyUrl) {
+    async function tryProxy(proxyUrl) {
       try {
         const res = await Promise.race([
           fetch(proxyUrl, { signal }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('t')), 6000))
+          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
         ]);
-        if (!res.ok) throw new Error('bad');
+        if (!res.ok) return null;
         const text = await res.text();
         let data;
         try { data = JSON.parse(text); } catch { return null; }
-        // allorigins wraps in {contents:"..."}
         if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { return null; } }
         if (!data || !data.results || !data.results.length) return null;
         return data.results.filter(r => r.artistName).map(r => ({
@@ -1093,69 +1080,21 @@ window.collectCredits = function() {
       } catch(e) { return null; }
     }
 
-    // Fire all proxies simultaneously — first one with results wins
-    const itunesRace = new Promise(resolve => {
+    // Fire all proxies in parallel — first one with real results wins
+    let resolved = false;
+    const results = await new Promise(resolve => {
       let done = 0;
       proxies.forEach(p => {
-        tryiTunes(p).then(res => {
+        tryProxy(p).then(res => {
           done++;
-          if (res && res.length) resolve(res);
-          else if (done === proxies.length) resolve(null);
+          if (res && res.length && !resolved) { resolved = true; resolve(res); }
+          else if (done === proxies.length && !resolved) resolve([]);
         });
       });
     });
 
-    // ── Source 2: MusicBrainz (CORS-native, broader indie/African coverage)
-    async function tryMusicBrainz() {
-      try {
-        const url = 'https://musicbrainz.org/ws/2/artist/?query=artist:' +
-          encodeURIComponent(query) + '&limit=8&fmt=json';
-        const res = await Promise.race([
-          fetch(url, { signal, headers: { Accept: 'application/json', 'User-Agent': 'ArtistPortal/1.0' } }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('t')), 8000))
-        ]);
-        if (!res.ok) throw new Error('bad');
-        const data = await res.json();
-        if (!data.artists || !data.artists.length) return null;
-        return data.artists.map(a => ({
-          name: a.name,
-          genre: (a.tags && a.tags.length ? a.tags.sort((x,y)=>y.count-x.count)[0].name : '') || a.type || '',
-          img: '',
-          source: 'mb'
-        }));
-      } catch(e) { return null; }
-    }
-
-    // Race both sources — first to return results gets shown immediately
-    // The slower source fills in any extra names not already shown
-    const mbPromise = tryMusicBrainz();
-    const itunesPromise = itunesRace;
-
-    // Show the first source that responds with results
-    Promise.race([
-      itunesPromise.then(r => r ? { results: r, src: 'itunes' } : Promise.reject()),
-      mbPromise.then(r => r ? { results: r, src: 'mb' } : Promise.reject())
-    ]).then(({ results, src }) => {
-      if (!rendered) tryRender(results, src);
-    }).catch(() => {});
-
-    // After both finish, merge if we only showed one source
-    Promise.allSettled([itunesPromise, mbPromise]).then(([it, mb]) => {
-      if (rendered) return; // already rendered
-      const itunes = it.status === 'fulfilled' ? it.value : null;
-      const brain  = mb.status === 'fulfilled' ? mb.value : null;
-      const merged = mergeArtists(itunes, brain);
-      if (merged.length) renderResults(query, merged, 'merged');
-      else renderResults(query, [], 'none');
-    });
-  }
-
-  function mergeArtists(itunes, mb) {
-    const seen = new Set();
-    const out = [];
-    (itunes || []).forEach(a => { const k = a.name.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(a); } });
-    (mb || []).forEach(a => { const k = a.name.toLowerCase(); if (!seen.has(k)) { seen.add(k); out.push(a); } });
-    return out.slice(0, 12);
+    if (signal.aborted) return;
+    renderResults(query, results, 'itunes');
   }
 
   searchInput.addEventListener('input', function() {
@@ -1194,7 +1133,7 @@ window.collectCredits = function() {
     let html = '';
     if (artists && artists.length > 0) {
       const srcLabel = (sourceName === 'itunes' || sourceName === 'merged') ? 'Apple Music' : 'MusicBrainz';
-      html += '<div class="dropdown-sect-title">Artist results</div>';
+      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
       artists.forEach((a, i) => {
         const imgUrl = a.img || '';
         dropdownItems.push({ name: a.name, imageUrl: imgUrl, genre: a.genre || '', source: a.source || 'mb' });
@@ -1202,7 +1141,7 @@ window.collectCredits = function() {
         const av = imgUrl
           ? `<div class="opt-avatar"><img src="${imgUrl}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
           : `<div class="opt-avatar">${initial}</div>`;
-        const badge = (a.source === 'itunes') ? 'Apple Music' : 'MusicBrainz';
+        const badge = 'Apple Music';
         html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${esc(a.name)}</div>${a.genre ? `<div class="opt-meta">${esc(a.genre)}</div>` : ''}</div><span class="opt-badge badge-apple">${badge}</span></div>`;
       });
     }
