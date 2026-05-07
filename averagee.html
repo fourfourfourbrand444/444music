@@ -1109,8 +1109,16 @@ window.collectCredits = function() {
 
   searchInput.addEventListener('keydown', handleKeyNav);
 
-  // Works on iOS Safari (touchstart) and desktop (mousedown)
+  // Close on outside tap — use touchend not touchstart so it doesn't fire during scroll
+  let outsideTouchMoved = false;
   document.addEventListener('touchstart', function(e) {
+    outsideTouchMoved = false;
+  }, { passive: true });
+  document.addEventListener('touchmove', function() {
+    outsideTouchMoved = true;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    if (outsideTouchMoved) return;
     if (!e.target.closest('#artistFieldWrap')) closeDropdown();
   }, { passive: true });
   document.addEventListener('mousedown', function(e) {
@@ -1155,10 +1163,29 @@ window.collectCredits = function() {
     focused = -1;
 
     dropdown.querySelectorAll('.artist-option').forEach(el => {
-      // mousedown prevents blur-before-click on desktop
+      // Desktop: mousedown fires before blur, preventDefault keeps focus on input
       el.addEventListener('mousedown', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-      // touchend with stopPropagation so iOS outside-click handler doesn't fire
-      el.addEventListener('touchend', function(e) { e.preventDefault(); e.stopPropagation(); selectItem(parseInt(el.dataset.index)); });
+
+      // Mobile: track touchstart position so we can tell tap apart from scroll.
+      // If the finger moved more than 8px in any direction it's a scroll — ignore touchend.
+      let touchStartX = 0, touchStartY = 0, didScroll = false;
+
+      el.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        didScroll = false;
+      }, { passive: true });
+
+      el.addEventListener('touchmove', function() {
+        didScroll = true; // any movement = scrolling, not tapping
+      }, { passive: true });
+
+      el.addEventListener('touchend', function(e) {
+        if (didScroll) return; // finger moved — was a scroll, ignore
+        e.preventDefault();
+        e.stopPropagation();
+        selectItem(parseInt(el.dataset.index));
+      });
     });
   }
 
