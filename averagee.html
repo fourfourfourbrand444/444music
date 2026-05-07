@@ -4,347 +4,820 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create New Release</title>
- 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
- 
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
 :root {
-  --bg-void:        #05050a;
-  --bg-surface:     #080810;
-  --bg-card:        #0c0c16;
-  --bg-input:       #111120;
-  --bg-input-hover: #14142a;
-  --bg-modal:       #0e0e1e;
-  --border:         rgba(140,120,255,0.1);
-  --border-focus:   rgba(160,130,255,0.55);
-  --border-modal:   rgba(160,130,255,0.18);
-  --purple:         #a278f5;
-  --purple-bright:  #c4a8ff;
-  --purple-deep:    #7c55d4;
-  --purple-dim:     rgba(162,120,245,0.15);
-  --purple-glow:    0 0 28px rgba(162,120,245,0.28);
-  --purple-glow-sm: 0 0 12px rgba(162,120,245,0.18);
-  --text-primary:   #eeedf5;
-  --text-secondary: #7b7a8e;
-  --text-muted:     #3a3a52;
-  --radius-sm:  6px;
-  --radius-md:  12px;
-  --radius-lg:  18px;
-  --radius-xl:  24px;
-  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-display: 'Syne', sans-serif;
-  --font-body:    'DM Sans', sans-serif;
+  --bg-base:        #070b14;
+  --bg-surface:     #0b1020;
+  --bg-card:        #0e1528;
+  --bg-input:       #131929;
+  --bg-input-focus: #161e30;
+  --border:         rgba(99,130,255,0.12);
+  --border-focus:   rgba(99,130,255,0.5);
+  --border-accent:  rgba(99,130,255,0.22);
+  --accent:         #4f7cff;
+  --accent-light:   #7fa0ff;
+  --accent-bright:  #a8c0ff;
+  --accent-dim:     rgba(79,124,255,0.12);
+  --accent-glow:    0 0 32px rgba(79,124,255,0.25);
+  --gold:           #f0c060;
+  --gold-dim:       rgba(240,192,96,0.12);
+  --text-primary:   #e8edf8;
+  --text-secondary: #7a87a8;
+  --text-muted:     #3a4560;
+  --success:        #34d399;
+  --danger:         #f87171;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --font-display: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
 }
- 
-html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-void);
+  background: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
   background-image:
-    radial-gradient(ellipse 70% 45% at 50% -5%,  rgba(162,120,245,0.09) 0%, transparent 65%),
-    radial-gradient(ellipse 35% 28% at 85% 95%,  rgba(100,70,200,0.06) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 35% at 10% 80%,  rgba(120,90,230,0.04) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,124,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 100%, rgba(79,124,255,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 70%, rgba(79,100,255,0.03) 0%, transparent 60%);
   background-attachment: fixed;
 }
+
+/* Subtle grid texture */
 body::before {
   content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 0; opacity: 0.7;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(99,130,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,130,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
 }
+
 .wrapper {
   position: relative; z-index: 1;
-  max-width: 900px; margin: 0 auto;
-  padding: 52px 24px 90px;
-  animation: wrapperIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
+  max-width: 920px; margin: 0 auto;
+  padding: 40px 24px 80px;
+  animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
 }
+
+/* ─── HEADER ─── */
 .site-header {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 52px; padding-bottom: 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 48px; padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
 }
-.site-logo { height: 42px; width: auto; object-fit: contain; filter: drop-shadow(0 0 14px rgba(162,120,245,0.35)); }
-h1 {
+.site-logo { height: 38px; width: auto; filter: drop-shadow(0 0 16px rgba(79,124,255,0.3)); }
+.header-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  border-radius: 999px; padding: 5px 12px;
+  font-family: var(--font-display); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light);
+}
+.header-badge svg { width: 10px; height: 10px; }
+
+/* ─── PAGE TITLE ─── */
+.page-title {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 800;
-  letter-spacing: -0.025em; line-height: 1.1; color: var(--text-primary);
-  margin-bottom: 10px; animation: fadeInUp 0.5s 0.1s ease both;
+  font-size: clamp(1.9rem, 5vw, 2.8rem); font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.08;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #e8edf8 0%, #a8c0ff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.subtitle { font-size: 0.93rem; color: var(--text-secondary); font-weight: 300; letter-spacing: 0.01em; margin-bottom: 34px; animation: fadeInUp 0.5s 0.18s ease both; }
-.step-indicator { display: flex; align-items: center; margin-bottom: 44px; animation: fadeInUp 0.5s 0.22s ease both; }
-.step { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; transition: color var(--transition); }
-.step.active { color: var(--purple); }
-.step-num { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-family: var(--font-display); font-weight: 700; flex-shrink: 0; transition: all var(--transition); }
-.step.active .step-num { background: var(--purple); border-color: var(--purple); color: #07070f; box-shadow: var(--purple-glow); }
-.step-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin: 0 14px; max-width: 80px; }
-.section-label { font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--purple); margin: 36px 0 18px; display: flex; align-items: center; gap: 12px; }
-.section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(162,120,245,0.28), transparent); }
+.page-sub {
+  font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;
+  margin-bottom: 36px; letter-spacing: 0.01em;
+}
+
+/* ─── STEP INDICATOR ─── */
+.step-track {
+  display: flex; align-items: center;
+  margin-bottom: 44px; gap: 0;
+}
+.step-item {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
+  white-space: nowrap;
+}
+.step-item.active { color: var(--accent-light); }
+.step-item.done { color: var(--success); }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+  transition: all var(--t);
+}
+.step-item.active .step-num {
+  background: var(--accent); border-color: var(--accent);
+  color: #fff; box-shadow: 0 0 0 4px rgba(79,124,255,0.15);
+}
+.step-connector {
+  flex: 1; height: 1px; max-width: 80px; margin: 0 12px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ─── FORM CARD ─── */
 #releaseForm {
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
   padding: clamp(24px, 5vw, 52px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 40px 100px rgba(0,0,0,0.6), 0 0 80px rgba(100,70,200,0.06) inset;
-  position: relative; overflow: hidden; animation: cardIn 0.55s 0.08s cubic-bezier(0.22,1,0.36,1) both;
+  position: relative; overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 40px 100px rgba(0,0,0,0.5),
+    0 2px 0 rgba(99,130,255,0.08) inset;
+  animation: fadeUp 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both;
 }
-#releaseForm::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%); opacity: 0.65; }
-#releaseForm::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(162,120,245,0.04), transparent); pointer-events: none; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-.field { display: flex; flex-direction: column; gap: 9px; }
-.field:has(textarea) { grid-column: 1 / -1; }
-.field label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-secondary); font-family: var(--font-display); display: flex; align-items: center; gap: 6px; }
-.field input, .field select, .field textarea { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; font-weight: 400; padding: 13px 16px; outline: none; transition: border-color var(--transition), background var(--transition), box-shadow var(--transition); width: 100%; appearance: none; -webkit-appearance: none; }
-.field input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.85rem; }
-.field input:hover, .field select:hover, .field textarea:hover { background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15); }
-.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--purple); background: var(--bg-input-hover); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
-.select-wrapper, .flag-select-wrapper { position: relative; }
-.select-wrapper::after, .flag-select-wrapper::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; transition: border-top-color var(--transition), transform var(--transition); }
-.select-wrapper:focus-within::after, .flag-select-wrapper:focus-within::after { border-top-color: var(--purple); transform: translateY(-50%) rotate(180deg); }
-.select-wrapper select { padding-right: 40px; cursor: pointer; }
-.flag-select-wrapper .flag-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 1.15rem; line-height: 1; pointer-events: none; z-index: 1; }
-.flag-select-wrapper select { padding-left: 44px; padding-right: 40px; cursor: pointer; }
-.field textarea { min-height: 130px; resize: vertical; line-height: 1.65; }
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5) sepia(1) hue-rotate(215deg) saturate(2); cursor: pointer; opacity: 0.6; transition: opacity var(--transition); }
+/* Top accent line */
+#releaseForm::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent-light) 60%, transparent 100%);
+  opacity: 0.6;
+}
+
+/* ─── SECTION HEADERS ─── */
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin: 40px 0 20px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head:first-child { margin-top: 0; }
+.section-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  background: var(--accent-dim); border: 1px solid var(--border-accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-icon svg { width: 15px; height: 15px; color: var(--accent-light); }
+.section-title-wrap { flex: 1; }
+.section-title {
+  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
+  letter-spacing: 0.04em; color: var(--text-primary);
+}
+.section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ─── GRID ─── */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.col-full { grid-column: 1 / -1; }
+
+/* ─── FIELD ─── */
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+}
+.field label svg { width: 11px; height: 11px; opacity: 0.7; }
+.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+.field input, .field select, .field textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+  width: 100%; appearance: none; -webkit-appearance: none;
+}
+.field input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
+.field input:hover, .field select:hover, .field textarea:hover {
+  border-color: var(--border-accent);
+  background: var(--bg-input-focus);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(79,124,255,0.12);
+}
+.field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
+
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary);
+  pointer-events: none; transition: all var(--t);
+}
+.select-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
+.select-wrap select { padding-right: 40px; cursor: pointer; }
+
+/* Country select with flag */
+.country-wrap { position: relative; }
+.country-flag {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 15px; border-radius: 2px; object-fit: cover;
+  pointer-events: none; z-index: 1; display: flex; align-items: center; justify-content: center;
+}
+.country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
+.country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
+.country-wrap::after {
+  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
+}
+.country-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.4) sepia(1) hue-rotate(195deg) saturate(2);
+  cursor: pointer; opacity: 0.6; transition: opacity var(--t);
+}
 input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
-.btn { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 38px; width: 100%; padding: 17px 32px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: var(--font-display); font-size: 0.83rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #09090f; background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 55%, var(--purple-deep) 100%); box-shadow: 0 4px 32px rgba(162,120,245,0.38), 0 1px 0 rgba(255,255,255,0.1) inset; transition: transform var(--transition), box-shadow var(--transition), filter var(--transition); position: relative; overflow: hidden; }
-.btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, transparent 55%); pointer-events: none; }
-.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(162,120,245,0.5); filter: brightness(1.06); }
-.btn:active:not(:disabled) { transform: translateY(0); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
-.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-#statusMsg { margin-top: 16px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 22px; }
-.form-footer-note { margin-top: 24px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.form-footer-note svg { width: 14px; height: 14px; opacity: 0.6; }
-option { background: #111120; color: var(--text-primary); }
-input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 100px var(--bg-input-hover) inset !important; -webkit-text-fill-color: var(--text-primary) !important; caret-color: var(--text-primary); border-color: var(--border) !important; }
- 
-/* ARTIST PILL FIELD */
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-input-focus) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary); border-color: var(--border) !important;
+}
+
+option { background: #131929; color: var(--text-primary); }
+
+/* ─── HINT TEXT ─── */
+.field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ─── ARTIST PILL FIELD ─── */
 .artist-field { position: relative; }
-.artist-pill-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; cursor: text; min-height: 48px; transition: border-color var(--transition), box-shadow var(--transition); }
-.artist-pill-box:focus-within { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
-.artist-pill { display: inline-flex; align-items: center; gap: 7px; background: rgba(162,120,245,0.14); border: 1px solid rgba(162,120,245,0.3); border-radius: 999px; padding: 4px 12px 4px 10px; font-size: 0.82rem; color: var(--purple-bright); animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
-.artist-pill .pill-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; background: rgba(162,120,245,0.2); font-size: 0.65rem; display: flex; align-items: center; justify-content: center; color: var(--purple); }
-.artist-pill .pill-avatar.has-img { background: none; }
-.artist-pill .pill-avatar.has-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
-.artist-pill-remove { width: 16px; height: 16px; border-radius: 50%; background: rgba(162,120,245,0.25); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--purple-bright); padding: 0; transition: background var(--transition), transform var(--transition); font-size: 0.7rem; line-height: 1; }
-.artist-pill-remove:hover { background: rgba(162,120,245,0.45); transform: scale(1.15); }
-.artist-search-input { background: none !important; border: none !important; box-shadow: none !important; outline: none !important; padding: 4px 6px !important; flex: 1; min-width: 140px; font-size: 0.88rem !important; color: var(--text-primary); }
-.artist-search-input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.84rem; }
-.artist-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 9000; background: var(--bg-modal); border: 1px solid var(--border-modal); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.5); display: none; animation: dropIn 0.2s cubic-bezier(0.22,1,0.36,1) both; max-height: 320px; overflow-y: auto; }
-.artist-dropdown.open { display: block; }
-.dropdown-section-title { padding: 10px 16px 6px; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; border-bottom: 1px solid var(--border); }
-.artist-option { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; transition: background var(--transition); border-bottom: 1px solid rgba(140,120,255,0.06); }
+.artist-pill-box {
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  cursor: text; min-height: 50px;
+  transition: border-color var(--t), box-shadow var(--t), background var(--t);
+}
+.artist-pill-box:focus-within {
+  border-color: var(--accent); background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(79,124,255,0.12);
+}
+.artist-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(79,124,255,0.12); border: 1px solid rgba(79,124,255,0.28);
+  border-radius: 999px; padding: 4px 10px 4px 6px;
+  font-size: 0.82rem; color: var(--accent-bright);
+  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.pill-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(79,124,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; color: var(--accent-light);
+  overflow: hidden; flex-shrink: 0;
+}
+.pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.pill-remove {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(79,124,255,0.2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent-bright); padding: 0;
+  transition: background var(--t), transform var(--t);
+}
+.pill-remove:hover { background: rgba(79,124,255,0.4); transform: scale(1.15); }
+.pill-remove svg { width: 8px; height: 8px; }
+.artist-search-input {
+  background: none !important; border: none !important;
+  box-shadow: none !important; outline: none !important;
+  padding: 4px 6px !important; flex: 1; min-width: 140px;
+  font-size: 0.88rem !important; color: var(--text-primary);
+}
+.artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
+
+/* ─── DROPDOWN ─── */
+.artist-dropdown {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  z-index: 9000; background: #0e1528;
+  border: 1px solid rgba(99,130,255,0.2); border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
+  display: none; max-height: 340px; overflow-y: auto;
+}
+.artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+.dropdown-sect-title {
+  padding: 10px 16px 6px;
+  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.artist-option {
+  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+  cursor: pointer; transition: background var(--t);
+  border-bottom: 1px solid rgba(99,130,255,0.05);
+}
 .artist-option:last-child { border-bottom: none; }
-.artist-option:hover, .artist-option.focused { background: rgba(162,120,245,0.1); }
-.artist-option-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; background: rgba(162,120,245,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--purple); }
-.artist-option-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.artist-option-info { flex: 1; min-width: 0; }
-.artist-option-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.artist-option-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
-.artist-option-badge { font-size: 0.6rem; padding: 2px 7px; border-radius: 999px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; flex-shrink: 0; }
-.badge-apple { background: rgba(252,60,68,0.12); color: #fc3c44; border: 1px solid rgba(252,60,68,0.2); }
-.badge-new   { background: rgba(162,120,245,0.15); color: var(--purple-bright); border: 1px solid rgba(162,120,245,0.3); }
-.dropdown-loading { padding: 18px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.artist-option:hover, .artist-option.focused { background: rgba(79,124,255,0.08); }
+.opt-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  overflow: hidden; background: rgba(79,124,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
+  color: var(--accent-light);
+}
+.opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.opt-info { flex: 1; min-width: 0; }
+.opt-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opt-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.opt-badge {
+  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
+}
+.badge-apple { background: rgba(252,60,68,0.1); color: #fc6b70; border: 1px solid rgba(252,60,68,0.2); }
+.badge-new   { background: rgba(79,124,255,0.12); color: var(--accent-bright); border: 1px solid rgba(79,124,255,0.25); }
+.dropdown-loading {
+  padding: 20px 16px; text-align: center;
+  font-size: 0.83rem; color: var(--text-muted); font-style: italic;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
 .artist-dropdown::-webkit-scrollbar { width: 4px; }
 .artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(162,120,245,0.3); border-radius: 2px; }
- 
-/* MODAL */
-.modal-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(4,4,10,0.85); backdrop-filter: blur(8px) saturate(0.7); display: flex; align-items: center; justify-content: center; padding: 20px; animation: overlayIn 0.25s ease both; }
-.modal-overlay.closing { animation: overlayOut 0.2s ease both; }
-.modal-card { background: var(--bg-modal); border: 1px solid var(--border-modal); border-radius: var(--radius-xl); padding: 36px 32px 32px; width: 100%; max-width: 440px; position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.5), 0 0 60px rgba(100,70,200,0.08) inset; animation: modalIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both; }
-.modal-card.closing { animation: modalOut 0.2s ease both; }
-.modal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--purple-deep) 35%, var(--purple-bright) 50%, var(--purple-deep) 65%, transparent 100%); opacity: 0.5; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
-.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(79,124,255,0.25); border-radius: 2px; }
+
+/* ─── CREDITS ─── */
+.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.credits-panel {
+  background: rgba(79,124,255,0.025); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px;
+}
+.credits-panel-hd {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
+}
+.credits-panel-hd svg { width: 13px; height: 13px; }
+.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.credit-row {
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px;
+  display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;
+  position: relative; animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+  transition: border-color var(--t);
+}
+.credit-row:hover { border-color: var(--border-accent); }
+.credit-row-num {
+  position: absolute; top: -9px; left: 12px;
+  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); background: var(--bg-card);
+  padding: 1px 8px; border-radius: 999px; border: 1px solid rgba(79,124,255,0.2);
+}
+.credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
+.credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.credit-input {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.86rem;
+  padding: 9px 12px; outline: none; width: 100%;
+  transition: border-color var(--t), box-shadow var(--t); appearance: none;
+}
+.credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
+.credit-input:hover { border-color: var(--border-accent); }
+.credit-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,124,255,0.1); }
+.csel-wrap { position: relative; }
+.csel-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid var(--text-secondary); pointer-events: none;
+}
+.csel-wrap:focus-within::after { border-top-color: var(--accent); }
+.csel-wrap select { padding-right: 28px; cursor: pointer; }
+.credit-remove {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: rgba(248,113,113,0.5); transition: all var(--t); flex-shrink: 0;
+}
+.credit-remove:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.35); color: var(--danger); transform: scale(1.08); }
+.credit-remove svg { width: 11px; height: 11px; }
+.add-credit-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: transparent; border: 1px dashed rgba(79,124,255,0.2);
+  border-radius: var(--radius-sm); padding: 10px 16px;
+  font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); cursor: pointer; width: 100%;
+  transition: all var(--t);
+}
+.add-credit-btn:hover { background: rgba(79,124,255,0.07); border-color: rgba(79,124,255,0.35); color: var(--accent-bright); }
+.add-credit-btn svg { width: 13px; height: 13px; }
+
+/* ─── SUBMIT BUTTON ─── */
+.form-actions { margin-top: 40px; }
+.submit-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px 32px;
+  border-radius: var(--radius-md); border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.85rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #5a8fff 0%, #3d6df5 50%, #2952e0 100%);
+  box-shadow: 0 4px 24px rgba(79,124,255,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+  transition: transform var(--t), box-shadow var(--t), filter var(--t);
+  position: relative; overflow: hidden;
+}
+.submit-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(79,124,255,0.45); filter: brightness(1.05); }
+.submit-btn:active:not(:disabled) { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+#statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
+.form-footer-note {
+  margin-top: 20px; text-align: center;
+  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
+
+/* ─── TRUST STRIP ─── */
+.trust-strip {
+  display: flex; align-items: center; justify-content: center; gap: 28px;
+  margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.04em;
+}
+.trust-item svg { width: 12px; height: 12px; color: var(--accent); opacity: 0.7; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(4,6,14,0.88); backdrop-filter: blur(10px) saturate(0.6);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  animation: overlayIn 0.2s ease both;
+}
+.modal-overlay.closing { animation: overlayOut 0.18s ease both; }
+.modal-card {
+  background: #0e1528; border: 1px solid rgba(99,130,255,0.2);
+  border-radius: var(--radius-xl); padding: 36px 32px 32px;
+  width: 100%; max-width: 440px; position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,0,0,0.4);
+  animation: modalIn 0.28s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+.modal-card.closing { animation: modalOut 0.18s ease both; }
+.modal-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-light), transparent);
+  opacity: 0.5; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+.modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 .modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
-.modal-close { width: 30px; height: 30px; border-radius: 50%; background: rgba(162,120,245,0.08); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 1rem; transition: all var(--transition); }
-.modal-close:hover { background: rgba(162,120,245,0.18); color: var(--text-primary); }
-.modal-field { margin-bottom: 20px; }
-.modal-label { display: block; margin-bottom: 8px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-secondary); font-family: var(--font-display); }
-.modal-input, .modal-select { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; padding: 13px 16px; outline: none; transition: border-color var(--transition), box-shadow var(--transition); appearance: none; }
-.modal-input:focus, .modal-select:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(162,120,245,0.12); }
-.modal-select-wrap { position: relative; }
-.modal-select-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
-.modal-select-wrap:focus-within::after { border-top-color: var(--purple); }
-.modal-hint { margin-top: 8px; padding: 10px 14px; background: rgba(162,120,245,0.07); border: 1px solid rgba(162,120,245,0.15); border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5; }
-.modal-hint strong { color: var(--purple-bright); }
-.modal-btns { display: flex; gap: 12px; margin-top: 26px; }
-.modal-btn-save, .modal-btn-cancel { flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer; font-family: var(--font-display); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; transition: all var(--transition); }
-.modal-btn-save { background: linear-gradient(135deg, var(--purple-bright) 0%, var(--purple) 100%); color: #07070f; box-shadow: 0 4px 20px rgba(162,120,245,0.3); }
-.modal-btn-save:hover { box-shadow: 0 8px 28px rgba(162,120,245,0.45); transform: translateY(-1px); }
-.modal-btn-cancel { background: rgba(162,120,245,0.06); border: 1px solid var(--border); color: var(--text-secondary); }
-.modal-btn-cancel:hover { background: rgba(162,120,245,0.12); color: var(--text-primary); }
- 
-/* CREDITS */
-.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-.credit-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; background: rgba(162,120,245,0.04); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; transition: border-color var(--transition), background var(--transition); animation: rowIn 0.28s cubic-bezier(0.34,1.4,0.64,1) both; position: relative; }
-.credit-row:hover { border-color: rgba(162,120,245,0.18); background: rgba(162,120,245,0.06); }
-.credit-row::before { content: attr(data-num); position: absolute; top: -8px; left: 14px; font-size: 0.58rem; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); background: var(--bg-card); padding: 1px 7px; border-radius: 999px; border: 1px solid rgba(162,120,245,0.25); }
-.credit-input-wrap { display: flex; flex-direction: column; gap: 5px; }
-.credit-input-label { font-size: 0.6rem; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
-.credit-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: var(--font-body); font-size: 0.88rem; padding: 10px 13px; outline: none; width: 100%; transition: border-color var(--transition), box-shadow var(--transition); appearance: none; }
-.credit-input::placeholder { color: var(--text-muted); font-style: italic; font-size: 0.83rem; }
-.credit-input:hover { background: var(--bg-input-hover); border-color: rgba(162,120,245,0.15); }
-.credit-input:focus { border-color: var(--purple); background: var(--bg-input-hover); box-shadow: 0 0 0 3px rgba(162,120,245,0.1); }
-.credit-select-wrap { position: relative; }
-.credit-select-wrap::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
-.credit-select-wrap:focus-within::after { border-top-color: var(--purple); }
-.credit-select-wrap select { padding-right: 34px; cursor: pointer; }
-.credit-remove { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,60,60,0.18); cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,100,100,0.6); font-size: 1rem; line-height: 1; transition: all var(--transition); flex-shrink: 0; align-self: flex-end; margin-bottom: 1px; }
-.credit-remove:hover { background: rgba(255,60,60,0.18); border-color: rgba(255,80,80,0.4); color: #ff6b6b; transform: scale(1.08); }
-.add-credit-btn { display: flex; align-items: center; gap: 8px; background: rgba(162,120,245,0.07); border: 1px dashed rgba(162,120,245,0.25); border-radius: var(--radius-sm); padding: 11px 18px; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); cursor: pointer; width: 100%; justify-content: center; transition: all var(--transition); }
-.add-credit-btn:hover { background: rgba(162,120,245,0.13); border-color: rgba(162,120,245,0.45); color: var(--purple-bright); }
-.add-credit-btn svg { width: 14px; height: 14px; }
-.credits-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.credits-panel { background: rgba(162,120,245,0.025); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
-.credits-panel-title { font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--purple); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.credits-panel-title .panel-icon { width: 22px; height: 22px; background: rgba(162,120,245,0.12); border: 1px solid rgba(162,120,245,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
- 
-/* ANIMATIONS */
-@keyframes wrapperIn  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-@keyframes cardIn     { from { opacity: 0; transform: translateY(16px) scale(0.99); } to { opacity: 1; transform: none; } }
-@keyframes fadeInUp   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes dropIn     { from { opacity: 0; transform: translateY(-6px) scaleY(0.96); transform-origin: top; } to { opacity: 1; transform: none; } }
-@keyframes pillPop    { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-@keyframes rowIn      { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: none; } }
-@keyframes overlayIn  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes overlayOut { from { opacity: 1; } to { opacity: 0; } }
-@keyframes modalIn    { from { opacity: 0; transform: scale(0.92) translateY(16px); } to { opacity: 1; transform: none; } }
-@keyframes modalOut   { from { opacity: 1; transform: none; } to { opacity: 0; transform: scale(0.94) translateY(8px); } }
-@keyframes spin       { to { transform: rotate(360deg); } }
- 
-@media (max-width: 700px) { .grid { grid-template-columns: 1fr; gap: 18px; } .credits-panels { grid-template-columns: 1fr; } .grid-3 { grid-template-columns: 1fr 1fr; } .credit-row { grid-template-columns: 1fr auto; } }
-@media (max-width: 640px) { .wrapper { padding: 30px 14px 64px; } #releaseForm { padding: 22px 16px; } .step-line { max-width: 28px; margin: 0 8px; } .step { font-size: 0.64rem; gap: 7px; } h1 { font-size: 1.65rem; } .modal-card { padding: 28px 20px 24px; } .modal-btns { flex-direction: column; } .grid-3 { grid-template-columns: 1fr; } .credit-row { grid-template-columns: 1fr auto; } }
-@media (max-width: 380px) { h1 { font-size: 1.35rem; } .btn { font-size: 0.78rem; padding: 14px 18px; } .site-logo { height: 30px; } }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(79,124,255,0.06); border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); transition: all var(--t);
+}
+.modal-close:hover { background: rgba(79,124,255,0.14); color: var(--text-primary); }
+.modal-close svg { width: 12px; height: 12px; }
+.modal-field { margin-bottom: 18px; }
+.modal-label { display: block; margin-bottom: 7px; font-family: var(--font-display); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); }
+.modal-input, .modal-select {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.9rem;
+  padding: 13px 16px; outline: none; transition: border-color var(--t), box-shadow var(--t); appearance: none;
+}
+.modal-input:focus, .modal-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,124,255,0.12); }
+.modal-sel-wrap { position: relative; }
+.modal-sel-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
+.modal-hint {
+  margin-top: 8px; padding: 10px 14px;
+  background: rgba(79,124,255,0.06); border: 1px solid rgba(79,124,255,0.12);
+  border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
+}
+.modal-hint strong { color: var(--accent-bright); }
+.modal-btns { display: flex; gap: 10px; margin-top: 24px; }
+.modal-save, .modal-cancel {
+  flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; transition: all var(--t);
+}
+.modal-save { background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%); color: #fff; box-shadow: 0 4px 18px rgba(79,124,255,0.3); }
+.modal-save:hover { box-shadow: 0 8px 28px rgba(79,124,255,0.45); transform: translateY(-1px); }
+.modal-cancel { background: rgba(79,124,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); }
+.modal-cancel:hover { background: rgba(79,124,255,0.1); color: var(--text-primary); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp    { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+@keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
+@keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+@keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+@keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
+@keyframes overlayOut{ from { opacity:1; } to { opacity:0; } }
+@keyframes modalIn   { from { opacity:0; transform:scale(0.93) translateY(14px); } to { opacity:1; transform:none; } }
+@keyframes modalOut  { from { opacity:1; transform:none; } to { opacity:0; transform:scale(0.94) translateY(8px); } }
+@keyframes spin      { to { transform:rotate(360deg); } }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 700px) {
+  .grid, .credits-grid { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .credit-row { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 640px) {
+  .wrapper { padding: 24px 14px 60px; }
+  #releaseForm { padding: 20px 16px; }
+  .step-connector { max-width: 24px; margin: 0 6px; }
+  .step-item span { display: none; }
+  .modal-card { padding: 26px 18px 22px; }
+  .modal-btns { flex-direction: column; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .trust-strip { gap: 16px; }
+}
+@media (max-width: 380px) {
+  .page-title { font-size: 1.7rem; }
+  .submit-btn { font-size: 0.78rem; padding: 15px 18px; }
+  .site-logo { height: 28px; }
+}
 </style>
 </head>
- 
+
 <body>
 <div class="wrapper">
+
+  <!-- HEADER -->
   <header class="site-header">
     <img src="logo.png" alt="Logo" class="site-logo">
+    <div class="header-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      Secure Portal
+    </div>
   </header>
- 
-  <h1>Create New Release</h1>
-  <p class="subtitle">Enter your release details. Select Stores on the next step.</p>
- 
-  <div class="step-indicator">
-    <div class="step active"><div class="step-num">1</div><span>Release Info</span></div>
-    <div class="step-line"></div>
-    <div class="step"><div class="step-num">2</div><span>Select Stores</span></div>
-    <div class="step-line"></div>
-    <div class="step"><div class="step-num">3</div><span>Review</span></div>
+
+  <h1 class="page-title">Create New Release</h1>
+  <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
+
+  <!-- STEP INDICATOR -->
+  <div class="step-track">
+    <div class="step-item active">
+      <div class="step-num">1</div>
+      <span>Release Info</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <span>Select Stores</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <span>Review</span>
+    </div>
   </div>
- 
+
   <form id="releaseForm">
- 
-    <!-- ARTIST INFO -->
-    <div class="section-label">Artist Info</div>
+
+    <!-- ═══ ARTIST INFO ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Artist Information</div>
+        <div class="section-desc">Search and select your artist profile from streaming platforms</div>
+      </div>
+    </div>
+
     <div class="grid">
-      <div class="field artist-field" id="artistFieldWrap" style="grid-column: 1 / -1;">
+      <!-- Artist Search — full width -->
+      <div class="field artist-field col-full" id="artistFieldWrap">
         <label>
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           Main Artist (Primary)
+          <div class="required-dot" title="Required"></div>
         </label>
         <div class="artist-pill-box" id="artistPillBox">
-          <input type="text" id="artistSearchInput" class="artist-search-input" placeholder="Search artist on Spotify / Apple Music…" autocomplete="off" spellcheck="false">
+          <input type="text" id="artistSearchInput" class="artist-search-input"
+            placeholder="Search artist name on Apple Music…"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <input type="hidden" id="artistName" name="artistName">
         <div class="artist-dropdown" id="artistDropdown"></div>
+        <div class="field-hint">Search by artist name — results pulled from Apple Music</div>
       </div>
+
       <div class="field">
-        <label>Featuring Artist</label>
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Featuring Artist
+        </label>
         <input id="featuring" placeholder="ft. Artist Name (optional)">
       </div>
+
       <div class="field">
-        <label>Country</label>
-        <div class="flag-select-wrapper">
-          <span class="flag-icon" id="countryFlag">🌍</span>
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Country of Origin
+        </label>
+        <div class="country-wrap" id="countryWrap">
+          <div class="country-flag">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
           <select id="country">
-            <option value="Afghanistan" data-flag="🇦🇫">🇦🇫 Afghanistan</option><option value="Albania" data-flag="🇦🇱">🇦🇱 Albania</option><option value="Algeria" data-flag="🇩🇿">🇩🇿 Algeria</option><option value="Angola" data-flag="🇦🇴">🇦🇴 Angola</option><option value="Argentina" data-flag="🇦🇷">🇦🇷 Argentina</option><option value="Australia" data-flag="🇦🇺">🇦🇺 Australia</option><option value="Austria" data-flag="🇦🇹">🇦🇹 Austria</option><option value="Bangladesh" data-flag="🇧🇩">🇧🇩 Bangladesh</option><option value="Belgium" data-flag="🇧🇪">🇧🇪 Belgium</option><option value="Bolivia" data-flag="🇧🇴">🇧🇴 Bolivia</option><option value="Brazil" data-flag="🇧🇷">🇧🇷 Brazil</option><option value="Cameroon" data-flag="🇨🇲">🇨🇲 Cameroon</option><option value="Canada" data-flag="🇨🇦">🇨🇦 Canada</option><option value="Chile" data-flag="🇨🇱">🇨🇱 Chile</option><option value="China" data-flag="🇨🇳">🇨🇳 China</option><option value="Colombia" data-flag="🇨🇴">🇨🇴 Colombia</option><option value="Democratic Republic of the Congo" data-flag="🇨🇩">🇨🇩 DR Congo</option><option value="Denmark" data-flag="🇩🇰">🇩🇰 Denmark</option><option value="Dominican Republic" data-flag="🇩🇴">🇩🇴 Dominican Republic</option><option value="Ecuador" data-flag="🇪🇨">🇪🇨 Ecuador</option><option value="Egypt" data-flag="🇪🇬">🇪🇬 Egypt</option><option value="Ethiopia" data-flag="🇪🇹">🇪🇹 Ethiopia</option><option value="France" data-flag="🇫🇷">🇫🇷 France</option><option value="Germany" data-flag="🇩🇪">🇩🇪 Germany</option><option value="Ghana" data-flag="🇬🇭">🇬🇭 Ghana</option><option value="Greece" data-flag="🇬🇷">🇬🇷 Greece</option><option value="India" data-flag="🇮🇳">🇮🇳 India</option><option value="Indonesia" data-flag="🇮🇩">🇮🇩 Indonesia</option><option value="Iran" data-flag="🇮🇷">🇮🇷 Iran</option><option value="Iraq" data-flag="🇮🇶">🇮🇶 Iraq</option><option value="Ireland" data-flag="🇮🇪">🇮🇪 Ireland</option><option value="Israel" data-flag="🇮🇱">🇮🇱 Israel</option><option value="Italy" data-flag="🇮🇹">🇮🇹 Italy</option><option value="Jamaica" data-flag="🇯🇲">🇯🇲 Jamaica</option><option value="Japan" data-flag="🇯🇵">🇯🇵 Japan</option><option value="Kenya" data-flag="🇰🇪">🇰🇪 Kenya</option><option value="Malaysia" data-flag="🇲🇾">🇲🇾 Malaysia</option><option value="Mexico" data-flag="🇲🇽">🇲🇽 Mexico</option><option value="Morocco" data-flag="🇲🇦">🇲🇦 Morocco</option><option value="Netherlands, The" data-flag="🇳🇱">🇳🇱 Netherlands</option><option value="New Zealand" data-flag="🇳🇿">🇳🇿 New Zealand</option><option value="Nigeria" data-flag="🇳🇬">🇳🇬 Nigeria</option><option value="Norway" data-flag="🇳🇴">🇳🇴 Norway</option><option value="Pakistan" data-flag="🇵🇰">🇵🇰 Pakistan</option><option value="Peru" data-flag="🇵🇪">🇵🇪 Peru</option><option value="Philippines" data-flag="🇵🇭">🇵🇭 Philippines</option><option value="Poland" data-flag="🇵🇱">🇵🇱 Poland</option><option value="Portugal" data-flag="🇵🇹">🇵🇹 Portugal</option><option value="Republic of Korea (South Korea)" data-flag="🇰🇷">🇰🇷 South Korea</option><option value="Romania" data-flag="🇷🇴">🇷🇴 Romania</option><option value="Russia" data-flag="🇷🇺">🇷🇺 Russia</option><option value="Saudi Arabia" data-flag="🇸🇦">🇸🇦 Saudi Arabia</option><option value="Senegal" data-flag="🇸🇳">🇸🇳 Senegal</option><option value="Singapore" data-flag="🇸🇬">🇸🇬 Singapore</option><option value="South Africa" data-flag="🇿🇦">🇿🇦 South Africa</option><option value="Spain" data-flag="🇪🇸">🇪🇸 Spain</option><option value="Sweden" data-flag="🇸🇪">🇸🇪 Sweden</option><option value="Switzerland" data-flag="🇨🇭">🇨🇭 Switzerland</option><option value="Tanzania" data-flag="🇹🇿">🇹🇿 Tanzania</option><option value="Thailand" data-flag="🇹🇭">🇹🇭 Thailand</option><option value="Trinidad and Tobago" data-flag="🇹🇹">🇹🇹 Trinidad and Tobago</option><option value="Tunisia" data-flag="🇹🇳">🇹🇳 Tunisia</option><option value="Turkey" data-flag="🇹🇷">🇹🇷 Turkey</option><option value="Uganda" data-flag="🇺🇬">🇺🇬 Uganda</option><option value="Ukraine" data-flag="🇺🇦">🇺🇦 Ukraine</option><option value="United Arab Emirates, The" data-flag="🇦🇪">🇦🇪 United Arab Emirates</option><option value="United Kingdom, The" data-flag="🇬🇧">🇬🇧 United Kingdom</option><option value="United States of America" data-flag="🇺🇸">🇺🇸 United States</option><option value="Uruguay" data-flag="🇺🇾">🇺🇾 Uruguay</option><option value="Venezuela" data-flag="🇻🇪">🇻🇪 Venezuela</option><option value="Vietnam" data-flag="🇻🇳">🇻🇳 Vietnam</option><option value="Zambia" data-flag="🇿🇲">🇿🇲 Zambia</option><option value="Zimbabwe" data-flag="🇿🇼">🇿🇼 Zimbabwe</option>
+            <option value="">Select country…</option>
+            <option>Afghanistan</option><option>Albania</option><option>Algeria</option><option>Angola</option><option>Argentina</option><option>Australia</option><option>Austria</option><option>Bangladesh</option><option>Belgium</option><option>Bolivia</option><option>Brazil</option><option>Cameroon</option><option>Canada</option><option>Chile</option><option>China</option><option>Colombia</option><option>Democratic Republic of the Congo</option><option>Denmark</option><option>Dominican Republic</option><option>Ecuador</option><option>Egypt</option><option>Ethiopia</option><option>France</option><option>Germany</option><option selected>Ghana</option><option>Greece</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Kenya</option><option>Malaysia</option><option>Mexico</option><option>Morocco</option><option>Netherlands, The</option><option>New Zealand</option><option>Nigeria</option><option>Norway</option><option>Pakistan</option><option>Peru</option><option>Philippines</option><option>Poland</option><option>Portugal</option><option>Republic of Korea (South Korea)</option><option>Romania</option><option>Russia</option><option>Saudi Arabia</option><option>Senegal</option><option>Singapore</option><option>South Africa</option><option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Tanzania</option><option>Thailand</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates, The</option><option>United Kingdom, The</option><option>United States of America</option><option>Uruguay</option><option>Venezuela</option><option>Vietnam</option><option>Zambia</option><option>Zimbabwe</option>
           </select>
         </div>
       </div>
+
       <div class="field">
-        <label>Phone Number</label>
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.47 2 2 0 0 1 3.64 1.31h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Phone Number
+          <div class="required-dot" title="Required"></div>
+        </label>
         <input id="number" placeholder="+1 000 000 0000" required>
       </div>
     </div>
- 
-    <!-- RELEASE DETAILS -->
-    <div class="section-label">Release Details</div>
+
+    <!-- ═══ RELEASE DETAILS ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Release Details</div>
+        <div class="section-desc">Core metadata for your release</div>
+      </div>
+    </div>
+
     <div class="grid">
-      <div class="field"><label>Release Title</label><input id="releaseTitle" placeholder="Name of your single, EP or album" required></div>
-      <div class="field"><label>Release Type</label><div class="select-wrapper"><select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select></div></div>
+      <div class="field">
+        <label>
+          Release Title
+          <div class="required-dot"></div>
+        </label>
+        <input id="releaseTitle" placeholder="Name of your single, EP or album" required>
+      </div>
+      <div class="field">
+        <label>Release Type</label>
+        <div class="select-wrap">
+          <select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select>
+        </div>
+      </div>
       <div class="field">
         <label>Genre</label>
-        <div class="select-wrapper">
+        <div class="select-wrap">
           <select id="genre">
-            <optgroup label=" Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>K-Pop</option><option>Afropop</option></optgroup>
-            <optgroup label=" Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Grime</option><option>Afro Trap</option></optgroup>
-            <optgroup label=" R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Funk</option><option>Gospel</option></optgroup>
-            <optgroup label=" Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Afro House</option><option>Techno</option><option>Ambient</option></optgroup>
-            <optgroup label=" Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Punk Rock</option></optgroup>
-            <optgroup label=" Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Amapiano</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
-            <optgroup label=" Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option></optgroup>
-            <optgroup label=" Latin"><option>Latin Pop</option><option>Salsa</option><option>Bachata</option><option>Bossa Nova</option></optgroup>
-            <optgroup label=" Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Soul Blues</option></optgroup>
-            <optgroup label=" Classical"><option>Classical</option><option>Orchestral</option><option>Film Score</option></optgroup>
-            <optgroup label=" Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option></optgroup>
-            <optgroup label=" Other"><option>Experimental</option><option>Lo-Fi</option><option>Spoken Word</option><option>Other</option></optgroup>
+            <optgroup label="Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>K-Pop</option><option>Afropop</option></optgroup>
+            <optgroup label="Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Grime</option><option>Afro Trap</option></optgroup>
+            <optgroup label="R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Funk</option><option>Gospel</option></optgroup>
+            <optgroup label="Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Afro House</option><option>Techno</option><option>Ambient</option></optgroup>
+            <optgroup label="Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Punk Rock</option></optgroup>
+            <optgroup label="Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Amapiano</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
+            <optgroup label="Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option></optgroup>
+            <optgroup label="Latin"><option>Latin Pop</option><option>Salsa</option><option>Bachata</option><option>Bossa Nova</option></optgroup>
+            <optgroup label="Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Soul Blues</option></optgroup>
+            <optgroup label="Classical"><option>Classical</option><option>Orchestral</option><option>Film Score</option></optgroup>
+            <optgroup label="Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option></optgroup>
+            <optgroup label="Other"><option>Experimental</option><option>Lo-Fi</option><option>Spoken Word</option><option>Other</option></optgroup>
           </select>
         </div>
       </div>
-      <div class="field"><label>Language</label><input id="language" placeholder="e.g. English, French, Twi"></div>
-      <div class="field"><label>Release Date</label><input id="releaseDate" type="date" required></div>
-      <div class="field"><label>Explicit Content</label><div class="select-wrapper"><select id="explicit"><option>No</option><option>Yes</option></select></div></div>
+      <div class="field">
+        <label>Language</label>
+        <input id="language" placeholder="e.g. English, French, Twi">
+      </div>
+      <div class="field">
+        <label>Release Date <div class="required-dot"></div></label>
+        <input id="releaseDate" type="date" required>
+      </div>
+      <div class="field">
+        <label>Explicit Content</label>
+        <div class="select-wrap"><select id="explicit"><option>No</option><option>Yes</option></select></div>
+      </div>
     </div>
- 
-    <!-- LABEL & RIGHTS -->
-    <div class="section-label">Label & Rights</div>
+
+    <!-- ═══ LABEL & RIGHTS ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Label &amp; Rights</div>
+        <div class="section-desc">Copyright and label ownership information</div>
+      </div>
+    </div>
+
     <div class="grid">
-      <div class="field"><label>Label Name</label><input id="label" placeholder="Independent or label name"></div>
-      <div class="field"><label>Copyright Holder</label><input id="copyright" placeholder="© 2025 Your Name or Company"></div>
+      <div class="field">
+        <label>Label Name</label>
+        <input id="label" placeholder="Independent or label name">
+      </div>
+      <div class="field">
+        <label>Copyright Holder</label>
+        <input id="copyright" placeholder="© 2025 Your Name or Company">
+      </div>
     </div>
- 
-    <!-- IDENTIFIERS -->
-    <div class="section-label">Identifiers</div>
+
+    <!-- ═══ IDENTIFIERS ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Identifiers</div>
+        <div class="section-desc">ISRC, UPC, and catalog codes</div>
+      </div>
+    </div>
+
     <div class="grid-3">
-      <div class="field"><label>ISRC Code</label><input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.08em;"></div>
-      <div class="field"><label>UPC / EAN Barcode</label><input id="upc" placeholder="Leave blank to auto-assign" maxlength="14"></div>
-      <div class="field"><label>Catalog Number</label><input id="catalogNumber" placeholder="e.g. LAB-001 (optional)"></div>
+      <div class="field">
+        <label>ISRC Code</label>
+        <input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.07em;">
+      </div>
+      <div class="field">
+        <label>UPC / EAN Barcode</label>
+        <input id="upc" placeholder="Leave blank to auto-assign" maxlength="14">
+      </div>
+      <div class="field">
+        <label>Catalog Number</label>
+        <input id="catalogNumber" placeholder="e.g. LAB-001 (optional)">
+      </div>
     </div>
- 
-    <!-- PRODUCTION CREDITS -->
-    <div class="section-label">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Production Credits
+
+    <!-- ═══ PRODUCTION CREDITS ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Production Credits</div>
+        <div class="section-desc">Producers, engineers, and musicians involved</div>
+      </div>
     </div>
-    <div class="credits-panels">
+
+    <div class="credits-grid">
       <div class="credits-panel">
-        <div class="credits-panel-title"><span class="panel-icon"></span>Producers &amp; Engineers</div>
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          Producers &amp; Engineers
+        </div>
         <div class="credits-list" id="producerList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('producer')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           Add Producer / Engineer
         </button>
       </div>
-    
- 
-    <!-- SONGWRITING & PUBLISHING -->
-    <div class="section-label">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Songwriting &amp; Publishing
-    </div>
-    <div class="credits-panels">
       <div class="credits-panel">
-        <div class="credits-panel-title"><span class="panel-icon"></span>Songwriters &amp; Composers</div>
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Musicians &amp; Performers
+        </div>
+        <div class="credits-list" id="musicianList"></div>
+        <button type="button" class="add-credit-btn" onclick="addCredit('musician')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Musician / Performer
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ SONGWRITING & PUBLISHING ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Songwriting &amp; Publishing</div>
+        <div class="section-desc">Writers, composers, and publishing information</div>
+      </div>
+    </div>
+
+    <div class="credits-grid">
+      <div class="credits-panel">
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Songwriters &amp; Composers
+        </div>
         <div class="credits-list" id="writerList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -352,7 +825,10 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         </button>
       </div>
       <div class="credits-panel">
-        <div class="credits-panel-title"><span class="panel-icon"></span>Publishing &amp; PRO</div>
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Publishing &amp; PRO
+        </div>
         <div class="credits-list" id="publishingList"></div>
         <button type="button" class="add-credit-btn" onclick="addCredit('publishing')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -360,46 +836,95 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
         </button>
       </div>
     </div>
- 
-    <!-- CONTACT -->
-    <div class="section-label">Contact & Account</div>
-    <div class="grid">
-      <div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com" required></div>
-      <div class="field"><label>Enter Referral Code</label><input id="refferal" placeholder="Leave blank if you don't have one"></div>
+
+    <!-- ═══ CONTACT ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Contact &amp; Account</div>
+        <div class="section-desc">Your contact information for this release</div>
+      </div>
     </div>
- 
-    <!-- LYRICS -->
-    <div class="section-label">Lyrics</div>
+
     <div class="grid">
-      <div class="field"><label>Add Lyrics (Optional)</label><textarea id="description" placeholder="Paste your lyrics here…"></textarea></div>
+      <div class="field col-full">
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email Address
+          <div class="required-dot"></div>
+        </label>
+        <input id="email" type="email" placeholder="your@email.com" required>
+      </div>
     </div>
- 
-    <button class="btn" id="submitBtn" type="submit">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      Save &amp; Continue
-    </button>
-    <div id="statusMsg"></div>
-    <p class="form-footer-note">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Your data is encrypted and stored securely
-    </p>
+
+    <!-- ═══ LYRICS ═══ -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Lyrics</div>
+        <div class="section-desc">Optional — improves discoverability on streaming platforms</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="field col-full">
+        <label>Lyrics (Optional)</label>
+        <textarea id="description" placeholder="Paste your lyrics here…"></textarea>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="form-actions">
+      <button class="submit-btn" id="submitBtn" type="submit">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Save &amp; Continue to Stores
+      </button>
+      <div id="statusMsg"></div>
+
+      <div class="trust-strip">
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          256-bit SSL Encrypted
+        </div>
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Data Stored Securely
+        </div>
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          GDPR Compliant
+        </div>
+      </div>
+
+      <p class="form-footer-note">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Your information is used solely for processing your release distribution
+      </p>
+    </div>
+
   </form>
 </div>
- 
-<!-- ARTIST MODAL -->
+
+<!-- MODAL: Add New Artist -->
 <div class="modal-overlay" id="artistModal" style="display:none;" aria-modal="true" role="dialog">
   <div class="modal-card" id="artistModalCard">
-    <div class="modal-header">
+    <div class="modal-hd">
       <span class="modal-title">Add New Artist</span>
-      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="modal-field">
-      <label class="modal-label">New Artist Name</label>
-      <input class="modal-input" id="modalArtistName" placeholder="Please enter the artist's name" autocomplete="off">
+      <label class="modal-label">Artist Name</label>
+      <input class="modal-input" id="modalArtistName" placeholder="Enter the artist's name" autocomplete="off">
     </div>
     <div class="modal-field">
-      <label class="modal-label">Main Artist Type</label>
-      <div class="modal-select-wrap">
+      <label class="modal-label">Artist Type</label>
+      <div class="modal-sel-wrap">
         <select class="modal-select" id="modalArtistType">
           <option value="primary">Primary Artist</option>
           <option value="collaborating">Collaborating Main Artist</option>
@@ -411,27 +936,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
       </div>
     </div>
     <div class="modal-btns">
-      <button class="modal-btn-save" id="modalSave">Save Artist</button>
-      <button class="modal-btn-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-save" id="modalSave">Save Artist</button>
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
     </div>
   </div>
 </div>
- 
+
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
- 
-<!-- COUNTRY FLAG -->
-<script>
-const countrySelect = document.getElementById('country');
-const flagIcon      = document.getElementById('countryFlag');
-function updateFlag() {
-  const sel = countrySelect.options[countrySelect.selectedIndex];
-  flagIcon.textContent = (sel && sel.getAttribute('data-flag')) || '🌍';
-}
-countrySelect.addEventListener('change', updateFlag);
-updateFlag();
-</script>
- 
+
 <!-- CREDITS ENGINE -->
 <script>
 const ROLES = {
@@ -441,82 +954,83 @@ const ROLES = {
   publishing: ['Publishing Company','Sub-Publisher','Music Publisher','PRO Affiliation (ASCAP)','PRO Affiliation (BMI)','PRO Affiliation (SESAC)','PRO Affiliation (SOCAN)','PRO Affiliation (PRS)','PRO Affiliation (GEMA)','PRO Affiliation (APRA)','PRO Affiliation (Other)','Self-Published']
 };
 const PLACEHOLDERS = {
-  producer:   { name: 'e.g. Metro Boomin',           role: 'Select role…' },
-  musician:   { name: 'e.g. John Mayer',              role: 'Select role…' },
-  writer:     { name: 'e.g. Max Martin',              role: 'Select role…' },
-  publishing: { name: 'e.g. Sony Music Publishing',   role: 'Select type…' }
+  producer:   { name: 'e.g. Metro Boomin', role: 'Select role…' },
+  musician:   { name: 'e.g. John Mayer',   role: 'Select role…' },
+  writer:     { name: 'e.g. Max Martin',   role: 'Select role…' },
+  publishing: { name: 'e.g. Sony Music Publishing', role: 'Select type…' }
 };
 const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList', publishing:'publishingList' };
 const credits = { producer:[], musician:[], writer:[], publishing:[] };
- 
+
 window.addCredit = function(type) {
-  const list  = document.getElementById(LIST_IDS[type]);
-  const idx   = credits[type].length;
+  const list = document.getElementById(LIST_IDS[type]);
+  const idx  = credits[type].length;
   credits[type].push({ name:'', role:'', ipi:'' });
   const row = document.createElement('div');
   row.className = 'credit-row';
   row.dataset.type = type; row.dataset.idx = idx;
-  row.dataset.num = `${type.charAt(0).toUpperCase()+type.slice(1)} ${idx+1}`;
+  const label = type.charAt(0).toUpperCase() + type.slice(1);
   const roleOptions = ROLES[type].map(r=>`<option value="${r}">${r}</option>`).join('');
   const showIPI = (type==='writer'||type==='publishing');
   row.innerHTML = `
-    <div class="credit-input-wrap">
-      <div class="credit-input-label">Full Name</div>
+    <span class="credit-row-num">${label} ${idx+1}</span>
+    <div class="credit-field-wrap">
+      <div class="credit-field-label">Full Name</div>
       <input class="credit-input" type="text" placeholder="${PLACEHOLDERS[type].name}" oninput="updateCredit('${type}',${idx},'name',this.value)">
     </div>
-    <div class="credit-input-wrap">
-      <div class="credit-input-label">Role</div>
-      <div class="credit-select-wrap">
+    <div class="credit-field-wrap">
+      <div class="credit-field-label">Role</div>
+      <div class="csel-wrap">
         <select class="credit-input" onchange="updateCredit('${type}',${idx},'role',this.value)">
           <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>${roleOptions}
         </select>
       </div>
     </div>
-    ${showIPI?`<div class="credit-input-wrap" style="grid-column:1/-1;"><div class="credit-input-label">${type==='writer'?'IPI / CAE Number (optional)':'Publisher IPI / Account No. (optional)'}</div><input class="credit-input" type="text" placeholder="e.g. 00000000497" oninput="updateCredit('${type}',${idx},'ipi',this.value)"></div>`:''}
-    <button type="button" class="credit-remove" title="Remove" onclick="removeCredit('${type}',this.closest('.credit-row'))">✕</button>`;
+    ${showIPI?`<div class="credit-field-wrap" style="grid-column:1/-1;"><div class="credit-field-label">${type==='writer'?'IPI / CAE Number (optional)':'Publisher IPI / Account No. (optional)'}</div><input class="credit-input" type="text" placeholder="e.g. 00000000497" oninput="updateCredit('${type}',${idx},'ipi',this.value)"></div>`:''}
+    <button type="button" class="credit-remove" title="Remove" onclick="removeCredit('${type}',this.closest('.credit-row'))">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
   list.appendChild(row);
   row.querySelector('input.credit-input')?.focus();
 };
- 
+
 window.updateCredit = function(type,idx,field,value) { if(credits[type][idx]) credits[type][idx][field]=value; };
- 
+
 window.removeCredit = function(type,row) {
-  const idx=parseInt(row.dataset.idx);
+  const idx = parseInt(row.dataset.idx);
   credits[type].splice(idx,1);
-  row.style.animation='rowIn 0.2s ease reverse';
+  row.style.opacity='0'; row.style.transform='translateY(-4px)'; row.style.transition='0.18s ease';
   setTimeout(()=>{
     row.remove();
     document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r,i)=>{
-      r.dataset.idx=i; r.dataset.num=`${type.charAt(0).toUpperCase()+type.slice(1)} ${i+1}`;
+      r.dataset.idx=i;
+      const lbl = type.charAt(0).toUpperCase()+type.slice(1);
+      r.querySelector('.credit-row-num').textContent=`${lbl} ${i+1}`;
     });
   },180);
 };
- 
-/* Format credits array → readable multiline string for email */
+
 window.formatCreditsForEmail = function(arr) {
   if (!arr || arr.length === 0) return 'None';
-  const lines = arr
-    .filter(c => c.name && c.name.trim() !== '')
-    .map(c => {
-      let line = `• ${c.name}`;
-      if (c.role) line += ` — ${c.role}`;
-      if (c.ipi)  line += ` (IPI: ${c.ipi})`;
-      return line;
-    });
-  return lines.length > 0 ? lines.join('\n') : 'None';
+  const lines = arr.filter(c=>c.name&&c.name.trim()!=='').map(c=>{
+    let line=`• ${c.name}`;
+    if(c.role) line+=` — ${c.role}`;
+    if(c.ipi)  line+=` (IPI: ${c.ipi})`;
+    return line;
+  });
+  return lines.length>0 ? lines.join('\n') : 'None';
 };
- 
-/* Collect credits for Firestore */
+
 window.collectCredits = function() {
-  const result = {};
-  ['producer','musician','writer','publishing'].forEach(type => {
-    result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
+  const result={};
+  ['producer','musician','writer','publishing'].forEach(type=>{
+    result[type]=credits[type].filter(c=>c.name&&c.name.trim()!=='');
   });
   return result;
 };
 </script>
- 
-<!-- ARTIST SEARCH ENGINE -->
+
+<!-- ARTIST SEARCH ENGINE — iOS Fixed -->
 <script>
 (function(){
   const selectedArtists=[];
@@ -531,99 +1045,196 @@ window.collectCredits = function() {
   const modalSaveBtn=document.getElementById('modalSave');
   const modalCancelBtn=document.getElementById('modalCancel');
   const modalCloseBtn=document.getElementById('modalClose');
-  let searchTimer=null,lastQuery='',focused=-1,dropdownItems=[];
- 
-  searchInput.addEventListener('input',()=>{
-    const q=searchInput.value.trim();
-    if(q===lastQuery)return; lastQuery=q;
-    clearTimeout(searchTimer);
-    if(q.length<2){closeDropdown();return;}
-    searchTimer=setTimeout(()=>fetchArtists(q),380); showLoading();
-  });
-  searchInput.addEventListener('keydown',handleKeyNav);
-  document.addEventListener('click',(e)=>{if(!e.target.closest('#artistFieldWrap'))closeDropdown();});
-  searchInput.addEventListener('focus',()=>{if(searchInput.value.trim().length>=2)fetchArtists(searchInput.value.trim());});
- 
-  async function fetchArtists(query){
+  let searchTimer=null, lastQuery='', focused=-1, dropdownItems=[];
+
+  /* ── iOS-compatible fetch using JSONP for iTunes API ── */
+  let jsonpCallbackCounter = 0;
+
+  function fetchArtistsJSONP(query) {
     showLoading();
-    try{
-      const url=`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=musicArtist&limit=7&media=music`;
-      const res=await fetch(url); const data=await res.json();
-      renderResults(query,data.results||[]);
-    }catch(e){renderResults(query,[]);}
+    // Clean up any previous JSONP script tags
+    const old = document.getElementById('itunes-jsonp');
+    if (old) old.remove();
+
+    const cbName = '__itunesCb' + (++jsonpCallbackCounter);
+    const timeout = setTimeout(() => {
+      window[cbName] = null;
+      const s = document.getElementById('itunes-jsonp');
+      if (s) s.remove();
+      renderResults(query, []);
+    }, 6000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timeout);
+      window[cbName] = null;
+      const s = document.getElementById('itunes-jsonp');
+      if (s) s.remove();
+      renderResults(query, (data && data.results) || []);
+    };
+
+    const script = document.createElement('script');
+    script.id = 'itunes-jsonp';
+    script.src = 'https://itunes.apple.com/search?term=' +
+      encodeURIComponent(query) +
+      '&entity=musicArtist&limit=7&media=music&callback=' + cbName;
+    script.onerror = function() {
+      clearTimeout(timeout);
+      window[cbName] = null;
+      renderResults(query, []);
+    };
+    document.head.appendChild(script);
   }
-  function showLoading(){dropdown.innerHTML=`<div class="dropdown-loading"><div class="spin"></div> Searching…</div>`;openDropdown();}
-  function renderResults(query,results){
-    dropdownItems=[];let html='';
-    const found=results.filter(r=>r.artistName);
-    if(found.length>0){
-      html+=`<div class="dropdown-section-title">Found on Apple Music</div>`;
-      found.forEach((artist,i)=>{
-        const name=artist.artistName,genre=artist.primaryGenreName||'',imgUrl=artist.artworkUrl100||'';
-        dropdownItems.push({name,imageUrl:imgUrl,source:'apple',genre});
-        const avatarHtml=imgUrl?`<div class="artist-option-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`:`<div class="artist-option-avatar">${name.charAt(0).toUpperCase()}</div>`;
-        html+=`<div class="artist-option" data-index="${i}" tabindex="-1">${avatarHtml}<div class="artist-option-info"><div class="artist-option-name">${escHtml(name)}</div>${genre?`<div class="artist-option-meta">${escHtml(genre)}</div>`:''}</div><span class="artist-option-badge badge-apple">Apple Music</span></div>`;
+
+  searchInput.addEventListener('input', function() {
+    const q = searchInput.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(searchTimer);
+    if (q.length < 2) { closeDropdown(); return; }
+    searchTimer = setTimeout(() => fetchArtistsJSONP(q), 380);
+    showLoading();
+  });
+
+  searchInput.addEventListener('keydown', handleKeyNav);
+
+  // Close on tap outside (works on iOS)
+  document.addEventListener('touchstart', function(e) {
+    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
+  }, { passive: true });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
+  });
+
+  searchInput.addEventListener('focus', function() {
+    if (searchInput.value.trim().length >= 2) fetchArtistsJSONP(searchInput.value.trim());
+  });
+
+  function showLoading() {
+    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
+    openDropdown();
+  }
+
+  function renderResults(query, results) {
+    dropdownItems = []; let html = '';
+    const found = results.filter(r => r.artistName);
+    if (found.length > 0) {
+      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
+      found.forEach((artist, i) => {
+        const name = artist.artistName;
+        const genre = artist.primaryGenreName || '';
+        const imgUrl = artist.artworkUrl100 || '';
+        dropdownItems.push({ name, imageUrl: imgUrl, source: 'apple', genre });
+        const avatarHtml = imgUrl
+          ? `<div class="opt-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`
+          : `<div class="opt-avatar">${name.charAt(0).toUpperCase()}</div>`;
+        html += `<div class="artist-option" data-index="${i}">${avatarHtml}<div class="opt-info"><div class="opt-name">${esc(name)}</div>${genre?`<div class="opt-meta">${esc(genre)}</div>`:''}</div><span class="opt-badge badge-apple">Apple Music</span></div>`;
       });
     }
-    const newIdx=dropdownItems.length;
-    dropdownItems.push({name:query,imageUrl:'',source:'new'});
-    html+=`<div class="dropdown-section-title">Not on Apple Music?</div>`;
-    html+=`<div class="artist-option" data-index="${newIdx}" tabindex="-1"><div class="artist-option-avatar" style="background:rgba(162,120,245,0.18);color:#c4a8ff;font-size:1.1rem;">+</div><div class="artist-option-info"><div class="artist-option-name">Add "${escHtml(query)}" as new artist</div><div class="artist-option-meta">Not on streaming platforms yet</div></div><span class="artist-option-badge badge-new">New</span></div>`;
-    dropdown.innerHTML=html; openDropdown(); focused=-1;
-    dropdown.querySelectorAll('.artist-option').forEach(el=>{el.addEventListener('mousedown',(e)=>{e.preventDefault();selectItem(parseInt(el.dataset.index));});});
-  }
-  function selectItem(idx){
-    const item=dropdownItems[idx]; if(!item)return;
-    if(item.source==='new'){modalNameInput.value=item.name;openModal();closeDropdown();searchInput.value='';lastQuery='';return;}
-    addArtistPill(item.name,item.imageUrl,item.source);closeDropdown();searchInput.value='';lastQuery='';
-  }
-  function addArtistPill(name,imageUrl,source){
-    if(selectedArtists.find(a=>a.name.toLowerCase()===name.toLowerCase()))return;
-    selectedArtists.push({name,imageUrl,source}); syncHiddenInput(); renderPills();
-  }
-  function removeArtist(idx){selectedArtists.splice(idx,1);syncHiddenInput();renderPills();}
-  function renderPills(){
-    pillBox.querySelectorAll('.artist-pill').forEach(p=>p.remove());
-    selectedArtists.forEach((artist,i)=>{
-      const pill=document.createElement('div'); pill.className='artist-pill';
-      const avatarHtml=artist.imageUrl?`<span class="pill-avatar has-img"><img src="${artist.imageUrl}" alt=""></span>`:`<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
-      pill.innerHTML=`${avatarHtml}<span>${escHtml(artist.name)}</span><button class="artist-pill-remove" title="Remove" aria-label="Remove ${escHtml(artist.name)}">✕</button>`;
-      pill.querySelector('.artist-pill-remove').addEventListener('click',()=>removeArtist(i));
-      pillBox.insertBefore(pill,searchInput);
+    const newIdx = dropdownItems.length;
+    dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
+    html += '<div class="dropdown-sect-title">Not listed?</div>';
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="background:rgba(79,124,255,0.15);color:#7fa0ff;font-size:1.2rem;font-weight:700;">+</div><div class="opt-info"><div class="opt-name">Add "${esc(query)}" as new artist</div><div class="opt-meta">Not on streaming platforms yet</div></div><span class="opt-badge badge-new">New</span></div>`;
+    dropdown.innerHTML = html; openDropdown(); focused = -1;
+    dropdown.querySelectorAll('.artist-option').forEach(el => {
+      // Use both mousedown and touchend for iOS
+      el.addEventListener('mousedown', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+      el.addEventListener('touchend', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
     });
-    searchInput.placeholder=selectedArtists.length>0?'Add another artist…':'Search artist on Spotify / Apple Music…';
   }
-  function syncHiddenInput(){hiddenInput.value=selectedArtists.map(a=>a.name).join(', ');}
-  function handleKeyNav(e){
-    const items=dropdown.querySelectorAll('.artist-option');
-    if(!dropdown.classList.contains('open')||items.length===0)return;
-    if(e.key==='ArrowDown'){e.preventDefault();focused=Math.min(focused+1,items.length-1);highlightItem(items);}
-    else if(e.key==='ArrowUp'){e.preventDefault();focused=Math.max(focused-1,0);highlightItem(items);}
-    else if(e.key==='Enter'){e.preventDefault();if(focused>=0)selectItem(focused);}
-    else if(e.key==='Escape')closeDropdown();
+
+  function selectItem(idx) {
+    const item = dropdownItems[idx]; if (!item) return;
+    if (item.source === 'new') {
+      modalNameInput.value = item.name;
+      openModal(); closeDropdown();
+      searchInput.value = ''; lastQuery = '';
+      return;
+    }
+    addArtistPill(item.name, item.imageUrl, item.source);
+    closeDropdown(); searchInput.value = ''; lastQuery = '';
   }
-  function highlightItem(items){items.forEach((el,i)=>el.classList.toggle('focused',i===focused));if(focused>=0)items[focused].scrollIntoView({block:'nearest'});}
-  function openDropdown(){dropdown.classList.add('open');}
-  function closeDropdown(){dropdown.classList.remove('open');focused=-1;}
-  function openModal(){modal.style.display='flex';modal.classList.remove('closing');modalCard.classList.remove('closing');setTimeout(()=>modalNameInput.focus(),100);}
-  function closeModal(cb){modal.classList.add('closing');modalCard.classList.add('closing');setTimeout(()=>{modal.style.display='none';modal.classList.remove('closing');modalCard.classList.remove('closing');if(cb)cb();},200);}
-  modalSaveBtn.addEventListener('click',()=>{const name=modalNameInput.value.trim();if(!name){modalNameInput.focus();return;}addArtistPill(name,'','new');closeModal(()=>{modalNameInput.value='';modalTypeSelect.value='primary';});});
-  modalCancelBtn.addEventListener('click',()=>closeModal());
-  modalCloseBtn.addEventListener('click',()=>closeModal());
-  modal.addEventListener('click',(e)=>{if(e.target===modal)closeModal();});
-  modalNameInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();modalSaveBtn.click();}if(e.key==='Escape')closeModal();});
-  pillBox.addEventListener('click',(e)=>{if(!e.target.closest('.artist-pill'))searchInput.focus();});
-  function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  function addArtistPill(name, imageUrl, source) {
+    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
+    selectedArtists.push({ name, imageUrl, source });
+    syncHiddenInput(); renderPills();
+  }
+
+  function removeArtist(idx) { selectedArtists.splice(idx,1); syncHiddenInput(); renderPills(); }
+
+  function renderPills() {
+    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
+    selectedArtists.forEach((artist, i) => {
+      const pill = document.createElement('div'); pill.className = 'artist-pill';
+      const avatarHtml = artist.imageUrl
+        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt=""></span>`
+        : `<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
+      pill.innerHTML = `${avatarHtml}<span>${esc(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${esc(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+      pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
+      pillBox.insertBefore(pill, searchInput);
+    });
+    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist name on Apple Music…';
+  }
+
+  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a=>a.name).join(', '); }
+
+  function handleKeyNav(e) {
+    const items = dropdown.querySelectorAll('.artist-option');
+    if (!dropdown.classList.contains('open') || items.length === 0) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused+1, items.length-1); highlightItem(items); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); focused = Math.max(focused-1, 0); highlightItem(items); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (focused >= 0) selectItem(focused); }
+    else if (e.key === 'Escape') closeDropdown();
+  }
+
+  function highlightItem(items) {
+    items.forEach((el,i) => el.classList.toggle('focused', i===focused));
+    if (focused >= 0) items[focused].scrollIntoView({ block:'nearest' });
+  }
+
+  function openDropdown()  { dropdown.classList.add('open'); }
+  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
+
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.classList.remove('closing'); modalCard.classList.remove('closing');
+    setTimeout(() => modalNameInput.focus(), 100);
+  }
+  function closeModal(cb) {
+    modal.classList.add('closing'); modalCard.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing'); modalCard.classList.remove('closing');
+      if (cb) cb();
+    }, 180);
+  }
+
+  modalSaveBtn.addEventListener('click', () => {
+    const name = modalNameInput.value.trim(); if (!name) { modalNameInput.focus(); return; }
+    addArtistPill(name, '', 'new');
+    closeModal(() => { modalNameInput.value = ''; modalTypeSelect.value = 'primary'; });
+  });
+  modalCancelBtn.addEventListener('click', () => closeModal());
+  modalCloseBtn.addEventListener('click',  () => closeModal());
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  modalNameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); modalSaveBtn.click(); }
+    if (e.key === 'Escape') closeModal();
+  });
+  pillBox.addEventListener('click', e => { if (!e.target.closest('.artist-pill')) searchInput.focus(); });
+
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 })();
 </script>
- 
+
 <!-- FIREBASE + EMAILJS -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc }
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
- 
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain:        "usersubmissionsportal.firebaseapp.com",
@@ -632,29 +1243,21 @@ const firebaseConfig = {
   messagingSenderId: "734783502459",
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
- 
+
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 emailjs.init("mwAZ_hDxmnBqkrTfA");
- 
+
 let currentUser = null;
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, user => {
   if (!user) { window.location.href = "login.html"; }
-  else       { currentUser = user; }
+  else        { currentUser = user; }
 });
- 
-/* ════════════════════════════════════════════
-   SEND EMAILS — EVERY FIELD INCLUDED
-   ════════════════════════════════════════════ */
+
 async function sendEmails(data) {
- 
-  /* formatCreditsForEmail is defined in the non-module script above */
   const fmt = window.formatCreditsForEmail;
- 
   const params = {
- 
-    /* ── Artist & Release ── */
     artist_name:    data.artistName,
     featuring:      data.featuring      || 'None',
     release_title:  data.releaseTitle,
@@ -663,68 +1266,50 @@ async function sendEmails(data) {
     language:       data.language       || 'Not specified',
     release_date:   data.releaseDate    || 'Not set',
     explicit:       data.explicit,
- 
-    /* ── Location & Contact ── */
     country:        data.country,
     phone:          data.phone          || 'Not provided',
     email:          data.email,
- 
-    /* ── Label & Rights ── */
     label:          data.label          || 'Independent',
     copyright:      data.copyright      || 'Not provided',
- 
-    /* ── Identifiers ── */
     isrc:           data.isrc           || 'Not provided',
     upc:            data.upc            || 'Auto-assign',
     catalog_number: data.catalogNumber  || 'Not provided',
- 
-    /* ── Production Credits (formatted as bullet lists) ── */
     producers:      fmt(data.credits?.producer),
     musicians:      fmt(data.credits?.musician),
- 
-    /* ── Songwriting & Publishing Credits ── */
     songwriters:    fmt(data.credits?.writer),
     publishers:     fmt(data.credits?.publishing),
- 
-    /* ── Extras ── */
-    refferal:       data.refferal       || 'None',
     lyrics:         data.description    || 'Not provided',
- 
-    /* ── Submission Meta ── */
     submitted_at:   new Date(data.createdAt).toLocaleString(),
     status:         data.status
   };
- 
-  /* Admin notification email */
   await emailjs.send("service_ydy0muo", "template_i6qh7ew", params);
-  /* Auto-reply to artist */
   await emailjs.send("service_ydy0muo", "template_m8g8n9q", params);
 }
- 
+
 const form      = document.getElementById("releaseForm");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 let isSubmitting = false;
- 
-form.addEventListener("submit", async (e) => {
+
+form.addEventListener("submit", async e => {
   e.preventDefault();
   if (isSubmitting || !currentUser) return;
   isSubmitting = true;
   submitBtn.disabled = true;
-  submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…`;
+  submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…`;
   statusMsg.textContent = "Please wait…";
- 
+
   const artistName = document.getElementById("artistName").value.trim();
   if (!artistName) {
     statusMsg.textContent = "Please add at least one artist before submitting.";
     submitBtn.disabled = false;
-    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue`;
+    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue to Stores`;
     isSubmitting = false;
     return;
   }
- 
+
   const creditsData = typeof window.collectCredits === 'function' ? window.collectCredits() : {};
- 
+
   const data = {
     artistName,
     releaseTitle:  document.getElementById("releaseTitle").value.trim(),
@@ -739,7 +1324,6 @@ form.addEventListener("submit", async (e) => {
     featuring:     document.getElementById("featuring").value.trim(),
     copyright:     document.getElementById("copyright").value.trim(),
     label:         document.getElementById("label").value.trim(),
-    refferal:      document.getElementById("refferal").value.trim(),
     description:   document.getElementById("description").value.trim(),
     isrc:          document.getElementById("isrc").value.trim(),
     upc:           document.getElementById("upc").value.trim(),
@@ -749,7 +1333,7 @@ form.addEventListener("submit", async (e) => {
     createdAt:     Date.now(),
     status:        "Pending"
   };
- 
+
   try {
     await addDoc(collection(db, "submissions"), data);
     await sendEmails(data);
@@ -757,11 +1341,12 @@ form.addEventListener("submit", async (e) => {
   } catch (error) {
     console.error("Submission Error:", error);
     submitBtn.disabled = false;
-    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue`;
+    submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Save &amp; Continue to Stores`;
     statusMsg.textContent = "Something went wrong. Please try again.";
     isSubmitting = false;
   }
 });
 </script>
+
 </body>
 </html>
