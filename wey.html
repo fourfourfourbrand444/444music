@@ -276,6 +276,20 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .check-reasons-btn:hover { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.45); color: #fca5a5; transform: translateY(-1px); }
 .check-reasons-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 
+/* ===== PROMOTE BUTTON ===== */
+.promote-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 10px 14px; margin-top: 10px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.08));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 8px; border-left: 2px solid var(--amber);
+  color: #fbbf24; font-size: 12px; font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: all 0.18s; text-decoration: none;
+}
+.promote-btn:hover { background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.14)); border-color: rgba(245,158,11,0.55); color: #fcd34d; transform: translateY(-1px); }
+.promote-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
 .card-actions { display: flex; gap: 7px; margin-top: 12px; }
 .action-btn {
   flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
@@ -447,51 +461,32 @@ button { font-family: inherit; cursor: pointer; border: none; }
 /* ═══════════════════════════════════════════════
    SMART LINK PANEL — PRODUCTION STYLES
 ═══════════════════════════════════════════════ */
-
-/* Smart Link section wrapper */
-.smart-link-section {
-  margin-top: 0;
-}
-
-/* Generating state */
+.smart-link-section { margin-top: 0; }
 .smart-link-generating {
-  background: var(--black-3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  display: flex; align-items: center; gap: 14px;
 }
 .sl-spinner {
   width: 32px; height: 32px;
-  border: 2px solid rgba(124,92,252,0.2);
-  border-top-color: var(--purple);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  flex-shrink: 0;
+  border: 2px solid rgba(124,92,252,0.2); border-top-color: var(--purple);
+  border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .sl-generating-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
 .sl-generating-text span { font-size: 11px; color: var(--text-3); }
 
-/* Smart Link Card — Active State */
 .smart-link-card {
   background: linear-gradient(135deg, rgba(124,92,252,0.08) 0%, rgba(34,197,94,0.04) 100%);
-  border: 1px solid rgba(124,92,252,0.25);
-  border-radius: 14px;
-  overflow: hidden;
-  position: relative;
+  border: 1px solid rgba(124,92,252,0.25); border-radius: 14px;
+  overflow: hidden; position: relative;
 }
 .smart-link-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, var(--purple) 0%, #22c55e 50%, var(--cyan) 100%);
 }
-
 .sl-card-header {
-  padding: 16px 18px 12px;
-  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px 12px; display: flex; align-items: center; justify-content: space-between;
 }
 .sl-card-title {
   display: flex; align-items: center; gap: 8px;
@@ -500,30 +495,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .sl-card-title svg { width: 13px; height: 13px; }
 .sl-live-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 9px; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px;
   background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
   font-size: 10px; font-weight: 700; color: var(--green);
   letter-spacing: 0.5px; text-transform: uppercase;
 }
-.sl-live-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--green);
-  animation: livePulse 1.8s ease-in-out infinite;
-}
-@keyframes livePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
-}
+.sl-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: livePulse 1.8s ease-in-out infinite; }
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.7);} }
 
-/* URL Display Row */
 .sl-url-row {
-  margin: 0 18px 14px;
-  display: flex; align-items: center; gap: 8px;
-  background: var(--black-4);
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
-  padding: 10px 12px;
+  margin: 0 18px 14px; display: flex; align-items: center; gap: 8px;
+  background: var(--black-4); border: 1px solid var(--border-light);
+  border-radius: 10px; padding: 10px 12px;
 }
 .sl-url-icon {
   width: 28px; height: 28px; background: var(--purple-dim);
@@ -532,8 +515,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .sl-url-icon svg { width: 13px; height: 13px; color: var(--purple-light); }
 .sl-url-text {
-  flex: 1; min-width: 0;
-  font-size: 12px; color: var(--text-2);
+  flex: 1; min-width: 0; font-size: 12px; color: var(--text-2);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   font-family: monospace; letter-spacing: 0.02em;
 }
@@ -548,110 +530,68 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .sl-copy-btn svg { width: 11px; height: 11px; }
 .sl-copy-btn.copied { background: var(--green); }
 
-/* UPC Display */
 .sl-upc-row {
-  margin: 0 18px 14px;
-  display: flex; align-items: center; justify-content: space-between;
+  margin: 0 18px 14px; display: flex; align-items: center; justify-content: space-between;
   background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.15);
   border-radius: 8px; padding: 8px 12px;
 }
 .sl-upc-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: var(--cyan);
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--cyan);
   display: flex; align-items: center; gap: 5px;
 }
 .sl-upc-label svg { width: 11px; height: 11px; }
-.sl-upc-value {
-  font-family: monospace; font-size: 14px; font-weight: 700;
-  color: var(--text); letter-spacing: 0.1em;
-}
+.sl-upc-value { font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: 0.1em; }
 
-/* Store links preview */
-.sl-stores-row {
-  margin: 0 18px 16px;
-  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-}
+.sl-stores-row { margin: 0 18px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .sl-stores-label { font-size: 10px; color: var(--text-3); font-weight: 600; margin-right: 2px; }
 .sl-store-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 9px; border-radius: 20px;
-  background: var(--black-4); border: 1px solid var(--border);
-  font-size: 10px; font-weight: 600; color: var(--text-2);
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px;
+  background: var(--black-4); border: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--text-2);
 }
 .sl-store-chip.has-link { border-color: rgba(124,92,252,0.2); color: var(--purple-light); background: var(--purple-dim); }
 
-/* Action buttons */
 .sl-actions {
-  padding: 12px 18px 16px;
-  display: flex; gap: 8px;
-  border-top: 1px solid var(--border);
+  padding: 12px 18px 16px; display: flex; gap: 8px; border-top: 1px solid var(--border);
 }
 .sl-btn {
   flex: 1; padding: 10px 12px; border-radius: 9px;
-  font-size: 12px; font-weight: 600; font-family: inherit;
-  cursor: pointer; transition: all 0.15s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  text-decoration: none;
+  font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
 }
 .sl-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
-.sl-btn-primary {
-  background: var(--purple); border: 1px solid rgba(124,92,252,0.4);
-  color: white;
-}
+.sl-btn-primary { background: var(--purple); border: 1px solid rgba(124,92,252,0.4); color: white; }
 .sl-btn-primary:hover { background: var(--purple-light); transform: translateY(-1px); }
-.sl-btn-secondary {
-  background: transparent; border: 1px solid var(--border-light);
-  color: var(--text-2);
-}
+.sl-btn-secondary { background: transparent; border: 1px solid var(--border-light); color: var(--text-2); }
 .sl-btn-secondary:hover { background: var(--black-4); color: var(--text); border-color: var(--border-light); }
-.sl-btn-share {
-  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
-  color: var(--green);
-}
+.sl-btn-share { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
 .sl-btn-share:hover { background: rgba(34,197,94,0.18); transform: translateY(-1px); }
 
 /* ===== SMART LINK PAGE MODAL ===== */
 .sl-page-overlay {
-  position: fixed; inset: 0; z-index: 7000;
-  background: rgba(0,0,0,0.95);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease;
+  position: fixed; inset: 0; z-index: 7000; background: rgba(0,0,0,0.95);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
 }
 .sl-page-overlay.open { opacity: 1; pointer-events: all; }
 .sl-page-modal {
-  background: #0a0a0a;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  width: 100%; max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  transform: scale(0.94) translateY(20px);
-  transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
-  scrollbar-width: none;
+  background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; width: 100%; max-width: 420px; max-height: 90vh;
+  overflow-y: auto; transform: scale(0.94) translateY(20px);
+  transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1); scrollbar-width: none;
 }
 .sl-page-overlay.open .sl-page-modal { transform: scale(1) translateY(0); }
 .sl-page-modal::-webkit-scrollbar { display: none; }
-
-.sl-page-close-row {
-  display: flex; justify-content: flex-end;
-  padding: 16px 16px 0;
-}
+.sl-page-close-row { display: flex; justify-content: flex-end; padding: 16px 16px 0; }
 .sl-page-close {
   width: 30px; height: 30px; border-radius: 50%;
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
   display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.5); cursor: pointer; font-size: 14px;
-  transition: all 0.15s;
+  color: rgba(255,255,255,0.5); cursor: pointer; font-size: 14px; transition: all 0.15s;
 }
 .sl-page-close:hover { background: rgba(255,255,255,0.1); color: white; }
 
-/* Cover hero */
 .sl-page-cover-hero {
-  margin: 8px 20px 0;
-  border-radius: 16px; overflow: hidden;
-  aspect-ratio: 1;
+  margin: 8px 20px 0; border-radius: 16px; overflow: hidden; aspect-ratio: 1;
   background: #1a1a1a;
   box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
   position: relative;
@@ -663,81 +603,54 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .sl-page-cover-placeholder svg { width: 60px; height: 60px; opacity: 0.15; }
 
-/* Artist info */
 .sl-page-info { padding: 20px 20px 0; text-align: center; }
 .sl-page-release-title {
   font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
-  letter-spacing: -0.5px; line-height: 1.2; color: #fff;
-  margin-bottom: 6px;
+  letter-spacing: -0.5px; line-height: 1.2; color: #fff; margin-bottom: 6px;
 }
-.sl-page-artist {
-  font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500;
-  margin-bottom: 4px;
-}
-.sl-page-featuring {
-  font-size: 12px; color: rgba(255,255,255,0.35);
-}
-.sl-page-meta-row {
-  display: flex; align-items: center; justify-content: center; gap: 16px;
-  margin-top: 12px;
-}
-.sl-page-meta-item {
-  font-size: 10px; text-align: center;
-}
+.sl-page-artist { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; margin-bottom: 4px; }
+.sl-page-featuring { font-size: 12px; color: rgba(255,255,255,0.35); }
+.sl-page-meta-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 12px; }
+.sl-page-meta-item { font-size: 10px; text-align: center; }
 .sl-page-meta-label { color: rgba(255,255,255,0.3); font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
 .sl-page-meta-value { color: rgba(255,255,255,0.7); font-weight: 600; }
 .sl-page-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
 
-/* Store links grid */
 .sl-page-stores { padding: 20px 20px; }
 .sl-page-stores-title {
-  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: rgba(255,255,255,0.3);
-  margin-bottom: 10px; text-align: center;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 10px; text-align: center;
 }
 .sl-page-store-links { display: flex; flex-direction: column; gap: 8px; }
 .sl-store-link-btn {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 16px; border-radius: 12px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
   color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all 0.18s;
-  font-family: 'Space Grotesk', sans-serif;
-  text-decoration: none;
+  cursor: pointer; transition: all 0.18s; font-family: 'Space Grotesk', sans-serif; text-decoration: none;
 }
-.sl-store-link-btn:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.14);
-  color: white; transform: translateX(2px);
-}
+.sl-store-link-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.14); color: white; transform: translateX(2px); }
 .sl-store-icon {
-  width: 34px; height: 34px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-size: 16px;
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
 }
+.sl-store-icon img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+.sl-store-icon svg { width: 20px; height: 20px; }
 .sl-store-link-text { flex: 1; }
 .sl-store-link-name { font-size: 13px; font-weight: 600; }
 .sl-store-link-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
 .sl-store-arrow { color: rgba(255,255,255,0.25); }
 .sl-store-arrow svg { width: 14px; height: 14px; }
 
-/* UPC at bottom of smart link page */
 .sl-page-upc-footer {
-  margin: 0 20px 20px;
-  padding: 10px 14px;
-  background: rgba(6,182,212,0.06);
-  border: 1px solid rgba(6,182,212,0.12);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: space-between;
+  margin: 0 20px 20px; padding: 10px 14px;
+  background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.12);
+  border-radius: 8px; display: flex; align-items: center; justify-content: space-between;
 }
 .sl-page-upc-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(6,182,212,0.7); }
 .sl-page-upc-val { font-family: monospace; font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; }
 
-/* Branding footer */
 .sl-page-branding {
-  padding: 14px 20px 20px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 14px 20px 20px; border-top: 1px solid rgba(255,255,255,0.05);
   display: flex; align-items: center; justify-content: center; gap: 7px;
   font-size: 11px; color: rgba(255,255,255,0.2); font-weight: 600;
 }
@@ -1014,9 +927,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <span id="toastMsg">Cover art updated!</span>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     METADATA VIEW MODAL WITH SMART LINK PANEL
-═══════════════════════════════════════════════ -->
+<!-- META MODAL -->
 <div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true">
   <div class="meta-modal" id="metaModal">
     <div class="meta-modal-header">
@@ -1111,17 +1022,13 @@ function getProgress(status) {
 }
 
 /* ═══════════════════════════════════════════════
-   UPC GENERATION — Production logic
-   Format: 731 + 9 random digits (12 digits total)
-   Stored permanently in Firestore
+   UPC GENERATION
 ═══════════════════════════════════════════════ */
 function generateUPCCandidate() {
-  // Prefix 731 (common distributor GS1 prefix range)
   let code = "731";
   for (let i = 0; i < 8; i++) {
     code += Math.floor(Math.random() * 10).toString();
   }
-  // Calculate check digit (UPC-A Luhn algorithm)
   let odd = 0, even = 0;
   for (let i = 0; i < 11; i++) {
     const d = parseInt(code[i]);
@@ -1131,17 +1038,58 @@ function generateUPCCandidate() {
   return code + checkDigit.toString();
 }
 
-/* Smart Link URL generator */
+/* ── FIXED: ffm.to URL format: https://ffm.to/artistname-songtitle ── */
 function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
-  const slug = [artistName, releaseTitle]
-    .join("-")
+  const artistSlug = (artistName || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "");
+  const titleSlug = (releaseTitle || "")
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
-    .substring(0, 40);
-  return `https://444music.ffm.to/${slug}-${releaseId.substring(0, 6)}`;
+    .substring(0, 30);
+  return `https://ffm.to/${artistSlug}-${titleSlug}`;
 }
+
+/* ═══════════════════════════════════════════════
+   STORE ICON SVGs — Real brand icons
+═══════════════════════════════════════════════ */
+const STORE_ICONS = {
+  spotify: `<svg viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`,
+  applemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="amlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fc3c44"/><stop offset="100%" style="stop-color:#ff6a6a"/></linearGradient></defs><rect width="24" height="24" rx="5" fill="url(#amlg)"/><path d="M17.05 8.49a.5.5 0 0 0-.35-.48l-5.5-1.5a.5.5 0 0 0-.65.48v6.54a2 2 0 1 0 1 1.73V10.6l4.5 1.23v3.68a2 2 0 1 0 1 1.73V8.49z" fill="white"/></svg>`,
+  audiomack: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ffa200"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="white"/></svg>`,
+  boomplay: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff6600"/><path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm3.5 9.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74z" fill="white"/></svg>`,
+  youtubemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff0000"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3.5 8.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74zm-1.28-4.74l-1.5.87V7.35l1.5-.87v1.65z" fill="white"/></svg>`,
+  tidal: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#000000"/><path d="M12 5.5L9.33 8.17 6.67 5.5 4 8.17l2.67 2.66L4 13.5l2.67 2.67 2.66-2.67L12 16.17l2.67-2.67-2.67-2.67 2.67-2.66L12 5.5zm2.67 2.67L17.33 5.5 20 8.17l-2.67 2.66L20 13.5l-2.67 2.67-2.66-2.67 2.66-2.66-2.66-2.67z" fill="white"/></svg>`,
+  deezer: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#a238ff"/><rect x="3" y="14" width="3" height="6" rx="1" fill="#40E0D0"/><rect x="7" y="11" width="3" height="9" rx="1" fill="#ff6600"/><rect x="11" y="8" width="3" height="12" rx="1" fill="#ff69b4"/><rect x="15" y="5" width="3" height="15" rx="1" fill="#40E0D0"/><rect x="19" y="3" width="3" height="17" rx="1" fill="#ff6600"/></svg>`,
+  amazonmusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#00a8e0"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c2.04 0 3.9-.76 5.31-2.01l-1.42-1.42A5.96 5.96 0 0 1 12 18a6 6 0 1 1 5.65-8.04l1.73-1a8 8 0 1 0 .62 3.04h-2c0-.34-.05-.67-.13-.99L16 12l-4-2v4h4l-1.4-1.4A4 4 0 0 1 12 14a4 4 0 1 1 4-4" fill="white"/></svg>`
+};
+
+function getStoreIconHtml(storeKey) {
+  const icon = STORE_ICONS[storeKey.toLowerCase().replace(/\s/g,'')];
+  if (icon) {
+    return `<div class="sl-store-icon">${icon}</div>`;
+  }
+  return `<div class="sl-store-icon" style="background:rgba(255,255,255,0.08);">🎵</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   STORE CONFIG
+═══════════════════════════════════════════════ */
+const STORE_CONFIG = [
+  { key: "spotifyLink",      name: "Spotify",       iconKey: "spotify",      color: "#1DB954", sub: "Stream on Spotify" },
+  { key: "appleMusicLink",   name: "Apple Music",   iconKey: "applemusic",   color: "#fc3c44", sub: "Listen on Apple Music" },
+  { key: "audiomackLink",    name: "Audiomack",     iconKey: "audiomack",    color: "#ffa200", sub: "Play on Audiomack" },
+  { key: "boomplayLink",     name: "Boomplay",      iconKey: "boomplay",     color: "#ff6600", sub: "Listen on Boomplay" },
+  { key: "youtubeMusicLink", name: "YouTube Music", iconKey: "youtubemusic", color: "#ff0000", sub: "Watch on YouTube Music" },
+  { key: "tidalLink",        name: "Tidal",         iconKey: "tidal",        color: "#00fefd", sub: "Stream on Tidal" },
+  { key: "deezerLink",       name: "Deezer",        iconKey: "deezer",       color: "#a238ff", sub: "Play on Deezer" },
+  { key: "amazonMusicLink",  name: "Amazon Music",  iconKey: "amazonmusic",  color: "#00a8e0", sub: "Listen on Amazon Music" },
+];
 
 /* ═══════════════════════════════════════════════
    SMART LINK PANEL RENDERER
@@ -1155,17 +1103,6 @@ function metaVal(v, fallback) {
   const f = fallback !== undefined ? fallback : '—';
   return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f;
 }
-
-const STORE_CONFIG = [
-  { key: "spotifyLink",      name: "Spotify",       icon: "🎵", color: "#1DB954", sub: "Stream on Spotify" },
-  { key: "appleMusicLink",   name: "Apple Music",   icon: "🍎", color: "#fc3c44", sub: "Listen on Apple Music" },
-  { key: "audiomackLink",    name: "Audiomack",     icon: "🎧", color: "#ffa200", sub: "Play on Audiomack" },
-  { key: "boomplayLink",     name: "Boomplay",      icon: "🎶", color: "#ff6600", sub: "Listen on Boomplay" },
-  { key: "youtubeMusicLink", name: "YouTube Music", icon: "▶️", color: "#ff0000", sub: "Watch on YouTube Music" },
-  { key: "tidalLink",        name: "Tidal",         icon: "🌊", color: "#00fefd", sub: "Stream on Tidal" },
-  { key: "deezerLink",       name: "Deezer",        icon: "🎼", color: "#a238ff", sub: "Play on Deezer" },
-  { key: "amazonMusicLink",  name: "Amazon Music",  icon: "📦", color: "#00a8e0", sub: "Listen on Amazon Music" },
-];
 
 function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerating) {
   if (isGenerating) {
@@ -1181,13 +1118,11 @@ function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerati
       </div>`;
   }
 
-  // Build store chips preview
   const storeChips = STORE_CONFIG.map(s => {
     const hasLink = data[s.key] && data[s.key].trim();
-    return `<span class="sl-store-chip ${hasLink ? 'has-link' : ''}">${s.icon} ${s.name}</span>`;
+    return `<span class="sl-store-chip ${hasLink ? 'has-link' : ''}">${s.name}</span>`;
   }).join('');
 
-  // Format UPC for display
   const upcDisplay = upcCode
     ? `${upcCode.substring(0,3)} ${upcCode.substring(3,6)} ${upcCode.substring(6,9)} ${upcCode.substring(9)}`
     : '—';
@@ -1282,11 +1217,7 @@ function copySmartLink(releaseId, url) {
 
 /* Share smart link */
 function shareSmartLink(releaseId, url, title, artist) {
-  const shareData = {
-    title: `${title} by ${artist}`,
-    text: `Listen to "${title}" by ${artist} on all streaming platforms`,
-    url: url
-  };
+  const shareData = { title: `${title} by ${artist}`, text: `Listen to "${title}" by ${artist} on all streaming platforms`, url };
   if (navigator.share) {
     navigator.share(shareData).catch(() => {});
   } else {
@@ -1295,7 +1226,7 @@ function shareSmartLink(releaseId, url, title, artist) {
   }
 }
 
-/* Open Smart Link page preview */
+/* Open Smart Link page preview — with real store icons */
 function openSmartLinkPage(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
@@ -1306,12 +1237,12 @@ function openSmartLinkPage(releaseId) {
     ? new Date(data.releaseDate).getFullYear()
     : new Date().getFullYear();
 
-  // Build store links
+  /* Build store links with real SVG icons */
   const storeLinks = STORE_CONFIG
     .filter(s => data[s.key] && data[s.key].trim())
     .map(s => `
       <a class="sl-store-link-btn" href="${escHtml(data[s.key])}" target="_blank" rel="noopener">
-        <div class="sl-store-icon" style="background:${s.color}22; border:1px solid ${s.color}33;">${s.icon}</div>
+        ${getStoreIconHtml(s.iconKey)}
         <div class="sl-store-link-text">
           <div class="sl-store-link-name">${s.name}</div>
           <div class="sl-store-link-sub">${s.sub}</div>
@@ -1324,10 +1255,19 @@ function openSmartLinkPage(releaseId) {
       </a>`)
     .join('');
 
-  // If no store links, show placeholder
+  /* If no links yet, show all stores with placeholder state */
   const storeSection = storeLinks
     ? `<div class="sl-page-store-links">${storeLinks}</div>`
-    : `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.2);font-size:12px;">Store links will appear here once added</div>`;
+    : `<div class="sl-page-store-links">
+        ${STORE_CONFIG.map(s => `
+        <div class="sl-store-link-btn" style="opacity:0.4;cursor:default;">
+          ${getStoreIconHtml(s.iconKey)}
+          <div class="sl-store-link-text">
+            <div class="sl-store-link-name">${s.name}</div>
+            <div class="sl-store-link-sub">Coming soon</div>
+          </div>
+        </div>`).join('')}
+       </div>`;
 
   const coverHtml = data.coverURL
     ? `<img src="${escHtml(data.coverURL)}" alt="${escHtml(data.releaseTitle)}">`
@@ -1390,7 +1330,6 @@ function openSmartLinkPage(releaseId) {
 
 function closeSmartLinkPage() {
   document.getElementById('slPageOverlay').classList.remove('open');
-  // Only restore scroll if meta modal is also closed
   if (!document.getElementById('metaOverlay').classList.contains('open')) {
     document.body.style.overflow = '';
   }
@@ -1456,11 +1395,9 @@ async function openMetaModal(releaseId) {
          </svg>
        </div></div>`;
 
-  /* Determine smart link section state */
   let smartLinkHtml = '';
   if (isApproved) {
     if (!data.upc || !data.smartLinkURL) {
-      // Show generating state immediately, then trigger generation
       smartLinkHtml = renderSmartLinkPanel(data, releaseId, null, null, true);
     } else {
       smartLinkHtml = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
@@ -1472,7 +1409,6 @@ async function openMetaModal(releaseId) {
     <div class="meta-modal-body">
 
       ${isApproved ? `
-      <!-- SMART LINK PANEL — only for approved releases -->
       <div class="meta-section">
         <div class="meta-section-label">
           <svg style="width:11px;height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1486,7 +1422,6 @@ async function openMetaModal(releaseId) {
         </div>
       </div>` : ''}
 
-      <!-- STATUS -->
       <div class="meta-section">
         <div class="meta-section-label">Status</div>
         <div class="meta-status-row">
@@ -1498,7 +1433,6 @@ async function openMetaModal(releaseId) {
         </div>
       </div>
 
-      <!-- ARTIST & RELEASE -->
       <div class="meta-section">
         <div class="meta-section-label">Artist & Release</div>
         <div class="meta-fields-grid">
@@ -1538,7 +1472,6 @@ async function openMetaModal(releaseId) {
         </div>
       </div>
 
-      <!-- LABEL & RIGHTS -->
       <div class="meta-section">
         <div class="meta-section-label">Label & Rights</div>
         <div class="meta-fields-grid">
@@ -1557,7 +1490,6 @@ async function openMetaModal(releaseId) {
         </div>
       </div>
 
-      <!-- IDENTIFIERS -->
       <div class="meta-section">
         <div class="meta-section-label">Identifiers</div>
         <div class="meta-fields-grid">
@@ -1582,7 +1514,6 @@ async function openMetaModal(releaseId) {
         </div>
       </div>
 
-      <!-- CONTACT -->
       <div class="meta-section">
         <div class="meta-section-label">Contact & Location</div>
         <div class="meta-fields-grid">
@@ -1646,15 +1577,12 @@ async function openMetaModal(releaseId) {
   document.getElementById('metaOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  /* If approved and no UPC/smartLink yet — trigger generation async */
   if (isApproved && (!data.upc || !data.smartLinkURL)) {
     triggerSmartLinkGeneration(releaseId);
   }
 }
 
-/* Generate and persist Smart Link + UPC to Firestore */
 async function triggerSmartLinkGeneration(releaseId) {
-  // This function is called from the module scope via a global bridge
   if (window._generateSmartLink) {
     window._generateSmartLink(releaseId);
   }
@@ -1670,17 +1598,13 @@ document.getElementById('metaOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeMetaModal();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeSmartLinkPage();
-    closeMetaModal();
-  }
+  if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); }
 });
 
-/* Card body click opens modal */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const cardBody = e.target.closest('.card-body-clickable');
   if (!cardBody) return;
-  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn')) return;
+  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn') || e.target.closest('.promote-btn')) return;
   const releaseId = cardBody.dataset.releaseId;
   if (releaseId) openMetaModal(releaseId);
 });
@@ -1708,22 +1632,18 @@ const auth      = getAuth(app);
 const db        = getFirestore(app);
 const container = document.getElementById("submissionsContainer");
 
-/* ─── UPC uniqueness check against Firestore ─── */
 async function generateUniqueUPC() {
   let attempts = 0;
   while (attempts < 20) {
     const candidate = generateUPCCandidate();
-    // Check Firestore for existing UPC
     const q = query(collection(db, "submissions"), where("upc", "==", candidate));
     const snap = await getDocs(q);
     if (snap.empty) return candidate;
     attempts++;
   }
-  // Fallback: extremely unlikely collision; just return candidate
   return generateUPCCandidate();
 }
 
-/* ─── Bridge: module → global scope ─── */
 window._generateSmartLink = async function(releaseId) {
   try {
     const docRef  = doc(db, "submissions", releaseId);
@@ -1731,7 +1651,6 @@ window._generateSmartLink = async function(releaseId) {
     if (!docSnap.exists()) return;
 
     const existing = docSnap.data();
-    // Double-check still no UPC (could have been generated in another tab)
     if (existing.upc && existing.smartLinkURL) {
       window._releaseMeta[releaseId].upc = existing.upc;
       window._releaseMeta[releaseId].smartLinkURL = existing.smartLinkURL;
@@ -1742,18 +1661,13 @@ window._generateSmartLink = async function(releaseId) {
     const upc          = await generateUniqueUPC();
     const smartLinkURL = buildSmartLinkURL(releaseId, existing.artistName || '', existing.releaseTitle || '');
 
-    // Persist to Firestore
     await updateDoc(docRef, {
-      upc:          upc,
-      smartLinkURL: smartLinkURL,
-      smartLinkGeneratedAt: serverTimestamp()
+      upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp()
     });
 
-    // Update in-memory meta
     window._releaseMeta[releaseId].upc = upc;
     window._releaseMeta[releaseId].smartLinkURL = smartLinkURL;
 
-    // Refresh the panel in the open modal
     refreshSmartLinkPanel(releaseId);
     showToast("Smart Link & UPC generated successfully!");
 
@@ -1763,11 +1677,10 @@ window._generateSmartLink = async function(releaseId) {
   }
 };
 
-/* Refresh only the smart link panel (not full modal) */
 function refreshSmartLinkPanel(releaseId) {
-  const data    = window._releaseMeta[releaseId];
-  const panel   = document.getElementById(`smartLinkPanelContainer-${releaseId}`);
-  const upcEl   = document.getElementById(`upcFieldValue-${releaseId}`);
+  const data  = window._releaseMeta[releaseId];
+  const panel = document.getElementById(`smartLinkPanelContainer-${releaseId}`);
+  const upcEl = document.getElementById(`upcFieldValue-${releaseId}`);
 
   if (panel && data.upc && data.smartLinkURL) {
     panel.innerHTML = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
@@ -1821,18 +1734,16 @@ onAuthStateChanged(auth, async (user) => {
         data.paymentVerified = false;
       }
 
-      /* ─── Auto-generate UPC + SmartLink if newly approved ─── */
       const rawStatus = (data.status || "Pending").trim().toLowerCase();
+
+      /* Auto-generate UPC + SmartLink if newly approved */
       if (rawStatus === "approved" && (!data.upc || !data.smartLinkURL)) {
-        // Fire in background — don't await, just let it run
         (async () => {
           try {
             const upc          = await generateUniqueUPC();
             const smartLinkURL = buildSmartLinkURL(id, data.artistName || '', data.releaseTitle || '');
             await updateDoc(doc(db, "submissions", id), {
-              upc:          upc,
-              smartLinkURL: smartLinkURL,
-              smartLinkGeneratedAt: serverTimestamp()
+              upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp()
             });
             window._releaseMeta[id].upc = upc;
             window._releaseMeta[id].smartLinkURL = smartLinkURL;
@@ -1869,6 +1780,16 @@ onAuthStateChanged(auth, async (user) => {
                <line x1="12" y1="16" x2="12.01" y2="16"/>
              </svg>
              Check Reasons
+           </a>`
+        : "";
+
+      /* ── PROMOTE BUTTON — only for approved releases ── */
+      const promoteBtn = isApproved
+        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+             </svg>
+             Promote
            </a>`
         : "";
 
@@ -1943,6 +1864,7 @@ onAuthStateChanged(auth, async (user) => {
           </div>
 
           ${checkReasonsBtn}
+          ${promoteBtn}
 
           <div class="card-actions">
             <button class="action-btn edit-cover-btn" data-id="${id}">
