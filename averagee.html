@@ -12,19 +12,19 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-base:        #0a0a0a;
-  --bg-surface:     #111111;
-  --bg-card:        #161616;
-  --bg-input:       #1c1c1c;
-  --bg-input-focus: #202020;
-  --border:         rgba(255,255,255,0.07);
-  --border-focus:   rgba(255,255,255,0.3);
-  --border-accent:  rgba(255,255,255,0.12);
-  --accent:         #e0e0e0;
-  --accent-light:   #c8c8c8;
-  --accent-bright:  #f0f0f0;
-  --accent-dim:     rgba(255,255,255,0.05);
-  --accent-glow:    0 0 24px rgba(255,255,255,0.06);
+  --bg-base:        #080810;
+  --bg-surface:     #0e0e18;
+  --bg-card:        #111120;
+  --bg-input:       #171725;
+  --bg-input-focus: #1c1c2c;
+  --border:         rgba(160,100,255,0.1);
+  --border-focus:   rgba(160,100,255,0.45);
+  --border-accent:  rgba(160,100,255,0.2);
+  --accent:         #b06ef3;
+  --accent-light:   #c48ff7;
+  --accent-bright:  #d8b4fe;
+  --accent-dim:     rgba(160,100,255,0.08);
+  --accent-glow:    0 0 24px rgba(160,100,255,0.15);
   --gold:           #c8a96e;
   --gold-dim:       rgba(200,169,110,0.1);
   --text-primary:   #e8e8e8;
@@ -77,10 +77,10 @@ body::before {
 .site-logo { height: 38px; width: auto; }
 .header-badge {
   display: flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border-accent);
+  background: rgba(160,100,255,0.06); border: 1px solid var(--border-accent);
   border-radius: 999px; padding: 5px 12px;
   font-family: var(--font-display); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light);
 }
 .header-badge svg { width: 10px; height: 10px; }
 
@@ -128,8 +128,8 @@ body::before {
   transition: all var(--t);
 }
 .step-item.active .step-num {
-  background: var(--text-primary); border-color: var(--text-primary);
-  color: #0a0a0a;
+  background: var(--accent); border-color: var(--accent);
+  color: #fff;
 }
 .step-connector {
   flex: 1; height: 1px;
@@ -150,7 +150,7 @@ body::before {
 }
 #releaseForm::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.08) 60%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent-light) 60%, transparent 100%);
 }
 
 /* ─── SECTION HEADERS ─── */
@@ -162,11 +162,11 @@ body::before {
 .section-head:first-child { margin-top: 0; }
 .section-icon {
   width: 32px; height: 32px; border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border-accent);
+  background: rgba(160,100,255,0.06); border: 1px solid var(--border-accent);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.section-icon svg { width: 15px; height: 15px; color: var(--text-secondary); }
+.section-icon svg { width: 15px; height: 15px; color: var(--accent-light); }
 .section-title-wrap { flex: 1; }
 .section-title {
   font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
@@ -187,7 +187,7 @@ body::before {
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
 }
 .field label svg { width: 11px; height: 11px; opacity: 0.7; }
-.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
+.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
 .field input, .field select, .field textarea {
   background: var(--bg-input);
@@ -206,9 +206,9 @@ body::before {
   background: var(--bg-input-focus);
 }
 .field input:focus, .field select:focus, .field textarea:focus {
-  border-color: rgba(255,255,255,0.3);
+  border-color: var(--accent);
   background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+  box-shadow: 0 0 0 3px rgba(160,100,255,0.1);
 }
 .field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
 
@@ -220,7 +220,7 @@ body::before {
   border-top: 5px solid var(--text-secondary);
   pointer-events: none; transition: all var(--t);
 }
-.select-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
+.select-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
 .select-wrap select { padding-right: 40px; cursor: pointer; }
 
 .country-wrap { position: relative; }
@@ -237,7 +237,7 @@ body::before {
   border-left: 4px solid transparent; border-right: 4px solid transparent;
   border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
 }
-.country-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
+.country-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t);
@@ -250,7 +250,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   caret-color: var(--text-primary); border-color: var(--border) !important;
 }
 
-option { background: #1c1c1c; color: var(--text-primary); }
+option { background: #171725; color: var(--text-primary); }
 
 /* ─── HINT TEXT ─── */
 .field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
@@ -265,32 +265,32 @@ option { background: #1c1c1c; color: var(--text-primary); }
   transition: border-color var(--t), box-shadow var(--t), background var(--t);
 }
 .artist-pill-box:focus-within {
-  border-color: rgba(255,255,255,0.3); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+  border-color: var(--accent); background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(160,100,255,0.1);
 }
 .artist-pill {
   display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(160,100,255,0.1); border: 1px solid rgba(160,100,255,0.25);
   border-radius: 999px; padding: 4px 10px 4px 6px;
-  font-size: 0.82rem; color: var(--text-primary);
+  font-size: 0.82rem; color: var(--accent-bright);
   animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .pill-avatar {
   width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(160,100,255,0.15);
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 700; color: var(--text-primary);
+  font-size: 0.65rem; font-weight: 700; color: var(--accent-light);
   overflow: hidden; flex-shrink: 0;
 }
 .pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
 .pill-remove {
   width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(255,255,255,0.08); border: none; cursor: pointer;
+  background: rgba(160,100,255,0.12); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); padding: 0;
+  color: var(--accent-light); padding: 0;
   transition: background var(--t), transform var(--t);
 }
-.pill-remove:hover { background: rgba(255,255,255,0.18); transform: scale(1.15); color: var(--text-primary); }
+.pill-remove:hover { background: rgba(160,100,255,0.28); transform: scale(1.15); color: var(--accent-bright); }
 .pill-remove svg { width: 8px; height: 8px; }
 .artist-search-input {
   background: none !important; border: none !important;
@@ -303,8 +303,8 @@ option { background: #1c1c1c; color: var(--text-primary); }
 /* ─── DROPDOWN ─── */
 .artist-dropdown {
   position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-  z-index: 9000; background: #1c1c1c;
-  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md);
+  z-index: 9000; background: #171725;
+  border: 1px solid rgba(160,100,255,0.18); border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
   display: none; max-height: 340px; overflow-y: auto;
@@ -322,13 +322,13 @@ option { background: #1c1c1c; color: var(--text-primary); }
   border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 .artist-option:last-child { border-bottom: none; }
-.artist-option:hover, .artist-option.focused { background: rgba(255,255,255,0.05); }
+.artist-option:hover, .artist-option.focused { background: rgba(160,100,255,0.08); }
 .opt-avatar {
   width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  overflow: hidden; background: rgba(255,255,255,0.07);
+  overflow: hidden; background: rgba(160,100,255,0.1);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--accent-light);
 }
 .opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .opt-info { flex: 1; min-width: 0; }
@@ -339,28 +339,28 @@ option { background: #1c1c1c; color: var(--text-primary); }
   letter-spacing: 0.06em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
 }
-.badge-apple { background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.12); }
-.badge-new   { background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.12); }
+.badge-apple { background: rgba(160,100,255,0.08); color: var(--accent-light); border: 1px solid rgba(160,100,255,0.2); }
+.badge-new   { background: rgba(160,100,255,0.08); color: var(--accent-light); border: 1px solid rgba(160,100,255,0.2); }
 .dropdown-loading {
   padding: 20px 16px; text-align: center;
   font-size: 0.83rem; color: var(--text-muted); font-style: italic;
   display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
 .artist-dropdown::-webkit-scrollbar { width: 4px; }
 .artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(160,100,255,0.2); border-radius: 2px; }
 
 /* ─── CREDITS ─── */
 .credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .credits-panel {
-  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  background: rgba(160,100,255,0.03); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 18px;
 }
 .credits-panel-hd {
   display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
   font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
 }
 .credits-panel-hd svg { width: 13px; height: 13px; }
 .credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
@@ -376,8 +376,8 @@ option { background: #1c1c1c; color: var(--text-primary); }
   position: absolute; top: -9px; left: 12px;
   font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-secondary); background: var(--bg-card);
-  padding: 1px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1);
+  color: var(--accent); background: var(--bg-card);
+  padding: 1px 8px; border-radius: 999px; border: 1px solid rgba(160,100,255,0.2);
 }
 .credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
 .credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
@@ -390,7 +390,7 @@ option { background: #1c1c1c; color: var(--text-primary); }
 }
 .credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
 .credit-input:hover { border-color: var(--border-accent); }
-.credit-input:focus { border-color: rgba(255,255,255,0.3); box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
+.credit-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(160,100,255,0.1); }
 .csel-wrap { position: relative; }
 .csel-wrap::after {
   content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
@@ -398,7 +398,7 @@ option { background: #1c1c1c; color: var(--text-primary); }
   border-left: 3px solid transparent; border-right: 3px solid transparent;
   border-top: 4px solid var(--text-secondary); pointer-events: none;
 }
-.csel-wrap:focus-within::after { border-top-color: var(--text-primary); }
+.csel-wrap:focus-within::after { border-top-color: var(--accent); }
 .csel-wrap select { padding-right: 28px; cursor: pointer; }
 .credit-remove {
   width: 32px; height: 32px; border-radius: 50%;
@@ -410,14 +410,14 @@ option { background: #1c1c1c; color: var(--text-primary); }
 .credit-remove svg { width: 11px; height: 11px; }
 .add-credit-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: transparent; border: 1px dashed rgba(255,255,255,0.1);
+  background: transparent; border: 1px dashed rgba(160,100,255,0.2);
   border-radius: var(--radius-sm); padding: 10px 16px;
   font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--text-muted); cursor: pointer; width: 100%;
   transition: all var(--t);
 }
-.add-credit-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.2); color: var(--text-primary); }
+.add-credit-btn:hover { background: rgba(160,100,255,0.06); border-color: rgba(160,100,255,0.35); color: var(--accent-bright); }
 .add-credit-btn svg { width: 13px; height: 13px; }
 
 /* ─── SUBMIT BUTTON ─── */
@@ -428,13 +428,13 @@ option { background: #1c1c1c; color: var(--text-primary); }
   border-radius: var(--radius-md); border: none; cursor: pointer;
   font-family: var(--font-display); font-size: 0.85rem; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase;
-  color: #0a0a0a;
-  background: #e0e0e0;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset;
-  transition: transform var(--t), box-shadow var(--t), background var(--t);
+  color: #fff;
+  background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 50%, #6d28d9 100%);
+  box-shadow: 0 4px 24px rgba(124,58,237,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+  transition: transform var(--t), box-shadow var(--t), filter var(--t);
   position: relative; overflow: hidden;
 }
-.submit-btn:hover:not(:disabled) { transform: translateY(-1px); background: #f0f0f0; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,58,237,0.5); filter: brightness(1.08); }
 .submit-btn:active:not(:disabled) { transform: translateY(0); }
 .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
@@ -457,7 +457,7 @@ option { background: #1c1c1c; color: var(--text-primary); }
   display: flex; align-items: center; gap: 6px;
   font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.04em;
 }
-.trust-item svg { width: 12px; height: 12px; color: var(--text-secondary); opacity: 0.6; }
+.trust-item svg { width: 12px; height: 12px; color: var(--accent); opacity: 0.7; }
 
 /* ─── MODAL ─── */
 .modal-overlay {
@@ -468,7 +468,7 @@ option { background: #1c1c1c; color: var(--text-primary); }
 }
 .modal-overlay.closing { animation: overlayOut 0.18s ease both; }
 .modal-card {
-  background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
+  background: #130f1e; border: 1px solid rgba(160,100,255,0.15);
   border-radius: var(--radius-xl); padding: 36px 32px 32px;
   width: 100%; max-width: 440px; position: relative;
   box-shadow: 0 40px 100px rgba(0,0,0,0.8);
@@ -477,18 +477,18 @@ option { background: #1c1c1c; color: var(--text-primary); }
 .modal-card.closing { animation: modalOut 0.18s ease both; }
 .modal-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-light), transparent);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 .modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
 .modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
 .modal-close {
   width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  background: rgba(160,100,255,0.05); border: 1px solid var(--border);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   color: var(--text-secondary); transition: all var(--t);
 }
-.modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+.modal-close:hover { background: rgba(160,100,255,0.12); color: var(--accent-bright); }
 .modal-close svg { width: 12px; height: 12px; }
 .modal-field { margin-bottom: 18px; }
 .modal-label { display: block; margin-bottom: 7px; font-family: var(--font-display); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); }
@@ -498,25 +498,25 @@ option { background: #1c1c1c; color: var(--text-primary); }
   font-family: var(--font-body); font-size: 0.9rem;
   padding: 13px 16px; outline: none; transition: border-color var(--t), box-shadow var(--t); appearance: none;
 }
-.modal-input:focus, .modal-select:focus { border-color: rgba(255,255,255,0.3); box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
+.modal-input:focus, .modal-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(160,100,255,0.1); }
 .modal-sel-wrap { position: relative; }
 .modal-sel-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
 .modal-hint {
   margin-top: 8px; padding: 10px 14px;
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(160,100,255,0.05); border: 1px solid rgba(160,100,255,0.12);
   border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
 }
-.modal-hint strong { color: var(--text-primary); }
+.modal-hint strong { color: var(--accent-bright); }
 .modal-btns { display: flex; gap: 10px; margin-top: 24px; }
 .modal-save, .modal-cancel {
   flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer;
   font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; transition: all var(--t);
 }
-.modal-save { background: #e0e0e0; color: #0a0a0a; }
-.modal-save:hover { background: #f0f0f0; transform: translateY(-1px); }
-.modal-cancel { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-secondary); }
-.modal-cancel:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+.modal-save { background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 100%); color: #fff; box-shadow: 0 4px 18px rgba(124,58,237,0.3); }
+.modal-save:hover { box-shadow: 0 8px 28px rgba(124,58,237,0.45); transform: translateY(-1px); }
+.modal-cancel { background: rgba(160,100,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); }
+.modal-cancel:hover { background: rgba(160,100,255,0.1); color: var(--accent-bright); }
 
 /* ─── ANIMATIONS ─── */
 @keyframes fadeUp    { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
@@ -1027,51 +1027,67 @@ window.collectCredits = function() {
 <!-- ARTIST SEARCH ENGINE -->
 <script>
 (function(){
-  const selectedArtists=[];
-  const searchInput=document.getElementById('artistSearchInput');
-  const pillBox=document.getElementById('artistPillBox');
-  const dropdown=document.getElementById('artistDropdown');
-  const hiddenInput=document.getElementById('artistName');
-  const modal=document.getElementById('artistModal');
-  const modalCard=document.getElementById('artistModalCard');
-  const modalNameInput=document.getElementById('modalArtistName');
-  const modalTypeSelect=document.getElementById('modalArtistType');
-  const modalSaveBtn=document.getElementById('modalSave');
-  const modalCancelBtn=document.getElementById('modalCancel');
-  const modalCloseBtn=document.getElementById('modalClose');
-  let searchTimer=null, lastQuery='', focused=-1, dropdownItems=[];
+  const selectedArtists = [];
+  const searchInput  = document.getElementById('artistSearchInput');
+  const pillBox      = document.getElementById('artistPillBox');
+  const dropdown     = document.getElementById('artistDropdown');
+  const hiddenInput  = document.getElementById('artistName');
+  const modal        = document.getElementById('artistModal');
+  const modalCard    = document.getElementById('artistModalCard');
+  const modalNameInput  = document.getElementById('modalArtistName');
+  const modalTypeSelect = document.getElementById('modalArtistType');
+  const modalSaveBtn    = document.getElementById('modalSave');
+  const modalCancelBtn  = document.getElementById('modalCancel');
+  const modalCloseBtn   = document.getElementById('modalClose');
+  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [];
+  let activeCtrl = null;
 
-  let jsonpCallbackCounter = 0;
-
-  function fetchArtistsJSONP(query) {
+  // ── MusicBrainz has real CORS headers — no proxy needed, works on all browsers & iOS
+  async function fetchArtists(query) {
     showLoading();
-    const old = document.getElementById('itunes-jsonp');
-    if (old) old.remove();
-    const cbName = '__itunesCb' + (++jsonpCallbackCounter);
-    const timeout = setTimeout(() => {
-      window[cbName] = null;
-      const s = document.getElementById('itunes-jsonp');
-      if (s) s.remove();
+    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
+    activeCtrl = new AbortController();
+    const signal = activeCtrl.signal;
+
+    try {
+      const url = 'https://musicbrainz.org/ws/2/artist/?query=artist:' +
+        encodeURIComponent(query) + '&limit=8&fmt=json';
+      const res = await Promise.race([
+        fetch(url, { signal, headers: { 'Accept': 'application/json', 'User-Agent': 'ArtistPortal/1.0 (release@portal.app)' } }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))
+      ]);
+      if (!res.ok) throw new Error('bad');
+      const data = await res.json();
+      const artists = (data.artists || []).map(a => {
+        const tag = a.tags && a.tags.length ? a.tags.sort((x,y)=>y.count-x.count)[0].name : '';
+        const genre = tag || a.type || '';
+        return { name: a.name, genre, mbid: a.id, img: '' };
+      });
+      // Grab cover art for top 5 in parallel (Cover Art Archive also supports CORS)
+      await Promise.allSettled(artists.slice(0,5).map(a => loadArt(a, signal)));
+      renderResults(query, artists);
+    } catch(e) {
+      if (e.name === 'AbortError') return;
       renderResults(query, []);
-    }, 6000);
-    window[cbName] = function(data) {
-      clearTimeout(timeout);
-      window[cbName] = null;
-      const s = document.getElementById('itunes-jsonp');
-      if (s) s.remove();
-      renderResults(query, (data && data.results) || []);
-    };
-    const script = document.createElement('script');
-    script.id = 'itunes-jsonp';
-    script.src = 'https://itunes.apple.com/search?term=' +
-      encodeURIComponent(query) +
-      '&entity=musicArtist&limit=7&media=music&callback=' + cbName;
-    script.onerror = function() {
-      clearTimeout(timeout);
-      window[cbName] = null;
-      renderResults(query, []);
-    };
-    document.head.appendChild(script);
+    }
+  }
+
+  async function loadArt(artist, signal) {
+    if (!artist.mbid) return;
+    try {
+      // Get artist's first release group
+      const rg = await fetch(
+        'https://musicbrainz.org/ws/2/release-group?artist=' + artist.mbid + '&limit=1&fmt=json&type=album|single',
+        { signal, headers: { 'Accept': 'application/json', 'User-Agent': 'ArtistPortal/1.0' } }
+      );
+      if (!rg.ok) return;
+      const rgData = await rg.json();
+      const rgId = rgData['release-groups'] && rgData['release-groups'][0] && rgData['release-groups'][0].id;
+      if (!rgId) return;
+      // Cover Art Archive supports CORS — check front image
+      const ca = await fetch('https://coverartarchive.org/release-group/' + rgId + '/front-250', { signal, redirect: 'follow' });
+      if (ca.ok || ca.type === 'opaque') artist.img = ca.url || ('https://coverartarchive.org/release-group/' + rgId + '/front-250');
+    } catch(e) { /* silent — will show letter avatar */ }
   }
 
   searchInput.addEventListener('input', function() {
@@ -1080,21 +1096,24 @@ window.collectCredits = function() {
     lastQuery = q;
     clearTimeout(searchTimer);
     if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => fetchArtistsJSONP(q), 380);
     showLoading();
+    searchTimer = setTimeout(() => fetchArtists(q), 400);
   });
 
   searchInput.addEventListener('keydown', handleKeyNav);
 
+  // Works on iOS Safari (touchstart) and desktop (mousedown)
   document.addEventListener('touchstart', function(e) {
     if (!e.target.closest('#artistFieldWrap')) closeDropdown();
   }, { passive: true });
-  document.addEventListener('click', function(e) {
+  document.addEventListener('mousedown', function(e) {
     if (!e.target.closest('#artistFieldWrap')) closeDropdown();
   });
 
   searchInput.addEventListener('focus', function() {
-    if (searchInput.value.trim().length >= 2) fetchArtistsJSONP(searchInput.value.trim());
+    const q = searchInput.value.trim();
+    if (q.length >= 2 && lastQuery !== q) fetchArtists(q);
+    else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
   });
 
   function showLoading() {
@@ -1102,35 +1121,39 @@ window.collectCredits = function() {
     openDropdown();
   }
 
-  function renderResults(query, results) {
-    dropdownItems = []; let html = '';
-    const found = results.filter(r => r.artistName);
-    if (found.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      found.forEach((artist, i) => {
-        const name = artist.artistName;
-        const genre = artist.primaryGenreName || '';
-        const imgUrl = artist.artworkUrl100 || '';
-        dropdownItems.push({ name, imageUrl: imgUrl, source: 'apple', genre });
-        const avatarHtml = imgUrl
-          ? `<div class="opt-avatar has-img"><img src="${imgUrl}" alt="" loading="lazy"></div>`
-          : `<div class="opt-avatar">${name.charAt(0).toUpperCase()}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${avatarHtml}<div class="opt-info"><div class="opt-name">${esc(name)}</div>${genre?`<div class="opt-meta">${esc(genre)}</div>`:''}</div><span class="opt-badge badge-apple">Apple Music</span></div>`;
+  function renderResults(query, artists) {
+    dropdownItems = [];
+    let html = '';
+    if (artists.length > 0) {
+      html += '<div class="dropdown-sect-title">Found on MusicBrainz</div>';
+      artists.forEach((a, i) => {
+        dropdownItems.push({ name: a.name, imageUrl: a.img, genre: a.genre, source: 'mb' });
+        const av = a.img
+          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.parentNode.textContent='${esc(a.name.charAt(0).toUpperCase())}'"></div>`
+          : `<div class="opt-avatar">${esc(a.name.charAt(0).toUpperCase())}</div>`;
+        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${esc(a.name)}</div>${a.genre ? `<div class="opt-meta">${esc(a.genre)}</div>` : ''}</div><span class="opt-badge badge-apple">MusicBrainz</span></div>`;
       });
     }
     const newIdx = dropdownItems.length;
     dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
     html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;font-weight:700;">+</div><div class="opt-info"><div class="opt-name">Add "${esc(query)}" as new artist</div><div class="opt-meta">Not on streaming platforms yet</div></div><span class="opt-badge badge-new">New</span></div>`;
-    dropdown.innerHTML = html; openDropdown(); focused = -1;
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.3rem;font-weight:700;color:var(--accent-light);">+</div><div class="opt-info"><div class="opt-name">Add "${esc(query)}" as new artist</div><div class="opt-meta">Manually add if not found above</div></div><span class="opt-badge badge-new">New</span></div>`;
+
+    dropdown.innerHTML = html;
+    openDropdown();
+    focused = -1;
+
     dropdown.querySelectorAll('.artist-option').forEach(el => {
+      // mousedown prevents blur-before-click on desktop
       el.addEventListener('mousedown', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-      el.addEventListener('touchend', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+      // touchend with stopPropagation so iOS outside-click handler doesn't fire
+      el.addEventListener('touchend', function(e) { e.preventDefault(); e.stopPropagation(); selectItem(parseInt(el.dataset.index)); });
     });
   }
 
   function selectItem(idx) {
-    const item = dropdownItems[idx]; if (!item) return;
+    const item = dropdownItems[idx];
+    if (!item) return;
     if (item.source === 'new') {
       modalNameInput.value = item.name;
       openModal(); closeDropdown();
@@ -1147,36 +1170,40 @@ window.collectCredits = function() {
     syncHiddenInput(); renderPills();
   }
 
-  function removeArtist(idx) { selectedArtists.splice(idx,1); syncHiddenInput(); renderPills(); }
+  function removeArtist(idx) {
+    selectedArtists.splice(idx, 1);
+    syncHiddenInput(); renderPills();
+  }
 
   function renderPills() {
     pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
     selectedArtists.forEach((artist, i) => {
-      const pill = document.createElement('div'); pill.className = 'artist-pill';
-      const avatarHtml = artist.imageUrl
-        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt=""></span>`
-        : `<span class="pill-avatar">${artist.name.charAt(0).toUpperCase()}</span>`;
-      pill.innerHTML = `${avatarHtml}<span>${esc(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${esc(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+      const pill = document.createElement('div');
+      pill.className = 'artist-pill';
+      const av = artist.imageUrl
+        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
+        : `<span class="pill-avatar">${esc(artist.name.charAt(0).toUpperCase())}</span>`;
+      pill.innerHTML = `${av}<span>${esc(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${esc(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
       pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
       pillBox.insertBefore(pill, searchInput);
     });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist name on Apple Music…';
+    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist name…';
   }
 
-  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a=>a.name).join(', '); }
+  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
 
   function handleKeyNav(e) {
     const items = dropdown.querySelectorAll('.artist-option');
     if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused+1, items.length-1); highlightItem(items); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); focused = Math.max(focused-1, 0); highlightItem(items); }
+    if (e.key === 'ArrowDown')  { e.preventDefault(); focused = Math.min(focused+1, items.length-1); highlightItem(items); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); focused = Math.max(focused-1, 0); highlightItem(items); }
     else if (e.key === 'Enter') { e.preventDefault(); if (focused >= 0) selectItem(focused); }
     else if (e.key === 'Escape') closeDropdown();
   }
 
   function highlightItem(items) {
-    items.forEach((el,i) => el.classList.toggle('focused', i===focused));
-    if (focused >= 0) items[focused].scrollIntoView({ block:'nearest' });
+    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
+    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
   }
 
   function openDropdown()  { dropdown.classList.add('open'); }
@@ -1197,7 +1224,8 @@ window.collectCredits = function() {
   }
 
   modalSaveBtn.addEventListener('click', () => {
-    const name = modalNameInput.value.trim(); if (!name) { modalNameInput.focus(); return; }
+    const name = modalNameInput.value.trim();
+    if (!name) { modalNameInput.focus(); return; }
     addArtistPill(name, '', 'new');
     closeModal(() => { modalNameInput.value = ''; modalTypeSelect.value = 'primary'; });
   });
@@ -1205,10 +1233,12 @@ window.collectCredits = function() {
   modalCloseBtn.addEventListener('click',  () => closeModal());
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   modalNameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); modalSaveBtn.click(); }
+    if (e.key === 'Enter')  { e.preventDefault(); modalSaveBtn.click(); }
     if (e.key === 'Escape') closeModal();
   });
-  pillBox.addEventListener('click', e => { if (!e.target.closest('.artist-pill')) searchInput.focus(); });
+  pillBox.addEventListener('click', e => {
+    if (!e.target.closest('.artist-pill')) searchInput.focus();
+  });
 
   function esc(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
