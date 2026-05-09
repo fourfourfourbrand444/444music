@@ -4,292 +4,376 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Saving Release • 444Music</title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, Helvetica, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-
-height:100vh;
-
-background:linear-gradient(135deg,#3a0d5d,#5f2c82);
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-color:white;
-
+body {
+  min-height: 100vh;
+  background: #0a0a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  padding: 40px 20px;
 }
 
-/* Glass container */
-
-.glass{
-
-width:92%;
-max-width:420px;
-
-padding:40px 30px;
-
-border-radius:25px;
-
-background:rgba(255,255,255,0.08);
-
-backdrop-filter:blur(20px);
-
-border:1px solid rgba(255,255,255,0.15);
-
-box-shadow:0 20px 60px rgba(0,0,0,0.5);
-
-text-align:center;
-
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: #111118;
+  border-radius: 20px;
+  border: 1px solid #1e1e2e;
+  padding: 40px 32px;
+  text-align: center;
 }
 
-/* Icon */
-
-.top-icon{
-
-font-size:50px;
-
-color:#c084ff;
-
-margin-bottom:20px;
-
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 36px;
 }
 
-/* Text */
-
-h1{
-
-font-size:26px;
-
-margin-bottom:10px;
-
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #fff;
 }
 
-p{
-
-color:#ddd;
-
-font-size:14px;
-
-margin-bottom:30px;
-
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e2e2e2;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
-/* Spinner */
-
-.spinner{
-
-width:60px;
-height:60px;
-
-border-radius:50%;
-
-border:4px solid rgba(255,255,255,0.2);
-
-border-top:4px solid #c084ff;
-
-animation:spin 1s linear infinite;
-
-margin:auto;
-margin-bottom:25px;
-
+/* Ring */
+.upload-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 28px;
 }
 
-@keyframes spin{
+.upload-ring svg {
+  width: 80px;
+  height: 80px;
+  transform: rotate(-90deg);
+}
 
-to{transform:rotate(360deg);}
+.ring-bg {
+  fill: none;
+  stroke: #1e1e2e;
+  stroke-width: 3;
+}
 
+.ring-fill {
+  fill: none;
+  stroke: #8b5cf6;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: fillRing 3.5s ease forwards;
+}
+
+@keyframes fillRing {
+  0%   { stroke-dashoffset: 220; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.ring-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  color: #a78bfa;
+}
+
+/* Headings */
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f0f0f5;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #5a5a7a;
+  margin-bottom: 32px;
+  font-weight: 400;
 }
 
 /* Steps */
-
-.step{
-
-display:flex;
-align-items:center;
-
-gap:12px;
-
-padding:16px;
-
-border-radius:14px;
-
-margin-bottom:14px;
-
-background:rgba(255,255,255,0.12);   /* stronger glass */
-
-border:1px solid rgba(255,255,255,0.25);
-
-font-size:15px;
-
-color:#ffffff;
-
-opacity:0.9;
-transition:all 0.3s ease;
-
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-
-.step.active{
-
-background:rgba(192,132,255,0.35);
-
-border:1px solid rgba(192,132,255,0.7);
-
-box-shadow:0 0 15px rgba(192,132,255,0.4);
-
-color:#fff;
-
+.step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: #16161f;
+  transition: all 0.4s ease;
+  text-align: left;
 }
 
-.step i{
+.step.active {
+  background: #1a1030;
+  border-color: #4c2889;
+}
 
-color:#d8b4fe;
+.step.done {
+  background: #111a18;
+  border-color: #1d3a32;
+}
 
-font-size:16px;
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1e1e2e;
+  border: 1px solid #2a2a3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #3a3a5a;
+  transition: all 0.4s ease;
+}
 
+.step.active .step-dot {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #fff;
+}
+
+.step.done .step-dot {
+  background: #1d6b52;
+  border-color: #1d6b52;
+  color: #4ade80;
+}
+
+.step-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  animation: pulse 1.2s ease infinite;
+  display: none;
+  flex-shrink: 0;
+}
+
+.step.active .step-pulse {
+  display: block;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.6); }
+}
+
+.step-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a3a5a;
+  flex: 1;
+  transition: color 0.4s ease;
+}
+
+.step.active .step-label { color: #c4b5fd; }
+.step.done  .step-label  { color: #4ade80; }
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 2px;
+  background: #1e1e2e;
+  border-radius: 2px;
+  margin-top: 28px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+  border-radius: 2px;
+  width: 0%;
+  animation: progressFill 3.5s ease forwards;
+}
+
+@keyframes progressFill {
+  0%   { width: 0%; }
+  100% { width: 100%; }
 }
 
 </style>
-
 </head>
-
 <body>
 
-<div class="glass">
+<div class="card">
 
-<div class="top-icon">
-<i class="fa-solid fa-cloud-arrow-up"></i>
-</div>
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-icon"><i class="fa-solid fa-music"></i></div>
+    <span class="brand-name">444Music</span>
+  </div>
 
-<h1>Saving Your Release</h1>
+  <!-- Ring -->
+  <div class="upload-ring">
+    <svg viewBox="0 0 80 80">
+      <circle class="ring-bg"   cx="40" cy="40" r="35"/>
+      <circle class="ring-fill" cx="40" cy="40" r="35"/>
+    </svg>
+    <div class="ring-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+  </div>
 
-<p>Please wait while we process your submission.</p>
+  <p class="title">Saving Your Release</p>
+  <p class="subtitle">Please wait while we process your submission</p>
 
-<div class="spinner"></div>
+  <!-- Steps -->
+  <div class="steps">
 
-<div class="step active" id="s1">
-<i class="fa-solid fa-upload"></i>
-Uploading release files
-</div>
+    <div class="step active" id="s1">
+      <div class="step-dot"><i class="fa-solid fa-upload"></i></div>
+      <span class="step-label">Uploading release files</span>
+      <div class="step-pulse"></div>
+    </div>
 
-<div class="step" id="s2">
-<i class="fa-solid fa-check"></i>
-Checking metadata
-</div>
+    <div class="step" id="s2">
+      <div class="step-dot"><i class="fa-solid fa-shield-check"></i></div>
+      <span class="step-label">Checking metadata</span>
+      <div class="step-pulse"></div>
+    </div>
 
-<div class="step" id="s3">
-<i class="fa-solid fa-globe"></i>
-Preparing distribution
-</div>
+    <div class="step" id="s3">
+      <div class="step-dot"><i class="fa-solid fa-globe"></i></div>
+      <span class="step-label">Preparing distribution</span>
+      <div class="step-pulse"></div>
+    </div>
 
-<div class="step" id="s4">
-<i class="fa-solid fa-rocket"></i>
-Finalizing submission
-</div>
+    <div class="step" id="s4">
+      <div class="step-dot"><i class="fa-solid fa-rocket"></i></div>
+      <span class="step-label">Finalizing submission</span>
+      <div class="step-pulse"></div>
+    </div>
+
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar">
+    <div class="progress-fill"></div>
+  </div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { initializeApp }        from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-authDomain: "usersubmissionsportal.firebaseapp.com",
-projectId: "usersubmissionsportal",
-storageBucket: "usersubmissionsportal.firebasestorage.app",
-messagingSenderId: "734783502459",
-appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app = initializeApp(firebaseConfig);
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db   = getFirestore(app);
 
-function step(id){
+const allSteps = ['s1','s2','s3','s4'];
 
-document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
-
-document.getElementById(id).classList.add("active");
-
+function setStep(id) {
+  allSteps.forEach(sid => {
+    const el = document.getElementById(sid);
+    const idx = allSteps.indexOf(sid);
+    const active = allSteps.indexOf(id);
+    if (idx < active) {
+      el.classList.remove('active');
+      el.classList.add('done');
+      el.querySelector('.step-dot').innerHTML = '<i class="fa-solid fa-check"></i>';
+    } else if (sid === id) {
+      el.classList.add('active');
+      el.classList.remove('done');
+    }
+  });
 }
 
 const submission = {
-title:"Test Release"
+  title: "Test Release"
 };
 
-onAuthStateChanged(auth, async(user)=>{
+onAuthStateChanged(auth, async (user) => {
 
-if(!user){
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-window.location.href="login.html";
-return;
+  try {
 
-}
+    setStep("s1");
+    await new Promise(r => setTimeout(r, 1000));
 
-try{
+    setStep("s2");
+    await new Promise(r => setTimeout(r, 1000));
 
-step("s1");
+    setStep("s3");
+    await new Promise(r => setTimeout(r, 1000));
 
-await new Promise(r=>setTimeout(r,1000));
+    await addDoc(collection(db, "sharp"), {
+      ...submission,
+      userId:    user.uid,
+      status:    "Pending",
+      createdAt: Date.now()
+    });
 
-step("s2");
+    setStep("s4");
 
-await new Promise(r=>setTimeout(r,1000));
+    setTimeout(() => {
+      window.location.href = "a.html";
+    }, 1200);
 
-step("s3");
-
-await new Promise(r=>setTimeout(r,1000));
-
-await addDoc(collection(db,"sharp"),{
-
-...submission,
-
-userId:user.uid,
-
-status:"Pending",
-
-createdAt:Date.now()
-
-});
-
-step("s4");
-
-setTimeout(()=>{
-
-window.location.href="a.html";
-
-},1200);
-
-}catch(err){
-
-console.error(err);
-
-alert("Submission failed");
-
-}
+  } catch (err) {
+    console.error(err);
+    alert("Submission failed. Please try again.");
+  }
 
 });
 
 </script>
-
 </body>
 </html>
-
-
