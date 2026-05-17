@@ -953,13 +953,13 @@ document.getElementById("gate-submit").addEventListener("click", async () => {
     if (!snap.exists()) {
       await setDoc(ref, {
         name, email, phone,
-        royaltyAmount: 0,
-        splitPercent: null,
+        royaltyAmount: 0.0,
+        splitPercent: 0.0,
         status: "pending",
-        streams: null,
-        paymentMethod: null,
+        streams: 0,
+        paymentMethod: "",
         paymentDetails: {},
-        breakdown: { spotify: 0, apple: 0, youtube: 0, other: 0 },
+        breakdown: { spotify: 0.0, apple: 0.0, youtube: 0.0, other: 0.0 },
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
@@ -1003,10 +1003,14 @@ async function loadData() {
   if (!snap.exists()) return;
   const d = snap.data();
 
-  royaltyAmount = d.royaltyAmount || 0;
+  royaltyAmount = parseFloat(d.royaltyAmount) || 0;
   document.getElementById("stat-total").textContent = "$" + royaltyAmount.toFixed(2);
-  document.getElementById("stat-split").textContent = d.splitPercent != null ? d.splitPercent + "%" : "—%";
-  document.getElementById("stat-streams").textContent = d.streams != null ? Number(d.streams).toLocaleString() : "—";
+
+  const splitPct = parseFloat(d.splitPercent) || 0;
+  document.getElementById("stat-split").textContent = splitPct > 0 ? splitPct + "%" : "—%";
+
+  const streams = parseInt(d.streams) || 0;
+  document.getElementById("stat-streams").textContent = streams > 0 ? streams.toLocaleString() : "—";
 
   // Status badge
   const statusEl = document.getElementById("stat-status");
@@ -1032,16 +1036,20 @@ async function loadData() {
 
   // Breakdown
   const bd = d.breakdown || {};
-  document.getElementById("bd-spotify-amt").textContent  = "$" + (bd.spotify||0).toFixed(2);
-  document.getElementById("bd-apple-amt").textContent    = "$" + (bd.apple||0).toFixed(2);
-  document.getElementById("bd-yt-amt").textContent       = "$" + (bd.youtube||0).toFixed(2);
-  document.getElementById("bd-other-amt").textContent    = "$" + (bd.other||0).toFixed(2);
-  const total = (bd.spotify||0)+(bd.apple||0)+(bd.youtube||0)+(bd.other||0);
+  const sp = parseFloat(bd.spotify) || 0;
+  const ap = parseFloat(bd.apple)   || 0;
+  const yt = parseFloat(bd.youtube) || 0;
+  const ot = parseFloat(bd.other)   || 0;
+  document.getElementById("bd-spotify-amt").textContent = "$" + sp.toFixed(2);
+  document.getElementById("bd-apple-amt").textContent   = "$" + ap.toFixed(2);
+  document.getElementById("bd-yt-amt").textContent      = "$" + yt.toFixed(2);
+  document.getElementById("bd-other-amt").textContent   = "$" + ot.toFixed(2);
+  const total = sp + ap + yt + ot;
   if (total > 0) {
-    document.getElementById("bd-spotify-pct").textContent = ((bd.spotify/total)*100).toFixed(1) + "% of streams";
-    document.getElementById("bd-apple-pct").textContent   = ((bd.apple/total)*100).toFixed(1) + "% of streams";
-    document.getElementById("bd-yt-pct").textContent      = ((bd.youtube/total)*100).toFixed(1) + "% of streams";
-    document.getElementById("bd-other-pct").textContent   = ((bd.other/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-spotify-pct").textContent = ((sp/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-apple-pct").textContent   = ((ap/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-yt-pct").textContent      = ((yt/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-other-pct").textContent   = ((ot/total)*100).toFixed(1) + "% of streams";
   }
 
   // Created date
