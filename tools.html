@@ -29,6 +29,8 @@ html { scroll-behavior: smooth; }
   --success-dim: rgba(34,197,94,0.1);
   --warn: #f59e0b;
   --warn-dim: rgba(245,158,11,0.1);
+  --gold: #f59e0b;
+  --gold-dim: rgba(245,158,11,0.08);
   --white: #ffffff;
 }
 
@@ -40,7 +42,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Noise texture */
 body::after {
   content:'';
   position:fixed;
@@ -51,7 +52,6 @@ body::after {
   z-index:9999;
 }
 
-/* ── SCROLL PROGRESS ── */
 .progress-bar {
   position:fixed; top:0; left:0; height:2px;
   background:linear-gradient(90deg,var(--accent),var(--accent2));
@@ -60,7 +60,6 @@ body::after {
   transition:width .1s linear;
 }
 
-/* ── NAVBAR ── */
 nav {
   position:fixed; top:0; left:0; right:0; z-index:1000;
   display:flex; align-items:center; justify-content:space-between;
@@ -111,7 +110,6 @@ nav {
 }
 .nav-cta:hover { background:#6d28d9; transform:translateY(-1px); box-shadow:0 0 28px rgba(124,58,237,0.5); }
 
-/* ── HERO ── */
 .hero {
   padding: 148px 24px 64px;
   text-align:center;
@@ -127,7 +125,6 @@ nav {
   pointer-events:none;
 }
 
-/* Animated grid background */
 .hero-grid {
   position:absolute; inset:0; overflow:hidden; pointer-events:none; opacity:0.04;
   background-image:
@@ -174,7 +171,6 @@ nav {
   to{opacity:1;transform:translateY(0);}
 }
 
-/* ── FILTER TABS ── */
 .filter-wrap {
   display:flex; justify-content:center; gap:6px;
   padding:0 24px 40px; flex-wrap:wrap;
@@ -193,7 +189,6 @@ nav {
   color:#fff; box-shadow:0 0 16px rgba(124,58,237,0.35);
 }
 
-/* ── TOOLS GRID ── */
 .tools-wrap {
   max-width:1100px; margin:0 auto;
   padding:0 24px 100px;
@@ -202,7 +197,6 @@ nav {
   gap:16px;
 }
 
-/* ── TOOL CARD ── */
 .tool-card {
   background:var(--surface);
   border:1px solid var(--border);
@@ -230,7 +224,50 @@ nav {
 .tool-card.danger:hover { border-color:rgba(239,68,68,0.38); box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(239,68,68,0.15); }
 .tool-card.danger .card-icon { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2); color:#f87171; }
 
-/* card top */
+/* ── CONTRIBUTOR CARD ── */
+.tool-card.contributor {
+  border-color: rgba(245,158,11,0.22);
+  background: linear-gradient(135deg, rgba(245,158,11,0.04) 0%, var(--surface) 60%);
+}
+.tool-card.contributor::before {
+  background: radial-gradient(circle at 80% 20%, rgba(245,158,11,0.07), transparent 60%);
+}
+.tool-card.contributor:hover {
+  border-color: rgba(245,158,11,0.42);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.18), 0 0 40px rgba(245,158,11,0.06);
+}
+.tool-card.contributor .card-icon {
+  background: rgba(245,158,11,0.1);
+  border-color: rgba(245,158,11,0.22);
+  color: #fbbf24;
+}
+.tool-card.contributor .tool-btn.contributor-btn {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(245,158,11,0.3);
+  border: none;
+}
+.tool-card.contributor .tool-btn.contributor-btn:hover {
+  background: linear-gradient(135deg, #92400e, #b45309);
+  box-shadow: 0 0 28px rgba(245,158,11,0.5);
+  transform: translateY(-1px);
+}
+.tag-royalty {
+  background: rgba(245,158,11,0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245,158,11,0.2);
+}
+.contributor-pulse {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 600; color: #fbbf24;
+  background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.18);
+  border-radius: 100px; padding: 3px 9px;
+}
+.contributor-pulse .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #fbbf24; animation: blink 2s infinite;
+}
+
 .card-top {
   display:flex; align-items:flex-start;
   justify-content:space-between; margin-bottom:18px;
@@ -261,7 +298,6 @@ nav {
   justify-content:center; color:var(--muted); font-size:10px;
 }
 
-/* card body */
 .card-body { flex:1; }
 .card-body h2 {
   font-family:'Sora',sans-serif; font-size:15.5px; font-weight:700;
@@ -271,7 +307,6 @@ nav {
   font-size:13.5px; color:var(--muted2); line-height:1.65; margin-bottom:20px;
 }
 
-/* feature chips */
 .card-chips {
   display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px;
 }
@@ -282,8 +317,8 @@ nav {
   border-radius:100px; white-space:nowrap;
 }
 .chip i { font-size:9px; color:var(--accent2); }
+.tool-card.contributor .chip i { color: #fbbf24; }
 
-/* card footer */
 .card-footer {
   display:flex; align-items:center;
   justify-content:space-between; margin-top:auto;
@@ -309,7 +344,6 @@ nav {
 }
 .card-rating i { color:#f59e0b; font-size:10px; }
 
-/* ── FEATURED CARD (full-width) ── */
 .tool-card.featured {
   grid-column:1 / -1;
   flex-direction:row; gap:28px; align-items:center;
@@ -345,7 +379,6 @@ nav {
   align-items:center; justify-content:center; flex-shrink:0;
 }
 
-/* ── SECTION LABEL ── */
 .sec-label {
   grid-column:1/-1; display:flex; align-items:center; gap:12px;
   padding-top:16px; margin-bottom:4px;
@@ -365,7 +398,6 @@ nav {
 }
 .sec-line { flex:1; height:1px; background:var(--border); }
 
-/* ── NOTICE CARD ── */
 .notice-card {
   grid-column:1/-1;
   display:flex; gap:14px; align-items:flex-start;
@@ -378,15 +410,12 @@ nav {
 .notice-card p { font-size:13px; color:var(--muted2); line-height:1.65; }
 .notice-card p strong { color:#fbbf24; }
 
-/* ── FOOTER ── */
 footer {
   border-top:1px solid var(--border);
   padding:36px 48px;
   display:flex; align-items:center; justify-content:space-between; gap:20px;
 }
-.footer-brand {
-  display:flex; align-items:center; gap:10px;
-}
+.footer-brand { display:flex; align-items:center; gap:10px; }
 .footer-icon {
   width:30px; height:30px; background:var(--accent); border-radius:8px;
   display:flex; align-items:center; justify-content:center;
@@ -406,7 +435,6 @@ footer {
 }
 .soc-btn:hover { color:var(--white); background:var(--surface2); border-color:var(--border-h); }
 
-/* ── BACK TO TOP ── */
 .btt {
   position:fixed; bottom:26px; right:26px;
   width:40px; height:40px; border-radius:11px;
@@ -418,7 +446,6 @@ footer {
 .btt.show { opacity:1; pointer-events:all; }
 .btt:hover { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 18px rgba(124,58,237,0.4); transform:translateY(-2px); }
 
-/* ── RESPONSIVE ── */
 @media(max-width:768px){
   nav { padding:0 20px; }
   .nav-center,.nav-badge { display:none; }
@@ -435,7 +462,6 @@ footer {
 
 <div class="progress-bar" id="pbar"></div>
 
-<!-- NAVBAR -->
 <nav>
   <a href="#" class="nav-logo">
     <div class="nav-logo-icon"><i class="fa-solid fa-music"></i></div>
@@ -448,19 +474,18 @@ footer {
     <a href="#" class="nav-link">Dashboard</a>
   </div>
   <div class="nav-right">
-    <div class="nav-badge"><div class="dot"></div> 9 Tools Live</div>
+    <div class="nav-badge"><div class="dot"></div> 10 Tools Live</div>
     <a href="https://wa.me/233530399523" class="nav-cta"><i class="fa-brands fa-whatsapp"></i> Get Support</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-grid"></div>
   <div class="hero-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Artist Toolkit</div>
   <h1>Every Tool You Need<br>to <em>Release Right</em></h1>
   <p>Professional-grade resources built for independent artists who take their craft seriously.</p>
   <div class="hero-stats">
-    <div class="h-stat"><strong>9</strong><span>Tools Available</span></div>
+    <div class="h-stat"><strong>10</strong><span>Tools Available</span></div>
     <div class="h-divider"></div>
     <div class="h-stat"><strong>Free</strong><span>No Hidden Fees</span></div>
     <div class="h-divider"></div>
@@ -468,26 +493,24 @@ footer {
   </div>
 </div>
 
-<!-- FILTER TABS -->
 <div class="filter-wrap">
   <button class="filter-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i> All Tools</button>
   <button class="filter-btn" data-filter="artwork"><i class="fa-solid fa-image"></i> Artwork</button>
   <button class="filter-btn" data-filter="audio"><i class="fa-solid fa-waveform-lines"></i> Audio</button>
   <button class="filter-btn" data-filter="growth"><i class="fa-solid fa-chart-line"></i> Growth</button>
   <button class="filter-btn" data-filter="management"><i class="fa-solid fa-gear"></i> Management</button>
+  <button class="filter-btn" data-filter="royalties"><i class="fa-solid fa-circle-dollar-to-slot"></i> Royalties</button>
 </div>
 
-<!-- TOOLS GRID -->
 <div class="tools-wrap">
 
-  <!-- SECTION LABEL: Artwork -->
+  <!-- SECTION: Artwork -->
   <div class="sec-label" id="sl1">
     <div class="sec-label-icon"><i class="fa-solid fa-palette"></i></div>
     <h3>Artwork & Visuals</h3>
     <div class="sec-line"></div>
   </div>
 
-  <!-- Cover Art -->
   <div class="tool-card" data-cat="artwork" data-delay="0">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-image"></i></div>
@@ -511,7 +534,6 @@ footer {
     </div>
   </div>
 
-  <!-- Image Converter -->
   <div class="tool-card" data-cat="artwork" data-delay="80">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-expand"></i></div>
@@ -535,14 +557,13 @@ footer {
     </div>
   </div>
 
-  <!-- SECTION LABEL: Audio -->
+  <!-- SECTION: Audio -->
   <div class="sec-label" id="sl2">
     <div class="sec-label-icon"><i class="fa-solid fa-waveform-lines"></i></div>
     <h3>Audio Tools</h3>
     <div class="sec-line"></div>
   </div>
 
-  <!-- Audio Mastering -->
   <div class="tool-card" data-cat="audio" data-delay="0">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
@@ -566,7 +587,6 @@ footer {
     </div>
   </div>
 
-  <!-- Audio Converter -->
   <div class="tool-card" data-cat="audio" data-delay="80">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
@@ -590,14 +610,13 @@ footer {
     </div>
   </div>
 
-  <!-- SECTION LABEL: Growth -->
+  <!-- SECTION: Growth -->
   <div class="sec-label" id="sl3">
     <div class="sec-label-icon"><i class="fa-solid fa-chart-line"></i></div>
     <h3>Growth & Revenue</h3>
     <div class="sec-line"></div>
   </div>
 
-  <!-- FEATURED: Royalty Calculator -->
   <div class="tool-card featured" data-cat="growth" data-delay="0">
     <div class="featured-left">
       <div class="card-top" style="margin-bottom:12px;">
@@ -625,7 +644,6 @@ footer {
     </div>
   </div>
 
-  <!-- Release Planner -->
   <div class="tool-card" data-cat="growth" data-delay="80">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
@@ -649,7 +667,6 @@ footer {
     </div>
   </div>
 
-  <!-- Referral Program -->
   <div class="tool-card" data-cat="growth" data-delay="120">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-handshake"></i></div>
@@ -673,14 +690,51 @@ footer {
     </div>
   </div>
 
-  <!-- SECTION LABEL: Management -->
+  <!-- SECTION: Royalties -->
+  <div class="sec-label" id="sl-royalties">
+    <div class="sec-label-icon" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.2);color:#fbbf24;"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+    <h3>Royalty Splits</h3>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- ── CONTRIBUTOR CARD ── -->
+  <div class="tool-card contributor" data-cat="royalties" data-delay="0">
+    <div class="card-top">
+      <div class="card-icon"><i class="fa-solid fa-users-between-lines"></i></div>
+      <div class="card-meta">
+        <span class="card-tag tag-royalty">Royalties</span>
+        <div class="card-ext" style="background:rgba(245,158,11,0.1);color:#fbbf24;border:1px solid rgba(245,158,11,0.2);">
+          <i class="fa-solid fa-lock-open"></i>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h2>Royalty Split Dashboard</h2>
+      <p>Access your personal contributor dashboard to view earnings, track your royalty split percentage, set payment preferences and request withdrawals.</p>
+      <div class="card-chips">
+        <span class="chip"><i class="fa-solid fa-percent"></i> View your split %</span>
+        <span class="chip"><i class="fa-solid fa-wallet"></i> Track earnings</span>
+        <span class="chip"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw funds</span>
+        <span class="chip"><i class="fa-solid fa-credit-card"></i> Set payout method</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="contributor.html" class="tool-btn contributor-btn">
+        <i class="fa-solid fa-chart-pie"></i> Open Dashboard
+      </a>
+      <div class="contributor-pulse">
+        <span class="dot"></span> Invite Only
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: Management -->
   <div class="sec-label" id="sl4">
     <div class="sec-label-icon"><i class="fa-solid fa-gear"></i></div>
     <h3>Account Management</h3>
     <div class="sec-line"></div>
   </div>
 
-  <!-- Claim Artist Profile -->
   <div class="tool-card" data-cat="management" data-delay="0">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-user-check"></i></div>
@@ -704,13 +758,11 @@ footer {
     </div>
   </div>
 
-  <!-- WARNING NOTICE -->
   <div class="notice-card" id="noticeCard">
     <i class="fa-solid fa-triangle-exclamation"></i>
     <p>The takedown tool permanently removes your release from all connected streaming platforms. <strong>This action cannot be undone.</strong> Ensure you have downloaded your analytics and confirmed any pending royalties before submitting a request.</p>
   </div>
 
-  <!-- Takedown -->
   <div class="tool-card danger" data-cat="management" data-delay="0">
     <div class="card-top">
       <div class="card-icon"><i class="fa-solid fa-trash-can"></i></div>
@@ -736,7 +788,6 @@ footer {
 
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div>
     <div class="footer-brand">
@@ -762,7 +813,6 @@ footer {
 <a href="#" class="btt" id="btt"><i class="fa-solid fa-chevron-up"></i></a>
 
 <script>
-  /* Scroll progress + back-to-top */
   const pbar = document.getElementById('pbar');
   const btt  = document.getElementById('btt');
   window.addEventListener('scroll', () => {
@@ -771,7 +821,6 @@ footer {
     btt.classList.toggle('show', s > 300);
   });
 
-  /* IntersectionObserver: reveal cards */
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
@@ -783,9 +832,9 @@ footer {
 
   document.querySelectorAll('.tool-card, .sec-label, .notice-card').forEach(el => obs.observe(el));
 
-  /* Filter tabs */
   const filterBtns = document.querySelectorAll('.filter-btn');
   const allCards   = document.querySelectorAll('.tool-card[data-cat]');
+  const secLabels  = document.querySelectorAll('.sec-label');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -796,6 +845,12 @@ footer {
         const match = f === 'all' || card.dataset.cat === f;
         card.style.display = match ? '' : 'none';
       });
+      // Show/hide section labels based on filter
+      secLabels.forEach(lbl => {
+        lbl.style.display = f === 'all' ? '' : 'none';
+      });
+      document.getElementById('noticeCard').style.display =
+        (f === 'all' || f === 'management') ? '' : 'none';
     });
   });
 </script>
