@@ -428,23 +428,22 @@ button { font-family: inherit; cursor: pointer; border: none; }
 /* ═══════════════════════════════════════════════════════════════
    EMAILJS CONFIGURATION
    ─────────────────────────────────────────────────────────────
-   Service ID  : service_e1ksnmx
-   Public Key  : LZhpLSIA8M2CHNc0L
-   Contributor template : template_w9u4esr  → sends to contributor
-   Admin template       : template_zxg81b9  → sends to 444musicdistro@gmail.com
+   Service ID  : service_e1ksnmx   |   Public Key : LZhpLSIA8M2CHNc0L
 
-   Template variables used (make sure BOTH templates have these):
-     {{to_name}}       – recipient's name
-     {{to_email}}      – recipient's email address  (set as "To Email" field in EmailJS)
-     {{reply_to}}      – reply-to address
-     {{release_title}} – release title
-     {{artist_name}}   – main artist name
-     {{collab_name}}   – this collaborator's name
-     {{collab_role}}   – this collaborator's role
-     {{collab_pct}}    – this collaborator's percentage  e.g. "25%"
-     {{collab_email}}  – this collaborator's email
-     {{collab_phone}}  – this collaborator's phone
-     {{all_splits}}    – full split breakdown (plain text, one per line)
+   CONTRIBUTOR template (template_w9u4esr) → each collaborator's inbox
+     EmailJS dashboard "To Email" field must be set to: {{to_email}}
+     JS sends: {{to_email}}, {{to_name}}, {{reply_to}},
+               {{collab_name}}, {{collab_role}}, {{collab_pct}},
+               {{collab_email}}, {{collab_phone}},
+               {{release_title}}, {{artist_name}}, {{all_splits}}
+
+   ADMIN template (template_zxg81b9) → 444musicdistro@gmail.com
+     EmailJS dashboard "To Email" field must be set to: {{to_email}}
+     JS sends: {{to_email}}, {{to_name}}, {{reply_to}},
+               {{name}}, {{email}}, {{phone}},
+               {{artist_name}}, {{track_title}}, {{genre}},
+               {{release_type}}, {{message}}
+     (variable names kept to match your existing admin template exactly)
 ═══════════════════════════════════════════════════════════════ */
 
 // ── Init EmailJS with your public key ──
@@ -528,31 +527,35 @@ async function sendAllEmails(releaseData, collabs, onProgress) {
     const c = collabs[i];
     onProgress(i, 'sending');
 
-    // ── Shared template params – every {{variable}} populated ──
-    const sharedParams = {
-      release_title : releaseData.releaseTitle || 'Untitled Release',
-      artist_name   : releaseData.artistName   || 'Artist',
-      collab_name   : c.name   || '',
-      collab_role   : c.role   || '',
-      collab_pct    : (parseFloat(c.pct) || 0) + '%',
-      collab_email  : c.email  || '',
-      collab_phone  : c.phone  || '',
-      all_splits    : allStr,
-    };
-
     let contributorStatus = 'failed';
     let adminStatus       = 'failed';
 
-    /* ── 1. Contributor invite → sent to the collaborator's own email ── */
+    /* ══════════════════════════════════════════════════════
+       SEND 1 — Contributor invite  (template_w9u4esr)
+       Variables used in THAT template:
+         {{collab_name}}, {{release_title}}, {{artist_name}},
+         {{collab_role}}, {{collab_pct}}, {{collab_email}},
+         {{collab_phone}}, {{all_splits}}, {{to_email}}
+    ══════════════════════════════════════════════════════ */
     try {
       await emailjs.send(
         EJ_SERVICE,
         EJ_TEMPLATE_CONTRIBUTOR,
         {
-          ...sharedParams,
-          to_name  : c.name,          // {{to_name}}  in template
-          to_email : c.email,          // {{to_email}} – EmailJS "To Email" field
-          reply_to : ADMIN_EMAIL,      // {{reply_to}}
+          // Routing – EmailJS "To Email" field must be {{to_email}}
+          to_email      : c.email,
+          to_name       : c.name,
+          reply_to      : ADMIN_EMAIL,
+
+          // Body variables – match the contributor template exactly
+          collab_name   : c.name                        || '',
+          collab_role   : c.role                        || '',
+          collab_pct    : (parseFloat(c.pct) || 0) + '%',
+          collab_email  : c.email                       || '',
+          collab_phone  : c.phone                       || '',
+          release_title : releaseData.releaseTitle      || 'Untitled Release',
+          artist_name   : releaseData.artistName        || 'Artist',
+          all_splits    : allStr,
         }
       );
       contributorStatus = 'sent';
@@ -560,16 +563,38 @@ async function sendAllEmails(releaseData, collabs, onProgress) {
       console.error('[EmailJS] Contributor send failed for', c.email, err);
     }
 
-    /* ── 2. Admin copy → always sent to 444musicdistro@gmail.com ── */
+    /* ══════════════════════════════════════════════════════
+       SEND 2 — Admin notification  (template_zxg81b9)
+       Variables used in THAT template:
+         {{name}}, {{email}}, {{phone}},
+         {{artist_name}}, {{track_title}}, {{genre}},
+         {{release_type}}, {{message}},
+         {{to_email}}
+       NOTE: The admin template was built for the contact/
+       submission form so its variable names are different.
+       We map our royalty-split data into those names here.
+    ══════════════════════════════════════════════════════ */
     try {
       await emailjs.send(
         EJ_SERVICE,
         EJ_TEMPLATE_ADMIN,
         {
-          ...sharedParams,
-          to_name  : '444Music Admin',  // {{to_name}}  in admin template
-          to_email : ADMIN_EMAIL,        // {{to_email}} – must match EmailJS "To Email" field
-          reply_to : c.email || ADMIN_EMAIL,  // {{reply_to}}
+          // Routing – EmailJS "To Email" field must be {{to_email}}
+          to_email     : ADMIN_EMAIL,
+          to_name      : '444Music Admin',
+          reply_to     : c.email || ADMIN_EMAIL,
+
+          // Map royalty-split data → admin template variable names
+          name         : c.name                        || '',   // {{name}}
+          email        : c.email                       || '',   // {{email}}
+          phone        : c.phone                       || '',   // {{phone}}
+          artist_name  : releaseData.artistName        || 'Artist',  // {{artist_name}}
+          track_title  : releaseData.releaseTitle      || 'Untitled Release', // {{track_title}}
+          genre        : releaseData.genre             || releaseData.primaryGenre || 'N/A', // {{genre}}
+          release_type : releaseData.releaseType       || releaseData.type || 'N/A',        // {{release_type}}
+
+          // {{message}} — full split breakdown so admin sees everything
+          message      : `Royalty split submitted.\n\nCollaborator: ${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%\n\nFull breakdown:\n${allStr}`,
         }
       );
       adminStatus = 'sent';
