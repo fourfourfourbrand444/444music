@@ -532,30 +532,33 @@ async function sendAllEmails(releaseData, collabs, onProgress) {
 
     /* ══════════════════════════════════════════════════════
        SEND 1 — Contributor invite  (template_w9u4esr)
-       Variables used in THAT template:
-         {{collab_name}}, {{release_title}}, {{artist_name}},
-         {{collab_role}}, {{collab_pct}}, {{collab_email}},
-         {{collab_phone}}, {{all_splits}}, {{to_email}}
+       "To Email" field in EmailJS is set to {{email}}
+       Subject uses {{order_id}} — we send release title there
     ══════════════════════════════════════════════════════ */
     try {
       await emailjs.send(
         EJ_SERVICE,
         EJ_TEMPLATE_CONTRIBUTOR,
         {
-          // Routing – EmailJS "To Email" field must be {{to_email}}
-          to_email      : c.email,
-          to_name       : c.name,
+          // ── ROUTING ──────────────────────────────────────
+          // "To Email" in EmailJS dashboard = {{email}}
+          email         : c.email,
+          // Subject in EmailJS dashboard uses {{order_id}}
+          order_id      : releaseData.releaseTitle || 'Untitled Release',
+          // Reply-To
           reply_to      : ADMIN_EMAIL,
 
-          // Body variables – match the contributor template exactly
-          collab_name   : c.name                        || '',
-          collab_role   : c.role                        || '',
+          // ── BODY VARIABLES ───────────────────────────────
+          collab_name   : c.name                         || '',
+          collab_role   : c.role                         || '',
           collab_pct    : (parseFloat(c.pct) || 0) + '%',
-          collab_email  : c.email                       || '',
-          collab_phone  : c.phone                       || '',
-          release_title : releaseData.releaseTitle      || 'Untitled Release',
-          artist_name   : releaseData.artistName        || 'Artist',
+          collab_email  : c.email                        || '',
+          collab_phone  : c.phone                        || '',
+          release_title : releaseData.releaseTitle       || 'Untitled Release',
+          artist_name   : releaseData.artistName         || 'Artist',
           all_splits    : allStr,
+          // Also send to_email in case footer uses {{to_email}}
+          to_email      : c.email,
         }
       );
       contributorStatus = 'sent';
