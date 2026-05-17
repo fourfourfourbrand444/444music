@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Royalty Split Portal — Contributor</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window._db = db;
+  window._firestoreUtils = { doc, setDoc, getDoc, updateDoc, serverTimestamp };
+  window.dispatchEvent(new Event("firebaseReady"));
+</script>
+
+<style>
+:root {
+  --bg-0: #050408;
+  --bg-1: #0b0910;
+  --bg-2: #110e1a;
+  --bg-3: #1a1526;
+  --bg-4: #221d30;
+  --purple-900: #1e0a3c;
+  --purple-800: #2d1258;
+  --purple-700: #3d1a7a;
+  --purple-600: #5222a8;
+  --purple-500: #6d35d4;
+  --purple-400: #8b55e8;
+  --purple-300: #a97cf5;
+  --purple-200: #c9a8fb;
+  --purple-100: #e8d8ff;
+  --accent-gold: #c9a227;
+  --accent-gold-dim: #7a5f0f;
+  --accent-green: #22c97a;
+  --accent-red: #e83535;
+  --text-primary: #f0eaff;
+  --text-secondary: #a89bc2;
+  --text-muted: #6b5f82;
+  --border: rgba(109,53,212,0.18);
+  --border-bright: rgba(139,85,232,0.4);
+  --glass: rgba(17,14,26,0.85);
+  --shadow-purple: 0 0 40px rgba(109,53,212,0.2);
+  --glow: 0 0 20px rgba(139,85,232,0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-0);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ──────── BACKGROUND ──────── */
+.bg-mesh {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(50,18,100,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(30,10,60,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(20,10,40,0.2) 0%, transparent 70%);
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.06;
+  background-image: linear-gradient(var(--purple-600) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--purple-600) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.bg-noise {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+/* ──────── ONBOARDING GATE ──────── */
+#gate-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg-0);
+  display: flex; align-items: center; justify-content: center;
+}
+.gate-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 48px 44px;
+  width: 100%; max-width: 480px;
+  box-shadow: var(--shadow-purple);
+  animation: fadeUp 0.5s ease both;
+}
+.gate-logo {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+}
+.gate-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--purple-600), var(--purple-400));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: #fff;
+  box-shadow: var(--glow);
+}
+.gate-logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
+.gate-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.gate-sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px;
+}
+.form-input {
+  width: 100%; background: var(--bg-3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 16px;
+  color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--purple-400);
+  box-shadow: 0 0 0 3px rgba(139,85,232,0.15);
+}
+.form-input::placeholder { color: var(--text-muted); }
+
+.btn-primary {
+  width: 100%; padding: 14px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple-600), var(--purple-400));
+  color: #fff; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 24px rgba(109,53,212,0.4);
+  margin-top: 8px;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(109,53,212,0.5); }
+.btn-primary:active { transform: translateY(0); }
+
+/* ──────── MAIN LAYOUT ──────── */
+#main-app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+
+/* ──────── TOP BAR ──────── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,4,8,0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--purple-700), var(--purple-500));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff; box-shadow: var(--glow);
+}
+.topbar-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.04em; }
+.topbar-badge {
+  font-size: 10px; padding: 3px 8px; border-radius: 20px;
+  background: rgba(109,53,212,0.25); border: 1px solid var(--purple-600);
+  color: var(--purple-300); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.topbar-right { display: flex; align-items: center; gap: 20px; }
+.topbar-user {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 40px; padding: 6px 14px 6px 6px;
+  cursor: pointer;
+}
+.topbar-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple-600), var(--purple-400));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.topbar-username { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+/* ──────── CONTENT AREA ──────── */
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+
+/* ──────── WELCOME BANNER ──────── */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--purple-900) 0%, var(--bg-3) 60%, rgba(30,10,60,0.3) 100%);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 32px 36px;
+  margin-bottom: 32px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+.welcome-banner::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(109,53,212,0.3), transparent 70%);
+  border-radius: 50%;
+}
+.welcome-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--purple-300); background: rgba(109,53,212,0.15);
+  border: 1px solid rgba(109,53,212,0.3); border-radius: 20px;
+  padding: 4px 12px; display: inline-block; margin-bottom: 14px;
+}
+.welcome-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.welcome-sub { color: var(--text-secondary); font-size: 14px; }
+.welcome-meta {
+  display: flex; gap: 24px; margin-top: 20px;
+}
+.welcome-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+.welcome-meta-item i { color: var(--purple-400); font-size: 12px; }
+
+/* ──────── STATS ROW ──────── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.5s ease both;
+  position: relative; overflow: hidden;
+}
+.stat-card:hover { border-color: var(--border-bright); box-shadow: var(--shadow-purple); }
+.stat-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--purple-700), transparent);
+}
+.stat-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 16px;
+}
+.stat-icon.purple { background: rgba(109,53,212,0.2); color: var(--purple-400); }
+.stat-icon.gold { background: rgba(201,162,39,0.15); color: var(--accent-gold); }
+.stat-icon.green { background: rgba(34,201,122,0.12); color: var(--accent-green); }
+.stat-icon.blue { background: rgba(50,120,250,0.12); color: #5b9eff; }
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.stat-value { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; }
+.stat-value.royalty { color: var(--accent-gold); }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ──────── WITHDRAW BUTTON ──────── */
+.withdraw-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 28px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-gold-dim), var(--accent-gold));
+  color: #0d0800; border: none; cursor: pointer;
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.05em; transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(201,162,39,0.3);
+  margin-bottom: 32px;
+  animation: fadeUp 0.5s ease 0.3s both;
+}
+.withdraw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(201,162,39,0.45); }
+.withdraw-btn i { font-size: 16px; }
+
+/* ──────── MAIN GRID ──────── */
+.main-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-bottom: 24px;
+}
+@media(max-width:760px){ .main-grid { grid-template-columns: 1fr; } }
+
+/* ──────── SECTION CARD ──────── */
+.section-card {
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 18px; padding: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+.section-card.full { grid-column: 1 / -1; }
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.section-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(109,53,212,0.2); display: flex; align-items: center; justify-content: center;
+  color: var(--purple-400); font-size: 14px;
+}
+.section-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.section-sub { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+
+/* ──────── PAYMENT OPTIONS ──────── */
+.payment-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.pay-option {
+  background: var(--bg-3); border: 2px solid var(--border);
+  border-radius: 14px; padding: 18px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  cursor: pointer; transition: all 0.2s;
+}
+.pay-option:hover { border-color: var(--purple-500); background: var(--bg-4); }
+.pay-option.selected {
+  border-color: var(--purple-400);
+  background: rgba(109,53,212,0.15);
+  box-shadow: 0 0 0 1px var(--purple-500), var(--shadow-purple);
+}
+.pay-option-img {
+  width: 60px; height: 36px; object-fit: contain; border-radius: 6px;
+  filter: brightness(0.85) saturate(0.8);
+}
+.pay-option.selected .pay-option-img { filter: none; }
+.pay-option-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.05em; }
+.pay-option.selected .pay-option-label { color: var(--purple-300); }
+.pay-option-check {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  display: flex; align-items: center; justify-content: center; font-size: 8px;
+}
+.pay-option.selected .pay-option-check {
+  background: var(--purple-500); border-color: var(--purple-400); color: #fff;
+}
+
+/* Payment sub-fields */
+.pay-fields { display: none; flex-direction: column; gap: 14px; }
+.pay-fields.show { display: flex; }
+
+/* ──────── STATUS BADGE ──────── */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+}
+.status-pending { background: rgba(201,162,39,0.15); color: var(--accent-gold); border: 1px solid rgba(201,162,39,0.3); }
+.status-paid { background: rgba(34,201,122,0.12); color: var(--accent-green); border: 1px solid rgba(34,201,122,0.3); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; }
+.status-pending .status-dot { background: var(--accent-gold); }
+.status-paid .status-dot { background: var(--accent-green); }
+
+/* ──────── TRANSACTION LIST ──────── */
+.txn-list { display: flex; flex-direction: column; gap: 12px; }
+.txn-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg-3); border-radius: 12px; padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+.txn-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+  flex-shrink: 0;
+}
+.txn-desc { flex: 1; }
+.txn-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.txn-date { font-size: 11px; color: var(--text-muted); }
+.txn-amount { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--accent-gold); }
+
+/* ──────── ROYALTY BREAKDOWN ──────── */
+.breakdown-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.breakdown-item:last-child { border-bottom: none; }
+.breakdown-left { display: flex; align-items: center; gap: 10px; }
+.breakdown-dot { width: 10px; height: 10px; border-radius: 50%; }
+.breakdown-platform { font-size: 13px; font-weight: 500; }
+.breakdown-share { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.breakdown-amount { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-secondary); }
+
+/* ──────── PROGRESS BAR ──────── */
+.progress-wrap { margin-top: 20px; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.progress-bar-bg {
+  height: 8px; background: var(--bg-3); border-radius: 99px; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--purple-600), var(--accent-gold));
+  width: 0%; transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.progress-note { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+
+/* ──────── SAVE BTN ──────── */
+.save-btn {
+  width: 100%; padding: 14px; border: none; border-radius: 10px; margin-top: 8px;
+  background: linear-gradient(135deg, var(--purple-700), var(--purple-500));
+  color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.04em;
+  box-shadow: 0 4px 20px rgba(109,53,212,0.35);
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.save-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(109,53,212,0.5); }
+
+/* ──────── TOAST ──────── */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--bg-3); border: 1px solid var(--border-bright);
+  border-radius: 12px; padding: 14px 24px;
+  font-size: 14px; font-weight: 500; z-index: 9999;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow-purple);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast i { color: var(--purple-400); }
+.toast.success i { color: var(--accent-green); }
+.toast.warning i { color: var(--accent-gold); }
+.toast.error i { color: var(--accent-red); }
+
+/* ──────── POPUP ──────── */
+.popup-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+}
+.popup-overlay.show { display: flex; }
+.popup-box {
+  background: var(--bg-2); border: 1px solid var(--border-bright);
+  border-radius: 20px; padding: 40px; max-width: 420px; width: 90%;
+  text-align: center; animation: popIn 0.3s ease;
+}
+.popup-icon {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: rgba(201,162,39,0.15); border: 1px solid rgba(201,162,39,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: var(--accent-gold); margin: 0 auto 20px;
+}
+.popup-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+.popup-body { color: var(--text-secondary); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+.popup-amount { font-family: 'DM Mono', monospace; font-size: 28px; color: var(--accent-gold); font-weight: 500; margin-bottom: 4px; }
+.popup-close {
+  padding: 12px 28px; border-radius: 10px;
+  background: var(--bg-3); border: 1px solid var(--border-bright);
+  color: var(--text-primary); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.popup-close:hover { background: var(--bg-4); }
+
+/* ──────── DIVIDER ──────── */
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+/* ──────── ANIMATIONS ──────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Stagger delay */
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.15s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.25s; }
+
+/* ──────── FOOTER ──────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--text-muted);
+}
+.footer-left { display: flex; align-items: center; gap: 8px; }
+.footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+
+/* input helper */
+select.form-input option { background: var(--bg-3); }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<div class="bg-noise"></div>
+
+<!-- ──────── GATE / ONBOARDING ──────── -->
+<div id="gate-overlay">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <div class="gate-logo-icon"><i class="fa-solid fa-music"></i></div>
+      <div class="gate-logo-text">SplitFlow <span style="color:var(--purple-400)">Portal</span></div>
+    </div>
+    <div class="gate-title">Contributor Access</div>
+    <div class="gate-sub">You have been invited to the royalty split dashboard. Please provide your details to continue.</div>
+
+    <div class="form-group">
+      <label class="form-label"><i class="fa-solid fa-user" style="margin-right:6px"></i>Full Name</label>
+      <input class="form-input" id="gate-name" type="text" placeholder="e.g. Kwame Mensah" autocomplete="name"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label"><i class="fa-solid fa-envelope" style="margin-right:6px"></i>Email Address</label>
+      <input class="form-input" id="gate-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label"><i class="fa-solid fa-phone" style="margin-right:6px"></i>Phone Number</label>
+      <input class="form-input" id="gate-phone" type="tel" placeholder="+233 XX XXX XXXX" autocomplete="tel"/>
+    </div>
+    <button class="btn-primary" id="gate-submit">
+      <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:8px"></i>Enter Dashboard
+    </button>
+  </div>
+</div>
+
+<!-- ──────── POPUP ──────── -->
+<div class="popup-overlay" id="min-popup">
+  <div class="popup-box">
+    <div class="popup-icon"><i class="fa-solid fa-lock"></i></div>
+    <div class="popup-title">Minimum Threshold Not Met</div>
+    <div class="popup-amount" id="popup-current-amt">$0.00</div>
+    <div class="popup-body">
+      Your current royalty balance has not reached the minimum withdrawal threshold of <strong style="color:var(--text-primary)">$20.00</strong>.
+      Once your earnings reach this amount, the withdrawal option will be unlocked automatically.
+    </div>
+    <button class="popup-close" onclick="document.getElementById('min-popup').classList.remove('show')">
+      <i class="fa-solid fa-xmark" style="margin-right:6px"></i>Got it
+    </button>
+  </div>
+</div>
+
+<!-- ──────── TOAST ──────── -->
+<div class="toast" id="toast">
+  <i class="fa-solid fa-circle-check"></i>
+  <span id="toast-msg">Saved successfully.</span>
+</div>
+
+<!-- ──────── MAIN APP ──────── -->
+<div id="main-app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo-icon"><i class="fa-solid fa-headphones"></i></div>
+      <span class="topbar-name">SplitFlow</span>
+      <span class="topbar-badge">Royalty Portal</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="avatar-initials">K</div>
+        <span class="topbar-username" id="topbar-username">Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-tag"><i class="fa-solid fa-star" style="margin-right:5px"></i>Royalty Split Contributor</div>
+      <div class="welcome-title">Welcome back, <span id="welcome-name">Contributor</span></div>
+      <div class="welcome-sub">Your royalty earnings summary and payment preferences for the current period.</div>
+      <div class="welcome-meta">
+        <div class="welcome-meta-item"><i class="fa-solid fa-calendar-days"></i> May 2025 — May 2026</div>
+        <div class="welcome-meta-item"><i class="fa-solid fa-circle" style="color:var(--accent-green);font-size:8px"></i> Active Split</div>
+        <div class="welcome-meta-item"><i class="fa-solid fa-shield-halved"></i> Portal Secured</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="fa-solid fa-dollar-sign"></i></div>
+        <div class="stat-label">Total Royalties</div>
+        <div class="stat-value royalty" id="stat-total">$0.00</div>
+        <div class="stat-sub">Admin updates this amount</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fa-solid fa-percent"></i></div>
+        <div class="stat-label">Your Split</div>
+        <div class="stat-value" id="stat-split" style="color:var(--purple-300)">—%</div>
+        <div class="stat-sub">Of total revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="stat-label">Payment Status</div>
+        <div id="stat-status-wrap" style="margin-top:4px">
+          <span class="status-badge status-pending" id="stat-status">
+            <span class="status-dot"></span> Pending
+          </span>
+        </div>
+        <div class="stat-sub" style="margin-top:8px">Set by admin</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-arrow-trend-up"></i></div>
+        <div class="stat-label">Streams</div>
+        <div class="stat-value" id="stat-streams" style="color:#5b9eff">—</div>
+        <div class="stat-sub">Across all platforms</div>
+      </div>
+    </div>
+
+    <!-- WITHDRAW BUTTON -->
+    <button class="withdraw-btn" id="withdraw-btn">
+      <i class="fa-solid fa-money-bill-transfer"></i>
+      Withdraw Royalties
+      <i class="fa-solid fa-arrow-right" style="font-size:12px; opacity:0.7"></i>
+    </button>
+
+    <!-- PROGRESS TO MINIMUM -->
+    <div class="section-card full" style="margin-bottom:24px; animation-delay:0.2s">
+      <div class="section-header">
+        <div class="section-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="section-title">Withdrawal Threshold Progress</div>
+        <span class="section-sub">Minimum: $20.00</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-labels">
+          <span>$0.00</span>
+          <span id="progress-label-current">$0.00 earned</span>
+          <span>$20.00</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-note" id="progress-note">Earn $20.00 more to unlock withdrawals.</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- PAYMENT SETUP -->
+      <div class="section-card" style="animation-delay:0.25s">
+        <div class="section-header">
+          <div class="section-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <div class="section-title">Payment Method</div>
+        </div>
+
+        <!-- Payment option tiles -->
+        <div class="payment-options">
+          <div class="pay-option" data-method="bank" onclick="selectPayment('bank')">
+            <div style="width:60px;height:36px;background:linear-gradient(135deg,#1a2a6c,#2d6a4f);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <i class="fa-solid fa-building-columns" style="color:#fff;font-size:18px"></i>
+            </div>
+            <div class="pay-option-label">Bank Transfer</div>
+            <div class="pay-option-check"><i class="fa-solid fa-check"></i></div>
+          </div>
+          <div class="pay-option" data-method="momo" onclick="selectPayment('momo')">
+            <div style="width:60px;height:36px;background:linear-gradient(135deg,#f7971e,#ffd200);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <i class="fa-solid fa-mobile-screen-button" style="color:#4a2900;font-size:18px"></i>
+            </div>
+            <div class="pay-option-label">Mobile Money</div>
+            <div class="pay-option-check"><i class="fa-solid fa-check"></i></div>
+          </div>
+          <div class="pay-option" data-method="paypal" onclick="selectPayment('paypal')">
+            <div style="width:60px;height:36px;background:linear-gradient(135deg,#003087,#009cde);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <i class="fa-brands fa-paypal" style="color:#fff;font-size:18px"></i>
+            </div>
+            <div class="pay-option-label">PayPal</div>
+            <div class="pay-option-check"><i class="fa-solid fa-check"></i></div>
+          </div>
+        </div>
+
+        <!-- BANK FIELDS -->
+        <div class="pay-fields" id="fields-bank">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Bank Name</label>
+            <input class="form-input" id="bank-name" placeholder="e.g. GCB Bank, Ecobank"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Account Name</label>
+            <input class="form-input" id="bank-acct-name" placeholder="Name on account"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Account Number</label>
+            <input class="form-input" id="bank-acct-num" placeholder="Account number"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Branch / Sort Code</label>
+            <input class="form-input" id="bank-branch" placeholder="Branch or routing code"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">SWIFT / IBAN (optional)</label>
+            <input class="form-input" id="bank-swift" placeholder="For international transfers"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Transfer Reference Note</label>
+            <input class="form-input" id="bank-note" placeholder="Any specific reference for the transfer"/>
+          </div>
+        </div>
+
+        <!-- MOMO FIELDS -->
+        <div class="pay-fields" id="fields-momo">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Mobile Money Provider</label>
+            <select class="form-input" id="momo-provider">
+              <option value="">Select provider</option>
+              <option>MTN Mobile Money</option>
+              <option>Vodafone Cash</option>
+              <option>AirtelTigo Money</option>
+              <option>Orange Money</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Registered Name</label>
+            <input class="form-input" id="momo-name" placeholder="Name on MoMo account"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Mobile Number</label>
+            <input class="form-input" id="momo-number" placeholder="+233 XX XXX XXXX"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Reference / Note (optional)</label>
+            <input class="form-input" id="momo-note" placeholder="Any reference for the transfer"/>
+          </div>
+        </div>
+
+        <!-- PAYPAL FIELDS -->
+        <div class="pay-fields" id="fields-paypal">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">PayPal Email Address</label>
+            <input class="form-input" id="paypal-email" type="email" placeholder="your@paypal.com"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Full Name on PayPal</label>
+            <input class="form-input" id="paypal-name" placeholder="Name as shown on PayPal"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">PayPal ID / Username (optional)</label>
+            <input class="form-input" id="paypal-id" placeholder="@username or ID"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Currency Preference</label>
+            <select class="form-input" id="paypal-currency">
+              <option>USD</option><option>EUR</option><option>GBP</option><option>GHS</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="save-btn" id="save-payment-btn" onclick="savePaymentInfo()">
+          <i class="fa-solid fa-floppy-disk"></i> Save Payment Details
+        </button>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- ROYALTY BREAKDOWN -->
+        <div class="section-card" style="animation-delay:0.3s; padding-bottom:20px;">
+          <div class="section-header">
+            <div class="section-icon"><i class="fa-solid fa-chart-pie"></i></div>
+            <div class="section-title">Royalty Breakdown</div>
+          </div>
+          <div id="breakdown-list">
+            <div class="breakdown-item">
+              <div class="breakdown-left">
+                <div class="breakdown-dot" style="background:#6d35d4"></div>
+                <div>
+                  <div class="breakdown-platform">Spotify</div>
+                  <div class="breakdown-share" id="bd-spotify-pct">—% of streams</div>
+                </div>
+              </div>
+              <div class="breakdown-amount" id="bd-spotify-amt">$0.00</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-left">
+                <div class="breakdown-dot" style="background:#c9a227"></div>
+                <div>
+                  <div class="breakdown-platform">Apple Music</div>
+                  <div class="breakdown-share" id="bd-apple-pct">—% of streams</div>
+                </div>
+              </div>
+              <div class="breakdown-amount" id="bd-apple-amt">$0.00</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-left">
+                <div class="breakdown-dot" style="background:#e83535"></div>
+                <div>
+                  <div class="breakdown-platform">YouTube Music</div>
+                  <div class="breakdown-share" id="bd-yt-pct">—% of streams</div>
+                </div>
+              </div>
+              <div class="breakdown-amount" id="bd-yt-amt">$0.00</div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-left">
+                <div class="breakdown-dot" style="background:#5b9eff"></div>
+                <div>
+                  <div class="breakdown-platform">Other Platforms</div>
+                  <div class="breakdown-share" id="bd-other-pct">—% of streams</div>
+                </div>
+              </div>
+              <div class="breakdown-amount" id="bd-other-amt">$0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="section-card" style="animation-delay:0.35s;">
+          <div class="section-header">
+            <div class="section-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="section-title">Recent Activity</div>
+          </div>
+          <div class="txn-list" id="txn-list">
+            <div class="txn-item">
+              <div class="txn-icon" style="background:rgba(109,53,212,0.15);color:var(--purple-400)"><i class="fa-solid fa-user-check"></i></div>
+              <div class="txn-desc">
+                <div class="txn-name">Account Created</div>
+                <div class="txn-date" id="txn-created-date">—</div>
+              </div>
+              <span class="status-badge status-paid"><span class="status-dot"></span>Done</span>
+            </div>
+            <div class="txn-item">
+              <div class="txn-icon" style="background:rgba(201,162,39,0.12);color:var(--accent-gold)"><i class="fa-solid fa-envelope-open-text"></i></div>
+              <div class="txn-desc">
+                <div class="txn-name">Invitation Received</div>
+                <div class="txn-date">Royalty Split Portal</div>
+              </div>
+              <span class="status-badge status-paid"><span class="status-dot"></span>Done</span>
+            </div>
+            <div class="txn-item">
+              <div class="txn-icon" style="background:rgba(34,201,122,0.1);color:var(--accent-green)"><i class="fa-solid fa-music"></i></div>
+              <div class="txn-desc">
+                <div class="txn-name">Split Agreement Active</div>
+                <div class="txn-date">Earnings accruing</div>
+              </div>
+              <span class="status-badge status-pending"><span class="status-dot"></span>Pending</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- INFO NOTE -->
+    <div style="background:rgba(109,53,212,0.08);border:1px solid rgba(109,53,212,0.2);border-radius:14px;padding:18px 22px;display:flex;align-items:flex-start;gap:14px;margin-bottom:40px;animation:fadeUp 0.5s 0.4s both;">
+      <i class="fa-solid fa-circle-info" style="color:var(--purple-400);margin-top:2px;flex-shrink:0"></i>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+        <strong style="color:var(--text-primary)">How this works:</strong> Your royalty balance is updated manually by the admin based on the current split agreement. All earnings displayed reflect your share after platform fees. Payment processing takes <strong style="color:var(--text-primary)">3–7 business days</strong> once a withdrawal is approved.
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <div class="footer">
+    <div class="footer-left">
+      <div class="footer-dot"></div>
+      <span>SplitFlow Royalty Portal — All data secured via Firebase</span>
+    </div>
+    <span>Powered by SplitFlow &copy; 2025</span>
+  </div>
+
+</div><!-- /main-app -->
+
+<script>
+// ────── STATE ──────
+let currentUser = null;
+let selectedPayment = null;
+let royaltyAmount = 0;
+const MIN_WITHDRAW = 20;
+
+// ────── FIREBASE READY ──────
+window.addEventListener("firebaseReady", () => {
+  // Check localStorage for returning user
+  const saved = localStorage.getItem("splitflow_contributor");
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    showDashboard();
+  }
+});
+
+// ────── GATE SUBMIT ──────
+document.getElementById("gate-submit").addEventListener("click", async () => {
+  const name  = document.getElementById("gate-name").value.trim();
+  const email = document.getElementById("gate-email").value.trim();
+  const phone = document.getElementById("gate-phone").value.trim();
+
+  if (!name || !email || !phone) {
+    showToast("Please fill in all fields.", "warning"); return;
+  }
+  if (!email.includes("@")) {
+    showToast("Enter a valid email address.", "warning"); return;
+  }
+
+  const btn = document.getElementById("gate-submit");
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  btn.disabled = true;
+
+  const id = email.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+
+  try {
+    const { doc, setDoc, getDoc, serverTimestamp } = window._firestoreUtils;
+    const db = window._db;
+    const ref = doc(db, "splits", id);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        name, email, phone,
+        royaltyAmount: 0,
+        splitPercent: null,
+        status: "pending",
+        streams: null,
+        paymentMethod: null,
+        paymentDetails: {},
+        breakdown: { spotify: 0, apple: 0, youtube: 0, other: 0 },
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    currentUser = { id, name, email, phone };
+    localStorage.setItem("splitflow_contributor", JSON.stringify(currentUser));
+    showDashboard();
+    loadData();
+  } catch (e) {
+    showToast("Error saving data. Please try again.", "error");
+    btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:8px"></i>Enter Dashboard';
+    btn.disabled = false;
+  }
+});
+
+// ────── SHOW DASHBOARD ──────
+function showDashboard() {
+  document.getElementById("gate-overlay").style.display = "none";
+  document.getElementById("main-app").style.display = "block";
+
+  // Set name displays
+  const first = currentUser.name.split(" ")[0];
+  document.getElementById("welcome-name").textContent = first;
+  document.getElementById("topbar-username").textContent = currentUser.name;
+  document.getElementById("avatar-initials").textContent = currentUser.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+
+  if (!window._db) {
+    window.addEventListener("firebaseReady", () => loadData());
+  } else {
+    loadData();
+  }
+}
+
+// ────── LOAD DATA ──────
+async function loadData() {
+  if (!currentUser || !window._db) return;
+  const { doc, getDoc } = window._firestoreUtils;
+  const ref = doc(window._db, "splits", currentUser.id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+  const d = snap.data();
+
+  royaltyAmount = d.royaltyAmount || 0;
+  document.getElementById("stat-total").textContent = "$" + royaltyAmount.toFixed(2);
+  document.getElementById("stat-split").textContent = d.splitPercent != null ? d.splitPercent + "%" : "—%";
+  document.getElementById("stat-streams").textContent = d.streams != null ? Number(d.streams).toLocaleString() : "—";
+
+  // Status badge
+  const statusEl = document.getElementById("stat-status");
+  if (d.status === "paid") {
+    statusEl.className = "status-badge status-paid";
+    statusEl.innerHTML = '<span class="status-dot"></span> Paid';
+  } else {
+    statusEl.className = "status-badge status-pending";
+    statusEl.innerHTML = '<span class="status-dot"></span> Pending';
+  }
+
+  // Progress bar
+  const pct = Math.min((royaltyAmount / MIN_WITHDRAW) * 100, 100);
+  setTimeout(() => {
+    document.getElementById("progress-fill").style.width = pct + "%";
+  }, 300);
+  document.getElementById("progress-label-current").textContent = "$" + royaltyAmount.toFixed(2) + " earned";
+  const remaining = Math.max(MIN_WITHDRAW - royaltyAmount, 0);
+  document.getElementById("progress-note").textContent =
+    royaltyAmount >= MIN_WITHDRAW
+      ? "Threshold reached. Withdrawals are now unlocked."
+      : "Earn $" + remaining.toFixed(2) + " more to unlock withdrawals.";
+
+  // Breakdown
+  const bd = d.breakdown || {};
+  document.getElementById("bd-spotify-amt").textContent  = "$" + (bd.spotify||0).toFixed(2);
+  document.getElementById("bd-apple-amt").textContent    = "$" + (bd.apple||0).toFixed(2);
+  document.getElementById("bd-yt-amt").textContent       = "$" + (bd.youtube||0).toFixed(2);
+  document.getElementById("bd-other-amt").textContent    = "$" + (bd.other||0).toFixed(2);
+  const total = (bd.spotify||0)+(bd.apple||0)+(bd.youtube||0)+(bd.other||0);
+  if (total > 0) {
+    document.getElementById("bd-spotify-pct").textContent = ((bd.spotify/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-apple-pct").textContent   = ((bd.apple/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-yt-pct").textContent      = ((bd.youtube/total)*100).toFixed(1) + "% of streams";
+    document.getElementById("bd-other-pct").textContent   = ((bd.other/total)*100).toFixed(1) + "% of streams";
+  }
+
+  // Created date
+  if (d.createdAt) {
+    const dt = d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt);
+    document.getElementById("txn-created-date").textContent = dt.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+  }
+
+  // Payment method
+  if (d.paymentMethod) {
+    selectPayment(d.paymentMethod, d.paymentDetails || {});
+  }
+}
+
+// ────── PAYMENT SELECTION ──────
+function selectPayment(method, prefill) {
+  selectedPayment = method;
+  document.querySelectorAll(".pay-option").forEach(el => {
+    el.classList.toggle("selected", el.dataset.method === method);
+  });
+  document.querySelectorAll(".pay-fields").forEach(el => el.classList.remove("show"));
+  const fieldsEl = document.getElementById("fields-" + method);
+  if (fieldsEl) fieldsEl.classList.add("show");
+
+  // Prefill saved values
+  if (prefill) {
+    if (method === "bank") {
+      setVal("bank-name", prefill.bankName);
+      setVal("bank-acct-name", prefill.accountName);
+      setVal("bank-acct-num", prefill.accountNumber);
+      setVal("bank-branch", prefill.branch);
+      setVal("bank-swift", prefill.swift);
+      setVal("bank-note", prefill.note);
+    } else if (method === "momo") {
+      setVal("momo-provider", prefill.provider);
+      setVal("momo-name", prefill.name);
+      setVal("momo-number", prefill.number);
+      setVal("momo-note", prefill.note);
+    } else if (method === "paypal") {
+      setVal("paypal-email", prefill.email);
+      setVal("paypal-name", prefill.name);
+      setVal("paypal-id", prefill.id);
+      setVal("paypal-currency", prefill.currency);
+    }
+  }
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el && val) el.value = val;
+}
+
+// ────── SAVE PAYMENT INFO ──────
+async function savePaymentInfo() {
+  if (!selectedPayment) { showToast("Select a payment method first.", "warning"); return; }
+  if (!currentUser || !window._db) { showToast("Not connected. Reload and try again.", "error"); return; }
+
+  let details = {};
+  if (selectedPayment === "bank") {
+    details = {
+      bankName:      document.getElementById("bank-name").value.trim(),
+      accountName:   document.getElementById("bank-acct-name").value.trim(),
+      accountNumber: document.getElementById("bank-acct-num").value.trim(),
+      branch:        document.getElementById("bank-branch").value.trim(),
+      swift:         document.getElementById("bank-swift").value.trim(),
+      note:          document.getElementById("bank-note").value.trim()
+    };
+    if (!details.bankName || !details.accountName || !details.accountNumber) {
+      showToast("Fill in bank name, account name and number.", "warning"); return;
+    }
+  } else if (selectedPayment === "momo") {
+    details = {
+      provider: document.getElementById("momo-provider").value,
+      name:     document.getElementById("momo-name").value.trim(),
+      number:   document.getElementById("momo-number").value.trim(),
+      note:     document.getElementById("momo-note").value.trim()
+    };
+    if (!details.provider || !details.name || !details.number) {
+      showToast("Fill in all required MoMo fields.", "warning"); return;
+    }
+  } else if (selectedPayment === "paypal") {
+    details = {
+      email:    document.getElementById("paypal-email").value.trim(),
+      name:     document.getElementById("paypal-name").value.trim(),
+      id:       document.getElementById("paypal-id").value.trim(),
+      currency: document.getElementById("paypal-currency").value
+    };
+    if (!details.email || !details.name) {
+      showToast("Fill in PayPal email and name.", "warning"); return;
+    }
+  }
+
+  const btn = document.getElementById("save-payment-btn");
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  btn.disabled = true;
+
+  try {
+    const { doc, updateDoc, serverTimestamp } = window._firestoreUtils;
+    await updateDoc(doc(window._db, "splits", currentUser.id), {
+      paymentMethod: selectedPayment,
+      paymentDetails: details,
+      updatedAt: serverTimestamp()
+    });
+    showToast("Payment details saved successfully.", "success");
+  } catch(e) {
+    showToast("Failed to save. Try again.", "error");
+  }
+
+  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Payment Details';
+  btn.disabled = false;
+}
+
+// ────── WITHDRAW BUTTON ──────
+document.getElementById("withdraw-btn").addEventListener("click", () => {
+  if (royaltyAmount < MIN_WITHDRAW) {
+    document.getElementById("popup-current-amt").textContent = "$" + royaltyAmount.toFixed(2);
+    document.getElementById("min-popup").classList.add("show");
+  } else {
+    window.location.href = "withdrawal.html";
+  }
+});
+
+// ────── TOAST ──────
+function showToast(msg, type) {
+  const t = document.getElementById("toast");
+  const icons = { success:"fa-circle-check", warning:"fa-triangle-exclamation", error:"fa-circle-xmark", default:"fa-bell" };
+  t.className = "toast " + (type||"");
+  t.querySelector("i").className = "fa-solid " + (icons[type]||icons.default);
+  document.getElementById("toast-msg").textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3800);
+}
+</script>
+</body>
+</html>
