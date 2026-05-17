@@ -427,30 +427,38 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <script>
 /* ═══════════════════════════════════════════════════════════════
    EMAILJS CONFIGURATION
-   Replace the three values below with your real EmailJS credentials.
+   ─────────────────────────────────────────────────────────────
+   Service ID  : service_e1ksnmx
+   Public Key  : LZhpLSIA8M2CHNc0L
+   Contributor template : template_w9u4esr  → sends to contributor
+   Admin template       : template_zxg81b9  → sends to 444musicdistro@gmail.com
 
-   Setup steps:
-   1. Sign up free at https://emailjs.com
-   2. Add Gmail service → connect to 444musicdistro@gmail.com → copy Service ID
-   3. Create TWO templates:
-      a) CONTRIBUTOR template  (EJ_TEMPLATE_CONTRIBUTOR)
-         Subject: "You've been invited to a royalty split — {{release_title}}"
-         To email field: {{to_email}}   ← contributor's address
-         Body variables available:
-           {{collab_name}}, {{collab_role}}, {{collab_pct}},
-           {{release_title}}, {{artist_name}}, {{all_splits}},
-           {{collab_email}}, {{collab_phone}}
-      b) ADMIN template  (EJ_TEMPLATE_ADMIN)
-         Subject: "Royalty split submitted for {{release_title}}"
-         To email field: 444musicdistro@gmail.com  ← hardcoded
-         Body variables: same as above + {{all_splits}}
-   4. Copy your Public Key from Account → General
+   Template variables used (make sure BOTH templates have these):
+     {{to_name}}       – recipient's name
+     {{to_email}}      – recipient's email address  (set as "To Email" field in EmailJS)
+     {{reply_to}}      – reply-to address
+     {{release_title}} – release title
+     {{artist_name}}   – main artist name
+     {{collab_name}}   – this collaborator's name
+     {{collab_role}}   – this collaborator's role
+     {{collab_pct}}    – this collaborator's percentage  e.g. "25%"
+     {{collab_email}}  – this collaborator's email
+     {{collab_phone}}  – this collaborator's phone
+     {{all_splits}}    – full split breakdown (plain text, one per line)
 ═══════════════════════════════════════════════════════════════ */
-emailjs.init("LZhpLSIA8M2CHNc0L");
-const EJ_SERVICE            = "service_e1ksnmx";
-const EJ_TEMPLATE_CONTRIBUTOR = "template_w9u4esr";  // sends to contributor
-const EJ_TEMPLATE_ADMIN       = "template_zxg81b9";         // sends to 444musicdistro@gmail.com
 
+// ── Init EmailJS with your public key ──
+emailjs.init("LZhpLSIA8M2CHNc0L");
+
+// ── Constants – use ONLY these variables everywhere ──
+const EJ_SERVICE              = "service_e1ksnmx";
+const EJ_TEMPLATE_CONTRIBUTOR = "template_w9u4esr";   // → contributor's email
+const EJ_TEMPLATE_ADMIN       = "template_zxg81b9";   // → 444musicdistro@gmail.com
+const ADMIN_EMAIL             = "444musicdistro@gmail.com";
+
+/* ─────────────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────────────── */
 const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
 const clr = i => PALETTE[i % PALETTE.length];
 
@@ -500,55 +508,76 @@ async function flock(rid, collabs, emailResults) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SEND EMAILS
-   Two sends per collaborator:
-     1. Contributor invite  → contributor's own email
-     2. Admin notification  → 444musicdistro@gmail.com
-   Returns array of {name, email, contributorStatus, adminStatus}
+   SEND EMAILS  ← ALL BUGS FIXED HERE
+   ─────────────────────────────────────────────────────────────
+   For each collaborator we fire TWO sends:
+     1. Contributor invite  → c.email          (EJ_TEMPLATE_CONTRIBUTOR)
+     2. Admin notification  → ADMIN_EMAIL       (EJ_TEMPLATE_ADMIN)
+   Both use the same param object so every {{variable}} is
+   populated in both templates.
 ══════════════════════════════════════════════════════════════ */
 async function sendAllEmails(releaseData, collabs, onProgress) {
-  const allStr = collabs.map(c=>`${c.name} (${c.role}) — ${c.pct}%`).join('\n');
+  // Build the human-readable full split summary once
+  const allStr = collabs
+    .map(c => `${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%`)
+    .join('\n');
+
   const results = [];
 
-  for (let i=0; i<collabs.length; i++) {
+  for (let i = 0; i < collabs.length; i++) {
     const c = collabs[i];
     onProgress(i, 'sending');
 
-    const params = {
-      release_title: releaseData.releaseTitle || 'Untitled Release',
-      artist_name:   releaseData.artistName   || 'Artist',
-      collab_name:   c.name,
-      collab_role:   c.role,
-      collab_pct:    c.pct + '%',
-      collab_email:  c.email || 'N/A',
-      collab_phone:  c.phone || 'N/A',
-      all_splits:    allStr,
+    // ── Shared template params – every {{variable}} populated ──
+    const sharedParams = {
+      release_title : releaseData.releaseTitle || 'Untitled Release',
+      artist_name   : releaseData.artistName   || 'Artist',
+      collab_name   : c.name   || '',
+      collab_role   : c.role   || '',
+      collab_pct    : (parseFloat(c.pct) || 0) + '%',
+      collab_email  : c.email  || '',
+      collab_phone  : c.phone  || '',
+      all_splits    : allStr,
     };
 
     let contributorStatus = 'failed';
     let adminStatus       = 'failed';
 
-    /* 1 ── Send invite directly to the contributor */
+    /* ── 1. Contributor invite → sent to the collaborator's own email ── */
     try {
-      await emailjs.send(service_e1ksnmx,template_w9u4esr, {
-        ...params,
-        to_email: c.email,   // → contributor's Gmail
-        reply_to: '444musicdistro@gmail.com',
-      });
+      await emailjs.send(
+        EJ_SERVICE,
+        EJ_TEMPLATE_CONTRIBUTOR,
+        {
+          ...sharedParams,
+          to_name  : c.name,          // {{to_name}}  in template
+          to_email : c.email,          // {{to_email}} – EmailJS "To Email" field
+          reply_to : ADMIN_EMAIL,      // {{reply_to}}
+        }
+      );
       contributorStatus = 'sent';
-    } catch(e) { console.error('Contributor email failed:', c.email, e); }
+    } catch (err) {
+      console.error('[EmailJS] Contributor send failed for', c.email, err);
+    }
 
-    /* 2 ── Send admin copy to 444musicdistro@gmail.com */
+    /* ── 2. Admin copy → always sent to 444musicdistro@gmail.com ── */
     try {
-      await emailjs.send(service_e1ksnmx, template_zxg81b9, {
-        ...params,
-        to_email: '444musicdistro@gmail.com',
-        reply_to: c.email || '',
-      });
+      await emailjs.send(
+        EJ_SERVICE,
+        EJ_TEMPLATE_ADMIN,
+        {
+          ...sharedParams,
+          to_name  : '444Music Admin',  // {{to_name}}  in admin template
+          to_email : ADMIN_EMAIL,        // {{to_email}} – must match EmailJS "To Email" field
+          reply_to : c.email || ADMIN_EMAIL,  // {{reply_to}}
+        }
+      );
       adminStatus = 'sent';
-    } catch(e) { console.error('Admin email failed:', e); }
+    } catch (err) {
+      console.error('[EmailJS] Admin send failed', err);
+    }
 
-    results.push({ name:c.name, email:c.email, contributorStatus, adminStatus });
+    results.push({ name: c.name, email: c.email, contributorStatus, adminStatus });
     onProgress(i, contributorStatus === 'sent' ? 'sent' : 'failed');
   }
 
@@ -777,7 +806,6 @@ let _pRid=null;
 function initiateSubmit(rid) {
   _pRid=rid;
   const collabs=window._SD[rid]||[];
-  // populate preview list
   const list=document.getElementById('confirmPreviewList');
   list.innerHTML=collabs.map((c,i)=>`
     <div class="confirm-preview-item">
@@ -803,7 +831,7 @@ document.getElementById('confirmGo').onclick=async()=>{
   const btn=document.getElementById('confirmGo');
   const collabs=window._SD[rid]||[];
 
-  /* Build live send-progress UI inside confirm modal */
+  /* Build live send-progress UI */
   const progressStates=collabs.map(()=>'pending');
   const renderProgress=()=>{
     const list=document.getElementById('confirmPreviewList');
@@ -814,17 +842,16 @@ document.getElementById('confirmGo').onclick=async()=>{
         <span class="send-email">${esc(c.email)}</span>
         <span class="send-status ${progressStates[i]}">${
           progressStates[i]==='sending'?'Sending…':
-          progressStates[i]==='sent'   ?'Sent':
+          progressStates[i]==='sent'   ?'Sent ✓':
           progressStates[i]==='failed' ?'Failed':
           'Queued'}</span>
       </div>`).join('');
   };
 
   btn.disabled=true;
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg> Sending invites…';
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Sending invites…';
   document.getElementById('confirmBack').style.display='none';
 
-  // Update label
   const lbl=document.querySelector('.confirm-preview-label');
   if(lbl) lbl.textContent='Sending invites — please wait…';
 
@@ -838,6 +865,10 @@ document.getElementById('confirmGo').onclick=async()=>{
 
     await flock(rid, collabs, results);
     window._LK.add(rid);
+
+    // Update the cached release data with email results so View modal shows them
+    if(window._RM[rid]) window._RM[rid].splitEmailResults = results;
+
     renderCard(window._RM[rid],rid,collabs,true);
 
     const failedCount=results.filter(r=>r.contributorStatus!=='sent').length;
@@ -847,12 +878,11 @@ document.getElementById('confirmGo').onclick=async()=>{
     if(failedCount===0){
       showToast(`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent successfully!`,'success');
     } else {
-      showToast(`Split locked. ${failedCount} invite(s) failed to send — check EmailJS config.`,'warn');
+      showToast(`Split locked. ${failedCount} invite(s) may have failed — check EmailJS logs.`,'warn');
     }
   } catch(e) {
-    console.error(e);
+    console.error('[Submit error]', e);
     showToast('Submission error — please try again','error');
-  } finally {
     btn.disabled=false;
     btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Confirm &amp; Send Invites';
     document.getElementById('confirmBack').style.display='';
@@ -862,7 +892,7 @@ document.getElementById('confirmGo').onclick=async()=>{
 /* ── VIEW LOCKED MODAL ── */
 function openView(rid){
   const collabs=window._SD[rid]||[], rel=window._RM[rid]||{};
-  const emailResults=(rel.splitEmailResults)||[];
+  const emailResults=Array.isArray(rel.splitEmailResults)?rel.splitEmailResults:[];
   const getResult=(email)=>emailResults.find(r=>r.email===email)||{contributorStatus:'unknown'};
 
   const coverHtml=rel.coverURL
@@ -919,6 +949,11 @@ function openView(rid){
 document.getElementById('viewClose').onclick=()=>{ document.getElementById('viewOverlay').classList.remove('open'); document.body.style.overflow=''; };
 document.getElementById('viewOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';} });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){document.getElementById('viewOverlay').classList.remove('open');document.getElementById('confirmOverlay').classList.remove('open');document.body.style.overflow='';} });
+
+/* CSS for spinner */
+const spinStyle=document.createElement('style');
+spinStyle.textContent='@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+document.head.appendChild(spinStyle);
 
 window._SD={}; window._RM={}; window._DB=null; window._FF={}; window._LK=new Set();
 </script>
