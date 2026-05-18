@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
 <style>
 :root {
   --black:         #000000;
@@ -42,38 +41,16 @@ body {
 }
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; border: none; }
-
 .page-wrap { max-width: 1100px; margin: 0 auto; }
-
-.releases-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 20px;
-}
+.releases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
 
 /* ===== SPLIT CARD ===== */
-.split-card {
-  background: var(--black-2);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  position: relative;
-}
+.split-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; position: relative; }
 .split-card:hover { border-color: var(--border-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 .split-card.locked { border-color: rgba(34,197,94,0.22) !important; }
 .split-card.locked:hover { border-color: rgba(34,197,94,0.40) !important; box-shadow: 0 12px 40px rgba(34,197,94,0.06); }
-
-.locked-ribbon {
-  position: absolute; top: 14px; right: -1px;
-  background: var(--green); color: #000;
-  font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  padding: 4px 10px 4px 12px; border-radius: 4px 0 0 4px;
-  display: flex; align-items: center; gap: 5px;
-  box-shadow: -2px 2px 10px rgba(34,197,94,0.35); z-index: 10;
-}
+.locked-ribbon { position: absolute; top: 14px; right: -1px; background: var(--green); color: #000; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px 4px 12px; border-radius: 4px 0 0 4px; display: flex; align-items: center; gap: 5px; box-shadow: -2px 2px 10px rgba(34,197,94,0.35); z-index: 10; }
 .locked-ribbon svg { width: 10px; height: 10px; }
-
 .sc-header { display: flex; align-items: center; gap: 14px; padding: 18px 18px 14px; border-bottom: 1px solid var(--border); }
 .sc-cover { width: 54px; height: 54px; border-radius: 10px; overflow: hidden; background: var(--black-4); flex-shrink: 0; }
 .sc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -83,12 +60,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .sc-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
 .sc-artist { font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
 .sc-badges { display: flex; gap: 5px; flex-wrap: wrap; }
-
-.badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 8px; border-radius: 5px; font-size: 10px;
-  font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
-}
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
 .badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
 .badge.pending  { background: rgba(245,158,11,0.10); color: var(--amber);  border: 1px solid rgba(245,158,11,0.20); }
 .badge.pending::before  { background: var(--amber); }
@@ -105,15 +77,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .badge.split-active { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.30); }
 .badge.split-active::before { background: var(--green); animation: dp 2s ease-in-out infinite; }
 @keyframes dp { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-
 .sc-body { padding: 16px 18px; }
-.sec-lbl {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase;
-  color: var(--text-3); margin-bottom: 10px;
-  display: flex; align-items: center; justify-content: space-between;
-}
+.sec-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
 .sec-lbl span { color: var(--purple-light); font-size: 9px; }
-
 .split-visual { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
 .donut-wrap { flex-shrink: 0; position: relative; width: 76px; height: 76px; }
 .donut-wrap svg { width: 76px; height: 76px; transform: rotate(-90deg); }
@@ -126,13 +92,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .legend-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 .legend-name { font-size: 11px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .legend-pct  { font-size: 11px; font-weight: 700; color: var(--text-2); font-family: 'Outfit', sans-serif; }
-
 .collabs-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-.collab-row {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--black-3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px 12px; transition: border-color 0.15s;
-}
+.collab-row { display: flex; align-items: center; gap: 10px; background: var(--black-3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; transition: border-color 0.15s; }
 .collab-row:hover { border-color: var(--border-light); }
 .collab-avatar { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 800; color: white; flex-shrink: 0; }
 .collab-info { flex: 1; min-width: 0; }
@@ -147,11 +108,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .collab-del:hover { background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.22); color: var(--rose); }
 .collab-del svg { width: 11px; height: 11px; pointer-events: none; }
 .no-collabs { font-size: 12px; color: var(--text-3); font-style: italic; padding: 4px 0 10px; }
-
 .add-toggle { width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px dashed rgba(124,92,252,0.30); background: var(--purple-dim); color: var(--purple-light); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.15s; }
 .add-toggle:hover { border-color: var(--purple-border); background: rgba(124,92,252,0.18); }
 .add-toggle svg { width: 13px; height: 13px; }
-
 .add-form { background: var(--black-3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 10px; display: none; flex-direction: column; gap: 11px; }
 .add-form.open { display: flex; }
 .form-row { display: flex; gap: 9px; }
@@ -178,7 +137,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-add svg { width: 12px; height: 12px; }
 .btn-cancel-f { padding: 10px 16px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-3); font-size: 12px; font-weight: 600; transition: all 0.15s; }
 .btn-cancel-f:hover { border-color: var(--border-light); color: var(--text-2); }
-
 .sc-footer { padding: 12px 18px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .footer-total { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 .footer-total strong { font-weight: 700; }
@@ -192,15 +150,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-view { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: var(--black-4); border: 1px solid var(--border); color: var(--text-2); font-size: 11px; font-weight: 600; transition: all 0.15s; }
 .btn-view:hover { background: var(--black-5); color: var(--text); border-color: var(--border-light); }
 .btn-view svg { width: 12px; height: 12px; }
-
-/* ── SEND PROGRESS ── */
-.send-progress {
-  background: var(--black-3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.send-progress-title { font-size: 11px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; margin-bottom: 2px; }
-.send-progress-title svg { width: 13px; height: 13px; color: var(--purple-light); }
 .send-row { display: flex; align-items: center; gap: 8px; }
 .send-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .send-dot.sending  { background: var(--amber); animation: dp 0.8s ease-in-out infinite; }
@@ -253,8 +202,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .modal-collab-contact span { font-size: 10px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
 .modal-collab-contact svg { width: 9px; height: 9px; flex-shrink: 0; }
 .modal-collab-pct { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; flex-shrink: 0; }
-
-/* ── EMAIL STATUS CHIPS in modal ── */
 .email-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-top: 3px; }
 .email-chip.sent   { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.22); }
 .email-chip.failed { background: rgba(239,68,68,0.10); color: var(--rose);  border: 1px solid rgba(239,68,68,0.20); }
@@ -277,18 +224,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .confirm-check svg { width: 14px; height: 14px; color: var(--amber); flex-shrink: 0; margin-top: 1px; }
 .confirm-check span { font-size: 12px; color: var(--text-2); line-height: 1.55; }
 .confirm-check strong { color: var(--text); }
-
-/* ── CONTRIBUTOR PREVIEW inside confirm ── */
 .confirm-preview { margin: 0 28px 18px; }
 .confirm-preview-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
-.confirm-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
+.confirm-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
 .confirm-preview-item { display: flex; align-items: center; gap: 9px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
 .confirm-preview-av { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 800; color: white; flex-shrink: 0; }
 .confirm-preview-info { flex: 1; min-width: 0; }
 .confirm-preview-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .confirm-preview-email { font-size: 10px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .confirm-preview-pct { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0; }
-
 .confirm-actions { display: flex; gap: 10px; padding: 6px 28px 28px; }
 .btn-confirm-go { flex: 1; padding: 12px; border-radius: 10px; background: var(--green); color: #000; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.15s; }
 .btn-confirm-go:hover:not(:disabled) { background: #16a34a; }
@@ -305,7 +249,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .skel-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 .skel-line { height: 12px; }
 .skel-w80 { width: 80%; } .skel-w60 { width: 60%; } .skel-w40 { width: 40%; }
-
 .empty-state { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
 .empty-ico { width: 56px; height: 56px; background: var(--black-3); border: 1px solid var(--border); border-radius: 14px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
 .empty-ico svg { width: 24px; height: 24px; color: var(--text-3); opacity: 0.35; }
@@ -314,15 +257,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .empty-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; background: var(--purple); color: white; font-size: 13px; font-weight: 600; transition: all 0.15s; }
 .empty-link:hover { background: var(--purple-light); }
 .empty-link svg { width: 13px; height: 13px; }
-
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--border-light); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 .toast.show { transform: translateX(0); }
 .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
-
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
-
 @media (max-width: 640px) {
   body { padding: 20px 14px 52px; }
   .releases-grid { grid-template-columns: 1fr; }
@@ -335,7 +275,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 </style>
 </head>
 <body>
-
 <div class="page-wrap">
   <div class="releases-grid" id="releasesGrid">
     <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
@@ -350,9 +289,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
     <div class="modal-head">
       <div>
         <div class="modal-head-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Royalty Split — Confirmed
         </div>
         <div class="modal-head-sub">Locked &amp; permanent — no further edits allowed</div>
@@ -376,30 +313,25 @@ button { font-family: inherit; cursor: pointer; border: none; }
     </div>
     <div class="confirm-text">
       <h2>Final Review Before Submitting</h2>
-      <p>Once submitted, this royalty split <strong style="color:var(--rose)">cannot be edited or changed.</strong> Each collaborator will receive an invite email directly to their Gmail, and a copy goes to <strong>444musicdistro@gmail.com</strong>.</p>
+      <p>Once submitted, this royalty split <strong style="color:var(--rose)">cannot be edited or changed.</strong> Each collaborator receives an invite email directly to their Gmail, and a copy goes to <strong>444musicdistro@gmail.com</strong>.</p>
     </div>
     <div class="confirm-checks">
       <div class="confirm-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span>All <strong>names, roles and percentages</strong> are correct and total exactly 100%.</span>
       </div>
       <div class="confirm-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <span>All <strong>email addresses and phone numbers</strong> belong to the correct collaborators — invite emails are sent immediately.</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>All <strong>email addresses</strong> belong to the correct collaborators — invite emails sent immediately, stored for contributor login.</span>
       </div>
       <div class="confirm-check">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
-        <span>This action is <strong>permanent and irreversible.</strong> You cannot add, remove, or modify collaborators after submission.</span>
+        <span>This action is <strong>permanent and irreversible.</strong> You cannot modify collaborators after submission.</span>
       </div>
     </div>
-    <!-- Live preview of who will be emailed -->
     <div class="confirm-preview">
       <div class="confirm-preview-label">Invites will be sent to</div>
       <div class="confirm-preview-list" id="confirmPreviewList"></div>
@@ -418,202 +350,166 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 <!-- TOAST -->
 <div class="toast" id="toast">
-  <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
+  <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastMsg"></span>
 </div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   EMAILJS CONFIGURATION
-   ─────────────────────────────────────────────────────────────
-   Service ID  : service_e1ksnmx   |   Public Key : LZhpLSIA8M2CHNc0L
-
-   CONTRIBUTOR template (template_w9u4esr) → each collaborator's inbox
-     EmailJS dashboard "To Email" field must be set to: {{to_email}}
-     JS sends: {{to_email}}, {{to_name}}, {{reply_to}},
-               {{collab_name}}, {{collab_role}}, {{collab_pct}},
-               {{collab_email}}, {{collab_phone}},
-               {{release_title}}, {{artist_name}}, {{all_splits}}
-
-   ADMIN template (template_zxg81b9) → 444musicdistro@gmail.com
-     EmailJS dashboard "To Email" field must be set to: {{to_email}}
-     JS sends: {{to_email}}, {{to_name}}, {{reply_to}},
-               {{name}}, {{email}}, {{phone}},
-               {{artist_name}}, {{track_title}}, {{genre}},
-               {{release_type}}, {{message}}
-     (variable names kept to match your existing admin template exactly)
+   EMAILJS CONFIG
 ═══════════════════════════════════════════════════════════════ */
-
-// ── Init EmailJS with your public key ──
 emailjs.init("LZhpLSIA8M2CHNc0L");
-
-// ── Constants – use ONLY these variables everywhere ──
 const EJ_SERVICE              = "service_e1ksnmx";
-const EJ_TEMPLATE_CONTRIBUTOR = "template_w9u4esr";   // → contributor's email
-const EJ_TEMPLATE_ADMIN       = "template_zxg81b9";   // → 444musicdistro@gmail.com
+const EJ_TEMPLATE_CONTRIBUTOR = "template_w9u4esr";
+const EJ_TEMPLATE_ADMIN       = "template_zxg81b9";
 const ADMIN_EMAIL             = "444musicdistro@gmail.com";
 
-/* ─────────────────────────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────────────────────────── */
+/* ── HELPERS ── */
 const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
 const clr = i => PALETTE[i % PALETTE.length];
+function initials(n){ if(!n)return'?'; const p=n.trim().split(/\s+/); return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e||'').trim()); }
+function validPhone(p){ return /^[+\d\s\-(). ]{7,20}$/.test(String(p||'').trim()); }
 
-function initials(n) {
-  if (!n) return '?';
-  const p = n.trim().split(/\s+/);
-  return p.length === 1 ? p[0][0].toUpperCase() : (p[0][0]+p[p.length-1][0]).toUpperCase();
-}
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e||'').trim()); }
-function validPhone(p) { return /^[+\d\s\-(). ]{7,20}$/.test(String(p||'').trim()); }
-
-/* ── TOAST ── */
-function showToast(msg, type) {
-  const t=document.getElementById('toast'), ic=document.getElementById('toastIcon');
+function showToast(msg,type){
+  const t=document.getElementById('toast'),ic=document.getElementById('toastIcon');
   document.getElementById('toastMsg').textContent=msg;
   ic.style.color=type==='error'?'var(--rose)':type==='warn'?'var(--amber)':'var(--green)';
-  ic.innerHTML=type==='error'
-    ?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
-    :type==='warn'
-    ?'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
-    :'<polyline points="20 6 9 17 4 12"/>';
+  ic.innerHTML=type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>':type==='warn'?'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>':'<polyline points="20 6 9 17 4 12"/>';
   t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3600);
 }
 
-/* ── DONUT ── */
-function buildDonut(collabs) {
+function buildDonut(collabs){
   const total=collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  const R=30, C=2*Math.PI*R;
-  let off=0, segs='';
-  collabs.forEach((c,i)=>{ const f=(parseFloat(c.pct)||0)/100, d=f*C, g=C-d; segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${clr(i)}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`; off+=d; });
+  const R=30,C=2*Math.PI*R; let off=0,segs='';
+  collabs.forEach((c,i)=>{ const f=(parseFloat(c.pct)||0)/100,d=f*C,g=C-d; segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${clr(i)}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`; off+=d; });
   return {segs,total};
 }
 
-/* ── FIRESTORE ── */
-async function fsave(rid, collabs) {
+/* ═══════════════════════════════════════════════════════════════
+   FIRESTORE WRITE STRATEGY
+   ─────────────────────────────────────────────────────────────
+   On lock/submit we write to TWO collections:
+
+   [A] submissions/{submissionId}  (existing — updated)
+       + contributorEmails: string[]   ← new field for easy querying
+       + royaltySplits, splitLocked, splitLockedAt, splitEmailResults (unchanged)
+
+   [B] splits/{auto-id}  ← NEW dedicated collection
+       {
+         submissionId,
+         ownerUserId, ownerEmail,
+         songTitle,      ← from releaseTitle; Admin edits this field in Firestore
+         artistName, releaseType, genre, coverURL,
+         lockedAt,
+         contributors: [
+           { name, role, email, phone, pct, emailStatus, balance }
+                                   ↑ balance starts at 0; Admin sets it in Firestore
+         ]
+       }
+
+   Contributor Dashboard queries:
+     db.collection('splits')
+       .where('contributors', 'array-contains-any', [{ email: userEmail }])
+       ← won't work for nested objects; instead we store a flat index:
+       contributorEmails: string[]  on the splits doc too
+       then query: where('contributorEmails','array-contains', userEmail)
+═══════════════════════════════════════════════════════════════ */
+async function fsave(rid,collabs){
   const {doc,updateDoc}=window._FF;
   await updateDoc(doc(window._DB,'submissions',rid),{royaltySplits:collabs});
 }
-async function flock(rid, collabs, emailResults) {
-  const {doc,updateDoc}=window._FF;
+
+async function flock(rid,collabs,emailResults){
+  const {doc,updateDoc,collection,addDoc}=window._FF;
+  const rel=window._RM[rid]||{};
+
+  // Flat email array for array-contains queries
+  const contributorEmails=collabs.map(c=>(c.email||'').toLowerCase().trim()).filter(Boolean);
+
+  // [A] Update submission doc
   await updateDoc(doc(window._DB,'submissions',rid),{
-    royaltySplits:collabs, splitLocked:true,
-    splitLockedAt:new Date().toISOString(),
-    splitEmailResults:emailResults
+    royaltySplits:    collabs,
+    splitLocked:      true,
+    splitLockedAt:    new Date().toISOString(),
+    splitEmailResults:emailResults,
+    contributorEmails:contributorEmails
   });
+
+  // [B] Build splits doc
+  const splitPayload={
+    submissionId:      rid,
+    ownerUserId:       rel.userId          || '',
+    ownerEmail:        (rel.email||'').toLowerCase().trim(),
+    songTitle:         rel.releaseTitle    || 'Untitled',  // Admin edits in Firestore
+    artistName:        rel.artistName      || '',
+    releaseType:       rel.releaseType     || rel.type        || '',
+    genre:             rel.genre           || rel.primaryGenre || '',
+    coverURL:          rel.coverURL        || '',
+    lockedAt:          new Date().toISOString(),
+    contributorEmails: contributorEmails,  // flat index for querying
+    contributors: collabs.map(c=>{
+      const res=emailResults.find(r=>r.email===c.email)||{};
+      return {
+        name:        c.name  || '',
+        role:        c.role  || '',
+        email:       (c.email||'').toLowerCase().trim(),
+        phone:       c.phone || '',
+        pct:         parseFloat(c.pct)||0,
+        emailStatus: res.contributorStatus||'unknown',
+        balance:     0          // Admin sets this value in Firestore console
+      };
+    })
+  };
+
+  // Upsert: update if already exists, else create
+  const existingId=window._SPLIT_DOC_IDS[rid];
+  if(existingId){
+    await updateDoc(doc(window._DB,'splits',existingId),splitPayload);
+  } else {
+    const ref=await addDoc(collection(window._DB,'splits'),splitPayload);
+    window._SPLIT_DOC_IDS[rid]=ref.id;
+  }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SEND EMAILS  ← ALL BUGS FIXED HERE
-   ─────────────────────────────────────────────────────────────
-   For each collaborator we fire TWO sends:
-     1. Contributor invite  → c.email          (EJ_TEMPLATE_CONTRIBUTOR)
-     2. Admin notification  → ADMIN_EMAIL       (EJ_TEMPLATE_ADMIN)
-   Both use the same param object so every {{variable}} is
-   populated in both templates.
-══════════════════════════════════════════════════════════════ */
-async function sendAllEmails(releaseData, collabs, onProgress) {
-  // Build the human-readable full split summary once
-  const allStr = collabs
-    .map(c => `${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%`)
-    .join('\n');
-
-  const results = [];
-
-  for (let i = 0; i < collabs.length; i++) {
-    const c = collabs[i];
-    onProgress(i, 'sending');
-
-    let contributorStatus = 'failed';
-    let adminStatus       = 'failed';
-
-    /* ══════════════════════════════════════════════════════
-       SEND 1 — Contributor invite  (template_w9u4esr)
-       "To Email" field in EmailJS is set to {{email}}
-       Subject uses {{order_id}} — we send release title there
-    ══════════════════════════════════════════════════════ */
-    try {
-      await emailjs.send(
-        EJ_SERVICE,
-        EJ_TEMPLATE_CONTRIBUTOR,
-        {
-          // ── ROUTING ──────────────────────────────────────
-          // "To Email" in EmailJS dashboard = {{email}}
-          email         : c.email,
-          // Subject in EmailJS dashboard uses {{order_id}}
-          order_id      : releaseData.releaseTitle || 'Untitled Release',
-          // Reply-To
-          reply_to      : ADMIN_EMAIL,
-
-          // ── BODY VARIABLES ───────────────────────────────
-          collab_name   : c.name                         || '',
-          collab_role   : c.role                         || '',
-          collab_pct    : (parseFloat(c.pct) || 0) + '%',
-          collab_email  : c.email                        || '',
-          collab_phone  : c.phone                        || '',
-          release_title : releaseData.releaseTitle       || 'Untitled Release',
-          artist_name   : releaseData.artistName         || 'Artist',
-          all_splits    : allStr,
-          // Also send to_email in case footer uses {{to_email}}
-          to_email      : c.email,
-        }
-      );
-      contributorStatus = 'sent';
-    } catch (err) {
-      console.error('[EmailJS] Contributor send failed for', c.email, err);
-    }
-
-    /* ══════════════════════════════════════════════════════
-       SEND 2 — Admin notification  (template_zxg81b9)
-       Variables used in THAT template:
-         {{name}}, {{email}}, {{phone}},
-         {{artist_name}}, {{track_title}}, {{genre}},
-         {{release_type}}, {{message}},
-         {{to_email}}
-       NOTE: The admin template was built for the contact/
-       submission form so its variable names are different.
-       We map our royalty-split data into those names here.
-    ══════════════════════════════════════════════════════ */
-    try {
-      await emailjs.send(
-        EJ_SERVICE,
-        EJ_TEMPLATE_ADMIN,
-        {
-          // Routing – EmailJS "To Email" field must be {{to_email}}
-          to_email     : ADMIN_EMAIL,
-          to_name      : '444Music Admin',
-          reply_to     : c.email || ADMIN_EMAIL,
-
-          // Map royalty-split data → admin template variable names
-          name         : c.name                        || '',   // {{name}}
-          email        : c.email                       || '',   // {{email}}
-          phone        : c.phone                       || '',   // {{phone}}
-          artist_name  : releaseData.artistName        || 'Artist',  // {{artist_name}}
-          track_title  : releaseData.releaseTitle      || 'Untitled Release', // {{track_title}}
-          genre        : releaseData.genre             || releaseData.primaryGenre || 'N/A', // {{genre}}
-          release_type : releaseData.releaseType       || releaseData.type || 'N/A',        // {{release_type}}
-
-          // {{message}} — full split breakdown so admin sees everything
-          message      : `Royalty split submitted.\n\nCollaborator: ${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%\n\nFull breakdown:\n${allStr}`,
-        }
-      );
-      adminStatus = 'sent';
-    } catch (err) {
-      console.error('[EmailJS] Admin send failed', err);
-    }
-
-    results.push({ name: c.name, email: c.email, contributorStatus, adminStatus });
-    onProgress(i, contributorStatus === 'sent' ? 'sent' : 'failed');
+/* ── EMAIL ── */
+async function sendAllEmails(releaseData,collabs,onProgress){
+  const allStr=collabs.map(c=>`${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%`).join('\n');
+  const results=[];
+  for(let i=0;i<collabs.length;i++){
+    const c=collabs[i]; onProgress(i,'sending');
+    let contributorStatus='failed',adminStatus='failed';
+    try{
+      await emailjs.send(EJ_SERVICE,EJ_TEMPLATE_CONTRIBUTOR,{
+        email:c.email, order_id:releaseData.releaseTitle||'Untitled Release',
+        reply_to:ADMIN_EMAIL, collab_name:c.name||'', collab_role:c.role||'',
+        collab_pct:(parseFloat(c.pct)||0)+'%', collab_email:c.email||'',
+        collab_phone:c.phone||'', release_title:releaseData.releaseTitle||'Untitled Release',
+        artist_name:releaseData.artistName||'Artist', all_splits:allStr, to_email:c.email,
+      });
+      contributorStatus='sent';
+    }catch(err){console.error('[EmailJS] Contributor failed',c.email,err);}
+    try{
+      await emailjs.send(EJ_SERVICE,EJ_TEMPLATE_ADMIN,{
+        to_email:ADMIN_EMAIL, to_name:'444Music Admin', reply_to:c.email||ADMIN_EMAIL,
+        name:c.name||'', email:c.email||'', phone:c.phone||'',
+        artist_name:releaseData.artistName||'Artist',
+        track_title:releaseData.releaseTitle||'Untitled Release',
+        genre:releaseData.genre||releaseData.primaryGenre||'N/A',
+        release_type:releaseData.releaseType||releaseData.type||'N/A',
+        message:`Royalty split submitted.\n\nCollaborator: ${c.name} (${c.role}) — ${parseFloat(c.pct)||0}%\n\nFull breakdown:\n${allStr}`,
+      });
+      adminStatus='sent';
+    }catch(err){console.error('[EmailJS] Admin send failed',err);}
+    results.push({name:c.name,email:c.email,contributorStatus,adminStatus});
+    onProgress(i,contributorStatus==='sent'?'sent':'failed');
   }
-
   return results;
 }
 
 /* ── RENDER CARD ── */
-function renderCard(rel, rid, collabs, locked) {
+function renderCard(rel,rid,collabs,locked){
   const card=document.getElementById('sc-'+rid);
   if(!card)return;
   const stCls=(rel.status||'Pending').toLowerCase().trim().replace(/\s+/g,'-');
@@ -763,44 +659,39 @@ function renderCard(rel, rid, collabs, locked) {
     </div>`;
 }
 
-function toggleForm(rid, force) {
-  const f=document.getElementById('af-'+rid);
-  if(!f)return;
+function toggleForm(rid,force){
+  const f=document.getElementById('af-'+rid); if(!f)return;
   const open=force!==undefined?force:!f.classList.contains('open');
   f.classList.toggle('open',open);
   if(open)document.getElementById('fn-'+rid)?.focus();
 }
 
-function onPct(rid) {
+function onPct(rid){
   const cur=(window._SD[rid]||[]).reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
   const np=parseFloat(document.getElementById('fpc-'+rid)?.value)||0;
   const rem=100-cur-np;
-  const el=document.getElementById('rp-'+rid);
-  if(!el)return;
+  const el=document.getElementById('rp-'+rid); if(!el)return;
   el.textContent=rem>=0?`${rem.toFixed(1)}% left`:`${Math.abs(rem).toFixed(1)}% over`;
   el.className='rem-pill '+(rem<0?'danger':rem===0?'ok':'warn');
 }
 
-async function addCollab(rid) {
+async function addCollab(rid){
   const name =document.getElementById('fn-'+rid)?.value.trim();
   const role =document.getElementById('fr-'+rid)?.value;
   const email=document.getElementById('fe-'+rid)?.value.trim();
   const phone=document.getElementById('fp-'+rid)?.value.trim();
   const pct  =parseFloat(document.getElementById('fpc-'+rid)?.value);
-
-  if(!name)               { showToast('Full name is required','error'); document.getElementById('fn-'+rid)?.focus(); return; }
-  if(!validEmail(email))  { showToast('Enter a valid email address','error'); document.getElementById('fe-'+rid)?.focus(); return; }
-  if(!validPhone(phone))  { showToast('Enter a valid phone number','error'); document.getElementById('fp-'+rid)?.focus(); return; }
-  if(!pct||pct<=0)        { showToast('Enter a valid percentage','error'); document.getElementById('fpc-'+rid)?.focus(); return; }
-
+  if(!name)              {showToast('Full name is required','error');document.getElementById('fn-'+rid)?.focus();return;}
+  if(!validEmail(email)) {showToast('Enter a valid email address','error');document.getElementById('fe-'+rid)?.focus();return;}
+  if(!validPhone(phone)) {showToast('Enter a valid phone number','error');document.getElementById('fp-'+rid)?.focus();return;}
+  if(!pct||pct<=0)       {showToast('Enter a valid percentage','error');document.getElementById('fpc-'+rid)?.focus();return;}
   const collabs=window._SD[rid]||[];
   const cur=collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  if(cur+pct>100.001){ showToast(`Only ${(100-cur).toFixed(1)}% remaining`,'warn'); return; }
-  if(collabs.some(c=>c.name.toLowerCase()===name.toLowerCase())){ showToast('Name already exists in this split','warn'); return; }
-
+  if(cur+pct>100.001){showToast(`Only ${(100-cur).toFixed(1)}% remaining`,'warn');return;}
+  if(collabs.some(c=>c.name.toLowerCase()===name.toLowerCase())){showToast('Name already exists in this split','warn');return;}
   const btn=document.getElementById('addBtn-'+rid);
-  if(btn){btn.disabled=true;btn.textContent='Saving…';}
-  try {
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
+  try{
     const next=[...collabs,{name,role,email,phone,pct}];
     window._SD[rid]=next;
     await fsave(rid,next);
@@ -808,34 +699,30 @@ async function addCollab(rid) {
     ['fn','fe','fp','fpc'].forEach(p=>{const el=document.getElementById(p+'-'+rid);if(el)el.value='';});
     renderCard(window._RM[rid],rid,next,false);
     showToast(name+' added to split','success');
-  } catch(e){ console.error(e); showToast('Save failed — please try again','error'); }
-  finally { if(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Add to Split';} }
+  }catch(e){console.error(e);showToast('Save failed — please try again','error');}
+  finally{if(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Add to Split';}}
 }
 
-/* ── DELETE ── */
 document.getElementById('releasesGrid').addEventListener('click',async e=>{
-  const btn=e.target.closest('.collab-del');
-  if(!btn)return;
-  const rid=btn.dataset.rid, idx=parseInt(btn.dataset.idx);
-  const c=(window._SD[rid]||[])[idx];
-  if(!c)return;
+  const btn=e.target.closest('.collab-del'); if(!btn)return;
+  const rid=btn.dataset.rid,idx=parseInt(btn.dataset.idx);
+  const c=(window._SD[rid]||[])[idx]; if(!c)return;
   if(!confirm(`Remove "${c.name}" from this split?`))return;
-  try {
+  try{
     const next=(window._SD[rid]||[]).filter((_,i)=>i!==idx);
     window._SD[rid]=next;
     await fsave(rid,next);
     renderCard(window._RM[rid],rid,next,false);
     showToast(c.name+' removed','success');
-  } catch(e){ console.error(e); showToast('Failed to remove','error'); }
+  }catch(e){console.error(e);showToast('Failed to remove','error');}
 });
 
-/* ── INITIATE SUBMIT ── */
+/* ── SUBMIT FLOW ── */
 let _pRid=null;
-function initiateSubmit(rid) {
+function initiateSubmit(rid){
   _pRid=rid;
   const collabs=window._SD[rid]||[];
-  const list=document.getElementById('confirmPreviewList');
-  list.innerHTML=collabs.map((c,i)=>`
+  document.getElementById('confirmPreviewList').innerHTML=collabs.map((c,i)=>`
     <div class="confirm-preview-item">
       <div class="confirm-preview-av" style="background:${clr(i)}">${esc(initials(c.name))}</div>
       <div class="confirm-preview-info">
@@ -855,61 +742,43 @@ document.getElementById('confirmBack').onclick=()=>{
 
 document.getElementById('confirmGo').onclick=async()=>{
   if(!_pRid)return;
-  const rid=_pRid;
-  const btn=document.getElementById('confirmGo');
+  const rid=_pRid, btn=document.getElementById('confirmGo');
   const collabs=window._SD[rid]||[];
-
-  /* Build live send-progress UI */
   const progressStates=collabs.map(()=>'pending');
   const renderProgress=()=>{
-    const list=document.getElementById('confirmPreviewList');
-    list.innerHTML=collabs.map((c,i)=>`
+    document.getElementById('confirmPreviewList').innerHTML=collabs.map((c,i)=>`
       <div class="send-row">
         <div class="send-dot ${progressStates[i]}"></div>
         <span class="send-name">${esc(c.name)}</span>
         <span class="send-email">${esc(c.email)}</span>
         <span class="send-status ${progressStates[i]}">${
-          progressStates[i]==='sending'?'Sending…':
-          progressStates[i]==='sent'   ?'Sent ✓':
-          progressStates[i]==='failed' ?'Failed':
-          'Queued'}</span>
+          progressStates[i]==='sending'?'Sending...':progressStates[i]==='sent'?'Sent ✓':progressStates[i]==='failed'?'Failed':'Queued'
+        }</span>
       </div>`).join('');
   };
-
   btn.disabled=true;
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Sending invites…';
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Sending invites...';
   document.getElementById('confirmBack').style.display='none';
-
   const lbl=document.querySelector('.confirm-preview-label');
-  if(lbl) lbl.textContent='Sending invites — please wait…';
-
+  if(lbl)lbl.textContent='Sending invites — please wait...';
   renderProgress();
-
-  try {
-    const results=await sendAllEmails(
-      window._RM[rid], collabs,
-      (idx, status)=>{ progressStates[idx]=status; renderProgress(); }
-    );
-
-    await flock(rid, collabs, results);
+  try{
+    const results=await sendAllEmails(window._RM[rid],collabs,(idx,status)=>{progressStates[idx]=status;renderProgress();});
+    await flock(rid,collabs,results);
     window._LK.add(rid);
-
-    // Update the cached release data with email results so View modal shows them
-    if(window._RM[rid]) window._RM[rid].splitEmailResults = results;
-
+    if(window._RM[rid])window._RM[rid].splitEmailResults=results;
     renderCard(window._RM[rid],rid,collabs,true);
-
     const failedCount=results.filter(r=>r.contributorStatus!=='sent').length;
     document.getElementById('confirmOverlay').classList.remove('open');
     document.body.style.overflow=''; _pRid=null;
-
-    if(failedCount===0){
-      showToast(`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent successfully!`,'success');
-    } else {
-      showToast(`Split locked. ${failedCount} invite(s) may have failed — check EmailJS logs.`,'warn');
-    }
-  } catch(e) {
-    console.error('[Submit error]', e);
+    showToast(
+      failedCount===0
+        ?`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent & stored for contributor login!`
+        :`Split locked. ${failedCount} invite(s) may have failed — check EmailJS logs.`,
+      failedCount===0?'success':'warn'
+    );
+  }catch(e){
+    console.error('[Submit error]',e);
     showToast('Submission error — please try again','error');
     btn.disabled=false;
     btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Confirm &amp; Send Invites';
@@ -917,23 +786,15 @@ document.getElementById('confirmGo').onclick=async()=>{
   }
 };
 
-/* ── VIEW LOCKED MODAL ── */
+/* ── VIEW MODAL ── */
 function openView(rid){
-  const collabs=window._SD[rid]||[], rel=window._RM[rid]||{};
+  const collabs=window._SD[rid]||[],rel=window._RM[rid]||{};
   const emailResults=Array.isArray(rel.splitEmailResults)?rel.splitEmailResults:[];
   const getResult=(email)=>emailResults.find(r=>r.email===email)||{contributorStatus:'unknown'};
-
-  const coverHtml=rel.coverURL
-    ?`<img src="${esc(rel.coverURL)}" alt="">`
-    :`<div class="modal-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
-
+  const coverHtml=rel.coverURL?`<img src="${esc(rel.coverURL)}" alt="">`:`<div class="modal-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
   const items=collabs.map((c,i)=>{
     const res=getResult(c.email);
-    const chipStatus=res.contributorStatus==='sent'?'sent':'failed';
-    const chipLabel =res.contributorStatus==='sent'?'Invite Sent':'Send Failed';
-    const chipIcon  =res.contributorStatus==='sent'
-      ?'<polyline points="20 6 9 17 4 12"/>'
-      :'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+    const chipOk=res.contributorStatus==='sent';
     return `
       <div class="modal-collab">
         <div class="modal-collab-av" style="background:${clr(i)}">${esc(initials(c.name))}</div>
@@ -941,55 +802,47 @@ function openView(rid){
           <div class="modal-collab-name">${esc(c.name)}</div>
           <div class="modal-collab-role">${esc(c.role)}</div>
           <div class="modal-collab-contact">
-            <span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              ${esc(c.email)}
-            </span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${esc(c.email)}</span>
             ${c.phone?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${esc(c.phone)}</span>`:''}
-            <span class="email-chip ${chipStatus}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${chipIcon}</svg>
-              ${chipLabel}
+            <span class="email-chip ${chipOk?'sent':'failed'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${chipOk?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}</svg>
+              ${chipOk?'Invite Sent':'Send Failed'}
             </span>
           </div>
         </div>
         <div class="modal-collab-pct" style="color:${clr(i)}">${parseFloat(c.pct)||0}%</div>
       </div>`;
   }).join('');
-
   document.getElementById('viewBody').innerHTML=`
     <div class="modal-release-row">
       <div class="modal-cover">${coverHtml}</div>
       <div><div class="modal-rel-title">${esc(rel.releaseTitle||'Untitled')}</div><div class="modal-rel-artist">${esc(rel.artistName||'')}</div></div>
     </div>
     <div class="modal-notice">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      <p>Invites were sent directly to each collaborator's Gmail and a copy was dispatched to <strong>444musicdistro@gmail.com</strong>. This split is <strong>permanently locked.</strong></p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <p>Invites sent to each collaborator's Gmail. A copy was sent to <strong>444musicdistro@gmail.com</strong>. Split data is stored so contributors can log in to view their percentage. This split is <strong>permanently locked.</strong></p>
     </div>
     <div class="modal-sec-lbl">Collaborators &amp; Invite Status</div>
-    <div class="modal-collabs">${items}</div>
-  `;
+    <div class="modal-collabs">${items}</div>`;
   document.getElementById('viewOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-document.getElementById('viewClose').onclick=()=>{ document.getElementById('viewOverlay').classList.remove('open'); document.body.style.overflow=''; };
-document.getElementById('viewOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';} });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){document.getElementById('viewOverlay').classList.remove('open');document.getElementById('confirmOverlay').classList.remove('open');document.body.style.overflow='';} });
+document.getElementById('viewClose').onclick=()=>{document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';};
+document.getElementById('viewOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('viewOverlay').classList.remove('open');document.getElementById('confirmOverlay').classList.remove('open');document.body.style.overflow='';}});
 
-/* CSS for spinner */
 const spinStyle=document.createElement('style');
 spinStyle.textContent='@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
 document.head.appendChild(spinStyle);
 
-window._SD={}; window._RM={}; window._DB=null; window._FF={}; window._LK=new Set();
+window._SD={}; window._RM={}; window._DB=null; window._FF={}; window._LK=new Set(); window._SPLIT_DOC_IDS={};
 </script>
 
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, updateDoc }
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc, addDoc }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1005,20 +858,25 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 window._DB = db;
-window._FF = { doc, updateDoc };
+window._FF = { doc, updateDoc, collection, addDoc };
 
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href='login.html'; return; }
-
-  const grid=document.getElementById('releasesGrid');
+  const grid = document.getElementById('releasesGrid');
   try {
-    const snap=await getDocs(query(collection(db,'submissions'),where('userId','==',user.uid)));
-    grid.innerHTML='';
-
+    const snap = await getDocs(query(collection(db,'submissions'), where('userId','==',user.uid)));
+    grid.innerHTML = '';
     if(snap.empty){
       grid.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>No releases found</h3><p>Create your first release to begin setting up royalty splits.</p><a class="empty-link" href="pricing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Create a Release</a></div>`;
       return;
     }
+
+    // Pre-load existing splits docs to avoid creating duplicates
+    const existingSplits = await getDocs(query(collection(db,'splits'), where('ownerUserId','==',user.uid)));
+    existingSplits.forEach(ds => {
+      const sid = ds.data().submissionId;
+      if(sid) window._SPLIT_DOC_IDS[sid] = ds.id;
+    });
 
     let i=0;
     snap.forEach(ds=>{
