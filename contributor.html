@@ -6,10 +6,10 @@
 <title>My Royalty Splits — 444Music</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;500;700;900&family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════
-   SPOTIFY-STYLE FONT + DESIGN SYSTEM
+   DESIGN SYSTEM
 ═══════════════════════════════════════ */
 :root {
   --bg:            #050508;
@@ -26,7 +26,6 @@
   --purple-4:      #c4b5fd;
   --purple-dim:    rgba(124,58,237,0.16);
   --purple-border: rgba(139,92,246,0.32);
-  --purple-glow:   rgba(124,58,237,0.22);
   --green:         #1db954;
   --green-dim:     rgba(29,185,84,0.10);
   --green-border:  rgba(29,185,84,0.26);
@@ -37,8 +36,7 @@
   --text-2:        #b3b3cc;
   --text-3:        #5a5a78;
   --text-4:        #30304a;
-  --min-withdraw:  20;
-  --font: 'Figtree', 'Circular Std', -apple-system, sans-serif;
+  --font: 'Figtree', -apple-system, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,75 +47,62 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  position: relative;
   overflow-x: hidden;
-}
-
-/* ═══════════════════════════════════════
-   BACKGROUND — music studio / vinyl aesthetic
-═══════════════════════════════════════ */
-.bg-image {
-  position: fixed; inset: 0; z-index: 0;
-  background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1800&q=80&auto=format&fit=crop');
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.12) saturate(0.6);
-}
-
-.bg-overlay {
-  position: fixed; inset: 0; z-index: 1;
-  background:
-    radial-gradient(ellipse 90% 60% at 15% -5%, rgba(124,58,237,0.30) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 60% at 85% 110%, rgba(109,40,217,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(5,5,8,0.55) 0%, transparent 80%),
-    linear-gradient(175deg, rgba(10,8,20,0.90) 0%, rgba(5,5,8,0.96) 100%);
-}
-
-.bg-vignette {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  background: radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(3,3,6,0.92) 100%);
-}
-
-.bg-orb {
-  position: fixed; border-radius: 50%; filter: blur(90px); z-index: 2; pointer-events: none;
-}
-.bg-orb-1 {
-  width: 560px; height: 560px; top: -180px; left: -120px;
-  background: radial-gradient(circle, rgba(124,58,237,0.20) 0%, transparent 70%);
-  animation: orbFloat 14s ease-in-out infinite;
-}
-.bg-orb-2 {
-  width: 460px; height: 460px; bottom: -120px; right: -100px;
-  background: radial-gradient(circle, rgba(109,40,217,0.15) 0%, transparent 70%);
-  animation: orbFloat 18s ease-in-out infinite reverse;
-}
-.bg-orb-3 {
-  width: 320px; height: 320px; top: 45%; left: 55%;
-  background: radial-gradient(circle, rgba(29,185,84,0.07) 0%, transparent 70%);
-  animation: orbFloat 22s ease-in-out infinite 4s;
-}
-
-@keyframes orbFloat {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33%  { transform: translate(35px,-25px) scale(1.06); }
-  66%  { transform: translate(-25px,35px) scale(0.96); }
-}
-
-/* Subtle scanline / grid */
-.bg-grid {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  /* Professional static background — NO fixed attachment for smooth scrolling */
   background-image:
-    linear-gradient(rgba(139,92,246,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 20%, transparent 100%);
+    radial-gradient(ellipse 90% 60% at 15% -5%, rgba(124,58,237,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 85% 110%, rgba(109,40,217,0.20) 0%, transparent 55%),
+    url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1600&q=70&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* KEY FIX: scroll instead of fixed = buttery smooth */
 }
 
-/* Film grain */
-.bg-grain {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
+/* Dark overlay baked into a pseudo element — no fixed stacking */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    linear-gradient(175deg, rgba(5,5,10,0.93) 0%, rgba(5,5,8,0.97) 100%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, rgba(3,3,6,0.85) 100%);
+  pointer-events: none;
+}
+
+/* Subtle grid — not fixed, just a background pattern */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(139,92,246,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+
+/* Ambient orbs — pure CSS, GPU-composited only (transform/opacity), no layout thrash */
+.orb {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 1;
+  will-change: transform;
+  animation: orbFloat var(--dur, 14s) ease-in-out infinite var(--delay, 0s);
+}
+.orb-1 {
+  width: 480px; height: 480px; top: -160px; left: -100px;
+  background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+  filter: blur(80px);
+  --dur: 14s;
+}
+.orb-2 {
+  width: 380px; height: 380px; bottom: -100px; right: -80px;
+  background: radial-gradient(circle, rgba(109,40,217,0.13) 0%, transparent 70%);
+  filter: blur(70px);
+  --dur: 18s; --delay: -6s;
+  animation-direction: reverse;
+}
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0); }
+  33%  { transform: translate(28px,-20px); }
+  66%  { transform: translate(-20px,28px); }
 }
 
 a { text-decoration: none; color: inherit; }
@@ -128,8 +113,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 ═══════════════════════════════════════ */
 .topnav {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(5,5,8,0.75);
-  backdrop-filter: blur(28px) saturate(1.6);
+  background: rgba(5,5,8,0.82);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border-bottom: 1px solid rgba(139,92,246,0.10);
   padding: 0 36px;
   display: flex; align-items: center; justify-content: space-between;
@@ -143,6 +129,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; font-weight: 900; color: #fff; letter-spacing: -1px;
   box-shadow: 0 0 22px rgba(124,58,237,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+  flex-shrink: 0;
 }
 .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.5px; }
 .nav-title span { color: var(--purple-3); }
@@ -216,8 +203,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border: 1px solid var(--border);
   border-radius: 18px; padding: 22px 24px;
   display: flex; flex-direction: column; gap: 7px;
-  transition: all 0.22s; position: relative; overflow: hidden;
+  transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+  position: relative; overflow: hidden;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .sum-card::before {
   content: ''; position: absolute; inset: 0;
@@ -288,9 +277,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
   background: rgba(13,13,20,0.88);
   border: 1px solid var(--border);
   border-radius: 20px; overflow: hidden;
-  transition: all 0.28s cubic-bezier(0.34,1.1,0.64,1);
+  transition: border-color 0.28s, transform 0.28s, box-shadow 0.28s;
   position: relative;
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .split-item:hover {
   border-color: var(--purple-border);
@@ -375,7 +365,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-withdraw.locked {
   border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-3); cursor: not-allowed;
 }
-.btn-withdraw.locked:hover { transform: none; background: rgba(255,255,255,0.03); }
+.btn-withdraw.locked:hover { transform: none; }
 .btn-withdraw svg { width: 12px; height: 12px; }
 
 /* LOCK BANNER */
@@ -425,6 +415,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .popup-overlay {
   position: fixed; inset: 0; z-index: 8000;
   background: rgba(0,0,0,0.88); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex; align-items: center; justify-content: center; padding: 20px;
   opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
 }
@@ -478,128 +469,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-popup-close svg { width: 15px; height: 15px; }
 
 /* ═══════════════════════════════════════
-   WITHDRAWAL MODAL
-═══════════════════════════════════════ */
-.wd-overlay {
-  position: fixed; inset: 0; z-index: 9000;
-  background: rgba(0,0,0,0.90); backdrop-filter: blur(16px);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
-}
-.wd-overlay.open { opacity: 1; pointer-events: all; }
-
-.wd-box {
-  background: var(--bg-2); border: 1px solid var(--border-md);
-  border-radius: 26px; width: 100%; max-width: 480px; overflow: hidden;
-  transform: scale(0.92) translateY(28px);
-  transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1);
-}
-.wd-overlay.open .wd-box { transform: scale(1) translateY(0); }
-
-.wd-bar { height: 3px; background: linear-gradient(90deg, transparent, var(--green) 25%, #4ade80 75%, transparent); }
-
-.wd-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 24px 28px 18px;
-}
-.wd-title-group { display: flex; align-items: center; gap: 13px; }
-.wd-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--green-dim); border: 1px solid var(--green-border);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 20px rgba(29,185,84,0.15);
-}
-.wd-icon svg { width: 20px; height: 20px; color: var(--green); }
-.wd-header h2 { font-size: 1.1rem; font-weight: 900; letter-spacing: -0.3px; }
-.wd-header p { font-size: 11.5px; color: var(--text-3); font-weight: 500; margin-top: 2px; }
-
-.btn-wd-close {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--bg-4); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; color: var(--text-3); flex-shrink: 0;
-  transition: all 0.18s;
-}
-.btn-wd-close:hover { background: var(--bg-5); color: var(--text); border-color: var(--border-hi); }
-.btn-wd-close svg { width: 14px; height: 14px; }
-
-.wd-body { padding: 0 28px 12px; }
-
-/* Balance preview */
-.wd-balance-row {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--green-dim); border: 1px solid var(--green-border);
-  border-radius: 14px; padding: 16px 20px; margin-bottom: 24px;
-}
-.wd-bal-left { display: flex; align-items: center; gap: 11px; }
-.wd-bal-icon { width: 36px; height: 36px; border-radius: 9px; background: rgba(29,185,84,0.12); display: flex; align-items: center; justify-content: center; }
-.wd-bal-icon svg { width: 16px; height: 16px; color: var(--green); }
-.wd-bal-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(29,185,84,0.7); }
-.wd-bal-amount { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; color: var(--green); }
-
-/* Method selector */
-.wd-method-label { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
-.wd-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-
-.wd-method {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--bg-3); border: 1.5px solid var(--border);
-  border-radius: 14px; padding: 14px 18px; cursor: pointer;
-  transition: all 0.2s; position: relative;
-}
-.wd-method:hover { border-color: var(--border-hi); background: var(--bg-4); }
-.wd-method.selected { border-color: var(--purple-border); background: var(--purple-dim); }
-.wd-method.selected::after {
-  content: ''; position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
-  width: 18px; height: 18px; border-radius: 50%;
-  background: var(--purple); display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 10px rgba(124,58,237,0.4);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: center; background-size: 10px 10px;
-}
-
-.wd-method-icon {
-  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.wd-method-icon svg { width: 20px; height: 20px; }
-.wd-method-icon.bank { background: rgba(56,189,248,0.10); color: var(--cyan); }
-.wd-method-icon.mobile { background: rgba(168,85,247,0.10); color: var(--purple-3); }
-.wd-method-icon.paypal { background: rgba(29,185,84,0.10); color: var(--green); }
-
-.wd-method-info { flex: 1; min-width: 0; }
-.wd-method-name { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 2px; }
-.wd-method-desc { font-size: 11px; color: var(--text-3); font-weight: 500; }
-
-/* Detail fields */
-.wd-fields { display: none; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-.wd-fields.active { display: flex; }
-
-.wd-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.wd-field { display: flex; flex-direction: column; gap: 6px; }
-.wd-field.full { grid-column: span 2; }
-.wd-field label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
-.wd-field input {
-  width: 100%; padding: 11px 14px;
-  background: var(--bg-3); border: 1.5px solid var(--border);
-  border-radius: 10px; color: var(--text); font-size: 13px; font-weight: 600;
-  font-family: var(--font); outline: none; transition: border-color 0.2s;
-}
-.wd-field input::placeholder { color: var(--text-4); font-weight: 500; }
-.wd-field input:focus { border-color: var(--purple-border); background: var(--bg-4); }
-
-/* Submit */
-.btn-wd-submit {
-  width: 100%; padding: 15px; border-radius: 14px;
-  background: linear-gradient(135deg, var(--purple) 0%, #9333ea 100%);
-  color: white; font-size: 14px; font-weight: 800; letter-spacing: 0.3px;
-  transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 9px;
-  box-shadow: 0 4px 24px rgba(124,58,237,0.40);
-  margin-bottom: 28px;
-}
-.btn-wd-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,0.55); filter: brightness(1.08); }
-.btn-wd-submit:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-.btn-wd-submit svg { width: 16px; height: 16px; }
-
-/* ═══════════════════════════════════════
    TOAST
 ═══════════════════════════════════════ */
 .toast {
@@ -635,22 +504,14 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .pct-num { font-size: 2rem; }
   .toast { left: 14px; right: 14px; bottom: 14px; max-width: none; transform: translateY(120%); }
   .toast.show { transform: translateY(0); }
-  .wd-field-row { grid-template-columns: 1fr; }
-  .wd-field.full { grid-column: span 1; }
 }
 </style>
 </head>
 <body>
 
-<!-- BACKGROUND -->
-<div class="bg-image"></div>
-<div class="bg-overlay"></div>
-<div class="bg-vignette"></div>
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
-<div class="bg-grid"></div>
-<div class="bg-grain"></div>
+<!-- Ambient orbs (GPU-only animation, no layout impact) -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
 <!-- NAV -->
 <nav class="topnav">
@@ -801,161 +662,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   </div>
 </div>
 
-<!-- ── WITHDRAWAL MODAL ── -->
-<div class="wd-overlay" id="wdModal">
-  <div class="wd-box">
-    <div class="wd-bar"></div>
-    <div class="wd-header">
-      <div class="wd-title-group">
-        <div class="wd-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M12 5v14m7-7l-7 7-7-7"/>
-          </svg>
-        </div>
-        <div>
-          <h2>Request Withdrawal</h2>
-          <p>Select your payment method</p>
-        </div>
-      </div>
-      <button class="btn-wd-close" id="wdClose">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="wd-body">
-      <!-- Balance row -->
-      <div class="wd-balance-row">
-        <div class="wd-bal-left">
-          <div class="wd-bal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="12" y1="1" x2="12" y2="23"/>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-          </div>
-          <div>
-            <div class="wd-bal-label">Available Balance</div>
-            <div class="wd-bal-amount" id="wdBalAmount">$0.00</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Method selector -->
-      <div class="wd-method-label">Payment Method</div>
-      <div class="wd-methods">
-
-        <div class="wd-method" data-method="bank" onclick="selectMethod('bank')">
-          <div class="wd-method-icon bank">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="3" y1="22" x2="21" y2="22"/>
-              <line x1="6" y1="18" x2="6" y2="11"/>
-              <line x1="10" y1="18" x2="10" y2="11"/>
-              <line x1="14" y1="18" x2="14" y2="11"/>
-              <line x1="18" y1="18" x2="18" y2="11"/>
-              <polygon points="12 2 20 7 4 7"/>
-            </svg>
-          </div>
-          <div class="wd-method-info">
-            <div class="wd-method-name">Bank Transfer</div>
-            <div class="wd-method-desc">Direct deposit to your bank account · 2–5 business days</div>
-          </div>
-        </div>
-
-        <div class="wd-method" data-method="mobile" onclick="selectMethod('mobile')">
-          <div class="wd-method-icon mobile">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <rect x="5" y="2" width="14" height="20" rx="2"/>
-              <line x1="12" y1="18" x2="12.01" y2="18"/>
-            </svg>
-          </div>
-          <div class="wd-method-info">
-            <div class="wd-method-name">Mobile Money</div>
-            <div class="wd-method-desc">MoMo / MTN / Vodafone Cash · Instant to 1 hour</div>
-          </div>
-        </div>
-
-        <div class="wd-method" data-method="paypal" onclick="selectMethod('paypal')">
-          <div class="wd-method-icon paypal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M7 11C7 11 6.5 14 9.5 14C12.5 14 13 11 13 11"/>
-              <path d="M3 6h10c2.5 0 5 1 4.5 4.5S14 14 11 14H8l-1 6H3L5 6z"/>
-              <path d="M8 14l-1 6"/>
-            </svg>
-          </div>
-          <div class="wd-method-info">
-            <div class="wd-method-name">PayPal</div>
-            <div class="wd-method-desc">Send to your PayPal email · Within 24 hours</div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Bank fields -->
-      <div class="wd-fields" id="fields-bank">
-        <div class="wd-field-row">
-          <div class="wd-field">
-            <label>Account Name</label>
-            <input type="text" placeholder="Full name on account" id="bank-name">
-          </div>
-          <div class="wd-field">
-            <label>Bank Name</label>
-            <input type="text" placeholder="e.g. GCB, Ecobank" id="bank-bankname">
-          </div>
-        </div>
-        <div class="wd-field-row">
-          <div class="wd-field">
-            <label>Account Number</label>
-            <input type="text" placeholder="0012345678" id="bank-accnum">
-          </div>
-          <div class="wd-field">
-            <label>Branch / Sort Code</label>
-            <input type="text" placeholder="Optional" id="bank-branch">
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile Money fields -->
-      <div class="wd-fields" id="fields-mobile">
-        <div class="wd-field-row">
-          <div class="wd-field">
-            <label>Full Name</label>
-            <input type="text" placeholder="Registered account name" id="mm-name">
-          </div>
-          <div class="wd-field">
-            <label>Network</label>
-            <input type="text" placeholder="MTN / Vodafone / AirtelTigo" id="mm-network">
-          </div>
-        </div>
-        <div class="wd-field full">
-          <label>Mobile Number</label>
-          <input type="tel" placeholder="+233 XX XXX XXXX" id="mm-number">
-        </div>
-      </div>
-
-      <!-- PayPal fields -->
-      <div class="wd-fields" id="fields-paypal">
-        <div class="wd-field full">
-          <label>PayPal Email</label>
-          <input type="email" placeholder="your@paypal.com" id="pp-email">
-        </div>
-        <div class="wd-field full">
-          <label>Confirm PayPal Email</label>
-          <input type="email" placeholder="Confirm your PayPal email" id="pp-email-confirm">
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <button class="btn-wd-submit" id="btnWdSubmit" disabled onclick="submitWithdrawal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M12 5v14m7-7l-7 7-7-7"/>
-        </svg>
-        Submit Withdrawal Request
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast">
   <svg id="toastIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="color:var(--green)">
@@ -1000,112 +706,74 @@ function showToast(msg, color='var(--green)'){
 
 /* ── MIN BALANCE POPUP ── */
 function openMinPopup(balance){
-  const pct = Math.min((balance/MIN_WITHDRAW)*100,100);
+  const pct = Math.min((balance / MIN_WITHDRAW) * 100, 100);
   document.getElementById('popupCurrentBal').textContent = fmtUSD(balance);
-  document.getElementById('popupPctText').textContent    = pct.toFixed(0)+'% of $'+MIN_WITHDRAW+'.00';
-  document.getElementById('popupProgressFill').style.width = pct+'%';
+  document.getElementById('popupPctText').textContent    = pct.toFixed(0) + '% of $' + MIN_WITHDRAW + '.00';
+  document.getElementById('popupProgressFill').style.width = pct + '%';
   document.getElementById('minPopup').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
 function closeMinPopup(){
   document.getElementById('minPopup').classList.remove('open');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
 document.getElementById('popupClose').onclick = closeMinPopup;
-document.getElementById('minPopup').addEventListener('click',e=>{ if(e.target===e.currentTarget)closeMinPopup(); });
+document.getElementById('minPopup').addEventListener('click', e => { if(e.target === e.currentTarget) closeMinPopup(); });
 
-/* ── WITHDRAWAL MODAL ── */
-let _wdSplitId = null;
-
-function openWdModal(balance, splitId){
-  _wdSplitId = splitId;
-  document.getElementById('wdBalAmount').textContent = fmtUSD(balance);
-  document.getElementById('wdModal').classList.add('open');
-  document.body.style.overflow='hidden';
-  // reset
-  document.querySelectorAll('.wd-method').forEach(m=>m.classList.remove('selected'));
-  document.querySelectorAll('.wd-fields').forEach(f=>f.classList.remove('active'));
-  document.getElementById('btnWdSubmit').disabled=true;
-}
-function closeWdModal(){
-  document.getElementById('wdModal').classList.remove('open');
-  document.body.style.overflow='';
-}
-document.getElementById('wdClose').onclick = closeWdModal;
-document.getElementById('wdModal').addEventListener('click',e=>{ if(e.target===e.currentTarget)closeWdModal(); });
-
-window.selectMethod = function(method){
-  document.querySelectorAll('.wd-method').forEach(m=>m.classList.toggle('selected', m.dataset.method===method));
-  document.querySelectorAll('.wd-fields').forEach(f=>f.classList.remove('active'));
-  document.getElementById('fields-'+method).classList.add('active');
-  document.getElementById('btnWdSubmit').disabled=false;
-};
-
-window.submitWithdrawal = function(){
-  const selected = document.querySelector('.wd-method.selected');
-  if(!selected) return;
-  const method = selected.dataset.method;
-  // Basic validation
-  let ok = true;
-  if(method==='bank'){
-    ok = document.getElementById('bank-name').value.trim() && document.getElementById('bank-accnum').value.trim();
-  } else if(method==='mobile'){
-    ok = document.getElementById('mm-name').value.trim() && document.getElementById('mm-number').value.trim();
-  } else if(method==='paypal'){
-    const e1=document.getElementById('pp-email').value.trim(), e2=document.getElementById('pp-email-confirm').value.trim();
-    ok = e1 && e1===e2;
-    if(e1 && e1!==e2){ showToast('PayPal emails do not match','var(--rose)'); return; }
-  }
-  if(!ok){ showToast('Please fill in all required fields','var(--amber)'); return; }
-  closeWdModal();
-  showToast('Withdrawal request submitted! You\'ll be notified within 24–48 hrs.','var(--green)');
-};
-
-window.handleWithdraw = function(balance, splitId){
-  if(balance < MIN_WITHDRAW){
-    openMinPopup(balance);
+/* ── WITHDRAW HANDLER ── */
+/* If balance >= $20 → redirect to withdrawal.html
+   If balance < $20  → show the "minimum balance" popup */
+window.handleWithdraw = function(balance, splitId) {
+  if (balance >= MIN_WITHDRAW) {
+    // Pass context to withdrawal page via sessionStorage so it knows which split
+    try {
+      sessionStorage.setItem('wd_splitId',  splitId);
+      sessionStorage.setItem('wd_balance',  balance);
+    } catch(e) {}
+    window.location.href = 'withdrawal.html';
   } else {
-    openWdModal(balance, splitId);
+    openMinPopup(balance);
   }
 };
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeMinPopup(); closeWdModal(); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMinPopup();
 });
 
 /* ── RENDER ── */
 function renderSplits(splits, userEmail){
   const norm = userEmail.toLowerCase().trim();
-  if(!splits.length){
-    document.getElementById('skelList').style.display='none';
-    document.getElementById('emptyState').style.display='block';
+  if (!splits.length){
+    document.getElementById('skelList').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
     return;
   }
 
-  let totalPct=0, totalBal=0;
-  splits.forEach(s=>{
-    const me=s.contributors?.find(c=>c.email===norm);
-    if(me){ totalPct+=parseFloat(me.pct)||0; totalBal+=parseFloat(me.balance)||0; }
+  let totalPct = 0, totalBal = 0;
+  splits.forEach(s => {
+    const me = s.contributors?.find(c => c.email === norm);
+    if (me){ totalPct += parseFloat(me.pct) || 0; totalBal += parseFloat(me.balance) || 0; }
   });
 
   document.getElementById('sumSongs').textContent = splits.length;
-  document.getElementById('sumAvg').textContent   = (totalPct/splits.length).toFixed(1)+'%';
+  document.getElementById('sumAvg').textContent   = (totalPct / splits.length).toFixed(1) + '%';
   document.getElementById('sumBal').textContent   = fmtUSD(totalBal);
-  ['summaryStrip','infoBox','secHead'].forEach(id=>document.getElementById(id).style.display='');
-  document.getElementById('secCnt').textContent = splits.length+' track'+(splits.length!==1?'s':'');
+  ['summaryStrip','infoBox','secHead'].forEach(id => document.getElementById(id).style.display = '');
+  document.getElementById('secCnt').textContent = splits.length + ' track' + (splits.length !== 1 ? 's' : '');
 
-  const html = splits.map((s,si)=>{
-    const me = s.contributors?.find(c=>c.email===norm);
-    if(!me) return '';
-    const accent   = clr(si);
-    const bal      = parseFloat(me.balance)||0;
-    const canWd    = bal >= MIN_WITHDRAW;
+  const html = splits.map((s, si) => {
+    const me = s.contributors?.find(c => c.email === norm);
+    if (!me) return '';
+    const accent     = clr(si);
+    const bal        = parseFloat(me.balance) || 0;
+    const canWd      = bal >= MIN_WITHDRAW;
     const lockedDate = s.lockedAt
       ? new Date(s.lockedAt).toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'})
       : '';
     const coverHtml = s.coverURL
-      ? `<img src="${esc(s.coverURL)}" alt="">`
+      ? `<img src="${esc(s.coverURL)}" alt="" loading="lazy">`
       : `<div class="split-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+
     return `
       <div class="split-item">
         <div class="split-inner">
@@ -1113,8 +781,8 @@ function renderSplits(splits, userEmail){
           <div class="split-body">
             <div class="split-cover">${coverHtml}</div>
             <div class="split-meta">
-              <div class="split-song">${esc(s.songTitle||'Untitled')}</div>
-              <div class="split-artist">${esc(s.artistName||'Unknown Artist')}</div>
+              <div class="split-song">${esc(s.songTitle || 'Untitled')}</div>
+              <div class="split-artist">${esc(s.artistName || 'Unknown Artist')}</div>
               <div class="split-tags">
                 <span class="stag role">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1123,8 +791,8 @@ function renderSplits(splits, userEmail){
                   </svg>
                   ${esc(me.role)}
                 </span>
-                ${s.releaseType?`<span class="stag type">${esc(s.releaseType)}</span>`:''}
-                ${s.genre?`<span class="stag genre">${esc(s.genre)}</span>`:''}
+                ${s.releaseType ? `<span class="stag type">${esc(s.releaseType)}</span>` : ''}
+                ${s.genre ? `<span class="stag genre">${esc(s.genre)}</span>` : ''}
               </div>
             </div>
           </div>
@@ -1134,12 +802,11 @@ function renderSplits(splits, userEmail){
               <div class="pct-lbl">Your Split</div>
             </div>
             <div class="bal-block">
-              <div class="bal-num ${bal===0?'zero':'nonzero'}">${bal===0?'—':fmtUSD(bal)}</div>
+              <div class="bal-num ${bal === 0 ? 'zero' : 'nonzero'}">${bal === 0 ? '—' : fmtUSD(bal)}</div>
               <div class="bal-lbl">Balance (USD)</div>
               <button
-                class="btn-withdraw ${canWd?'active':'locked'}"
-                onclick="handleWithdraw(${bal},'${esc(s.id)}')"
-                ${canWd?'':''}>
+                class="btn-withdraw ${canWd ? 'active' : 'locked'}"
+                onclick="handleWithdraw(${bal}, '${esc(s.id)}')">
                 ${canWd
                   ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14m7-7l-7 7-7-7"/></svg> Withdraw`
                   : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Min $${MIN_WITHDRAW}`
@@ -1153,40 +820,44 @@ function renderSplits(splits, userEmail){
             <rect x="3" y="11" width="18" height="11" rx="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          Split locked${lockedDate?' on '+lockedDate:''} &nbsp;·&nbsp; ${s.contributors?.length||1} contributor${(s.contributors?.length||1)!==1?'s':''}
+          Split locked${lockedDate ? ' on ' + lockedDate : ''} &nbsp;·&nbsp; ${s.contributors?.length || 1} contributor${(s.contributors?.length || 1) !== 1 ? 's' : ''}
         </div>
       </div>`;
   }).join('');
 
   const el = document.getElementById('splitItems');
   el.innerHTML = html;
-  document.getElementById('skelList').style.display='none';
-  el.style.display='flex';
-  el.style.flexDirection='column';
-  el.style.gap='14px';
+  document.getElementById('skelList').style.display = 'none';
+  el.style.display = 'flex';
+  el.style.flexDirection = 'column';
+  el.style.gap = '14px';
 }
 
-onAuthStateChanged(auth, async user=>{
-  if(!user){ window.location.href='login.html'; return; }
-  const email = user.email||'';
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+
+  const email = user.email || '';
   document.getElementById('navEmail').textContent  = email;
-  document.getElementById('navAvatar').textContent = initials(user.displayName||email);
-  document.getElementById('btnSignOut').onclick = ()=>signOut(auth).then(()=>window.location.href='login.html');
+  document.getElementById('navAvatar').textContent = initials(user.displayName || email);
+
+  // ── Sign out → home.html ──
+  document.getElementById('btnSignOut').onclick = () =>
+    signOut(auth).then(() => window.location.href = 'home.html');
 
   try {
     const norm = email.toLowerCase().trim();
     const snap = await getDocs(
-      query(collection(db,'splits'), where('contributorEmails','array-contains',norm))
+      query(collection(db, 'splits'), where('contributorEmails', 'array-contains', norm))
     );
-    const splits=[];
-    snap.forEach(ds=>splits.push({id:ds.id,...ds.data()}));
-    splits.sort((a,b)=>new Date(b.lockedAt||0)-new Date(a.lockedAt||0));
+    const splits = [];
+    snap.forEach(ds => splits.push({id: ds.id, ...ds.data()}));
+    splits.sort((a, b) => new Date(b.lockedAt || 0) - new Date(a.lockedAt || 0));
     renderSplits(splits, email);
-  } catch(e){
-    console.error('[Splits error]',e);
-    document.getElementById('skelList').style.display='none';
-    document.getElementById('emptyState').style.display='block';
-    showToast('Could not load your splits — please refresh.','var(--rose)');
+  } catch(e) {
+    console.error('[Splits error]', e);
+    document.getElementById('skelList').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    showToast('Could not load your splits — please refresh.', 'var(--rose)');
   }
 });
 </script>
