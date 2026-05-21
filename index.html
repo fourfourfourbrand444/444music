@@ -6,6 +6,10 @@
   <meta name="google-site-verification" content="4zz_qr5WnTpfYV-vrJJBIMLRIfTBwpXSfUijZs-uZRg" />
   <title>444 Music Distribution</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="black.png">
+  <link rel="shortcut icon" href="black.png">
+
   <link rel="stylesheet" href="style.css">
 
   <!-- PWA Setup -->
@@ -51,16 +55,12 @@
       justify-content: center;
       text-align: center;
       overflow: hidden;
-
-      /* Override any background image set in style.css */
       background-image: none !important;
       background-color: var(--dark) !important;
     }
 
-    /* Also kill any overlay pseudo-element from style.css */
     .overlay { display: none !important; }
 
-    /* Subtle grid lines */
     .hero::after {
       content: '';
       position: absolute;
@@ -71,8 +71,6 @@
       background-size: 48px 48px;
       pointer-events: none;
     }
-
-
 
     .content {
       position: relative;
@@ -99,7 +97,6 @@
       animation: fadeUp 0.9s 0.1s cubic-bezier(.22,1,.36,1) both;
     }
 
-    /* Fallback logo if image missing */
     .logo-fallback {
       width: 90px;
       height: 90px;
@@ -155,10 +152,7 @@
     .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--purple-glow); background: var(--purple-light); }
     .btn:active { transform: translateY(0); }
 
-
-    /* ════════════════════════════════
-       ANDROID — Bottom Install Banner
-       ════════════════════════════════ */
+    /* ── Android Banner ── */
     #androidBanner {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -181,18 +175,10 @@
     }
 
     .banner-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 52px; height: 52px; border-radius: 14px;
       background: linear-gradient(135deg, var(--purple), #4a0fbf);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 16px;
-      overflow: hidden;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; overflow: hidden;
     }
     .banner-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
 
@@ -203,75 +189,42 @@
     .banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
     .btn-install {
-      background: var(--purple);
-      color: #fff;
-      border: none;
-      border-radius: 100px;
-      padding: 9px 18px;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      font-size: 0.85rem;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 2px 12px var(--purple-glow);
-      transition: background 0.18s, transform 0.18s;
+      background: var(--purple); color: #fff; border: none; border-radius: 100px;
+      padding: 9px 18px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 2px 12px var(--purple-glow); transition: background 0.18s, transform 0.18s;
     }
     .btn-install:hover { background: var(--purple-light); transform: scale(1.04); }
 
     .btn-dismiss {
-      background: transparent;
-      color: var(--text-dim);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 9px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: color 0.18s, border-color 0.18s;
+      background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 100px; padding: 9px 14px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; cursor: pointer; transition: color 0.18s, border-color 0.18s;
     }
     .btn-dismiss:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
 
-
-    /* ════════════════════════════════
-       iOS — Bottom Sheet Instructions
-       ════════════════════════════════ */
+    /* ── iOS Sheet ── */
     #iosOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 998;
-      background: rgba(0,0,0,0);
-      pointer-events: none;
-      transition: background 0.35s;
+      position: fixed; inset: 0; z-index: 998;
+      background: rgba(0,0,0,0); pointer-events: none; transition: background 0.35s;
     }
-    #iosOverlay.visible {
-      background: rgba(0,0,0,0.6);
-      pointer-events: all;
-    }
+    #iosOverlay.visible { background: rgba(0,0,0,0.6); pointer-events: all; }
 
     #iosSheet {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 999;
-      padding: 0 12px 12px;
-      transform: translateY(110%);
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+      padding: 0 12px 12px; transform: translateY(110%);
       transition: transform 0.45s cubic-bezier(.22,1,.36,1);
     }
     #iosSheet.visible { transform: translateY(0); }
 
     .sheet-card {
-      background: #16101f;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 -8px 60px rgba(0,0,0,0.7);
+      background: #16101f; border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden; box-shadow: 0 -8px 60px rgba(0,0,0,0.7);
     }
 
     .sheet-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 20px 12px;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 12px; border-bottom: 1px solid var(--border);
     }
 
     .sheet-app-info { display: flex; align-items: center; gap: 12px; }
@@ -287,8 +240,7 @@
     .sheet-app-url  { font-size: 0.75rem; color: var(--text-dim); margin-top: 1px; }
 
     .sheet-close {
-      background: rgba(255,255,255,0.1);
-      border: none; color: #fff; cursor: pointer;
+      background: rgba(255,255,255,0.1); border: none; color: #fff; cursor: pointer;
       width: 30px; height: 30px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 1rem; transition: background 0.18s;
@@ -296,56 +248,31 @@
     .sheet-close:hover { background: rgba(255,255,255,0.2); }
 
     .sheet-body { padding: 20px; }
-
-    .sheet-title {
-      font-family: 'Syne', sans-serif; font-weight: 700;
-      font-size: 1.05rem; margin-bottom: 4px;
-    }
+    .sheet-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
     .sheet-desc { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 20px; line-height: 1.5; }
 
     .steps { display: flex; flex-direction: column; gap: 14px; }
-
     .step {
       display: flex; align-items: flex-start; gap: 14px;
       background: var(--card); border: 1px solid var(--border);
       border-radius: 14px; padding: 14px;
     }
-
     .step-num {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--purple); flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 50%; background: var(--purple); flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem;
     }
-
     .step-content { flex: 1; }
     .step-label { font-weight: 500; font-size: 0.88rem; margin-bottom: 2px; }
     .step-hint  { font-size: 0.77rem; color: var(--text-dim); line-height: 1.4; }
+    .step-icon  { margin-left: auto; flex-shrink: 0; font-size: 1.3rem; display: flex; align-items: center; }
 
-    .step-icon {
-      margin-left: auto; flex-shrink: 0;
-      font-size: 1.3rem; display: flex; align-items: center;
-    }
-
-    /* iOS Trigger button (shows only on iOS before sheet is dismissed permanently) */
     #iosTrigger {
-      position: fixed;
-      bottom: 24px; right: 20px;
-      z-index: 99;
-      background: var(--purple);
-      color: #fff;
-      border: none;
-      border-radius: 100px;
-      padding: 12px 20px;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 24px var(--purple-glow);
-      animation: pulse 2.5s ease-in-out infinite;
+      position: fixed; bottom: 24px; right: 20px; z-index: 99;
+      background: var(--purple); color: #fff; border: none; border-radius: 100px;
+      padding: 12px 20px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.85rem; cursor: pointer; display: none; align-items: center; gap: 8px;
+      box-shadow: 0 4px 24px var(--purple-glow); animation: pulse 2.5s ease-in-out infinite;
     }
 
     @keyframes pulse {
@@ -357,10 +284,9 @@
 
 <body>
 
-  <!-- ── Hero ── -->
   <div class="hero">
     <div class="content">
-      <img src="logo.png" alt="444 Music Logo" class="logo"
+      <img src="black.png" alt="444 Music Logo" class="logo"
            onerror="this.outerHTML='<div class=\'logo-fallback\'>444</div>'">
 
       <h1>444 Music<br><span>Distribution</span></h1>
@@ -371,13 +297,11 @@
     </div>
   </div>
 
-
-  <!-- ── Android Install Banner ── -->
+  <!-- Android Install Banner -->
   <div id="androidBanner" role="banner" aria-label="Install app">
     <div class="banner-card">
       <div class="banner-icon">
-        <img src="icon-192.png" alt="444 Music"
-             onerror="this.outerHTML='444'">
+        <img src="black.png" alt="444 Music" onerror="this.outerHTML='444'">
       </div>
       <div class="banner-text">
         <div class="banner-title">Add to Home Screen</div>
@@ -390,23 +314,20 @@
     </div>
   </div>
 
+  <!-- iOS Backdrop -->
+  <div id="iosOverlay" role="dialog" aria-modal="true" aria-label="Add to Home Screen instructions"></div>
 
-  <!-- ── iOS Backdrop ── -->
-  <div id="iosOverlay" role="dialog" aria-modal="true" aria-label="Add to Home Screen instructions">
-  </div>
-
-  <!-- ── iOS Bottom Sheet ── -->
+  <!-- iOS Bottom Sheet -->
   <div id="iosSheet">
     <div class="sheet-card">
       <div class="sheet-header">
         <div class="sheet-app-info">
           <div class="sheet-app-icon">
-            <img src="icon-192.png" alt=""
-                 onerror="this.outerHTML='444'">
+            <img src="black.png" alt="" onerror="this.outerHTML='444'">
           </div>
           <div>
             <div class="sheet-app-name">444 Music</div>
-            <div class="sheet-app-url">444music.app</div>
+            <div class="sheet-app-url">444music-distribution.vercel.app</div>
           </div>
         </div>
         <button class="sheet-close" id="iosClose" aria-label="Close">✕</button>
@@ -415,7 +336,6 @@
       <div class="sheet-body">
         <div class="sheet-title">Add to Home Screen</div>
         <div class="sheet-desc">Install this app on your iPhone for the full experience — works offline too.</div>
-
         <div class="steps">
           <div class="step">
             <div class="step-num">1</div>
@@ -425,7 +345,6 @@
             </div>
             <div class="step-icon">⬆️</div>
           </div>
-
           <div class="step">
             <div class="step-num">2</div>
             <div class="step-content">
@@ -434,7 +353,6 @@
             </div>
             <div class="step-icon">➕</div>
           </div>
-
           <div class="step">
             <div class="step-num">3</div>
             <div class="step-content">
@@ -448,15 +366,12 @@
     </div>
   </div>
 
-  <!-- iOS floating re-trigger button -->
   <button id="iosTrigger" aria-label="How to install">
     📲 Add to Home Screen
   </button>
 
-
   <script>
   (() => {
-    // ── Helpers ──────────────────────────────────────
     const isIOS = () =>
       /iphone|ipad|ipod/i.test(navigator.userAgent) &&
       !/crios|fxios|opios|mercury/i.test(navigator.userAgent);
@@ -468,19 +383,14 @@
     const DISMISSED_KEY = '444music_install_dismissed';
     const IOS_DISMISSED  = '444music_ios_dismissed';
 
-    // ── Android / Chrome install prompt ──────────────
     let deferredPrompt = null;
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-
-      // Don't show if user dismissed within 7 days
       const dismissed = localStorage.getItem(DISMISSED_KEY);
       if (dismissed && Date.now() - parseInt(dismissed) < 7 * 86400_000) return;
       if (isStandalone()) return;
-
-      // Delay slightly so hero loads first
       setTimeout(() => {
         document.getElementById('androidBanner').classList.add('visible');
       }, 1800);
@@ -500,8 +410,6 @@
       localStorage.setItem(DISMISSED_KEY, Date.now());
     });
 
-
-    // ── iOS Sheet ─────────────────────────────────────
     function showIOSSheet() {
       document.getElementById('iosOverlay').classList.add('visible');
       document.getElementById('iosSheet').classList.add('visible');
@@ -516,41 +424,27 @@
       const iosDismissed = localStorage.getItem(IOS_DISMISSED);
       const trigger = document.getElementById('iosTrigger');
       trigger.style.display = 'flex';
-
-      // Auto-show once if never dismissed
-      if (!iosDismissed) {
-        setTimeout(showIOSSheet, 1800);
-      }
-
-      // Floating button to re-open
+      if (!iosDismissed) { setTimeout(showIOSSheet, 1800); }
       trigger.addEventListener('click', showIOSSheet);
-
-      // Close sheet
       document.getElementById('iosClose').addEventListener('click', () => {
         hideIOSSheet();
         localStorage.setItem(IOS_DISMISSED, '1');
       });
-
-      // Tap backdrop to close
       document.getElementById('iosOverlay').addEventListener('click', () => {
         hideIOSSheet();
         localStorage.setItem(IOS_DISMISSED, '1');
       });
     }
 
-
-    // ── Service Worker ────────────────────────────────
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').catch(() => {});
     }
 
-    // ── App installed event ───────────────────────────
     window.addEventListener('appinstalled', () => {
       document.getElementById('androidBanner').classList.remove('visible');
       document.getElementById('iosTrigger').style.display = 'none';
       localStorage.setItem(DISMISSED_KEY, Date.now());
     });
-
   })();
   </script>
 
