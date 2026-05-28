@@ -410,7 +410,6 @@ const { useState, useRef, useCallback } = React;
 
 const SUPABASE_URL = 'https://uaylyvdheqaxvsidkaxu.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_6RTU8FDXWed6qs0Oh-F0GA_6Tb3U4RL';
-const RESEND_API_KEY = 're_4DFQE3T3_JQjKywno8EAQD3CnRMahAZRp';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let idCounter = 0;
@@ -592,40 +591,21 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
     return errs;
   };
 
-  const sendEmailNotification = async (fileUrl, coverUrl) => {
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'onboarding@resend.dev',
-          to: '444musicdistro@gmail.com',
-          subject: `New Upload: ${track.releaseTitle} — ${track.artistName}`,
-          html: `
-            <div style="font-family:sans-serif;max-width:520px;margin:0 auto;background:#0d0d0d;color:#f0f0f0;border-radius:10px;overflow:hidden;">
-              <div style="background:#6d28d9;padding:20px 24px;">
-                <h2 style="margin:0;font-size:16px;font-weight:700;letter-spacing:0.04em;color:white;">444 MUSICDISTRO — NEW UPLOAD</h2>
-              </div>
-              <div style="padding:24px;">
-                ${coverUrl ? `<img src="${coverUrl}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin-bottom:18px;display:block;" />` : ''}
-                <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                  <tr><td style="padding:8px 0;color:#666;width:120px;">Artist</td><td style="padding:8px 0;font-weight:600;">${track.artistName}</td></tr>
-                  <tr><td style="padding:8px 0;color:#666;">Release Title</td><td style="padding:8px 0;font-weight:600;">${track.releaseTitle}</td></tr>
-                  <tr><td style="padding:8px 0;color:#666;">Featuring</td><td style="padding:8px 0;">${track.featuringArtist || '—'}</td></tr>
-                </table>
-                <a href="${fileUrl}" style="display:inline-block;margin-top:18px;background:#6d28d9;color:white;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;">Download MP3</a>
-              </div>
-            </div>
-          `
-        })
-      });
-    } catch (e) {
-      console.warn('Email notification failed:', e);
-    }
-  };
+ const sendEmailNotification = async (fileUrl, coverUrl) => {
+  try {
+    await supabase.functions.invoke("send-email", {
+      body: {
+        artistName: track.artistName,
+        releaseTitle: track.releaseTitle,
+        featuringArtist: track.featuringArtist,
+        fileUrl,
+        coverUrl,
+      },
+    });
+  } catch (e) {
+    console.warn('Email notification failed:', e);
+  }
+};
 
   const handleUpload = async () => {
     const errs = validate();
@@ -683,7 +663,7 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
       await sendEmailNotification(fileUrl, coverUrl);
 
       onUpdate(track.id, { progress: 100, status: 'success' });
-      setTimeout(() => { window.location.href = 'average.html'; }, 1500);
+      setTimeout(() => { window.location.href = 'averagee.html'; }, 1500);
 
     } catch (err) {
       onUpdate(track.id, { status: 'error', errorMsg: err.message || 'Upload failed. Please try again.', progress: 0 });
