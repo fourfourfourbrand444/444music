@@ -597,13 +597,15 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
       const res = await fetch("https://formspree.io/f/mojbrkgn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          artistName: track.artistName,
-          releaseTitle: track.releaseTitle,
-          featuringArtist: track.featuringArtist || "None",
-          fileUrl: fileUrl,
-          coverUrl: coverUrl || "No cover uploaded",
-        }),
+       body: JSON.stringify({
+  _subject: `New Upload: ${track.releaseTitle} by ${track.artistName}`,
+  _replyto: "noreply@444music.com",  // ← add this
+  "Artist Name": track.artistName,
+  "Release Title": track.releaseTitle,
+  "Featuring Artist": track.featuringArtist || "None",
+  "Download Link": fileUrl,
+  "Cover Art Link": coverUrl || "No cover uploaded",
+}),
       });
       if (!res.ok) {
         const text = await res.text();
