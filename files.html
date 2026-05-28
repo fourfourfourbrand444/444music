@@ -591,21 +591,28 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
     return errs;
   };
 
- const sendEmailNotification = async (fileUrl, coverUrl) => {
-  try {
-    await supabase.functions.invoke("send-email", {
-      body: {
-        artistName: track.artistName,
-        releaseTitle: track.releaseTitle,
-        featuringArtist: track.featuringArtist,
-        fileUrl,
-        coverUrl,
-      },
-    });
-  } catch (e) {
-    console.warn('Email notification failed:', e);
-  }
-};
+  // ✅ UPDATED: Formspree email notification (no backend needed)
+  const sendEmailNotification = async (fileUrl, coverUrl) => {
+    try {
+      const res = await fetch("https://formspree.io/f/mojbrkgn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          artistName: track.artistName,
+          releaseTitle: track.releaseTitle,
+          featuringArtist: track.featuringArtist || "None",
+          fileUrl: fileUrl,
+          coverUrl: coverUrl || "No cover uploaded",
+        }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Formspree error:", text);
+      }
+    } catch (e) {
+      console.warn("Email notification failed:", e);
+    }
+  };
 
   const handleUpload = async () => {
     const errs = validate();
@@ -616,7 +623,6 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
       const mp3Ext = track.mp3File.name.split('.').pop();
       const mp3Path = `tracks/${Date.now()}_${Math.random().toString(36).slice(2)}.${mp3Ext}`;
 
-      // Faster progress simulation
       let simulatedProgress = 0;
       const progressInterval = setInterval(() => {
         simulatedProgress = Math.min(simulatedProgress + Math.random() * 18 + 5, 82);
