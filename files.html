@@ -3,406 +3,724 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>444Music — Distribution Upload</title>
+<title>444Music — Upload Your Music</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #030303;
-    --surface: #080808;
-    --card: #0d0d0d;
-    --border: #161616;
-    --border-mid: #202020;
-    --accent: #6d28d9;
-    --accent-hover: #7c3aed;
-    --accent-dim: rgba(109,40,217,0.12);
-    --text: #f0f0f0;
-    --text-muted: #555;
-    --text-sub: #333;
-    --success: #22c55e;
-    --error: #ef4444;
-    --radius: 10px;
-  }
+:root {
+  --bg-base:        #080810;
+  --bg-surface:     #0e0e18;
+  --bg-card:        #111120;
+  --bg-input:       #171725;
+  --bg-input-focus: #1c1c2c;
+  --border:         rgba(160,100,255,0.1);
+  --border-focus:   rgba(160,100,255,0.45);
+  --border-accent:  rgba(160,100,255,0.2);
+  --accent:         #b06ef3;
+  --accent-light:   #c48ff7;
+  --accent-bright:  #d8b4fe;
+  --accent-dim:     rgba(160,100,255,0.08);
+  --accent-glow:    0 0 24px rgba(160,100,255,0.15);
+  --text-primary:   #e8e8e8;
+  --text-secondary: #888888;
+  --text-muted:     #444444;
+  --success:        #4ade80;
+  --danger:         #f87171;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --font-display: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
+}
 
-  html { scroll-behavior: smooth; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
 
-  #root { position: relative; }
+/* ─── ANIMATED BACKGROUND ─── */
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-  /* HEADER */
-  .header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 1.5rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+/* Slow panning gradient mesh */
+.bg-mesh {
+  position: absolute;
+  inset: -40%;
+  width: 180%;
+  height: 180%;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(112,40,220,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(160,80,255,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 55% 15%, rgba(80,20,180,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 40% at 10% 80%, rgba(100,30,200,0.12) 0%, transparent 60%);
+  animation: meshDrift 22s ease-in-out infinite alternate;
+}
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text);
-  }
+@keyframes meshDrift {
+  0%   { transform: translate(0%,    0%)    scale(1);    }
+  25%  { transform: translate(3%,   -2.5%)  scale(1.03); }
+  50%  { transform: translate(-2%,   4%)    scale(1.05); }
+  75%  { transform: translate(4%,    2%)    scale(1.02); }
+  100% { transform: translate(-3%,  -3%)    scale(1.04); }
+}
 
-  .logo-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: white;
-    letter-spacing: 0.02em;
-    flex-shrink: 0;
-  }
+/* Sliding light beam */
+.bg-beam {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 55%;
+  height: 140%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(160,100,255,0.04) 40%,
+    rgba(190,130,255,0.07) 50%,
+    rgba(160,100,255,0.04) 60%,
+    transparent 100%
+  );
+  transform: skewX(-15deg);
+  animation: beamSlide 10s ease-in-out infinite;
+}
 
-  .header-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem;
-    color: var(--text-muted);
-    border: 1px solid var(--border-mid);
-    padding: 3px 9px;
-    border-radius: 4px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+@keyframes beamSlide {
+  0%   { left: -50%; opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { left: 120%; opacity: 0.8; }
+  51%  { opacity: 0; left: 120%; }
+  100% { left: -50%; opacity: 0; }
+}
 
-  /* MAIN */
-  .main {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 2.5rem 1.25rem 5rem;
-  }
+/* Grid overlay */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 100%);
+  animation: gridPulse 8s ease-in-out infinite alternate;
+}
 
-  .page-title {
-    font-size: clamp(1.35rem, 5vw, 1.9rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.35rem;
-    line-height: 1.15;
-    color: var(--text);
-  }
+@keyframes gridPulse {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
 
-  .page-subtitle {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 2rem;
-    letter-spacing: 0.02em;
-  }
+/* Floating orbs */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0;
+  animation: orbFloat 0s ease-in-out infinite alternate;
+}
+.bg-orb-1 {
+  width: 320px; height: 320px;
+  background: rgba(120,50,230,0.12);
+  top: 10%; left: 5%;
+  animation-duration: 18s;
+  animation-delay: 0s;
+  animation-name: orbFloat1;
+}
+.bg-orb-2 {
+  width: 240px; height: 240px;
+  background: rgba(160,90,255,0.10);
+  bottom: 15%; right: 8%;
+  animation-duration: 22s;
+  animation-delay: -5s;
+  animation-name: orbFloat2;
+}
+.bg-orb-3 {
+  width: 180px; height: 180px;
+  background: rgba(80,20,200,0.14);
+  top: 55%; left: 45%;
+  animation-duration: 15s;
+  animation-delay: -9s;
+  animation-name: orbFloat3;
+}
 
-  /* COVER SECTION */
-  .global-cover-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-  }
+@keyframes orbFloat1 {
+  0%   { opacity: 0.5; transform: translate(0,0) scale(1); }
+  50%  { opacity: 0.8; transform: translate(30px,-40px) scale(1.1); }
+  100% { opacity: 0.5; transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes orbFloat2 {
+  0%   { opacity: 0.4; transform: translate(0,0) scale(1); }
+  50%  { opacity: 0.7; transform: translate(-40px,30px) scale(1.12); }
+  100% { opacity: 0.4; transform: translate(20px,-20px) scale(0.9); }
+}
+@keyframes orbFloat3 {
+  0%   { opacity: 0.3; transform: translate(0,0); }
+  50%  { opacity: 0.6; transform: translate(20px,30px) scale(1.08); }
+  100% { opacity: 0.3; transform: translate(-30px,-10px) scale(1); }
+}
 
-  @media (max-width: 440px) {
-    .global-cover-section { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  }
+/* ─── LAYOUT ─── */
+#root { position: relative; z-index: 1; }
 
-  .global-cover-img-wrap {
-    position: relative;
-    width: 90px;
-    height: 90px;
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid var(--border-mid);
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-  .global-cover-img-wrap:hover { border-color: var(--accent); }
+.wrapper {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 0 80px;
+  animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
 
-  .cover-placeholder {
-    width: 100%; height: 100%;
-    background: #111;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-  }
-  .cover-placeholder-text {
-    font-size: 0.5rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #333;
-  }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+@keyframes spin   { to { transform:rotate(360deg); } }
 
-  .cover-overlay {
-    position: absolute; inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 3px;
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .global-cover-img-wrap:hover .cover-overlay { opacity: 1; }
-  .cover-overlay-text { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.08em; color: white; text-transform: uppercase; }
+/* ─── HEADER ─── */
+.header {
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.75rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(8,8,16,0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 40px;
+}
 
-  .global-cover-info { flex: 1; min-width: 0; }
-  .global-cover-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 3px; color: var(--text); }
-  .global-cover-sub { font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); margin-bottom: 10px; line-height: 1.6; }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
 
-  .global-cover-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: transparent;
-    border: 1px solid var(--border-mid);
-    color: var(--text);
-    border-radius: 6px;
-    padding: 0.42rem 0.9rem;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.75rem; font-weight: 500;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .global-cover-btn:hover { border-color: var(--accent); color: #a78bfa; }
+.logo-mark {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 800; color: white;
+  letter-spacing: 0.02em; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+}
 
-  .cover-set-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 0.65rem; font-family: 'JetBrains Mono', monospace;
-    color: var(--success); margin-top: 7px;
-  }
+.header-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(160,100,255,0.06);
+  border: 1px solid var(--border-accent);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-family: var(--font-display);
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent-light);
+}
 
-  /* TRACK CARD */
-  .track-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    margin-bottom: 0.75rem;
-    transition: border-color 0.2s;
-  }
-  .track-card:focus-within { border-color: var(--border-mid); }
+/* ─── PAGE TITLE AREA ─── */
+.page-header {
+  padding: 0 1.75rem;
+  margin-bottom: 32px;
+  animation: fadeUp 0.5s 0.05s cubic-bezier(0.22,1,0.36,1) both;
+}
 
-  .card-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.1rem;
-  }
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
 
-  .track-number {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
+.page-title span {
+  background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-  .remove-btn {
-    background: none; border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 26px; height: 26px; border-radius: 5px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .remove-btn:hover { border-color: var(--error); color: var(--error); background: rgba(239,68,68,0.07); }
+.page-sub {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
 
-  /* FORM GRID */
-  .card-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.85rem;
-  }
-  @media (max-width: 500px) { .card-body { grid-template-columns: 1fr; } }
+.page-sub-dot {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
 
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field.full { grid-column: 1 / -1; }
+/* ─── MAIN CONTENT ─── */
+.main { padding: 0 1.75rem; }
 
-  label {
-    font-size: 0.67rem; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  label span.req { color: var(--accent-hover); margin-left: 2px; }
-  label span.opt { color: var(--text-sub); font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 4px; font-size: 0.63rem; }
+/* ─── CARD ─── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: clamp(20px,4vw,40px);
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 40px 100px rgba(0,0,0,0.35);
+  margin-bottom: 16px;
+  animation: fadeUp 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+  transition: border-color var(--t);
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent-light) 60%, transparent 100%);
+}
+.card:focus-within { border-color: var(--border-accent); }
 
-  input[type="text"] {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 0.6rem 0.8rem;
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none; width: 100%;
-  }
-  input[type="text"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(109,40,217,0.1);
-  }
-  input[type="text"]::placeholder { color: var(--text-sub); }
+/* ─── SECTION HEADER ─── */
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
 
-  /* FILE ZONE */
-  .file-zone {
-    border: 1px dashed var(--border-mid);
-    border-radius: 8px;
-    padding: 1.1rem;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 6px; cursor: pointer;
-    transition: all 0.2s; text-align: center;
-    min-height: 100px; background: var(--surface);
-  }
-  .file-zone:hover, .file-zone.drag-over {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
-  .file-zone-text { font-size: 0.77rem; font-weight: 500; color: var(--text-muted); }
-  .file-zone-sub { font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: var(--text-sub); }
+.section-icon {
+  width: 34px; height: 34px;
+  border-radius: var(--radius-sm);
+  background: rgba(160,100,255,0.06);
+  border: 1px solid var(--border-accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
 
-  .file-selected { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-  .file-name { font-size: 0.78rem; font-weight: 600; color: var(--text); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .file-size { font-size: 0.63rem; font-family: 'JetBrains Mono', monospace; color: #a78bfa; }
+.section-title {
+  font-family: var(--font-display);
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-primary);
+}
 
-  .field-error {
-    font-size: 0.65rem; color: var(--error);
-    font-family: 'JetBrains Mono', monospace;
-    display: flex; align-items: center; gap: 4px;
-  }
+.section-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
 
-  /* PROGRESS */
-  .progress-wrap { grid-column: 1 / -1; margin-top: 0.25rem; }
-  .progress-label {
-    display: flex; justify-content: space-between;
-    font-size: 0.65rem; font-family: 'JetBrains Mono', monospace;
-    color: var(--text-muted); margin-bottom: 5px;
-  }
-  .progress-track { height: 3px; background: var(--border); border-radius: 999px; overflow: hidden; }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 999px;
-    transition: width 0.15s ease;
-  }
+/* ─── COVER ART ─── */
+.cover-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-  /* BUTTONS */
-  .upload-btn {
-    grid-column: 1 / -1;
-    margin-top: 0.25rem;
-    background: var(--accent);
-    color: white; border: none;
-    border-radius: 8px;
-    padding: 0.7rem 1.25rem;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.82rem; font-weight: 600;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    width: 100%;
-  }
-  .upload-btn:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
-  .upload-btn:active:not(:disabled) { transform: translateY(0); }
-  .upload-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+@media (max-width: 440px) {
+  .cover-row { flex-direction: column; align-items: flex-start; }
+}
 
-  /* BANNERS */
-  .success-banner {
-    grid-column: 1 / -1;
-    background: rgba(34,197,94,0.06);
-    border: 1px solid rgba(34,197,94,0.2);
-    border-radius: 8px;
-    padding: 0.85rem 1rem;
-    display: flex; align-items: center; gap: 10px;
-    margin-top: 0.25rem;
-  }
-  .success-text { font-size: 0.8rem; font-weight: 600; color: var(--success); }
-  .success-sub { font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: rgba(34,197,94,0.5); margin-top: 2px; }
+.cover-thumb {
+  position: relative;
+  width: 100px; height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--border-accent);
+  cursor: pointer;
+  transition: border-color var(--t), box-shadow var(--t);
+  background: var(--bg-input);
+}
+.cover-thumb:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(160,100,255,0.2);
+}
+.cover-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.cover-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px;
+}
+.cover-placeholder svg { color: #333; }
+.cover-placeholder-text {
+  font-family: var(--font-display);
+  font-size: 0.52rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #333;
+}
+.cover-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.72);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  opacity: 0; transition: opacity var(--t);
+}
+.cover-thumb:hover .cover-overlay { opacity: 1; }
+.cover-overlay-text {
+  font-family: var(--font-display);
+  font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: white;
+}
 
-  .error-banner {
-    grid-column: 1 / -1;
-    background: rgba(239,68,68,0.06);
-    border: 1px solid rgba(239,68,68,0.18);
-    border-radius: 8px;
-    padding: 0.7rem 0.9rem;
-    font-size: 0.75rem; color: var(--error);
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: 0.25rem;
-    display: flex; align-items: flex-start; gap: 7px;
-  }
+.cover-info { flex: 1; min-width: 0; }
+.cover-info-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 4px;
+}
+.cover-info-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.6; margin-bottom: 12px;
+  font-family: var(--font-body);
+}
 
-  /* ADD TRACK */
-  .add-track-btn {
-    width: 100%; background: transparent;
-    border: 1px dashed var(--border-mid);
-    color: var(--text-muted);
-    border-radius: var(--radius);
-    padding: 0.9rem;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    margin-top: 0.25rem;
-  }
-  .add-track-btn:hover { border-color: var(--accent); color: #a78bfa; background: var(--accent-dim); }
+.cover-upload-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: transparent;
+  border: 1px solid var(--border-accent);
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: all var(--t);
+}
+.cover-upload-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-bright);
+  background: rgba(160,100,255,0.06);
+}
 
-  /* FOOTER */
-  .footer-note {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
-    color: var(--text-sub);
-    font-size: 0.65rem;
-    font-family: 'JetBrains Mono', monospace;
-  }
+.cover-set-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.65rem; font-family: var(--font-display);
+  font-weight: 600; letter-spacing: 0.06em;
+  color: var(--success); margin-top: 8px;
+}
 
-  /* SPINNER */
-  .spinner {
-    width: 14px; height: 14px;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ─── TRACK NUMBER BADGE ─── */
+.track-badge {
+  font-family: var(--font-display);
+  font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(160,100,255,0.08);
+  border: 1px solid rgba(160,100,255,0.18);
+  border-radius: 999px;
+  padding: 3px 12px;
+  display: inline-flex; align-items: center;
+}
 
-  input[type="file"] { display: none; }
+.card-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
 
-  /* MOBILE TWEAKS */
-  @media (max-width: 380px) {
-    .main { padding: 1.5rem 1rem 4rem; }
-    .header { padding: 0 1rem; }
-    .track-card, .global-cover-section { padding: 1rem; }
-  }
+.remove-btn {
+  background: rgba(248,113,113,0.05);
+  border: 1px solid rgba(248,113,113,0.15);
+  color: rgba(248,113,113,0.45);
+  width: 30px; height: 30px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--t);
+}
+.remove-btn:hover {
+  background: rgba(248,113,113,0.12);
+  border-color: rgba(248,113,113,0.35);
+  color: var(--danger);
+  transform: scale(1.08);
+}
+
+/* ─── FORM GRID ─── */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.col-full { grid-column: 1 / -1; }
+@media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+
+/* ─── FIELD ─── */
+.field { display: flex; flex-direction: column; gap: 7px; }
+
+.field label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display);
+  font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.req-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.opt-tag {
+  font-weight: 400; text-transform: none; letter-spacing: 0;
+  font-size: 0.62rem; color: var(--text-muted);
+}
+
+.field input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.9rem;
+  padding: 12px 15px; outline: none; width: 100%;
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+}
+.field input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
+.field input:hover { border-color: var(--border-accent); background: var(--bg-input-focus); }
+.field input:focus { border-color: var(--accent); background: var(--bg-input-focus); box-shadow: 0 0 0 3px rgba(160,100,255,0.1); }
+.field input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.field-error {
+  font-family: var(--font-display);
+  font-size: 0.65rem; font-weight: 600;
+  color: var(--danger);
+  display: flex; align-items: center; gap: 5px;
+  letter-spacing: 0.04em;
+}
+
+/* ─── FILE ZONE ─── */
+.file-zone {
+  border: 1px dashed rgba(160,100,255,0.2);
+  border-radius: var(--radius-md);
+  padding: 28px 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; cursor: pointer;
+  transition: all var(--t); text-align: center;
+  min-height: 120px; background: var(--bg-surface);
+  position: relative; overflow: hidden;
+}
+.file-zone::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(160,100,255,0.04) 0%, transparent 70%);
+  opacity: 0; transition: opacity var(--t);
+}
+.file-zone:hover, .file-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(160,100,255,0.05);
+}
+.file-zone:hover::before, .file-zone.drag-over::before { opacity: 1; }
+
+.file-zone-icon { color: #444; transition: color var(--t); }
+.file-zone:hover .file-zone-icon { color: var(--accent-light); }
+
+.file-zone-text {
+  font-family: var(--font-display);
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.file-zone-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.file-selected { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.file-name {
+  font-family: var(--font-display);
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--text-primary);
+  max-width: 240px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.file-size {
+  font-size: 0.65rem; color: var(--accent-light);
+  font-family: var(--font-body);
+  letter-spacing: 0.06em;
+}
+
+/* ─── PROGRESS ─── */
+.progress-wrap { margin-top: 4px; }
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 0.65rem; font-weight: 600;
+  color: var(--text-muted); margin-bottom: 7px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.progress-track {
+  height: 3px;
+  background: rgba(160,100,255,0.1);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #9b5de5, #b06ef3);
+  border-radius: 999px;
+  transition: width 0.15s ease;
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+  animation: shimmer 1s ease infinite;
+}
+@keyframes shimmer { 0%,100%{opacity:0;} 50%{opacity:1;} }
+
+/* ─── BANNERS ─── */
+.success-banner {
+  grid-column: 1 / -1;
+  background: rgba(74,222,128,0.05);
+  border: 1px solid rgba(74,222,128,0.18);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.success-text {
+  font-family: var(--font-display);
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--success); letter-spacing: 0.03em;
+}
+.success-sub {
+  font-size: 0.67rem; color: rgba(74,222,128,0.5);
+  margin-top: 2px; font-family: var(--font-body);
+}
+
+.error-banner {
+  grid-column: 1 / -1;
+  background: rgba(248,113,113,0.05);
+  border: 1px solid rgba(248,113,113,0.18);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 0.78rem; color: var(--danger);
+  font-family: var(--font-body); line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+
+/* ─── UPLOAD BUTTON ─── */
+.upload-btn {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 50%, #6d28d9 100%);
+  color: white; border: none;
+  border-radius: var(--radius-md);
+  padding: 14px 24px;
+  font-family: var(--font-display);
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--t), box-shadow var(--t), filter var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(124,58,237,0.35);
+  position: relative; overflow: hidden;
+}
+.upload-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  opacity: 0; transition: opacity var(--t);
+}
+.upload-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+  filter: brightness(1.08);
+}
+.upload-btn:hover:not(:disabled)::before { opacity: 1; }
+.upload-btn:active:not(:disabled) { transform: translateY(0); }
+.upload-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ─── ADD TRACK BUTTON ─── */
+.add-track-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed rgba(160,100,255,0.2);
+  color: var(--text-muted);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: all var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 16px;
+}
+.add-track-btn:hover {
+  border-color: rgba(160,100,255,0.4);
+  color: var(--accent-bright);
+  background: rgba(160,100,255,0.05);
+}
+
+/* ─── FOOTER NOTE ─── */
+.footer-note {
+  display: flex; align-items: center; justify-content: center; gap: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.footer-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.68rem; color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.footer-item svg { color: var(--accent); opacity: 0.6; }
+
+/* ─── SPINNER ─── */
+.spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+input[type="file"] { display: none; }
+
+@media (max-width: 380px) {
+  .wrapper { padding-bottom: 60px; }
+  .main, .page-header { padding-left: 1rem; padding-right: 1rem; }
+  .header { padding: 0 1rem; }
+}
 </style>
 </head>
 <body>
+
+<!-- BACKGROUND SCENE -->
+<div class="bg-scene">
+  <div class="bg-mesh"></div>
+  <div class="bg-beam"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+
 <div id="root"></div>
 
 <script type="text/babel">
@@ -424,99 +742,132 @@ const createTrack = () => ({
   mp3File: null, progress: 0, status: 'idle', errorMsg: '', errors: {},
 });
 
-// Icons
-const IconImage = ({size=16,color='currentColor'}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+/* ── ICONS ── */
+const Ico = ({ d, size=16, color='currentColor', fill='none', sw=2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color}
+    strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+    {typeof d === 'string' ? <path d={d}/> : d}
+  </svg>
+);
+
+const IcoMusic = ({size=22,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+  </svg>
+);
+const IcoImage = ({size=14,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
     <polyline points="21 15 16 10 5 21"/>
   </svg>
 );
-const IconMusic = ({size=22,color='currentColor'}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-  </svg>
-);
-const IconHeadphones = ({size=20,color='currentColor'}) => (
+const IcoHeadphones = ({size=22,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
     <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/>
     <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
   </svg>
 );
-const IconCheck = ({size=15,color='currentColor'}) => (
+const IcoCheck = ({size=16,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
-const IconAlert = ({size=13,color='currentColor'}) => (
+const IcoAlert = ({size=13,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
   </svg>
 );
-const IconPlus = ({size=15,color='currentColor'}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round">
+const IcoPlus = ({size=14,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
   </svg>
 );
-const IconX = ({size=13,color='currentColor'}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round">
+const IcoX = ({size=12,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 );
-const IconArrowUp = ({size=15,color='currentColor'}) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+const IcoUpload = ({size=22,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
   </svg>
 );
-const IconEdit = ({size=13,color='currentColor'}) => (
+const IcoArrowRight = ({size=16,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+  </svg>
+);
+const IcoEdit = ({size=13,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
   </svg>
 );
-const IconShield = ({size=13,color='currentColor'}) => (
+const IcoShield = ({size=12,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
   </svg>
 );
-const IconUpload = ({size=13,color='currentColor'}) => (
+const IcoLock = ({size=12,color='currentColor'}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-    <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+const IcoGlobe = ({size=12,color='currentColor'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
   </svg>
 );
 
-// Global Cover
+/* ── GLOBAL COVER ART ── */
 function GlobalCoverArt({ coverPreview, onCoverSelect }) {
   const inputRef = useRef();
   return (
-    <div className="global-cover-section">
-      <div className="global-cover-img-wrap" onClick={() => inputRef.current.click()}>
-        {coverPreview ? (
-          <img src={coverPreview} alt="Cover" style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
-        ) : (
-          <div className="cover-placeholder">
-            <IconMusic size={22} color="#2a2a2a" />
-            <div className="cover-placeholder-text">Cover</div>
-          </div>
-        )}
-        <div className="cover-overlay">
-          <IconEdit size={13} color="white" />
-          <div className="cover-overlay-text">Change</div>
+    <div className="card" style={{animationDelay:'0.08s'}}>
+      <div className="section-head">
+        <div className="section-icon">
+          <IcoImage size={15} color="var(--accent-light)" />
+        </div>
+        <div>
+          <div className="section-title">Cover Art</div>
+          <div className="section-desc">Applies to all tracks on this release</div>
         </div>
       </div>
-      <div className="global-cover-info">
-        <div className="global-cover-title">Cover Art</div>
-        <div className="global-cover-sub">Applies to all tracks · 3000×3000px recommended · JPG or PNG</div>
-        <button className="global-cover-btn" onClick={() => inputRef.current.click()}>
-          <IconImage size={13} />
-          {coverPreview ? 'Change Image' : 'Upload Image'}
-        </button>
-        {coverPreview && (
-          <div className="cover-set-badge">
-            <IconCheck size={12} color="var(--success)" /> Cover set
+      <div className="cover-row">
+        <div className="cover-thumb" onClick={() => inputRef.current.click()}>
+          {coverPreview
+            ? <img src={coverPreview} alt="Cover" />
+            : <div className="cover-placeholder">
+                <IcoMusic size={24} color="#2a2a2a" />
+                <div className="cover-placeholder-text">Cover</div>
+              </div>
+          }
+          <div className="cover-overlay">
+            <IcoEdit size={13} color="white" />
+            <div className="cover-overlay-text">Change</div>
           </div>
-        )}
+        </div>
+        <div className="cover-info">
+          <div className="cover-info-title">Release Cover</div>
+          <div className="cover-info-sub">
+            3000 × 3000 px recommended · JPG or PNG<br/>
+            Square format · min 1400 × 1400 px
+          </div>
+          <button className="cover-upload-btn" onClick={() => inputRef.current.click()}>
+            <IcoImage size={12} />
+            {coverPreview ? 'Change Image' : 'Upload Image'}
+          </button>
+          {coverPreview && (
+            <div className="cover-set-badge">
+              <IcoCheck size={12} color="var(--success)" /> Cover set
+            </div>
+          )}
+        </div>
       </div>
       <input ref={inputRef} type="file" accept="image/*"
         onChange={e => e.target.files[0] && onCoverSelect(e.target.files[0])} />
@@ -524,7 +875,7 @@ function GlobalCoverArt({ coverPreview, onCoverSelect }) {
   );
 }
 
-// File Zone
+/* ── FILE DROP ZONE ── */
 function FileZone({ mp3File, onFileSelect, error, disabled }) {
   const inputRef = useRef();
   const [drag, setDrag] = useState(false);
@@ -535,8 +886,11 @@ function FileZone({ mp3File, onFileSelect, error, disabled }) {
     if (f) onFileSelect(f);
   };
   return (
-    <div className="field full">
-      <label>MP3 File <span className="req">*</span></label>
+    <div className="field col-full">
+      <label>
+        <IcoHeadphones size={11} color="currentColor" />
+        MP3 File <div className="req-dot" title="Required"></div>
+      </label>
       <div
         className={`file-zone${drag ? ' drag-over' : ''}`}
         onClick={() => !disabled && inputRef.current.click()}
@@ -546,34 +900,34 @@ function FileZone({ mp3File, onFileSelect, error, disabled }) {
       >
         {mp3File ? (
           <div className="file-selected">
-            <IconHeadphones size={18} color="#a78bfa" />
+            <IcoHeadphones size={28} color="var(--accent-light)" />
             <div className="file-name">{mp3File.name}</div>
             <div className="file-size">{formatBytes(mp3File.size)}</div>
           </div>
         ) : (
           <>
-            <IconUpload size={18} color="#333" />
-            <div className="file-zone-text">Drop MP3 here or click to browse</div>
-            <div className="file-zone-sub">MP3 only · max 10MB</div>
+            <div className="file-zone-icon"><IcoUpload size={28} /></div>
+            <div className="file-zone-text">Drop your MP3 here or click to browse</div>
+            <div className="file-zone-sub">MP3 only · max 10 MB per track</div>
           </>
         )}
       </div>
-      {error && <div className="field-error"><IconAlert size={12} color="var(--error)" /> {error}</div>}
+      {error && <div className="field-error"><IcoAlert size={12} color="var(--danger)" /> {error}</div>}
       <input ref={inputRef} type="file" accept=".mp3,audio/mpeg"
         onChange={e => e.target.files[0] && onFileSelect(e.target.files[0])} />
     </div>
   );
 }
 
-// Track Card
+/* ── TRACK CARD ── */
 function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
   const disabled = track.status === 'uploading' || track.status === 'success';
   const set = (field, value) => onUpdate(track.id, { [field]: value });
 
   const validateFile = (file) => {
     if (!file.type.includes('mp3') && !file.name.toLowerCase().endsWith('.mp3'))
-      return 'Only MP3 files are allowed.';
-    if (file.size > 10 * 1024 * 1024) return 'File exceeds 10MB limit.';
+      return 'Only MP3 files are accepted.';
+    if (file.size > 10 * 1024 * 1024) return 'File exceeds the 10 MB limit.';
     return null;
   };
 
@@ -591,26 +945,22 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
     return errs;
   };
 
-  // ✅ UPDATED: Formspree email notification (no backend needed)
   const sendEmailNotification = async (fileUrl, coverUrl) => {
     try {
       const res = await fetch("https://formspree.io/f/mojbrkgn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({
-  _subject: `New Upload: ${track.releaseTitle} by ${track.artistName}`,
-  _replyto: "noreply@444music.com",  // ← add this
-  "Artist Name": track.artistName,
-  "Release Title": track.releaseTitle,
-  "Featuring Artist": track.featuringArtist || "None",
-  "Download Link": fileUrl,
-  "Cover Art Link": coverUrl || "No cover uploaded",
-}),
+        body: JSON.stringify({
+          _subject: `New Upload: ${track.releaseTitle} by ${track.artistName}`,
+          _replyto: "noreply@444music.com",
+          "Artist Name": track.artistName,
+          "Release Title": track.releaseTitle,
+          "Featuring Artist": track.featuringArtist || "None",
+          "Download Link": fileUrl,
+          "Cover Art Link": coverUrl || "No cover uploaded",
+        }),
       });
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("Formspree error:", text);
-      }
+      if (!res.ok) console.error("Formspree error:", await res.text());
     } catch (e) {
       console.warn("Email notification failed:", e);
     }
@@ -637,7 +987,6 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
 
       clearInterval(progressInterval);
       if (mp3Err) throw new Error(mp3Err.message);
-
       onUpdate(track.id, { progress: 90 });
 
       const { data: { publicUrl: fileUrl } } = supabase.storage
@@ -659,53 +1008,69 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
       onUpdate(track.id, { progress: 95 });
 
       const { error: dbErr } = await supabase.from('tracks').insert({
-        artist_name: track.artistName.trim(),
-        release_title: track.releaseTitle.trim(),
+        artist_name:     track.artistName.trim(),
+        release_title:   track.releaseTitle.trim(),
         featuring_artist: track.featuringArtist.trim() || null,
-        file_url: fileUrl,
+        file_url:  fileUrl,
         cover_url: coverUrl,
       });
 
       if (dbErr) throw new Error(dbErr.message);
-
       await sendEmailNotification(fileUrl, coverUrl);
-
       onUpdate(track.id, { progress: 100, status: 'success' });
       setTimeout(() => { window.location.href = 'averagee.html'; }, 1500);
 
     } catch (err) {
-      onUpdate(track.id, { status: 'error', errorMsg: err.message || 'Upload failed. Please try again.', progress: 0 });
+      onUpdate(track.id, {
+        status: 'error',
+        errorMsg: err.message || 'Upload failed. Please try again.',
+        progress: 0
+      });
     }
   };
 
   return (
-    <div className="track-card">
+    <div className="card" style={{animationDelay: `${0.12 + index * 0.06}s`}}>
       <div className="card-header">
-        <span className="track-number">Track {String(index + 1).padStart(2, '0')}</span>
+        <span className="track-badge">Track {String(index + 1).padStart(2, '0')}</span>
         {canRemove && track.status !== 'uploading' && (
-          <button className="remove-btn" onClick={() => onRemove(track.id)} title="Remove">
-            <IconX size={12} />
+          <button className="remove-btn" onClick={() => onRemove(track.id)} title="Remove track">
+            <IcoX size={11} />
           </button>
         )}
       </div>
 
-      <div className="card-body">
+      <div className="section-head" style={{marginBottom:'20px'}}>
+        <div className="section-icon">
+          <IcoHeadphones size={15} color="var(--accent-light)" />
+        </div>
+        <div>
+          <div className="section-title">Track Details</div>
+          <div className="section-desc">Artist name, release title and audio file</div>
+        </div>
+      </div>
+
+      <div className="grid">
         <div className="field">
-          <label>Artist Name <span className="req">*</span></label>
+          <label>Artist Name <div className="req-dot"></div></label>
           <input type="text" placeholder="e.g. Burna Boy" value={track.artistName}
             disabled={disabled} onChange={e => set('artistName', e.target.value)} />
-          {track.errors.artistName && <div className="field-error"><IconAlert /> {track.errors.artistName}</div>}
+          {track.errors.artistName && (
+            <div className="field-error"><IcoAlert size={12} color="var(--danger)" /> {track.errors.artistName}</div>
+          )}
         </div>
 
         <div className="field">
-          <label>Release Title <span className="req">*</span></label>
+          <label>Release Title <div className="req-dot"></div></label>
           <input type="text" placeholder="e.g. Abundance" value={track.releaseTitle}
             disabled={disabled} onChange={e => set('releaseTitle', e.target.value)} />
-          {track.errors.releaseTitle && <div className="field-error"><IconAlert /> {track.errors.releaseTitle}</div>}
+          {track.errors.releaseTitle && (
+            <div className="field-error"><IcoAlert size={12} color="var(--danger)" /> {track.errors.releaseTitle}</div>
+          )}
         </div>
 
-        <div className="field full">
-          <label>Featuring Artist <span className="opt">optional</span></label>
+        <div className="field col-full">
+          <label>Featuring Artist <span className="opt-tag">— optional</span></label>
           <input type="text" placeholder="Leave blank if none"
             value={track.featuringArtist} disabled={disabled}
             onChange={e => set('featuringArtist', e.target.value)} />
@@ -715,7 +1080,7 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
           error={track.errors.mp3} disabled={disabled} />
 
         {(track.status === 'uploading' || track.status === 'success') && (
-          <div className="progress-wrap">
+          <div className="progress-wrap col-full">
             <div className="progress-label">
               <span>{track.status === 'success' ? 'Complete' : 'Uploading'}</span>
               <span>{track.progress}%</span>
@@ -728,28 +1093,27 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
 
         {track.status === 'error' && track.errorMsg && (
           <div className="error-banner">
-            <IconAlert size={13} color="var(--error)" style={{flexShrink:0,marginTop:'1px'}} />
+            <IcoAlert size={13} color="var(--danger)" />
             <span>{track.errorMsg}</span>
           </div>
         )}
 
         {track.status === 'success' && (
           <div className="success-banner">
-            <IconCheck size={16} color="var(--success)" />
+            <IcoCheck size={18} color="var(--success)" />
             <div>
               <div className="success-text">Upload complete</div>
-              <div className="success-sub">Redirecting…</div>
+              <div className="success-sub">Redirecting to your dashboard…</div>
             </div>
           </div>
         )}
 
         {track.status !== 'success' && (
           <button className="upload-btn" onClick={handleUpload} disabled={disabled}>
-            {track.status === 'uploading' ? (
-              <><div className="spinner" /> Uploading — {track.progress}%</>
-            ) : (
-              <><IconArrowUp size={14} /> Upload Track</>
-            )}
+            {track.status === 'uploading'
+              ? <><div className="spinner" /> Uploading — {track.progress}%</>
+              : <><IcoArrowRight size={15} /> Upload Track</>
+            }
           </button>
         )}
       </div>
@@ -757,7 +1121,7 @@ function TrackCard({ track, index, onUpdate, onRemove, canRemove, coverFile }) {
   );
 }
 
-// App
+/* ── APP ── */
 function App() {
   const [tracks, setTracks] = useState([createTrack()]);
   const [coverFile, setCoverFile] = useState(null);
@@ -779,19 +1143,36 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="wrapper">
+
+      {/* HEADER */}
       <header className="header">
         <div className="logo">
           <div className="logo-mark">444</div>
           MusicDistro
         </div>
-        <div className="header-badge">Distribution Portal</div>
+        <div className="header-badge">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+          </svg>
+          Secure Portal
+        </div>
       </header>
 
-      <main className="main">
-        <h1 className="page-title">Upload Your Music</h1>
-        <p className="page-subtitle">distribute to 150+ platforms · release in 24–48 hrs</p>
+      {/* PAGE TITLE */}
+      <div className="page-header">
+        <h1 className="page-title">Upload Your <span>Music</span></h1>
+        <p className="page-sub">
+          Distribute to 150+ platforms
+          <span className="page-sub-dot"></span>
+          Release in 24–48 hrs
+          <span className="page-sub-dot"></span>
+          Keep 100% royalties
+        </p>
+      </div>
 
+      {/* CONTENT */}
+      <div className="main">
         <GlobalCoverArt coverPreview={coverPreview} onCoverSelect={handleCoverSelect} />
 
         {tracks.map((track, i) => (
@@ -804,14 +1185,15 @@ function App() {
         ))}
 
         <button className="add-track-btn" onClick={addTrack}>
-          <IconPlus size={14} /> Add Another Track
+          <IcoPlus size={13} /> Add Another Track
         </button>
 
         <div className="footer-note">
-          <IconShield size={12} color="#222" />
-          Files encrypted in transit · stored on Supabase · max 10MB per track
+          <div className="footer-item"><IcoLock /><span>256-bit SSL Encrypted</span></div>
+          <div className="footer-item"><IcoShield /><span>Stored on Supabase</span></div>
+          <div className="footer-item"><IcoGlobe /><span>GDPR Compliant</span></div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
