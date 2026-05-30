@@ -83,6 +83,131 @@ body::before {
 @keyframes orbDrift { 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.05); } 66%{ transform:translate(-20px,40px) scale(0.95); } }
 
 /* =========================================
+   SLIDING HERO IMAGES — BACKGROUND
+   ========================================= */
+@keyframes slideKen1 {
+  0%   { transform: scale(1.08) translateX(0);    opacity: 1; }
+  28%  { transform: scale(1.14) translateX(-2%);  opacity: 1; }
+  33%  { opacity: 0; }
+  100% { transform: scale(1.08) translateX(0);    opacity: 0; }
+}
+@keyframes slideKen2 {
+  0%   { opacity: 0; }
+  30%  { opacity: 0; }
+  33%  { opacity: 1; transform: scale(1.08) translateX(0); }
+  61%  { transform: scale(1.14) translateX(2%); opacity: 1; }
+  66%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes slideKen3 {
+  0%   { opacity: 0; }
+  63%  { opacity: 0; }
+  66%  { opacity: 1; transform: scale(1.08) translateX(0); }
+  95%  { transform: scale(1.13) translateX(-1.5%); opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes heroImgFade {
+  0%, 28%  { opacity: 1; }
+  33%, 100% { opacity: 0; }
+}
+
+.hero-bg-slider {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-bg-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.hero-bg-slide:nth-child(1) {
+  background-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1800&q=85&auto=format&fit=crop');
+  animation: slideKen1 18s ease-in-out infinite;
+  opacity: 1;
+}
+.hero-bg-slide:nth-child(2) {
+  background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1800&q=85&auto=format&fit=crop');
+  animation: slideKen2 18s ease-in-out infinite;
+}
+.hero-bg-slide:nth-child(3) {
+  background-image: url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1800&q=85&auto=format&fit=crop');
+  animation: slideKen3 18s ease-in-out infinite;
+}
+
+/* Backdrop layers over slides */
+.hero-bg-overlay-base {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,5,0.62);
+  z-index: 1;
+  pointer-events: none;
+}
+/* left-side gradient so text stays readable */
+.hero-bg-overlay-left {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(8,8,8,0.92) 0%,
+    rgba(8,8,8,0.78) 30%,
+    rgba(8,8,8,0.38) 58%,
+    rgba(8,8,8,0.08) 80%,
+    transparent 100%
+  );
+}
+/* bottom vignette */
+.hero-bg-overlay-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 38%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+}
+/* subtle purple color grade */
+.hero-bg-overlay-purple {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 70% 40%, rgba(147,51,234,0.18) 0%, transparent 65%);
+  mix-blend-mode: screen;
+}
+
+/* dot indicator dots */
+.slide-dots {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.slide-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  cursor: pointer;
+  transition: width 0.4s, background 0.4s;
+}
+.slide-dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: var(--purple3);
+}
+
+/* =========================================
    NAVBAR
    ========================================= */
 .navbar {
@@ -90,24 +215,25 @@ body::before {
   height: 64px;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 5%;
-  background: rgba(8,8,8,0.88);
-  backdrop-filter: blur(24px) saturate(140%);
-  border-bottom: 1px solid var(--border2);
+  background: rgba(8,8,8,0.55);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   animation: heroFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: -0.3px; }
 .nav-logo-img { height: 36px; width: auto; }
 .nav-logo-fallback { width: 36px; height: 36px; border-radius: 10px; background: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: white; font-family: 'Outfit', sans-serif; }
 .nav-links { display: flex; align-items: center; gap: 2px; }
-.nav-links a { padding: 7px 13px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.15s, background 0.15s; }
-.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-links a { padding: 7px 13px; border-radius: 8px; color: rgba(255,255,255,0.72); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.15s, background 0.15s; }
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.07); }
 .nav-right { display: flex; align-items: center; gap: 10px; }
-.nav-login { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: 0.15s; }
+.nav-login { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: 0.15s; }
 .nav-login:hover { color: var(--text); }
 .nav-cta { background: var(--purple); color: white; padding: 9px 20px; border-radius: 9px; text-decoration: none; font-size: 13.5px; font-weight: 700; transition: background 0.2s, transform 0.15s; letter-spacing: -0.1px; }
 .nav-cta:hover { background: var(--purple2); transform: translateY(-1px); }
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; text-decoration: none; color: inherit; }
-.hamburger span { width: 21px; height: 1.5px; background: var(--text2); border-radius: 2px; display: block; }
+.hamburger span { width: 21px; height: 1.5px; background: rgba(255,255,255,0.7); border-radius: 2px; display: block; }
 
 /* =========================================
    HERO
@@ -117,47 +243,70 @@ body::before {
   display: flex; align-items: center;
   position: relative; overflow: hidden;
 }
-.hero::before {
-  content: ''; position: absolute; top: -10%; left: -5%;
-  width: 800px; height: 600px;
-  background: radial-gradient(ellipse at 30% 50%, rgba(147,51,234,0.13) 0%, transparent 65%);
-  pointer-events: none; filter: blur(60px);
-  animation: orbDrift 20s ease-in-out infinite;
-}
-.hero::after {
-  content: ''; position: absolute; bottom: -10%; right: 0%;
-  width: 500px; height: 500px;
-  background: radial-gradient(ellipse, rgba(147,51,234,0.07) 0%, transparent 70%);
-  pointer-events: none; filter: blur(80px);
-  animation: orbDrift 25s ease-in-out infinite reverse;
-}
-.hero-inner { max-width: 1200px; margin: auto; width: 100%; display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: center; position: relative; z-index: 1; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px 5px 6px; font-size: 12.5px; color: var(--text2); font-weight: 600; margin-bottom: 28px; animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s both; }
+
+.hero-inner { max-width: 1200px; margin: auto; width: 100%; display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: center; position: relative; z-index: 10; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.07); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.13); border-radius: 100px; padding: 5px 14px 5px 6px; font-size: 12.5px; color: rgba(255,255,255,0.8); font-weight: 600; margin-bottom: 28px; animation: heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s both; }
 .hero-eyebrow .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--purple); display: flex; align-items: center; justify-content: center; animation: pulseRing 2.5s ease infinite; }
 .hero-eyebrow .dot::after { content: ''; display: block; width: 7px; height: 7px; border-radius: 50%; background: white; animation: blink 2s ease-in-out infinite; }
-.hero-title { font-family: 'Outfit', sans-serif; font-size: clamp(56px, 8.5vw, 96px); font-weight: 900; line-height: 0.9; letter-spacing: -3.5px; margin-bottom: 22px; text-align: left !important; overflow: hidden; }
+.hero-title { font-family: 'Outfit', sans-serif; font-size: clamp(56px, 8.5vw, 96px); font-weight: 900; line-height: 0.9; letter-spacing: -3.5px; margin-bottom: 22px; text-align: left !important; overflow: hidden; text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
 .hero-title .line1 { display: block; animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s both; }
 .hero-title .line2 { display: block; margin-top: 4px; animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.45s both; }
 .hero-title .accent { display: block; margin-top: 4px; font-size: 1.18em; background: linear-gradient(135deg, #a855f7 0%, #c084fc 40%, #7c22d4 70%, #a855f7 100%); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.6s both, gradientShift 5s ease infinite 1.4s; }
-.hero-sub { font-size: 17px; color: var(--text2); line-height: 1.75; max-width: 500px; margin-bottom: 40px; font-weight: 400; text-align: left !important; animation: subReveal 0.9s cubic-bezier(0.22,1,0.36,1) 0.75s both; }
+.hero-sub { font-size: 17px; color: rgba(255,255,255,0.72); line-height: 1.75; max-width: 500px; margin-bottom: 40px; font-weight: 400; text-align: left !important; animation: subReveal 0.9s cubic-bezier(0.22,1,0.36,1) 0.75s both; text-shadow: 0 1px 12px rgba(0,0,0,0.6); }
 .hero-btns { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; justify-content: flex-start !important; animation: heroFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.9s both; }
 .btn-primary { display: inline-flex; align-items: center; gap: 9px; background: var(--purple); color: white; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; letter-spacing: -0.2px; position: relative; overflow: hidden; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; }
 .btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%); background-size: 200% 100%; animation: btnShimmer 3s ease infinite; pointer-events: none; }
 .btn-primary:hover { background: var(--purple2); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(147,51,234,0.4); }
-.btn-secondary { display: inline-flex; align-items: center; gap: 8px; color: var(--text); padding: 14px 26px; border-radius: 12px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s, transform 0.15s; }
-.btn-secondary:hover { border-color: rgba(255,255,255,0.18); background: var(--surface2); transform: translateY(-2px); }
+.btn-secondary { display: inline-flex; align-items: center; gap: 8px; color: var(--text); padding: 14px 26px; border-radius: 12px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); backdrop-filter: blur(10px); transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.1); transform: translateY(-2px); }
 .hero-social-proof { display: flex; align-items: center; gap: 14px; justify-content: flex-start !important; animation: heroFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 1.05s both; }
 .proof-avatars { display: flex; }
-.proof-av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--bg); margin-right: -10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; transition: transform 0.2s; }
+.proof-av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.5); margin-right: -10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; transition: transform 0.2s; }
 .proof-av:hover { transform: scale(1.15) translateY(-2px); z-index: 1; }
 .av1{background:#7c22d4} .av2{background:#9333ea} .av3{background:#a855f7} .av4{background:#c084fc} .av5{background:#6b21a8}
-.proof-text { font-size: 13.5px; color: var(--text2); margin-left: 20px; }
-.proof-text strong { color: var(--text); }
+.proof-text { font-size: 13.5px; color: rgba(255,255,255,0.7); margin-left: 20px; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.proof-text strong { color: white; }
+
+/* slide caption overlay — bottom right of hero */
+.slide-caption {
+  position: absolute;
+  bottom: 60px;
+  right: 5%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(8,8,8,0.48);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 12px 18px;
+  min-width: 240px;
+  transition: opacity 0.5s;
+}
+.slide-caption-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: white; flex-shrink: 0;
+}
+.slide-caption-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; }
+.slide-caption-text span { display: block; font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; }
 
 /* =========================================
    HERO CARD
    ========================================= */
-.hero-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3); padding: 24px; box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(147,51,234,0.08); animation: heroFadeRight 1s cubic-bezier(0.22,1,0.36,1) 0.4s both, float 6s ease-in-out infinite 1.5s; position: relative; overflow: visible; }
+.hero-card { 
+  background: rgba(17,17,17,0.72); 
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  border: 1px solid rgba(255,255,255,0.1); 
+  border-radius: var(--radius3); padding: 24px; 
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(147,51,234,0.12), inset 0 1px 0 rgba(255,255,255,0.08); 
+  animation: heroFadeRight 1s cubic-bezier(0.22,1,0.36,1) 0.4s both, float 6s ease-in-out infinite 1.5s; 
+  position: relative; overflow: visible; 
+}
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .card-header-left { display: flex; align-items: center; gap: 10px; }
 .card-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 15px; color: white; }
@@ -170,7 +319,7 @@ body::before {
 .dropzone i { font-size: 22px; color: var(--purple3); margin-bottom: 8px; }
 .dropzone p { font-size: 12px; color: var(--text2); }
 .dropzone strong { color: var(--text); font-size: 13px; }
-.track-row { display: flex; align-items: center; gap: 11px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; transition: border-color 0.2s, transform 0.2s; }
+.track-row { display: flex; align-items: center; gap: 11px; background: rgba(22,22,22,0.8); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; transition: border-color 0.2s, transform 0.2s; }
 .track-row:hover { border-color: var(--border); transform: translateX(4px); }
 .track-art { width: 38px; height: 38px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .track-info { flex: 1; min-width: 0; }
@@ -184,7 +333,7 @@ body::before {
 .prog-header { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
 .prog-track { width: 100%; height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
 .prog-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--purple3)); border-radius: 4px; animation: fillup 3s ease forwards, progGlow 2s ease-in-out infinite 3s; }
-.chip { position: absolute; border-radius: 11px; background: var(--surface2); border: 1px solid var(--border); padding: 10px 14px; font-size: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.chip { position: absolute; border-radius: 11px; background: rgba(17,17,17,0.82); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); padding: 10px 14px; font-size: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .chip.stores { top: -18px; right: -16px; display: flex; align-items: center; gap: 7px; animation: chipBob 4s ease-in-out infinite 1s; }
 .chip.stores i { color: var(--green); }
 .chip.royalty { bottom: 16px; left: -24px; animation: chipBob2 5s ease-in-out infinite 0.5s; }
@@ -514,6 +663,7 @@ body::before {
   .bento-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
   .bento-cell.span2 { grid-column: span 1; }
   .bento-cell.tall { grid-row: span 1; }
+  .slide-caption { display: none; }
 }
 
 @media (max-width: 768px) {
@@ -554,6 +704,15 @@ body::before {
   .feature-split { padding: 56px 4%; }
   .fsplit-img img { height: 260px; }
   .photo-strip-section { padding: 16px 4% 0; }
+  .slide-dots { bottom: 20px; }
+  .hero-bg-overlay-left {
+    background: linear-gradient(
+      180deg,
+      rgba(8,8,8,0.82) 0%,
+      rgba(8,8,8,0.72) 60%,
+      rgba(8,8,8,0.38) 100%
+    );
+  }
 }
 
 @media (max-width: 480px) {
@@ -601,6 +760,37 @@ body::before {
 
 <!-- ===== HERO ===== -->
 <section class="hero">
+
+  <!-- ── SLIDING BACKGROUND ── -->
+  <div class="hero-bg-slider" aria-hidden="true">
+    <div class="hero-bg-slide"></div>
+    <div class="hero-bg-slide"></div>
+    <div class="hero-bg-slide"></div>
+  </div>
+
+  <!-- overlay layers -->
+  <div class="hero-bg-overlay-base"  aria-hidden="true"></div>
+  <div class="hero-bg-overlay-purple" aria-hidden="true"></div>
+  <div class="hero-bg-overlay-left"  aria-hidden="true"></div>
+  <div class="hero-bg-overlay-bottom" aria-hidden="true"></div>
+
+  <!-- slide indicator dots -->
+  <div class="slide-dots" aria-hidden="true">
+    <div class="slide-dot active" data-idx="0"></div>
+    <div class="slide-dot" data-idx="1"></div>
+    <div class="slide-dot" data-idx="2"></div>
+  </div>
+
+  <!-- caption badge — bottom right -->
+  <div class="slide-caption" id="slideCaption">
+    <div class="slide-caption-icon"><i class="fa-solid fa-music"></i></div>
+    <div class="slide-caption-text">
+      <strong id="captionTitle">Live on Stage</strong>
+      <span id="captionSub">From upload to the world</span>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
   <div class="hero-inner">
     <div>
       <div class="hero-eyebrow">
@@ -631,6 +821,7 @@ body::before {
         <div class="proof-text" style="margin-left:18px;"><strong>7,000+</strong> artists already distributing</div>
       </div>
     </div>
+
     <!-- Hero Dashboard Card -->
     <div class="hero-card">
       <div class="chip stores"><i class="fa-solid fa-circle-check"></i><span style="color:var(--text);font-weight:600;">Live on 100+ stores</span></div>
@@ -713,9 +904,8 @@ body::before {
 </div>
 
 <!-- ===== PHOTO STRIP — 3 real images below stats ===== -->
-
-
-    <!-- third: concert / performance -->
+<div class="photo-strip-section">
+  <div class="photo-strip">
     <div class="photo-strip-item tall">
       <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80&auto=format&fit=crop"
            alt="Artist performing on stage" loading="lazy">
@@ -724,7 +914,6 @@ body::before {
         <span>Global reach in days</span>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -764,7 +953,7 @@ body::before {
   </div>
 </div>
 
-<!-- ===== FEATURE SPLIT 1 — laptop / upload ===== -->
+<!-- ===== FEATURE SPLIT 1 ===== -->
 <div class="feature-split reveal">
   <div class="fsplit-img">
     <img src="https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=900&q=80&auto=format&fit=crop"
@@ -784,7 +973,7 @@ body::before {
   </div>
 </div>
 
-<!-- ===== FEATURE SPLIT 2 — studio / headphones (reversed) ===== -->
+<!-- ===== FEATURE SPLIT 2 ===== -->
 <div class="feature-split reverse reveal">
   <div class="fsplit-img">
     <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&auto=format&fit=crop"
@@ -882,38 +1071,32 @@ body::before {
   </div>
 </div>
 
-<!-- ===== BENTO PHOTO GRID — between testimonials and pricing ===== -->
+<!-- ===== BENTO PHOTO GRID ===== -->
 <div class="bento-section reveal">
   <div class="label-tag centered" style="justify-content:center;">The Artist Journey</div>
   <h2 class="section-h centered display">Built for every stage of your career</h2>
   <p class="section-p centered" style="margin-left:auto;margin-right:auto;">From bedroom producer to festival headliner — 444Music scales with you.</p>
-
   <div class="bento-grid">
-    <!-- top-left wide -->
     <div class="bento-cell span2">
       <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1000&q=80&auto=format&fit=crop"
            alt="Producer uploading music on laptop in studio" loading="lazy">
       <div class="bento-overlay"><span class="bento-tag">Upload &amp; Distribute</span></div>
     </div>
-    <!-- top-right -->
     <div class="bento-cell">
       <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80&auto=format&fit=crop"
            alt="Artist checking royalties on phone" loading="lazy">
       <div class="bento-overlay"><span class="bento-tag">Earn Royalties</span></div>
     </div>
-    <!-- bottom-left -->
     <div class="bento-cell">
       <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80&auto=format&fit=crop"
            alt="Artist on stage performing live" loading="lazy">
       <div class="bento-overlay"><span class="bento-tag">Grow Your Fanbase</span></div>
     </div>
-    <!-- bottom-mid -->
     <div class="bento-cell">
       <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80&auto=format&fit=crop"
            alt="Artist in recording studio with headphones" loading="lazy">
       <div class="bento-overlay"><span class="bento-tag">Studio Quality</span></div>
     </div>
-    <!-- bottom-right -->
     <div class="bento-cell">
       <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=600&q=80&auto=format&fit=crop"
            alt="Music streaming analytics on screen" loading="lazy">
@@ -1114,7 +1297,53 @@ loadFeatured();
 </script>
 
 <script>
-/* FAQ accordion */
+/* ── HERO SLIDER JS ── */
+const SLIDE_DATA = [
+  { icon: 'fa-solid fa-compact-disc', title: 'Live on Stage',      sub:  'From upload to the world'       },
+  { icon: 'fa-solid fa-laptop',       title: 'Upload & Distribute', sub:  'Studio session → Global stores' },
+  { icon: 'fa-solid fa-headphones',   title: 'Studio Quality',      sub:  'WAV · FLAC · Pro delivery'     },
+];
+const CYCLE = 6000; // ms per slide (must match CSS 18s / 3 slides)
+let currentSlide = 0;
+const dots    = document.querySelectorAll('.slide-dot');
+const caption = document.getElementById('slideCaption');
+const capIcon = caption ? caption.querySelector('.slide-caption-icon i') : null;
+const capTitle= document.getElementById('captionTitle');
+const capSub  = document.getElementById('captionSub');
+
+function activateDot(idx) {
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+function updateCaption(idx) {
+  if (!caption) return;
+  const d = SLIDE_DATA[idx];
+  caption.style.opacity = '0';
+  setTimeout(() => {
+    if (capIcon)  { capIcon.className = d.icon; }
+    if (capTitle) capTitle.textContent = d.title;
+    if (capSub)   capSub.textContent   = d.sub;
+    caption.style.opacity = '1';
+  }, 280);
+}
+
+// Sync dots & caption every CYCLE ms
+const sliderInterval = setInterval(() => {
+  currentSlide = (currentSlide + 1) % 3;
+  activateDot(currentSlide);
+  updateCaption(currentSlide);
+}, CYCLE);
+
+// Manual dot click
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const idx = parseInt(dot.dataset.idx, 10);
+    currentSlide = idx;
+    activateDot(idx);
+    updateCaption(idx);
+  });
+});
+
+/* ── FAQ accordion ── */
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
     const item = q.closest('.faq-item');
@@ -1124,7 +1353,7 @@ document.querySelectorAll('.faq-q').forEach(q => {
   });
 });
 
-/* FAQ filter */
+/* ── FAQ filter ── */
 document.querySelectorAll('.faq-filters button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.faq-filters button').forEach(b => b.classList.remove('active'));
@@ -1136,13 +1365,13 @@ document.querySelectorAll('.faq-filters button').forEach(btn => {
   });
 });
 
-/* Scroll reveal */
+/* ── Scroll reveal ── */
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
 }, { threshold: 0.06 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-/* Upload step highlight */
+/* ── Upload step highlight ── */
 document.querySelectorAll('.step-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
@@ -1150,7 +1379,7 @@ document.querySelectorAll('.step-item').forEach(item => {
   });
 });
 
-/* Form tabs */
+/* ── Form tabs ── */
 document.querySelectorAll('.form-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
@@ -1158,7 +1387,7 @@ document.querySelectorAll('.form-tab').forEach(tab => {
   });
 });
 
-/* Stagger stat items */
+/* ── Stagger stat items ── */
 const statObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
