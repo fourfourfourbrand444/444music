@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music — Download App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #ffffff;
+  --surface:   #f7f7f7;
+  --card:      #f2f2f2;
+  --border:    rgba(0,0,0,0.08);
+  --border-md: rgba(0,0,0,0.14);
+  --black:     #0a0a0a;
+  --black-soft:#1a1a1a;
+  --text:      #0a0a0a;
+  --text-sec:  #555555;
+  --text-mut:  #999999;
+  --ff-head: 'Syne', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+}
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* subtle dot grid */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 30%, transparent 80%);
+}
+
+/* top gradient wash */
+body::after {
+  content: '';
+  position: fixed; top: 0; left: 0; right: 0; height: 420px;
+  pointer-events: none; z-index: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 100%);
+}
+
+/* ── LAYOUT ── */
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+/* ── NAV ── */
+.nav {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 0 0;
+  margin-bottom: 64px;
+  animation: fadeUp 0.4s ease both;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo img { height: 32px; width: auto; display: block; }
+
+.nav-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--black);
+  color: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-head);
+}
+
+.nav-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74,222,128,0.8);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── APP ICON ── */
+.icon-wrap {
+  position: relative;
+  margin-bottom: 36px;
+  animation: scaleIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+}
+
+.app-icon {
+  width: 110px; height: 110px; border-radius: 26px;
+  background: var(--black);
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.1),
+    0 32px 64px rgba(0,0,0,0.12);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-icon img {
+  width: 68px; height: auto;
+  filter: invert(1);
+  display: block;
+}
+
+/* corner shine */
+.app-icon::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+  border-radius: 26px 26px 0 0;
+  pointer-events: none;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-mut);
+  margin-bottom: 16px;
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+
+.eyebrow svg { opacity: 0.5; }
+
+h1 {
+  font-family: var(--ff-head);
+  font-size: clamp(2.6rem, 9vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  margin-bottom: 18px;
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+
+h1 em {
+  font-style: normal;
+  position: relative;
+  display: inline-block;
+}
+
+/* underline accent */
+h1 em::after {
+  content: '';
+  position: absolute; left: 0; bottom: 4px; right: 0; height: 3px;
+  background: var(--black);
+  border-radius: 2px;
+}
+
+.sub {
+  font-size: 0.97rem; font-weight: 400;
+  color: var(--text-sec); line-height: 1.75;
+  max-width: 420px; margin: 0 auto 36px;
+  animation: fadeUp 0.4s ease 0.25s both;
+}
+
+/* ── DOWNLOAD BTN ── */
+.dl-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  animation: fadeUp 0.4s ease 0.3s both;
+}
+
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 16px;
+  background: var(--black);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 16px;
+  padding: 16px 28px;
+  font-family: var(--ff-body); font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative; overflow: hidden;
+}
+
+.dl-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.dl-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.dl-btn:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+
+.dl-icon-box {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.dl-text { text-align: left; }
+.dl-text-top  { font-size: 0.65rem; font-weight: 400; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 2px; }
+.dl-text-main { font-size: 1rem; font-weight: 700; font-family: var(--ff-head); letter-spacing: 0.02em; }
+
+.dl-meta {
+  display: flex; align-items: center; gap: 16px;
+  font-size: 0.72rem; color: var(--text-mut);
+}
+
+.dl-meta-item { display: flex; align-items: center; gap: 5px; }
+.dl-meta-item svg { opacity: 0.4; }
+
+/* ── DIVIDER ── */
+.section-divider {
+  width: 100%; height: 1px;
+  background: var(--border);
+  margin: 44px 0;
+}
+
+/* ── FEATURES ── */
+.features {
+  width: 100%;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-bottom: 44px;
+  animation: fadeUp 0.4s ease 0.35s both;
+}
+
+.feat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 16px 18px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.feat:hover {
+  border-color: var(--border-md);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.feat-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.feat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mut); margin-bottom: 2px; }
+.feat-val   { font-size: 1.1rem; font-weight: 700; font-family: var(--ff-head); color: var(--black); letter-spacing: 0.02em; }
+
+/* ── STEPS ── */
+.steps-wrap {
+  width: 100%;
+  animation: fadeUp 0.4s ease 0.4s both;
+}
+
+.section-label {
+  font-family: var(--ff-head); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-mut); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.steps { display: flex; flex-direction: column; gap: 0; }
+
+.step {
+  display: flex; align-items: flex-start; gap: 18px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.step:last-child { border-bottom: none; }
+
+.step-left { display: flex; flex-direction: column; align-items: center; gap: 0; flex-shrink: 0; }
+
+.step-num {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--black);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-head); font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.step-line {
+  width: 1px; flex: 1;
+  background: var(--border);
+  margin-top: 8px;
+  min-height: 100%;
+}
+
+.step:last-child .step-line { display: none; }
+
+.step-body { padding-top: 6px; }
+.step-title { font-size: 0.9rem; font-weight: 600; color: var(--black); margin-bottom: 5px; }
+.step-desc  { font-size: 0.8rem; color: var(--text-sec); line-height: 1.6; }
+.step-desc strong { color: var(--black); font-weight: 600; }
+
+/* ── NOTICE ── */
+.notice {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-top: 32px;
+  animation: fadeUp 0.4s ease 0.45s both;
+}
+
+.notice-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.notice-text { font-size: 0.78rem; color: var(--text-sec); line-height: 1.65; }
+.notice-text strong { color: var(--black); }
+
+/* ── FOOTER ── */
+footer {
+  width: 100%;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.72rem; color: var(--text-mut);
+  flex-wrap: wrap; gap: 10px;
+  animation: fadeUp 0.4s ease 0.5s both;
+}
+
+footer a { color: var(--text-sec); text-decoration: none; transition: color 0.2s; }
+footer a:hover { color: var(--black); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .features { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .feat { padding: 14px 12px; }
+  .feat-val { font-size: 0.95rem; }
+  h1 { font-size: 2.4rem; }
+  .nav { margin-bottom: 44px; }
+  footer { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="logo" href="https://444music-distribution.vercel.app">
+      <img src="https://444music-distribution.vercel.app/black.png" alt="444Music">
+    </a>
+    <div class="nav-badge">
+      <div class="nav-badge-dot"></div>
+      v1.0 Live
+    </div>
+  </nav>
+
+  <!-- APP ICON -->
+  <div class="icon-wrap">
+    <div class="app-icon">
+      <img src="https://444music-distribution.vercel.app/black.png" alt="444Music App">
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l3 3"/></svg>
+      Official Android Release
+    </div>
+
+    <h1>Your Music.<br><em>Your Terms.</em></h1>
+
+    <p class="sub">Distribute to 100+ stores worldwide, keep every cent of your royalties, and monitor your streams — all from one app built for African artists.</p>
+
+    <div class="dl-wrap">
+      <a class="dl-btn" href="https://github.com/fourfourfourbrand444/444music/releases/download/v1.0/app-release.apk" download>
+        <div class="dl-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="dl-text">
+          <div class="dl-text-top">Download for Android</div>
+          <div class="dl-text-main">Get 444Music Free</div>
+        </div>
+      </a>
+
+      <div class="dl-meta">
+        <div class="dl-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          65.3 MB
+        </div>
+        <div class="dl-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Android 5.0+
+        </div>
+        <div class="dl-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Free Forever
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Global Stores</div>
+        <div class="feat-val">100+</div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Royalties</div>
+        <div class="feat-val">100%</div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div>
+        <div class="feat-label">Analytics</div>
+        <div class="feat-val">Real-time</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL STEPS -->
+  <div class="steps-wrap">
+    <div class="section-label">How to Install</div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">1</div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">Download the APK</div>
+          <div class="step-desc">Tap the download button above. The file (65 MB) will save to your device's Downloads folder automatically.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">2</div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">Allow Installation from Unknown Sources</div>
+          <div class="step-desc">Go to <strong>Settings → Security → Install Unknown Apps</strong> and enable it for your browser or file manager. This is a one-time step.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">3</div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">Open the Downloaded File</div>
+          <div class="step-desc">Tap the notification that appears after download, or open your <strong>Downloads</strong> folder and tap <strong>app-release.apk</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">4</div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">Install &amp; Launch</div>
+          <div class="step-desc">Tap <strong>Install</strong> on the prompt, then open 444Music and start distributing your music globally.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="notice">
+    <div class="notice-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="notice-text">
+      This is the <strong>official 444Music APK</strong> distributed directly by our team. Android may display a security warning for apps installed outside the Play Store — this is normal behavior. Tap <strong>"Install anyway"</strong> to continue safely.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 444Music · All rights reserved</span>
+    <div style="display:flex;gap:20px;">
+      <a href="https://444music-distribution.vercel.app">Website</a>
+      <a href="https://github.com/fourfourfourbrand444/444music/releases">All Releases</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
