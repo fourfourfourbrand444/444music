@@ -6,9 +6,8 @@
 <title>444Music — Analytics Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
- 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   :root {
     --bg-void:    #080a0f;
     --bg-base:    #0d1018;
@@ -27,12 +26,13 @@
     --text-sec:   #8892a4;
     --text-dim:   #404b5e;
     --success:    #10b981;
+    --warning:    #f59e0b;
     --radius:     12px;
     --radius-sm:  8px;
   }
- 
+
   html { scroll-behavior: smooth; }
- 
+
   body {
     font-family: 'DM Mono', monospace;
     background: var(--bg-void);
@@ -40,510 +40,406 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
- 
-  /* ── NOISE OVERLAY ── */
+
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.025;
-    pointer-events: none;
-    z-index: 0;
+    opacity: 0.025; pointer-events: none; z-index: 0;
   }
- 
-  /* ── TOP GLOW ── */
+
   body::after {
     content: '';
-    position: fixed;
-    top: -200px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 400px;
+    position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 400px;
     background: radial-gradient(ellipse, rgba(255,46,99,0.12) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
- 
-  /* ── HEADER ── */
+
   .header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(8,10,15,0.85);
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(8,10,15,0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     height: 64px;
   }
- 
+
   .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px;
   }
- 
+
   .logo-badge {
-    width: 32px;
-    height: 32px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
+    width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
     box-shadow: 0 0 16px rgba(255,46,99,0.5);
   }
- 
+
   .logo-text span { color: var(--accent); }
- 
-  .header-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+
+  .header-right {
+    display: flex; align-items: center; gap: 16px;
   }
- 
+
+  .header-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
   .dot-live {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 8px var(--success);
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--success); box-shadow: 0 0 8px var(--success);
     animation: pulse-dot 2s infinite;
   }
- 
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .refresh-btn {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-sec); font-family: 'DM Mono', monospace; font-size: 11px;
+    padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    text-transform: uppercase; letter-spacing: 1px;
   }
- 
-  /* ── MAIN ── */
+
+  .refresh-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text-pri); }
+
   .main {
-    position: relative;
-    z-index: 1;
-    max-width: 1000px;
-    margin: 0 auto;
+    position: relative; z-index: 1;
+    max-width: 1000px; margin: 0 auto;
     padding: 40px 24px 80px;
   }
- 
-  /* ── PAGE TITLE ── */
+
   .page-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 32px;
-    letter-spacing: -1px;
-    margin-bottom: 4px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 32px;
+    letter-spacing: -1px; margin-bottom: 4px;
   }
- 
-  .page-sub {
-    color: var(--text-sec);
-    font-size: 13px;
-    margin-bottom: 32px;
+
+  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; }
+
+  /* DEBUG PANEL */
+  .debug-panel {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: var(--warning);
+    display: none;
   }
- 
-  /* ── STATS BAR ── */
+  .debug-panel.visible { display: block; }
+  .debug-title { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 8px; }
+  .debug-list { color: var(--text-sec); line-height: 1.8; }
+
+  /* STATS BAR */
   .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 32px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px;
   }
- 
+
   .stat-pill {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 4px;
     transition: border-color 0.2s;
   }
- 
+
   .stat-pill:hover { border-color: rgba(255,255,255,0.12); }
- 
-  .stat-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--text-dim);
-  }
- 
+
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); }
+
   .stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-pri);
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-pri);
   }
- 
+
   .stat-value.accent { color: var(--accent); }
- 
-  /* ── SEARCH ── */
-  .search-wrapper {
-    position: relative;
-    margin-bottom: 28px;
-  }
- 
+
+  /* SEARCH + FILTER */
+  .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
+
+  .search-wrapper { position: relative; flex: 1; }
+
   .search-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-dim);
-    font-size: 15px;
-    pointer-events: none;
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 15px; pointer-events: none;
   }
- 
+
   .search-input {
-    width: 100%;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px 14px 44px;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--text-pri);
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px 14px 44px;
+    font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-pri);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
   }
- 
+
   .search-input::placeholder { color: var(--text-dim); }
- 
+
   .search-input:focus {
     border-color: var(--border-glow);
     box-shadow: 0 0 0 3px rgba(255,46,99,0.08);
   }
- 
-  /* ── TOOLBAR ── */
+
   .toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
   }
- 
-  .count-label {
-    font-size: 11px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+
+  .count-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .count-label span { color: var(--accent); font-weight: 700; }
+
+  /* NEW ARTIST BUTTON */
+  .new-btn {
+    background: transparent; border: 1px solid var(--border-glow);
+    color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px;
+    padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
   }
- 
-  .count-label span {
-    color: var(--accent);
-    font-weight: 700;
+
+  .new-btn:hover {
+    background: rgba(255,46,99,0.1);
+    box-shadow: 0 0 16px rgba(255,46,99,0.2);
   }
- 
-  /* ── CARDS ── */
+
+  /* CREATE FORM */
+  .create-form {
+    background: var(--bg-card); border: 1px solid rgba(255,46,99,0.25);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+    display: none; animation: fadeUp 0.25s ease both;
+  }
+
+  .create-form.visible { display: block; }
+
+  .create-form-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+    color: var(--accent); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  .create-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  .create-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .create-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); }
+
+  .create-input {
+    background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 12px; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-pri);
+    outline: none; transition: border-color 0.2s;
+  }
+
+  .create-input:focus { border-color: rgba(255,46,99,0.4); }
+
+  .create-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+
+  .cancel-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--text-sec);
+    font-family: 'DM Mono', monospace; font-size: 12px; padding: 9px 18px;
+    border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.2s;
+  }
+
+  .cancel-btn:hover { border-color: rgba(255,255,255,0.15); }
+
+  /* CARDS */
   .results { display: flex; flex-direction: column; gap: 12px; }
- 
+
   .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
     transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
     animation: fadeUp 0.3s ease both;
   }
- 
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
- 
+
   .card:hover {
     border-color: rgba(255,255,255,0.1);
     transform: translateY(-1px);
     box-shadow: 0 12px 40px rgba(0,0,0,0.4);
   }
- 
+
   .card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
   }
- 
+
   .avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 44px; height: 44px; border-radius: 10px;
     background: linear-gradient(135deg, rgba(255,46,99,0.3), rgba(255,107,53,0.2));
     border: 1px solid rgba(255,46,99,0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    color: var(--accent);
-    flex-shrink: 0;
-    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: var(--accent);
+    flex-shrink: 0; text-transform: uppercase;
   }
- 
+
   .card-info { flex: 1; min-width: 0; }
- 
+
   .artist-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text-pri);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--text-pri);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
- 
-  .artist-email {
-    font-size: 12px;
-    color: var(--text-sec);
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
- 
+
+  .artist-email { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+
   .card-badge {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: rgba(255,46,99,0.12);
-    border: 1px solid rgba(255,46,99,0.2);
-    color: var(--accent);
-    white-space: nowrap;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px;
+    border-radius: 20px; background: rgba(255,46,99,0.12);
+    border: 1px solid rgba(255,46,99,0.2); color: var(--accent); white-space: nowrap;
   }
- 
-  /* ── STREAM GRID ── */
+
+  /* SOURCE TAG — shows which collection data came from */
+  .source-tag {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 8px;
+    border-radius: 20px; white-space: nowrap; margin-top: 4px; display: inline-block;
+  }
+
+  .source-tag.analytics-only {
+    background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); color: var(--total);
+  }
+
+  .source-tag.users-linked {
+    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: var(--success);
+  }
+
+  /* STREAM GRID */
   .stream-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 18px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px;
   }
- 
+
   .stream-field { display: flex; flex-direction: column; gap: 6px; }
- 
+
   .field-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 6px;
   }
- 
-  .platform-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
- 
-  .dot-total   { background: var(--total); box-shadow: 0 0 6px var(--total); }
+
+  .platform-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .dot-total   { background: var(--total);   box-shadow: 0 0 6px var(--total); }
   .dot-spotify { background: var(--spotify); box-shadow: 0 0 6px var(--spotify); }
-  .dot-apple   { background: var(--apple); box-shadow: 0 0 6px var(--apple); }
+  .dot-apple   { background: var(--apple);   box-shadow: 0 0 6px var(--apple); }
   .dot-youtube { background: var(--youtube); box-shadow: 0 0 6px var(--youtube); }
- 
+
   .field-label.total-lbl   { color: var(--total); }
   .field-label.spotify-lbl { color: var(--spotify); }
   .field-label.apple-lbl   { color: var(--apple); }
   .field-label.youtube-lbl { color: var(--youtube); }
- 
+
   .stream-input {
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--text-pri);
-    outline: none;
-    width: 100%;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 12px;
+    font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-pri);
+    outline: none; width: 100%; transition: border-color 0.2s, box-shadow 0.2s;
   }
- 
-  .stream-input:focus {
-    border-color: rgba(255,255,255,0.2);
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.04);
-  }
- 
+
+  .stream-input:focus { border-color: rgba(255,255,255,0.2); box-shadow: 0 0 0 2px rgba(255,255,255,0.04); }
   .stream-input.total-inp:focus   { border-color: rgba(167,139,250,0.4); box-shadow: 0 0 0 2px rgba(167,139,250,0.07); }
   .stream-input.spotify-inp:focus { border-color: rgba(29,185,84,0.4);   box-shadow: 0 0 0 2px rgba(29,185,84,0.07); }
   .stream-input.apple-inp:focus   { border-color: rgba(252,60,68,0.4);   box-shadow: 0 0 0 2px rgba(252,60,68,0.07); }
   .stream-input.youtube-inp:focus { border-color: rgba(255,0,0,0.4);     box-shadow: 0 0 0 2px rgba(255,0,0,0.07); }
- 
-  /* ── CARD FOOTER ── */
+
+  /* CARD FOOTER */
   .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 16px; border-top: 1px solid var(--border);
   }
- 
-  .card-id {
-    font-size: 11px;
-    color: var(--text-dim);
-    font-family: 'DM Mono', monospace;
-  }
- 
+
+  .card-id { font-size: 11px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
+
   .save-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--accent);
-    border: none;
-    color: white;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 8px;
+    background: var(--accent); border: none; color: white;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+    padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px;
   }
- 
-  .save-btn:hover {
-    opacity: 0.9;
-    transform: scale(1.02);
-    box-shadow: 0 4px 20px rgba(255,46,99,0.4);
-  }
- 
+
+  .save-btn:hover { opacity: 0.9; transform: scale(1.02); box-shadow: 0 4px 20px rgba(255,46,99,0.4); }
   .save-btn:active { transform: scale(0.98); }
- 
-  .save-btn.saving {
-    background: var(--text-dim);
-    pointer-events: none;
-  }
- 
-  .save-btn.saved {
-    background: var(--success);
-    pointer-events: none;
-  }
- 
-  /* ── TOAST ── */
+  .save-btn.saving { background: var(--text-dim); pointer-events: none; }
+  .save-btn.saved  { background: var(--success); pointer-events: none; }
+
+  /* TOAST */
   .toast-container {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
+    position: fixed; bottom: 32px; right: 32px;
+    display: flex; flex-direction: column; gap: 10px; z-index: 9999;
   }
- 
+
   .toast {
-    background: var(--bg-card2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    min-width: 260px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    background: var(--bg-card2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+    font-size: 13px; min-width: 260px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
   }
- 
+
   .toast.success { border-left: 3px solid var(--success); }
   .toast.error   { border-left: 3px solid var(--accent); }
- 
+  .toast.info    { border-left: 3px solid var(--total); }
   .toast-icon { font-size: 16px; }
- 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(30px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeOut {
-    to { opacity: 0; transform: translateX(30px); }
-  }
- 
-  /* ── EMPTY STATE ── */
-  .empty {
-    text-align: center;
-    padding: 80px 24px;
-    color: var(--text-dim);
-  }
+
+  @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes fadeOut { to { opacity: 0; transform: translateX(30px); } }
+
+  .empty { text-align: center; padding: 80px 24px; color: var(--text-dim); }
   .empty-icon { font-size: 40px; margin-bottom: 12px; }
   .empty-text { font-family: 'Syne', sans-serif; font-size: 16px; }
- 
-  /* ── LOADING ── */
+  .empty-sub  { font-size: 12px; color: var(--text-dim); margin-top: 8px; line-height: 1.6; }
+
   .loading-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 60px;
-    color: var(--text-sec);
-    font-size: 13px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 60px; color: var(--text-sec); font-size: 13px;
   }
- 
+
   .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
+    width: 20px; height: 20px; border: 2px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
- 
+
   @keyframes spin { to { transform: rotate(360deg); } }
- 
-  /* ── RESPONSIVE ── */
+
   @media (max-width: 700px) {
     .header { padding: 0 20px; }
     .main { padding: 24px 16px 60px; }
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
     .stream-grid { grid-template-columns: repeat(2, 1fr); }
     .page-title { font-size: 26px; }
+    .create-row { grid-template-columns: 1fr; }
   }
- 
-  @media (max-width: 440px) {
-    .stream-grid { grid-template-columns: 1fr 1fr; }
-  }
- 
 </style>
 </head>
 <body>
- 
-<!-- HEADER -->
+
 <header class="header">
   <div class="logo">
     <div class="logo-badge">♪</div>
     <div class="logo-text">444<span>Music</span></div>
   </div>
-  <div class="header-meta">
-    <div class="dot-live"></div>
-    <span>Admin · Analytics</span>
+  <div class="header-right">
+    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    <div class="header-meta">
+      <div class="dot-live"></div>
+      <span>Admin · Analytics</span>
+    </div>
   </div>
 </header>
- 
-<!-- TOAST CONTAINER -->
+
 <div class="toast-container" id="toasts"></div>
- 
-<!-- MAIN -->
+
 <main class="main">
   <div class="page-title">Analytics Manager</div>
-  <div class="page-sub">Manage stream counts across all connected platforms</div>
- 
-  <!-- STATS BAR -->
-  <div class="stats-bar" id="statsBar">
+  <div class="page-sub">Edit stream counts — changes write to the <code>analytics</code> collection and display on the user's dashboard</div>
+
+  <!-- DEBUG PANEL: only shows if issues detected -->
+  <div class="debug-panel" id="debugPanel">
+    <div class="debug-title">⚠ Debug Info</div>
+    <div class="debug-list" id="debugList"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
     <div class="stat-pill">
       <div class="stat-label">Total Artists</div>
       <div class="stat-value accent" id="statArtists">—</div>
@@ -557,47 +453,83 @@
       <div class="stat-value" id="statSpotify">—</div>
     </div>
     <div class="stat-pill">
-      <div class="stat-label">YouTube</div>
-      <div class="stat-value" id="statYT">—</div>
+      <div class="stat-label">Apple Music</div>
+      <div class="stat-value" id="statApple">—</div>
     </div>
   </div>
- 
-  <!-- SEARCH -->
-  <div class="search-wrapper">
-    <span class="search-icon">⌕</span>
-    <input
-      type="text"
-      class="search-input"
-      id="search"
-      placeholder="Search by name, email or ID..."
-      autocomplete="off"
-      spellcheck="false"
-    >
+
+  <!-- SEARCH + NEW ARTIST -->
+  <div class="search-row">
+    <div class="search-wrapper">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="search"
+        placeholder="Search by name, email or UID…" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="new-btn" onclick="toggleCreate()">+ New Artist</button>
   </div>
- 
+
+  <!-- CREATE FORM -->
+  <div class="create-form" id="createForm">
+    <div class="create-form-title">Create Analytics Record</div>
+    <div class="create-row">
+      <div class="create-field">
+        <label class="create-label">Artist Name *</label>
+        <input class="create-input" id="cf-name" type="text" placeholder="e.g. Kwame Asante">
+      </div>
+      <div class="create-field">
+        <label class="create-label">User UID (optional)</label>
+        <input class="create-input" id="cf-uid" type="text" placeholder="Leave blank = auto-generate">
+      </div>
+    </div>
+    <div class="create-row">
+      <div class="create-field">
+        <label class="create-label">Total Streams</label>
+        <input class="create-input" id="cf-total" type="number" value="0" min="0">
+      </div>
+      <div class="create-field">
+        <label class="create-label">Spotify Streams</label>
+        <input class="create-input" id="cf-spotify" type="number" value="0" min="0">
+      </div>
+    </div>
+    <div class="create-row">
+      <div class="create-field">
+        <label class="create-label">Apple Music Streams</label>
+        <input class="create-input" id="cf-apple" type="number" value="0" min="0">
+      </div>
+      <div class="create-field">
+        <label class="create-label">YouTube Streams</label>
+        <input class="create-input" id="cf-youtube" type="number" value="0" min="0">
+      </div>
+    </div>
+    <div class="create-actions">
+      <button class="cancel-btn" onclick="toggleCreate()">Cancel</button>
+      <button class="save-btn" onclick="createRecord()">Create Record</button>
+    </div>
+  </div>
+
   <!-- TOOLBAR -->
   <div class="toolbar">
     <div class="count-label" id="countLabel">Loading…</div>
   </div>
- 
+
   <!-- RESULTS -->
   <div class="results" id="results">
     <div class="loading-wrap">
       <div class="spinner"></div>
-      <span>Connecting to database…</span>
+      <span>Loading artists…</span>
     </div>
   </div>
 </main>
- 
+
 <script type="module">
- 
+
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
   getFirestore, collection,
-  getDocs, doc, updateDoc
+  getDocs, doc, setDoc, updateDoc, getDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
- 
-/* ── FIREBASE ── */
+
+/* ─── FIREBASE CONFIG ─── */
 const app = initializeApp({
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain:        "usersubmissionsportal.firebaseapp.com",
@@ -606,47 +538,39 @@ const app = initializeApp({
   messagingSenderId: "734783502459",
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 });
- 
+
 const db = getFirestore(app);
-let analyticsData = [];
- 
-/* ── HELPERS ── */
+let allData = [];    // merged analytics + users data
+let createOpen = false;
+
+/* ─── HELPERS ─── */
 function fmt(n) {
   const num = Number(n) || 0;
   if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
   if (num >= 1_000)     return (num / 1_000).toFixed(1) + 'K';
   return num.toLocaleString();
 }
- 
-/* Resolve artist name from any possible field */
+
 function resolveName(data) {
   return (
-    data.name         ||
-    data.artistName   ||
-    data.displayName  ||
-    data.artist       ||
-    data.fullName     ||
-    data.username     ||
-    data.Name         ||
-    data.ArtistName   ||
+    data.name        ||
+    data.artistName  ||
+    data.displayName ||
+    data.artist      ||
+    data.fullName    ||
+    data.username    ||
+    data.Name        ||
     ''
   ).trim();
 }
- 
-/* Resolve email from any possible field */
+
 function resolveEmail(data) {
-  return (
-    data.email        ||
-    data.Email        ||
-    data.userEmail    ||
-    data.gmail        ||
-    ''
-  ).trim();
+  return (data.email || data.Email || data.userEmail || '').trim();
 }
- 
+
 function initials(name, email) {
   if (name) {
-    const parts = name.trim().split(' ');
+    const parts = name.trim().split(/\s+/);
     return parts.length >= 2
       ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
       : name.slice(0, 2).toUpperCase();
@@ -654,204 +578,308 @@ function initials(name, email) {
   if (email) return email.slice(0, 2).toUpperCase();
   return '??';
 }
- 
-/* ── TOAST ── */
+
+/* ─── TOAST ─── */
 function toast(msg, type = 'success') {
   const c = document.getElementById('toasts');
   const t = document.createElement('div');
   t.className = `toast ${type}`;
-  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+  const icon = type === 'success' ? '✓' : type === 'info' ? 'ℹ' : '✕';
+  t.innerHTML = `<span class="toast-icon">${icon}</span><span>${msg}</span>`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3200);
 }
- 
-/* ── UPDATE STATS BAR ── */
+
+/* ─── STATS ─── */
 function updateStats(data) {
   const totStr  = data.reduce((s, a) => s + (Number(a.totalStreams)   || 0), 0);
   const spotStr = data.reduce((s, a) => s + (Number(a.spotifyStreams) || 0), 0);
-  const ytStr   = data.reduce((s, a) => s + (Number(a.youtubeStreams) || 0), 0);
+  const aplStr  = data.reduce((s, a) => s + (Number(a.appleStreams)   || 0), 0);
   document.getElementById('statArtists').textContent = data.length;
   document.getElementById('statTotal').textContent   = fmt(totStr);
   document.getElementById('statSpotify').textContent = fmt(spotStr);
-  document.getElementById('statYT').textContent      = fmt(ytStr);
+  document.getElementById('statApple').textContent   = fmt(aplStr);
 }
- 
-/* ── LOAD ── */
-async function loadAnalytics() {
+
+/* ─── LOAD: merge analytics + users ─── */
+window.loadAll = async function () {
+  document.getElementById('results').innerHTML =
+    `<div class="loading-wrap"><div class="spinner"></div><span>Loading artists…</span></div>`;
+  document.getElementById('countLabel').textContent = 'Loading…';
+
   try {
-    const snap = await getDocs(collection(db, 'analytics'));
-    analyticsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    render(analyticsData);
-    updateStats(analyticsData);
+    // 1. Fetch analytics collection
+    const analyticsSnap = await getDocs(collection(db, 'analytics'));
+    const analyticsMap  = {};
+    analyticsSnap.forEach(d => { analyticsMap[d.id] = { id: d.id, ...d.data() }; });
+
+    // 2. Fetch users collection (to get names/emails)
+    let usersMap = {};
+    try {
+      const usersSnap = await getDocs(collection(db, 'users'));
+      usersSnap.forEach(d => { usersMap[d.id] = { id: d.id, ...d.data() }; });
+    } catch (e) {
+      console.warn('Could not read users collection:', e);
+    }
+
+    // 3. Merge: for each analytics doc, attach user info if UID matches
+    const merged = Object.values(analyticsMap).map(a => {
+      const user = usersMap[a.id] || {};
+      return {
+        ...a,
+        // prefer users collection name, fall back to whatever is in analytics doc
+        name:    resolveName(user) || resolveName(a),
+        email:   resolveEmail(user) || resolveEmail(a),
+        _linked: !!usersMap[a.id],  // whether we found a matching user
+        // normalise field names: analytics doc may store 'appleStreams' already
+        // but Flutter dashboard might read from a flattened doc — we ensure all keys exist
+        totalStreams:   Number(a.totalStreams   ?? a.total   ?? 0),
+        spotifyStreams: Number(a.spotifyStreams ?? a.spotify ?? 0),
+        appleStreams:   Number(a.appleStreams   ?? a.apple   ?? 0),
+        youtubeStreams: Number(a.youtubeStreams ?? a.youtube ?? 0),
+      };
+    });
+
+    // 4. Debug: surface analytics docs with no user name
+    const noName = merged.filter(a => !a.name);
+    if (noName.length > 0) {
+      const panel = document.getElementById('debugPanel');
+      const list  = document.getElementById('debugList');
+      panel.classList.add('visible');
+      list.innerHTML =
+        `${noName.length} analytics doc(s) have no name. ` +
+        `This usually means no matching <code>users</code> doc was found with the same UID, ` +
+        `or the user doc has a different field name for the name.<br>` +
+        `<br>Affected IDs:<br>` +
+        noName.map(a => `• ${a.id}`).join('<br>');
+    } else {
+      document.getElementById('debugPanel').classList.remove('visible');
+    }
+
+    allData = merged;
+    render(allData);
+    updateStats(allData);
+
+    if (allData.length === 0) {
+      toast('No analytics records found. Create one above.', 'info');
+    }
+
   } catch (err) {
-    console.error(err);
+    console.error('Load error:', err);
     document.getElementById('results').innerHTML =
-      `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-text">Failed to load data.<br>Check your connection.</div></div>`;
-    document.getElementById('countLabel').textContent = 'Error loading data';
+      `<div class="empty">
+        <div class="empty-icon">⚠</div>
+        <div class="empty-text">Failed to load data</div>
+        <div class="empty-sub">${err.message}<br><br>Check Firestore rules allow admin read access.</div>
+      </div>`;
+    document.getElementById('countLabel').textContent = 'Error';
+    toast('Failed to load: ' + err.message, 'error');
   }
-}
- 
-loadAnalytics();
- 
-/* ── RENDER ── */
+};
+
+loadAll();
+
+/* ─── RENDER ─── */
 function render(data) {
-  const el = document.getElementById('results');
+  const el  = document.getElementById('results');
   const lbl = document.getElementById('countLabel');
- 
-  lbl.innerHTML = `Showing <span>${data.length}</span> of ${analyticsData.length} artist${analyticsData.length !== 1 ? 's' : ''}`;
- 
+
+  lbl.innerHTML = `Showing <span>${data.length}</span> of ${allData.length} artist${allData.length !== 1 ? 's' : ''}`;
+
   if (!data.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">◎</div><div class="empty-text">No artists found.</div></div>`;
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">◎</div>
+        <div class="empty-text">No artists found</div>
+        <div class="empty-sub">
+          Either the <code>analytics</code> collection is empty,<br>
+          or your search has no matches.<br><br>
+          Use "+ New Artist" above to create a record.
+        </div>
+      </div>`;
     return;
   }
- 
+
   el.innerHTML = '';
- 
+
   data.forEach((a, i) => {
-    const name  = resolveName(a)  || 'Unknown Artist';
-    const email = resolveEmail(a) || '—';
-    const ini   = initials(resolveName(a), resolveEmail(a));
- 
+    const displayName = a.name  || 'Unknown Artist';
+    const displayEmail = a.email || '—';
+    const ini = initials(a.name, a.email);
+    const sourceTag = a._linked
+      ? `<span class="source-tag users-linked">✓ user linked</span>`
+      : `<span class="source-tag analytics-only">analytics only</span>`;
+
     const card = document.createElement('div');
     card.className = 'card';
     card.style.animationDelay = `${i * 40}ms`;
- 
+
     card.innerHTML = `
       <div class="card-header">
         <div class="avatar">${ini}</div>
         <div class="card-info">
-          <div class="artist-name" title="${name}">${name}</div>
-          <div class="artist-email" title="${email}">${email}</div>
+          <div class="artist-name" title="${displayName}">${displayName}</div>
+          <div class="artist-email" title="${displayEmail}">${displayEmail}</div>
+          ${sourceTag}
         </div>
         <div class="card-badge">Artist</div>
       </div>
- 
+
       <div class="stream-grid">
         <div class="stream-field">
           <div class="field-label total-lbl">
-            <div class="platform-dot dot-total"></div>Total Streams
+            <div class="platform-dot dot-total"></div>Total
           </div>
-          <input
-            class="stream-input total-inp"
-            id="total-${a.id}"
-            type="number"
-            min="0"
-            value="${Number(a.totalStreams) || 0}"
-          >
+          <input class="stream-input total-inp" id="total-${a.id}" type="number" min="0" value="${a.totalStreams}">
         </div>
         <div class="stream-field">
           <div class="field-label spotify-lbl">
             <div class="platform-dot dot-spotify"></div>Spotify
           </div>
-          <input
-            class="stream-input spotify-inp"
-            id="spotify-${a.id}"
-            type="number"
-            min="0"
-            value="${Number(a.spotifyStreams) || 0}"
-          >
+          <input class="stream-input spotify-inp" id="spotify-${a.id}" type="number" min="0" value="${a.spotifyStreams}">
         </div>
         <div class="stream-field">
           <div class="field-label apple-lbl">
-            <div class="platform-dot dot-apple"></div>Apple Music
+            <div class="platform-dot dot-apple"></div>Apple
           </div>
-          <input
-            class="stream-input apple-inp"
-            id="apple-${a.id}"
-            type="number"
-            min="0"
-            value="${Number(a.appleStreams) || 0}"
-          >
+          <input class="stream-input apple-inp" id="apple-${a.id}" type="number" min="0" value="${a.appleStreams}">
         </div>
         <div class="stream-field">
           <div class="field-label youtube-lbl">
             <div class="platform-dot dot-youtube"></div>YouTube
           </div>
-          <input
-            class="stream-input youtube-inp"
-            id="youtube-${a.id}"
-            type="number"
-            min="0"
-            value="${Number(a.youtubeStreams) || 0}"
-          >
+          <input class="stream-input youtube-inp" id="youtube-${a.id}" type="number" min="0" value="${a.youtubeStreams}">
         </div>
       </div>
- 
+
       <div class="card-footer">
-        <div class="card-id">ID: ${a.id}</div>
+        <div class="card-id">UID: ${a.id}</div>
         <button class="save-btn" onclick="window.saveAnalytics('${a.id}', this)">
           Save Changes
         </button>
       </div>
     `;
- 
+
     el.appendChild(card);
   });
 }
- 
-/* ── SEARCH ── */
+
+/* ─── SEARCH ─── */
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const filtered = q
-    ? analyticsData.filter(a => {
-        const name  = resolveName(a).toLowerCase();
-        const email = resolveEmail(a).toLowerCase();
-        const id    = (a.id || '').toLowerCase();
-        return name.includes(q) || email.includes(q) || id.includes(q);
+    ? allData.filter(a => {
+        return (
+          (a.name  || '').toLowerCase().includes(q) ||
+          (a.email || '').toLowerCase().includes(q) ||
+          (a.id    || '').toLowerCase().includes(q)
+        );
       })
-    : analyticsData;
+    : allData;
   render(filtered);
   updateStats(filtered);
 });
- 
-/* ── SAVE ── */
-window.saveAnalytics = async function(id, btn) {
-  const total   = document.getElementById(`total-${id}`)?.value;
-  const spotify = document.getElementById(`spotify-${id}`)?.value;
-  const apple   = document.getElementById(`apple-${id}`)?.value;
-  const youtube = document.getElementById(`youtube-${id}`)?.value;
- 
-  if (total === undefined) { toast('Could not find fields.', 'error'); return; }
- 
+
+/* ─── SAVE ─── */
+/*
+  KEY FIX: This writes the EXACT field names that the Flutter app reads.
+  Make sure your Flutter dashboard reads: totalStreams, spotifyStreams, appleStreams, youtubeStreams
+  from the analytics/{uid} document.
+*/
+window.saveAnalytics = async function (id, btn) {
+  const total   = Number(document.getElementById(`total-${id}`)?.value   || 0);
+  const spotify = Number(document.getElementById(`spotify-${id}`)?.value || 0);
+  const apple   = Number(document.getElementById(`apple-${id}`)?.value   || 0);
+  const youtube = Number(document.getElementById(`youtube-${id}`)?.value || 0);
+
+  const orig = btn.textContent;
   btn.textContent = 'Saving…';
   btn.classList.add('saving');
- 
+
   try {
-    await updateDoc(doc(db, 'analytics', id), {
-      totalStreams:   Number(total),
-      spotifyStreams: Number(spotify),
-      appleStreams:   Number(apple),
-      youtubeStreams: Number(youtube)
-    });
- 
-    /* update local cache */
-    const idx = analyticsData.findIndex(a => a.id === id);
+    // Use setDoc with merge:true so it creates the doc if it doesn't exist yet
+    await setDoc(doc(db, 'analytics', id), {
+      totalStreams:   total,
+      spotifyStreams: spotify,
+      appleStreams:   apple,
+      youtubeStreams: youtube,
+      updatedAt:      serverTimestamp(),
+    }, { merge: true });
+
+    // Update local cache
+    const idx = allData.findIndex(a => a.id === id);
     if (idx !== -1) {
-      analyticsData[idx].totalStreams   = Number(total);
-      analyticsData[idx].spotifyStreams = Number(spotify);
-      analyticsData[idx].appleStreams   = Number(apple);
-      analyticsData[idx].youtubeStreams = Number(youtube);
+      allData[idx].totalStreams   = total;
+      allData[idx].spotifyStreams = spotify;
+      allData[idx].appleStreams   = apple;
+      allData[idx].youtubeStreams = youtube;
     }
- 
+
     btn.textContent = '✓ Saved';
     btn.classList.remove('saving');
     btn.classList.add('saved');
-    toast(`Streams updated successfully`, 'success');
-    updateStats(analyticsData);
- 
+    updateStats(allData);
+    toast(`Streams updated for ${allData.find(a=>a.id===id)?.name || id}`, 'success');
+
     setTimeout(() => {
       btn.textContent = 'Save Changes';
       btn.classList.remove('saved');
     }, 2500);
- 
+
   } catch (err) {
-    console.error(err);
-    btn.textContent = 'Save Changes';
+    console.error('Save error:', err);
+    btn.textContent = orig;
     btn.classList.remove('saving');
-    toast('Failed to save. Check permissions.', 'error');
+    toast('Save failed: ' + err.message, 'error');
   }
 };
- 
+
+/* ─── CREATE NEW RECORD ─── */
+window.toggleCreate = function () {
+  createOpen = !createOpen;
+  document.getElementById('createForm').classList.toggle('visible', createOpen);
+};
+
+window.createRecord = async function () {
+  const nameVal   = document.getElementById('cf-name').value.trim();
+  const uidVal    = document.getElementById('cf-uid').value.trim();
+  const totalVal  = Number(document.getElementById('cf-total').value   || 0);
+  const spotVal   = Number(document.getElementById('cf-spotify').value || 0);
+  const appleVal  = Number(document.getElementById('cf-apple').value   || 0);
+  const ytVal     = Number(document.getElementById('cf-youtube').value || 0);
+
+  if (!nameVal) { toast('Artist name is required.', 'error'); return; }
+
+  // Use provided UID or auto-generate one
+  const docId = uidVal || crypto.randomUUID();
+
+  try {
+    await setDoc(doc(db, 'analytics', docId), {
+      name:          nameVal,
+      totalStreams:   totalVal,
+      spotifyStreams: spotVal,
+      appleStreams:   appleVal,
+      youtubeStreams: ytVal,
+      createdAt:     serverTimestamp(),
+      updatedAt:     serverTimestamp(),
+    });
+
+    toast(`Created analytics record for ${nameVal}`, 'success');
+    document.getElementById('cf-name').value   = '';
+    document.getElementById('cf-uid').value    = '';
+    document.getElementById('cf-total').value  = '0';
+    document.getElementById('cf-spotify').value= '0';
+    document.getElementById('cf-apple').value  = '0';
+    document.getElementById('cf-youtube').value= '0';
+    toggleCreate();
+    await loadAll();
+
+  } catch (err) {
+    console.error('Create error:', err);
+    toast('Create failed: ' + err.message, 'error');
+  }
+};
+
 </script>
 </body>
 </html>
