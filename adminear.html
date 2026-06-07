@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music — Earnings Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-void:    #080a0f;
+    --bg-card:    #111520;
+    --bg-card2:   #161b28;
+    --bg-input:   #0c101a;
+    --border:     rgba(255,255,255,0.06);
+    --accent:     #f59e0b;
+    --accent-dim: rgba(245,158,11,0.15);
+    --accent-glow:rgba(245,158,11,0.3);
+    --green:      #10b981;
+    --red:        #ff2e63;
+    --text-pri:   #f0f2f8;
+    --text-sec:   #8892a4;
+    --text-dim:   #404b5e;
+    --radius:     14px;
+    --radius-sm:  9px;
+  }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg-void);
+    color: var(--text-pri);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 60% -10%, rgba(245,158,11,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 0% 80%,  rgba(16,185,129,0.05) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(8,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+  }
+
+  .logo-badge {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .refresh-btn {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-sec); font-family: 'DM Mono', monospace; font-size: 11px;
+    padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .refresh-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text-pri); }
+
+  .header-tag {
+    font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* MAIN */
+  .main {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 34px;
+    letter-spacing: -1px; margin-bottom: 4px;
+  }
+
+  .page-title span { color: var(--accent); }
+
+  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; }
+
+  /* STATS */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px;
+  }
+
+  .stat-pill {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px 18px;
+  }
+
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 6px; }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700;
+  }
+
+  .stat-value.gold  { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.white { color: var(--text-pri); }
+
+  /* SEARCH */
+  .search-wrapper { position: relative; margin-bottom: 20px; }
+
+  .search-icon {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 15px; pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px 14px 44px;
+    font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-pri);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus {
+    border-color: var(--accent-glow);
+    box-shadow: 0 0 0 3px rgba(245,158,11,0.07);
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+  }
+
+  .count-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .count-label span { color: var(--accent); font-weight: 700; }
+
+  /* CARDS */
+  .results { display: flex; flex-direction: column; gap: 10px; }
+
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px;
+    display: flex; align-items: center; gap: 16px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    border-color: rgba(245,158,11,0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+
+  .avatar {
+    width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(16,185,129,0.15));
+    border: 1px solid rgba(245,158,11,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px;
+    color: var(--accent); text-transform: uppercase;
+  }
+
+  .card-info { flex: 1; min-width: 0; }
+
+  .artist-name {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .artist-email {
+    font-size: 11px; color: var(--text-sec); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .artist-id {
+    font-size: 10px; color: var(--text-dim); margin-top: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* EARNINGS CONTROL */
+  .earnings-control {
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+
+  .currency-tag {
+    font-size: 11px; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 1px; white-space: nowrap;
+  }
+
+  .earnings-wrap { position: relative; }
+
+  .currency-symbol {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+    color: var(--accent); pointer-events: none;
+  }
+
+  .earnings-input {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 11px 12px 11px 28px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px;
+    color: var(--text-pri); outline: none; width: 140px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: right;
+  }
+
+  .earnings-input:focus {
+    border-color: var(--accent-glow);
+    box-shadow: 0 0 0 2px rgba(245,158,11,0.08);
+  }
+
+  .save-btn {
+    background: var(--accent); border: none; color: #080a0f;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px;
+    padding: 11px 18px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
+  }
+
+  .save-btn:hover { opacity: 0.88; transform: scale(1.03); box-shadow: 0 4px 16px var(--accent-glow); }
+  .save-btn:active { transform: scale(0.97); }
+  .save-btn.saving { background: var(--text-dim); color: var(--bg-void); pointer-events: none; }
+  .save-btn.saved  { background: var(--green);   color: white;          pointer-events: none; }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed; bottom: 28px; right: 28px;
+    display: flex; flex-direction: column; gap: 8px; z-index: 9999;
+  }
+
+  .toast {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 13px 18px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; min-width: 240px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
+  }
+
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error   { border-left: 3px solid var(--red); }
+  .toast-icon    { font-size: 14px; }
+
+  @keyframes toastIn  { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes toastOut { to  {opacity:0;transform:translateX(24px)} }
+
+  /* EMPTY / LOADING */
+  .empty { text-align: center; padding: 72px 24px; color: var(--text-dim); }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-text { font-family: 'Syne', sans-serif; font-size: 15px; }
+  .empty-sub  { font-size: 12px; margin-top: 8px; line-height: 1.7; }
+
+  .loading-wrap {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 60px; color: var(--text-sec); font-size: 13px;
+  }
+
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .header { padding: 0 16px; }
+    .main { padding: 24px 14px 60px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .card { flex-wrap: wrap; }
+    .earnings-control { width: 100%; justify-content: flex-end; }
+    .earnings-input { width: 110px; }
+    .page-title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-badge">$</div>
+    <div class="logo-text">444<span>Music</span></div>
+  </div>
+  <div class="header-right">
+    <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+    <div class="header-tag">
+      <div class="dot"></div>
+      <span>Admin · Earnings</span>
+    </div>
+  </div>
+</header>
+
+<div class="toast-container" id="toasts"></div>
+
+<main class="main">
+  <div class="page-title">Earnings <span>Manager</span></div>
+  <div class="page-sub">Edit each artist's earnings — writes directly to <code>users/{uid}.earnings</code></div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-label">Total Artists</div>
+      <div class="stat-value white" id="statCount">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Total Paid Out</div>
+      <div class="stat-value gold" id="statTotal">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Artists with Earnings</div>
+      <div class="stat-value green" id="statActive">—</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrapper">
+    <span class="search-icon">⌕</span>
+    <input type="text" class="search-input" id="search"
+      placeholder="Search by name, email or UID…" autocomplete="off" spellcheck="false">
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="count-label" id="countLabel">Loading…</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>Loading users…</span>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  doc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+});
+
+const db = getFirestore(app);
+let allUsers = [];
+
+/* ── HELPERS ── */
+function resolveName(d) {
+  return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim();
+}
+
+function resolveEmail(d) {
+  return (d.email || d.Email || d.userEmail || '').trim();
+}
+
+function initials(name, email) {
+  if (name) {
+    const p = name.trim().split(/\s+/);
+    return p.length >= 2 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
+  }
+  return email ? email.slice(0,2).toUpperCase() : '??';
+}
+
+function fmtMoney(n) {
+  const num = Number(n) || 0;
+  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ── TOAST ── */
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+/* ── STATS ── */
+function updateStats(data) {
+  const total  = data.reduce((s, u) => s + (Number(u.earnings) || 0), 0);
+  const active = data.filter(u => (Number(u.earnings) || 0) > 0).length;
+  document.getElementById('statCount').textContent  = data.length;
+  document.getElementById('statTotal').textContent  = fmtMoney(total);
+  document.getElementById('statActive').textContent = active;
+}
+
+/* ── LOAD ── */
+window.loadUsers = async function () {
+  document.getElementById('results').innerHTML =
+    `<div class="loading-wrap"><div class="spinner"></div><span>Loading users…</span></div>`;
+  document.getElementById('countLabel').textContent = 'Loading…';
+
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Sort: highest earnings first, then alphabetically
+    allUsers.sort((a, b) => {
+      const diff = (Number(b.earnings) || 0) - (Number(a.earnings) || 0);
+      return diff !== 0 ? diff : (resolveName(a) || '').localeCompare(resolveName(b) || '');
+    });
+
+    render(allUsers);
+    updateStats(allUsers);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('results').innerHTML =
+      `<div class="empty">
+        <div class="empty-icon">⚠</div>
+        <div class="empty-text">Failed to load users</div>
+        <div class="empty-sub">${err.message}</div>
+      </div>`;
+    document.getElementById('countLabel').textContent = 'Error';
+    toast('Load failed: ' + err.message, 'error');
+  }
+};
+
+loadUsers();
+
+/* ── RENDER ── */
+function render(data) {
+  const el  = document.getElementById('results');
+  const lbl = document.getElementById('countLabel');
+
+  lbl.innerHTML = `Showing <span>${data.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+
+  if (!data.length) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">◎</div>
+        <div class="empty-text">No users found</div>
+        <div class="empty-sub">The users collection may be empty,<br>or your search has no matches.</div>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = '';
+
+  data.forEach((u, i) => {
+    const name  = resolveName(u)  || 'Unknown Artist';
+    const email = resolveEmail(u) || '—';
+    const ini   = initials(resolveName(u), resolveEmail(u));
+    const earn  = Number(u.earnings) || 0;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
+
+    card.innerHTML = `
+      <div class="avatar">${ini}</div>
+
+      <div class="card-info">
+        <div class="artist-name">${name}</div>
+        <div class="artist-email">${email}</div>
+        <div class="artist-id">UID: ${u.id}</div>
+      </div>
+
+      <div class="earnings-control">
+        <div class="currency-tag">GHS</div>
+        <div class="earnings-wrap">
+          <span class="currency-symbol">₵</span>
+          <input
+            class="earnings-input"
+            id="earn-${u.id}"
+            type="number"
+            min="0"
+            step="0.01"
+            value="${earn.toFixed(2)}"
+          >
+        </div>
+        <button class="save-btn" onclick="window.saveEarnings('${u.id}', this)">
+          Save
+        </button>
+      </div>
+    `;
+
+    el.appendChild(card);
+  });
+}
+
+/* ── SEARCH ── */
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  const filtered = q
+    ? allUsers.filter(u =>
+        (resolveName(u)  || '').toLowerCase().includes(q) ||
+        (resolveEmail(u) || '').toLowerCase().includes(q) ||
+        (u.id            || '').toLowerCase().includes(q)
+      )
+    : allUsers;
+  render(filtered);
+  updateStats(filtered);
+});
+
+/* ── SAVE ── */
+window.saveEarnings = async function (uid, btn) {
+  const input = document.getElementById(`earn-${uid}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const newEarnings = parseFloat(input.value) || 0;
+
+  btn.textContent = '…';
+  btn.classList.add('saving');
+
+  try {
+    await updateDoc(doc(db, 'users', uid), {
+      earnings:  newEarnings,
+      updatedAt: serverTimestamp(),
+    });
+
+    // Update local cache
+    const idx = allUsers.findIndex(u => u.id === uid);
+    if (idx !== -1) allUsers[idx].earnings = newEarnings;
+
+    btn.textContent = '✓';
+    btn.classList.remove('saving');
+    btn.classList.add('saved');
+    updateStats(allUsers);
+
+    const name = resolveName(allUsers.find(u => u.id === uid) || {}) || uid;
+    toast(`${name} → ₵${newEarnings.toFixed(2)}`, 'success');
+
+    setTimeout(() => {
+      btn.textContent = 'Save';
+      btn.classList.remove('saved');
+    }, 2200);
+
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Save';
+    btn.classList.remove('saving');
+    toast('Save failed: ' + err.message, 'error');
+  }
+};
+
+</script>
+</body>
+</html>
