@@ -8,6 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  emailjs.init("YdwKKnZpEVzhis4lB");
+</script>
+
 <style>
 /* ════════════════════════════════
    BASE
@@ -99,7 +105,6 @@ body::before {
   color: var(--text-mut);
 }
 
-/* Connection status indicator */
 .conn-indicator {
   display: flex; align-items: center; gap: 7px;
   font-size: 0.72rem; color: var(--text-sec);
@@ -344,6 +349,25 @@ option { background: #13132a; }
 .badge-paid     { background: rgba(52,211,153,0.1);  color: #34d399; border-color: rgba(52,211,153,0.25); }
 .badge-unpaid   { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
 
+/* UPC display badge */
+.upc-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(52,211,153,0.06);
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+.upc-badge .upc-label {
+  font-family: var(--ff-head); font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-mut); white-space: nowrap;
+}
+.upc-badge .upc-value {
+  font-family: monospace; font-size: 0.88rem; color: var(--green);
+  font-weight: 700; letter-spacing: 0.05em;
+}
+
 /* ── META ── */
 .meta-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -355,7 +379,6 @@ option { background: #13132a; }
 .meta-value { font-size: 0.8rem; color: var(--text-sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .meta-value.email { color: var(--purple-soft); }
 
-/* File link */
 .file-link-row {
   display: flex; align-items: center; gap: 8px;
   background: var(--purple-dim);
@@ -444,7 +467,6 @@ option { background: #13132a; }
 }
 .loading-state p { font-size: 0.85rem; color: var(--text-mut); }
 
-/* Retry button inside loading state */
 .retry-btn {
   background: var(--purple-dim);
   border: 1px solid var(--border-md);
@@ -672,7 +694,7 @@ option { background: #13132a; }
   </div>
 </div>
 
-<!-- ── FIREBASE ──────────────────────────────── -->
+<!-- ── FIREBASE + EMAILJS LOGIC ──────────────────────────────── -->
 <script type="module">
 import { initializeApp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -684,7 +706,6 @@ import {
   deleteDoc,
   onSnapshot,
   enableIndexedDbPersistence,
-  getDocs,
   CACHE_SIZE_UNLIMITED
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -698,22 +719,53 @@ const firebaseConfig = {
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
+/* ─── EMAILJS CONFIG ─────────────────────── */
+const EJS_SERVICE  = "service_4tj52zt";
+const EJS_TEMPLATE = "template_nyt4wdr";
+
+/* ─── UPC GENERATOR ─────────────────────── */
+function generateUPC() {
+  const prefix = "731648";
+  const random = Math.floor(Math.random() * 9999999).toString().padStart(7, "0");
+  return prefix + random;
+}
+
+/* ─── SEND APPROVAL EMAIL ────────────────── */
+async function sendApprovalEmail(item, upc) {
+  const toEmail = item.email || "";
+  if (!toEmail) {
+    toast("⚠️", "No email on file — skipped sending");
+    return;
+  }
+
+  const toName   = item.artistName  || "Artist";
+  const songTitle = item.releaseTitle || item.songTitle || item.title || "Your Release";
+
+  try {
+    await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+      to_email:   toEmail,
+      to_name:    toName,
+      song_title: songTitle,
+      upc_code:   upc
+    });
+    toast("📧", `Approval email sent to ${toEmail}`);
+  } catch (err) {
+    console.error("EmailJS error:", err);
+    toast("❌", "Email failed: " + (err.text || err.message || "unknown error"));
+  }
+}
+
 /* ─── INIT ───────────────────────────────── */
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* ─── ENABLE OFFLINE PERSISTENCE ────────── */
-// This caches all data locally so the page NEVER shows empty on reload,
-// even without network — it serves from IndexedDB instantly.
 try {
   await enableIndexedDbPersistence(db, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
 } catch (err) {
   if (err.code === 'failed-precondition') {
-    // Multiple tabs open — persistence available in one tab only (fine)
-    console.warn('Persistence: multiple tabs open, using one-tab cache');
+    console.warn('Persistence: multiple tabs open');
   } else if (err.code === 'unimplemented') {
-    // Browser doesn't support persistence (rare)
-    console.warn('Persistence not supported in this browser');
+    console.warn('Persistence not supported');
   }
 }
 
@@ -739,7 +791,7 @@ let retryCount    = 0;
 let retryTimer    = null;
 const MAX_RETRIES = 8;
 
-/* ─── ONLINE/OFFLINE DETECTION ──────────── */
+/* ─── CONNECTION STATUS ──────────────────── */
 function setConnStatus(state) {
   connDot.className = 'conn-dot ' + state;
   const labels = {
@@ -756,15 +808,11 @@ window.addEventListener('online',  () => { if (!unsubscribe || retryCount > 0) s
 window.addEventListener('offline', () => setConnStatus('offline'));
 
 /* ─── REAL-TIME LISTENER ─────────────────── */
-// onSnapshot fires immediately from cache, then again from server.
-// This means: page loads → data appears instantly from cache → server
-// update arrives seconds later → UI updates automatically. No reload needed.
 function startListener() {
   if (unsubscribe) { unsubscribe(); unsubscribe = null; }
   clearTimeout(retryTimer);
   setConnStatus('connecting');
 
-  // Show spinner only if we have no cached data yet
   if (submissions.length === 0) {
     resultsEl.innerHTML = `<div class="loading-state"><div class="loader"></div><p>Loading submissions…</p></div>`;
   }
@@ -772,14 +820,10 @@ function startListener() {
   try {
     unsubscribe = onSnapshot(
       collection(db, "submissions"),
-
-      /* ── SUCCESS HANDLER ── */
       { includeMetadataChanges: true },
       (snap) => {
         const fromCache = snap.metadata.fromCache;
-        const hasPending = snap.metadata.hasPendingWrites;
 
-        // Update connection UI
         if (!fromCache) {
           retryCount = 0;
           setConnStatus('live');
@@ -790,11 +834,9 @@ function startListener() {
           setConnStatus('offline');
         }
 
-        // Rebuild submissions list from snapshot
         submissions = [];
         snap.forEach(d => submissions.push({ id: d.id, ...d.data() }));
 
-        // Newest first
         submissions.sort((a, b) => {
           const ta = a.createdAt instanceof Object ? a.createdAt.seconds * 1000 : (a.createdAt || 0);
           const tb = b.createdAt instanceof Object ? b.createdAt.seconds * 1000 : (b.createdAt || 0);
@@ -804,8 +846,6 @@ function startListener() {
         updateStats();
         applyFilters();
       },
-
-      /* ── ERROR HANDLER ── */
       (err) => {
         console.error('Snapshot error:', err.code, err.message);
         scheduleRetry(err);
@@ -821,7 +861,6 @@ function startListener() {
 function scheduleRetry(err) {
   if (retryCount >= MAX_RETRIES) {
     setConnStatus('offline');
-    // Show error + manual retry button if we have NO data
     if (submissions.length === 0) {
       resultsEl.innerHTML = `
         <div class="loading-state">
@@ -840,11 +879,7 @@ function scheduleRetry(err) {
 
   retryCount++;
   setConnStatus('retrying');
-
-  // Exponential backoff: 2s, 4s, 8s, 16s… capped at 30s
   const delay = Math.min(2000 * Math.pow(1.8, retryCount - 1), 30000);
-  console.log(`Retry ${retryCount}/${MAX_RETRIES} in ${Math.round(delay/1000)}s`);
-
   retryTimer = setTimeout(() => {
     if (navigator.onLine) startListener();
     else scheduleRetry({ message: 'No network' });
@@ -912,7 +947,6 @@ function display(data) {
     const isPaid = !!item.paymentVerified;
     const initial = name.charAt(0).toUpperCase();
 
-    // Handle both timestamp types (Firestore Timestamp object or ms number)
     let date = '—';
     if (item.createdAt) {
       const ts = item.createdAt instanceof Object && item.createdAt.seconds
@@ -934,13 +968,20 @@ function display(data) {
     card.className = "card";
     card.style.animationDelay = `${Math.min(delay * 0.04, 0.4)}s`;
 
-    // Build file link row if a file URL exists
     const fileUrl = item.fileUrl || item.audioUrl || item.downloadUrl || '';
     const fileLinkHtml = fileUrl
       ? `<a class="file-link-row" href="${escHtml(fileUrl)}" target="_blank" rel="noopener">
            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--purple-soft)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
            <span>${escHtml(fileUrl)}</span>
          </a>`
+      : '';
+
+    // Show existing UPC if already assigned
+    const upcHtml = item.upc
+      ? `<div class="upc-badge">
+           <span class="upc-label">UPC</span>
+           <span class="upc-value">${escHtml(item.upc)}</span>
+         </div>`
       : '';
 
     card.innerHTML = `
@@ -959,6 +1000,8 @@ function display(data) {
         <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? '✓ Paid' : '✗ Unpaid'}</span>
         ${item.releaseType ? `<span class="badge" style="background:rgba(162,120,245,0.1);color:#c4a8ff;border-color:rgba(162,120,245,0.25);">${escHtml(item.releaseType)}</span>` : ''}
       </div>
+
+      ${upcHtml}
 
       <div class="meta-grid">
         <div class="meta-item">
@@ -994,7 +1037,11 @@ function display(data) {
       <div class="controls">
         <div class="control-row">
           <span class="control-label">Status</span>
-          <select class="ctrl-select" data-id="${item.id}" data-type="status">
+          <select class="ctrl-select" data-id="${item.id}" data-type="status"
+            data-email="${escHtml(item.email || '')}"
+            data-artist="${escHtml(name)}"
+            data-title="${escHtml(title)}"
+            data-upc="${escHtml(item.upc || '')}">
             <option value="">— Change Status —</option>
             <option value="Pending"  ${status==='Pending'  ?'selected':''}>Pending</option>
             <option value="review"   ${status==='review'   ?'selected':''}>Review</option>
@@ -1016,17 +1063,48 @@ function display(data) {
         </button>
       </div>`;
 
-    /* Status change */
+    /* ── STATUS CHANGE + AUTO EMAIL ── */
     card.querySelector('[data-type="status"]').addEventListener('change', async function() {
       if (!this.value) return;
       this.disabled = true;
-      const ok = await safeUpdate(this.dataset.id, { status: this.value });
-      if (ok) toast('✅', `Status → "${this.value}"`);
-      // onSnapshot auto-refreshes — no need to reload
+
+      const newStatus  = this.value;
+      const subId      = this.dataset.id;
+      const artistName = this.dataset.artist;
+      const songTitle  = this.dataset.title;
+      const email      = this.dataset.email;
+      let   existingUPC = this.dataset.upc;
+
+      // Build update object
+      const updateData = { status: newStatus };
+
+      // If approving — generate UPC if not already assigned
+      if (newStatus === "Approved") {
+        if (!existingUPC) {
+          existingUPC = generateUPC();
+          updateData.upc = existingUPC;
+        }
+      }
+
+      const ok = await safeUpdate(subId, updateData);
+
+      if (ok) {
+        toast('✅', `Status → "${newStatus}"`);
+
+        // Send email only on Approved
+        if (newStatus === "Approved") {
+          toast('📤', 'Sending approval email…');
+          await sendApprovalEmail(
+            { email, artistName, releaseTitle: songTitle },
+            existingUPC
+          );
+        }
+      }
+
       setTimeout(() => { this.disabled = false; }, 1500);
     });
 
-    /* Payment change */
+    /* ── PAYMENT CHANGE ── */
     card.querySelector('[data-type="payment"]').addEventListener('change', async function() {
       if (this.value === '') return;
       this.disabled = true;
@@ -1035,7 +1113,7 @@ function display(data) {
       setTimeout(() => { this.disabled = false; }, 1500);
     });
 
-    /* Delete */
+    /* ── DELETE ── */
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
     });
@@ -1080,7 +1158,6 @@ confirmYes.addEventListener('click', async () => {
     await deleteDoc(doc(db, "submissions", pendingDelete));
     closeConfirm();
     toast('🗑️', 'Submission deleted');
-    // onSnapshot will auto-update the list
   } catch(e) {
     toast('❌', 'Delete failed: ' + e.message);
     closeConfirm();
