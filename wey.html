@@ -146,35 +146,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .stat-value.cyan   { color: var(--cyan); }
 .stat-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
 
-/* ===== NOTICE ===== */
-.notice {
-  background: var(--black-2); border: 1px solid rgba(245,158,11,0.2);
-  border-radius: 12px; padding: 16px 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
-}
-.notice-left { display: flex; align-items: flex-start; gap: 12px; }
-.notice-icon {
-  width: 36px; height: 36px; background: rgba(245,158,11,0.1);
-  border: 1px solid rgba(245,158,11,0.2); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.notice-icon svg { width: 16px; height: 16px; color: var(--amber); }
-.notice-text strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 3px; color: var(--text); }
-.notice-text p { font-size: 12px; color: var(--text-2); line-height: 1.5; }
-.tag { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; }
-.tag-amber { background: rgba(245,158,11,0.1); color: var(--amber); }
-.tag-green { background: rgba(34,197,94,0.1);  color: var(--green); }
-.tag-rose  { background: rgba(239,68,68,0.1);  color: var(--rose); }
-.pay-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 10px 20px; background: var(--purple); border-radius: 8px;
-  color: white; font-size: 13px; font-weight: 600;
-  transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
-}
-.pay-btn:hover { background: var(--purple-light); transform: translateY(-1px); }
-.pay-btn svg { width: 13px; height: 13px; }
-
 /* ===== SECTION HEADER ===== */
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
 .section-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
@@ -459,7 +430,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
 
 /* ═══════════════════════════════════════════════
-   SMART LINK PANEL — PRODUCTION STYLES
+   SMART LINK PANEL
 ═══════════════════════════════════════════════ */
 .smart-link-section { margin-top: 0; }
 .smart-link-generating {
@@ -671,9 +642,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .page-content { padding: 20px 16px; }
   .topbar { padding: 14px 16px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .notice { padding: 14px; }
-  .notice-left { flex-direction: column; gap: 8px; }
-  .pay-btn { width: 100%; justify-content: center; }
   .container { grid-template-columns: 1fr; }
   .toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(110%); }
   .toast.show { transform: translateY(0); }
@@ -749,7 +717,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
       </svg>
-      Royalty Split 
+      Royalty Split
     </a>
     <div class="nav-section-label">Tools</div>
     <a class="nav-item" href="https://444musicblog.vercel.app/">
@@ -810,6 +778,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   </div>
 
   <div class="page-content">
+
     <!-- STATS -->
     <div class="stats-row" id="statsRow">
       <div class="stat-card">
@@ -852,32 +821,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
         <div class="stat-value cyan" id="statPaid">—</div>
         <div class="stat-sub">Payment confirmed</div>
       </div>
-    </div>
-
-    <!-- NOTICE -->
-    <div class="notice">
-      <div class="notice-left">
-        <div class="notice-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </div>
-        <div class="notice-text">
-          <strong>Payment Required to Activate Release</strong>
-          <p>
-            Submitted releases stay <span class="tag tag-amber">Pending</span> until payment is confirmed.
-            Status updates to <span class="tag tag-green">Paid</span> or <span class="tag tag-rose">Unpaid</span>
-            — usually within <span class="tag tag-amber">1–24 hrs</span> after payment.
-          </p>
-        </div>
-      </div>
-      <a class="pay-btn" href="https://444music-distribution.vercel.app/pay.html" target="_blank">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-        </svg>
-        Pay Now
-      </a>
     </div>
 
     <!-- SECTION HEADER -->
@@ -1027,14 +970,10 @@ function getProgress(status) {
   }
 }
 
-/* ═══════════════════════════════════════════════
-   UPC GENERATION
-═══════════════════════════════════════════════ */
+/* === UPC GENERATION === */
 function generateUPCCandidate() {
   let code = "731";
-  for (let i = 0; i < 8; i++) {
-    code += Math.floor(Math.random() * 10).toString();
-  }
+  for (let i = 0; i < 8; i++) { code += Math.floor(Math.random() * 10).toString(); }
   let odd = 0, even = 0;
   for (let i = 0; i < 11; i++) {
     const d = parseInt(code[i]);
@@ -1044,26 +983,13 @@ function generateUPCCandidate() {
   return code + checkDigit.toString();
 }
 
-/* ── FIXED: ffm.to URL format: https://ffm.to/artistname-songtitle ── */
 function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
-  const artistSlug = (artistName || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .trim()
-    .replace(/\s+/g, "");
-  const titleSlug = (releaseTitle || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .substring(0, 30);
+  const artistSlug = (artistName || "").toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "");
+  const titleSlug  = (releaseTitle || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").replace(/-+/g, "-").substring(0, 30);
   return `https://ffm.to/${artistSlug}-${titleSlug}`;
 }
 
-/* ═══════════════════════════════════════════════
-   STORE ICON SVGs — Real brand icons
-═══════════════════════════════════════════════ */
+/* === STORE ICONS === */
 const STORE_ICONS = {
   spotify: `<svg viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`,
   applemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="amlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fc3c44"/><stop offset="100%" style="stop-color:#ff6a6a"/></linearGradient></defs><rect width="24" height="24" rx="5" fill="url(#amlg)"/><path d="M17.05 8.49a.5.5 0 0 0-.35-.48l-5.5-1.5a.5.5 0 0 0-.65.48v6.54a2 2 0 1 0 1 1.73V10.6l4.5 1.23v3.68a2 2 0 1 0 1 1.73V8.49z" fill="white"/></svg>`,
@@ -1077,15 +1003,10 @@ const STORE_ICONS = {
 
 function getStoreIconHtml(storeKey) {
   const icon = STORE_ICONS[storeKey.toLowerCase().replace(/\s/g,'')];
-  if (icon) {
-    return `<div class="sl-store-icon">${icon}</div>`;
-  }
+  if (icon) return `<div class="sl-store-icon">${icon}</div>`;
   return `<div class="sl-store-icon" style="background:rgba(255,255,255,0.08);">🎵</div>`;
 }
 
-/* ═══════════════════════════════════════════════
-   STORE CONFIG
-═══════════════════════════════════════════════ */
 const STORE_CONFIG = [
   { key: "spotifyLink",      name: "Spotify",       iconKey: "spotify",      color: "#1DB954", sub: "Stream on Spotify" },
   { key: "appleMusicLink",   name: "Apple Music",   iconKey: "applemusic",   color: "#fc3c44", sub: "Listen on Apple Music" },
@@ -1097,13 +1018,8 @@ const STORE_CONFIG = [
   { key: "amazonMusicLink",  name: "Amazon Music",  iconKey: "amazonmusic",  color: "#00a8e0", sub: "Listen on Amazon Music" },
 ];
 
-/* ═══════════════════════════════════════════════
-   SMART LINK PANEL RENDERER
-═══════════════════════════════════════════════ */
 function escHtml(str) {
-  return String(str || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function metaVal(v, fallback) {
   const f = fallback !== undefined ? fallback : '—';
@@ -1112,90 +1028,43 @@ function metaVal(v, fallback) {
 
 function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerating) {
   if (isGenerating) {
-    return `
-      <div class="smart-link-section">
-        <div class="smart-link-generating">
-          <div class="sl-spinner"></div>
-          <div class="sl-generating-text">
-            <strong>Generating Smart Link & UPC…</strong>
-            <span>Setting up your release profile</span>
-          </div>
-        </div>
-      </div>`;
+    return `<div class="smart-link-section"><div class="smart-link-generating"><div class="sl-spinner"></div><div class="sl-generating-text"><strong>Generating Smart Link & UPC…</strong><span>Setting up your release profile</span></div></div></div>`;
   }
-
   const storeChips = STORE_CONFIG.map(s => {
     const hasLink = data[s.key] && data[s.key].trim();
     return `<span class="sl-store-chip ${hasLink ? 'has-link' : ''}">${s.name}</span>`;
   }).join('');
-
-  const upcDisplay = upcCode
-    ? `${upcCode.substring(0,3)} ${upcCode.substring(3,6)} ${upcCode.substring(6,9)} ${upcCode.substring(9)}`
-    : '—';
-
+  const upcDisplay = upcCode ? `${upcCode.substring(0,3)} ${upcCode.substring(3,6)} ${upcCode.substring(6,9)} ${upcCode.substring(9)}` : '—';
   return `
     <div class="smart-link-section">
       <div class="smart-link-card">
         <div class="sl-card-header">
           <div class="sl-card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             Smart Link
           </div>
-          <div class="sl-live-badge">
-            <div class="sl-live-dot"></div>
-            Live
-          </div>
+          <div class="sl-live-badge"><div class="sl-live-dot"></div>Live</div>
         </div>
-
         <div class="sl-url-row">
-          <div class="sl-url-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
-          </div>
+          <div class="sl-url-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
           <span class="sl-url-text" id="slUrlDisplay-${releaseId}">${escHtml(smartLinkURL)}</span>
           <button class="sl-copy-btn" id="slCopyBtn-${releaseId}" onclick="copySmartLink('${releaseId}', '${escHtml(smartLinkURL)}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy
           </button>
         </div>
-
         <div class="sl-upc-row">
-          <div class="sl-upc-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14M3 10h4M8 10h4M12 10h5M17 10h4"/>
-            </svg>
-            UPC / Barcode
-          </div>
+          <div class="sl-upc-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14M3 10h4M8 10h4M12 10h5M17 10h4"/></svg>UPC / Barcode</div>
           <div class="sl-upc-value">${escHtml(upcDisplay)}</div>
         </div>
-
-        <div class="sl-stores-row">
-          <span class="sl-stores-label">Stores:</span>
-          ${storeChips}
-        </div>
-
+        <div class="sl-stores-row"><span class="sl-stores-label">Stores:</span>${storeChips}</div>
         <div class="sl-actions">
           <button class="sl-btn sl-btn-primary" onclick="openSmartLinkPage('${releaseId}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             Open Smart Link
           </button>
           <button class="sl-btn sl-btn-share" onclick="shareSmartLink('${releaseId}', '${escHtml(smartLinkURL)}', '${escHtml(data.releaseTitle || '')}', '${escHtml(data.artistName || '')}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             Share
           </button>
         </div>
@@ -1203,7 +1072,6 @@ function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerati
     </div>`;
 }
 
-/* Copy smart link */
 function copySmartLink(releaseId, url) {
   navigator.clipboard.writeText(url).then(() => {
     const btn = document.getElementById(`slCopyBtn-${releaseId}`);
@@ -1216,138 +1084,61 @@ function copySmartLink(releaseId, url) {
       }, 2200);
     }
     showToast("Smart Link copied to clipboard!");
-  }).catch(() => {
-    showToast("Copy failed — please copy manually", true);
-  });
+  }).catch(() => showToast("Copy failed — please copy manually", true));
 }
 
-/* Share smart link */
 function shareSmartLink(releaseId, url, title, artist) {
   const shareData = { title: `${title} by ${artist}`, text: `Listen to "${title}" by ${artist} on all streaming platforms`, url };
-  if (navigator.share) {
-    navigator.share(shareData).catch(() => {});
-  } else {
-    copySmartLink(releaseId, url);
-    showToast("Link copied! Share it anywhere.");
-  }
+  if (navigator.share) { navigator.share(shareData).catch(() => {}); }
+  else { copySmartLink(releaseId, url); showToast("Link copied! Share it anywhere."); }
 }
 
-/* Open Smart Link page preview — with real store icons */
 function openSmartLinkPage(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
-
   const upc = data.upc || '';
-  const url = data.smartLinkURL || '';
-  const releaseDate = data.releaseDate
-    ? new Date(data.releaseDate).getFullYear()
-    : new Date().getFullYear();
-
-  /* Build store links with real SVG icons */
-  const storeLinks = STORE_CONFIG
-    .filter(s => data[s.key] && data[s.key].trim())
-    .map(s => `
-      <a class="sl-store-link-btn" href="${escHtml(data[s.key])}" target="_blank" rel="noopener">
-        ${getStoreIconHtml(s.iconKey)}
-        <div class="sl-store-link-text">
-          <div class="sl-store-link-name">${s.name}</div>
-          <div class="sl-store-link-sub">${s.sub}</div>
-        </div>
-        <div class="sl-store-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </div>
-      </a>`)
-    .join('');
-
-  /* If no links yet, show all stores with placeholder state */
+  const releaseDate = data.releaseDate ? new Date(data.releaseDate).getFullYear() : new Date().getFullYear();
+  const storeLinks = STORE_CONFIG.filter(s => data[s.key] && data[s.key].trim()).map(s => `
+    <a class="sl-store-link-btn" href="${escHtml(data[s.key])}" target="_blank" rel="noopener">
+      ${getStoreIconHtml(s.iconKey)}
+      <div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">${s.sub}</div></div>
+      <div class="sl-store-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </a>`).join('');
   const storeSection = storeLinks
     ? `<div class="sl-page-store-links">${storeLinks}</div>`
-    : `<div class="sl-page-store-links">
-        ${STORE_CONFIG.map(s => `
-        <div class="sl-store-link-btn" style="opacity:0.4;cursor:default;">
-          ${getStoreIconHtml(s.iconKey)}
-          <div class="sl-store-link-text">
-            <div class="sl-store-link-name">${s.name}</div>
-            <div class="sl-store-link-sub">Coming soon</div>
-          </div>
-        </div>`).join('')}
-       </div>`;
-
+    : `<div class="sl-page-store-links">${STORE_CONFIG.map(s => `<div class="sl-store-link-btn" style="opacity:0.4;cursor:default;">${getStoreIconHtml(s.iconKey)}<div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">Coming soon</div></div></div>`).join('')}</div>`;
   const coverHtml = data.coverURL
     ? `<img src="${escHtml(data.coverURL)}" alt="${escHtml(data.releaseTitle)}">`
-    : `<div class="sl-page-cover-placeholder">
-         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
-           <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-         </svg>
-       </div>`;
-
+    : `<div class="sl-page-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
   const upcFormatted = upc ? `${upc.substring(0,3)} ${upc.substring(3,6)} ${upc.substring(6,9)} ${upc.substring(9)}` : '—';
-
   document.getElementById('slPageContent').innerHTML = `
-    <div class="sl-page-close-row">
-      <button class="sl-page-close" onclick="closeSmartLinkPage()">✕</button>
-    </div>
+    <div class="sl-page-close-row"><button class="sl-page-close" onclick="closeSmartLinkPage()">✕</button></div>
     <div class="sl-page-cover-hero">${coverHtml}</div>
     <div class="sl-page-info">
       <div class="sl-page-release-title">${escHtml(data.releaseTitle || 'Untitled')}</div>
       <div class="sl-page-artist">${escHtml(data.artistName || '')}</div>
-      ${data.featuring && data.featuring.trim()
-        ? `<div class="sl-page-featuring">feat. ${escHtml(data.featuring)}</div>` : ''}
+      ${data.featuring && data.featuring.trim() ? `<div class="sl-page-featuring">feat. ${escHtml(data.featuring)}</div>` : ''}
       <div class="sl-page-meta-row">
-        ${data.genre ? `<div class="sl-page-meta-item">
-          <div class="sl-page-meta-label">Genre</div>
-          <div class="sl-page-meta-value">${escHtml(data.genre)}</div>
-        </div><div class="sl-page-divider"></div>` : ''}
-        <div class="sl-page-meta-item">
-          <div class="sl-page-meta-label">Year</div>
-          <div class="sl-page-meta-value">${releaseDate}</div>
-        </div>
-        ${data.releaseType ? `<div class="sl-page-divider"></div>
-        <div class="sl-page-meta-item">
-          <div class="sl-page-meta-label">Type</div>
-          <div class="sl-page-meta-value">${escHtml(data.releaseType)}</div>
-        </div>` : ''}
+        ${data.genre ? `<div class="sl-page-meta-item"><div class="sl-page-meta-label">Genre</div><div class="sl-page-meta-value">${escHtml(data.genre)}</div></div><div class="sl-page-divider"></div>` : ''}
+        <div class="sl-page-meta-item"><div class="sl-page-meta-label">Year</div><div class="sl-page-meta-value">${releaseDate}</div></div>
+        ${data.releaseType ? `<div class="sl-page-divider"></div><div class="sl-page-meta-item"><div class="sl-page-meta-label">Type</div><div class="sl-page-meta-value">${escHtml(data.releaseType)}</div></div>` : ''}
       </div>
     </div>
-    <div class="sl-page-stores">
-      <div class="sl-page-stores-title">Listen Now</div>
-      ${storeSection}
-    </div>
-    ${upc ? `
-    <div class="sl-page-upc-footer">
-      <div class="sl-page-upc-label">UPC Barcode</div>
-      <div class="sl-page-upc-val">${escHtml(upcFormatted)}</div>
-    </div>` : ''}
-    <div class="sl-page-branding">
-      <div class="sl-brand-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-        </svg>
-      </div>
-      Distributed by 444Music
-    </div>
-  `;
-
+    <div class="sl-page-stores"><div class="sl-page-stores-title">Listen Now</div>${storeSection}</div>
+    ${upc ? `<div class="sl-page-upc-footer"><div class="sl-page-upc-label">UPC Barcode</div><div class="sl-page-upc-val">${escHtml(upcFormatted)}</div></div>` : ''}
+    <div class="sl-page-branding"><div class="sl-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>Distributed by 444Music</div>`;
   document.getElementById('slPageOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeSmartLinkPage() {
   document.getElementById('slPageOverlay').classList.remove('open');
-  if (!document.getElementById('metaOverlay').classList.contains('open')) {
-    document.body.style.overflow = '';
-  }
+  if (!document.getElementById('metaOverlay').classList.contains('open')) document.body.style.overflow = '';
 }
 
-document.getElementById('slPageOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeSmartLinkPage();
-});
+document.getElementById('slPageOverlay').addEventListener('click', function(e) { if (e.target === this) closeSmartLinkPage(); });
 
-/* ═══════════════════════════════════════════════
-   META MODAL LOGIC
-═══════════════════════════════════════════════ */
+/* === META MODAL === */
 window._releaseMeta = {};
 
 function renderCreditsSection(arr) {
@@ -1368,230 +1159,90 @@ function renderCreditsSection(arr) {
 async function openMetaModal(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
-
   const content  = document.getElementById('metaModalContent');
   const subtitle = document.getElementById('metaModalSubtitle');
   subtitle.textContent = data.releaseTitle || 'Release Details';
-
-  const releaseDate = data.releaseDate
-    ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
-    : '—';
-  const submittedAt = data.createdAt
-    ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    : '—';
-
-  const rawStatus  = (data.status || 'Pending').trim();
-  const statusClass = rawStatus.toLowerCase().replace(/\s+/g, '-');
-  const isApproved  = statusClass === 'approved';
-
-  const credits = data.credits || {};
+  const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+  const submittedAt  = data.createdAt   ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const rawStatus    = (data.status || 'Pending').trim();
+  const statusClass  = rawStatus.toLowerCase().replace(/\s+/g, '-');
+  const isApproved   = statusClass === 'approved';
+  const credits      = data.credits || {};
   const hasProducers  = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
   const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
   const hasWriters    = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
   const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
   const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
-
   const coverHtml = data.coverURL
     ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
-    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder">
-         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-           <rect x="3" y="3" width="18" height="18" rx="2"/>
-           <circle cx="8.5" cy="8.5" r="1.5"/>
-           <polyline points="21 15 16 10 5 21"/>
-         </svg>
-       </div></div>`;
-
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
   let smartLinkHtml = '';
   if (isApproved) {
-    if (!data.upc || !data.smartLinkURL) {
-      smartLinkHtml = renderSmartLinkPanel(data, releaseId, null, null, true);
-    } else {
-      smartLinkHtml = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
-    }
+    smartLinkHtml = (!data.upc || !data.smartLinkURL)
+      ? renderSmartLinkPanel(data, releaseId, null, null, true)
+      : renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
   }
-
   content.innerHTML = `
     ${coverHtml}
     <div class="meta-modal-body">
-
-      ${isApproved ? `
-      <div class="meta-section">
-        <div class="meta-section-label">
-          <svg style="width:11px;height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-          Smart Link & UPC
-        </div>
-        <div id="smartLinkPanelContainer-${releaseId}">
-          ${smartLinkHtml}
-        </div>
-      </div>` : ''}
-
-      <div class="meta-section">
-        <div class="meta-section-label">Status</div>
+      ${isApproved ? `<div class="meta-section"><div class="meta-section-label"><svg style="width:11px;height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link & UPC</div><div id="smartLinkPanelContainer-${releaseId}">${smartLinkHtml}</div></div>` : ''}
+      <div class="meta-section"><div class="meta-section-label">Status</div>
         <div class="meta-status-row">
           <span class="badge ${statusClass}">${escHtml(rawStatus)}</span>
-          <span class="badge ${data.paymentVerified ? 'paid' : 'unpaid'}">
-            ${data.paymentVerified ? 'Paid' : 'Unpaid'}
-          </span>
+          <span class="badge ${data.paymentVerified ? 'paid' : 'unpaid'}">${data.paymentVerified ? 'Paid' : 'Unpaid'}</span>
           ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--text-3);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
         </div>
       </div>
-
-      <div class="meta-section">
-        <div class="meta-section-label">Artist & Release</div>
+      <div class="meta-section"><div class="meta-section-label">Artist & Release</div>
         <div class="meta-fields-grid">
-          <div class="meta-field full">
-            <div class="meta-field-label">Main Artist</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div>
-          </div>
-          ${data.featuring && data.featuring.trim() ? `
-          <div class="meta-field full">
-            <div class="meta-field-label">Featuring</div>
-            <div class="meta-field-value">${escHtml(data.featuring)}</div>
-          </div>` : ''}
-          <div class="meta-field full">
-            <div class="meta-field-label">Release Title</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Type</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Genre</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.genre))}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Language</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.language))}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Release Date</div>
-            <div class="meta-field-value">${escHtml(releaseDate)}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Explicit Content</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div>
-          </div>
+          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
+          ${data.featuring && data.featuring.trim() ? `<div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value">${escHtml(data.featuring)}</div></div>` : ''}
+          <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Language</div><div class="meta-field-value">${escHtml(metaVal(data.language))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Release Date</div><div class="meta-field-value">${escHtml(releaseDate)}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Explicit Content</div><div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div></div>
         </div>
       </div>
-
-      <div class="meta-section">
-        <div class="meta-section-label">Label & Rights</div>
+      <div class="meta-section"><div class="meta-section-label">Label & Rights</div>
         <div class="meta-fields-grid">
-          <div class="meta-field">
-            <div class="meta-field-label">Label Name</div>
-            <div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">
-              ${escHtml(metaVal(data.label, 'Independent'))}
-            </div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Copyright Holder</div>
-            <div class="meta-field-value ${!data.copyright || !data.copyright.trim() ? 'none' : ''}">
-              ${escHtml(metaVal(data.copyright))}
-            </div>
-          </div>
+          <div class="meta-field"><div class="meta-field-label">Label Name</div><div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">${escHtml(metaVal(data.label, 'Independent'))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Copyright Holder</div><div class="meta-field-value ${!data.copyright || !data.copyright.trim() ? 'none' : ''}">${escHtml(metaVal(data.copyright))}</div></div>
         </div>
       </div>
-
-      <div class="meta-section">
-        <div class="meta-section-label">Identifiers</div>
+      <div class="meta-section"><div class="meta-section-label">Identifiers</div>
         <div class="meta-fields-grid">
-          <div class="meta-field">
-            <div class="meta-field-label">ISRC Code</div>
-            <div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">
-              ${escHtml(metaVal(data.isrc))}
-            </div>
-          </div>
-          <div class="meta-field" id="upcDisplayField-${releaseId}">
-            <div class="meta-field-label">UPC / EAN Barcode</div>
-            <div class="meta-field-value ${!data.upc ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;" id="upcFieldValue-${releaseId}">
-              ${data.upc ? escHtml(data.upc) : (isApproved ? 'Generating…' : 'Auto-assign')}
-            </div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Catalog Number</div>
-            <div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">
-              ${escHtml(metaVal(data.catalogNumber))}
-            </div>
-          </div>
+          <div class="meta-field"><div class="meta-field-label">ISRC Code</div><div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">${escHtml(metaVal(data.isrc))}</div></div>
+          <div class="meta-field" id="upcDisplayField-${releaseId}"><div class="meta-field-label">UPC / EAN Barcode</div><div class="meta-field-value ${!data.upc ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;" id="upcFieldValue-${releaseId}">${data.upc ? escHtml(data.upc) : (isApproved ? 'Generating…' : 'Auto-assign')}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">${escHtml(metaVal(data.catalogNumber))}</div></div>
         </div>
       </div>
-
-      <div class="meta-section">
-        <div class="meta-section-label">Contact & Location</div>
+      <div class="meta-section"><div class="meta-section-label">Contact & Location</div>
         <div class="meta-fields-grid">
-          <div class="meta-field">
-            <div class="meta-field-label">Country</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.country))}</div>
-          </div>
-          <div class="meta-field">
-            <div class="meta-field-label">Phone</div>
-            <div class="meta-field-value ${!data.phone || !data.phone.trim() ? 'none' : ''}">
-              ${escHtml(metaVal(data.phone))}
-            </div>
-          </div>
-          <div class="meta-field full">
-            <div class="meta-field-label">Email</div>
-            <div class="meta-field-value">${escHtml(metaVal(data.email))}</div>
-          </div>
-          ${data.refferal && data.refferal.trim() ? `
-          <div class="meta-field">
-            <div class="meta-field-label">Referral Code</div>
-            <div class="meta-field-value">${escHtml(data.refferal)}</div>
-          </div>` : ''}
+          <div class="meta-field"><div class="meta-field-label">Country</div><div class="meta-field-value">${escHtml(metaVal(data.country))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Phone</div><div class="meta-field-value ${!data.phone || !data.phone.trim() ? 'none' : ''}">${escHtml(metaVal(data.phone))}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Email</div><div class="meta-field-value">${escHtml(metaVal(data.email))}</div></div>
+          ${data.refferal && data.refferal.trim() ? `<div class="meta-field"><div class="meta-field-label">Referral Code</div><div class="meta-field-value">${escHtml(data.refferal)}</div></div>` : ''}
         </div>
       </div>
-
-      ${hasAnyCredits ? `
-      <div class="meta-section">
-        <div class="meta-section-label">Production Credits</div>
-        ${hasProducers ? `
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>
-          ${renderCreditsSection(credits.producer)}
-        ` : ''}
-        ${hasMusicians ? `
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Musicians</div>
-          ${renderCreditsSection(credits.musician)}
-        ` : ''}
+      ${hasAnyCredits ? `<div class="meta-section"><div class="meta-section-label">Production Credits</div>
+        ${hasProducers ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>${renderCreditsSection(credits.producer)}` : ''}
+        ${hasMusicians ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Musicians</div>${renderCreditsSection(credits.musician)}` : ''}
       </div>` : ''}
-
-      ${(hasWriters || hasPublishers) ? `
-      <div class="meta-section">
-        <div class="meta-section-label">Songwriting & Publishing</div>
-        ${hasWriters ? `
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>
-          ${renderCreditsSection(credits.writer)}
-        ` : ''}
-        ${hasPublishers ? `
-          <div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>
-          ${renderCreditsSection(credits.publishing)}
-        ` : ''}
+      ${(hasWriters || hasPublishers) ? `<div class="meta-section"><div class="meta-section-label">Songwriting & Publishing</div>
+        ${hasWriters ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>${renderCreditsSection(credits.writer)}` : ''}
+        ${hasPublishers ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>${renderCreditsSection(credits.publishing)}` : ''}
       </div>` : ''}
-
-      ${data.description && data.description.trim() ? `
-      <div class="meta-section">
-        <div class="meta-section-label">Lyrics</div>
-        <div class="meta-lyrics">${escHtml(data.description)}</div>
-      </div>` : ''}
-
-    </div>
-  `;
-
+      ${data.description && data.description.trim() ? `<div class="meta-section"><div class="meta-section-label">Lyrics</div><div class="meta-lyrics">${escHtml(data.description)}</div></div>` : ''}
+    </div>`;
   document.getElementById('metaOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-
-  if (isApproved && (!data.upc || !data.smartLinkURL)) {
-    triggerSmartLinkGeneration(releaseId);
-  }
+  if (isApproved && (!data.upc || !data.smartLinkURL)) triggerSmartLinkGeneration(releaseId);
 }
 
 async function triggerSmartLinkGeneration(releaseId) {
-  if (window._generateSmartLink) {
-    window._generateSmartLink(releaseId);
-  }
+  if (window._generateSmartLink) window._generateSmartLink(releaseId);
 }
 
 function closeMetaModal() {
@@ -1600,13 +1251,8 @@ function closeMetaModal() {
 }
 
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
-document.getElementById('metaOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeMetaModal();
-});
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); }
-});
-
+document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); } });
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const cardBody = e.target.closest('.card-body-clickable');
   if (!cardBody) return;
@@ -1655,7 +1301,6 @@ window._generateSmartLink = async function(releaseId) {
     const docRef  = doc(db, "submissions", releaseId);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return;
-
     const existing = docSnap.data();
     if (existing.upc && existing.smartLinkURL) {
       window._releaseMeta[releaseId].upc = existing.upc;
@@ -1663,20 +1308,13 @@ window._generateSmartLink = async function(releaseId) {
       refreshSmartLinkPanel(releaseId);
       return;
     }
-
     const upc          = await generateUniqueUPC();
     const smartLinkURL = buildSmartLinkURL(releaseId, existing.artistName || '', existing.releaseTitle || '');
-
-    await updateDoc(docRef, {
-      upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp()
-    });
-
+    await updateDoc(docRef, { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
     window._releaseMeta[releaseId].upc = upc;
     window._releaseMeta[releaseId].smartLinkURL = smartLinkURL;
-
     refreshSmartLinkPanel(releaseId);
     showToast("Smart Link & UPC generated successfully!");
-
   } catch (err) {
     console.error("Smart link generation error:", err);
     showToast("Failed to generate smart link. Please try again.", true);
@@ -1687,225 +1325,101 @@ function refreshSmartLinkPanel(releaseId) {
   const data  = window._releaseMeta[releaseId];
   const panel = document.getElementById(`smartLinkPanelContainer-${releaseId}`);
   const upcEl = document.getElementById(`upcFieldValue-${releaseId}`);
-
-  if (panel && data.upc && data.smartLinkURL) {
-    panel.innerHTML = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
-  }
-  if (upcEl && data.upc) {
-    upcEl.textContent = data.upc;
-    upcEl.classList.remove('none');
-  }
+  if (panel && data.upc && data.smartLinkURL) panel.innerHTML = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
+  if (upcEl && data.upc) { upcEl.textContent = data.upc; upcEl.classList.remove('none'); }
 }
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "login.html"; return; }
-
   const name = user.displayName || user.email.split("@")[0];
   document.getElementById("userName").textContent    = name;
   document.getElementById("userInitial").textContent = name.charAt(0).toUpperCase();
-
   const userRef  = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
-  if (!userSnap.exists()) {
-    await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
-  }
-
+  if (!userSnap.exists()) await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
   try {
     const q        = query(collection(db, "submissions"), where("userId", "==", user.uid));
     const snapshot = await getDocs(q);
-
     container.innerHTML = "";
-
     if (snapshot.empty) {
-      container.innerHTML = `
-        <div class="empty">
-          <div class="empty-icon">🎵</div>
-          <h3>No releases yet</h3>
-          <p>Create your first release to start distributing your music worldwide.</p>
-        </div>`;
+      container.innerHTML = `<div class="empty"><div class="empty-icon">🎵</div><h3>No releases yet</h3><p>Create your first release to start distributing your music worldwide.</p></div>`;
       updateStats([]);
       return;
     }
-
     const submissionsData = [];
-
     snapshot.forEach(async (docSnap) => {
       const data = docSnap.data();
       const id   = docSnap.id;
-
       window._releaseMeta[id] = { ...data, _id: id };
-
-      if (data.paymentVerified === undefined) {
-        await updateDoc(doc(db, "submissions", id), { paymentVerified: false });
-        data.paymentVerified = false;
-      }
-
+      if (data.paymentVerified === undefined) { await updateDoc(doc(db, "submissions", id), { paymentVerified: false }); data.paymentVerified = false; }
       const rawStatus = (data.status || "Pending").trim().toLowerCase();
-
-      /* Auto-generate UPC + SmartLink if newly approved */
       if (rawStatus === "approved" && (!data.upc || !data.smartLinkURL)) {
         (async () => {
           try {
-            const upc          = await generateUniqueUPC();
+            const upc = await generateUniqueUPC();
             const smartLinkURL = buildSmartLinkURL(id, data.artistName || '', data.releaseTitle || '');
-            await updateDoc(doc(db, "submissions", id), {
-              upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp()
-            });
+            await updateDoc(doc(db, "submissions", id), { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
             window._releaseMeta[id].upc = upc;
             window._releaseMeta[id].smartLinkURL = smartLinkURL;
           } catch(e) { console.error("BG smart link gen error:", e); }
         })();
       }
-
       submissionsData.push(data);
-
-      const releaseDate = data.releaseDate
-        ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-        : "TBA";
+      const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
       const statusClass  = rawStatus.replace(/\s+/g, "-");
       const isRejected   = statusClass === "rejected";
       const isApproved   = statusClass === "approved";
       const { pct, label } = getProgress(rawStatus);
-
       const imageSection = data.coverURL
         ? `<img src="${data.coverURL}" class="cover-image" data-id="${id}" alt="Cover art">`
-        : `<div class="cover-placeholder cover-image" data-id="${id}">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-               <rect x="3" y="3" width="18" height="18" rx="2"/>
-               <circle cx="8.5" cy="8.5" r="1.5"/>
-               <polyline points="21 15 16 10 5 21"/>
-             </svg>
-             <span>Click to add cover art</span>
-           </div>`;
-
+        : `<div class="cover-placeholder cover-image" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Click to add cover art</span></div>`;
       const checkReasonsBtn = isRejected
-        ? `<a href="rejection.html" class="check-reasons-btn">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-               <circle cx="12" cy="12" r="10"/>
-               <line x1="12" y1="8" x2="12" y2="12"/>
-               <line x1="12" y1="16" x2="12.01" y2="16"/>
-             </svg>
-             Check Reasons
-           </a>`
+        ? `<a href="rejection.html" class="check-reasons-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons</a>`
         : "";
-
-      /* ── PROMOTE BUTTON — only for approved releases ── */
       const promoteBtn = isApproved
-        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-             </svg>
-             Promote
-           </a>`
+        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote</a>`
         : "";
-
-      /* Smart Link button on card — only for approved */
       const smartLinkCardBtn = isApproved
-        ? `<button class="action-btn sl-card-action-btn" data-id="${id}" style="background:rgba(124,92,252,0.08);border-color:rgba(124,92,252,0.2);color:var(--purple-light);" onclick="openMetaModal('${id}')">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-             </svg>
-             Smart Link
-           </button>`
-        : `<button class="action-btn" onclick="location.href='pricing.html'">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-               <circle cx="12" cy="12" r="10"/>
-               <line x1="12" y1="8" x2="12" y2="16"/>
-               <line x1="8" y1="12" x2="16" y2="12"/>
-             </svg>
-             New Release
-           </button>`;
-
+        ? `<button class="action-btn sl-card-action-btn" data-id="${id}" style="background:rgba(124,92,252,0.08);border-color:rgba(124,92,252,0.2);color:var(--purple-light);" onclick="openMetaModal('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</button>`
+        : `<button class="action-btn" onclick="location.href='pricing.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</button>`;
       const card = document.createElement("div");
       card.className = `card${isRejected ? " status-rejected" : ""}`;
       card.dataset.status = statusClass;
-
       card.innerHTML = `
         <div class="image-wrapper">
           ${imageSection}
-          <div class="play-overlay">
-            <div class="play-btn-circle">
-              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-          </div>
+          <div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
         </div>
-
         <div class="card-body card-body-clickable" data-release-id="${id}">
           <h3>${data.releaseTitle || "Untitled Release"}<span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/></svg></span></h3>
           <p class="artist-name">${data.artistName || "Unknown Artist"}</p>
-
-          ${data.featuring && data.featuring.trim()
-            ? `<p class="feat"><strong>ft.</strong> ${data.featuring}</p>`
-            : ""}
-
-          <p class="release-date">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <rect x="3" y="4" width="18" height="18" rx="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            Release: <strong>${releaseDate}</strong>
-          </p>
-
+          ${data.featuring && data.featuring.trim() ? `<p class="feat"><strong>ft.</strong> ${data.featuring}</p>` : ""}
+          <p class="release-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Release: <strong>${releaseDate}</strong></p>
           <div class="progress-wrap">
-            <div class="progress-label">
-              <span>${label}</span>
-              <span>${pct}%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill${isRejected ? " rejected-fill" : ""}" style="width:0%" data-pct="${pct}"></div>
-            </div>
+            <div class="progress-label"><span>${label}</span><span>${pct}%</span></div>
+            <div class="progress-bar"><div class="progress-fill${isRejected ? " rejected-fill" : ""}" style="width:0%" data-pct="${pct}"></div></div>
           </div>
-
           <div class="card-divider"></div>
-
           <div class="status-row">
             <span class="badge ${statusClass}">${(data.status || 'Pending').trim()}</span>
-            <span class="badge ${data.paymentVerified ? "paid" : "unpaid"}">
-              ${data.paymentVerified ? "Paid" : "Unpaid"}
-            </span>
+            <span class="badge ${data.paymentVerified ? "paid" : "unpaid"}">${data.paymentVerified ? "Paid" : "Unpaid"}</span>
             ${isApproved ? `<span style="font-size:10px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>Live</span>` : ''}
           </div>
-
           ${checkReasonsBtn}
           ${promoteBtn}
-
           <div class="card-actions">
-            <button class="action-btn edit-cover-btn" data-id="${id}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
-              Edit Cover
-            </button>
+            <button class="action-btn edit-cover-btn" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Cover</button>
             ${smartLinkCardBtn}
           </div>
-        </div>
-      `;
-
+        </div>`;
       container.appendChild(card);
-
-      card.style.opacity   = "0";
-      card.style.transform = "translateY(16px)";
-      setTimeout(() => {
-        card.style.transition = "opacity 0.35s ease, transform 0.35s ease";
-        card.style.opacity    = "1";
-        card.style.transform  = "translateY(0)";
-      }, submissionsData.length * 60);
-
-      setTimeout(() => {
-        const fill = card.querySelector(".progress-fill");
-        if (fill) fill.style.width = fill.dataset.pct + "%";
-      }, 500 + submissionsData.length * 60);
-
+      card.style.opacity = "0"; card.style.transform = "translateY(16px)";
+      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, submissionsData.length * 60);
+      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + submissionsData.length * 60);
       allCards.push({ card, status: statusClass });
     });
-
     setTimeout(() => updateStats(submissionsData), 200);
-
-    /* Cover art click */
     container.addEventListener("click", (e) => {
       const target = e.target.closest(".cover-image, .edit-cover-btn");
       if (!target) return;
@@ -1914,8 +1428,6 @@ onAuthStateChanged(auth, async (user) => {
       const input = container.querySelector(`.cover-input[data-id="${id}"]`);
       if (input) input.click();
     });
-
-    /* Cover art upload */
     container.addEventListener("change", async (e) => {
       if (!e.target.classList.contains("cover-input")) return;
       const file = e.target.files[0];
@@ -1928,29 +1440,14 @@ onAuthStateChanged(auth, async (user) => {
         const base64 = ev.target.result;
         await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
         if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
-        wrapper.innerHTML = `
-          <img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art"
-               style="width:100%;height:200px;object-fit:cover;">
-          <div class="play-overlay">
-            <div class="play-btn-circle">
-              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-          </div>
-          <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
-        `;
+        wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
         showToast("Cover art updated successfully!");
       };
       reader.readAsDataURL(file);
     });
-
   } catch (err) {
     console.error("Error loading releases:", err);
-    container.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">⚠️</div>
-        <h3>Something went wrong</h3>
-        <p>Failed to load your releases. Please refresh or contact support.</p>
-      </div>`;
+    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
   }
 });
 </script>
