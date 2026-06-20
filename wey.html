@@ -983,10 +983,32 @@ function generateUPCCandidate() {
   return code + checkDigit.toString();
 }
 
+/* === SMART LINK SLUG BUILDER (FIXED) ===
+   Previously the artist name had ALL spaces stripped, collapsing
+   multi-word names into one solid word (e.g. "At Winful" -> "atwinful").
+   This produced broken/confusing links like:
+     https://ffm.to/atwinful-careless-flow
+   Now every word boundary becomes a hyphen, matching the release
+   title slug logic, producing clean links like:
+     https://ffm.to/at-winful-careless-flow
+*/
+function slugify(str, maxLen) {
+  let s = (str || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")   // strip anything not alphanumeric/space/hyphen
+    .trim()
+    .replace(/\s+/g, "-")           // spaces -> hyphens
+    .replace(/-+/g, "-")            // collapse repeated hyphens
+    .replace(/^-+|-+$/g, "");       // trim leading/trailing hyphens
+  if (maxLen) s = s.substring(0, maxLen).replace(/-+$/g, "");
+  return s;
+}
+
 function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
-  const artistSlug = (artistName || "").toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "");
-  const titleSlug  = (releaseTitle || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").replace(/-+/g, "-").substring(0, 30);
-  return `https://ffm.to/${artistSlug}-${titleSlug}`;
+  const artistSlug = slugify(artistName);
+  const titleSlug  = slugify(releaseTitle, 30);
+  const slug = [artistSlug, titleSlug].filter(Boolean).join("-");
+  return `https://ffm.to/${slug}`;
 }
 
 /* === STORE ICONS === */
