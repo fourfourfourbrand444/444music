@@ -659,7 +659,12 @@ import {
   deleteDoc,
   onSnapshot,
   enableIndexedDbPersistence,
-  CACHE_SIZE_UNLIMITED
+  CACHE_SIZE_UNLIMITED,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ─── FIREBASE CONFIG ────────────────────── */
@@ -676,6 +681,8 @@ const firebaseConfig = {
 const EJS_SERVICE  = "service_4tj52zt";
 const EJS_TEMPLATE = "template_nyt4wdr";
 // Public key already initialized above via emailjs.init()
+
+const PAYMENT_AMOUNT = 30; // GHS, fixed per submission marked Paid
 
 /* ─── UPC GENERATOR ─────────────────────── */
 function generateUPC() {
@@ -720,6 +727,7 @@ async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
 /* ─── INIT FIREBASE ──────────────────────── */
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+window.db = db; // exposed for one-time console scripts (e.g. payment reset)
 
 try {
   await enableIndexedDbPersistence(db, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
@@ -1076,12 +1084,54 @@ function display(data) {
       }
     });
 
-    /* ── PAYMENT CHANGE ── */
+    /* ── PAYMENT CHANGE ──────────────────────────────────────────────
+       This is the single source of truth for payments. Marking a
+       submission Paid here:
+         1. Sets paymentVerified + paidAt on the submission doc.
+         2. Creates exactly one matching doc in `payments`, stamped
+            with the real serverTimestamp() at the moment of payment —
+            never Date.now() and never backfilled later.
+       Marking it Unpaid removes the matching payments doc(s), so the
+       payments collection always reflects exactly what's true right
+       now. analytics.html reads straight from this collection with
+       no separate backfill logic required.
+       ───────────────────────────────────────────────────────────── */
     card.querySelector('[data-type="payment"]').addEventListener('change', async function() {
       if (this.value === '') return;
       this.disabled = true;
-      const ok = await safeUpdate(this.dataset.id, { paymentVerified: this.value === 'true' });
-      if (ok) toast('💳', `Payment → ${this.value === 'true' ? 'Paid ✓' : 'Unpaid ✗'}`);
+      const isPaid = this.value === 'true';
+      const subId  = this.dataset.id;
+
+      const ok = await safeUpdate(subId, {
+        paymentVerified: isPaid,
+        paidAt: isPaid ? serverTimestamp() : null
+      });
+
+      if (ok) {
+        try {
+          const existing = await getDocs(
+            query(collection(db, "payments"), where("submissionId", "==", subId))
+          );
+          if (isPaid && existing.empty) {
+            await addDoc(collection(db, "payments"), {
+              submissionId: subId,
+              amount: PAYMENT_AMOUNT,
+              currency: 'GHS',
+              status: 'paid',
+              createdAt: serverTimestamp()
+            });
+          } else if (!isPaid && !existing.empty) {
+            for (const d of existing.docs) {
+              await deleteDoc(doc(db, "payments", d.id));
+            }
+          }
+        } catch (e) {
+          console.error('Payment record sync failed:', e);
+          toast('⚠️', 'Status saved, but payment record sync failed — check console');
+        }
+
+        toast('💳', `Payment → ${isPaid ? 'Paid ✓' : 'Unpaid ✗'}`);
+      }
       setTimeout(() => { this.disabled = false; }, 1500);
     });
 
@@ -1149,6 +1199,20 @@ confirmYes.addEventListener('click', async () => {
   confirmYes.disabled    = true;
   try {
     await deleteDoc(doc(db, "submissions", pendingDelete));
+
+    // Also clean up any matching payments doc so deleted submissions
+    // don't leave orphaned revenue behind in analytics.
+    try {
+      const existing = await getDocs(
+        query(collection(db, "payments"), where("submissionId", "==", pendingDelete))
+      );
+      for (const d of existing.docs) {
+        await deleteDoc(doc(db, "payments", d.id));
+      }
+    } catch (e) {
+      console.error('Failed to clean up payment record on delete:', e);
+    }
+
     closeConfirm();
     toast('🗑️', 'Submission deleted');
   } catch(e) {
