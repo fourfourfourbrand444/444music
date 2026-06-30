@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music — Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- PDF / Excel export -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --paper:       #F6F4EF;
+  --paper-raised:#FBFAF6;
+  --paper-sunk:  #EFEBE2;
+  --line:        #E2DDD0;
+  --line-strong: #D2CBB8;
+  --ink:         #1C1A17;
+  --ink-soft:    #56514A;
+  --ink-mute:    #948D80;
+  --brass:       #B8722E;
+  --brass-deep:  #93591F;
+  --brass-wash:  #F1E3D1;
+  --green:       #2F7D5C;
+  --green-wash:  #E1EEE7;
+  --red:         #B5402E;
+  --red-wash:    #F3E2DE;
+  --blue:        #3D6B8C;
+  --blue-wash:   #E2EBF1;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --ff-display: 'Fraunces', serif;
+  --ff-body:    'Inter', sans-serif;
+  --ff-mono:    'JetBrains Mono', monospace;
+  --t: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--ff-body);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ============ LOGIN GATE ============ */
+#loginGate {
+  position: fixed; inset: 0; z-index: 5000;
+  background: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.login-card {
+  width: 100%; max-width: 380px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px 32px;
+  box-shadow: 0 30px 70px rgba(28,26,23,0.08);
+}
+.login-mark {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-display); font-weight: 700; font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+.login-title {
+  font-family: var(--ff-display); font-size: 1.5rem; font-weight: 600;
+  margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.login-sub { font-size: 0.86rem; color: var(--ink-soft); margin-bottom: 28px; line-height: 1.5; }
+.login-field { margin-bottom: 16px; }
+.login-label {
+  display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-mute); margin-bottom: 7px;
+}
+.login-input {
+  width: 100%; background: var(--paper);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: 12px 14px; font-family: var(--ff-body); font-size: 0.92rem;
+  color: var(--ink); outline: none; transition: border-color var(--t);
+}
+.login-input:focus { border-color: var(--brass); }
+.login-btn {
+  width: 100%; padding: 13px; margin-top: 6px;
+  background: var(--ink); color: var(--paper); border: none;
+  border-radius: var(--radius-sm); font-family: var(--ff-body); font-weight: 600;
+  font-size: 0.88rem; cursor: pointer; transition: background var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.login-btn:hover { background: var(--brass-deep); }
+.login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.login-error {
+  display: none; align-items: center; gap: 8px;
+  background: var(--red-wash); border: 1px solid rgba(181,64,46,0.25);
+  color: var(--red); border-radius: var(--radius-sm);
+  padding: 10px 12px; font-size: 0.8rem; margin-top: 14px;
+}
+.login-error.show { display: flex; }
+.login-foot {
+  margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line);
+  font-size: 0.74rem; color: var(--ink-mute); text-align: center;
+}
+
+/* ============ APP SHELL ============ */
+#app { display: none; }
+#app.show { display: block; }
+
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(246,244,239,0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 24px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-back {
+  display: flex; align-items: center; gap: 8px; text-decoration: none;
+  color: var(--ink-soft); font-size: 0.82rem; font-weight: 600;
+  transition: color var(--t);
+}
+.nav-back:hover { color: var(--ink); }
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-brand-badge {
+  width: 28px; height: 28px; border-radius: 7px; background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-display); font-weight: 700; font-size: 0.82rem;
+}
+.nav-brand-text { font-family: var(--ff-display); font-weight: 600; font-size: 0.96rem; }
+.nav-right { display: flex; align-items: center; gap: 14px; }
+.nav-admin-email { font-size: 0.78rem; color: var(--ink-mute); }
+.nav-logout {
+  background: transparent; border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); padding: 7px 13px;
+  font-size: 0.78rem; font-weight: 600; color: var(--ink-soft);
+  cursor: pointer; transition: all var(--t);
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-logout:hover { border-color: var(--ink); color: var(--ink); }
+
+.page { max-width: 1240px; margin: 0 auto; padding: 32px 24px 90px; }
+
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+.page-title { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 600; letter-spacing: -0.01em; }
+.page-sub { font-size: 0.85rem; color: var(--ink-soft); margin-top: 4px; }
+.conn-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 13px; font-size: 0.76rem; color: var(--ink-soft);
+}
+.conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-mute); transition: background 0.3s; }
+.conn-dot.live { background: var(--green); }
+.conn-dot.offline { background: var(--red); }
+
+/* RANGE SELECTOR */
+.range-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; flex-wrap: wrap; }
+.range-select {
+  background: var(--paper-raised); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-family: var(--ff-body); font-size: 0.85rem; color: var(--ink);
+  outline: none; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356514A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
+  padding-right: 34px;
+}
+.export-btns { display: flex; gap: 8px; margin-left: auto; }
+.export-btn {
+  background: var(--paper-raised); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); padding: 10px 15px;
+  font-family: var(--ff-body); font-size: 0.82rem; font-weight: 600; color: var(--ink-soft);
+  cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all var(--t);
+}
+.export-btn:hover { border-color: var(--ink); color: var(--ink); }
+.export-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* RECEIPT STRIP — today's snapshot */
+.receipt-strip {
+  background: var(--paper-raised); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px; margin-bottom: 28px;
+  display: flex; align-items: center; gap: 0;
+  position: relative; overflow: hidden;
+}
+.receipt-strip::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: repeating-linear-gradient(90deg, var(--brass) 0 8px, transparent 8px 14px);
+}
+.receipt-item { flex: 1; padding: 0 22px; text-align: left; }
+.receipt-item + .receipt-item { border-left: 1px dashed var(--line-strong); }
+.receipt-label {
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-mute); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.receipt-value { font-family: var(--ff-display); font-size: 1.5rem; font-weight: 600; }
+.receipt-value.brass { color: var(--brass-deep); }
+.receipt-value.green { color: var(--green); }
+.receipt-sub { font-size: 0.74rem; color: var(--ink-mute); margin-top: 3px; }
+
+/* STAT GRID */
+.stat-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: var(--radius-md); padding: 18px 20px;
+  transition: border-color var(--t), transform var(--t);
+}
+.stat-card:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+.stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.stat-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper-sunk); color: var(--ink-soft);
+}
+.stat-icon.brass { background: var(--brass-wash); color: var(--brass-deep); }
+.stat-icon.green { background: var(--green-wash); color: var(--green); }
+.stat-icon.blue  { background: var(--blue-wash);  color: var(--blue); }
+.stat-icon.red   { background: var(--red-wash);   color: var(--red); }
+.stat-trend {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 0.72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+}
+.stat-trend.up   { color: var(--green); background: var(--green-wash); }
+.stat-trend.down { color: var(--red);   background: var(--red-wash); }
+.stat-trend.flat { color: var(--ink-mute); background: var(--paper-sunk); }
+.stat-label { font-size: 0.74rem; color: var(--ink-soft); margin-bottom: 4px; }
+.stat-value { font-family: var(--ff-display); font-size: 1.7rem; font-weight: 600; letter-spacing: -0.01em; }
+
+/* CHARTS ROW */
+.charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 16px; }
+.panel {
+  background: var(--paper-raised); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 22px;
+}
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.panel-title { font-family: var(--ff-display); font-size: 1.05rem; font-weight: 600; }
+.panel-sub { font-size: 0.74rem; color: var(--ink-mute); margin-top: 2px; }
+
+#barChart { width: 100%; height: 220px; }
+.bar-tooltip {
+  position: absolute; background: var(--ink); color: var(--paper);
+  padding: 6px 10px; border-radius: 6px; font-size: 0.72rem; font-family: var(--ff-mono);
+  pointer-events: none; opacity: 0; transition: opacity 0.1s; white-space: nowrap; z-index: 50;
+}
+
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut-legend { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.legend-row { display: flex; align-items: center; gap: 9px; font-size: 0.82rem; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { color: var(--ink-soft); flex: 1; }
+.legend-pct { font-family: var(--ff-mono); font-weight: 500; color: var(--ink); }
+
+/* TWO PANEL ROW */
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+/* SUBMISSIONS LEDGER */
+.ledger-table { width: 100%; border-collapse: collapse; }
+.ledger-table th {
+  text-align: left; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-mute); padding: 0 0 10px; border-bottom: 1px solid var(--line);
+}
+.ledger-table td {
+  padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; vertical-align: middle;
+}
+.ledger-table tr:last-child td { border-bottom: none; }
+.ledger-id { font-family: var(--ff-mono); color: var(--ink-mute); font-size: 0.76rem; }
+.ledger-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 999px; font-size: 0.7rem; font-weight: 600;
+}
+.ledger-badge.paid    { background: var(--green-wash); color: var(--green); }
+.ledger-badge.unpaid  { background: var(--paper-sunk); color: var(--ink-mute); }
+.ledger-amt { font-family: var(--ff-mono); font-weight: 500; text-align: right; }
+.empty-row { text-align: center; padding: 30px 0; color: var(--ink-mute); font-size: 0.84rem; }
+
+/* USER GROWTH PANEL */
+.growth-num { font-family: var(--ff-display); font-size: 2.2rem; font-weight: 600; margin: 6px 0 2px; }
+.growth-note {
+  font-size: 0.78rem; color: var(--ink-mute); line-height: 1.5; margin-top: 14px;
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.growth-note svg { vertical-align: -2px; margin-right: 4px; }
+#growthSpark { width: 100%; height: 60px; margin-top: 14px; }
+
+/* LOADING / EMPTY */
+.loading-block { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 60px 0; color: var(--ink-mute); }
+.loader { width: 30px; height: 30px; border: 3px solid var(--line); border-top-color: var(--brass); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TOAST */
+#toastBox { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast {
+  background: var(--ink); color: var(--paper); padding: 12px 18px;
+  border-radius: var(--radius-sm); font-size: 0.83rem;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 9px;
+  animation: toastIn 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+.toast.out { animation: toastOut 0.2s ease both; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(6px); } }
+
+@media (max-width: 980px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-row, .row-2 { grid-template-columns: 1fr; }
+  .receipt-strip { flex-direction: column; gap: 16px; }
+  .receipt-item + .receipt-item { border-left: none; border-top: 1px dashed var(--line-strong); padding-top: 16px; }
+}
+@media (max-width: 560px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .page { padding: 22px 14px 70px; }
+  .range-bar { flex-direction: column; align-items: stretch; }
+  .export-btns { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN GATE ============ -->
+<div id="loginGate">
+  <div class="login-card">
+    <div class="login-mark">4</div>
+    <div class="login-title">Analytics Access</div>
+    <div class="login-sub">Enter your authorized admin email to view 444Music sales and platform analytics.</div>
+    <form id="loginForm">
+      <div class="login-field">
+        <label class="login-label">Admin Email</label>
+        <input type="email" id="loginEmail" class="login-input" placeholder="you@444music.com" required autocomplete="email">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Continue
+      </button>
+      <div class="login-error" id="loginError">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="loginErrorText">This email is not authorized.</span>
+      </div>
+    </form>
+    <div class="login-foot">Access is restricted to 444Music administrators.</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+
+  <nav class="top-nav">
+    <a class="nav-back" href="admin.html">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Admin Panel
+    </a>
+    <div class="nav-brand">
+      <div class="nav-brand-badge">4</div>
+      <div class="nav-brand-text">Analytics</div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-admin-email" id="navAdminEmail"></span>
+      <button class="nav-logout" id="logoutBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <div class="page-head">
+      <div>
+        <div class="page-title">Sales &amp; Platform Analytics</div>
+        <div class="page-sub">Live revenue, submissions, and growth tracking for 444Music</div>
+      </div>
+      <div class="conn-pill"><div class="conn-dot" id="connDot"></div><span id="connLabel">Connecting…</span></div>
+    </div>
+
+    <div class="range-bar">
+      <select class="range-select" id="rangeSelect">
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="all" selected>All Time</option>
+      </select>
+      <div class="export-btns">
+        <button class="export-btn" id="exportPdfBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Download PDF
+        </button>
+        <button class="export-btn" id="exportXlsBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Download Excel
+        </button>
+      </div>
+    </div>
+
+    <!-- TODAY RECEIPT STRIP -->
+    <div class="receipt-strip">
+      <div class="receipt-item">
+        <div class="receipt-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Today's Payments
+        </div>
+        <div class="receipt-value brass" id="todayPayment">GH₵ 0.00</div>
+        <div class="receipt-sub" id="todayPaymentSub">No payments received yet today</div>
+      </div>
+      <div class="receipt-item">
+        <div class="receipt-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Today's Submissions
+        </div>
+        <div class="receipt-value" id="todaySubs">0</div>
+        <div class="receipt-sub" id="todaySubsSub">across all release types</div>
+      </div>
+      <div class="receipt-item">
+        <div class="receipt-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Date
+        </div>
+        <div class="receipt-value" style="font-size:1.15rem;" id="todayDate">—</div>
+        <div class="receipt-sub" id="todayUpdated">Updates live</div>
+      </div>
+    </div>
+
+    <!-- STAT GRID -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon brass"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="stat-trend flat" id="trendRevenue">—</div>
+        </div>
+        <div class="stat-label">Total Revenue (selected range)</div>
+        <div class="stat-value" id="statRevenue">GH₵ 0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div class="stat-trend flat" id="trendPaid">—</div>
+        </div>
+        <div class="stat-label">Paid Submissions</div>
+        <div class="stat-value" id="statPaid">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="stat-trend flat" id="trendReleases">—</div>
+        </div>
+        <div class="stat-label">Total Releases</div>
+        <div class="stat-value" id="statReleases">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="stat-trend flat" id="trendSubmitters">—</div>
+        </div>
+        <div class="stat-label">Active Submitters</div>
+        <div class="stat-value" id="statSubmitters">0</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-row">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Revenue Over Time</div>
+            <div class="panel-sub" id="barChartSub">Daily payments received</div>
+          </div>
+        </div>
+        <div style="position:relative;">
+          <svg id="barChart" viewBox="0 0 600 220" preserveAspectRatio="none"></svg>
+          <div class="bar-tooltip" id="barTooltip"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Status Breakdown</div>
+            <div class="panel-sub">Share of all submissions</div>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120" id="donutChart"></svg>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Submission Ledger</div>
+            <div class="panel-sub">Most recent activity — identities hidden</div>
+          </div>
+        </div>
+        <table class="ledger-table">
+          <thead>
+            <tr><th>Ref</th><th>Date Submitted</th><th>Status</th><th>Date Paid</th><th style="text-align:right;">Amount</th></tr>
+          </thead>
+          <tbody id="ledgerBody">
+            <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Platform Growth</div>
+            <div class="panel-sub">Active submitters over time</div>
+          </div>
+        </div>
+        <div class="growth-num" id="growthNum">0</div>
+        <div class="receipt-sub" id="growthSub">unique people who have submitted a release</div>
+        <svg id="growthSpark" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
+        <div class="growth-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Counted from unique submitter emails. Full authenticated-user counts require a backend function and aren't available in this client-only view.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toastBox"></div>
+
+<!-- ============ LOGIC ============ -->
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, doc, onSnapshot, query, orderBy,
+  addDoc, getDoc, getDocs, serverTimestamp, enableIndexedDbPersistence, CACHE_SIZE_UNLIMITED
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+try { await enableIndexedDbPersistence(db, { cacheSizeBytes: CACHE_SIZE_UNLIMITED }); }
+catch(e) { console.warn('Persistence not enabled:', e.code); }
+
+const PAYMENT_AMOUNT = 30; // GHC, fixed per submission marked Paid
+
+/* ============ LOGIN ============ */
+const loginGate   = document.getElementById('loginGate');
+const loginForm   = document.getElementById('loginForm');
+const loginEmail  = document.getElementById('loginEmail');
+const loginBtn    = document.getElementById('loginBtn');
+const loginError  = document.getElementById('loginError');
+const loginErrTxt = document.getElementById('loginErrorText');
+const appEl       = document.getElementById('app');
+const navEmailEl  = document.getElementById('navAdminEmail');
+
+const SESSION_KEY = '444music_admin_session';
+
+async function isAuthorized(email) {
+  const snap = await getDocs(collection(db, "admins"));
+  let ok = false;
+  snap.forEach(d => {
+    const data = d.data();
+    if ((data.email || d.id || '').toLowerCase() === email.toLowerCase()) ok = true;
+  });
+  return ok;
+}
+
+async function trySession() {
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (!saved) return;
+  const ok = await isAuthorized(saved).catch(() => false);
+  if (ok) enterApp(saved);
+  else sessionStorage.removeItem(SESSION_KEY);
+}
+
+function enterApp(email) {
+  loginGate.style.display = 'none';
+  appEl.classList.add('show');
+  navEmailEl.textContent = email;
+  sessionStorage.setItem(SESSION_KEY, email);
+  startListeners();
+}
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = loginEmail.value.trim().toLowerCase();
+  if (!email) return;
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Checking…';
+  loginError.classList.remove('show');
+  try {
+    const ok = await isAuthorized(email);
+    if (ok) {
+      enterApp(email);
+    } else {
+      loginErrTxt.textContent = 'This email is not authorized for analytics access.';
+      loginError.classList.add('show');
+    }
+  } catch (err) {
+    loginErrTxt.textContent = 'Could not verify access. Check your connection.';
+    loginError.classList.add('show');
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Continue`;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+});
+
+trySession();
+
+/* ============ STATE ============ */
+let submissions = [];
+let payments    = [];
+let currentRange = 'all';
+const connDot   = document.getElementById('connDot');
+const connLabel = document.getElementById('connLabel');
+
+function setConn(state) {
+  connDot.className = 'conn-dot ' + state;
+  connLabel.textContent = state === 'live' ? 'Live' : state === 'offline' ? 'Offline' : 'Connecting…';
+}
+
+/* ============ LISTENERS ============ */
+function startListeners() {
+  setConn('connecting');
+
+  onSnapshot(collection(db, "submissions"), { includeMetadataChanges: true }, (snap) => {
+    submissions = [];
+    snap.forEach(d => submissions.push({ id: d.id, ...d.data() }));
+    setConn(snap.metadata.fromCache && !navigator.onLine ? 'offline' : 'live');
+    render();
+  }, (err) => { console.error(err); setConn('offline'); });
+
+  onSnapshot(collection(db, "payments"), { includeMetadataChanges: true }, (snap) => {
+    payments = [];
+    snap.forEach(d => payments.push({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => console.error(err));
+}
+
+/* ============ DATE HELPERS ============ */
+function toDate(ts) {
+  if (!ts) return null;
+  if (ts instanceof Object && typeof ts.seconds === 'number') return new Date(ts.seconds * 1000);
+  if (typeof ts === 'number') return new Date(ts);
+  const d = new Date(ts);
+  return isNaN(d) ? null : d;
+}
+function isToday(d) {
+  if (!d) return false;
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+function isThisWeek(d) {
+  if (!d) return false;
+  const n = new Date();
+  const start = new Date(n); start.setDate(n.getDate() - n.getDay()); start.setHours(0,0,0,0);
+  return d >= start;
+}
+function isThisMonth(d) {
+  if (!d) return false;
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth();
+}
+function inRange(d, range) {
+  if (!d) return false;
+  if (range === 'today') return isToday(d);
+  if (range === 'week')  return isThisWeek(d);
+  if (range === 'month') return isThisMonth(d);
+  return true; // all
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function fmtMoney(n) {
+  return 'GH₵ ' + (n || 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ============ RENDER ORCHESTRATOR ============ */
+document.getElementById('rangeSelect').addEventListener('change', (e) => {
+  currentRange = e.target.value;
+  render();
+});
+
+function render() {
+  if (!submissions.length && !payments.length) return;
+  renderReceiptStrip();
+  renderStatGrid();
+  renderBarChart();
+  renderDonut();
+  renderLedger();
+  renderGrowth();
+}
+
+/* ============ TODAY RECEIPT STRIP ============ */
+function renderReceiptStrip() {
+  const todaysPayments = payments.filter(p => isToday(toDate(p.createdAt)));
+  const todaysTotal = todaysPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+  document.getElementById('todayPayment').textContent = fmtMoney(todaysTotal);
+  document.getElementById('todayPaymentSub').textContent = todaysTotal > 0
+    ? `${todaysPayments.length} payment${todaysPayments.length === 1 ? '' : 's'} received`
+    : 'No payments received yet today';
+
+  const todaysSubs = submissions.filter(s => isToday(toDate(s.createdAt)));
+  document.getElementById('todaySubs').textContent = todaysSubs.length;
+  document.getElementById('todaySubsSub').textContent = todaysSubs.length > 0
+    ? `${todaysSubs.filter(s => s.paymentVerified).length} paid · ${todaysSubs.filter(s => !s.paymentVerified).length} unpaid`
+    : 'across all release types';
+
+  document.getElementById('todayDate').textContent = fmtDate(new Date());
+  document.getElementById('todayUpdated').textContent = 'As of ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+
+/* ============ STAT GRID ============ */
+function filteredSubs() {
+  return submissions.filter(s => currentRange === 'all' || inRange(toDate(s.createdAt), currentRange));
+}
+function filteredPayments() {
+  return payments.filter(p => currentRange === 'all' || inRange(toDate(p.createdAt), currentRange));
+}
+
+function renderStatGrid() {
+  const subs = filteredSubs();
+  const pays = filteredPayments();
+
+  const revenue = pays.reduce((sum, p) => sum + (p.amount || 0), 0);
+  document.getElementById('statRevenue').textContent = fmtMoney(revenue);
+
+  const paidCount = subs.filter(s => s.paymentVerified).length;
+  document.getElementById('statPaid').textContent = paidCount;
+
+  document.getElementById('statReleases').textContent = subs.length;
+
+  const uniqueSubmitters = new Set(subs.map(s => (s.email || '').toLowerCase()).filter(Boolean));
+  document.getElementById('statSubmitters').textContent = uniqueSubmitters.size;
+
+  // Trends: compare to previous equivalent period (simple, all-data based when range=all -> show flat)
+  setTrend('trendRevenue', revenue, computePrevValue('revenue'));
+  setTrend('trendPaid', paidCount, computePrevValue('paid'));
+  setTrend('trendReleases', subs.length, computePrevValue('releases'));
+  setTrend('trendSubmitters', uniqueSubmitters.size, computePrevValue('submitters'));
+}
+
+function computePrevValue(metric) {
+  // Compare current range vs the immediately preceding equivalent period
+  if (currentRange === 'all') return null;
+  const now = new Date();
+  let prevSubs = [], prevPays = [];
+
+  if (currentRange === 'today') {
+    const y = new Date(now); y.setDate(now.getDate() - 1);
+    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d.toDateString() === y.toDateString(); });
+    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.toDateString() === y.toDateString(); });
+  } else if (currentRange === 'week') {
+    const start = new Date(now); start.setDate(now.getDate() - now.getDay() - 7); start.setHours(0,0,0,0);
+    const end = new Date(now); end.setDate(now.getDate() - now.getDay()); end.setHours(0,0,0,0);
+    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d >= start && d < end; });
+    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d >= start && d < end; });
+  } else if (currentRange === 'month') {
+    const m = now.getMonth() - 1, y = m < 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const mm = (m + 12) % 12;
+    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d.getMonth() === mm && d.getFullYear() === y; });
+    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.getMonth() === mm && d.getFullYear() === y; });
+  }
+
+  if (metric === 'revenue')     return prevPays.reduce((s,p) => s + (p.amount||0), 0);
+  if (metric === 'paid')        return prevSubs.filter(s => s.paymentVerified).length;
+  if (metric === 'releases')    return prevSubs.length;
+  if (metric === 'submitters')  return new Set(prevSubs.map(s => (s.email||'').toLowerCase()).filter(Boolean)).size;
+  return null;
+}
+
+function setTrend(elId, current, prev) {
+  const el = document.getElementById(elId);
+  if (prev === null || prev === undefined) {
+    el.className = 'stat-trend flat'; el.textContent = '—'; return;
+  }
+  if (prev === 0 && current === 0) { el.className = 'stat-trend flat'; el.textContent = '0%'; return; }
+  if (prev === 0) { el.className = 'stat-trend up'; el.textContent = '+100%'; return; }
+  const pct = Math.round(((current - prev) / prev) * 100);
+  if (pct > 0) { el.className = 'stat-trend up';   el.textContent = `↑ ${pct}%`; }
+  else if (pct < 0) { el.className = 'stat-trend down'; el.textContent = `↓ ${Math.abs(pct)}%`; }
+  else { el.className = 'stat-trend flat'; el.textContent = '0%'; }
+}
+
+/* ============ BAR CHART (revenue over time) ============ */
+function renderBarChart() {
+  const svg = document.getElementById('barChart');
+  const tooltip = document.getElementById('barTooltip');
+  const pays = filteredPayments();
+
+  // Group by day (last 14 days within range, or full range if smaller)
+  const byDay = {};
+  pays.forEach(p => {
+    const d = toDate(p.createdAt);
+    if (!d) return;
+    const key = d.toISOString().slice(0,10);
+    byDay[key] = (byDay[key] || 0) + (p.amount || 0);
+  });
+
+  let days = Object.keys(byDay).sort();
+  if (days.length === 0) {
+    // show last 7 days as empty baseline
+    days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      days.push(d.toISOString().slice(0,10));
+    }
+  }
+  days = days.slice(-14);
+
+  const max = Math.max(...days.map(d => byDay[d] || 0), 1);
+  const w = 600, h = 220, padB = 26, padT = 10;
+  const barW = (w / days.length) * 0.6;
+  const gap = (w / days.length) * 0.4;
+
+  let svgContent = '';
+  days.forEach((day, i) => {
+    const val = byDay[day] || 0;
+    const barH = ((val / max) * (h - padB - padT));
+    const x = i * (w / days.length) + gap / 2;
+    const y = h - padB - barH;
+    const dateLabel = new Date(day).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    svgContent += `<rect x="${x}" y="${y}" width="${barW}" height="${Math.max(barH,2)}" rx="3"
+      fill="${val > 0 ? '#B8722E' : '#E2DDD0'}" opacity="${val > 0 ? '1' : '0.5'}"
+      class="bar-rect" data-amount="${val.toFixed(2)}" data-date="${dateLabel}"
+      style="cursor:pointer;"></rect>`;
+    if (days.length <= 14) {
+      svgContent += `<text x="${x + barW/2}" y="${h - 8}" text-anchor="middle" font-size="9" fill="#948D80" font-family="Inter">${dateLabel.split(' ')[0]}</text>`;
+    }
+  });
+
+  svg.innerHTML = svgContent;
+
+  svg.querySelectorAll('.bar-rect').forEach(rect => {
+    rect.addEventListener('mousemove', (e) => {
+      tooltip.style.opacity = '1';
+      tooltip.textContent = `${rect.dataset.date}: GH₵ ${rect.dataset.amount}`;
+      const rectBox = svg.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - rectBox.left + 10) + 'px';
+      tooltip.style.top  = (e.clientY - rectBox.top - 30) + 'px';
+    });
+    rect.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+  });
+
+  document.getElementById('barChartSub').textContent =
+    `${days.length} day${days.length === 1 ? '' : 's'} shown · peak GH₵ ${max.toFixed(2)}`;
+}
+
+/* ============ DONUT CHART (status breakdown) ============ */
+function renderDonut() {
+  const subs = filteredSubs();
+  const statuses = ['Pending', 'review', 'Approved', 'rejected'];
+  const colors = { 'Pending': '#B8722E', 'review': '#3D6B8C', 'Approved': '#2F7D5C', 'rejected': '#B5402E' };
+  const labels = { 'Pending': 'Pending', 'review': 'In Review', 'Approved': 'Approved', 'rejected': 'Rejected' };
+
+  const counts = {};
+  statuses.forEach(s => counts[s] = 0);
+  subs.forEach(s => {
+    const st = s.status || 'Pending';
+    if (counts[st] !== undefined) counts[st]++;
+    else counts['Pending']++;
+  });
+
+  const total = subs.length || 1;
+  const svg = document.getElementById('donutChart');
+  const legend = document.getElementById('donutLegend');
+  const r = 50, cx = 60, cy = 60, sw = 16;
+  const circumference = 2 * Math.PI * r;
+
+  let offset = 0;
+  let svgContent = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EFEBE2" stroke-width="${sw}"/>`;
+  let legendHtml = '';
+
+  statuses.forEach(st => {
+    const count = counts[st];
+    const pct = count / total;
+    const dash = pct * circumference;
+    svgContent += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors[st]}" stroke-width="${sw}"
+      stroke-dasharray="${dash} ${circumference - dash}" stroke-dashoffset="${-offset}"
+      transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+    offset += dash;
+
+    legendHtml += `<div class="legend-row">
+      <span class="legend-dot" style="background:${colors[st]}"></span>
+      <span class="legend-name">${labels[st]}</span>
+      <span class="legend-pct">${Math.round(pct * 100)}%</span>
+    </div>`;
+  });
+
+  svg.innerHTML = svgContent;
+  legend.innerHTML = legendHtml;
+}
+
+/* ============ SUBMISSION LEDGER ============ */
+function renderLedger() {
+  const subs = [...filteredSubs()].sort((a,b) => {
+    const ta = toDate(a.createdAt)?.getTime() || 0;
+    const tb = toDate(b.createdAt)?.getTime() || 0;
+    return tb - ta;
+  }).slice(0, 12);
+
+  const body = document.getElementById('ledgerBody');
+  if (subs.length === 0) {
+    body.innerHTML = `<tr><td colspan="5" class="empty-row">No submissions in this range.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = subs.map(s => {
+    const isPaid = !!s.paymentVerified;
+    const dSub = toDate(s.createdAt);
+    const matchingPayment = payments.find(p => p.submissionId === s.id);
+    const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : null;
+    return `<tr>
+      <td class="ledger-id">#${s.id.slice(0,6).toUpperCase()}</td>
+      <td>${fmtDate(dSub)}</td>
+      <td><span class="ledger-badge ${isPaid ? 'paid' : 'unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span></td>
+      <td>${dPaid ? fmtDate(dPaid) : '—'}</td>
+      <td class="ledger-amt">${isPaid ? fmtMoney(PAYMENT_AMOUNT) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ============ GROWTH PANEL ============ */
+function renderGrowth() {
+  const allEmails = new Set(submissions.map(s => (s.email || '').toLowerCase()).filter(Boolean));
+  document.getElementById('growthNum').textContent = allEmails.size;
+
+  // Build cumulative growth by week from first submission to now
+  const sorted = [...submissions].sort((a,b) => (toDate(a.createdAt)?.getTime()||0) - (toDate(b.createdAt)?.getTime()||0));
+  const seen = new Set();
+  const points = [];
+  sorted.forEach(s => {
+    const email = (s.email || '').toLowerCase();
+    if (email && !seen.has(email)) { seen.add(email); points.push(seen.size); }
+  });
+
+  const svg = document.getElementById('growthSpark');
+  if (points.length < 2) { svg.innerHTML = ''; return; }
+
+  const w = 300, h = 60;
+  const max = Math.max(...points, 1);
+  const stepX = w / (points.length - 1);
+  const path = points.map((p, i) => `${i * stepX},${h - (p / max) * (h - 6) - 3}`).join(' L ');
+  svg.innerHTML = `
+    <polyline points="${path}" fill="none" stroke="#B8722E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${(points.length-1)*stepX}" cy="${h - (points[points.length-1]/max)*(h-6) - 3}" r="3.5" fill="#B8722E"/>
+  `;
+}
+
+/* ============ PAYMENT AUTO-RECORD (status -> Approved/Paid sync) ============ */
+/* This dashboard reads payments written by the admin panel.
+   If the admin panel's own logic doesn't yet write to 'payments',
+   this listener creates the record the first time it sees paymentVerified flip true
+   without a matching payments doc — keeping totals accurate either way. */
+let processedPaymentSubIds = new Set();
+onSnapshot(collection(db, "submissions"), async (snap) => {
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data();
+    if (data.paymentVerified && !processedPaymentSubIds.has(docSnap.id)) {
+      processedPaymentSubIds.add(docSnap.id);
+      const already = payments.find(p => p.submissionId === docSnap.id);
+      if (!already) {
+        try {
+          await addDoc(collection(db, "payments"), {
+            submissionId: docSnap.id,
+            amount: PAYMENT_AMOUNT,
+            currency: 'GHS',
+            status: 'paid',
+            createdAt: data.paidAt || Date.now()
+          });
+        } catch (e) { console.error('Auto payment record failed:', e); }
+      }
+    }
+  }
+});
+
+/* ============ TOAST ============ */
+function toast(msg) {
+  const box = document.getElementById('toastBox');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 250); }, 2600);
+}
+
+/* ============ EXPORT: PDF ============ */
+document.getElementById('exportPdfBtn').addEventListener('click', () => {
+  try {
+    const { jsPDF } = window.jspdf;
+    const docPdf = new jsPDF();
+    const subs = filteredSubs();
+    const pays = filteredPayments();
+    const revenue = pays.reduce((s,p) => s + (p.amount||0), 0);
+
+    docPdf.setFont('helvetica', 'bold');
+    docPdf.setFontSize(16);
+    docPdf.text('444Music — Analytics Report', 14, 18);
+    docPdf.setFont('helvetica', 'normal');
+    docPdf.setFontSize(9);
+    docPdf.setTextColor(110);
+    docPdf.text(`Generated ${new Date().toLocaleString('en-GB')} · Range: ${currentRange.toUpperCase()}`, 14, 25);
+
+    docPdf.setTextColor(0);
+    docPdf.setFontSize(11);
+    docPdf.text(`Total Revenue: GH₵ ${revenue.toFixed(2)}`, 14, 36);
+    docPdf.text(`Total Releases: ${subs.length}`, 14, 43);
+    docPdf.text(`Paid Submissions: ${subs.filter(s=>s.paymentVerified).length}`, 14, 50);
+
+    const rows = subs.sort((a,b) => (toDate(b.createdAt)?.getTime()||0) - (toDate(a.createdAt)?.getTime()||0))
+      .map(s => {
+        const matchingPayment = pays.find(p => p.submissionId === s.id);
+        return [
+          '#' + s.id.slice(0,6).toUpperCase(),
+          fmtDate(toDate(s.createdAt)),
+          s.paymentVerified ? 'Paid' : 'Unpaid',
+          matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
+          s.paymentVerified ? `GH₵ ${PAYMENT_AMOUNT.toFixed(2)}` : '—'
+        ];
+      });
+
+    docPdf.autoTable({
+      startY: 58,
+      head: [['Ref', 'Date Submitted', 'Status', 'Date Paid', 'Amount']],
+      body: rows,
+      styles: { fontSize: 8.5, font: 'helvetica' },
+      headStyles: { fillColor: [28,26,23] }
+    });
+
+    docPdf.save(`444music-analytics-${currentRange}-${Date.now()}.pdf`);
+    toast('PDF downloaded');
+  } catch (e) {
+    console.error(e);
+    toast('PDF export failed — check console');
+  }
+});
+
+/* ============ EXPORT: EXCEL ============ */
+document.getElementById('exportXlsBtn').addEventListener('click', () => {
+  try {
+    const subs = filteredSubs();
+    const pays = filteredPayments();
+    const rows = subs.sort((a,b) => (toDate(b.createdAt)?.getTime()||0) - (toDate(a.createdAt)?.getTime()||0))
+      .map(s => {
+        const matchingPayment = pays.find(p => p.submissionId === s.id);
+        return {
+          'Ref': '#' + s.id.slice(0,6).toUpperCase(),
+          'Date Submitted': fmtDate(toDate(s.createdAt)),
+          'Status': s.paymentVerified ? 'Paid' : 'Unpaid',
+          'Date Paid': matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
+          'Amount (GHS)': s.paymentVerified ? PAYMENT_AMOUNT : 0
+        };
+      });
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Analytics');
+    XLSX.writeFile(wb, `444music-analytics-${currentRange}-${Date.now()}.xlsx`);
+    toast('Excel file downloaded');
+  } catch (e) {
+    console.error(e);
+    toast('Excel export failed — check console');
+  }
+});
+</script>
+
+</body>
+</html>
