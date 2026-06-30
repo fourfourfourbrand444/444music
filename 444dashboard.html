@@ -555,6 +555,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+window.db = db; // exposed for one-time console scripts (e.g. payment reset)
 
 try { await enableIndexedDbPersistence(db, { cacheSizeBytes: CACHE_SIZE_UNLIMITED }); }
 catch(e) { console.warn('Persistence not enabled:', e.code); }
@@ -984,41 +985,6 @@ function renderGrowth() {
     <circle cx="${(points.length-1)*stepX}" cy="${h - (points[points.length-1]/max)*(h-6) - 3}" r="3.5" fill="#1DB954"/>
   `;
 }
-
-/* ============ PAYMENT BACKFILL (legacy/missed records only) ============
-   The admin panel now writes its own payments doc the instant a submission
-   is marked Paid, stamped with serverTimestamp() at that exact moment — so
-   "Today's Payments" reflects real same-day activity going forward.
-
-   This listener only exists as a one-time safety net for OLDER submissions
-   that were marked paid before this fix existed, and only backfills them
-   using `paidAt` if that field is present. It deliberately does NOT fall
-   back to Date.now(), because that was the bug that stamped 94 historic
-   payments with "today" the first time this page ever ran. If a legacy
-   submission has no paidAt on file, it is intentionally left out of the
-   payments collection rather than guessed at — you can backfill it
-   manually in Firestore with the correct date if needed. */
-let processedPaymentSubIds = new Set();
-onSnapshot(collection(db, "submissions"), async (snap) => {
-  for (const docSnap of snap.docs) {
-    const data = docSnap.data();
-    if (data.paymentVerified && !processedPaymentSubIds.has(docSnap.id)) {
-      processedPaymentSubIds.add(docSnap.id);
-      const already = payments.find(p => p.submissionId === docSnap.id);
-      if (!already && data.paidAt) {
-        try {
-          await addDoc(collection(db, "payments"), {
-            submissionId: docSnap.id,
-            amount: PAYMENT_AMOUNT,
-            currency: 'GHS',
-            status: 'paid',
-            createdAt: data.paidAt
-          });
-        } catch (e) { console.error('Auto payment record failed:', e); }
-      }
-    }
-  }
-});
 
 /* ============ TOAST ============ */
 function toast(msg) {
