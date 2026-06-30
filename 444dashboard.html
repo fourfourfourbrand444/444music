@@ -6,7 +6,8 @@
 <title>444Music — Analytics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Spotify-style type system: Poppins for display/headlines (geometric, rounded — close to Circular), Inter for body/UI, JetBrains Mono for numeric/ledger data -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- PDF / Excel export -->
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -22,14 +23,17 @@
   --paper-sunk:  #EFEBE2;
   --line:        #E2DDD0;
   --line-strong: #D2CBB8;
-  --ink:         #1C1A17;
-  --ink-soft:    #56514A;
-  --ink-mute:    #948D80;
-  --brass:       #B8722E;
-  --brass-deep:  #93591F;
-  --brass-wash:  #F1E3D1;
-  --green:       #2F7D5C;
-  --green-wash:  #E1EEE7;
+  --ink:         #121417;
+  --ink-soft:    #54585C;
+  --ink-mute:    #8E9296;
+
+  /* Spotify-green accent system replacing the old brown/brass palette */
+  --accent:       #1DB954;
+  --accent-deep:  #168f42;
+  --accent-wash:  #DDF3E5;
+
+  --green:       #1DB954;
+  --green-wash:  #DDF3E5;
   --red:         #B5402E;
   --red-wash:    #F3E2DE;
   --blue:        #3D6B8C;
@@ -37,7 +41,7 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
-  --ff-display: 'Fraunces', serif;
+  --ff-display: 'Poppins', sans-serif;
   --ff-body:    'Inter', sans-serif;
   --ff-mono:    'JetBrains Mono', monospace;
   --t: 0.18s cubic-bezier(0.4,0,0.2,1);
@@ -64,17 +68,17 @@ body {
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
   padding: 40px 32px 32px;
-  box-shadow: 0 30px 70px rgba(28,26,23,0.08);
+  box-shadow: 0 30px 70px rgba(18,20,23,0.08);
 }
 .login-mark {
   width: 44px; height: 44px; border-radius: 10px;
   background: var(--ink); color: var(--paper);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--ff-display); font-weight: 700; font-size: 1.2rem;
+  font-family: var(--ff-display); font-weight: 800; font-size: 1.2rem;
   margin-bottom: 20px;
 }
 .login-title {
-  font-family: var(--ff-display); font-size: 1.5rem; font-weight: 600;
+  font-family: var(--ff-display); font-size: 1.5rem; font-weight: 700;
   margin-bottom: 6px; letter-spacing: -0.01em;
 }
 .login-sub { font-size: 0.86rem; color: var(--ink-soft); margin-bottom: 28px; line-height: 1.5; }
@@ -89,7 +93,7 @@ body {
   padding: 12px 14px; font-family: var(--ff-body); font-size: 0.92rem;
   color: var(--ink); outline: none; transition: border-color var(--t);
 }
-.login-input:focus { border-color: var(--brass); }
+.login-input:focus { border-color: var(--accent); }
 .login-btn {
   width: 100%; padding: 13px; margin-top: 6px;
   background: var(--ink); color: var(--paper); border: none;
@@ -97,7 +101,7 @@ body {
   font-size: 0.88rem; cursor: pointer; transition: background var(--t);
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.login-btn:hover { background: var(--brass-deep); }
+.login-btn:hover { background: var(--accent-deep); }
 .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .login-error {
   display: none; align-items: center; gap: 8px;
@@ -133,9 +137,9 @@ body {
 .nav-brand-badge {
   width: 28px; height: 28px; border-radius: 7px; background: var(--ink); color: var(--paper);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--ff-display); font-weight: 700; font-size: 0.82rem;
+  font-family: var(--ff-display); font-weight: 800; font-size: 0.82rem;
 }
-.nav-brand-text { font-family: var(--ff-display); font-weight: 600; font-size: 0.96rem; }
+.nav-brand-text { font-family: var(--ff-display); font-weight: 700; font-size: 0.96rem; }
 .nav-right { display: flex; align-items: center; gap: 14px; }
 .nav-admin-email { font-size: 0.78rem; color: var(--ink-mute); }
 .nav-logout {
@@ -150,7 +154,7 @@ body {
 .page { max-width: 1240px; margin: 0 auto; padding: 32px 24px 90px; }
 
 .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-.page-title { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 600; letter-spacing: -0.01em; }
+.page-title { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; }
 .page-sub { font-size: 0.85rem; color: var(--ink-soft); margin-top: 4px; }
 .conn-pill {
   display: flex; align-items: center; gap: 7px;
@@ -166,9 +170,9 @@ body {
 .range-select {
   background: var(--paper-raised); border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm); padding: 10px 14px;
-  font-family: var(--ff-body); font-size: 0.85rem; color: var(--ink);
+  font-family: var(--ff-body); font-size: 0.85rem; color: var(--ink); font-weight: 600;
   outline: none; cursor: pointer; appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356514A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2354585C' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
   padding-right: 34px;
 }
@@ -192,7 +196,7 @@ body {
 }
 .receipt-strip::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: repeating-linear-gradient(90deg, var(--brass) 0 8px, transparent 8px 14px);
+  background: repeating-linear-gradient(90deg, var(--accent) 0 8px, transparent 8px 14px);
 }
 .receipt-item { flex: 1; padding: 0 22px; text-align: left; }
 .receipt-item + .receipt-item { border-left: 1px dashed var(--line-strong); }
@@ -200,8 +204,8 @@ body {
   font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--ink-mute); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
 }
-.receipt-value { font-family: var(--ff-display); font-size: 1.5rem; font-weight: 600; }
-.receipt-value.brass { color: var(--brass-deep); }
+.receipt-value { font-family: var(--ff-display); font-size: 1.5rem; font-weight: 700; }
+.receipt-value.brass { color: var(--accent-deep); }
 .receipt-value.green { color: var(--green); }
 .receipt-sub { font-size: 0.74rem; color: var(--ink-mute); margin-top: 3px; }
 
@@ -221,7 +225,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   background: var(--paper-sunk); color: var(--ink-soft);
 }
-.stat-icon.brass { background: var(--brass-wash); color: var(--brass-deep); }
+.stat-icon.brass { background: var(--accent-wash); color: var(--accent-deep); }
 .stat-icon.green { background: var(--green-wash); color: var(--green); }
 .stat-icon.blue  { background: var(--blue-wash);  color: var(--blue); }
 .stat-icon.red   { background: var(--red-wash);   color: var(--red); }
@@ -233,7 +237,7 @@ body {
 .stat-trend.down { color: var(--red);   background: var(--red-wash); }
 .stat-trend.flat { color: var(--ink-mute); background: var(--paper-sunk); }
 .stat-label { font-size: 0.74rem; color: var(--ink-soft); margin-bottom: 4px; }
-.stat-value { font-family: var(--ff-display); font-size: 1.7rem; font-weight: 600; letter-spacing: -0.01em; }
+.stat-value { font-family: var(--ff-display); font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; }
 
 /* CHARTS ROW */
 .charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -242,7 +246,7 @@ body {
   border-radius: var(--radius-lg); padding: 22px;
 }
 .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.panel-title { font-family: var(--ff-display); font-size: 1.05rem; font-weight: 600; }
+.panel-title { font-family: var(--ff-display); font-size: 1.05rem; font-weight: 700; }
 .panel-sub { font-size: 0.74rem; color: var(--ink-mute); margin-top: 2px; }
 
 #barChart { width: 100%; height: 220px; }
@@ -283,7 +287,7 @@ body {
 .empty-row { text-align: center; padding: 30px 0; color: var(--ink-mute); font-size: 0.84rem; }
 
 /* USER GROWTH PANEL */
-.growth-num { font-family: var(--ff-display); font-size: 2.2rem; font-weight: 600; margin: 6px 0 2px; }
+.growth-num { font-family: var(--ff-display); font-size: 2.2rem; font-weight: 700; margin: 6px 0 2px; }
 .growth-note {
   font-size: 0.78rem; color: var(--ink-mute); line-height: 1.5; margin-top: 14px;
   padding-top: 14px; border-top: 1px solid var(--line);
@@ -293,7 +297,7 @@ body {
 
 /* LOADING / EMPTY */
 .loading-block { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 60px 0; color: var(--ink-mute); }
-.loader { width: 30px; height: 30px; border: 3px solid var(--line); border-top-color: var(--brass); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.loader { width: 30px; height: 30px; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* TOAST */
@@ -664,6 +668,16 @@ function toDate(ts) {
   const d = new Date(ts);
   return isNaN(d) ? null : d;
 }
+
+/* Submissions can have createdAt written under slightly different field
+   names depending on which form/version produced them. This checks every
+   known alias so "today" filtering doesn't silently miss real records. */
+function getSubDate(item) {
+  return toDate(
+    item.createdAt ?? item.timestamp ?? item.submittedAt ?? item.dateCreated ?? item.created_at ?? null
+  );
+}
+
 function isToday(d) {
   if (!d) return false;
   const n = new Date();
@@ -711,7 +725,11 @@ function render() {
   renderGrowth();
 }
 
-/* ============ TODAY RECEIPT STRIP ============ */
+/* ============ TODAY RECEIPT STRIP ============
+   "Today's Payments" reads the payments collection filtered to records
+   whose createdAt falls on today's date. A payment record is only ever
+   created the moment the admin panel marks a submission Paid, so this
+   accurately reflects payments made *today*, not historical paid totals. */
 function renderReceiptStrip() {
   const todaysPayments = payments.filter(p => isToday(toDate(p.createdAt)));
   const todaysTotal = todaysPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -720,7 +738,7 @@ function renderReceiptStrip() {
     ? `${todaysPayments.length} payment${todaysPayments.length === 1 ? '' : 's'} received`
     : 'No payments received yet today';
 
-  const todaysSubs = submissions.filter(s => isToday(toDate(s.createdAt)));
+  const todaysSubs = submissions.filter(s => isToday(getSubDate(s)));
   document.getElementById('todaySubs').textContent = todaysSubs.length;
   document.getElementById('todaySubsSub').textContent = todaysSubs.length > 0
     ? `${todaysSubs.filter(s => s.paymentVerified).length} paid · ${todaysSubs.filter(s => !s.paymentVerified).length} unpaid`
@@ -730,9 +748,14 @@ function renderReceiptStrip() {
   document.getElementById('todayUpdated').textContent = 'As of ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
-/* ============ STAT GRID ============ */
+/* ============ STAT GRID ============
+   - Revenue: sum of `payments` docs whose createdAt falls in the selected range.
+   - Paid Submissions: counted directly off `submissions.paymentVerified === true`
+     within range — this is the "all true paid submissions" source of truth,
+     independent of whether a payments doc happens to exist for it.
+   - Releases / Submitters: counted off submission dates within range. */
 function filteredSubs() {
-  return submissions.filter(s => currentRange === 'all' || inRange(toDate(s.createdAt), currentRange));
+  return submissions.filter(s => currentRange === 'all' || inRange(getSubDate(s), currentRange));
 }
 function filteredPayments() {
   return payments.filter(p => currentRange === 'all' || inRange(toDate(p.createdAt), currentRange));
@@ -753,7 +776,6 @@ function renderStatGrid() {
   const uniqueSubmitters = new Set(subs.map(s => (s.email || '').toLowerCase()).filter(Boolean));
   document.getElementById('statSubmitters').textContent = uniqueSubmitters.size;
 
-  // Trends: compare to previous equivalent period (simple, all-data based when range=all -> show flat)
   setTrend('trendRevenue', revenue, computePrevValue('revenue'));
   setTrend('trendPaid', paidCount, computePrevValue('paid'));
   setTrend('trendReleases', subs.length, computePrevValue('releases'));
@@ -761,24 +783,23 @@ function renderStatGrid() {
 }
 
 function computePrevValue(metric) {
-  // Compare current range vs the immediately preceding equivalent period
   if (currentRange === 'all') return null;
   const now = new Date();
   let prevSubs = [], prevPays = [];
 
   if (currentRange === 'today') {
     const y = new Date(now); y.setDate(now.getDate() - 1);
-    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d.toDateString() === y.toDateString(); });
+    prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d.toDateString() === y.toDateString(); });
     prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.toDateString() === y.toDateString(); });
   } else if (currentRange === 'week') {
     const start = new Date(now); start.setDate(now.getDate() - now.getDay() - 7); start.setHours(0,0,0,0);
     const end = new Date(now); end.setDate(now.getDate() - now.getDay()); end.setHours(0,0,0,0);
-    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d >= start && d < end; });
+    prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d >= start && d < end; });
     prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d >= start && d < end; });
   } else if (currentRange === 'month') {
     const m = now.getMonth() - 1, y = m < 0 ? now.getFullYear() - 1 : now.getFullYear();
     const mm = (m + 12) % 12;
-    prevSubs = submissions.filter(s => { const d = toDate(s.createdAt); return d && d.getMonth() === mm && d.getFullYear() === y; });
+    prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d.getMonth() === mm && d.getFullYear() === y; });
     prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.getMonth() === mm && d.getFullYear() === y; });
   }
 
@@ -808,7 +829,6 @@ function renderBarChart() {
   const tooltip = document.getElementById('barTooltip');
   const pays = filteredPayments();
 
-  // Group by day (last 14 days within range, or full range if smaller)
   const byDay = {};
   pays.forEach(p => {
     const d = toDate(p.createdAt);
@@ -819,7 +839,6 @@ function renderBarChart() {
 
   let days = Object.keys(byDay).sort();
   if (days.length === 0) {
-    // show last 7 days as empty baseline
     days = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i);
@@ -841,11 +860,11 @@ function renderBarChart() {
     const y = h - padB - barH;
     const dateLabel = new Date(day).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
     svgContent += `<rect x="${x}" y="${y}" width="${barW}" height="${Math.max(barH,2)}" rx="3"
-      fill="${val > 0 ? '#B8722E' : '#E2DDD0'}" opacity="${val > 0 ? '1' : '0.5'}"
+      fill="${val > 0 ? '#1DB954' : '#E2DDD0'}" opacity="${val > 0 ? '1' : '0.5'}"
       class="bar-rect" data-amount="${val.toFixed(2)}" data-date="${dateLabel}"
       style="cursor:pointer;"></rect>`;
     if (days.length <= 14) {
-      svgContent += `<text x="${x + barW/2}" y="${h - 8}" text-anchor="middle" font-size="9" fill="#948D80" font-family="Inter">${dateLabel.split(' ')[0]}</text>`;
+      svgContent += `<text x="${x + barW/2}" y="${h - 8}" text-anchor="middle" font-size="9" fill="#8E9296" font-family="Inter">${dateLabel.split(' ')[0]}</text>`;
     }
   });
 
@@ -870,7 +889,7 @@ function renderBarChart() {
 function renderDonut() {
   const subs = filteredSubs();
   const statuses = ['Pending', 'review', 'Approved', 'rejected'];
-  const colors = { 'Pending': '#B8722E', 'review': '#3D6B8C', 'Approved': '#2F7D5C', 'rejected': '#B5402E' };
+  const colors = { 'Pending': '#1DB954', 'review': '#3D6B8C', 'Approved': '#168f42', 'rejected': '#B5402E' };
   const labels = { 'Pending': 'Pending', 'review': 'In Review', 'Approved': 'Approved', 'rejected': 'Rejected' };
 
   const counts = {};
@@ -914,8 +933,8 @@ function renderDonut() {
 /* ============ SUBMISSION LEDGER ============ */
 function renderLedger() {
   const subs = [...filteredSubs()].sort((a,b) => {
-    const ta = toDate(a.createdAt)?.getTime() || 0;
-    const tb = toDate(b.createdAt)?.getTime() || 0;
+    const ta = getSubDate(a)?.getTime() || 0;
+    const tb = getSubDate(b)?.getTime() || 0;
     return tb - ta;
   }).slice(0, 12);
 
@@ -927,7 +946,7 @@ function renderLedger() {
 
   body.innerHTML = subs.map(s => {
     const isPaid = !!s.paymentVerified;
-    const dSub = toDate(s.createdAt);
+    const dSub = getSubDate(s);
     const matchingPayment = payments.find(p => p.submissionId === s.id);
     const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : null;
     return `<tr>
@@ -945,8 +964,7 @@ function renderGrowth() {
   const allEmails = new Set(submissions.map(s => (s.email || '').toLowerCase()).filter(Boolean));
   document.getElementById('growthNum').textContent = allEmails.size;
 
-  // Build cumulative growth by week from first submission to now
-  const sorted = [...submissions].sort((a,b) => (toDate(a.createdAt)?.getTime()||0) - (toDate(b.createdAt)?.getTime()||0));
+  const sorted = [...submissions].sort((a,b) => (getSubDate(a)?.getTime()||0) - (getSubDate(b)?.getTime()||0));
   const seen = new Set();
   const points = [];
   sorted.forEach(s => {
@@ -962,16 +980,24 @@ function renderGrowth() {
   const stepX = w / (points.length - 1);
   const path = points.map((p, i) => `${i * stepX},${h - (p / max) * (h - 6) - 3}`).join(' L ');
   svg.innerHTML = `
-    <polyline points="${path}" fill="none" stroke="#B8722E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="${(points.length-1)*stepX}" cy="${h - (points[points.length-1]/max)*(h-6) - 3}" r="3.5" fill="#B8722E"/>
+    <polyline points="${path}" fill="none" stroke="#1DB954" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${(points.length-1)*stepX}" cy="${h - (points[points.length-1]/max)*(h-6) - 3}" r="3.5" fill="#1DB954"/>
   `;
 }
 
-/* ============ PAYMENT AUTO-RECORD (status -> Approved/Paid sync) ============ */
-/* This dashboard reads payments written by the admin panel.
-   If the admin panel's own logic doesn't yet write to 'payments',
-   this listener creates the record the first time it sees paymentVerified flip true
-   without a matching payments doc — keeping totals accurate either way. */
+/* ============ PAYMENT BACKFILL (legacy/missed records only) ============
+   The admin panel now writes its own payments doc the instant a submission
+   is marked Paid, stamped with serverTimestamp() at that exact moment — so
+   "Today's Payments" reflects real same-day activity going forward.
+
+   This listener only exists as a one-time safety net for OLDER submissions
+   that were marked paid before this fix existed, and only backfills them
+   using `paidAt` if that field is present. It deliberately does NOT fall
+   back to Date.now(), because that was the bug that stamped 94 historic
+   payments with "today" the first time this page ever ran. If a legacy
+   submission has no paidAt on file, it is intentionally left out of the
+   payments collection rather than guessed at — you can backfill it
+   manually in Firestore with the correct date if needed. */
 let processedPaymentSubIds = new Set();
 onSnapshot(collection(db, "submissions"), async (snap) => {
   for (const docSnap of snap.docs) {
@@ -979,14 +1005,14 @@ onSnapshot(collection(db, "submissions"), async (snap) => {
     if (data.paymentVerified && !processedPaymentSubIds.has(docSnap.id)) {
       processedPaymentSubIds.add(docSnap.id);
       const already = payments.find(p => p.submissionId === docSnap.id);
-      if (!already) {
+      if (!already && data.paidAt) {
         try {
           await addDoc(collection(db, "payments"), {
             submissionId: docSnap.id,
             amount: PAYMENT_AMOUNT,
             currency: 'GHS',
             status: 'paid',
-            createdAt: data.paidAt || Date.now()
+            createdAt: data.paidAt
           });
         } catch (e) { console.error('Auto payment record failed:', e); }
       }
@@ -1027,12 +1053,12 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     docPdf.text(`Total Releases: ${subs.length}`, 14, 43);
     docPdf.text(`Paid Submissions: ${subs.filter(s=>s.paymentVerified).length}`, 14, 50);
 
-    const rows = subs.sort((a,b) => (toDate(b.createdAt)?.getTime()||0) - (toDate(a.createdAt)?.getTime()||0))
+    const rows = subs.sort((a,b) => (getSubDate(b)?.getTime()||0) - (getSubDate(a)?.getTime()||0))
       .map(s => {
         const matchingPayment = pays.find(p => p.submissionId === s.id);
         return [
           '#' + s.id.slice(0,6).toUpperCase(),
-          fmtDate(toDate(s.createdAt)),
+          fmtDate(getSubDate(s)),
           s.paymentVerified ? 'Paid' : 'Unpaid',
           matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
           s.paymentVerified ? `GH₵ ${PAYMENT_AMOUNT.toFixed(2)}` : '—'
@@ -1044,7 +1070,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
       head: [['Ref', 'Date Submitted', 'Status', 'Date Paid', 'Amount']],
       body: rows,
       styles: { fontSize: 8.5, font: 'helvetica' },
-      headStyles: { fillColor: [28,26,23] }
+      headStyles: { fillColor: [18,20,23] }
     });
 
     docPdf.save(`444music-analytics-${currentRange}-${Date.now()}.pdf`);
@@ -1060,12 +1086,12 @@ document.getElementById('exportXlsBtn').addEventListener('click', () => {
   try {
     const subs = filteredSubs();
     const pays = filteredPayments();
-    const rows = subs.sort((a,b) => (toDate(b.createdAt)?.getTime()||0) - (toDate(a.createdAt)?.getTime()||0))
+    const rows = subs.sort((a,b) => (getSubDate(b)?.getTime()||0) - (getSubDate(a)?.getTime()||0))
       .map(s => {
         const matchingPayment = pays.find(p => p.submissionId === s.id);
         return {
           'Ref': '#' + s.id.slice(0,6).toUpperCase(),
-          'Date Submitted': fmtDate(toDate(s.createdAt)),
+          'Date Submitted': fmtDate(getSubDate(s)),
           'Status': s.paymentVerified ? 'Paid' : 'Unpaid',
           'Date Paid': matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
           'Amount (GHS)': s.paymentVerified ? PAYMENT_AMOUNT : 0
