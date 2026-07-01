@@ -50,7 +50,6 @@
       flex-direction: column;
       padding: 32px 26px 36px;
       overflow-y: auto;
-      /* subtle noise texture feel */
       background:
         radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.015) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 100%, rgba(255,255,255,0.01) 0%, transparent 60%),
@@ -490,7 +489,7 @@
   import {
     getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
     sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup,
-    signInWithRedirect, getRedirectResult, browserPopupRedirectResolver
+    signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -504,6 +503,7 @@
   });
   const auth = getAuth(app);
   const db   = getFirestore(app);
+  await setPersistence(auth, browserLocalPersistence).catch(() => {});
   const $ = id => document.getElementById(id);
 
   function showMsg(id, text, type) {
@@ -520,28 +520,38 @@
     const btn=$(id); btn.classList.toggle('loading',on); btn.disabled=on;
   }
 
-  /* Creates the user/analytics docs the first time someone signs in with Google,
-     since createUserWithEmailAndPassword's onboarding write doesn't run for OAuth users */
+  /* Creates the user/analytics docs the first time someone signs in with Google.
+     Runs in the BACKGROUND after redirecting to asap.html, not before it —
+     a Firestore permission error can no longer strand the user on this page. */
   async function ensureUserDocs(user) {
-    const userRef = doc(db, 'users', user.uid);
-    const existing = await getDoc(userRef);
-    if (existing.exists()) return;
-    await setDoc(userRef, {
-      name: user.displayName || 'New Artist',
-      email: user.email,
-      artistType: 'Independent Artist',
-      genre: 'Afrobeats',
-      country: 'Ghana',
-      earnings: 0,
-      createdAt: serverTimestamp()
-    });
-    await setDoc(doc(db, 'analytics', user.uid), {
-      totalStreams:0, spotifyStreams:0, appleStreams:0,
-      youtubeStreams:0, tiktokStreams:0,
-      topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
-      monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
-      createdAt: serverTimestamp()
-    });
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const existing = await getDoc(userRef);
+      if (existing.exists()) return;
+      await setDoc(userRef, {
+        name: user.displayName || 'New Artist',
+        email: user.email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db, 'analytics', user.uid), {
+        totalStreams:0, spotifyStreams:0, appleStreams:0,
+        youtubeStreams:0, tiktokStreams:0,
+        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
+        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error('ensureUserDocs failed (non-blocking):', e);
+    }
+  }
+
+  function goToApp(user) {
+    ensureUserDocs(user);
+    window.location.href = 'asap.html';
   }
 
   /* LOGIN */
@@ -570,36 +580,32 @@
     }
   };
 
-  /* ══ GOOGLE SIGN-IN — works across iOS Safari, in-app browsers, and Android ══
-     Popups are unreliable on iOS Safari and are blocked outright inside
-     in-app browsers (Instagram/WhatsApp/Facebook/TikTok webviews). We detect
-     those environments and fall back to a full-page redirect flow instead,
-     which doesn't depend on popup windows or cross-window messaging. */
+  /* ══ GOOGLE SIGN-IN ══
+     Popups work fine on desktop AND modern mobile Safari/Chrome. Only
+     genuine in-app webviews (Instagram/WhatsApp/TikTok/etc.) block popups
+     outright — and Google refuses OAuth inside those webviews no matter
+     what this code does. So: try popup everywhere except known in-app
+     webviews, and only fall back to redirect if the popup itself fails. */
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
 
-  function isPopupHostileEnvironment() {
+  function isInAppWebview() {
     const ua = navigator.userAgent || navigator.vendor || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isInAppBrowser = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Twitter|GSA\/|WhatsApp/i.test(ua);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-    return isIOS || isInAppBrowser || (isSafari && isIOS);
+    return /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Twitter|GSA\/|WhatsApp/i.test(ua);
   }
 
   $('googleLoginBtn').addEventListener('click', async () => {
     clearMsg('loginMsg');
     const btn = $('googleLoginBtn');
     btn.disabled = true;
-    $('googleBtnText').textContent = 'Redirecting…';
 
-    if (isPopupHostileEnvironment()) {
+    if (isInAppWebview()) {
+      $('googleBtnText').textContent = 'Redirecting…';
       try {
         await signInWithRedirect(auth, provider);
-        // Page navigates away here; result is handled by getRedirectResult on reload.
       } catch (err) {
         btn.disabled = false;
         $('googleBtnText').textContent = 'Continue with Google';
-        // TEMP: showing the raw code/message so we can pinpoint the exact iOS failure.
         showMsg('loginMsg', `Google sign-in failed: ${err.code || err.message}`, 'error');
         console.error('signInWithRedirect error:', err);
       }
@@ -608,13 +614,13 @@
 
     try {
       const result = await signInWithPopup(auth, provider);
-      await ensureUserDocs(result.user);
-      window.location.href = 'asap.html';
+      goToApp(result.user);
     } catch (err) {
       btn.disabled = false;
       $('googleBtnText').textContent = 'Continue with Google';
       if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         try {
+          $('googleBtnText').textContent = 'Redirecting…';
           await signInWithRedirect(auth, provider);
         } catch (e2) {
           showMsg('loginMsg', `Google sign-in failed: ${e2.code || e2.message}`, 'error');
@@ -628,11 +634,10 @@
   });
 
   /* Catch the result when the page reloads after a redirect sign-in */
-  getRedirectResult(auth).then(async (result) => {
+  getRedirectResult(auth).then((result) => {
     if (result && result.user) {
       showMsg('loginMsg','Signing in…','success');
-      await ensureUserDocs(result.user);
-      window.location.href = 'asap.html';
+      goToApp(result.user);
     }
   }).catch((err) => {
     if (err && err.code && err.code !== 'auth/no-current-user') {
