@@ -3,1322 +3,1313 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create New Release</title>
+<title>My Releases — 444Music</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+/* ===== ROOT ===== */
 :root {
-  --bg-base:        #080810;
-  --bg-surface:     #0e0e18;
-  --bg-card:        #111120;
-  --bg-input:       #171725;
-  --bg-input-focus: #1c1c2c;
-  --border:         rgba(160,100,255,0.1);
-  --border-focus:   rgba(160,100,255,0.45);
-  --border-accent:  rgba(160,100,255,0.2);
-  --accent:         #b06ef3;
-  --accent-light:   #c48ff7;
-  --accent-bright:  #d8b4fe;
-  --accent-dim:     rgba(160,100,255,0.08);
-  --accent-glow:    0 0 24px rgba(160,100,255,0.15);
-  --gold:           #c8a96e;
-  --gold-dim:       rgba(200,169,110,0.1);
-  --text-primary:   #e8e8e8;
-  --text-secondary: #888888;
-  --text-muted:     #444444;
-  --success:        #4ade80;
-  --danger:         #f87171;
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
-  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
-  --font-display: 'Outfit', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  --black: #000000;
+  --black-1: #080808;
+  --black-2: #0d0d0d;
+  --black-3: #111111;
+  --black-4: #161616;
+  --black-5: #1a1a1a;
+  --border: rgba(255,255,255,0.06);
+  --border-light: rgba(255,255,255,0.1);
+  --purple: #7c5cfc;
+  --purple-light: #9b7fff;
+  --purple-dim: rgba(124,92,252,0.15);
+  --purple-border: rgba(124,92,252,0.3);
+  --text: #f5f5f5;
+  --text-2: #a0a0a0;
+  --text-3: #606060;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --rose: #ef4444;
+  --cyan: #06b6d4;
+  --sidebar-w: 240px;
 }
 
-html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-body);
-  background: var(--bg-base);
-  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--black);
+  color: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
 }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w); height: 100vh;
+  background: var(--black-1); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 200;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
 }
-
-.wrapper {
-  position: relative; z-index: 1;
-  max-width: 920px; margin: 0 auto;
-  padding: 40px 24px 80px;
-  animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 24px 20px 20px; border-bottom: 1px solid var(--border);
 }
-
-/* HEADER */
-.site-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 48px; padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
+.sidebar-logo img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
+.sidebar-logo-fallback {
+  width: 32px; height: 32px; background: var(--purple);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.site-logo { height: 38px; width: auto; }
-.header-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(160,100,255,0.06); border: 1px solid var(--border-accent);
-  border-radius: 999px; padding: 5px 12px;
-  font-family: var(--font-display); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-light);
+.sidebar-logo-fallback svg { width: 18px; height: 18px; }
+.sidebar-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--text); }
+.sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
+.nav-section-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); padding: 12px 8px 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  color: var(--text-2); font-size: 14px; font-weight: 500;
+  transition: all 0.15s; cursor: pointer; position: relative;
 }
-.header-badge svg { width: 10px; height: 10px; }
-
-/* PAGE TITLE */
-.page-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.9rem, 5vw, 2.8rem); font-weight: 800;
-  letter-spacing: -0.03em; line-height: 1.08;
-  margin-bottom: 8px;
-  color: var(--text-primary);
+.nav-item:hover { background: var(--black-4); color: var(--text); }
+.nav-item.active { background: var(--purple-dim); color: var(--purple-light); border: 1px solid var(--purple-border); }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: 10px; background: var(--black-3); border: 1px solid var(--border);
 }
-.page-sub {
-  font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;
-  margin-bottom: 36px; letter-spacing: 0.01em;
-}
-
-/* STEP INDICATOR */
-.step-track {
-  display: flex; align-items: center; margin-bottom: 44px;
-  gap: 0; overflow: visible;
-}
-.step-item {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
-}
-.step-item.active { color: var(--text-primary); }
-.step-item.done   { color: var(--success); }
-.step-num {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid currentColor;
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--purple);
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
-  transition: all var(--t);
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 13px; color: white; flex-shrink: 0;
 }
-.step-item.active .step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
-.step-connector {
-  flex: 1; height: 1px; min-width: 16px; max-width: 80px;
-  margin: 0 10px; background: var(--border);
-}
+.user-info { min-width: 0; }
+.user-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 11px; color: var(--text-3); }
 
-/* FORM CARD */
-#releaseForm {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: clamp(24px, 5vw, 52px);
-  position: relative; overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 40px 100px rgba(0,0,0,0.4);
-  animation: fadeUp 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both;
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 190; }
+
+/* ===== MAIN ===== */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px; border-bottom: 1px solid var(--border);
+  background: var(--black); position: sticky; top: 0; z-index: 100;
 }
-#releaseForm::before {
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.hamburger-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 36px; height: 36px; background: var(--black-3);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+}
+.topbar-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--text); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 8px; background: var(--purple);
+  color: white; font-size: 13px; font-weight: 600; transition: all 0.15s; border: none;
+}
+.topbar-btn:hover { background: var(--purple-light); transform: translateY(-1px); }
+.topbar-btn svg { width: 14px; height: 14px; }
+.topbar-icon-btn {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  background: var(--black-3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-2); transition: all 0.15s;
+}
+.topbar-icon-btn:hover { background: var(--black-4); color: var(--text); border-color: var(--border-light); }
+.topbar-icon-btn svg { width: 15px; height: 15px; }
+
+/* ===== PAGE CONTENT ===== */
+.page-content { padding: 28px; flex: 1; }
+
+/* ===== STATS ROW ===== */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--black-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 20px; transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border-light); }
+.stat-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 10px;
+}
+.stat-label svg { width: 12px; height: 12px; }
+.stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+.stat-value.purple { color: var(--purple-light); }
+.stat-value.amber  { color: var(--amber); }
+.stat-value.green  { color: var(--green); }
+.stat-value.cyan   { color: var(--cyan); }
+.stat-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+
+/* ===== SECTION HEADER ===== */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.section-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.section-dot { width: 6px; height: 6px; background: var(--purple); border-radius: 50%; }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-chip {
+  padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-3); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.filter-chip:hover { border-color: var(--border-light); color: var(--text-2); }
+.filter-chip.active { background: var(--purple-dim); border-color: var(--purple-border); color: var(--purple-light); }
+
+/* ===== GRID ===== */
+.container { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+
+/* ===== CARD ===== */
+.card {
+  background: var(--black-2); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+.card.status-rejected { border-color: rgba(239,68,68,0.18); }
+.card.status-rejected:hover { border-color: rgba(239,68,68,0.38); }
+
+.image-wrapper { height: 200px; position: relative; overflow: hidden; background: var(--black-3); cursor: pointer; }
+.cover-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.card:hover .cover-image { transform: scale(1.03); }
+.cover-placeholder {
+  width: 100%; height: 200px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  color: var(--text-3); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; background: var(--black-3);
+}
+.cover-placeholder:hover { background: var(--black-4); color: var(--text-2); }
+.cover-placeholder svg { width: 28px; height: 28px; opacity: 0.3; }
+.play-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s; z-index: 5;
+}
+.card:hover .play-overlay { opacity: 1; }
+.play-btn-circle {
+  width: 46px; height: 46px; background: var(--purple);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.play-btn-circle svg { width: 18px; height: 18px; color: white; }
+
+.card-body { padding: 16px; }
+.card-body h3 {
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+  letter-spacing: -0.2px; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.artist-name { color: var(--text-2); font-size: 13px; }
+.feat { font-size: 12px; color: var(--text-3); margin-top: 8px; padding: 5px 9px; background: var(--black-3); border-radius: 6px; border: 1px solid var(--border); }
+.feat strong { color: var(--text-2); }
+.release-date { margin-top: 10px; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+.release-date svg { width: 11px; height: 11px; }
+.card-divider { height: 1px; background: var(--border); margin: 12px 0; }
+.status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-wrap { margin-top: 10px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-bottom: 5px; }
+.progress-bar { height: 3px; background: var(--black-4); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--purple); transition: width 0.8s ease; }
+.progress-fill.rejected-fill { background: var(--rose); }
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 6px; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.badge.pending  { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.badge.pending::before { background: var(--amber); }
+.badge.review   { background: rgba(6,182,212,0.1); color: var(--cyan); border: 1px solid rgba(6,182,212,0.2); }
+.badge.review::before { background: var(--cyan); }
+.badge.approved { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.badge.approved::before { background: var(--green); }
+.badge.rejected { background: rgba(239,68,68,0.1); color: var(--rose); border: 1px solid rgba(239,68,68,0.2); }
+.badge.rejected::before { background: var(--rose); animation: pulseDot 1.5s infinite; }
+.badge.paid   { background: rgba(34,197,94,0.1);  color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.badge.paid::before { background: var(--green); }
+.badge.unpaid { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.badge.unpaid::before { background: var(--amber); }
+@keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.check-reasons-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 10px 14px; margin-top: 10px;
+  background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.22);
+  border-radius: 8px; border-left: 2px solid var(--rose);
+  color: #f87171; font-size: 12px; font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: all 0.18s;
+}
+.check-reasons-btn:hover { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.45); color: #fca5a5; transform: translateY(-1px); }
+.check-reasons-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ===== PROMOTE BUTTON ===== */
+.promote-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 10px 14px; margin-top: 10px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.08));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 8px; border-left: 2px solid var(--amber);
+  color: #fbbf24; font-size: 12px; font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: all 0.18s; text-decoration: none;
+}
+.promote-btn:hover { background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.14)); border-color: rgba(245,158,11,0.55); color: #fcd34d; transform: translateY(-1px); }
+.promote-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.card-actions { display: flex; gap: 7px; margin-top: 12px; }
+.action-btn {
+  flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-3); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: inherit;
+}
+.action-btn:hover { background: var(--purple-dim); border-color: var(--purple-border); color: var(--purple-light); }
+.action-btn svg { width: 12px; height: 12px; }
+
+/* ===== EMPTY STATE ===== */
+.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
+.empty-icon { font-size: 42px; margin-bottom: 14px; opacity: 0.25; }
+.empty h3 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-2); margin-bottom: 7px; }
+.empty p { font-size: 13px; color: var(--text-3); max-width: 300px; margin: 0 auto; }
+
+/* ===== SKELETON ===== */
+.skeleton {
+  background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.03) 50%, var(--black-3) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skeleton-card { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+.skeleton-img { height: 200px; }
+.skeleton-body { padding: 16px; }
+.skeleton-line { height: 13px; margin-bottom: 9px; }
+.skeleton-line.w-80 { width: 80%; }
+.skeleton-line.w-60 { width: 60%; }
+.skeleton-line.w-40 { width: 40%; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--black-3); border: 1px solid var(--border-light);
+  border-radius: 10px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text); font-size: 13px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999;
+  transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.toast.show { transform: translateX(0); }
+.toast-icon { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
+
+/* ===== CARD CLICKABLE ===== */
+.card-body-clickable { cursor: pointer; position: relative; }
+.card-body-clickable h3 { transition: color 0.15s; }
+.card:hover .card-body-clickable h3 { color: var(--purple-light); }
+.expand-hint {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 500; color: var(--text-3);
+  vertical-align: middle; margin-left: 6px;
+  opacity: 0; transition: opacity 0.15s;
+}
+.card:hover .expand-hint { opacity: 1; }
+.expand-hint svg { width: 10px; height: 10px; }
+
+/* ═══════════════════════════════════════════════
+   META VIEW MODAL BASE STYLES
+═══════════════════════════════════════════════ */
+.meta-overlay {
+  position: fixed; inset: 0; z-index: 6000;
+  background: rgba(0,0,0,0.84);
+  backdrop-filter: blur(8px) saturate(0.7);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.meta-overlay.open { opacity: 1; pointer-events: all; }
+.meta-modal {
+  background: var(--black-2); border: 1px solid var(--border-light);
+  border-radius: 18px; width: 100%; max-width: 640px;
+  max-height: 88vh; overflow-y: auto;
+  transform: translateY(22px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1);
+  position: relative; scrollbar-width: thin;
+  scrollbar-color: var(--black-5) transparent;
+}
+.meta-overlay.open .meta-modal { transform: translateY(0) scale(1); }
+.meta-modal::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--accent) 40%, var(--accent-light) 60%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--purple) 40%, var(--purple-light) 50%, var(--purple) 60%, transparent 100%);
+  border-radius: 18px 18px 0 0; z-index: 2;
+}
+.meta-modal::-webkit-scrollbar { width: 4px; }
+.meta-modal::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
+
+.meta-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 22px 16px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--black-2); z-index: 3;
+  border-radius: 18px 18px 0 0;
+}
+.meta-modal-title {
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+.meta-modal-title svg { width: 15px; height: 15px; color: var(--purple-light); }
+.meta-modal-subtitle { font-size: 11px; color: var(--text-3); font-weight: 400; margin-top: 1px; }
+.meta-modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--black-4); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); cursor: pointer; font-size: 0.9rem;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.meta-modal-close:hover { background: var(--black-5); color: var(--text); }
+
+.meta-cover-strip { width: 100%; height: 180px; overflow: hidden; position: relative; }
+.meta-cover-strip img { width: 100%; height: 100%; object-fit: cover; }
+.meta-cover-strip-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--black-3) 0%, var(--black-4) 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.meta-cover-strip-placeholder svg { width: 44px; height: 44px; color: var(--text-3); opacity: 0.2; }
+.meta-cover-strip::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+  background: linear-gradient(to top, var(--black-2), transparent);
 }
 
-/* SECTION HEADERS */
-.section-head {
-  display: flex; align-items: center; gap: 12px;
-  margin: 40px 0 20px; padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
+.meta-modal-body { padding: 20px 22px 26px; }
+.meta-section { margin-bottom: 20px; }
+.meta-section:last-child { margin-bottom: 0; }
+.meta-section-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;
+  color: var(--purple-light); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
 }
-.section-head:first-child { margin-top: 0; }
-.section-icon {
-  width: 32px; height: 32px; border-radius: var(--radius-sm);
-  background: rgba(160,100,255,0.06); border: 1px solid var(--border-accent);
+.meta-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--purple-border), transparent);
+}
+.meta-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.meta-field {
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px;
+}
+.meta-field.full { grid-column: 1 / -1; }
+.meta-field-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.meta-field-value { font-size: 13px; color: var(--text); font-weight: 500; word-break: break-word; line-height: 1.4; }
+.meta-field-value.none { color: var(--text-3); font-weight: 400; font-style: italic; font-size: 12px; }
+.meta-credits-list { display: flex; flex-direction: column; gap: 6px; }
+.meta-credit-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 12px; transition: border-color 0.15s;
+}
+.meta-credit-item:hover { border-color: var(--border-light); }
+.meta-credit-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); flex-shrink: 0; margin-top: 4px; }
+.meta-credit-info { min-width: 0; flex: 1; }
+.meta-credit-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.meta-credit-role { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.meta-credit-ipi  { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: monospace; }
+.meta-no-credits  { font-size: 12px; color: var(--text-3); font-style: italic; padding: 4px 0; }
+.meta-lyrics {
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 13px; font-size: 12px; line-height: 1.8;
+  color: var(--text-2); white-space: pre-wrap; word-break: break-word;
+  max-height: 220px; overflow-y: auto;
+}
+.meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════
+   SMART LINK PANEL
+═══════════════════════════════════════════════ */
+.smart-link-section { margin-top: 0; }
+.smart-link-generating {
+  background: var(--black-3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.sl-spinner {
+  width: 32px; height: 32px;
+  border: 2px solid rgba(124,92,252,0.2); border-top-color: var(--purple);
+  border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.sl-generating-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
+.sl-generating-text span { font-size: 11px; color: var(--text-3); }
+
+.smart-link-card {
+  background: linear-gradient(135deg, rgba(124,92,252,0.08) 0%, rgba(34,197,94,0.04) 100%);
+  border: 1px solid rgba(124,92,252,0.25); border-radius: 14px;
+  overflow: hidden; position: relative;
+}
+.smart-link-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--purple) 0%, #22c55e 50%, var(--cyan) 100%);
+}
+.sl-card-header {
+  padding: 16px 18px 12px; display: flex; align-items: center; justify-content: space-between;
+}
+.sl-card-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--purple-light);
+}
+.sl-card-title svg { width: 13px; height: 13px; }
+.sl-live-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px;
+  background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
+  font-size: 10px; font-weight: 700; color: var(--green);
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.sl-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: livePulse 1.8s ease-in-out infinite; }
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.7);} }
+
+.sl-url-row {
+  margin: 0 18px 14px; display: flex; align-items: center; gap: 8px;
+  background: var(--black-4); border: 1px solid var(--border-light);
+  border-radius: 10px; padding: 10px 12px;
+}
+.sl-url-icon {
+  width: 28px; height: 28px; background: var(--purple-dim);
+  border: 1px solid var(--purple-border); border-radius: 7px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.section-icon svg { width: 15px; height: 15px; color: var(--accent-light); }
-.section-title-wrap { flex: 1; }
-.section-title {
-  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
-  letter-spacing: 0.04em; color: var(--text-primary);
+.sl-url-icon svg { width: 13px; height: 13px; color: var(--purple-light); }
+.sl-url-text {
+  flex: 1; min-width: 0; font-size: 12px; color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: monospace; letter-spacing: 0.02em;
 }
-.section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.sl-copy-btn {
+  flex-shrink: 0; padding: 5px 10px; border-radius: 6px;
+  background: var(--purple); border: none; color: white;
+  font-size: 11px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.sl-copy-btn:hover { background: var(--purple-light); transform: scale(1.03); }
+.sl-copy-btn svg { width: 11px; height: 11px; }
+.sl-copy-btn.copied { background: var(--green); }
 
-/* GRID */
-.grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-.col-full { grid-column: 1 / -1; }
+.sl-upc-row {
+  margin: 0 18px 14px; display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.15);
+  border-radius: 8px; padding: 8px 12px;
+}
+.sl-upc-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--cyan);
+  display: flex; align-items: center; gap: 5px;
+}
+.sl-upc-label svg { width: 11px; height: 11px; }
+.sl-upc-value { font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: 0.1em; }
 
-/* FIELD */
-.field { display: flex; flex-direction: column; gap: 7px; }
-.field label {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--font-display); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+.sl-stores-row { margin: 0 18px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.sl-stores-label { font-size: 10px; color: var(--text-3); font-weight: 600; margin-right: 2px; }
+.sl-store-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px;
+  background: var(--black-4); border: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--text-2);
 }
-.field label svg { width: 11px; height: 11px; opacity: 0.7; }
-.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.sl-store-chip.has-link { border-color: rgba(124,92,252,0.2); color: var(--purple-light); background: var(--purple-dim); }
 
-.field input, .field select, .field textarea {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
-  padding: 13px 16px; outline: none;
-  transition: border-color var(--t), background var(--t), box-shadow var(--t);
-  width: 100%; appearance: none; -webkit-appearance: none;
+.sl-actions {
+  padding: 12px 18px 16px; display: flex; gap: 8px; border-top: 1px solid var(--border);
 }
-.field input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
-.field input:hover, .field select:hover, .field textarea:hover {
-  border-color: var(--border-accent); background: var(--bg-input-focus);
+.sl-btn {
+  flex: 1; padding: 10px 12px; border-radius: 9px;
+  font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
 }
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--accent); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(160,100,255,0.1);
-}
-.field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
+.sl-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.sl-btn-primary { background: var(--purple); border: 1px solid rgba(124,92,252,0.4); color: white; }
+.sl-btn-primary:hover { background: var(--purple-light); transform: translateY(-1px); }
+.sl-btn-secondary { background: transparent; border: 1px solid var(--border-light); color: var(--text-2); }
+.sl-btn-secondary:hover { background: var(--black-4); color: var(--text); border-color: var(--border-light); }
+.sl-btn-share { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+.sl-btn-share:hover { background: rgba(34,197,94,0.18); transform: translateY(-1px); }
 
-.select-wrap { position: relative; }
-.select-wrap::after {
-  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
-}
-.select-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
-.select-wrap select { padding-right: 40px; cursor: pointer; }
-
-.country-wrap { position: relative; }
-.country-flag {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 20px; height: 15px; border-radius: 2px; object-fit: cover;
-  pointer-events: none; z-index: 1; display: flex; align-items: center; justify-content: center;
-}
-.country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
-.country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
-.country-wrap::after {
-  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
-}
-.country-wrap:focus-within::after { border-top-color: var(--accent); transform: translateY(-50%) rotate(180deg); }
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t);
-}
-input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
-
-input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 100px var(--bg-input-focus) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
-  caret-color: var(--text-primary); border-color: var(--border) !important;
-}
-
-option { background: #171725; color: var(--text-primary); }
-
-.field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-
-/* ARTIST PILL FIELD */
-.artist-field { position: relative; }
-.artist-pill-box {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 8px 12px;
-  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-  cursor: text; min-height: 50px;
-  transition: border-color var(--t), box-shadow var(--t), background var(--t);
-}
-.artist-pill-box:focus-within {
-  border-color: var(--accent); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(160,100,255,0.1);
-}
-.artist-pill {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(160,100,255,0.1); border: 1px solid rgba(160,100,255,0.25);
-  border-radius: 999px; padding: 4px 10px 4px 6px;
-  font-size: 0.82rem; color: var(--accent-bright);
-  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
-}
-.pill-avatar {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(160,100,255,0.15);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 700; color: var(--accent-light);
-  overflow: hidden; flex-shrink: 0;
-}
-.pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-.pill-remove {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(160,100,255,0.12); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--accent-light); padding: 0;
-  transition: background var(--t), transform var(--t);
-}
-.pill-remove:hover { background: rgba(160,100,255,0.28); transform: scale(1.15); color: var(--accent-bright); }
-.pill-remove svg { width: 8px; height: 8px; }
-.artist-search-input {
-  background: none !important; border: none !important;
-  box-shadow: none !important; outline: none !important;
-  padding: 4px 6px !important; flex: 1; min-width: 140px;
-  font-size: 0.88rem !important; color: var(--text-primary);
-}
-.artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
-
-/* DROPDOWN */
-.artist-dropdown {
-  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-  z-index: 9000; background: #171725;
-  border: 1px solid rgba(160,100,255,0.18); border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
-  display: none; max-height: 340px; overflow-y: auto;
-}
-.artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
-.dropdown-sect-title {
-  padding: 10px 16px 6px;
-  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-}
-.artist-option {
-  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
-  cursor: pointer; transition: background var(--t);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
-.artist-option:last-child { border-bottom: none; }
-.artist-option:hover, .artist-option.focused { background: rgba(160,100,255,0.08); }
-.opt-avatar {
-  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  overflow: hidden; background: rgba(160,100,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
-  color: var(--accent-light);
-}
-.opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.opt-info { flex: 1; min-width: 0; }
-.opt-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.opt-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-.opt-badge {
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
-}
-.badge-apple { background: rgba(160,100,255,0.08); color: var(--accent-light); border: 1px solid rgba(160,100,255,0.2); }
-.badge-new   { background: rgba(160,100,255,0.08); color: var(--accent-light); border: 1px solid rgba(160,100,255,0.2); }
-.dropdown-loading {
-  padding: 20px 16px; text-align: center;
-  font-size: 0.83rem; color: var(--text-muted); font-style: italic;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-.artist-dropdown::-webkit-scrollbar { width: 4px; }
-.artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(160,100,255,0.2); border-radius: 2px; }
-
-/* CREDITS */
-.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.credits-panel {
-  background: rgba(160,100,255,0.03); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 18px;
-}
-.credits-panel.required-panel {
-  border-color: rgba(160,100,255,0.25);
-  background: rgba(160,100,255,0.04);
-}
-.credits-panel-hd {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
-  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
-}
-.credits-panel-hd svg { width: 13px; height: 13px; }
-.required-badge {
-  margin-left: auto;
-  background: rgba(176,110,243,0.12); border: 1px solid rgba(176,110,243,0.3);
-  border-radius: 999px; padding: 2px 8px;
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
-}
-.writer-notice {
-  background: rgba(160,100,255,0.06); border: 1px solid rgba(160,100,255,0.18);
-  border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;
-  font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;
-}
-.writer-notice strong { color: var(--accent-bright); }
-.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-.credit-row {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 14px;
-  display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;
-  position: relative; animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
-  transition: border-color var(--t);
-}
-.credit-row:hover { border-color: var(--border-accent); }
-.credit-row-num {
-  position: absolute; top: -9px; left: 12px;
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--accent); background: var(--bg-card);
-  padding: 1px 8px; border-radius: 999px; border: 1px solid rgba(160,100,255,0.2);
-}
-.credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
-.credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
-.credit-input {
-  background: var(--bg-surface); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.86rem;
-  padding: 9px 12px; outline: none; width: 100%;
-  transition: border-color var(--t), box-shadow var(--t); appearance: none;
-}
-.credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
-.credit-input:hover { border-color: var(--border-accent); }
-.credit-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(160,100,255,0.1); }
-.credit-input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(248,113,113,0.12) !important; }
-.csel-wrap { position: relative; }
-.csel-wrap::after {
-  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 3px solid transparent; border-right: 3px solid transparent;
-  border-top: 4px solid var(--text-secondary); pointer-events: none;
-}
-.csel-wrap:focus-within::after { border-top-color: var(--accent); }
-.csel-wrap select { padding-right: 28px; cursor: pointer; }
-.credit-remove {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.12);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: rgba(248,113,113,0.45); transition: all var(--t); flex-shrink: 0;
-}
-.credit-remove:hover { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: var(--danger); transform: scale(1.08); }
-.credit-remove svg { width: 11px; height: 11px; }
-.add-credit-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: transparent; border: 1px dashed rgba(160,100,255,0.2);
-  border-radius: var(--radius-sm); padding: 10px 16px;
-  font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-muted); cursor: pointer; width: 100%;
-  transition: all var(--t);
-}
-.add-credit-btn:hover { background: rgba(160,100,255,0.06); border-color: rgba(160,100,255,0.35); color: var(--accent-bright); }
-.add-credit-btn svg { width: 13px; height: 13px; }
-
-/* Writer name inline error */
-.writer-name-error {
-  font-size: 0.72rem; color: var(--danger);
-  margin-top: 5px; display: none;
-  line-height: 1.4;
-}
-
-/* SUBMIT BUTTON */
-.form-actions { margin-top: 40px; }
-.submit-btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 17px 32px;
-  border-radius: var(--radius-md); border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 0.85rem; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: #fff;
-  background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 50%, #6d28d9 100%);
-  box-shadow: 0 4px 24px rgba(124,58,237,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
-  transition: transform var(--t), box-shadow var(--t), filter var(--t);
-  position: relative; overflow: hidden;
-}
-.submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,58,237,0.5); filter: brightness(1.08); }
-.submit-btn:active:not(:disabled) { transform: translateY(0); }
-.submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
-
-#statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
-#statusMsg.error { color: var(--danger); }
-.form-footer-note {
-  margin-top: 20px; text-align: center;
-  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
-
-/* TRUST STRIP */
-.trust-strip {
-  display: flex; align-items: center; justify-content: center; gap: 28px;
-  margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-.trust-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.04em;
-}
-.trust-item svg { width: 12px; height: 12px; color: var(--accent); opacity: 0.7; }
-
-/* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 99999;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+/* ===== SMART LINK PAGE MODAL ===== */
+.sl-page-overlay {
+  position: fixed; inset: 0; z-index: 7000; background: rgba(0,0,0,0.95);
   display: flex; align-items: center; justify-content: center; padding: 20px;
-  animation: overlayIn 0.2s ease both;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
 }
-.modal-overlay.closing { animation: overlayOut 0.18s ease both; }
-.modal-card {
-  background: #130f1e; border: 1px solid rgba(160,100,255,0.15);
-  border-radius: var(--radius-xl); padding: 36px 32px 32px;
-  width: 100%; max-width: 440px; position: relative;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-  animation: modalIn 0.28s cubic-bezier(0.34,1.3,0.64,1) both;
+.sl-page-overlay.open { opacity: 1; pointer-events: all; }
+.sl-page-modal {
+  background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; width: 100%; max-width: 420px; max-height: 90vh;
+  overflow-y: auto; transform: scale(0.94) translateY(20px);
+  transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1); scrollbar-width: none;
 }
-.modal-card.closing { animation: modalOut 0.18s ease both; }
-.modal-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-light), transparent);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
-.modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-.modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
-.modal-close {
+.sl-page-overlay.open .sl-page-modal { transform: scale(1) translateY(0); }
+.sl-page-modal::-webkit-scrollbar { display: none; }
+.sl-page-close-row { display: flex; justify-content: flex-end; padding: 16px 16px 0; }
+.sl-page-close {
   width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(160,100,255,0.05); border: 1px solid var(--border);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); transition: all var(--t);
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5); cursor: pointer; font-size: 14px; transition: all 0.15s;
 }
-.modal-close:hover { background: rgba(160,100,255,0.12); color: var(--accent-bright); }
-.modal-close svg { width: 12px; height: 12px; }
-.modal-field { margin-bottom: 18px; }
-.modal-label { display: block; margin-bottom: 7px; font-family: var(--font-display); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); }
-.modal-input, .modal-select {
-  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.9rem;
-  padding: 13px 16px; outline: none; transition: border-color var(--t), box-shadow var(--t); appearance: none;
-}
-.modal-input:focus, .modal-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(160,100,255,0.1); }
-.modal-sel-wrap { position: relative; }
-.modal-sel-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
-.modal-hint {
-  margin-top: 8px; padding: 10px 14px;
-  background: rgba(160,100,255,0.05); border: 1px solid rgba(160,100,255,0.12);
-  border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
-}
-.modal-hint strong { color: var(--accent-bright); }
-.modal-btns { display: flex; gap: 10px; margin-top: 24px; }
-.modal-save, .modal-cancel {
-  flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; transition: all var(--t);
-}
-.modal-save { background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 100%); color: #fff; box-shadow: 0 4px 18px rgba(124,58,237,0.3); }
-.modal-save:hover { box-shadow: 0 8px 28px rgba(124,58,237,0.45); transform: translateY(-1px); }
-.modal-cancel { background: rgba(160,100,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); }
-.modal-cancel:hover { background: rgba(160,100,255,0.1); color: var(--accent-bright); }
+.sl-page-close:hover { background: rgba(255,255,255,0.1); color: white; }
 
-/* ANIMATIONS */
-@keyframes fadeUp    { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
-@keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
-@keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
-@keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-@keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
-@keyframes overlayOut{ from { opacity:1; } to { opacity:0; } }
-@keyframes modalIn   { from { opacity:0; transform:scale(0.93) translateY(14px); } to { opacity:1; transform:none; } }
-@keyframes modalOut  { from { opacity:1; transform:none; } to { opacity:0; transform:scale(0.94) translateY(8px); } }
-@keyframes spin      { to { transform:rotate(360deg); } }
+.sl-page-cover-hero {
+  margin: 8px 20px 0; border-radius: 16px; overflow: hidden; aspect-ratio: 1;
+  background: #1a1a1a;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+  position: relative;
+}
+.sl-page-cover-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sl-page-cover-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+}
+.sl-page-cover-placeholder svg { width: 60px; height: 60px; opacity: 0.15; }
 
-/* RESPONSIVE */
-@media (max-width: 700px) {
-  .grid, .credits-grid { grid-template-columns: 1fr; }
-  .grid-3 { grid-template-columns: 1fr 1fr; }
-  .credit-row { grid-template-columns: 1fr auto; }
+.sl-page-info { padding: 20px 20px 0; text-align: center; }
+.sl-page-release-title {
+  font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.2; color: #fff; margin-bottom: 6px;
 }
-@media (max-width: 640px) {
-  .wrapper { padding: 24px 14px 60px; }
-  #releaseForm { padding: 20px 16px; }
-  .step-connector { min-width: 8px; max-width: 24px; margin: 0 6px; }
-  .step-item { font-size: 0.62rem; letter-spacing: 0.04em; }
-  .step-item span { display: inline; }
-  .modal-card { padding: 26px 18px 22px; }
-  .modal-btns { flex-direction: column; }
-  .grid-3 { grid-template-columns: 1fr; }
-  .trust-strip { gap: 16px; }
+.sl-page-artist { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; margin-bottom: 4px; }
+.sl-page-featuring { font-size: 12px; color: rgba(255,255,255,0.35); }
+.sl-page-meta-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 12px; }
+.sl-page-meta-item { font-size: 10px; text-align: center; }
+.sl-page-meta-label { color: rgba(255,255,255,0.3); font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
+.sl-page-meta-value { color: rgba(255,255,255,0.7); font-weight: 600; }
+.sl-page-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
+
+.sl-page-stores { padding: 20px 20px; }
+.sl-page-stores-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 10px; text-align: center;
 }
-@media (max-width: 420px) {
-  .step-track { gap: 0; }
-  .step-connector { min-width: 4px; max-width: 12px; margin: 0 4px; }
-  .step-item { font-size: 0.58rem; gap: 5px; }
-  .step-num { width: 22px; height: 22px; font-size: 0.6rem; }
-  .page-title { font-size: 1.7rem; }
-  .submit-btn { font-size: 0.78rem; padding: 15px 18px; }
-  .site-logo { height: 28px; }
+.sl-page-store-links { display: flex; flex-direction: column; gap: 8px; }
+.sl-store-link-btn {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.18s; font-family: 'Space Grotesk', sans-serif; text-decoration: none;
+}
+.sl-store-link-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.14); color: white; transform: translateX(2px); }
+.sl-store-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.sl-store-icon img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+.sl-store-icon svg { width: 20px; height: 20px; }
+.sl-store-link-text { flex: 1; }
+.sl-store-link-name { font-size: 13px; font-weight: 600; }
+.sl-store-link-sub { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 1px; }
+.sl-store-arrow { color: rgba(255,255,255,0.25); }
+.sl-store-arrow svg { width: 14px; height: 14px; }
+
+.sl-page-upc-footer {
+  margin: 0 20px 20px; padding: 10px 14px;
+  background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.12);
+  border-radius: 8px; display: flex; align-items: center; justify-content: space-between;
+}
+.sl-page-upc-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(6,182,212,0.7); }
+.sl-page-upc-val { font-family: monospace; font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; }
+
+.sl-page-branding {
+  padding: 14px 20px 20px; border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-size: 11px; color: rgba(255,255,255,0.2); font-weight: 600;
+}
+.sl-brand-logo {
+  width: 18px; height: 18px; background: var(--purple);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.sl-brand-logo svg { width: 11px; height: 11px; color: white; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.show { display: block; }
+  .main { margin-left: 0; }
+  .hamburger-btn { display: flex; }
+  .page-content { padding: 20px 16px; }
+  .topbar { padding: 14px 16px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .container { grid-template-columns: 1fr; }
+  .toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(110%); }
+  .toast.show { transform: translateY(0); }
+  .meta-modal { max-height: 92vh; border-radius: 14px 14px 0 0; align-self: flex-end; width: 100%; }
+  .meta-overlay { align-items: flex-end; padding: 0; }
+  .meta-fields-grid { grid-template-columns: 1fr; }
+  .meta-field.full { grid-column: 1; }
+  .sl-actions { flex-wrap: wrap; }
+}
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-value { font-size: 1.6rem; }
+  .topbar-title { font-size: 0.95rem; }
 }
 </style>
 </head>
-
 <body>
-<div class="wrapper">
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <img src="logo.png" alt="Logo" class="site-logo">
-    <div class="header-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-      Secure Portal
-    </div>
-  </header>
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <h1 class="page-title">Create New Release</h1>
-  <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="logo.png" alt="444Music" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="sidebar-logo-fallback" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+        <path d="M9 18V5l12-2v13"/>
+        <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+      </svg>
+    </div>
+    <span class="sidebar-brand">444Music</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-item" href="home.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Home
+    </a>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M9 18V5l12-2v13"/>
+        <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+      </svg>
+      My Releases
+    </a>
+    <a class="nav-item" href="pricing.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      New Release
+    </a>
+    <div class="nav-section-label">Finance</div>
+    <a class="nav-item" href="ear.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      Royalties
+    </a>
+    <a class="nav-item" href="https://444music-distribution.vercel.app/pay.html" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <line x1="2" y1="10" x2="22" y2="10"/>
+      </svg>
+      Pay Now
+    </a>
+    <a class="nav-item" href="splits.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      Royalty Split
+    </a>
+    <div class="nav-section-label">Tools</div>
+    <a class="nav-item" href="https://444musicblog.vercel.app/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+        <path d="M12 12H3M16 6H3M12 18H3"/>
+      </svg>
+      Promote/Playlist
+    </a>
+    <a class="nav-item" href="support.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>
+      </svg>
+      Support
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar" id="userInitial">—</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role">Artist</div>
+      </div>
+    </div>
+  </div>
+</aside>
 
-  <!-- STEP INDICATOR -->
-  <div class="step-track">
-    <div class="step-item active">
-      <div class="step-num">1</div>
-      <span>Release Info</span>
+<!-- ===== MAIN ===== -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <span class="topbar-title">My Releases</span>
     </div>
-    <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-num">2</div>
-      <span>Select Stores</span>
-    </div>
-    <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-num">3</div>
-      <span>Review</span>
+    <div class="topbar-right">
+      <a class="topbar-btn" href="pricing.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        New Release
+      </a>
+      <a class="topbar-icon-btn" href="support.html" title="Help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>
+        </svg>
+      </a>
     </div>
   </div>
 
-  <form id="releaseForm">
+  <div class="page-content">
 
-    <!-- ARTIST INFO -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
+    <!-- STATS -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          </svg>
+          Total Releases
+        </div>
+        <div class="stat-value purple" id="statTotal">—</div>
+        <div class="stat-sub">All time</div>
       </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Artist Information</div>
-        <div class="section-desc">Search and select your artist profile from streaming platforms</div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Pending
+        </div>
+        <div class="stat-value amber" id="statPending">—</div>
+        <div class="stat-sub">Awaiting review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Approved
+        </div>
+        <div class="stat-value green" id="statApproved">—</div>
+        <div class="stat-sub">Live on stores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+          Paid
+        </div>
+        <div class="stat-value cyan" id="statPaid">—</div>
+        <div class="stat-sub">Payment confirmed</div>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="field artist-field col-full" id="artistFieldWrap">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Main Artist (Primary)
-          <div class="required-dot" title="Required"></div>
-        </label>
-        <div class="artist-pill-box" id="artistPillBox">
-          <input type="text" id="artistSearchInput" class="artist-search-input"
-            placeholder="Search artist name on Apple Music…"
-            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <!-- SECTION HEADER -->
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-dot"></div>
+        All Releases
+      </div>
+      <div class="filter-row">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="pending">Pending</button>
+        <button class="filter-chip" data-filter="approved">Approved</button>
+        <button class="filter-chip" data-filter="review">In Review</button>
+        <button class="filter-chip" data-filter="rejected">Rejected</button>
+      </div>
+    </div>
+
+    <!-- SUBMISSIONS -->
+    <div class="container" id="submissionsContainer">
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line w-80"></div>
+          <div class="skeleton skeleton-line w-60"></div>
+          <div class="skeleton skeleton-line w-40"></div>
         </div>
-        <input type="hidden" id="artistName" name="artistName">
-        <div class="artist-dropdown" id="artistDropdown"></div>
-        <div class="field-hint">Search by artist name — results pulled from Apple Music</div>
       </div>
-
-      <div class="field">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Featuring Artist
-        </label>
-        <input id="featuring" placeholder="ft. Artist Name (optional)">
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line w-80"></div>
+          <div class="skeleton skeleton-line w-60"></div>
+          <div class="skeleton skeleton-line w-40"></div>
+        </div>
       </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line w-80"></div>
+          <div class="skeleton skeleton-line w-60"></div>
+          <div class="skeleton skeleton-line w-40"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <div class="field">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Country of Origin
-        </label>
-        <div class="country-wrap" id="countryWrap">
-          <div class="country-flag">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+  <span id="toastMsg">Cover art updated!</span>
+</div>
+
+<!-- META MODAL -->
+<div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true">
+  <div class="meta-modal" id="metaModal">
+    <div class="meta-modal-header">
+      <div>
+        <div class="meta-modal-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          </svg>
+          Release Details
+        </div>
+        <div class="meta-modal-subtitle" id="metaModalSubtitle">View-only metadata</div>
+      </div>
+      <button class="meta-modal-close" id="metaModalClose" aria-label="Close">✕</button>
+    </div>
+    <div id="metaModalContent"></div>
+  </div>
+</div>
+
+<!-- Smart Link Page Preview Modal -->
+<div class="sl-page-overlay" id="slPageOverlay">
+  <div class="sl-page-modal" id="slPageModal">
+    <div id="slPageContent"></div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+/* --- SIDEBAR --- */
+const sidebar   = document.getElementById("sidebar");
+const overlay   = document.getElementById("sidebarOverlay");
+const hamburger = document.getElementById("hamburgerBtn");
+hamburger.onclick = () => { sidebar.classList.toggle("open"); overlay.classList.toggle("show"); };
+overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); };
+
+/* --- FILTER CHIPS --- */
+let activeFilter = "all";
+let allCards = [];
+document.querySelectorAll(".filter-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter;
+    filterCards();
+  });
+});
+function filterCards() {
+  allCards.forEach(({ card, status }) => {
+    const show = activeFilter === "all" || status === activeFilter;
+    card.style.display = show ? "" : "none";
+  });
+}
+
+/* --- TOAST --- */
+function showToast(msg, isError = false) {
+  const toast    = document.getElementById("toast");
+  const toastMsg = document.getElementById("toastMsg");
+  const icon     = toast.querySelector(".toast-icon");
+  toastMsg.textContent = msg;
+  icon.style.color = isError ? "var(--rose)" : "var(--green)";
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+/* --- STATS --- */
+function updateStats(submissions) {
+  animateCount("statTotal",    submissions.length);
+  animateCount("statPending",  submissions.filter(d => (d.status || "").toLowerCase() === "pending").length);
+  animateCount("statApproved", submissions.filter(d => (d.status || "").toLowerCase() === "approved").length);
+  animateCount("statPaid",     submissions.filter(d => d.paymentVerified).length);
+}
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let current = 0;
+  const step  = Math.max(1, Math.floor(target / 20));
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current;
+    if (current >= target) clearInterval(timer);
+  }, 40);
+}
+
+/* --- PROGRESS --- */
+function getProgress(status) {
+  switch ((status || "").toLowerCase()) {
+    case "pending":  return { pct: 25,  label: "Awaiting payment",  isRejected: false };
+    case "review":   return { pct: 60,  label: "Under review",      isRejected: false };
+    case "approved": return { pct: 100, label: "Live on stores",     isRejected: false };
+    case "rejected": return { pct: 10,  label: "Action needed",      isRejected: true  };
+    default:         return { pct: 10,  label: "Processing",         isRejected: false };
+  }
+}
+
+/* === UPC GENERATION === */
+function generateUPCCandidate() {
+  let code = "731";
+  for (let i = 0; i < 8; i++) { code += Math.floor(Math.random() * 10).toString(); }
+  let odd = 0, even = 0;
+  for (let i = 0; i < 11; i++) {
+    const d = parseInt(code[i]);
+    i % 2 === 0 ? odd += d : even += d;
+  }
+  const checkDigit = (10 - ((odd * 3 + even) % 10)) % 10;
+  return code + checkDigit.toString();
+}
+
+/* === SMART LINK SLUG BUILDER (FIXED — v2) ===
+   Two separate bugs fixed here:
+
+   1) (earlier fix) Spaces in the artist name now become hyphens instead
+      of being stripped entirely, so "At Winful" -> "at-winful" not
+      "atwinful".
+
+   2) (this fix) Names typed with NO spaces at all — e.g. "OGBluhface" or
+      "BBoiStrenja" — were still producing solid, unreadable slugs like
+      "ogbluhface" or "bboistrenja" because there was nothing for the
+      space-to-hyphen step to work with.
+
+      The fix: BEFORE lowercasing, detect case-boundary transitions and
+      insert a hyphen there too:
+        - lowercase->Uppercase  (e.g. "og[B]luhface" -> "og-Bluhface")
+        - ACRONYM->Capitalized  (e.g. "OG[B]luhface" -> "OG-Bluhface",
+          so leading multi-letter acronyms like "OG" or "B" stay their
+          own segment instead of gluing onto the next word)
+      This has to happen before .toLowerCase() runs, because case
+      information is what marks the word boundary — once everything is
+      flattened to lowercase there's no signal left to split on.
+
+      Result: "OGBluhface" -> "og-bluhface", "BBoiStrenja" -> "b-boi-strenja",
+      while genuine one-word stage names in all caps (e.g. "SZA") are left
+      alone since there's no lower->upper transition to trigger a split.
+*/
+function slugify(str, maxLen) {
+  let s = (str || "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")    // johnSmith    -> john-Smith
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2") // OGBluhface   -> OG-Bluhface
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")   // strip anything not alphanumeric/space/hyphen
+    .trim()
+    .replace(/\s+/g, "-")           // spaces -> hyphens
+    .replace(/-+/g, "-")            // collapse repeated hyphens
+    .replace(/^-+|-+$/g, "");       // trim leading/trailing hyphens
+  if (maxLen) s = s.substring(0, maxLen).replace(/-+$/g, "");
+  return s;
+}
+
+function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
+  const artistSlug = slugify(artistName);
+  const titleSlug  = slugify(releaseTitle, 30);
+  const slug = [artistSlug, titleSlug].filter(Boolean).join("-");
+  return `https://ffm.to/${slug}`;
+}
+
+/* === STORE ICONS === */
+const STORE_ICONS = {
+  spotify: `<svg viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`,
+  applemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="amlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fc3c44"/><stop offset="100%" style="stop-color:#ff6a6a"/></linearGradient></defs><rect width="24" height="24" rx="5" fill="url(#amlg)"/><path d="M17.05 8.49a.5.5 0 0 0-.35-.48l-5.5-1.5a.5.5 0 0 0-.65.48v6.54a2 2 0 1 0 1 1.73V10.6l4.5 1.23v3.68a2 2 0 1 0 1 1.73V8.49z" fill="white"/></svg>`,
+  audiomack: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ffa200"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="white"/></svg>`,
+  boomplay: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff6600"/><path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm3.5 9.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74z" fill="white"/></svg>`,
+  youtubemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff0000"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3.5 8.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74zm-1.28-4.74l-1.5.87V7.35l1.5-.87v1.65z" fill="white"/></svg>`,
+  tidal: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#000000"/><path d="M12 5.5L9.33 8.17 6.67 5.5 4 8.17l2.67 2.66L4 13.5l2.67 2.67 2.66-2.67L12 16.17l2.67-2.67-2.67-2.67 2.67-2.66L12 5.5zm2.67 2.67L17.33 5.5 20 8.17l-2.67 2.66L20 13.5l-2.67 2.67-2.66-2.67 2.66-2.66-2.66-2.67z" fill="white"/></svg>`,
+  deezer: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#a238ff"/><rect x="3" y="14" width="3" height="6" rx="1" fill="#40E0D0"/><rect x="7" y="11" width="3" height="9" rx="1" fill="#ff6600"/><rect x="11" y="8" width="3" height="12" rx="1" fill="#ff69b4"/><rect x="15" y="5" width="3" height="15" rx="1" fill="#40E0D0"/><rect x="19" y="3" width="3" height="17" rx="1" fill="#ff6600"/></svg>`,
+  amazonmusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#00a8e0"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c2.04 0 3.9-.76 5.31-2.01l-1.42-1.42A5.96 5.96 0 0 1 12 18a6 6 0 1 1 5.65-8.04l1.73-1a8 8 0 1 0 .62 3.04h-2c0-.34-.05-.67-.13-.99L16 12l-4-2v4h4l-1.4-1.4A4 4 0 0 1 12 14a4 4 0 1 1 4-4" fill="white"/></svg>`
+};
+
+function getStoreIconHtml(storeKey) {
+  const icon = STORE_ICONS[storeKey.toLowerCase().replace(/\s/g,'')];
+  if (icon) return `<div class="sl-store-icon">${icon}</div>`;
+  return `<div class="sl-store-icon" style="background:rgba(255,255,255,0.08);">🎵</div>`;
+}
+
+const STORE_CONFIG = [
+  { key: "spotifyLink",      name: "Spotify",       iconKey: "spotify",      color: "#1DB954", sub: "Stream on Spotify" },
+  { key: "appleMusicLink",   name: "Apple Music",   iconKey: "applemusic",   color: "#fc3c44", sub: "Listen on Apple Music" },
+  { key: "audiomackLink",    name: "Audiomack",     iconKey: "audiomack",    color: "#ffa200", sub: "Play on Audiomack" },
+  { key: "boomplayLink",     name: "Boomplay",      iconKey: "boomplay",     color: "#ff6600", sub: "Listen on Boomplay" },
+  { key: "youtubeMusicLink", name: "YouTube Music", iconKey: "youtubemusic", color: "#ff0000", sub: "Watch on YouTube Music" },
+  { key: "tidalLink",        name: "Tidal",         iconKey: "tidal",        color: "#00fefd", sub: "Stream on Tidal" },
+  { key: "deezerLink",       name: "Deezer",        iconKey: "deezer",       color: "#a238ff", sub: "Play on Deezer" },
+  { key: "amazonMusicLink",  name: "Amazon Music",  iconKey: "amazonmusic",  color: "#00a8e0", sub: "Listen on Amazon Music" },
+];
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function metaVal(v, fallback) {
+  const f = fallback !== undefined ? fallback : '—';
+  return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f;
+}
+
+function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerating) {
+  if (isGenerating) {
+    return `<div class="smart-link-section"><div class="smart-link-generating"><div class="sl-spinner"></div><div class="sl-generating-text"><strong>Generating Smart Link & UPC…</strong><span>Setting up your release profile</span></div></div></div>`;
+  }
+  const storeChips = STORE_CONFIG.map(s => {
+    const hasLink = data[s.key] && data[s.key].trim();
+    return `<span class="sl-store-chip ${hasLink ? 'has-link' : ''}">${s.name}</span>`;
+  }).join('');
+  const upcDisplay = upcCode ? `${upcCode.substring(0,3)} ${upcCode.substring(3,6)} ${upcCode.substring(6,9)} ${upcCode.substring(9)}` : '—';
+  return `
+    <div class="smart-link-section">
+      <div class="smart-link-card">
+        <div class="sl-card-header">
+          <div class="sl-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Smart Link
           </div>
-          <select id="country">
-            <option value="">Select country…</option>
-            <option>Afghanistan</option><option>Albania</option><option>Algeria</option><option>Angola</option><option>Argentina</option><option>Australia</option><option>Austria</option><option>Bangladesh</option><option>Belgium</option><option>Bolivia</option><option>Brazil</option><option>Cameroon</option><option>Canada</option><option>Chile</option><option>China</option><option>Colombia</option><option>Democratic Republic of the Congo</option><option>Denmark</option><option>Dominican Republic</option><option>Ecuador</option><option>Egypt</option><option>Ethiopia</option><option>France</option><option>Germany</option><option selected>Ghana</option><option>Greece</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Kenya</option><option>Malaysia</option><option>Mexico</option><option>Morocco</option><option>Netherlands, The</option><option>New Zealand</option><option>Nigeria</option><option>Norway</option><option>Pakistan</option><option>Peru</option><option>Philippines</option><option>Poland</option><option>Portugal</option><option>Republic of Korea (South Korea)</option><option>Romania</option><option>Russia</option><option>Saudi Arabia</option><option>Senegal</option><option>Singapore</option><option>South Africa</option><option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Tanzania</option><option>Thailand</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates, The</option><option>United Kingdom, The</option><option>United States of America</option><option>Uruguay</option><option>Venezuela</option><option>Vietnam</option><option>Zambia</option><option>Zimbabwe</option>
-          </select>
+          <div class="sl-live-badge"><div class="sl-live-dot"></div>Live</div>
+        </div>
+        <div class="sl-url-row">
+          <div class="sl-url-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <span class="sl-url-text" id="slUrlDisplay-${releaseId}">${escHtml(smartLinkURL)}</span>
+          <button class="sl-copy-btn" id="slCopyBtn-${releaseId}" onclick="copySmartLink('${releaseId}', '${escHtml(smartLinkURL)}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <div class="sl-upc-row">
+          <div class="sl-upc-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14M3 10h4M8 10h4M12 10h5M17 10h4"/></svg>UPC / Barcode</div>
+          <div class="sl-upc-value">${escHtml(upcDisplay)}</div>
+        </div>
+        <div class="sl-stores-row"><span class="sl-stores-label">Stores:</span>${storeChips}</div>
+        <div class="sl-actions">
+          <button class="sl-btn sl-btn-primary" onclick="openSmartLinkPage('${releaseId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open Smart Link
+          </button>
+          <button class="sl-btn sl-btn-share" onclick="shareSmartLink('${releaseId}', '${escHtml(smartLinkURL)}', '${escHtml(data.releaseTitle || '')}', '${escHtml(data.artistName || '')}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
         </div>
       </div>
+    </div>`;
+}
 
-      <div class="field">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.47 2 2 0 0 1 3.64 1.31h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          Phone Number
-          <div class="required-dot" title="Required"></div>
-        </label>
-        <input id="number" placeholder="+1 000 000 0000" required>
+function copySmartLink(releaseId, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById(`slCopyBtn-${releaseId}`);
+    if (btn) {
+      btn.classList.add('copied');
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+      }, 2200);
+    }
+    showToast("Smart Link copied to clipboard!");
+  }).catch(() => showToast("Copy failed — please copy manually", true));
+}
+
+function shareSmartLink(releaseId, url, title, artist) {
+  const shareData = { title: `${title} by ${artist}`, text: `Listen to "${title}" by ${artist} on all streaming platforms`, url };
+  if (navigator.share) { navigator.share(shareData).catch(() => {}); }
+  else { copySmartLink(releaseId, url); showToast("Link copied! Share it anywhere."); }
+}
+
+function openSmartLinkPage(releaseId) {
+  const data = window._releaseMeta[releaseId];
+  if (!data) return;
+  const upc = data.upc || '';
+  const releaseDate = data.releaseDate ? new Date(data.releaseDate).getFullYear() : new Date().getFullYear();
+  const storeLinks = STORE_CONFIG.filter(s => data[s.key] && data[s.key].trim()).map(s => `
+    <a class="sl-store-link-btn" href="${escHtml(data[s.key])}" target="_blank" rel="noopener">
+      ${getStoreIconHtml(s.iconKey)}
+      <div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">${s.sub}</div></div>
+      <div class="sl-store-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </a>`).join('');
+  const storeSection = storeLinks
+    ? `<div class="sl-page-store-links">${storeLinks}</div>`
+    : `<div class="sl-page-store-links">${STORE_CONFIG.map(s => `<div class="sl-store-link-btn" style="opacity:0.4;cursor:default;">${getStoreIconHtml(s.iconKey)}<div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">Coming soon</div></div></div>`).join('')}</div>`;
+  const coverHtml = data.coverURL
+    ? `<img src="${escHtml(data.coverURL)}" alt="${escHtml(data.releaseTitle)}">`
+    : `<div class="sl-page-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  const upcFormatted = upc ? `${upc.substring(0,3)} ${upc.substring(3,6)} ${upc.substring(6,9)} ${upc.substring(9)}` : '—';
+  document.getElementById('slPageContent').innerHTML = `
+    <div class="sl-page-close-row"><button class="sl-page-close" onclick="closeSmartLinkPage()">✕</button></div>
+    <div class="sl-page-cover-hero">${coverHtml}</div>
+    <div class="sl-page-info">
+      <div class="sl-page-release-title">${escHtml(data.releaseTitle || 'Untitled')}</div>
+      <div class="sl-page-artist">${escHtml(data.artistName || '')}</div>
+      ${data.featuring && data.featuring.trim() ? `<div class="sl-page-featuring">feat. ${escHtml(data.featuring)}</div>` : ''}
+      <div class="sl-page-meta-row">
+        ${data.genre ? `<div class="sl-page-meta-item"><div class="sl-page-meta-label">Genre</div><div class="sl-page-meta-value">${escHtml(data.genre)}</div></div><div class="sl-page-divider"></div>` : ''}
+        <div class="sl-page-meta-item"><div class="sl-page-meta-label">Year</div><div class="sl-page-meta-value">${releaseDate}</div></div>
+        ${data.releaseType ? `<div class="sl-page-divider"></div><div class="sl-page-meta-item"><div class="sl-page-meta-label">Type</div><div class="sl-page-meta-value">${escHtml(data.releaseType)}</div></div>` : ''}
       </div>
     </div>
+    <div class="sl-page-stores"><div class="sl-page-stores-title">Listen Now</div>${storeSection}</div>
+    ${upc ? `<div class="sl-page-upc-footer"><div class="sl-page-upc-label">UPC Barcode</div><div class="sl-page-upc-val">${escHtml(upcFormatted)}</div></div>` : ''}
+    <div class="sl-page-branding"><div class="sl-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>Distributed by 444Music</div>`;
+  document.getElementById('slPageOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
-    <!-- RELEASE DETAILS -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Release Details</div>
-        <div class="section-desc">Core metadata for your release</div>
-      </div>
-    </div>
+function closeSmartLinkPage() {
+  document.getElementById('slPageOverlay').classList.remove('open');
+  if (!document.getElementById('metaOverlay').classList.contains('open')) document.body.style.overflow = '';
+}
 
-    <div class="grid">
-      <div class="field">
-        <label>Release Title <div class="required-dot"></div></label>
-        <input id="releaseTitle" placeholder="Name of your single, EP or album" required>
-      </div>
-      <div class="field">
-        <label>Release Type</label>
-        <div class="select-wrap">
-          <select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Genre</label>
-        <div class="select-wrap">
-          <select id="genre">
-            <optgroup label="Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>K-Pop</option><option>Afropop</option></optgroup>
-            <optgroup label="Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Grime</option><option>Afro Trap</option></optgroup>
-            <optgroup label="R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Funk</option><option>Gospel</option></optgroup>
-            <optgroup label="Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Afro House</option><option>Techno</option><option>Ambient</option></optgroup>
-            <optgroup label="Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Punk Rock</option></optgroup>
-            <optgroup label="Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Amapiano</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
-            <optgroup label="Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option></optgroup>
-            <optgroup label="Latin"><option>Latin Pop</option><option>Salsa</option><option>Bachata</option><option>Bossa Nova</option></optgroup>
-            <optgroup label="Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Soul Blues</option></optgroup>
-            <optgroup label="Classical"><option>Classical</option><option>Orchestral</option><option>Film Score</option></optgroup>
-            <optgroup label="Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option></optgroup>
-            <optgroup label="Other"><option>Experimental</option><option>Lo-Fi</option><option>Spoken Word</option><option>Other</option></optgroup>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>Language</label>
-        <input id="language" placeholder="e.g. English, French, Twi">
-      </div>
-      <div class="field">
-        <label>Release Date <div class="required-dot"></div></label>
-        <input id="releaseDate" type="date" required>
-      </div>
-      <div class="field">
-        <label>Explicit Content</label>
-        <div class="select-wrap"><select id="explicit"><option>No</option><option>Yes</option></select></div>
-      </div>
-    </div>
+document.getElementById('slPageOverlay').addEventListener('click', function(e) { if (e.target === this) closeSmartLinkPage(); });
 
-    <!-- LABEL & RIGHTS -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Label &amp; Rights</div>
-        <div class="section-desc">Copyright and label ownership information</div>
-      </div>
-    </div>
+/* === META MODAL === */
+window._releaseMeta = {};
 
-    <div class="grid">
-      <div class="field">
-        <label>Label Name</label>
-        <input id="label" placeholder="Independent or label name">
+function renderCreditsSection(arr) {
+  if (!arr || arr.length === 0) return '<p class="meta-no-credits">None added</p>';
+  const filtered = arr.filter(c => c && c.name && c.name.trim());
+  if (filtered.length === 0) return '<p class="meta-no-credits">None added</p>';
+  return '<div class="meta-credits-list">' + filtered.map(c => `
+    <div class="meta-credit-item">
+      <div class="meta-credit-dot"></div>
+      <div class="meta-credit-info">
+        <div class="meta-credit-name">${escHtml(c.name)}</div>
+        ${c.role ? `<div class="meta-credit-role">${escHtml(c.role)}</div>` : ''}
+        ${c.ipi  ? `<div class="meta-credit-ipi">IPI / CAE: ${escHtml(c.ipi)}</div>` : ''}
       </div>
-      <div class="field">
-        <label>Copyright Holder</label>
-        <input id="copyright" placeholder="© 2025 Your Name or Company">
-      </div>
-    </div>
+    </div>`).join('') + '</div>';
+}
 
-    <!-- IDENTIFIERS -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Identifiers</div>
-        <div class="section-desc">ISRC, UPC, and catalog codes</div>
-      </div>
-    </div>
-
-    <div class="grid-3">
-      <div class="field">
-        <label>ISRC Code</label>
-        <input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.07em;">
-      </div>
-      <div class="field">
-        <label>UPC / EAN Barcode</label>
-        <input id="upc" placeholder="Leave blank to auto-assign" maxlength="14">
-      </div>
-      <div class="field">
-        <label>Catalog Number</label>
-        <input id="catalogNumber" placeholder="e.g. LAB-001 (optional)">
-      </div>
-    </div>
-
-    <!-- PRODUCTION CREDITS -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Production Credits</div>
-        <div class="section-desc">Producers, engineers, and musicians involved</div>
-      </div>
-    </div>
-
-    <div class="credits-grid">
-      <div class="credits-panel">
-        <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-          Producers &amp; Engineers
-        </div>
-        <div class="credits-list" id="producerList"></div>
-        <button type="button" class="add-credit-btn" onclick="addCredit('producer')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add Producer / Engineer
-        </button>
-      </div>
-      <div class="credits-panel">
-        <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          Musicians &amp; Performers
-        </div>
-        <div class="credits-list" id="musicianList"></div>
-        <button type="button" class="add-credit-btn" onclick="addCredit('musician')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add Musician / Performer
-        </button>
-      </div>
-    </div>
-
-    <!-- SONGWRITING & PUBLISHING -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Songwriting &amp; Publishing</div>
-        <div class="section-desc">Writers, composers, and publishing information</div>
-      </div>
-    </div>
-
-    <div class="credits-grid">
-
-      <!-- WRITERS PANEL — REQUIRED -->
-      <div class="credits-panel required-panel" id="writerPanel">
-        <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Songwriters &amp; Composers
-          <span class="required-badge">Required</span>
-        </div>
-        <div class="writer-notice">
-          <strong>⚠ Important:</strong> Enter your <strong>real legal name</strong> — not your artist or stage name. This is required for royalty registration and legal copyright purposes.
-        </div>
-        <div class="credits-list" id="writerList"></div>
-        <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add Songwriter / Composer
-        </button>
-      </div>
-
-      <div class="credits-panel">
-        <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          Publishing &amp; PRO
-        </div>
-        <div class="credits-list" id="publishingList"></div>
-        <button type="button" class="add-credit-btn" onclick="addCredit('publishing')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add Publisher / PRO Info
-        </button>
-      </div>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Contact &amp; Account</div>
-        <div class="section-desc">Your contact information for this release</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="field col-full">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Email Address
-          <div class="required-dot"></div>
-        </label>
-        <input id="email" type="email" placeholder="your@email.com" required>
-      </div>
-    </div>
-
-    <!-- LYRICS -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Lyrics</div>
-        <div class="section-desc">Optional — improves discoverability on streaming platforms</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="field col-full">
-        <label>Lyrics (Optional)</label>
-        <textarea id="description" placeholder="Paste your lyrics here…"></textarea>
-      </div>
-    </div>
-
-    <!-- SUBMIT -->
-    <div class="form-actions">
-      <button class="submit-btn" id="submitBtn" type="submit">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        Save &amp; Continue to Stores
-      </button>
-      <div id="statusMsg"></div>
-
-      <div class="trust-strip">
-        <div class="trust-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          256-bit SSL Encrypted
-        </div>
-        <div class="trust-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Data Stored Securely
-        </div>
-        <div class="trust-item">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-          GDPR Compliant
-        </div>
-      </div>
-
-      <p class="form-footer-note">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Your information is used solely for processing your release distribution
-      </p>
-    </div>
-
-  </form>
-</div>
-
-<!-- MODAL: Add New Artist -->
-<div class="modal-overlay" id="artistModal" style="display:none;" aria-modal="true" role="dialog">
-  <div class="modal-card" id="artistModalCard">
-    <div class="modal-hd">
-      <span class="modal-title">Add New Artist</span>
-      <button class="modal-close" id="modalClose" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-field">
-      <label class="modal-label">Artist Name</label>
-      <input class="modal-input" id="modalArtistName" placeholder="Enter the artist's name" autocomplete="off">
-    </div>
-    <div class="modal-field">
-      <label class="modal-label">Artist Type</label>
-      <div class="modal-sel-wrap">
-        <select class="modal-select" id="modalArtistType">
-          <option value="primary">Primary Artist</option>
-          <option value="collaborating">Collaborating Main Artist</option>
-        </select>
-      </div>
-      <div class="modal-hint">
-        <strong>Primary artists</strong> count toward your subscription limit.<br>
-        Collaborating artists do not affect your limit.
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-save" id="modalSave">Save Artist</button>
-      <button class="modal-cancel" id="modalCancel">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<!-- CREDITS ENGINE -->
-<script>
-const ROLES = {
-  producer:   ['Producer','Executive Producer','Co-Producer','Beat Maker / Beatmaker','Mixing Engineer','Mastering Engineer','Recording Engineer','Assistant Recording Engineer','Assistant Mixing Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor','Vocal Tuning Engineer','Drum Programmer','Synthesizer Programmer'],
-  musician:   ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Lead Guitarist','Rhythm Guitarist','Bassist','Drummer','Percussionist','Pianist','Keyboardist','Organist','Violinist','Cellist','Trumpeter','Saxophonist','Trombonist','Flutist','Harpist','DJ / Turntablist','Session Musician','String Arranger','Horn Arranger','Choir Director','Conductor'],
-  writer:     ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Translator / Adaptor','Top-Liner','Concept Writer','Traditional / Public Domain'],
-  publishing: ['Publishing Company','Sub-Publisher','Music Publisher','PRO Affiliation (ASCAP)','PRO Affiliation (BMI)','PRO Affiliation (SESAC)','PRO Affiliation (SOCAN)','PRO Affiliation (PRS)','PRO Affiliation (GEMA)','PRO Affiliation (APRA)','PRO Affiliation (Other)','Self-Published']
-};
-const PLACEHOLDERS = {
-  producer:   { name: 'e.g. Metro Boomin',              role: 'Select role…' },
-  musician:   { name: 'e.g. John Mayer',                role: 'Select role…' },
-  writer:     { name: 'e.g. John Doe (legal name)',     role: 'Select role…' },
-  publishing: { name: 'e.g. Sony Music Publishing',     role: 'Select type…' }
-};
-const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList', publishing:'publishingList' };
-const credits  = { producer:[], musician:[], writer:[], publishing:[] };
-
-window.addCredit = function(type) {
-  const list = document.getElementById(LIST_IDS[type]);
-  const idx  = credits[type].length;
-  credits[type].push({ name:'', role:'', ipi:'' });
-  const row  = document.createElement('div');
-  row.className = 'credit-row';
-  row.dataset.type = type; row.dataset.idx = idx;
-  const label       = type.charAt(0).toUpperCase() + type.slice(1);
-  const roleOptions = ROLES[type].map(r => `<option value="${r}">${r}</option>`).join('');
-  const showIPI     = (type === 'writer' || type === 'publishing');
-  const isWriter    = (type === 'writer');
-
-  row.innerHTML = `
-    <span class="credit-row-num">${label} ${idx + 1}</span>
-    <div class="credit-field-wrap">
-      <div class="credit-field-label">Full ${isWriter ? 'Legal ' : ''}Name</div>
-      <input class="credit-input" type="text"
-        placeholder="${PLACEHOLDERS[type].name}"
-        oninput="updateCredit('${type}',${idx},'name',this.value)${isWriter ? '; checkWriterName(this)' : ''}">
-      ${isWriter ? '<div class="writer-name-error" id="writerErr_' + idx + '">⚠ Please use your real legal name, not your artist or stage name.</div>' : ''}
-    </div>
-    <div class="credit-field-wrap">
-      <div class="credit-field-label">Role</div>
-      <div class="csel-wrap">
-        <select class="credit-input" onchange="updateCredit('${type}',${idx},'role',this.value)">
-          <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>${roleOptions}
-        </select>
-      </div>
-    </div>
-    ${showIPI ? `<div class="credit-field-wrap" style="grid-column:1/-1;">
-      <div class="credit-field-label">${type === 'writer' ? 'IPI / CAE Number (optional)' : 'Publisher IPI / Account No. (optional)'}</div>
-      <input class="credit-input" type="text" placeholder="e.g. 00000000497"
-        oninput="updateCredit('${type}',${idx},'ipi',this.value)">
-    </div>` : ''}
-    <button type="button" class="credit-remove" title="Remove"
-      onclick="removeCredit('${type}', this.closest('.credit-row'))">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>`;
-
-  list.appendChild(row);
-  row.querySelector('input.credit-input')?.focus();
-};
-
-/* Check writer name against artist names in real-time */
-window.checkWriterName = function(inputEl) {
-  const val         = inputEl.value.trim().toLowerCase();
-  const artistNames = (document.getElementById('artistName').value || '')
-    .split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
-  const row      = inputEl.closest('.credit-row');
-  const idx      = parseInt(row.dataset.idx);
-  const errEl    = document.getElementById('writerErr_' + idx);
-  const isStage  = val !== '' && artistNames.includes(val);
-
-  if (errEl) errEl.style.display = isStage ? 'block' : 'none';
-  if (isStage) {
-    inputEl.classList.add('input-error');
-  } else {
-    inputEl.classList.remove('input-error');
+async function openMetaModal(releaseId) {
+  const data = window._releaseMeta[releaseId];
+  if (!data) return;
+  const content  = document.getElementById('metaModalContent');
+  const subtitle = document.getElementById('metaModalSubtitle');
+  subtitle.textContent = data.releaseTitle || 'Release Details';
+  const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
+  const submittedAt  = data.createdAt   ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const rawStatus    = (data.status || 'Pending').trim();
+  const statusClass  = rawStatus.toLowerCase().replace(/\s+/g, '-');
+  const isApproved   = statusClass === 'approved';
+  const credits      = data.credits || {};
+  const hasProducers  = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
+  const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
+  const hasWriters    = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
+  const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
+  const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
+  const coverHtml = data.coverURL
+    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
+  let smartLinkHtml = '';
+  if (isApproved) {
+    smartLinkHtml = (!data.upc || !data.smartLinkURL)
+      ? renderSmartLinkPanel(data, releaseId, null, null, true)
+      : renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
   }
-};
+  content.innerHTML = `
+    ${coverHtml}
+    <div class="meta-modal-body">
+      ${isApproved ? `<div class="meta-section"><div class="meta-section-label"><svg style="width:11px;height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link & UPC</div><div id="smartLinkPanelContainer-${releaseId}">${smartLinkHtml}</div></div>` : ''}
+      <div class="meta-section"><div class="meta-section-label">Status</div>
+        <div class="meta-status-row">
+          <span class="badge ${statusClass}">${escHtml(rawStatus)}</span>
+          <span class="badge ${data.paymentVerified ? 'paid' : 'unpaid'}">${data.paymentVerified ? 'Paid' : 'Unpaid'}</span>
+          ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--text-3);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
+        </div>
+      </div>
+      <div class="meta-section"><div class="meta-section-label">Artist & Release</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
+          ${data.featuring && data.featuring.trim() ? `<div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value">${escHtml(data.featuring)}</div></div>` : ''}
+          <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Language</div><div class="meta-field-value">${escHtml(metaVal(data.language))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Release Date</div><div class="meta-field-value">${escHtml(releaseDate)}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Explicit Content</div><div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div></div>
+        </div>
+      </div>
+      <div class="meta-section"><div class="meta-section-label">Label & Rights</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field"><div class="meta-field-label">Label Name</div><div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">${escHtml(metaVal(data.label, 'Independent'))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Copyright Holder</div><div class="meta-field-value ${!data.copyright || !data.copyright.trim() ? 'none' : ''}">${escHtml(metaVal(data.copyright))}</div></div>
+        </div>
+      </div>
+      <div class="meta-section"><div class="meta-section-label">Identifiers</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field"><div class="meta-field-label">ISRC Code</div><div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">${escHtml(metaVal(data.isrc))}</div></div>
+          <div class="meta-field" id="upcDisplayField-${releaseId}"><div class="meta-field-label">UPC / EAN Barcode</div><div class="meta-field-value ${!data.upc ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;" id="upcFieldValue-${releaseId}">${data.upc ? escHtml(data.upc) : (isApproved ? 'Generating…' : 'Auto-assign')}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">${escHtml(metaVal(data.catalogNumber))}</div></div>
+        </div>
+      </div>
+      <div class="meta-section"><div class="meta-section-label">Contact & Location</div>
+        <div class="meta-fields-grid">
+          <div class="meta-field"><div class="meta-field-label">Country</div><div class="meta-field-value">${escHtml(metaVal(data.country))}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Phone</div><div class="meta-field-value ${!data.phone || !data.phone.trim() ? 'none' : ''}">${escHtml(metaVal(data.phone))}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Email</div><div class="meta-field-value">${escHtml(metaVal(data.email))}</div></div>
+          ${data.refferal && data.refferal.trim() ? `<div class="meta-field"><div class="meta-field-label">Referral Code</div><div class="meta-field-value">${escHtml(data.refferal)}</div></div>` : ''}
+        </div>
+      </div>
+      ${hasAnyCredits ? `<div class="meta-section"><div class="meta-section-label">Production Credits</div>
+        ${hasProducers ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>${renderCreditsSection(credits.producer)}` : ''}
+        ${hasMusicians ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Musicians</div>${renderCreditsSection(credits.musician)}` : ''}
+      </div>` : ''}
+      ${(hasWriters || hasPublishers) ? `<div class="meta-section"><div class="meta-section-label">Songwriting & Publishing</div>
+        ${hasWriters ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>${renderCreditsSection(credits.writer)}` : ''}
+        ${hasPublishers ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>${renderCreditsSection(credits.publishing)}` : ''}
+      </div>` : ''}
+      ${data.description && data.description.trim() ? `<div class="meta-section"><div class="meta-section-label">Lyrics</div><div class="meta-lyrics">${escHtml(data.description)}</div></div>` : ''}
+    </div>`;
+  document.getElementById('metaOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (isApproved && (!data.upc || !data.smartLinkURL)) triggerSmartLinkGeneration(releaseId);
+}
 
-window.updateCredit = function(type, idx, field, value) {
-  if (credits[type][idx]) credits[type][idx][field] = value;
-};
+async function triggerSmartLinkGeneration(releaseId) {
+  if (window._generateSmartLink) window._generateSmartLink(releaseId);
+}
 
-window.removeCredit = function(type, row) {
-  const idx = parseInt(row.dataset.idx);
-  credits[type].splice(idx, 1);
-  row.style.opacity   = '0';
-  row.style.transform = 'translateY(-4px)';
-  row.style.transition= '0.18s ease';
-  setTimeout(() => {
-    row.remove();
-    document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r, i) => {
-      r.dataset.idx = i;
-      const lbl = type.charAt(0).toUpperCase() + type.slice(1);
-      r.querySelector('.credit-row-num').textContent = `${lbl} ${i + 1}`;
-      // Re-sync error IDs for writer rows
-      if (type === 'writer') {
-        const errEl = r.querySelector('.writer-name-error');
-        if (errEl) errEl.id = 'writerErr_' + i;
-        const nameInput = r.querySelector('input.credit-input');
-        if (nameInput) {
-          nameInput.setAttribute('oninput',
-            `updateCredit('writer',${i},'name',this.value); checkWriterName(this)`);
-        }
-      }
-    });
-  }, 180);
-};
+function closeMetaModal() {
+  document.getElementById('metaOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-window.formatCreditsForEmail = function(arr) {
-  if (!arr || arr.length === 0) return 'None';
-  const lines = arr.filter(c => c.name && c.name.trim() !== '').map(c => {
-    let line = `• ${c.name}`;
-    if (c.role) line += ` — ${c.role}`;
-    if (c.ipi)  line += ` (IPI: ${c.ipi})`;
-    return line;
-  });
-  return lines.length > 0 ? lines.join('\n') : 'None';
-};
-
-window.collectCredits = function() {
-  const result = {};
-  ['producer','musician','writer','publishing'].forEach(type => {
-    result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
-  });
-  return result;
-};
+document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
+document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); } });
+document.getElementById('submissionsContainer').addEventListener('click', function(e) {
+  const cardBody = e.target.closest('.card-body-clickable');
+  if (!cardBody) return;
+  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn') || e.target.closest('.promote-btn')) return;
+  const releaseId = cardBody.dataset.releaseId;
+  if (releaseId) openMetaModal(releaseId);
+});
 </script>
 
-<!-- ARTIST SEARCH ENGINE -->
-<script>
-(function(){
-  const selectedArtists  = [];
-  const searchInput      = document.getElementById('artistSearchInput');
-  const pillBox          = document.getElementById('artistPillBox');
-  const dropdown         = document.getElementById('artistDropdown');
-  const hiddenInput      = document.getElementById('artistName');
-  const modal            = document.getElementById('artistModal');
-  const modalCard        = document.getElementById('artistModalCard');
-  const modalNameInput   = document.getElementById('modalArtistName');
-  const modalTypeSelect  = document.getElementById('modalArtistType');
-  const modalSaveBtn     = document.getElementById('modalSave');
-  const modalCancelBtn   = document.getElementById('modalCancel');
-  const modalCloseBtn    = document.getElementById('modalClose');
-  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [];
-  let activeCtrl  = null;
-
-  async function fetchArtists(query) {
-    showLoading();
-    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
-    activeCtrl = new AbortController();
-    const signal = activeCtrl.signal;
-
-    const itunesUrl = 'https://itunes.apple.com/search?term=' +
-      encodeURIComponent(query) + '&entity=musicArtist&limit=10&media=music';
-
-    const proxies = [
-      'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
-      'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl),
-      'https://thingproxy.freeboard.io/fetch/' + itunesUrl,
-      'https://api.codetabs.com/v1/proxy?quest=' + itunesUrl
-    ];
-
-    async function tryProxy(proxyUrl) {
-      try {
-        const res = await Promise.race([
-          fetch(proxyUrl, { signal }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
-        ]);
-        if (!res.ok) return null;
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { return null; }
-        if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { return null; } }
-        if (!data || !data.results || !data.results.length) return null;
-        return data.results.filter(r => r.artistName).map(r => ({
-          name:   r.artistName,
-          genre:  r.primaryGenreName || '',
-          img:    (r.artworkUrl100 || '').replace('100x100bb', '300x300bb'),
-          source: 'itunes'
-        }));
-      } catch(e) { return null; }
-    }
-
-    let resolved = false;
-    const results = await new Promise(resolve => {
-      let done = 0;
-      proxies.forEach(p => {
-        tryProxy(p).then(res => {
-          done++;
-          if (res && res.length && !resolved) { resolved = true; resolve(res); }
-          else if (done === proxies.length && !resolved) resolve([]);
-        });
-      });
-    });
-
-    if (signal.aborted) return;
-    renderResults(query, results, 'itunes');
-  }
-
-  searchInput.addEventListener('input', function() {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
-    clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    showLoading();
-    searchTimer = setTimeout(() => fetchArtists(q), 400);
-  });
-
-  searchInput.addEventListener('keydown', handleKeyNav);
-
-  let outsideTouchMoved = false;
-  document.addEventListener('touchstart', function() { outsideTouchMoved = false; }, { passive: true });
-  document.addEventListener('touchmove',  function() { outsideTouchMoved = true;  }, { passive: true });
-  document.addEventListener('touchend', function(e) {
-    if (outsideTouchMoved) return;
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  }, { passive: true });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  });
-
-  searchInput.addEventListener('focus', function() {
-    const q = searchInput.value.trim();
-    if (q.length >= 2 && lastQuery !== q) fetchArtists(q);
-    else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
-  });
-
-  function showLoading() {
-    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
-    openDropdown();
-  }
-
-  function renderResults(query, artists, sourceName) {
-    dropdownItems = [];
-    let html = '';
-    if (artists && artists.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      artists.forEach((a, i) => {
-        const imgUrl = a.img || '';
-        dropdownItems.push({ name: a.name, imageUrl: imgUrl, genre: a.genre || '', source: a.source || 'itunes' });
-        const initial = esc((a.name || '?').charAt(0).toUpperCase());
-        const av = imgUrl
-          ? `<div class="opt-avatar"><img src="${imgUrl}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
-          : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${esc(a.name)}</div>${a.genre ? `<div class="opt-meta">${esc(a.genre)}</div>` : ''}</div><span class="opt-badge badge-apple">Apple Music</span></div>`;
-      });
-    }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
-    html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.3rem;font-weight:700;color:var(--accent-light);">+</div><div class="opt-info"><div class="opt-name">Add "${esc(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge badge-new">New</span></div>`;
-
-    dropdown.innerHTML = html;
-    openDropdown();
-    focused = -1;
-
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-      let touchStartX = 0, touchStartY = 0, didScroll = false;
-      el.addEventListener('touchstart', function(e) {
-        touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; didScroll = false;
-      }, { passive: true });
-      el.addEventListener('touchmove', function() { didScroll = true; }, { passive: true });
-      el.addEventListener('touchend', function(e) {
-        if (didScroll) return;
-        e.preventDefault(); e.stopPropagation();
-        selectItem(parseInt(el.dataset.index));
-      });
-    });
-  }
-
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    if (item.source === 'new') {
-      modalNameInput.value = item.name;
-      openModal(); closeDropdown();
-      searchInput.value = ''; lastQuery = '';
-      return;
-    }
-    addArtistPill(item.name, item.imageUrl, item.source);
-    closeDropdown(); searchInput.value = ''; lastQuery = '';
-  }
-
-  function addArtistPill(name, imageUrl, source) {
-    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    selectedArtists.push({ name, imageUrl, source });
-    syncHiddenInput(); renderPills();
-  }
-
-  function removeArtist(idx) {
-    selectedArtists.splice(idx, 1);
-    syncHiddenInput(); renderPills();
-  }
-
-  function renderPills() {
-    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
-    selectedArtists.forEach((artist, i) => {
-      const pill = document.createElement('div');
-      pill.className = 'artist-pill';
-      const av = artist.imageUrl
-        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
-        : `<span class="pill-avatar">${esc(artist.name.charAt(0).toUpperCase())}</span>`;
-      pill.innerHTML = `${av}<span>${esc(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${esc(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-      pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
-      pillBox.insertBefore(pill, searchInput);
-    });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist name…';
-  }
-
-  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
-
-  function handleKeyNav(e) {
-    const items = dropdown.querySelectorAll('.artist-option');
-    if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if      (e.key === 'ArrowDown')  { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlightItem(items); }
-    else if (e.key === 'ArrowUp')    { e.preventDefault(); focused = Math.max(focused - 1, 0); highlightItem(items); }
-    else if (e.key === 'Enter')      { e.preventDefault(); if (focused >= 0) selectItem(focused); }
-    else if (e.key === 'Escape')     { closeDropdown(); }
-  }
-
-  function highlightItem(items) {
-    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
-    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
-  }
-
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
-
-  function openModal() {
-    modal.style.display = 'flex';
-    modal.classList.remove('closing'); modalCard.classList.remove('closing');
-    setTimeout(() => modalNameInput.focus(), 100);
-  }
-  function closeModal(cb) {
-    modal.classList.add('closing'); modalCard.classList.add('closing');
-    setTimeout(() => {
-      modal.style.display = 'none';
-      modal.classList.remove('closing'); modalCard.classList.remove('closing');
-      if (cb) cb();
-    }, 180);
-  }
-
-  modalSaveBtn.addEventListener('click', () => {
-    const name = modalNameInput.value.trim();
-    if (!name) { modalNameInput.focus(); return; }
-    addArtistPill(name, '', 'new');
-    closeModal(() => { modalNameInput.value = ''; modalTypeSelect.value = 'primary'; });
-  });
-  modalCancelBtn.addEventListener('click', () => closeModal());
-  modalCloseBtn.addEventListener('click',  () => closeModal());
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  modalNameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter')  { e.preventDefault(); modalSaveBtn.click(); }
-    if (e.key === 'Escape') closeModal();
-  });
-  pillBox.addEventListener('click', e => {
-    if (!e.target.closest('.artist-pill')) searchInput.focus();
-  });
-
-  function esc(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-})();
-</script>
-
-<!-- FIREBASE + EMAILJS -->
 <script type="module">
-import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged }       from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore, collection, query, where,
+  getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1329,142 +1320,175 @@ const firebaseConfig = {
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-emailjs.init("mwAZ_hDxmnBqkrTfA");
+const app       = initializeApp(firebaseConfig);
+const auth      = getAuth(app);
+const db        = getFirestore(app);
+const container = document.getElementById("submissionsContainer");
 
-let currentUser = null;
-onAuthStateChanged(auth, user => {
-  if (!user) { window.location.href = "login.html"; }
-  else        { currentUser = user; }
-});
-
-const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
-
-async function sendEmails(data) {
-  const fmt    = window.formatCreditsForEmail;
-  const params = {
-    artist_name:    data.artistName,
-    featuring:      data.featuring      || 'None',
-    release_title:  data.releaseTitle,
-    release_type:   data.releaseType,
-    genre:          data.genre,
-    language:       data.language       || 'Not specified',
-    release_date:   data.releaseDate    || 'Not set',
-    explicit:       data.explicit,
-    country:        data.country,
-    phone:          data.phone          || 'Not provided',
-    email:          data.email,
-    label:          data.label          || 'Independent',
-    copyright:      data.copyright      || 'Not provided',
-    isrc:           data.isrc           || 'Not provided',
-    upc:            data.upc            || 'Auto-assign',
-    catalog_number: data.catalogNumber  || 'Not provided',
-    producers:      fmt(data.credits?.producer),
-    musicians:      fmt(data.credits?.musician),
-    songwriters:    fmt(data.credits?.writer),
-    publishers:     fmt(data.credits?.publishing),
-    lyrics:         data.description    || 'Not provided',
-    submitted_at:   new Date(data.createdAt).toLocaleString(),
-    status:         data.status
-  };
-  await emailjs.send("service_ydy0muo", "template_i6qh7ew", params);
-  await emailjs.send("service_ydy0muo", "template_m8g8n9q", params);
+async function generateUniqueUPC() {
+  let attempts = 0;
+  while (attempts < 20) {
+    const candidate = generateUPCCandidate();
+    const q = query(collection(db, "submissions"), where("upc", "==", candidate));
+    const snap = await getDocs(q);
+    if (snap.empty) return candidate;
+    attempts++;
+  }
+  return generateUPCCandidate();
 }
 
-const form      = document.getElementById("releaseForm");
-const submitBtn = document.getElementById("submitBtn");
-const statusMsg = document.getElementById("statusMsg");
-let isSubmitting = false;
-
-function resetBtn() {
-  submitBtn.disabled = false;
-  submitBtn.innerHTML = `${SUBMIT_SVG} Save &amp; Continue to Stores`;
-  isSubmitting = false;
-}
-
-function showError(msg) {
-  statusMsg.textContent = msg;
-  statusMsg.className   = 'error';
-}
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  if (isSubmitting || !currentUser) return;
-
-  isSubmitting       = true;
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
-  statusMsg.textContent = 'Please wait…';
-  statusMsg.className   = '';
-
-  /* ── Validation: artist ── */
-  const artistName = document.getElementById("artistName").value.trim();
-  if (!artistName) {
-    showError("⚠ Please add at least one artist before submitting.");
-    document.getElementById('artistPillBox').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
-  /* ── Validation: at least one writer ── */
-  const writerEntries = (credits['writer'] || []).filter(c => c.name && c.name.trim() !== '');
-  if (writerEntries.length === 0) {
-    showError("⚠ At least one Songwriter / Composer is required. Please add their legal name.");
-    document.getElementById('writerPanel').scrollIntoView({ behavior:'smooth', block:'center' });
-    // Highlight the writers panel border
-    const panel = document.getElementById('writerPanel');
-    panel.style.borderColor = 'var(--danger)';
-    panel.style.boxShadow   = '0 0 0 3px rgba(248,113,113,0.12)';
-    setTimeout(() => { panel.style.borderColor = ''; panel.style.boxShadow = ''; }, 3000);
-    resetBtn(); return;
-  }
-
-  /* ── Validation: writer name must not match artist/stage name ── */
-  const artistNamesList = artistName.split(',').map(n => n.trim().toLowerCase());
-  const stageNameMatch  = writerEntries.find(c => artistNamesList.includes(c.name.trim().toLowerCase()));
-  if (stageNameMatch) {
-    showError(`⚠ Writer name "${stageNameMatch.name}" is the same as your artist/stage name. Please enter your real legal name.`);
-    document.getElementById('writerPanel').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
-  /* ── Collect & submit ── */
-  const creditsData = typeof window.collectCredits === 'function' ? window.collectCredits() : {};
-
-  const data = {
-    artistName,
-    releaseTitle:  document.getElementById("releaseTitle").value.trim(),
-    releaseType:   document.getElementById("releaseType").value,
-    country:       document.getElementById("country").value,
-    genre:         document.getElementById("genre").value,
-    language:      document.getElementById("language").value.trim(),
-    releaseDate:   document.getElementById("releaseDate").value,
-    explicit:      document.getElementById("explicit").value,
-    email:         document.getElementById("email").value.trim(),
-    phone:         document.getElementById("number").value.trim(),
-    featuring:     document.getElementById("featuring").value.trim(),
-    copyright:     document.getElementById("copyright").value.trim(),
-    label:         document.getElementById("label").value.trim(),
-    description:   document.getElementById("description").value.trim(),
-    isrc:          document.getElementById("isrc").value.trim(),
-    upc:           document.getElementById("upc").value.trim(),
-    catalogNumber: document.getElementById("catalogNumber").value.trim(),
-    credits:       creditsData,
-    userId:        currentUser.uid,
-    createdAt:     Date.now(),
-    status:        "Pending"
-  };
-
+window._generateSmartLink = async function(releaseId) {
   try {
-    await addDoc(collection(db, "submissions"), data);
-    await sendEmails(data);
-    window.location.href = "select.html";
-  } catch (error) {
-    console.error("Submission Error:", error);
-    showError("Something went wrong. Please try again.");
-    resetBtn();
+    const docRef  = doc(db, "submissions", releaseId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const existing = docSnap.data();
+    if (existing.upc && existing.smartLinkURL) {
+      window._releaseMeta[releaseId].upc = existing.upc;
+      window._releaseMeta[releaseId].smartLinkURL = existing.smartLinkURL;
+      refreshSmartLinkPanel(releaseId);
+      return;
+    }
+    const upc          = await generateUniqueUPC();
+    const smartLinkURL = buildSmartLinkURL(releaseId, existing.artistName || '', existing.releaseTitle || '');
+    await updateDoc(docRef, { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
+    window._releaseMeta[releaseId].upc = upc;
+    window._releaseMeta[releaseId].smartLinkURL = smartLinkURL;
+    refreshSmartLinkPanel(releaseId);
+    showToast("Smart Link & UPC generated successfully!");
+  } catch (err) {
+    console.error("Smart link generation error:", err);
+    showToast("Failed to generate smart link. Please try again.", true);
+  }
+};
+
+function refreshSmartLinkPanel(releaseId) {
+  const data  = window._releaseMeta[releaseId];
+  const panel = document.getElementById(`smartLinkPanelContainer-${releaseId}`);
+  const upcEl = document.getElementById(`upcFieldValue-${releaseId}`);
+  if (panel && data.upc && data.smartLinkURL) panel.innerHTML = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
+  if (upcEl && data.upc) { upcEl.textContent = data.upc; upcEl.classList.remove('none'); }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = "login.html"; return; }
+  const name = user.displayName || user.email.split("@")[0];
+  document.getElementById("userName").textContent    = name;
+  document.getElementById("userInitial").textContent = name.charAt(0).toUpperCase();
+  const userRef  = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
+  try {
+    const q        = query(collection(db, "submissions"), where("userId", "==", user.uid));
+    const snapshot = await getDocs(q);
+    container.innerHTML = "";
+    if (snapshot.empty) {
+      container.innerHTML = `<div class="empty"><div class="empty-icon">🎵</div><h3>No releases yet</h3><p>Create your first release to start distributing your music worldwide.</p></div>`;
+      updateStats([]);
+      return;
+    }
+    const submissionsData = [];
+    snapshot.forEach(async (docSnap) => {
+      const data = docSnap.data();
+      const id   = docSnap.id;
+      window._releaseMeta[id] = { ...data, _id: id };
+      if (data.paymentVerified === undefined) { await updateDoc(doc(db, "submissions", id), { paymentVerified: false }); data.paymentVerified = false; }
+      const rawStatus = (data.status || "Pending").trim().toLowerCase();
+      if (rawStatus === "approved" && (!data.upc || !data.smartLinkURL)) {
+        (async () => {
+          try {
+            const upc = await generateUniqueUPC();
+            const smartLinkURL = buildSmartLinkURL(id, data.artistName || '', data.releaseTitle || '');
+            await updateDoc(doc(db, "submissions", id), { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
+            window._releaseMeta[id].upc = upc;
+            window._releaseMeta[id].smartLinkURL = smartLinkURL;
+          } catch(e) { console.error("BG smart link gen error:", e); }
+        })();
+      }
+      submissionsData.push(data);
+      const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
+      const statusClass  = rawStatus.replace(/\s+/g, "-");
+      const isRejected   = statusClass === "rejected";
+      const isApproved   = statusClass === "approved";
+      const { pct, label } = getProgress(rawStatus);
+      const imageSection = data.coverURL
+        ? `<img src="${data.coverURL}" class="cover-image" data-id="${id}" alt="Cover art">`
+        : `<div class="cover-placeholder cover-image" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Click to add cover art</span></div>`;
+      const checkReasonsBtn = isRejected
+        ? `<a href="rejection.html" class="check-reasons-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons</a>`
+        : "";
+      const promoteBtn = isApproved
+        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote</a>`
+        : "";
+      const smartLinkCardBtn = isApproved
+        ? `<button class="action-btn sl-card-action-btn" data-id="${id}" style="background:rgba(124,92,252,0.08);border-color:rgba(124,92,252,0.2);color:var(--purple-light);" onclick="openMetaModal('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</button>`
+        : `<button class="action-btn" onclick="location.href='pricing.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</button>`;
+      const card = document.createElement("div");
+      card.className = `card${isRejected ? " status-rejected" : ""}`;
+      card.dataset.status = statusClass;
+      card.innerHTML = `
+        <div class="image-wrapper">
+          ${imageSection}
+          <div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
+        </div>
+        <div class="card-body card-body-clickable" data-release-id="${id}">
+          <h3>${data.releaseTitle || "Untitled Release"}<span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/></svg></span></h3>
+          <p class="artist-name">${data.artistName || "Unknown Artist"}</p>
+          ${data.featuring && data.featuring.trim() ? `<p class="feat"><strong>ft.</strong> ${data.featuring}</p>` : ""}
+          <p class="release-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Release: <strong>${releaseDate}</strong></p>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>${label}</span><span>${pct}%</span></div>
+            <div class="progress-bar"><div class="progress-fill${isRejected ? " rejected-fill" : ""}" style="width:0%" data-pct="${pct}"></div></div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="status-row">
+            <span class="badge ${statusClass}">${(data.status || 'Pending').trim()}</span>
+            <span class="badge ${data.paymentVerified ? "paid" : "unpaid"}">${data.paymentVerified ? "Paid" : "Unpaid"}</span>
+            ${isApproved ? `<span style="font-size:10px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>Live</span>` : ''}
+          </div>
+          ${checkReasonsBtn}
+          ${promoteBtn}
+          <div class="card-actions">
+            <button class="action-btn edit-cover-btn" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Cover</button>
+            ${smartLinkCardBtn}
+          </div>
+        </div>`;
+      container.appendChild(card);
+      card.style.opacity = "0"; card.style.transform = "translateY(16px)";
+      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, submissionsData.length * 60);
+      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + submissionsData.length * 60);
+      allCards.push({ card, status: statusClass });
+    });
+    setTimeout(() => updateStats(submissionsData), 200);
+    container.addEventListener("click", (e) => {
+      const target = e.target.closest(".cover-image, .edit-cover-btn");
+      if (!target) return;
+      if (e.target.closest('.card-body-clickable') && !e.target.closest('.edit-cover-btn')) return;
+      const id    = target.dataset.id;
+      const input = container.querySelector(`.cover-input[data-id="${id}"]`);
+      if (input) input.click();
+    });
+    container.addEventListener("change", async (e) => {
+      if (!e.target.classList.contains("cover-input")) return;
+      const file = e.target.files[0];
+      if (!file) return;
+      const id      = e.target.dataset.id;
+      const wrapper = e.target.closest(".image-wrapper");
+      if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64 = ev.target.result;
+        await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
+        if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
+        wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
+        showToast("Cover art updated successfully!");
+      };
+      reader.readAsDataURL(file);
+    });
+  } catch (err) {
+    console.error("Error loading releases:", err);
+    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
   }
 });
 </script>
