@@ -190,6 +190,38 @@
       align-items: center; justify-content: center;
       text-align: center;
       padding: 110px 24px 80px;
+      overflow: hidden;
+    }
+
+    /* video background layer */
+    .hero-video-wrap {
+      position: absolute; inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      background: #000; /* fallback while video loads / if it fails */
+    }
+    .hero-video-wrap video {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100%; height: 100%;
+      min-width: 100%; min-height: 100%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      /* filter blends the raw footage into the site's dark-purple palette
+         and keeps it subtle enough that text stays readable */
+      filter: grayscale(0.35) brightness(0.55) contrast(1.05) saturate(1.3);
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .hero-video-wrap video.loaded { opacity: 1; }
+
+    /* gradient + color wash overlay to tie the video into the purple/black theme */
+    .hero-video-overlay {
+      position: absolute; inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(139,92,246,0.22), transparent 70%),
+        linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 35%, rgba(0,0,0,0.85) 78%, #000 100%);
     }
 
     .hero-badge {
@@ -215,6 +247,7 @@
       letter-spacing: -2px;
       margin-bottom: 22px;
       animation: fadeUp 0.8s 0.1s ease both;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
     }
 
     .hero h1 span {
@@ -281,6 +314,7 @@
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       color: var(--muted); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
       animation: fadeUp 1s 0.8s ease both;
+      z-index: 1;
     }
     .scroll-hint i { animation: bounce 2s infinite; font-size: 14px; color: var(--purple); }
     @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
@@ -499,6 +533,11 @@
       section.section { padding: 70px 18px; }
       .cta-block { padding: 44px 22px; }
     }
+
+    /* Respect users who prefer reduced motion: freeze on first frame look (still show video, just no filter transition jump) */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-video-wrap video { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -577,10 +616,20 @@
 
 <!-- ─── HERO ─── -->
 <section class="hero">
-  <div class="hero-badge">
-    <i class="fa-solid fa-circle"></i>
-    Independent Artist Platform
+
+  <!-- VIDEO BACKGROUND
+       Candidate clips (all real, direct Mixkit files, verified live):
+       1. Guitarist on stage (default) → https://assets.mixkit.co/videos/475/475-360.mp4
+       2. DJ playing on stage          → https://assets.mixkit.co/videos/4026/4026-360.mp4
+       3. Rock band live performance   → https://assets.mixkit.co/videos/485/485-360.mp4
+       4. Person singing on stage      → https://assets.mixkit.co/videos/490/490-360.mp4
+       To switch: just change the src on the <source> tag below to any of the above. -->
+  <div class="hero-video-wrap">
+    <video id="heroVideo" autoplay muted loop playsinline preload="auto">
+      <source src="https://assets.mixkit.co/videos/475/475-360.mp4" type="video/mp4">
+    </video>
   </div>
+  <div class="hero-video-overlay"></div>
 
   <h1>Distribute Your Music<br><span>to the World</span></h1>
 
@@ -812,6 +861,18 @@
   }, { threshold: 0.12 });
 
   document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+  /* ─ Hero video: fade in once it can actually play, and fail gracefully
+       (falls back to the plain black/purple gradient background if the
+       clip can't load, so the hero never looks broken) ─ */
+  const heroVideo = document.getElementById("heroVideo");
+  if (heroVideo) {
+    heroVideo.addEventListener("canplay", () => heroVideo.classList.add("loaded"));
+    heroVideo.addEventListener("error", () => {
+      const wrap = heroVideo.closest(".hero-video-wrap");
+      if (wrap) wrap.style.display = "none";
+    });
+  }
 </script>
 </body>
 </html>
