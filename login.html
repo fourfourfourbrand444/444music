@@ -674,13 +674,14 @@
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid  = cred.user.uid;
       await setDoc(doc(db,'users',uid), {
-        name, email,
-        artistType: 'Independent Artist',
-        genre: 'Afrobeats',
-        country: 'Ghana',
-        earnings: 0,
-        createdAt: serverTimestamp()
-      });
+  name, email,
+  artistType: 'Independent Artist',
+  genre: 'Afrobeats',
+  country: 'Ghana',
+  earnings: 0,
+  emailOptIn: true,
+  createdAt: serverTimestamp()
+});
       await setDoc(doc(db,'analytics',uid), {
         totalStreams:0, spotifyStreams:0, appleStreams:0,
         youtubeStreams:0, tiktokStreams:0,
