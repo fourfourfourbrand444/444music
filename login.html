@@ -528,15 +528,16 @@
       const userRef = doc(db, 'users', user.uid);
       const existing = await getDoc(userRef);
       if (existing.exists()) return;
-      await setDoc(userRef, {
-        name: user.displayName || 'New Artist',
-        email: user.email,
-        artistType: 'Independent Artist',
-        genre: 'Afrobeats',
-        country: 'Ghana',
-        earnings: 0,
-        createdAt: serverTimestamp()
-      });
+     await setDoc(userRef, {
+  name: user.displayName || 'New Artist',
+  email: user.email,
+  artistType: 'Independent Artist',
+  genre: 'Afrobeats',
+  country: 'Ghana',
+  earnings: 0,
+  emailOptIn: true,
+  createdAt: serverTimestamp()
+});
       await setDoc(doc(db, 'analytics', user.uid), {
         totalStreams:0, spotifyStreams:0, appleStreams:0,
         youtubeStreams:0, tiktokStreams:0,
