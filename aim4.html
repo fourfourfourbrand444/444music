@@ -330,6 +330,11 @@
       <p class="error-msg">Please enter a valid link starting with http:// or https://.</p>
     </div>
 
+    <!-- FormSubmit.co config fields -->
+    <input type="hidden" name="_subject" value="New 444Music Song Submission">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+
     <button type="submit" class="btn" id="submitBtn">
       <span class="spinner"></span>
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
@@ -367,7 +372,12 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const modalClose = document.getElementById('modalClose');
 
- const FORM_ENDPOINT = "https://formspree.io/f/mdarjgqk";
+  // FormSubmit.co — no signup/API key needed, just the destination email.
+  // NOTE: the first submission ever sent to this email triggers a one-time
+  // "Confirm your FormSubmit activation" email — click Confirm in that
+  // email once and every submission after that goes straight through.
+  const FORM_ENDPOINT = "https://formsubmit.co/ajax/444musicdistro@gmail.com";
+
   function setFieldError(fieldId, isError){
     document.getElementById(fieldId).classList.toggle('has-error', isError);
   }
@@ -417,7 +427,9 @@
         body: formData
       });
 
-      if(response.ok){
+      const data = await response.json().catch(() => null);
+
+      if(response.ok && data && data.success !== "false"){
         form.reset();
         modalOverlay.classList.add('show');
       } else {
