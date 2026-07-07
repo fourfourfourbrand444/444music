@@ -1,113 +1,778 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Request Playlist Pitching | 444Music Distribution</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music – Welcome</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;width:100%;font-family:'DM Sans',sans-serif;overflow:hidden;background:#040405;}
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="playlist.css">
+  .app-shell{position:relative;width:100%;height:100%;}
+
+  .screen{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .32s ease;
+  }
+  .screen.active{ opacity:1; visibility:visible; pointer-events:auto; }
+
+  /* ================= WELCOME SCREEN ================= */
+  .welcome-screen{ background:#040405; overflow:hidden; }
+
+  .orbs{ position:absolute; inset:0; z-index:0; }
+  .orb{
+    position:absolute; border-radius:50%; filter:blur(1px);
+    animation: drift 14s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) translateX(0) scale(1); }
+    50%{ transform:translateY(-16px) translateX(6px) scale(1.04); }
+  }
+
+  .vignette{
+    position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(4,4,5,0) 0%, rgba(4,4,5,0.55) 46%, rgba(4,4,5,0.94) 78%, #040405 100%);
+  }
+
+  .top-bar{
+    position:relative; z-index:3;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 18px 0;
+  }
+  .icon-btn{
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.09);
+    color:#e9e9ef; cursor:pointer; transition:background .2s, transform .15s;
+  }
+  .icon-btn:hover{ background:rgba(255,255,255,0.14); }
+  .icon-btn:active{ transform:scale(0.94); }
+  .icon-btn svg{ width:16px; height:16px; }
+
+  .welcome-content{
+    position:relative; z-index:3;
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 34px; gap:18px;
+  }
+  .logo-mark{
+    height:40px; width:auto; object-fit:contain;
+    filter:brightness(0) invert(1);
+    opacity:0.96;
+  }
+  .welcome-content h1{
+    font-size:26px; font-weight:700; color:#f4f4f8;
+    letter-spacing:-0.01em; line-height:1.25; max-width:280px;
+  }
+  .welcome-content p{
+    font-size:14px; font-weight:400; color:rgba(255,255,255,0.42);
+    line-height:1.5; max-width:270px;
+  }
+
+  .welcome-actions{
+    position:relative; z-index:3;
+    padding:0 26px 30px; display:flex; flex-direction:column; gap:12px;
+  }
+
+  .pill-btn{
+    width:100%; padding:15px; border-radius:50px; border:none;
+    font-family:'DM Sans',sans-serif; font-size:14.5px; font-weight:600;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    cursor:pointer; letter-spacing:0.01em;
+    transition:opacity .2s, transform .15s;
+  }
+  .pill-btn:active{ transform:scale(0.98); }
+  .pill-btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .pill-btn svg{ width:18px; height:18px; flex-shrink:0; }
+
+  .pill-light{ background:#ffffff; color:#0a0a0c; }
+  .pill-light:hover:not(:disabled){ opacity:0.9; }
+
+  .pill-outline{
+    background:transparent; color:#f0f0f4;
+    border:1px solid rgba(255,255,255,0.16);
+  }
+  .pill-outline:hover:not(:disabled){ background:rgba(255,255,255,0.06); }
+
+  .welcome-footer{
+    text-align:center; margin-top:6px;
+    font-size:12.5px; color:rgba(255,255,255,0.32);
+  }
+  .welcome-footer a{ color:#f4f4f8; font-weight:600; text-decoration:none; cursor:pointer; }
+  .welcome-footer a:hover{ color:#fff; }
+
+  .welcome-msg{
+    text-align:center; font-size:12.5px; min-height:16px; margin-top:2px;
+    font-weight:500;
+  }
+  .welcome-msg.error{ color:#f87171; }
+  .welcome-msg.success{ color:#4ade80; }
+
+  /* ================= AUTH SCREEN (white theme) ================= */
+  .auth-screen{ background:#ffffff; }
+
+  .auth-header{
+    display:flex; align-items:center; justify-content:center;
+    position:relative; padding:22px 18px 18px; flex-shrink:0;
+    border-bottom:1px solid #f0f0f2;
+  }
+  .auth-back{
+    position:absolute; left:16px; top:20px;
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:#f5f5f7; border:1px solid #ececef; color:#111;
+    cursor:pointer;
+  }
+  .auth-back svg{ width:15px; height:15px; }
+  .auth-header img{ height:34px; object-fit:contain; }
+
+  .auth-body{
+    flex:1; overflow-y:auto; padding:30px 26px 34px;
+    display:flex; flex-direction:column;
+  }
+
+  .toggle-wrap{
+    display:flex; background:#f2f2f4; border-radius:50px; padding:4px;
+    margin-bottom:32px; position:relative; width:100%; flex-shrink:0;
+  }
+  .toggle-slider{
+    position:absolute; top:4px; left:4px;
+    width:calc(50% - 4px); height:calc(100% - 8px);
+    background:#0a0a0c; border-radius:50px;
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+  }
+  .toggle-slider.right{ transform:translateX(100%); }
+  .toggle-btn{
+    flex:1; padding:12px 0; background:none; border:none; border-radius:50px;
+    font-family:'DM Sans',sans-serif; font-size:13.5px; font-weight:600;
+    cursor:pointer; position:relative; z-index:1; transition:color .3s;
+  }
+  .toggle-btn.active{ color:#fff; }
+  .toggle-btn.inactive{ color:rgba(10,10,12,0.4); }
+
+  .panel{ display:none; flex-direction:column; flex:1; }
+  .panel.active{ display:flex; animation:fadeIn .28s ease both; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .field{ margin-bottom:22px; }
+  .field label{
+    display:block; font-size:10.5px; font-weight:700; letter-spacing:0.09em;
+    text-transform:uppercase; color:rgba(10,10,12,0.38); margin-bottom:9px;
+  }
+  .input-row{
+    position:relative; display:flex; align-items:center;
+    border-bottom:1.5px solid #e7e7ea; transition:border-color .2s;
+  }
+  .input-row.focused, .input-row:focus-within{ border-bottom-color:#0a0a0c; }
+  .input-row svg{ width:16px; height:16px; color:rgba(10,10,12,0.32); flex-shrink:0; margin-right:8px; }
+  .input-row input{
+    flex:1; background:transparent; border:none; color:#0a0a0c;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:400;
+    padding:9px 0; outline:none;
+  }
+  .input-row input::placeholder{ color:rgba(10,10,12,0.24); }
+
+  .eye-btn{
+    background:none; border:none; color:rgba(10,10,12,0.32); cursor:pointer;
+    padding:4px; display:flex; align-items:center; transition:color .2s;
+  }
+  .eye-btn:hover{ color:rgba(10,10,12,0.7); }
+  .eye-btn svg{ width:17px; height:17px; margin:0; }
+
+  .forgot-row{ text-align:right; margin:-8px 0 26px; }
+  .forgot-row a{ font-size:12px; color:rgba(10,10,12,0.4); text-decoration:none; }
+  .forgot-row a:hover{ color:#0a0a0c; }
+
+  .submit-btn{
+    width:100%; padding:16px; border:none; border-radius:50px;
+    background:#0a0a0c; color:#ffffff; font-family:'DM Sans',sans-serif;
+    font-size:14.5px; font-weight:700; cursor:pointer; letter-spacing:0.02em;
+    transition:opacity .2s, transform .15s; position:relative; margin-top:auto;
+  }
+  .submit-btn:hover:not(:disabled){ opacity:0.88; }
+  .submit-btn:active:not(:disabled){ transform:scale(0.99); }
+  .submit-btn:disabled{ opacity:0.25; cursor:not-allowed; }
+  .btn-text{ display:block; }
+  .spinner{
+    display:none; width:17px; height:17px;
+    border:2px solid rgba(255,255,255,0.25); border-top-color:#fff;
+    border-radius:50%; animation:spin .65s linear infinite; margin:0 auto;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .submit-btn.loading .btn-text{ display:none; }
+  .submit-btn.loading .spinner{ display:block; }
+
+  .msg{
+    font-size:12px; text-align:center; margin-top:14px; min-height:16px;
+    opacity:0; transition:opacity .3s; font-weight:500;
+  }
+  .msg.visible{ opacity:1; }
+  .msg.error{ color:#e0483e; }
+  .msg.success{ color:#1fa15c; }
+  .msg.warn{ color:#c47a12; }
+
+  .bottom-link{
+    text-align:center; margin-top:20px; font-size:13px; color:rgba(10,10,12,0.4);
+  }
+  .bottom-link a{ color:#0a0a0c; font-weight:600; text-decoration:none; }
+  .bottom-link a:hover{ opacity:0.7; }
+
+  .strength-wrap{ margin:-14px 0 20px; }
+  .strength-bars{ display:flex; gap:4px; margin-bottom:5px; }
+  .strength-bar{ flex:1; height:3px; background:#eeeef0; border-radius:2px; transition:background .35s; }
+  .strength-bar.s1{ background:#e0483e; }
+  .strength-bar.s2{ background:#d97f1c; }
+  .strength-bar.s3{ background:#c9a400; }
+  .strength-bar.s4{ background:#1fa15c; }
+  .strength-label{ font-size:10.5px; color:rgba(10,10,12,0.32); letter-spacing:0.03em; }
+  .strength-label.s1{ color:#e0483e; }
+  .strength-label.s2{ color:#d97f1c; }
+  .strength-label.s3{ color:#c9a400; }
+  .strength-label.s4{ color:#1fa15c; }
+
+  .match-hint{ font-size:11.5px; min-height:14px; margin:-14px 0 18px; }
+  .match-hint.ok{ color:#1fa15c; }
+  .match-hint.err{ color:#e0483e; }
+
+  .terms-row{ display:flex; align-items:flex-start; gap:10px; margin-bottom:24px; }
+  .terms-row input[type="checkbox"]{ width:15px; height:15px; accent-color:#0a0a0c; cursor:pointer; flex-shrink:0; margin-top:1px; }
+  .terms-row span{ font-size:12px; color:rgba(10,10,12,0.45); line-height:1.4; }
+  .terms-row a{ color:#0a0a0c; text-decoration:none; font-weight:600; }
+
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); }
+    40%{ transform:translateX(5px); } 60%{ transform:translateX(-3px); } 80%{ transform:translateX(3px); }
+  }
+  .shake{ animation:shake .35s ease; }
+  .has-error .input-row{ border-bottom-color:#e0483e !important; }
+
+  .auth-body::-webkit-scrollbar{ width:3px; }
+  .auth-body::-webkit-scrollbar-thumb{ background:#eee; border-radius:3px; }
+</style>
 </head>
-
 <body>
 
-  <div class="container">
+<div class="app-shell">
 
-    <!-- HERO -->
-    <section class="hero">
-      <h1>Request Playlist Pitching</h1>
-      <p>
-        Playlist placement is one of the most powerful ways to increase streams,
-        grow real fans, and boost algorithmic discovery across major music platforms.
-        Our playlist pitching service helps your music reach the right audience at the right time.
-      </p>
-    </section>
+  <!-- ============ WELCOME SCREEN ============ -->
+  <div class="screen welcome-screen active" id="screenWelcome">
 
-    <!-- WHY PLAYLISTING -->
-    <section class="section">
-      <h2>Why Playlist Pitching Matters</h2>
+    <div class="orbs" id="orbLayer"></div>
+    <div class="vignette"></div>
 
-      <div class="features">
-        <div class="feature">
-          <h3>📈 Increased Streams</h3>
-          <p>Your song gains consistent plays from listeners already interested in your genre.</p>
-        </div>
-
-        <div class="feature">
-          <h3>🤖 Algorithm Boost</h3>
-          <p>More saves and streams signal platforms like Spotify & Apple Music to push your song further.</p>
-        </div>
-
-        <div class="feature">
-          <h3>🌍 Global Exposure</h3>
-          <p>Reach new listeners worldwide through editorial, curated, and influencer playlists.</p>
-        </div>
-
-        <div class="feature">
-          <h3>🎯 Targeted Audience</h3>
-          <p>Your music is pitched to playlists that match your sound and brand.</p>
-        </div>
-      </div>
-    </section>
-    <section class="section">
-  <h2>Featured Playlist Samples</h2>
-
-  <div class="playlist-grid">
-    <div class="playlist-card">
-      <img src="friday.jpg"Spotify New Music Friday">
-      <h4>Spotify – New Music Friday</h4>
+    <div class="top-bar">
+      <button class="icon-btn" id="backBtn" aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="icon-btn" id="closeBtn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
 
-    <div class="playlist-card">
-      <img src="New-Music-Daily-700x401.jpg" alt="Apple Music New Music Daily">
-      <h4>Apple Music – New Music Daily</h4>
+    <div class="welcome-content">
+      <img class="logo-mark" src="https://www.444musicdistro.com/black.png" alt="444Music"
+        onerror="this.style.display='none';document.getElementById('logoFallbackW').style.display='block'">
+      <span id="logoFallbackW" style="display:none;font-weight:800;font-size:22px;color:#f4f4f8;letter-spacing:-0.5px;">444Music</span>
+      <h1>Get your song playlisted</h1>
+      <p>Submit your music and get discovered by curators, playlists, and blogs worldwide.</p>
     </div>
 
-    <div class="playlist-card">
-      <img src="best.webp" alt="Audiomack Trending">
-      <h4>Audiomack – 444Music</h4>
-    </div>
+    <div class="welcome-actions">
+      <button class="pill-btn pill-light" id="googleWelcomeBtn">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        <span id="googleBtnText">Continue with Google</span>
+      </button>
 
-    <div class="playlist-card">
-      <img src="C8F851D0-AEC9-488E-AB78-425BA4B505A0.jpeg" alt="Boomplay Editorial">
-      <h4>Boomplay – Editorial Picks</h4>
+      <button class="pill-btn pill-outline" id="emailWelcomeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4V4z" opacity="0"/><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+        <span>Continue with Email</span>
+      </button>
+
+      <div class="welcome-msg" id="welcomeMsg"></div>
+      <div class="welcome-footer">New here? <a id="gotoSignup">Create an account</a></div>
     </div>
   </div>
-</section>
 
+  <!-- ============ AUTH SCREEN (white theme) ============ -->
+  <div class="screen auth-screen" id="screenAuth">
 
-    <!-- PLATFORMS -->
-    <section class="section">
-      <h2>Supported Platforms</h2>
-
-      <div class="platforms">
-        <div class="platform"><h4>Spotify Editorial & Curated Playlists</h4></div>
-        <div class="platform"><h4>Apple Music Playlists</h4></div>
-        <div class="platform"><h4>Audiomack Trending & Curator Lists</h4></div>
-        <div class="platform"><h4>Boomplay Editorial Playlists</h4></div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta">
-      <h2>Ready to Pitch Your Song?</h2>
-      <p>
-        Connect with our playlist pitching team and submit your release for playlist consideration.
-        Our team will guide you through the process professionally.
-      </p>
-
-      <a href="https://wa.me/233530399523" target="_blank">
-        Request Playlist Pitching
-      </a>
-    </section>
-
-    <!-- CONTACT -->
-    <div class="contact">
-      For inquiries or support, contact us at  
-      <span>fourfourfourbrand444@gmail.com</span>
+    <div class="auth-header">
+      <button class="auth-back" id="authBack" aria-label="Back to welcome">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <img src="https://www.444musicdistro.com/black.png" alt="444Music" style="height:34px"
+        onerror="this.style.display='none';document.getElementById('logoFallbackA').style.display='block'">
+      <span id="logoFallbackA" style="display:none;font-weight:800;font-size:20px;color:#0a0a0c;">444Music</span>
     </div>
 
+    <div class="auth-body">
+
+      <div class="toggle-wrap">
+        <div class="toggle-slider" id="toggleSlider"></div>
+        <button class="toggle-btn active" id="btnLoginTab" onclick="switchTab('login')">Login</button>
+        <button class="toggle-btn inactive" id="btnSignupTab" onclick="switchTab('signup')">Sign up</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="panel active" id="panelLogin">
+        <div class="field" id="loginFieldEmail">
+          <label>Email</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="field" id="loginFieldPass">
+          <label>Password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="eye-btn" onclick="toggleEye('loginPassword',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="forgot-row"><a href="#" id="forgotPass">Forgot password?</a></div>
+
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+          <span class="btn-text">Login</span>
+          <div class="spinner"></div>
+        </button>
+
+        <div class="msg" id="loginMsg"></div>
+        <div class="bottom-link">No account yet? <a href="#" onclick="switchTab('signup');return false;">Sign up →</a></div>
+      </div>
+
+      <!-- SIGN UP -->
+      <div class="panel" id="panelSignup">
+        <div class="field" id="signupFieldName">
+          <label>Username</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <input type="text" id="signupName" placeholder="e.g. Kwame Beats" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field" id="signupFieldEmail">
+          <label>Email</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4V6z"/><path d="M4 7l8 6 8-6"/></svg>
+            <input type="email" id="signupEmail" placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="field" id="signupFieldPass">
+          <label>Password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="signupPassword" placeholder="Create a strong password" oninput="onPassInput()">
+            <button type="button" class="eye-btn" onclick="toggleEye('signupPassword',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="strength-wrap">
+          <div class="strength-bars">
+            <div class="strength-bar" id="sb1"></div>
+            <div class="strength-bar" id="sb2"></div>
+            <div class="strength-bar" id="sb3"></div>
+            <div class="strength-bar" id="sb4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+
+        <div class="field" id="signupFieldConfirm">
+          <label>Confirm password</label>
+          <div class="input-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input type="password" id="signupConfirm" placeholder="Re-enter your password" oninput="checkMatch()">
+            <button type="button" class="eye-btn" onclick="toggleEye('signupConfirm',this)">
+              <svg class="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eyeClosed" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a19.7 19.7 0 014.22-5.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 7 11 7a19.7 19.7 0 01-2.68 3.68"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="match-hint" id="matchHint"></div>
+
+        <div class="terms-row">
+          <input type="checkbox" id="agreeCheck" onchange="document.getElementById('signupBtn').disabled=!this.checked">
+          <span>I agree to the <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></span>
+        </div>
+
+        <button class="submit-btn" id="signupBtn" disabled onclick="doSignup()">
+          <span class="btn-text">Create Account</span>
+          <div class="spinner"></div>
+        </button>
+
+        <div class="msg" id="signupMsg"></div>
+        <div class="bottom-link">Already have an account? <a href="#" onclick="switchTab('login');return false;">Login →</a></div>
+      </div>
+
+    </div>
   </div>
+
+</div>
+
+<!-- Floating orb background (Spotify-style ambient collage) -->
+<script>
+  (function(){
+    const layer = document.getElementById('orbLayer');
+    const palette = [
+      'radial-gradient(circle at 35% 30%, #6b5bd1, #241e4a)',
+      'radial-gradient(circle at 35% 30%, #d15b8f, #3a1a2a)',
+      'radial-gradient(circle at 35% 30%, #d19a3a, #3a2a12)',
+      'radial-gradient(circle at 35% 30%, #3ab0a3, #12312d)',
+      'radial-gradient(circle at 35% 30%, #4a7bd1, #16233f)',
+      'radial-gradient(circle at 35% 30%, #a83ad1, #2b1240)'
+    ];
+    const spots = [
+      {top:'6%',  left:'10%', size:78},
+      {top:'4%',  left:'62%', size:60},
+      {top:'14%', left:'82%', size:92},
+      {top:'20%', left:'32%', size:56},
+      {top:'2%',  left:'40%', size:44},
+      {top:'70%', left:'6%',  size:84},
+      {top:'78%', left:'70%', size:70},
+      {top:'86%', left:'40%', size:96},
+      {top:'64%', left:'86%', size:52},
+      {top:'92%', left:'18%', size:50},
+      {top:'46%', left:'4%',  size:46},
+      {top:'50%', left:'92%', size:60}
+    ];
+    spots.forEach((s,i)=>{
+      const o = document.createElement('div');
+      o.className = 'orb';
+      o.style.top = s.top;
+      o.style.left = s.left;
+      o.style.width = s.size+'px';
+      o.style.height = s.size+'px';
+      o.style.background = palette[i % palette.length];
+      o.style.opacity = 0.55;
+      o.style.animationDuration = (10 + (i % 5) * 2) + 's';
+      o.style.animationDelay = (i * 0.4) + 's';
+      layer.appendChild(o);
+    });
+  })();
+</script>
+
+<!-- Screen navigation -->
+<script>
+  function showWelcome(){
+    document.getElementById('screenAuth').classList.remove('active');
+    document.getElementById('screenWelcome').classList.add('active');
+  }
+  function showAuth(tab){
+    document.getElementById('screenWelcome').classList.remove('active');
+    document.getElementById('screenAuth').classList.add('active');
+    switchTab(tab || 'login');
+  }
+  document.getElementById('emailWelcomeBtn').addEventListener('click', ()=> showAuth('login'));
+  document.getElementById('gotoSignup').addEventListener('click', ()=> showAuth('signup'));
+  document.getElementById('authBack').addEventListener('click', showWelcome);
+  document.getElementById('backBtn').addEventListener('click', ()=> history.back());
+  document.getElementById('closeBtn').addEventListener('click', ()=> window.location.href = 'https://www.444musicdistro.com');
+
+  function switchTab(tab){
+    const slider = document.getElementById('toggleSlider');
+    const btnL = document.getElementById('btnLoginTab');
+    const btnS = document.getElementById('btnSignupTab');
+    const panelL = document.getElementById('panelLogin');
+    const panelS = document.getElementById('panelSignup');
+    if (tab === 'login'){
+      slider.classList.remove('right');
+      btnL.className = 'toggle-btn active';
+      btnS.className = 'toggle-btn inactive';
+      panelL.classList.add('active');
+      panelS.classList.remove('active');
+    } else {
+      slider.classList.add('right');
+      btnL.className = 'toggle-btn inactive';
+      btnS.className = 'toggle-btn active';
+      panelS.classList.add('active');
+      panelL.classList.remove('active');
+    }
+  }
+
+  function toggleEye(inputId, btn){
+    const inp = document.getElementById(inputId);
+    const isPass = inp.type === 'password';
+    inp.type = isPass ? 'text' : 'password';
+    btn.querySelector('.eyeOpen').style.display = isPass ? 'none' : 'block';
+    btn.querySelector('.eyeClosed').style.display = isPass ? 'block' : 'none';
+  }
+
+  const levels = [
+    { label:'Too short', cls:'s1' },
+    { label:'Weak',      cls:'s2' },
+    { label:'Fair',      cls:'s3' },
+    { label:'Strong',    cls:'s4' },
+  ];
+  function getStrength(v){
+    let s=0;
+    if(v.length>5) s++;
+    if(v.length>8) s++;
+    if(/[A-Z]/.test(v)&&/[0-9]/.test(v)) s++;
+    if(/[^A-Za-z0-9]/.test(v)) s++;
+    return s;
+  }
+  function onPassInput(){
+    const val = document.getElementById('signupPassword').value;
+    const score = val.length ? getStrength(val) : 0;
+    [1,2,3,4].forEach(i=>{
+      const b = document.getElementById('sb'+i);
+      b.className = 'strength-bar';
+      if (i <= score && score > 0) b.classList.add(levels[score-1].cls);
+    });
+    const lbl = document.getElementById('strengthLabel');
+    lbl.className = 'strength-label' + (score ? ' '+levels[score-1].cls : '');
+    lbl.textContent = val.length ? levels[score-1].label : '';
+    checkMatch();
+  }
+  function checkMatch(){
+    const p = document.getElementById('signupPassword').value;
+    const c = document.getElementById('signupConfirm').value;
+    const h = document.getElementById('matchHint');
+    if (!c) { h.textContent=''; h.className='match-hint'; return; }
+    if (p===c) { h.textContent='Passwords match'; h.className='match-hint ok'; }
+    else       { h.textContent="Passwords don't match"; h.className='match-hint err'; }
+  }
+</script>
+
+<!-- Firebase auth logic -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup,
+    signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  });
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  await setPersistence(auth, browserLocalPersistence).catch(()=>{});
+  const $ = id => document.getElementById(id);
+
+  const REDIRECT_TARGET = 'addplaylist.html';
+
+  function showMsg(id, text, type){
+    const el = $(id); el.textContent = text; el.className = `msg visible ${type}`;
+  }
+  function showWelcomeMsg(text, type){
+    const el = $('welcomeMsg'); el.textContent = text; el.className = `welcome-msg ${type}`;
+  }
+  function clearMsg(id){
+    const el = $(id); el.className = 'msg'; el.textContent = '';
+  }
+  function shake(id){
+    const el = $(id);
+    el.classList.add('shake','has-error');
+    el.addEventListener('animationend', ()=> el.classList.remove('shake'), {once:true});
+  }
+  function setLoad(id, on){
+    const btn = $(id); btn.classList.toggle('loading', on); btn.disabled = on;
+  }
+
+  /* Creates the user/analytics docs the first time someone signs in.
+     Runs in the background after redirecting — a Firestore error can
+     no longer strand the user on this page. */
+  async function ensureUserDocs(user){
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const existing = await getDoc(userRef);
+      if (existing.exists()) return;
+      await setDoc(userRef, {
+        name: user.displayName || 'New Artist',
+        email: user.email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db, 'analytics', user.uid), {
+        totalStreams:0, spotifyStreams:0, appleStreams:0,
+        youtubeStreams:0, tiktokStreams:0,
+        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
+        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+        createdAt: serverTimestamp()
+      });
+    } catch (e){
+      console.error('ensureUserDocs failed (non-blocking):', e);
+    }
+  }
+
+  function goToApp(user){
+    ensureUserDocs(user);
+    window.location.href = REDIRECT_TARGET;
+  }
+
+  /* ===== EMAIL LOGIN ===== */
+  window.doLogin = async () => {
+    clearMsg('loginMsg');
+    const email = $('loginEmail').value.trim();
+    const pass  = $('loginPassword').value;
+    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email.','warn'); return; }
+    if (!pass)  { shake('loginFieldPass');  showMsg('loginMsg','Enter your password.','warn'); return; }
+    setLoad('loginBtn', true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      showMsg('loginMsg','Signing in…','success');
+      setTimeout(()=> goToApp(cred.user), 500);
+    } catch(err){
+      setLoad('loginBtn', false);
+      const c = err.code || '';
+      if (c==='auth/user-not-found' || c==='auth/wrong-password' || c==='auth/invalid-credential'){
+        shake('loginFieldEmail'); shake('loginFieldPass');
+        showMsg('loginMsg','Incorrect email or password.','error');
+      } else if (c==='auth/too-many-requests'){
+        showMsg('loginMsg','Too many attempts. Try again later.','error');
+      } else {
+        showMsg('loginMsg','Something went wrong. Try again.','error');
+      }
+    }
+  };
+
+  /* ===== EMAIL SIGN UP ===== */
+  window.doSignup = async () => {
+    clearMsg('signupMsg');
+    const name    = $('signupName').value.trim();
+    const email   = $('signupEmail').value.trim();
+    const pass    = $('signupPassword').value;
+    const confirm = $('signupConfirm').value;
+    if (name.length < 2)  { shake('signupFieldName');    showMsg('signupMsg','Enter your username.','warn'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shake('signupFieldEmail'); showMsg('signupMsg','Enter a valid email.','warn'); return; }
+    if (pass.length < 6)  { shake('signupFieldPass');    showMsg('signupMsg','Password must be 6+ characters.','warn'); return; }
+    if (pass !== confirm) { shake('signupFieldConfirm'); showMsg('signupMsg','Passwords do not match.','error'); return; }
+    setLoad('signupBtn', true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const uid  = cred.user.uid;
+      await setDoc(doc(db,'users',uid), {
+        name, email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db,'analytics',uid), {
+        totalStreams:0, spotifyStreams:0, appleStreams:0,
+        youtubeStreams:0, tiktokStreams:0,
+        topCountry1:'US', topCountry2:'UK', topCountry3:'GH',
+        monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
+        createdAt: serverTimestamp()
+      });
+      showMsg('signupMsg','Account created. Welcome to 444Music.','success');
+      setTimeout(()=> goToApp(cred.user), 1200);
+    } catch(err){
+      setLoad('signupBtn', false);
+      const m = {
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/invalid-email':         'Invalid email address.',
+        'auth/weak-password':         'Choose a stronger password (min 6 chars).',
+        'auth/network-request-failed':'Network error. Check your connection.',
+      };
+      showMsg('signupMsg', m[err.code] || err.message, 'error');
+    }
+  };
+
+  /* ===== FORGOT PASSWORD ===== */
+  $('forgotPass').addEventListener('click', async e => {
+    e.preventDefault();
+    const email = $('loginEmail').value.trim();
+    if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email first.','warn'); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showMsg('loginMsg','Reset link sent — check your inbox.','success');
+    } catch(err){ showMsg('loginMsg', err.message, 'error'); }
+  });
+
+  /* ===== GOOGLE SIGN-IN (welcome screen) =====
+     Popups work fine on desktop and modern mobile browsers. Only genuine
+     in-app webviews (Instagram/WhatsApp/TikTok/etc.) block popups outright
+     and Google refuses OAuth inside them regardless — so popup everywhere
+     else, redirect as the fallback. */
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  function isInAppWebview(){
+    const ua = navigator.userAgent || navigator.vendor || '';
+    return /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Twitter|GSA\/|WhatsApp/i.test(ua);
+  }
+
+  $('googleWelcomeBtn').addEventListener('click', async () => {
+    const btn = $('googleWelcomeBtn');
+    btn.disabled = true;
+
+    if (isInAppWebview()){
+      $('googleBtnText').textContent = 'Redirecting…';
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (err){
+        btn.disabled = false;
+        $('googleBtnText').textContent = 'Continue with Google';
+        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+      }
+      return;
+    }
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      goToApp(result.user);
+    } catch (err){
+      btn.disabled = false;
+      $('googleBtnText').textContent = 'Continue with Google';
+      if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request'){
+        try {
+          $('googleBtnText').textContent = 'Redirecting…';
+          await signInWithRedirect(auth, provider);
+        } catch (e2){
+          showWelcomeMsg(`Google sign-in failed: ${e2.code || e2.message}`, 'error');
+        }
+      } else {
+        showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+      }
+    }
+  });
+
+  /* Catch the result when the page reloads after a redirect sign-in */
+  getRedirectResult(auth).then((result) => {
+    if (result && result.user){
+      showWelcomeMsg('Signing in…', 'success');
+      goToApp(result.user);
+    }
+  }).catch((err) => {
+    if (err && err.code && err.code !== 'auth/no-current-user'){
+      showWelcomeMsg(`Google sign-in failed: ${err.code || err.message}`, 'error');
+    }
+  });
+</script>
 
 </body>
 </html>
