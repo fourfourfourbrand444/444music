@@ -231,6 +231,61 @@ option { background: #171725; color: var(--text-primary); }
 
 .field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
+/* RADIO PILLS (NEW) */
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 18px;
+  font-family: var(--font-body); font-size: 0.86rem; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer;
+  transition: all var(--t); appearance: none;
+}
+.radio-pill::before {
+  content: ''; width: 15px; height: 15px; border-radius: 50%;
+  border: 1.5px solid var(--text-muted); flex-shrink: 0;
+  transition: all var(--t); position: relative;
+}
+.radio-pill:hover { border-color: var(--border-accent); background: var(--bg-input-focus); }
+.radio-pill.selected {
+  background: rgba(160,100,255,0.1); border-color: var(--accent);
+  color: var(--accent-bright);
+}
+.radio-pill.selected::before {
+  border-color: var(--accent); background: var(--accent);
+  box-shadow: inset 0 0 0 3px var(--bg-input);
+}
+
+/* OWNERSHIP AGREEMENT (NEW) */
+.agreement-box {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px;
+  margin-top: 28px; cursor: pointer; transition: border-color var(--t), background var(--t);
+}
+.agreement-box:hover { border-color: var(--border-accent); }
+.agreement-box.checked { border-color: rgba(160,100,255,0.4); background: rgba(160,100,255,0.04); }
+.agreement-checkbox {
+  width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+  border: 1.5px solid var(--text-muted); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--t);
+}
+.agreement-checkbox.checked {
+  background: linear-gradient(135deg, #9b5de5 0%, #7c3aed 100%);
+  border-color: transparent;
+}
+.agreement-checkbox svg { width: 12px; height: 12px; color: #fff; opacity: 0; transition: opacity var(--t); }
+.agreement-checkbox.checked svg { opacity: 1; }
+.agreement-text { flex: 1; }
+.agreement-title {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.agreement-text p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
+
 /* ARTIST PILL FIELD */
 .artist-field { position: relative; }
 .artist-pill-box {
@@ -712,6 +767,54 @@ option { background: #171725; color: var(--text-primary); }
       </div>
     </div>
 
+    <!-- SONG DETAILS & OWNERSHIP (NEW) -->
+    <div class="section-head">
+      <div class="section-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div class="section-title-wrap">
+        <div class="section-title">Song Details &amp; Ownership</div>
+        <div class="section-desc">Version, prior release status, and rights</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Version <div class="required-dot"></div></label>
+        <div class="select-wrap">
+          <select id="version" required>
+            <option value="">Select version…</option>
+            <option>Original</option>
+            <option>Radio Edit</option>
+            <option>Extended Mix</option>
+            <option>Remix</option>
+            <option>Acoustic</option>
+            <option>Live</option>
+            <option>Instrumental</option>
+            <option>Remastered</option>
+            <option>Cover</option>
+            <option>Sped Up</option>
+            <option>Slowed</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Vocals or Instrumental</label>
+        <div class="radio-group" id="vocalTypeGroup" data-value="Vocals">
+          <button type="button" class="radio-pill selected" data-value="Vocals">Vocals</button>
+          <button type="button" class="radio-pill" data-value="Instrumental">Instrumental</button>
+        </div>
+      </div>
+      <div class="field col-full">
+        <label>Has this song been released before? <div class="required-dot"></div></label>
+        <div class="radio-group" id="previouslyReleasedGroup" data-value="No">
+          <button type="button" class="radio-pill selected" data-value="No">No</button>
+          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
+        </div>
+      </div>
+    </div>
+
     <!-- LABEL & RIGHTS -->
     <div class="section-head">
       <div class="section-icon">
@@ -879,6 +982,17 @@ option { background: #171725; color: var(--text-primary); }
       </div>
     </div>
 
+    <!-- OWNERSHIP AGREEMENT (NEW) -->
+    <div class="agreement-box" id="agreementBox">
+      <div class="agreement-checkbox" id="agreementCheckbox">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="agreement-text">
+        <div class="agreement-title">Ownership Agreement <div class="required-dot"></div></div>
+        <p>I confirm that this is an original song that I own, or that I hold full legal rights to distribute, and that it does not infringe on any third-party copyrights.</p>
+      </div>
+    </div>
+
     <!-- SUBMIT -->
     <div class="form-actions">
       <button class="submit-btn" id="submitBtn" type="submit">
@@ -946,6 +1060,39 @@ option { background: #171725; color: var(--text-primary); }
 
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<!-- RADIO GROUP ENGINE (NEW) -->
+<script>
+(function(){
+  document.querySelectorAll('.radio-group').forEach(function(group){
+    group.addEventListener('click', function(e){
+      const btn = e.target.closest('.radio-pill');
+      if (!btn) return;
+      group.querySelectorAll('.radio-pill').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      group.dataset.value = btn.dataset.value;
+    });
+  });
+  window.getRadioValue = function(id) {
+    const el = document.getElementById(id);
+    return el ? el.dataset.value : '';
+  };
+})();
+</script>
+
+<!-- OWNERSHIP AGREEMENT ENGINE (NEW) -->
+<script>
+(function(){
+  window.ownershipConfirmed = false;
+  const agreementBox      = document.getElementById('agreementBox');
+  const agreementCheckbox  = document.getElementById('agreementCheckbox');
+  agreementBox.addEventListener('click', function(){
+    window.ownershipConfirmed = !window.ownershipConfirmed;
+    agreementCheckbox.classList.toggle('checked', window.ownershipConfirmed);
+    agreementBox.classList.toggle('checked', window.ownershipConfirmed);
+  });
+})();
+</script>
 
 <!-- CREDITS ENGINE -->
 <script>
@@ -1362,6 +1509,13 @@ async function sendEmails(data) {
     isrc:           data.isrc           || 'Not provided',
     upc:            data.upc            || 'Auto-assign',
     catalog_number: data.catalogNumber  || 'Not provided',
+    // NEW — song details / ownership fields
+    version:              data.version,
+    previously_released:  data.previouslyReleased,
+    vocal_type:           data.vocalType,
+    ownership_confirmed:  data.ownershipConfirmed
+      ? 'Yes — confirmed original work'
+      : 'Not confirmed',
     producers:      fmt(data.credits?.producer),
     musicians:      fmt(data.credits?.musician),
     songwriters:    fmt(data.credits?.writer),
@@ -1408,6 +1562,21 @@ form.addEventListener("submit", async e => {
     resetBtn(); return;
   }
 
+  /* ── Validation: version (NEW) ── */
+  const version = document.getElementById("version").value;
+  if (!version) {
+    showError("⚠ Please select a version for this track.");
+    document.getElementById('version').scrollIntoView({ behavior:'smooth', block:'center' });
+    resetBtn(); return;
+  }
+
+  /* ── Validation: ownership agreement (NEW) ── */
+  if (!window.ownershipConfirmed) {
+    showError("⚠ Please confirm the ownership agreement before submitting.");
+    document.getElementById('agreementBox').scrollIntoView({ behavior:'smooth', block:'center' });
+    resetBtn(); return;
+  }
+
   /* ── Validation: at least one writer ── */
   const writerEntries = (credits['writer'] || []).filter(c => c.name && c.name.trim() !== '');
   if (writerEntries.length === 0) {
@@ -1451,6 +1620,11 @@ form.addEventListener("submit", async e => {
     isrc:          document.getElementById("isrc").value.trim(),
     upc:           document.getElementById("upc").value.trim(),
     catalogNumber: document.getElementById("catalogNumber").value.trim(),
+    // NEW — song details / ownership
+    version:              version,
+    previouslyReleased:   window.getRadioValue('previouslyReleasedGroup'),
+    vocalType:            window.getRadioValue('vocalTypeGroup'),
+    ownershipConfirmed:   window.ownershipConfirmed,
     credits:       creditsData,
     userId:        currentUser.uid,
     createdAt:     Date.now(),
