@@ -1058,9 +1058,6 @@ option { background: #171725; color: var(--text-primary); }
   </div>
 </div>
 
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
 <!-- RADIO GROUP ENGINE (NEW) -->
 <script>
 (function(){
@@ -1461,7 +1458,7 @@ window.collectCredits = function() {
 })();
 </script>
 
-<!-- FIREBASE + EMAILJS -->
+<!-- FIREBASE + OWN BACKEND NOTIFY -->
 <script type="module">
 import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged }       from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -1479,7 +1476,10 @@ const firebaseConfig = {
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-emailjs.init("mwAZ_hDxmnBqkrTfA");
+
+// ── Own backend notification endpoint (replaces EmailJS) ────────────────
+const NOTIFY_URL   = "https://444music-backend.bonto.run/api/submissions/notify";
+const NOTIFY_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
 
 let currentUser = null;
 onAuthStateChanged(auth, user => {
@@ -1493,6 +1493,7 @@ const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 async function sendEmails(data) {
   const fmt    = window.formatCreditsForEmail;
   const params = {
+    email:          data.email,
     artist_name:    data.artistName,
     featuring:      data.featuring      || 'None',
     release_title:  data.releaseTitle,
@@ -1503,7 +1504,6 @@ async function sendEmails(data) {
     explicit:       data.explicit,
     country:        data.country,
     phone:          data.phone          || 'Not provided',
-    email:          data.email,
     label:          data.label          || 'Independent',
     copyright:      data.copyright      || 'Not provided',
     isrc:           data.isrc           || 'Not provided',
@@ -1524,8 +1524,20 @@ async function sendEmails(data) {
     submitted_at:   new Date(data.createdAt).toLocaleString(),
     status:         data.status
   };
-  await emailjs.send("service_ydy0muo", "template_i6qh7ew", params);
-  await emailjs.send("service_ydy0muo", "template_m8g8n9q", params);
+
+  const res = await fetch(NOTIFY_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-app-secret": NOTIFY_SECRET
+    },
+    body: JSON.stringify(params)
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Notify request failed (${res.status}): ${text}`);
+  }
 }
 
 const form      = document.getElementById("releaseForm");
