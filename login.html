@@ -689,8 +689,20 @@
         monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
         createdAt: serverTimestamp()
       });
-      showMsg('signupMsg','Account created! Welcome to 444Music 🎵','success');
-      setTimeout(() => window.location.href = 'loading.html', 1500);
+     // Fire the verification code email — best-effort, doesn't block
+      // navigation if it fails (verify page offers a resend option).
+      fetch('https://444music-backend.bonto.run/api/verification/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid, email, name })
+      }).catch(() => {});
+
+      sessionStorage.setItem('pendingVerifyUid', uid);
+      sessionStorage.setItem('pendingVerifyEmail', email);
+      sessionStorage.setItem('pendingVerifyName', name);
+
+      showMsg('signupMsg','Account created. Check your email for a code.','success');
+      setTimeout(() => window.location.href = 'verify-code.html', 1200);
     } catch(err) {
       setLoad('signupBtn', false);
       const m = {
