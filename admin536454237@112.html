@@ -290,6 +290,100 @@ option { background: #13132a; }
 .refresh-btn:hover { background: rgba(162,120,245,0.2); border-color: rgba(162,120,245,0.4); }
 .refresh-btn.spinning svg { animation: spin 0.7s linear infinite; }
 
+.export-btn {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-sec);
+  font-family: var(--ff-head);
+  font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 11px 18px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  transition: all var(--trans);
+}
+.export-btn:hover { border-color: var(--border-md); color: var(--text); }
+
+.select-mode-btn {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-sec);
+  font-family: var(--ff-head);
+  font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 11px 18px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  transition: all var(--trans);
+}
+.select-mode-btn.active {
+  background: var(--purple-dim);
+  border-color: var(--border-md);
+  color: var(--purple-soft);
+}
+
+/* SELECT CHECKBOX ON CARD */
+.card-select-box {
+  display: none;
+  position: absolute; top: 16px; right: 16px;
+  width: 22px; height: 22px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border-md);
+  background: var(--input-bg);
+  cursor: pointer;
+  align-items: center; justify-content: center;
+  z-index: 2;
+  transition: all var(--trans);
+}
+body.select-mode .card-select-box { display: flex; }
+.card-select-box.checked {
+  background: var(--purple);
+  border-color: var(--purple);
+}
+.card-select-box svg { opacity: 0; transition: opacity 0.15s; color: #0a0a0a; }
+.card-select-box.checked svg { opacity: 1; }
+body.select-mode .card { cursor: pointer; }
+.card.selected { border-color: var(--border-md); box-shadow: 0 0 0 2px rgba(162,120,245,0.25); }
+
+/* BULK ACTION BAR */
+.bulk-bar {
+  position: fixed; left: 50%; bottom: 24px; z-index: 500;
+  transform: translateX(-50%) translateY(120%);
+  background: #0f0f20;
+  border: 1px solid var(--border-md);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  transition: transform 0.25s cubic-bezier(0.34,1.3,0.64,1);
+  max-width: calc(100vw - 32px);
+}
+.bulk-bar.visible { transform: translateX(-50%) translateY(0); }
+.bulk-count {
+  font-size: 0.8rem; color: var(--text); font-weight: 600;
+  padding: 0 10px; white-space: nowrap;
+}
+.bulk-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-md);
+  border-radius: 10px;
+  color: var(--text-sec);
+  font-family: var(--ff-head); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: all var(--trans);
+  white-space: nowrap;
+}
+.bulk-btn:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+.bulk-btn.danger { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
+.bulk-btn.danger:hover { background: rgba(248,113,113,0.2); }
+.bulk-btn.good { background: rgba(52,211,153,0.1); color: #34d399; border-color: rgba(52,211,153,0.25); }
+.bulk-btn.good:hover { background: rgba(52,211,153,0.2); }
+.bulk-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* COUNT BAR */
 .count-bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -619,6 +713,9 @@ option { background: #13132a; }
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="nav-menu-dropdown" id="navMenuDropdown">
+      <a class="nav-menu-item" href="duplicate-cleanup.html">
+        <span class="dot"></span> Duplicate Cleanup
+      </a>
       <a class="nav-menu-item active" href="adminpage.html">
         <span class="dot"></span> Submissions Portal
       </a>
@@ -688,6 +785,23 @@ option { background: #13132a; }
       <option value="unpaid">Unpaid</option>
     </select>
 
+    <select class="filter-select" id="sortSelect">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="name-az">Name A–Z</option>
+      <option value="name-za">Name Z–A</option>
+    </select>
+
+    <button class="select-mode-btn" id="selectModeBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Select
+    </button>
+
+    <button class="export-btn" id="exportBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+
     <button class="refresh-btn" id="refreshBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
       Refresh
@@ -706,6 +820,15 @@ option { background: #13132a; }
     </div>
   </div>
 
+</div>
+
+<div class="bulk-bar" id="bulkBar">
+  <span class="bulk-count" id="bulkCount">0 selected</span>
+  <button class="bulk-btn good" id="bulkApprove">✓ Approve</button>
+  <button class="bulk-btn" id="bulkReject">✗ Reject</button>
+  <button class="bulk-btn good" id="bulkMarkPaid">💳 Mark Paid</button>
+  <button class="bulk-btn danger" id="bulkDelete">🗑️ Delete</button>
+  <button class="bulk-btn" id="bulkClear">Clear</button>
 </div>
 
 <div id="toast-container"></div>
@@ -818,6 +941,16 @@ const resultsEl       = document.getElementById("results");
 const searchEl        = document.getElementById("search");
 const statusFilterEl  = document.getElementById("statusFilter");
 const paymentFilterEl = document.getElementById("paymentFilter");
+const sortSelectEl    = document.getElementById("sortSelect");
+const selectModeBtn   = document.getElementById("selectModeBtn");
+const exportBtn       = document.getElementById("exportBtn");
+const bulkBar         = document.getElementById("bulkBar");
+const bulkCountEl     = document.getElementById("bulkCount");
+const bulkApproveBtn  = document.getElementById("bulkApprove");
+const bulkRejectBtn   = document.getElementById("bulkReject");
+const bulkMarkPaidBtn = document.getElementById("bulkMarkPaid");
+const bulkDeleteBtn   = document.getElementById("bulkDelete");
+const bulkClearBtn    = document.getElementById("bulkClear");
 const refreshBtn      = document.getElementById("refreshBtn");
 const confirmOverlay  = document.getElementById("confirmOverlay");
 const confirmMsg      = document.getElementById("confirmMsg");
@@ -829,11 +962,13 @@ const offlineBanner   = document.getElementById("offlineBanner");
 const lastSyncEl      = document.getElementById("lastSync");
 
 let submissions   = [];
-let pendingDelete = null;
+let pendingDelete = null; // string id, or array of ids for bulk delete
 let unsubscribe   = null;
 let retryCount    = 0;
 let retryTimer    = null;
 const MAX_RETRIES = 8;
+let selectMode    = false;
+let selectedIds   = new Set();
 
 /* ─── CONNECTION STATUS ──────────────────── */
 function setConnStatus(state) {
@@ -966,6 +1101,18 @@ function applyFilters() {
     return matchQ && matchS && matchP;
   });
 
+  const sortMode = sortSelectEl.value;
+  filtered.sort((a, b) => {
+    if (sortMode === 'name-az' || sortMode === 'name-za') {
+      const an = (a.artistName || '').toLowerCase();
+      const bn = (b.artistName || '').toLowerCase();
+      return sortMode === 'name-az' ? an.localeCompare(bn) : bn.localeCompare(an);
+    }
+    const ta = a.createdAt instanceof Object && a.createdAt.seconds ? a.createdAt.seconds * 1000 : (a.createdAt || 0);
+    const tb = b.createdAt instanceof Object && b.createdAt.seconds ? b.createdAt.seconds * 1000 : (b.createdAt || 0);
+    return sortMode === 'oldest' ? ta - tb : tb - ta;
+  });
+
   document.getElementById("countShown").textContent = filtered.length;
   document.getElementById("countTotal").textContent = submissions.length;
   display(filtered);
@@ -1012,7 +1159,10 @@ function display(data) {
 
     const card = document.createElement("div");
     card.className = "card";
+    card.dataset.id = item.id;
     card.style.animationDelay = `${Math.min(idx * 0.04, 0.4)}s`;
+    card.style.position = "relative";
+    if (selectedIds.has(item.id)) card.classList.add("selected");
 
     const fileUrl = item.fileUrl || item.audioUrl || item.downloadUrl || '';
     const fileLinkHtml = fileUrl
@@ -1042,6 +1192,9 @@ function display(data) {
       : '';
 
     card.innerHTML = `
+      <div class="card-select-box ${selectedIds.has(item.id) ? 'checked' : ''}" data-select-id="${item.id}">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
       <div class="card-top">
         <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
           <div class="artist-avatar">${escHtml(initial)}</div>
@@ -1238,6 +1391,28 @@ function display(data) {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
     });
 
+    /* ── SELECT (bulk mode) ── */
+    const selectBox = card.querySelector('.card-select-box');
+    function toggleSelect() {
+      if (selectedIds.has(item.id)) {
+        selectedIds.delete(item.id);
+        selectBox.classList.remove('checked');
+        card.classList.remove('selected');
+      } else {
+        selectedIds.add(item.id);
+        selectBox.classList.add('checked');
+        card.classList.add('selected');
+      }
+      updateBulkBar();
+    }
+    selectBox.addEventListener('click', (e) => { e.stopPropagation(); toggleSelect(); });
+    card.addEventListener('click', (e) => {
+      if (!selectMode) return;
+      // Don't hijack clicks on interactive controls within the card
+      if (e.target.closest('select, button, a')) return;
+      toggleSelect();
+    });
+
     resultsEl.appendChild(card);
   });
 }
@@ -1253,10 +1428,14 @@ async function safeUpdate(id, data) {
   }
 }
 
-/* ─── DELETE FLOW ────────────────────────── */
-function openConfirm(id, name, title) {
-  pendingDelete = id;
-  confirmMsg.innerHTML = `Permanently delete the submission for <strong style="color:#f0eff2;">${escHtml(name)}</strong> — <em>${escHtml(title)}</em>.<br><br>This cannot be undone.`;
+/* ─── DELETE FLOW (supports single id or array of ids) ────── */
+function openConfirm(idOrIds, name, title) {
+  pendingDelete = idOrIds;
+  if (Array.isArray(idOrIds)) {
+    confirmMsg.innerHTML = `Permanently delete <strong style="color:#f0eff2;">${idOrIds.length} submissions</strong>.<br><br>This cannot be undone.`;
+  } else {
+    confirmMsg.innerHTML = `Permanently delete the submission for <strong style="color:#f0eff2;">${escHtml(name)}</strong> — <em>${escHtml(title)}</em>.<br><br>This cannot be undone.`;
+  }
   confirmOverlay.style.display = 'flex';
   confirmOverlay.classList.remove('hide');
 }
@@ -1270,28 +1449,37 @@ function closeConfirm() {
   }, 200);
 }
 
+async function deleteOneSubmission(id) {
+  await deleteDoc(doc(db, "submissions", id));
+  try {
+    const existing = await getDocs(
+      query(collection(db, "payments"), where("submissionId", "==", id))
+    );
+    for (const d of existing.docs) {
+      await deleteDoc(doc(db, "payments", d.id));
+    }
+  } catch (e) {
+    console.error('Failed to clean up payment record on delete:', e);
+  }
+}
+
 confirmYes.addEventListener('click', async () => {
   if (!pendingDelete) return;
   confirmYes.textContent = 'Deleting…';
   confirmYes.disabled    = true;
   try {
-    await deleteDoc(doc(db, "submissions", pendingDelete));
-
-    // Also clean up any matching payments doc so deleted submissions
-    // don't leave orphaned revenue behind in analytics.
-    try {
-      const existing = await getDocs(
-        query(collection(db, "payments"), where("submissionId", "==", pendingDelete))
-      );
-      for (const d of existing.docs) {
-        await deleteDoc(doc(db, "payments", d.id));
+    if (Array.isArray(pendingDelete)) {
+      for (const id of pendingDelete) {
+        await deleteOneSubmission(id);
       }
-    } catch (e) {
-      console.error('Failed to clean up payment record on delete:', e);
+      selectedIds.clear();
+      updateBulkBar();
+      toast('🗑️', `${pendingDelete.length} submissions deleted`);
+    } else {
+      await deleteOneSubmission(pendingDelete);
+      toast('🗑️', 'Submission deleted');
     }
-
     closeConfirm();
-    toast('🗑️', 'Submission deleted');
   } catch(e) {
     toast('❌', 'Delete failed: ' + e.message);
     closeConfirm();
@@ -1345,6 +1533,123 @@ document.addEventListener('click', (e) => {
 searchEl.addEventListener('input', applyFilters);
 statusFilterEl.addEventListener('change', applyFilters);
 paymentFilterEl.addEventListener('change', applyFilters);
+sortSelectEl.addEventListener('change', applyFilters);
+
+/* ─── SELECT MODE ────────────────────────── */
+selectModeBtn.addEventListener('click', () => {
+  selectMode = !selectMode;
+  document.body.classList.toggle('select-mode', selectMode);
+  selectModeBtn.classList.toggle('active', selectMode);
+  if (!selectMode) {
+    selectedIds.clear();
+    updateBulkBar();
+  }
+});
+
+function updateBulkBar() {
+  const n = selectedIds.size;
+  bulkCountEl.textContent = `${n} selected`;
+  bulkBar.classList.toggle('visible', selectMode && n > 0);
+  [bulkApproveBtn, bulkRejectBtn, bulkMarkPaidBtn, bulkDeleteBtn].forEach(b => b.disabled = n === 0);
+}
+
+bulkClearBtn.addEventListener('click', () => {
+  selectedIds.clear();
+  document.querySelectorAll('.card-select-box.checked').forEach(b => b.classList.remove('checked'));
+  document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
+  updateBulkBar();
+});
+
+async function bulkUpdateStatus(newStatus) {
+  const ids = Array.from(selectedIds);
+  toast('⏳', `Updating ${ids.length} submissions…`);
+  for (const id of ids) {
+    await safeUpdate(id, { status: newStatus });
+  }
+  toast('✅', `${ids.length} submissions → "${newStatus}"`);
+  selectedIds.clear();
+  updateBulkBar();
+  setTimeout(() => startListener(), 500);
+}
+
+bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('Approved'));
+bulkRejectBtn.addEventListener('click', () => bulkUpdateStatus('rejected'));
+
+bulkMarkPaidBtn.addEventListener('click', async () => {
+  const ids = Array.from(selectedIds);
+  toast('⏳', `Marking ${ids.length} as paid…`);
+  for (const id of ids) {
+    await safeUpdate(id, { paymentVerified: true, paidAt: serverTimestamp() });
+    try {
+      const existing = await getDocs(query(collection(db, "payments"), where("submissionId", "==", id)));
+      if (existing.empty) {
+        await addDoc(collection(db, "payments"), {
+          submissionId: id, amount: PAYMENT_AMOUNT, currency: 'GHS',
+          status: 'paid', createdAt: serverTimestamp()
+        });
+      }
+    } catch (e) { console.error('Bulk payment sync failed:', e); }
+  }
+  toast('💳', `${ids.length} submissions marked Paid`);
+  selectedIds.clear();
+  updateBulkBar();
+  setTimeout(() => startListener(), 500);
+});
+
+bulkDeleteBtn.addEventListener('click', () => {
+  if (selectedIds.size === 0) return;
+  openConfirm(Array.from(selectedIds));
+});
+
+/* ─── CSV EXPORT ─────────────────────────── */
+function toCsvValue(v) {
+  const s = String(v ?? '');
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+exportBtn.addEventListener('click', () => {
+  const rows = [
+    ['Artist', 'Title', 'Email', 'Phone', 'Status', 'Paid', 'UPC', 'Genre', 'Country', 'Submitted']
+  ];
+  submissions.forEach(item => {
+    let date = '';
+    if (item.createdAt) {
+      const ts = item.createdAt instanceof Object && item.createdAt.seconds
+        ? new Date(item.createdAt.seconds * 1000) : new Date(item.createdAt);
+      if (!isNaN(ts)) date = ts.toISOString().slice(0, 10);
+    }
+    rows.push([
+      item.artistName || '', item.releaseTitle || item.songTitle || item.title || '',
+      item.email || '', item.phone || '', item.status || 'Pending',
+      item.paymentVerified ? 'Paid' : 'Unpaid', item.upc || '',
+      item.genre || '', item.country || '', date
+    ]);
+  });
+  const csv = rows.map(r => r.map(toCsvValue).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `444music-submissions-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('📄', `Exported ${submissions.length} submissions`);
+});
+
+/* ─── KEYBOARD SHORTCUT: "/" focuses search ── */
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchEl && !e.metaKey && !e.ctrlKey) {
+    const tag = document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    e.preventDefault();
+    searchEl.focus();
+  }
+  if (e.key === 'Escape' && selectMode) {
+    selectModeBtn.click();
+  }
+});
 
 /* ─── START ──────────────────────────────── */
 startListener();
