@@ -384,6 +384,43 @@ body.select-mode .card { cursor: pointer; }
 .bulk-btn.good:hover { background: rgba(52,211,153,0.2); }
 .bulk-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* PAGINATION */
+.pagination-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin-top: 28px; flex-wrap: wrap;
+}
+.page-btn {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-sec);
+  font-family: var(--ff-head); font-size: 0.8rem; font-weight: 700;
+  min-width: 36px; height: 36px;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: all var(--trans);
+  display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--border-md); color: var(--text); }
+.page-btn.active {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #0a0a0a;
+}
+.page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.page-ellipsis { color: var(--text-mut); font-size: 0.8rem; padding: 0 4px; }
+.page-size-select {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-sec);
+  font-family: var(--ff-body);
+  font-size: 0.78rem;
+  padding: 8px 10px;
+  outline: none; cursor: pointer;
+  margin-left: 6px;
+}
+
 /* COUNT BAR */
 .count-bar {
   display: flex; align-items: center; justify-content: space-between;
@@ -820,6 +857,8 @@ option { background: #13132a; }
     </div>
   </div>
 
+  <div class="pagination-bar" id="paginationBar" style="display:none;"></div>
+
 </div>
 
 <div class="bulk-bar" id="bulkBar">
@@ -969,6 +1008,9 @@ let retryTimer    = null;
 const MAX_RETRIES = 8;
 let selectMode    = false;
 let selectedIds   = new Set();
+let currentPage   = 1;
+let pageSize      = 24;
+const paginationBar = document.getElementById('paginationBar');
 
 /* ─── CONNECTION STATUS ──────────────────── */
 function setConnStatus(state) {
@@ -1115,7 +1157,68 @@ function applyFilters() {
 
   document.getElementById("countShown").textContent = filtered.length;
   document.getElementById("countTotal").textContent = submissions.length;
-  display(filtered);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const start = (currentPage - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+
+  display(pageItems);
+  renderPagination(filtered.length, totalPages);
+}
+
+function goToPage(p) {
+  currentPage = p;
+  applyFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPagination(totalItems, totalPages) {
+  if (totalItems === 0 || totalPages <= 1) {
+    paginationBar.style.display = 'none';
+    paginationBar.innerHTML = '';
+    return;
+  }
+  paginationBar.style.display = 'flex';
+
+  const start = (currentPage - 1) * pageSize + 1;
+  const end = Math.min(currentPage * pageSize, totalItems);
+
+  let html = `<button class="page-btn" id="pgPrev" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) pages.push(i);
+    else if (pages[pages.length - 1] !== '…') pages.push('…');
+  }
+  pages.forEach(p => {
+    if (p === '…') html += `<span class="page-ellipsis">…</span>`;
+    else html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`;
+  });
+
+  html += `<button class="page-btn" id="pgNext" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+  html += `<select class="page-size-select" id="pageSizeSelect">
+             <option value="12" ${pageSize===12?'selected':''}>12 / page</option>
+             <option value="24" ${pageSize===24?'selected':''}>24 / page</option>
+             <option value="48" ${pageSize===48?'selected':''}>48 / page</option>
+             <option value="96" ${pageSize===96?'selected':''}>96 / page</option>
+           </select>`;
+  html += `<span class="page-ellipsis" style="margin-left:6px;">Showing ${start}–${end} of ${totalItems}</span>`;
+
+  paginationBar.innerHTML = html;
+
+  paginationBar.querySelectorAll('[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => goToPage(Number(btn.dataset.page)));
+  });
+  document.getElementById('pgPrev')?.addEventListener('click', () => goToPage(currentPage - 1));
+  document.getElementById('pgNext')?.addEventListener('click', () => goToPage(currentPage + 1));
+  document.getElementById('pageSizeSelect')?.addEventListener('change', (e) => {
+    pageSize = Number(e.target.value);
+    currentPage = 1;
+    applyFilters();
+  });
 }
 
 /* ─── DISPLAY ────────────────────────────── */
@@ -1530,10 +1633,11 @@ document.addEventListener('click', (e) => {
 });
 
 /* ─── EVENTS ─────────────────────────────── */
-searchEl.addEventListener('input', applyFilters);
-statusFilterEl.addEventListener('change', applyFilters);
-paymentFilterEl.addEventListener('change', applyFilters);
-sortSelectEl.addEventListener('change', applyFilters);
+function resetPageAndApply() { currentPage = 1; applyFilters(); }
+searchEl.addEventListener('input', resetPageAndApply);
+statusFilterEl.addEventListener('change', resetPageAndApply);
+paymentFilterEl.addEventListener('change', resetPageAndApply);
+sortSelectEl.addEventListener('change', resetPageAndApply);
 
 /* ─── SELECT MODE ────────────────────────── */
 selectModeBtn.addEventListener('click', () => {
