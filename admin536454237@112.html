@@ -811,9 +811,9 @@ option { background: #13132a; }
     <select class="filter-select" id="statusFilter">
       <option value="">All Statuses</option>
       <option value="Pending">Pending</option>
-      <option value="review">Review</option>
+      <option value="Review">Review</option>
       <option value="Approved">Approved</option>
-      <option value="rejected">Rejected</option>
+      <option value="Rejected">Rejected</option>
     </select>
 
     <select class="filter-select" id="paymentFilter">
@@ -921,7 +921,26 @@ const EJS_SERVICE  = "service_4tj52zt";
 const EJS_TEMPLATE = "template_nyt4wdr";
 // Public key already initialized above via emailjs.init()
 
-const PAYMENT_AMOUNT = 30; // GHS, fixed per submission marked Paid
+const PAYMENT_AMOUNT = 30; // GHS — legacy flat amount used only by this
+                            // admin page's manual "Mark Paid" system. Real
+                            // Paystack payments carry their own amount and
+                            // never touch this constant.
+
+/* ─── PAYMENT SYNC HELPER ────────────────────────────────────────────
+   Two systems can mark a submission "paid":
+     1. The Paystack flow in the app — writes a string field `paid`
+        ('Paid' / 'Unpaid') directly on the submission document.
+     2. This admin page's own manual toggle — historically wrote only
+        the boolean `paymentVerified`.
+   Previously these were never cross-checked, so a submission paid
+   through Paystack showed up here as "Unpaid" until someone noticed
+   and fixed it by hand. This helper checks BOTH fields, and every
+   write path below now sets BOTH fields together, so old data and
+   new data are read the same way and can't drift apart again.
+   ─────────────────────────────────────────────────────────────────── */
+function isSubmissionPaid(item) {
+  return item.paymentVerified === true || item.paid === 'Paid';
+}
 
 /* ─── UPC GENERATOR ─────────────────────── */
 function generateUPC() {
@@ -1119,7 +1138,7 @@ refreshBtn.addEventListener('click', () => {
 /* ─── STATS ──────────────────────────────── */
 function updateStats() {
   document.getElementById("statTotal").textContent   = submissions.length;
-  document.getElementById("statPaid").textContent    = submissions.filter(s => s.paymentVerified).length;
+  document.getElementById("statPaid").textContent    = submissions.filter(isSubmissionPaid).length;
   document.getElementById("statPending").textContent = submissions.filter(s =>
     (s.status || "Pending").toLowerCase() === "pending").length;
 }
@@ -1136,10 +1155,14 @@ function applyFilters() {
     const email = (item.email || "").toLowerCase();
     const phone = (item.phone || "").toLowerCase();
     const matchQ = !q || name.includes(q) || title.includes(q) || email.includes(q) || phone.includes(q);
-    const matchS = !sFilter || (item.status || "Pending") === sFilter;
+    // Case-insensitive: old data may have been saved as lowercase
+    // ('rejected', 'review') while the app writes capitalized values
+    // ('Rejected', 'Review'). Comparing lowercase-to-lowercase means
+    // both eras of data filter correctly without needing a migration.
+    const matchS = !sFilter || (item.status || "Pending").toLowerCase() === sFilter.toLowerCase();
     const matchP = !pFilter ||
-      (pFilter === "paid"   &&  item.paymentVerified) ||
-      (pFilter === "unpaid" && !item.paymentVerified);
+      (pFilter === "paid"   &&  isSubmissionPaid(item)) ||
+      (pFilter === "unpaid" && !isSubmissionPaid(item));
     return matchQ && matchS && matchP;
   });
 
@@ -1238,8 +1261,9 @@ function display(data) {
     const name       = item.artistName || "Unknown Artist";
     const title      = item.releaseTitle || item.songTitle || item.title || "Untitled";
     const status     = item.status || "Pending";
-    const isPaid     = !!item.paymentVerified;
-    const isApproved = status === "Approved";
+    const statusKey  = status.toLowerCase();
+    const isPaid     = isSubmissionPaid(item);
+    const isApproved = statusKey === "approved";
     const initial    = name.charAt(0).toUpperCase();
     const existingUPC = item.upc || '';
 
@@ -1253,12 +1277,14 @@ function display(data) {
       }
     }
 
+    // Case-insensitive lookup so both old (lowercase) and new
+    // (capitalized) status values map to the correct badge color.
     const statusClass = {
-      'Pending':  'badge-pending',
-      'review':   'badge-review',
-      'Approved': 'badge-approved',
-      'rejected': 'badge-rejected'
-    }[status] || 'badge-pending';
+      pending:  'badge-pending',
+      review:   'badge-review',
+      approved: 'badge-approved',
+      rejected: 'badge-rejected'
+    }[statusKey] || 'badge-pending';
 
     const card = document.createElement("div");
     card.className = "card";
@@ -1356,10 +1382,10 @@ function display(data) {
             data-title="${escHtml(title)}"
             data-upc="${escHtml(existingUPC)}">
             <option value="">— Change Status —</option>
-            <option value="Pending"  ${status==='Pending'  ?'selected':''}>Pending</option>
-            <option value="review"   ${status==='review'   ?'selected':''}>Review</option>
-            <option value="Approved" ${status==='Approved' ?'selected':''}>Approved</option>
-            <option value="rejected" ${status==='rejected' ?'selected':''}>Rejected</option>
+            <option value="Pending"  ${statusKey==='pending'  ?'selected':''}>Pending</option>
+            <option value="Review"   ${statusKey==='review'   ?'selected':''}>Review</option>
+            <option value="Approved" ${statusKey==='approved' ?'selected':''}>Approved</option>
+            <option value="Rejected" ${statusKey==='rejected' ?'selected':''}>Rejected</option>
           </select>
         </div>
         <div class="control-row">
@@ -1420,7 +1446,9 @@ function display(data) {
     /* ── PAYMENT CHANGE ──────────────────────────────────────────────
        This is the single source of truth for payments. Marking a
        submission Paid here:
-         1. Sets paymentVerified + paidAt on the submission doc.
+         1. Sets paymentVerified + paid + paidAt on the submission doc,
+            so the boolean field this admin page reads and the string
+            field the Paystack flow reads always agree.
          2. Creates exactly one matching doc in `payments`, stamped
             with the real serverTimestamp() at the moment of payment —
             never Date.now() and never backfilled later.
@@ -1432,12 +1460,13 @@ function display(data) {
     card.querySelector('[data-type="payment"]').addEventListener('change', async function() {
       if (this.value === '') return;
       this.disabled = true;
-      const isPaid = this.value === 'true';
+      const isPaidNow = this.value === 'true';
       const subId  = this.dataset.id;
 
       const ok = await safeUpdate(subId, {
-        paymentVerified: isPaid,
-        paidAt: isPaid ? serverTimestamp() : null
+        paymentVerified: isPaidNow,
+        paid: isPaidNow ? 'Paid' : 'Unpaid',
+        paidAt: isPaidNow ? serverTimestamp() : null
       });
 
       if (ok) {
@@ -1445,7 +1474,7 @@ function display(data) {
           const existing = await getDocs(
             query(collection(db, "payments"), where("submissionId", "==", subId))
           );
-          if (isPaid && existing.empty) {
+          if (isPaidNow && existing.empty) {
             await addDoc(collection(db, "payments"), {
               submissionId: subId,
               amount: PAYMENT_AMOUNT,
@@ -1453,7 +1482,7 @@ function display(data) {
               status: 'paid',
               createdAt: serverTimestamp()
             });
-          } else if (!isPaid && !existing.empty) {
+          } else if (!isPaidNow && !existing.empty) {
             for (const d of existing.docs) {
               await deleteDoc(doc(db, "payments", d.id));
             }
@@ -1463,7 +1492,7 @@ function display(data) {
           toast('⚠️', 'Status saved, but payment record sync failed — check console');
         }
 
-        toast('💳', `Payment → ${isPaid ? 'Paid ✓' : 'Unpaid ✗'}`);
+        toast('💳', `Payment → ${isPaidNow ? 'Paid ✓' : 'Unpaid ✗'}`);
       }
       setTimeout(() => { this.disabled = false; }, 1500);
     });
@@ -1677,13 +1706,13 @@ async function bulkUpdateStatus(newStatus) {
 }
 
 bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('Approved'));
-bulkRejectBtn.addEventListener('click', () => bulkUpdateStatus('rejected'));
+bulkRejectBtn.addEventListener('click', () => bulkUpdateStatus('Rejected'));
 
 bulkMarkPaidBtn.addEventListener('click', async () => {
   const ids = Array.from(selectedIds);
   toast('⏳', `Marking ${ids.length} as paid…`);
   for (const id of ids) {
-    await safeUpdate(id, { paymentVerified: true, paidAt: serverTimestamp() });
+    await safeUpdate(id, { paymentVerified: true, paid: 'Paid', paidAt: serverTimestamp() });
     try {
       const existing = await getDocs(query(collection(db, "payments"), where("submissionId", "==", id)));
       if (existing.empty) {
@@ -1725,7 +1754,7 @@ exportBtn.addEventListener('click', () => {
     rows.push([
       item.artistName || '', item.releaseTitle || item.songTitle || item.title || '',
       item.email || '', item.phone || '', item.status || 'Pending',
-      item.paymentVerified ? 'Paid' : 'Unpaid', item.upc || '',
+      isSubmissionPaid(item) ? 'Paid' : 'Unpaid', item.upc || '',
       item.genre || '', item.country || '', date
     ]);
   });
