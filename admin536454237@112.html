@@ -514,6 +514,23 @@ body.select-mode .card { cursor: pointer; }
   font-weight: 700; letter-spacing: 0.05em;
 }
 
+/* REJECTION REASON BOX */
+.rejection-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(248,113,113,0.06);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+.rejection-box svg { flex-shrink: 0; margin-top: 1px; color: var(--red); }
+.rejection-box .rej-label {
+  font-family: var(--ff-head); font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--red); display: block; margin-bottom: 3px;
+}
+.rejection-box .rej-text { color: var(--text-sec); line-height: 1.5; word-break: break-word; }
+
 /* META */
 .meta-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -583,6 +600,25 @@ option { background: #13132a; }
   border-color: rgba(52,211,153,0.35);
 }
 .resend-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* EDIT REASON BUTTON */
+.edit-reason-btn {
+  width: 100%; margin-top: 2px;
+  padding: 10px;
+  background: rgba(248,113,113,0.06);
+  border: 1px solid rgba(248,113,113,0.18);
+  border-radius: 8px;
+  color: var(--red);
+  font-family: var(--ff-head); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--trans);
+}
+.edit-reason-btn:hover {
+  background: rgba(248,113,113,0.15);
+  border-color: rgba(248,113,113,0.4);
+}
 
 /* DELETE BUTTON */
 .delete-btn {
@@ -711,6 +747,70 @@ option { background: #13132a; }
   border: 1px solid var(--border-md); color: var(--text-sec);
 }
 .confirm-cancel:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+/* REASON DIALOG */
+.reason-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(4,4,12,0.82);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease both;
+}
+.reason-overlay.hide { animation: fadeOut 0.18s ease both; }
+
+.reason-card {
+  background: #0f0f20;
+  border: 1px solid rgba(248,113,113,0.25);
+  border-radius: 18px;
+  padding: 30px 26px 26px;
+  max-width: 420px; width: 100%;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+  animation: scaleIn 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
+}
+.reason-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.22);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-size: 1.3rem;
+}
+.reason-title { font-family: var(--ff-head); font-size: 1.02rem; font-weight: 700; color: var(--text); margin-bottom: 6px; text-align: center; }
+.reason-sub { font-size: 0.8rem; color: var(--text-sec); line-height: 1.5; margin-bottom: 18px; text-align: center; }
+.reason-textarea {
+  width: 100%; min-height: 100px; resize: vertical;
+  background: var(--input-bg);
+  border: 1px solid var(--border-md);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--ff-body);
+  font-size: 0.86rem;
+  padding: 12px 14px;
+  outline: none;
+  margin-bottom: 18px;
+  transition: border-color var(--trans);
+}
+.reason-textarea:focus { border-color: var(--red); }
+.reason-textarea::placeholder { color: var(--text-mut); }
+.reason-btns { display: flex; gap: 12px; }
+.reason-submit, .reason-cancel {
+  flex: 1; padding: 13px;
+  border-radius: 999px; border: none; cursor: pointer;
+  font-family: var(--ff-head); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  transition: all var(--trans);
+}
+.reason-submit {
+  background: #f87171; color: #0a0a0a;
+  box-shadow: 0 4px 20px rgba(248,113,113,0.3);
+}
+.reason-submit:hover { background: #ef4444; transform: translateY(-1px); }
+.reason-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.reason-cancel {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-md); color: var(--text-sec);
+}
+.reason-cancel:hover { background: rgba(255,255,255,0.1); color: var(--text); }
 
 /* ANIMATIONS */
 @keyframes pageIn  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
@@ -886,6 +986,19 @@ option { background: #13132a; }
   </div>
 </div>
 
+<div class="reason-overlay" id="reasonOverlay" style="display:none;">
+  <div class="reason-card">
+    <div class="reason-icon">✗</div>
+    <div class="reason-title" id="reasonTitle">Reject Submission</div>
+    <div class="reason-sub" id="reasonSub">Tell the artist what needs fixing. This will be shown on their dashboard.</div>
+    <textarea class="reason-textarea" id="reasonTextarea" placeholder="e.g. Cover art is below 3000x3000px, please re-upload a higher resolution image."></textarea>
+    <div class="reason-btns">
+      <button class="reason-submit" id="reasonSubmit">Reject &amp; Notify</button>
+      <button class="reason-cancel" id="reasonCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp }
@@ -1018,6 +1131,12 @@ const connDot         = document.getElementById("connDot");
 const connLabel       = document.getElementById("connLabel");
 const offlineBanner   = document.getElementById("offlineBanner");
 const lastSyncEl      = document.getElementById("lastSync");
+const reasonOverlay   = document.getElementById("reasonOverlay");
+const reasonTitle     = document.getElementById("reasonTitle");
+const reasonSub       = document.getElementById("reasonSub");
+const reasonTextarea  = document.getElementById("reasonTextarea");
+const reasonSubmit    = document.getElementById("reasonSubmit");
+const reasonCancel    = document.getElementById("reasonCancel");
 
 let submissions   = [];
 let pendingDelete = null; // string id, or array of ids for bulk delete
@@ -1264,8 +1383,10 @@ function display(data) {
     const statusKey  = status.toLowerCase();
     const isPaid     = isSubmissionPaid(item);
     const isApproved = statusKey === "approved";
+    const isRejected = statusKey === "rejected";
     const initial    = name.charAt(0).toUpperCase();
     const existingUPC = item.upc || '';
+    const rejectionReason = item.rejectionReason || '';
 
     let date = '—';
     if (item.createdAt) {
@@ -1308,6 +1429,18 @@ function display(data) {
          </div>`
       : '';
 
+    // Show the rejection reason (if any) right under the badges, so
+    // it's visible on the card without needing to open anything.
+    const rejectionHtml = (isRejected && rejectionReason)
+      ? `<div class="rejection-box">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+           <div>
+             <span class="rej-label">Rejection reason</span>
+             <span class="rej-text">${escHtml(rejectionReason)}</span>
+           </div>
+         </div>`
+      : '';
+
     // Show resend button only if already approved and has UPC + email
     const resendHtml = (isApproved && existingUPC && item.email)
       ? `<button class="resend-btn" data-id="${item.id}"
@@ -1317,6 +1450,15 @@ function display(data) {
             data-upc="${escHtml(existingUPC)}">
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
            Resend Approval Email
+         </button>`
+      : '';
+
+    // Let admin edit/add a reason after the fact, even without
+    // changing the status dropdown again.
+    const editReasonHtml = isRejected
+      ? `<button class="edit-reason-btn" data-id="${item.id}" data-current="${escHtml(rejectionReason)}">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+           ${rejectionReason ? 'Edit Rejection Reason' : 'Add Rejection Reason'}
          </button>`
       : '';
 
@@ -1341,6 +1483,7 @@ function display(data) {
       </div>
 
       ${upcHtml}
+      ${rejectionHtml}
 
       <div class="meta-grid">
         <div class="meta-item">
@@ -1397,16 +1540,16 @@ function display(data) {
           </select>
         </div>
         ${resendHtml}
+        ${editReasonHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
         </button>
       </div>`;
 
-    /* ── STATUS CHANGE → AUTO EMAIL ON APPROVED ── */
+    /* ── STATUS CHANGE → REASON PROMPT ON REJECT, AUTO EMAIL ON APPROVED ── */
     card.querySelector('[data-type="status"]').addEventListener('change', async function() {
       if (!this.value) return;
-      this.disabled = true;
 
       const newStatus   = this.value;
       const subId       = this.dataset.id;
@@ -1415,8 +1558,40 @@ function display(data) {
       const email       = this.dataset.email;
       let   upc         = this.dataset.upc;
 
+      // Rejecting always routes through the reason dialog instead of
+      // saving instantly — the reason is the whole point of rejecting.
+      if (newStatus === "Rejected") {
+        const reason = await promptForReason({
+          title: 'Reject Submission',
+          sub: `Tell ${artistName} what needs fixing before resubmitting. This is shown on their dashboard.`,
+          existing: ''
+        });
+        if (reason === null) {
+          // Cancelled — snap the dropdown back to the current status
+          this.value = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+          return;
+        }
+        this.disabled = true;
+        const ok = await safeUpdate(subId, { status: newStatus, rejectionReason: reason });
+        if (ok) {
+          toast('✗', `Rejected — reason saved`);
+          setTimeout(() => startListener(), 800);
+        } else {
+          this.disabled = false;
+        }
+        return;
+      }
+
+      this.disabled = true;
+
       // Build Firestore update payload
       const updateData = { status: newStatus };
+
+      // Clear any old rejection reason once a submission moves past
+      // Rejected (e.g. artist fixed it and it's back in Review).
+      if (newStatus !== "Rejected") {
+        updateData.rejectionReason = '';
+      }
 
       // Generate UPC when approving if one doesn't exist yet
       if (newStatus === "Approved" && !upc) {
@@ -1518,6 +1693,28 @@ function display(data) {
       });
     }
 
+    /* ── EDIT/ADD REJECTION REASON WITHOUT TOUCHING STATUS ── */
+    const editReasonBtn = card.querySelector('.edit-reason-btn');
+    if (editReasonBtn) {
+      editReasonBtn.addEventListener('click', async function() {
+        const subId = this.dataset.id;
+        const current = this.dataset.current || '';
+        const reason = await promptForReason({
+          title: 'Edit Rejection Reason',
+          sub: `Update what ${name} needs to fix. They'll see this on their dashboard.`,
+          existing: current
+        });
+        if (reason === null) return; // cancelled
+        this.disabled = true;
+        const ok = await safeUpdate(subId, { rejectionReason: reason });
+        if (ok) {
+          toast('✅', 'Rejection reason updated');
+          setTimeout(() => startListener(), 500);
+        }
+        this.disabled = false;
+      });
+    }
+
     /* ── DELETE ── */
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
@@ -1558,6 +1755,49 @@ async function safeUpdate(id, data) {
     toast('❌', 'Update failed: ' + e.message);
     return false;
   }
+}
+
+/* ─── REASON DIALOG (single + bulk reject) ──────────────────────────
+   Returns a Promise<string|null> — resolves with the typed reason
+   (trimmed), or null if the admin cancelled. Used both for the
+   single-card status dropdown and the bulk "Reject" button, so there
+   is exactly one place that owns this UI.
+   ─────────────────────────────────────────────────────────────────── */
+function promptForReason({ title, sub, existing }) {
+  return new Promise((resolve) => {
+    reasonTitle.textContent = title;
+    reasonSub.textContent = sub;
+    reasonTextarea.value = existing || '';
+    reasonOverlay.style.display = 'flex';
+    reasonOverlay.classList.remove('hide');
+    reasonSubmit.disabled = false;
+    reasonSubmit.textContent = 'Reject & Notify';
+    setTimeout(() => reasonTextarea.focus(), 50);
+
+    function cleanup(result) {
+      reasonOverlay.classList.add('hide');
+      setTimeout(() => {
+        reasonOverlay.style.display = 'none';
+        reasonOverlay.classList.remove('hide');
+      }, 180);
+      reasonSubmit.removeEventListener('click', onSubmit);
+      reasonCancel.removeEventListener('click', onCancel);
+      reasonOverlay.removeEventListener('click', onOverlayClick);
+      resolve(result);
+    }
+    function onSubmit() {
+      cleanup(reasonTextarea.value.trim());
+    }
+    function onCancel() {
+      cleanup(null);
+    }
+    function onOverlayClick(e) {
+      if (e.target === reasonOverlay) cleanup(null);
+    }
+    reasonSubmit.addEventListener('click', onSubmit);
+    reasonCancel.addEventListener('click', onCancel);
+    reasonOverlay.addEventListener('click', onOverlayClick);
+  });
 }
 
 /* ─── DELETE FLOW (supports single id or array of ids) ────── */
@@ -1706,7 +1946,28 @@ async function bulkUpdateStatus(newStatus) {
 }
 
 bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('Approved'));
-bulkRejectBtn.addEventListener('click', () => bulkUpdateStatus('Rejected'));
+
+// Bulk reject also collects a single shared reason applied to every
+// selected submission — simplest option for a batch of similar issues
+// (e.g. a rule change that invalidates several pending releases at once).
+bulkRejectBtn.addEventListener('click', async () => {
+  const ids = Array.from(selectedIds);
+  if (ids.length === 0) return;
+  const reason = await promptForReason({
+    title: `Reject ${ids.length} Submissions`,
+    sub: 'This reason will be applied to every selected submission and shown to each artist.',
+    existing: ''
+  });
+  if (reason === null) return;
+  toast('⏳', `Rejecting ${ids.length} submissions…`);
+  for (const id of ids) {
+    await safeUpdate(id, { status: 'Rejected', rejectionReason: reason });
+  }
+  toast('✗', `${ids.length} submissions rejected`);
+  selectedIds.clear();
+  updateBulkBar();
+  setTimeout(() => startListener(), 500);
+});
 
 bulkMarkPaidBtn.addEventListener('click', async () => {
   const ids = Array.from(selectedIds);
@@ -1742,7 +2003,7 @@ function toCsvValue(v) {
 
 exportBtn.addEventListener('click', () => {
   const rows = [
-    ['Artist', 'Title', 'Email', 'Phone', 'Status', 'Paid', 'UPC', 'Genre', 'Country', 'Submitted']
+    ['Artist', 'Title', 'Email', 'Phone', 'Status', 'Rejection Reason', 'Paid', 'UPC', 'Genre', 'Country', 'Submitted']
   ];
   submissions.forEach(item => {
     let date = '';
@@ -1754,6 +2015,7 @@ exportBtn.addEventListener('click', () => {
     rows.push([
       item.artistName || '', item.releaseTitle || item.songTitle || item.title || '',
       item.email || '', item.phone || '', item.status || 'Pending',
+      item.rejectionReason || '',
       isSubmissionPaid(item) ? 'Paid' : 'Unpaid', item.upc || '',
       item.genre || '', item.country || '', date
     ]);
