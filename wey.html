@@ -950,18 +950,70 @@ document.getElementById('submissionsContainer').addEventListener('click', functi
    except for Paystack's own hosted checkout tab, exactly
    like the app hands off to the phone's browser and waits.
 
-   NOTE: endpoint paths below assume paystackRoutes.js is
-   mounted under /api (POST /api/create-payment and
-   GET /api/verify-payment/:reference). If the real mount
-   prefix differs, update BACKEND_BASE below to match.
+   The exact mount prefix for paystackRoutes.js isn't confirmed
+   from the browser's side, so instead of hardcoding one guess
+   (which 404'd as "Route not found; POST /api/create-payment"),
+   this probes a short list of likely prefixes on the first call
+   and remembers whichever one actually answers — same backend,
+   same host, just found the right path automatically instead of
+   assuming /api.
 ═══════════════════════════════════════════════════════ */
-const BACKEND_BASE        = "https://444music-backend.bonto.run/api";
-const CREATE_PAYMENT_URL  = `${BACKEND_BASE}/create-payment`;
-const VERIFY_PAYMENT_URL  = (ref) => `${BACKEND_BASE}/verify-payment/${encodeURIComponent(ref)}`;
+const PAYMENT_HOST = "https://444music-backend.bonto.run";
+const PAYMENT_BASE_CANDIDATES = [
+  `${PAYMENT_HOST}/api/paystack`,
+  `${PAYMENT_HOST}/api/payments`,
+  `${PAYMENT_HOST}/api/payment`,
+  `${PAYMENT_HOST}/api`,
+  `${PAYMENT_HOST}`,
+];
+
+function looksLikeRouteNotFound(status, text) {
+  if (status === 404) return true;
+  return /route not found/i.test(text || "");
+}
+
+// Tries each candidate base until one responds with something other
+// than "route not found", then remembers it in sessionStorage so
+// every later call (this create, and every verify poll) goes straight
+// to the right place without re-probing.
+async function postCreatePaymentWithProbing(body) {
+  const cached = sessionStorage.getItem("paymentApiBase");
+  const ordered = cached
+    ? [cached, ...PAYMENT_BASE_CANDIDATES.filter(b => b !== cached)]
+    : PAYMENT_BASE_CANDIDATES;
+
+  let lastError = null;
+  for (const base of ordered) {
+    try {
+      const res  = await fetch(`${base}/create-payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const text = await res.text();
+      if (looksLikeRouteNotFound(res.status, text)) {
+        lastError = new Error(`Route not found at ${base}/create-payment`);
+        continue;
+      }
+      let json = {};
+      try { json = JSON.parse(text); } catch (e) { /* non-JSON body */ }
+      sessionStorage.setItem("paymentApiBase", base);
+      return { ok: res.ok, status: res.status, payload: json, base };
+    } catch (e) {
+      lastError = e; // network error on this candidate — try the next one
+    }
+  }
+  throw lastError || new Error("No working payment endpoint found.");
+}
+
+function verifyPaymentUrl(base, reference) {
+  return `${base}/verify-payment/${encodeURIComponent(reference)}`;
+}
 
 let _pendingPay = null;      // { releaseId, releaseTitle, amount }
 let _pollTimer  = null;
 let _pollDeadline = null;
+let _pollBase   = null;      // the payment base that worked, reused for verify polls
 
 function requestPayNow(releaseId, releaseTitle, amount) {
   _pendingPay = { releaseId, releaseTitle, amount };
@@ -998,19 +1050,16 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
 
   let payload;
   try {
-    const res = await fetch(CREATE_PAYMENT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amountGHS: amount,
-        submissionId: releaseId,
-        uid: user.uid,
-        email: user.email || "",
-        isExistingSubmission: true,
-      }),
+    const result = await postCreatePaymentWithProbing({
+      amountGHS: amount,
+      submissionId: releaseId,
+      uid: user.uid,
+      email: user.email || "",
+      isExistingSubmission: true,
     });
-    payload = await res.json();
-    if (!res.ok) throw new Error(payload.message || "Could not start payment.");
+    payload   = result.payload;
+    _pollBase = result.base;
+    if (!result.ok) throw new Error(payload.message || `Payment server returned ${result.status}.`);
   } catch (err) {
     console.error("[create-payment] error:", err);
     openPayWait(`
@@ -1068,7 +1117,7 @@ async function pollPaymentStatus(reference, releaseId) {
     return;
   }
   try {
-    const res  = await fetch(VERIFY_PAYMENT_URL(reference));
+    const res  = await fetch(verifyPaymentUrl(_pollBase || PAYMENT_BASE_CANDIDATES[0], reference));
     const data = await res.json();
     const status = (data.status || data.paymentStatus || "").toString().toLowerCase();
     if (status === "success" || status === "paid" || data.paid === true) {
