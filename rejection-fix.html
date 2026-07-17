@@ -1,1 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix & Resubmit — 444Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #000000; --black-2: #0d0d0d; --black-3: #111111; --black-4: #161616;
+  --white: #ffffff; --white-70: rgba(255,255,255,0.70); --white-40: rgba(255,255,255,0.40);
+  --white-10: rgba(255,255,255,0.10); --white-06: rgba(255,255,255,0.06);
+  --grey: #888888; --grey-dark: #444444;
+  --green: #22c55e; --green-dim: rgba(34,197,94,0.12); --green-brd: rgba(34,197,94,0.2);
+  --rose: #ef4444; --rose-dim: rgba(239,68,68,0.09); --rose-brd: rgba(239,68,68,0.2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--black);color:var(--white);min-height:100vh;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--white-10);position:sticky;top:0;background:var(--black);z-index:10;}
+.back-btn{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--white-06);border:1px solid var(--white-10);border-radius:10px;color:var(--white);transition:background .15s;}
+.back-btn:hover{background:var(--black-4);}
+.back-btn svg{width:15px;height:15px;}
+.topbar-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.05rem;}
+.page{max-width:560px;margin:0 auto;padding:20px 20px 60px;}
+.card{background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;padding:16px;margin-bottom:20px;}
+.reason-card{background:var(--rose-dim);border:1px solid var(--rose-brd);}
+.reason-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.reason-head svg{width:16px;height:16px;color:var(--rose);flex-shrink:0;}
+.reason-title{font-size:14px;font-weight:800;}
+.reason-text{font-size:12.5px;color:var(--white-70);line-height:1.5;margin-top:8px;}
+.category-chip{display:inline-block;margin-top:10px;padding:4px 9px;background:var(--black-4);border:1px solid var(--white-10);border-radius:7px;font-size:11px;font-weight:700;color:var(--white-70);}
+.detail-label{color:var(--grey-dark);font-size:10px;font-weight:800;letter-spacing:1.5px;margin-bottom:12px;}
+.detail-row{display:flex;gap:8px;margin-bottom:10px;}
+.detail-row:last-child{margin-bottom:0;}
+.detail-key{width:110px;flex-shrink:0;color:var(--grey);font-size:12.5px;font-weight:600;}
+.detail-val{font-size:13px;font-weight:700;}
+.section-title{font-size:14px;font-weight:800;margin-bottom:4px;}
+.section-sub{font-size:12px;color:var(--grey);line-height:1.5;margin-bottom:12px;}
+.filezone{width:100%;padding:18px;background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .15s;margin-bottom:20px;}
+.filezone.has-file{border-color:var(--green-brd);text-align:left;}
+.filezone-empty-icon{width:52px;height:52px;margin:0 auto 12px;background:var(--black-4);border:1px solid var(--white-10);border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.filezone-empty-icon svg{width:24px;height:24px;color:var(--grey-dark);}
+.filezone-hint{font-size:13px;font-weight:700;color:var(--white-70);}
+.filezone-sub{font-size:11px;color:var(--grey-dark);margin-top:4px;}
+.filezone-row{display:flex;align-items:center;gap:12px;}
+.filezone-check{width:42px;height:42px;flex-shrink:0;background:var(--green-dim);border:1px solid var(--green-brd);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.filezone-check svg{width:20px;height:20px;color:var(--green);}
+.filezone-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.filezone-size{font-size:11px;color:var(--grey);}
+.filezone-swap{width:18px;height:18px;color:var(--grey-dark);flex-shrink:0;}
+.error-banner{display:flex;gap:8px;padding:12px 14px;background:var(--rose-dim);border:1px solid var(--rose-brd);border-radius:10px;margin-bottom:20px;}
+.error-banner svg{width:16px;height:16px;color:var(--rose);flex-shrink:0;margin-top:1px;}
+.error-banner span{font-size:12.5px;color:var(--rose);line-height:1.5;}
+.submit-btn{width:100%;padding:16px;border-radius:12px;background:var(--white);border:1px solid var(--white);color:var(--black);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
+.submit-btn:hover{opacity:.9;}
+.submit-btn:disabled{background:var(--black-3);border-color:var(--white-10);color:var(--grey);cursor:default;}
+.submit-btn svg{width:18px;height:18px;}
+.spinner{width:16px;height:16px;border:2px solid var(--white-10);border-top-color:var(--grey);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.hint-text{text-align:center;font-size:11px;color:var(--grey-dark);line-height:1.6;margin-top:14px;}
+.success-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:20px;}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-dim);border:1px solid var(--green-brd);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.success-icon svg{width:32px;height:32px;color:var(--green);}
+.success-title{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;margin-bottom:6px;}
+.success-sub{font-size:12.5px;color:var(--grey);}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:14px;}
+.loading-wrap .spinner{width:28px;height:28px;border-width:3px;}
+.loading-wrap span{font-size:12.5px;color:var(--grey);}
+input[type=file]{display:none;}
+</style>
+</head>
+<body>
 
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <span class="topbar-title">Fix & Resubmit</span>
+</div>
+
+<div id="loadingState" class="loading-wrap">
+  <div class="spinner"></div>
+  <span>Loading submission…</span>
+</div>
+
+<div id="pageContent" class="page" style="display:none;"></div>
+
+<div id="successState" class="success-wrap" style="display:none;">
+  <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <div class="success-title">Sent for Review</div>
+  <div class="success-sub">We'll take another look — no payment needed.</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, deleteField, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Same unsigned Cloudinary preset used everywhere else in the app.
+const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/dlbgqtvqg/auto/upload";
+const CLOUDINARY_PRESET = "glmamp2y";
+
+// Same admin-notify backend the app's RejectionFixScreen hits.
+const NOTIFY_URL  = "https://444music-backend.bonto.run/api/submissions/notify";
+const APP_SECRET  = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
+
+function escHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fmtBytes(b){ return b < 1024*1024 ? (b/1024).toFixed(1)+" KB" : (b/(1024*1024)).toFixed(1)+" MB"; }
+
+function goBack() {
+  if (document.referrer) history.back();
+  else window.location.href = "releases.html";
+}
+window.goBack = goBack;
+
+const params = new URLSearchParams(window.location.search);
+const releaseId = params.get("id");
+
+let submissionData = null;
+let pickedLicense = null;   // {file, name, size}
+let pickedAudio   = null;
+let pickedCover   = null;
+let submitting    = false;
+let errorMsg      = "";
+
+function isCopyright(category) {
+  const c = (category || "").toLowerCase();
+  return c.includes("copyright") || c.includes("license");
+}
+
+function fmtCreditList(list) {
+  if (!Array.isArray(list)) return "None";
+  const filtered = list.filter(c => c && c.name && c.name.trim());
+  if (filtered.length === 0) return "None";
+  return filtered.map(c => {
+    let line = `• ${c.name}`;
+    if (c.role) line += ` — ${c.role}`;
+    if (c.ipi)  line += ` (IPI: ${c.ipi})`;
+    return line;
+  }).join("\n");
+}
+function fmtFeaturing(data) {
+  if (Array.isArray(data.featuredArtists) && data.featuredArtists.length) {
+    return data.featuredArtists.map(f => {
+      let line = `${f.name} (${f.role})`;
+      if (f.url && f.url.trim()) line += ` — ${f.url}`;
+      return line;
+    }).join("\n");
+  }
+  if (data.featuring && data.featuring.trim()) return data.featuring.trim();
+  return "None";
+}
+
+async function loadData() {
+  // Prefer the full doc handed off via sessionStorage by the dashboard
+  // (same as Navigator arguments in the app); fall back to a direct
+  // Firestore read by id so this page also works from a bare link.
+  try {
+    const cached = sessionStorage.getItem("rejectionFixData");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (!releaseId || parsed._id === releaseId) { submissionData = parsed; return; }
+    }
+  } catch (e) {}
+  if (!releaseId) return;
+  const snap = await getDoc(doc(db, "submissions", releaseId));
+  if (snap.exists()) submissionData = { ...snap.data(), _id: releaseId };
+}
+
+function render() {
+  const content = document.getElementById("pageContent");
+  if (!submissionData) {
+    content.innerHTML = `<div class="error-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Missing submission reference. Please go back and try again.</span></div>`;
+    document.getElementById("loadingState").style.display = "none";
+    content.style.display = "block";
+    return;
+  }
+  const data     = submissionData;
+  const category = (data.rejectionCategory || "Other").toString().trim();
+  const reason   = (data.rejectionReason || "").toString().trim();
+  const artist   = data.artistName || "—";
+  const title    = data.releaseTitle || "Your release";
+  const copyrightMode = isCopyright(category);
+
+  content.innerHTML = `
+    <div class="card reason-card">
+      <div class="reason-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span class="reason-title">${escHtml(title)}</span>
+      </div>
+      ${reason ? `<div class="reason-text">${escHtml(reason)}</div>` : ""}
+      <span class="category-chip">${copyrightMode ? "Copyright / License Issue" : "Other Issue"}</span>
+    </div>
+
+    <div class="card">
+      <div class="detail-label">SUBMISSION DETAILS</div>
+      <div class="detail-row"><div class="detail-key">Artist Name</div><div class="detail-val">${escHtml(artist)}</div></div>
+      <div class="detail-row"><div class="detail-key">Release Title</div><div class="detail-val">${escHtml(title)}</div></div>
+    </div>
+
+    ${copyrightMode ? `
+      <div class="section-title">Upload License / Proof</div>
+      <div class="section-sub">A license, purchase receipt, or written permission for the beat — PDF only.</div>
+      <div class="filezone" id="zone-license" onclick="document.getElementById('input-license').click()"></div>
+      <input type="file" id="input-license" accept="application/pdf,.pdf">
+    ` : `
+      <div class="section-title">Re-upload Audio File</div>
+      <div class="section-sub">Fixed version of the track — MP3 only, max 50 MB.</div>
+      <div class="filezone" id="zone-audio" onclick="document.getElementById('input-audio').click()"></div>
+      <input type="file" id="input-audio" accept="audio/mpeg,.mp3">
+
+      <div class="section-title">Re-upload Cover Art</div>
+      <div class="section-sub">Fixed cover artwork — JPG or PNG, square, max 15 MB.</div>
+      <div class="filezone" id="zone-cover" onclick="document.getElementById('input-cover').click()"></div>
+      <input type="file" id="input-cover" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+    `}
+
+    <div id="errorSlot"></div>
+
+    <button class="submit-btn" id="submitBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Resubmit for Review
+    </button>
+
+    ${copyrightMode ? `<div class="hint-text">No proof yet? You can leave this and come back —<br>your release stays Rejected until you upload it.</div>` : ""}
+  `;
+
+  renderZones();
+  document.getElementById("submitBtn").addEventListener("click", submit);
+  if (copyrightMode) {
+    document.getElementById("input-license").addEventListener("change", e => handlePick(e, "license"));
+  } else {
+    document.getElementById("input-audio").addEventListener("change", e => handlePick(e, "audio"));
+    document.getElementById("input-cover").addEventListener("change", e => handlePick(e, "cover"));
+  }
+
+  document.getElementById("loadingState").style.display = "none";
+  content.style.display = "block";
+}
+
+function renderZones() {
+  const zones = [
+    ["zone-license", pickedLicense, "picture_as_pdf", "Tap to select a PDF", "PDF only"],
+    ["zone-audio",   pickedAudio,   "audio_file",     "Tap to select MP3",  "MP3 only"],
+    ["zone-cover",   pickedCover,   "image",          "Tap to select JPG or PNG", "JPG / PNG only"],
+  ];
+  zones.forEach(([id, picked, iconKey, hint, sub]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (picked) {
+      el.classList.add("has-file");
+      el.innerHTML = `
+        <div class="filezone-row">
+          <div class="filezone-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div style="flex:1;min-width:0;">
+            <div class="filezone-name">${escHtml(picked.name)}</div>
+            <div class="filezone-size">${fmtBytes(picked.size)}</div>
+          </div>
+          <svg class="filezone-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>`;
+    } else {
+      el.classList.remove("has-file");
+      el.innerHTML = `
+        <div class="filezone-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg></div>
+        <div class="filezone-hint">${hint}</div>
+        <div class="filezone-sub">${sub}</div>`;
+    }
+  });
+}
+
+function setError(msg) {
+  errorMsg = msg;
+  const slot = document.getElementById("errorSlot");
+  slot.innerHTML = msg ? `<div class="error-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${escHtml(msg)}</span></div>` : "";
+}
+
+function handlePick(e, kind) {
+  const file = e.target.files[0];
+  if (!file) return;
+  setError("");
+
+  if (kind === "license") {
+    if (!file.name.toLowerCase().endsWith(".pdf")) { setError("Only PDF files are accepted."); return; }
+    pickedLicense = { file, name: file.name, size: file.size };
+  } else if (kind === "audio") {
+    if (!file.name.toLowerCase().endsWith(".mp3")) { setError("Only MP3 files are accepted."); return; }
+    if (file.size > 50 * 1024 * 1024) { setError("Audio file exceeds 50 MB limit."); return; }
+    pickedAudio = { file, name: file.name, size: file.size };
+  } else if (kind === "cover") {
+    const ext = file.name.toLowerCase();
+    if (!ext.endsWith(".jpg") && !ext.endsWith(".jpeg") && !ext.endsWith(".png")) { setError("Only JPG or PNG accepted."); return; }
+    if (file.size > 15 * 1024 * 1024) { setError("Cover art exceeds 15 MB limit."); return; }
+    pickedCover = { file, name: file.name, size: file.size };
+  }
+  renderZones();
+}
+
+async function uploadToCloudinary(file, folder) {
+  const fd = new FormData();
+  fd.append("upload_preset", CLOUDINARY_PRESET);
+  fd.append("folder", folder);
+  fd.append("file", file);
+  const res  = await fetch(CLOUDINARY_URL, { method: "POST", body: fd });
+  const json = await res.json();
+  if (json.secure_url) return json.secure_url;
+  console.error("Cloudinary error:", json);
+  return null;
+}
+
+async function notifyAdmin(kind, { licenseUrl, audioUrl, coverUrl } = {}) {
+  const data     = submissionData;
+  const category = (data.rejectionCategory || "Other").toString().trim();
+  const reason   = (data.rejectionReason || "").toString().trim();
+  const credits  = data.credits || {};
+
+  const resolvedCoverUrl = coverUrl || data.coverURL || "";
+  let audioFiles;
+  if (audioUrl) {
+    audioFiles = [{ title: data.releaseTitle || "", url: audioUrl }];
+  } else if (Array.isArray(data.audioFiles)) {
+    audioFiles = data.audioFiles
+      .map(m => ({ title: m.title || data.releaseTitle || "", url: m.url || "" }))
+      .filter(m => m.url);
+  } else {
+    audioFiles = [];
+  }
+
+  const body = {
+    type: "resubmission",
+    submissionId: data._id,
+    is_resend: true,
+    email: data.email || "",
+    artist_name: data.artistName || "",
+    release_title: data.releaseTitle || "",
+    featuring: fmtFeaturing(data),
+    release_type: data.releaseType || "",
+    genre: data.genre || "",
+    language: data.language || "Not specified",
+    release_date: data.releaseDate || "Not set",
+    explicit: data.explicit || "",
+    country: data.country || "",
+    phone: data.phone || "Not provided",
+    label: data.label || "Independent",
+    copyright: data.copyright || "Not provided",
+    isrc: data.isrc || "Not provided",
+    upc: data.upc || "Auto-assign",
+    catalog_number: data.catalogNumber || "Not provided",
+    version: data.version || "",
+    previously_released: data.previouslyReleased || "",
+    previous_release_date: data.previousReleaseDate || "N/A",
+    vocal_type: data.vocalType || "",
+    ownership_confirmed: data.ownershipConfirmed === true ? "Yes — confirmed original work" : "Not confirmed",
+    producers: fmtCreditList(credits.producer),
+    musicians: fmtCreditList(credits.musician),
+    songwriters: fmtCreditList(credits.writer),
+    lyrics: data.lyrics || "Not provided",
+    payment_status: data.paid || "Not confirmed",
+    category,
+    previous_reason: reason,
+    fix_kind: kind,
+    ...(licenseUrl ? { fix_license_url: licenseUrl } : {}),
+    cover_url: resolvedCoverUrl,
+    audio_files: audioFiles,
+    status: "Review",
+    submitted_at: new Date().toString(),
+  };
+
+  try {
+    const res = await fetch(NOTIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-app-secret": APP_SECRET },
+      body: JSON.stringify(body),
+    });
+    console.log("[Notify resubmit] status=", res.status);
+  } catch (e) {
+    console.error("[Notify resubmit] ERROR:", e);
+  }
+}
+
+async function submit() {
+  if (submitting) return;
+  const data = submissionData;
+  const category = (data.rejectionCategory || "Other").toString().trim();
+  const copyrightMode = isCopyright(category);
+
+  if (!data._id) { setError("Missing submission reference. Please go back and try again."); return; }
+  if (copyrightMode && !pickedLicense) { setError("Please upload your license / proof document."); return; }
+  if (!copyrightMode && (!pickedAudio || !pickedCover)) { setError("Please upload both the fixed MP3 and cover art."); return; }
+
+  submitting = true;
+  setError("");
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div> Submitting…`;
+
+  try {
+    const docRef = doc(db, "submissions", data._id);
+    if (copyrightMode) {
+      const url = await uploadToCloudinary(pickedLicense.file, "license-proofs");
+      if (!url) { throw new Error("Upload failed. Check your connection and try again."); }
+      await updateDoc(docRef, {
+        status: "Review",
+        rejectionReason: deleteField(),
+        rejectionCategory: deleteField(),
+        resubmittedAt: serverTimestamp(),
+        licenseURL: url,
+      });
+      await notifyAdmin("license", { licenseUrl: url });
+    } else {
+      const audioUrl = await uploadToCloudinary(pickedAudio.file, "tracks");
+      if (!audioUrl) { throw new Error("Audio upload failed. Check your connection and try again."); }
+      const coverUrl = await uploadToCloudinary(pickedCover.file, "covers");
+      if (!coverUrl) { throw new Error("Cover art upload failed. Check your connection and try again."); }
+      await updateDoc(docRef, {
+        status: "Review",
+        rejectionReason: deleteField(),
+        rejectionCategory: deleteField(),
+        resubmittedAt: serverTimestamp(),
+        resubmittedAudioURL: audioUrl,
+        resubmittedCoverURL: coverUrl,
+      });
+      await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
+    }
+
+    sessionStorage.removeItem("rejectionFixData");
+    document.getElementById("pageContent").style.display = "none";
+    document.getElementById("successState").style.display = "flex";
+    setTimeout(() => { window.location.href = "releases.html"; }, 1400);
+  } catch (e) {
+    console.error("[Resubmit] ERROR:", e);
+    submitting = false;
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Resubmit for Review`;
+    setError(e.message || "Something went wrong saving your fix. Please try again.");
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = "login.html"; return; }
+  await loadData();
+  render();
+});
+</script>
+</body>
+</html>
