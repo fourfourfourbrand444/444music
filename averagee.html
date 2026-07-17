@@ -48,20 +48,12 @@ body {
   min-height: 100vh;
 }
 
-/* ── APP SHELL — full screen, no card wrapper, mirrors the Flutter layout ── */
-.app-shell {
-  max-width: 720px;
-  margin: 0 auto;
-  min-height: 100vh;
-  position: relative;
-}
+.app-shell { max-width: 720px; margin: 0 auto; min-height: 100vh; position: relative; }
 
-/* TOP BAR — sticky like the app's AppBar */
 .top-bar {
   position: sticky; top: 0; z-index: 500;
   display: flex; align-items: center; justify-content: space-between;
-  gap: 14px;
-  padding: 14px 20px;
+  gap: 14px; padding: 14px 20px;
   background: rgba(8,8,16,0.9);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -88,12 +80,7 @@ body {
 }
 .secure-badge svg { width: 10px; height: 10px; }
 
-/* STEP INDICATOR */
-.step-track {
-  display: flex; align-items: center;
-  padding: 16px 20px;
-  gap: 0;
-}
+.step-track { display: flex; align-items: center; padding: 16px 20px; gap: 0; }
 .step-item {
   display: flex; align-items: center; gap: 8px;
   font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
@@ -102,31 +89,17 @@ body {
 }
 .step-item.active { color: var(--text-primary); }
 .step-num {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid currentColor;
+  width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
-  transition: all var(--t);
+  font-size: 0.68rem; font-weight: 700; flex-shrink: 0; transition: all var(--t);
 }
 .step-item.active .step-num { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
-.step-connector {
-  flex: 1; height: 1px; min-width: 16px; max-width: 80px;
-  margin: 0 10px; background: var(--border);
-}
+.step-connector { flex: 1; height: 1px; min-width: 16px; max-width: 80px; margin: 0 10px; background: var(--border); }
 
-/* PAGE CONTENT — no card, flows full width like the app scroll view */
 .content { padding: 8px 20px 80px; }
+.page-sub { font-size: 0.86rem; color: var(--text-secondary); font-weight: 400; margin: 4px 0 8px; letter-spacing: 0.01em; }
 
-.page-sub {
-  font-size: 0.86rem; color: var(--text-secondary); font-weight: 400;
-  margin: 4px 0 8px; letter-spacing: 0.01em;
-}
-
-/* SECTION HEADERS — same visual language as the app's sectionHeader() */
-.section-head {
-  display: flex; align-items: center; gap: 12px;
-  margin: 28px 0 16px;
-}
+.section-head { display: flex; align-items: center; gap: 12px; margin: 28px 0 16px; }
 .section-head:first-child { margin-top: 8px; }
 .section-icon {
   width: 32px; height: 32px; border-radius: var(--radius-sm);
@@ -135,19 +108,13 @@ body {
 }
 .section-icon svg { width: 15px; height: 15px; color: var(--text-secondary); }
 .section-title-wrap { flex: 1; min-width: 0; }
-.section-title {
-  font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
-  letter-spacing: 0.03em; color: var(--text-primary);
-}
+.section-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em; color: var(--text-primary); }
 .section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
-/* GRID */
 .grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.col-full { grid-column: 1 / -1; }
 .stack-gap { margin-top: 16px; }
 
-/* FIELD */
 .field { display: flex; flex-direction: column; gap: 7px; }
 .field label {
   display: flex; align-items: center; gap: 6px;
@@ -176,8 +143,7 @@ body {
 .select-wrap { position: relative; }
 .select-wrap::after {
   content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
   border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
 }
 .select-wrap:focus-within::after { border-top-color: var(--accent-light); transform: translateY(-50%) rotate(180deg); }
@@ -186,22 +152,19 @@ body {
 .country-wrap { position: relative; }
 .country-flag {
   position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 20px; height: 15px; border-radius: 2px; object-fit: cover;
-  pointer-events: none; z-index: 1; display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 15px; pointer-events: none; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
 }
 .country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
 .country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
 .country-wrap::after {
   content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
   border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
 }
 .country-wrap:focus-within::after { border-top-color: var(--accent-light); transform: translateY(-50%) rotate(180deg); }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t);
-}
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t); }
 input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
 
 input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
@@ -210,34 +173,28 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   caret-color: var(--text-primary); border-color: var(--border) !important;
 }
 
-option { background: #171725; color: var(--text-primary); }
-
+option, optgroup { background: #171725; color: var(--text-primary); }
 .field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
-/* RADIO PILLS — same look as the app's Wrap of pill buttons */
 .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
 .radio-pill {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--bg-input); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 12px 18px;
   font-family: var(--font-body); font-size: 0.86rem; font-weight: 600;
-  color: var(--text-secondary); cursor: pointer;
-  transition: all var(--t); appearance: none;
+  color: var(--text-secondary); cursor: pointer; transition: all var(--t); appearance: none;
 }
 .radio-pill::before {
   content: ''; width: 15px; height: 15px; border-radius: 50%;
-  border: 1.5px solid var(--text-muted); flex-shrink: 0;
-  transition: all var(--t); position: relative;
+  border: 1.5px solid var(--text-muted); flex-shrink: 0; transition: all var(--t); position: relative;
 }
 .radio-pill:hover { border-color: var(--border-accent); }
 .radio-pill.selected { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
 .radio-pill.selected::before { border-color: var(--bg-base); background: var(--bg-base); box-shadow: inset 0 0 0 3px var(--text-primary); }
 
-/* PREVIOUS RELEASE DATE — conditional, mirrors app's AnimatedSize reveal */
-#previousReleaseDateWrap { display: none; }
-#previousReleaseDateWrap.visible { display: block; animation: rowIn 0.2s ease both; }
+#previousReleaseDateWrap, #featuredArtistsWrap { display: none; }
+#previousReleaseDateWrap.visible, #featuredArtistsWrap.visible { display: block; animation: rowIn 0.2s ease both; }
 
-/* OWNERSHIP AGREEMENT — card, matching the app's agreement card */
 .agreement-box {
   display: flex; align-items: flex-start; gap: 12px;
   background: var(--bg-card); border: 1px solid var(--border);
@@ -249,8 +206,7 @@ option { background: #171725; color: var(--text-primary); }
 .agreement-checkbox {
   width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
   border: 1.5px solid var(--text-muted); background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--t);
+  display: flex; align-items: center; justify-content: center; transition: all var(--t);
 }
 .agreement-checkbox.checked { background: var(--text-primary); border-color: var(--text-primary); }
 .agreement-checkbox svg { width: 12px; height: 12px; color: var(--bg-base); opacity: 0; transition: opacity var(--t); }
@@ -259,12 +215,10 @@ option { background: #171725; color: var(--text-primary); }
 .agreement-title {
   display: flex; align-items: center; gap: 6px;
   font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
-  margin-bottom: 6px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
 }
 .agreement-text p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
 
-/* ARTIST PILL FIELD */
 .artist-field { position: relative; }
 .artist-pill-box {
   background: var(--bg-input); border: 1px solid var(--border);
@@ -285,8 +239,7 @@ option { background: #171725; color: var(--text-primary); }
   animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 .pill-avatar {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(255,255,255,0.12);
+  width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; font-weight: 700; color: var(--text-secondary);
   overflow: hidden; flex-shrink: 0;
@@ -296,26 +249,22 @@ option { background: #171725; color: var(--text-primary); }
   width: 16px; height: 16px; border-radius: 50%;
   background: rgba(255,255,255,0.1); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); padding: 0;
-  transition: background var(--t), transform var(--t);
+  color: var(--text-secondary); padding: 0; transition: background var(--t), transform var(--t);
 }
 .pill-remove:hover { background: rgba(255,255,255,0.22); transform: scale(1.15); color: var(--text-primary); }
 .pill-remove svg { width: 8px; height: 8px; }
 .artist-search-input {
-  background: none !important; border: none !important;
-  box-shadow: none !important; outline: none !important;
+  background: none !important; border: none !important; box-shadow: none !important; outline: none !important;
   padding: 4px 6px !important; flex: 1; min-width: 140px;
   font-size: 0.88rem !important; color: var(--text-primary);
 }
 .artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
 
-/* DROPDOWN */
 .artist-dropdown {
   position: absolute; top: calc(100% + 6px); left: 0; right: 0;
   z-index: 9000; background: #171725;
   border: 1px solid var(--border-accent); border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
+  overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
   display: none; max-height: 340px; overflow-y: auto;
 }
 .artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
@@ -336,8 +285,7 @@ option { background: #171725; color: var(--text-primary); }
   width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
   overflow: hidden; background: rgba(255,255,255,0.08);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
-  color: var(--text-secondary);
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);
 }
 .opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .opt-info { flex: 1; min-width: 0; }
@@ -350,8 +298,7 @@ option { background: #171725; color: var(--text-primary); }
   background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--border);
 }
 .dropdown-loading {
-  padding: 20px 16px; text-align: center;
-  font-size: 0.83rem; color: var(--text-muted); font-style: italic;
+  padding: 20px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic;
   display: flex; align-items: center; justify-content: center; gap: 10px;
 }
 .spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -359,12 +306,54 @@ option { background: #171725; color: var(--text-primary); }
 .artist-dropdown::-webkit-scrollbar-track { background: transparent; }
 .artist-dropdown::-webkit-scrollbar-thumb { background: rgba(160,100,255,0.2); border-radius: 2px; }
 
-/* CREDITS — kept as cards, mirroring the app's Container panels */
-.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.credits-panel {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px;
+/* Featured / Secondary artist cards — mirrors the app's _featuredArtistCard */
+.feat-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 12px; margin-bottom: 10px;
+  animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
 }
+.feat-card-top { display: flex; align-items: center; gap: 10px; }
+.feat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
+}
+.feat-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.feat-name { flex: 1; min-width: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feat-remove {
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--danger); transition: all var(--t);
+}
+.feat-remove:hover { background: rgba(248,113,113,0.18); transform: scale(1.06); }
+.feat-remove svg { width: 11px; height: 11px; }
+.feat-role-wrap { margin-top: 10px; position: relative; }
+.feat-role-wrap select {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
+  outline: none; appearance: none; cursor: pointer;
+}
+.feat-role-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid var(--text-secondary); pointer-events: none;
+}
+.feat-url-wrap {
+  margin-top: 10px; display: flex; align-items: center; gap: 8px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); padding: 0 10px;
+}
+.feat-url-wrap input {
+  flex: 1; background: none; border: none; outline: none; box-shadow: none;
+  color: var(--text-primary); font-size: 0.82rem; padding: 9px 0;
+}
+.feat-url-wrap input::placeholder { color: var(--text-muted); }
+.feat-url-wrap img { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
+
+.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.credits-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .credits-panel.required-panel { border-color: rgba(255,255,255,0.18); }
 .credits-panel-hd {
   display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
@@ -373,8 +362,7 @@ option { background: #171725; color: var(--text-primary); }
 }
 .credits-panel-hd svg { width: 13px; height: 13px; }
 .required-badge {
-  margin-left: auto;
-  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  margin-left: auto; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
   border-radius: 999px; padding: 2px 8px;
   font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
@@ -397,28 +385,24 @@ option { background: #171725; color: var(--text-primary); }
 .credit-row-num {
   position: absolute; top: -9px; left: 12px;
   font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-secondary); background: var(--bg-card);
-  padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+  background: var(--bg-card); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border);
 }
 .credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
 .credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
 .credit-input {
   background: var(--bg-input); border: 1px solid var(--border);
   border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.86rem;
-  padding: 9px 12px; outline: none; width: 100%;
+  font-family: var(--font-body); font-size: 0.86rem; padding: 9px 12px; outline: none; width: 100%;
   transition: border-color var(--t), box-shadow var(--t); appearance: none;
 }
 .credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
 .credit-input:hover { border-color: var(--border-accent); }
 .credit-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(160,100,255,0.08); }
-.credit-input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(248,113,113,0.12) !important; }
 .csel-wrap { position: relative; }
 .csel-wrap::after {
   content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0;
-  border-left: 3px solid transparent; border-right: 3px solid transparent;
+  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
   border-top: 4px solid var(--text-secondary); pointer-events: none;
 }
 .csel-wrap select { padding-right: 28px; cursor: pointer; }
@@ -435,25 +419,19 @@ option { background: #171725; color: var(--text-primary); }
   background: transparent; border: 1px dashed var(--border-accent);
   border-radius: var(--radius-sm); padding: 10px 16px;
   font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-muted); cursor: pointer; width: 100%;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; width: 100%;
   transition: all var(--t);
 }
 .add-credit-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.3); color: var(--text-primary); }
 .add-credit-btn svg { width: 13px; height: 13px; }
 
-.writer-name-error { font-size: 0.72rem; color: var(--danger); margin-top: 5px; display: none; line-height: 1.4; }
-
-/* SUBMIT BUTTON — app-style solid pill button */
 .form-actions { margin-top: 40px; }
 .submit-btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   width: 100%; padding: 17px 32px;
   border-radius: var(--radius-md); border: 1px solid var(--text-primary); cursor: pointer;
   font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--bg-base);
-  background: var(--text-primary);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--bg-base); background: var(--text-primary);
   transition: transform var(--t), box-shadow var(--t), filter var(--t), opacity var(--t);
   position: relative; overflow: hidden;
 }
@@ -465,85 +443,30 @@ option { background: #171725; color: var(--text-primary); }
 #statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
 #statusMsg.error { color: var(--danger); }
 .form-footer-note {
-  margin-top: 20px; text-align: center;
-  font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
+  margin-top: 20px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
   display: flex; align-items: center; justify-content: center; gap: 6px;
 }
 .form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
 
-/* TRUST STRIP */
-.trust-strip {
-  display: flex; align-items: center; justify-content: center; gap: 22px;
-  margin-top: 18px; flex-wrap: wrap;
-}
+.trust-strip { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 18px; flex-wrap: wrap; }
 .trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.03em; }
 .trust-item svg { width: 12px; height: 12px; color: var(--text-secondary); opacity: 0.7; }
 
-/* MODAL */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 99999;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  animation: overlayIn 0.2s ease both;
+/* Payment badge — shown at the top when a verified payment reference is present */
+.payment-badge {
+  display: none; align-items: center; gap: 8px;
+  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin: 8px 0 4px;
+  font-size: 0.78rem; color: var(--success); font-weight: 600;
 }
-.modal-overlay.closing { animation: overlayOut 0.18s ease both; }
-.modal-card {
-  background: #130f1e; border: 1px solid var(--border-accent);
-  border-radius: var(--radius-xl); padding: 36px 32px 32px;
-  width: 100%; max-width: 440px; position: relative;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-  animation: modalIn 0.28s cubic-bezier(0.34,1.3,0.64,1) both;
-}
-.modal-card.closing { animation: modalOut 0.18s ease both; }
-.modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-.modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
-.modal-close {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); transition: all var(--t);
-}
-.modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
-.modal-close svg { width: 12px; height: 12px; }
-.modal-field { margin-bottom: 18px; }
-.modal-label { display: block; margin-bottom: 7px; font-family: var(--font-display); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); }
-.modal-input, .modal-select {
-  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.9rem;
-  padding: 13px 16px; outline: none; transition: border-color var(--t), box-shadow var(--t); appearance: none;
-}
-.modal-input:focus, .modal-select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(160,100,255,0.08); }
-.modal-sel-wrap { position: relative; }
-.modal-sel-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid var(--text-secondary); pointer-events: none; }
-.modal-hint {
-  margin-top: 8px; padding: 10px 14px;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); font-size: 0.76rem; color: var(--text-secondary); line-height: 1.5;
-}
-.modal-hint strong { color: var(--text-primary); }
-.modal-btns { display: flex; gap: 10px; margin-top: 24px; }
-.modal-save, .modal-cancel {
-  flex: 1; padding: 13px 20px; border-radius: 999px; border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; transition: all var(--t);
-}
-.modal-save { background: var(--text-primary); color: var(--bg-base); }
-.modal-save:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.4); transform: translateY(-1px); }
-.modal-cancel { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-secondary); }
-.modal-cancel:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+.payment-badge.show { display: flex; }
+.payment-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-/* ANIMATIONS */
 @keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
 @keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
 @keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-@keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
-@keyframes overlayOut{ from { opacity:1; } to { opacity:0; } }
-@keyframes modalIn   { from { opacity:0; transform:scale(0.93) translateY(14px); } to { opacity:1; transform:none; } }
-@keyframes modalOut  { from { opacity:1; transform:none; } to { opacity:0; transform:scale(0.94) translateY(8px); } }
 @keyframes spin      { to { transform:rotate(360deg); } }
 
-/* RESPONSIVE */
 @media (max-width: 700px) {
   .grid, .credits-grid { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
@@ -555,8 +478,6 @@ option { background: #171725; color: var(--text-primary); }
   .step-track { padding: 14px 16px; }
   .step-connector { min-width: 8px; max-width: 24px; margin: 0 6px; }
   .step-item { font-size: 0.62rem; letter-spacing: 0.04em; }
-  .modal-card { padding: 26px 18px 22px; }
-  .modal-btns { flex-direction: column; }
   .grid-3 { grid-template-columns: 1fr; }
   .trust-strip { gap: 14px; }
 }
@@ -573,7 +494,6 @@ option { background: #171725; color: var(--text-primary); }
 <body>
 <div class="app-shell">
 
-  <!-- TOP BAR -->
   <header class="top-bar">
     <div class="top-bar-left">
       <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
@@ -587,26 +507,21 @@ option { background: #171725; color: var(--text-primary); }
     </div>
   </header>
 
-  <!-- STEP INDICATOR -->
   <div class="step-track">
-    <div class="step-item active">
-      <div class="step-num">1</div>
-      <span>Release Info</span>
-    </div>
+    <div class="step-item active"><div class="step-num">1</div><span>Release Info</span></div>
     <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-num">2</div>
-      <span>Select Stores</span>
-    </div>
+    <div class="step-item"><div class="step-num">2</div><span>Select Stores</span></div>
     <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-num">3</div>
-      <span>Review</span>
-    </div>
+    <div class="step-item"><div class="step-num">3</div><span>Review</span></div>
   </div>
 
   <div class="content">
     <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
+
+    <div class="payment-badge" id="paymentBadge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      Payment verified — this release will go straight to Review
+    </div>
 
     <form id="releaseForm">
 
@@ -629,7 +544,7 @@ option { background: #171725; color: var(--text-primary); }
         </label>
         <div class="artist-pill-box" id="artistPillBox">
           <input type="text" id="artistSearchInput" class="artist-search-input"
-            placeholder="Search artist name on Apple Music…"
+            placeholder="Search artist on Apple Music…"
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <input type="hidden" id="artistName" name="artistName">
@@ -637,38 +552,59 @@ option { background: #171725; color: var(--text-primary); }
         <div class="field-hint">Results pulled from Apple Music</div>
       </div>
 
-      <div class="grid stack-gap">
-        <div class="field">
-          <label>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Featuring Artist
-          </label>
-          <input id="featuring" placeholder="ft. Artist Name (optional)">
-        </div>
+      <div class="field stack-gap">
+        <label>Phone Number</label>
+        <input id="number" type="tel" placeholder="+1 000 000 0000">
+      </div>
 
-        <div class="field">
-          <label>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            Country of Origin
-          </label>
-          <div class="country-wrap" id="countryWrap">
-            <div class="country-flag">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            </div>
-            <select id="country">
-              <option value="">Select country…</option>
-              <option>Afghanistan</option><option>Albania</option><option>Algeria</option><option>Angola</option><option>Argentina</option><option>Australia</option><option>Austria</option><option>Bangladesh</option><option>Belgium</option><option>Bolivia</option><option>Brazil</option><option>Cameroon</option><option>Canada</option><option>Chile</option><option>China</option><option>Colombia</option><option>Democratic Republic of the Congo</option><option>Denmark</option><option>Dominican Republic</option><option>Ecuador</option><option>Egypt</option><option>Ethiopia</option><option>France</option><option>Germany</option><option selected>Ghana</option><option>Greece</option><option>India</option><option>Indonesia</option><option>Iran</option><option>Iraq</option><option>Ireland</option><option>Israel</option><option>Italy</option><option>Jamaica</option><option>Japan</option><option>Kenya</option><option>Malaysia</option><option>Mexico</option><option>Morocco</option><option>Netherlands, The</option><option>New Zealand</option><option>Nigeria</option><option>Norway</option><option>Pakistan</option><option>Peru</option><option>Philippines</option><option>Poland</option><option>Portugal</option><option>Republic of Korea (South Korea)</option><option>Romania</option><option>Russia</option><option>Saudi Arabia</option><option>Senegal</option><option>Singapore</option><option>South Africa</option><option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Tanzania</option><option>Thailand</option><option>Trinidad and Tobago</option><option>Tunisia</option><option>Turkey</option><option>Uganda</option><option>Ukraine</option><option>United Arab Emirates, The</option><option>United Kingdom, The</option><option>United States of America</option><option>Uruguay</option><option>Venezuela</option><option>Vietnam</option><option>Zambia</option><option>Zimbabwe</option>
-            </select>
+      <div class="field stack-gap">
+        <label>Country of Origin</label>
+        <div class="country-wrap" id="countryWrap">
+          <div class="country-flag">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
+          <select id="country">
+            <option>Ghana</option><option>Nigeria</option><option>Kenya</option><option>South Africa</option>
+            <option>Uganda</option><option>Tanzania</option><option>Cameroon</option>
+            <option>United States of America</option><option>United Kingdom, The</option><option>Canada</option>
+            <option>Australia</option><option>France</option><option>Germany</option><option>Brazil</option>
+            <option>India</option><option>Jamaica</option><option>Trinidad and Tobago</option><option>Senegal</option>
+            <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
+          </select>
         </div>
+      </div>
 
-        <div class="field">
-          <label>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.47 2 2 0 0 1 3.64 1.31h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Phone Number
-          </label>
-          <input id="number" placeholder="+1 000 000 0000">
+      <!-- FEATURED & SECONDARY ARTISTS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Featured &amp; Secondary Artists</div>
+          <div class="section-desc">Optional — add other artists on this track</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Add a featured or secondary artist?</label>
+        <div class="radio-group" id="hasFeaturedGroup" data-value="No">
+          <button type="button" class="radio-pill selected" data-value="No">No</button>
+          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
+        </div>
+      </div>
+
+      <div class="field stack-gap" id="featuredArtistsWrap">
+        <label>Search Artist</label>
+        <div class="artist-field" id="featArtistFieldWrap">
+          <div class="artist-pill-box" style="min-height:auto;">
+            <input type="text" id="featArtistSearchInput" class="artist-search-input"
+              placeholder="Search artist on Apple Music…"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          </div>
+          <div class="artist-dropdown" id="featArtistDropdown"></div>
+        </div>
+        <div class="field-hint">Results pulled from Apple Music</div>
+        <div id="featuredArtistsList" style="margin-top:12px;"></div>
       </div>
 
       <!-- RELEASE DETAILS -->
@@ -695,27 +631,26 @@ option { background: #171725; color: var(--text-primary); }
           </div>
         </div>
         <div class="field">
-          <label>Genre</label>
+          <label>Genre <div class="required-dot"></div></label>
           <div class="select-wrap">
             <select id="genre">
-              <optgroup label="Pop"><option>Pop</option><option>Indie Pop</option><option>Synth-Pop</option><option>Electropop</option><option>K-Pop</option><option>Afropop</option></optgroup>
-              <optgroup label="Hip-Hop / Rap"><option>Hip-Hop</option><option>Rap</option><option>Trap</option><option>Drill</option><option>UK Drill</option><option>Boom Bap</option><option>Grime</option><option>Afro Trap</option></optgroup>
-              <optgroup label="R&B / Soul"><option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Funk</option><option>Gospel</option></optgroup>
-              <optgroup label="Electronic / Dance"><option>Electronic</option><option>EDM</option><option>House</option><option>Deep House</option><option>Afro House</option><option>Techno</option><option>Ambient</option></optgroup>
-              <optgroup label="Rock / Alternative"><option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option><option>Classic Rock</option><option>Punk Rock</option></optgroup>
-              <optgroup label="Afrobeats / African"><option>Afrobeats</option><option>Afroswing</option><option>Highlife</option><option>Amapiano</option><option>Azonto</option><option>Kizomba</option><option>Bongo Flava</option></optgroup>
-              <optgroup label="Reggae / Dancehall"><option>Reggae</option><option>Dancehall</option><option>Reggaeton</option></optgroup>
-              <optgroup label="Latin"><option>Latin Pop</option><option>Salsa</option><option>Bachata</option><option>Bossa Nova</option></optgroup>
-              <optgroup label="Jazz / Blues"><option>Jazz</option><option>Blues</option><option>Soul Blues</option></optgroup>
-              <optgroup label="Classical"><option>Classical</option><option>Orchestral</option><option>Film Score</option></optgroup>
-              <optgroup label="Gospel / Worship"><option>Gospel</option><option>Contemporary Christian</option><option>Worship</option><option>Christian Hip-Hop</option></optgroup>
-              <optgroup label="Other"><option>Experimental</option><option>Lo-Fi</option><option>Spoken Word</option><option>Other</option></optgroup>
+              <option>Pop</option><option>Indie Pop</option><option>Afropop</option><option>Hip-Hop</option>
+              <option>Rap</option><option>Trap</option><option>Drill</option><option>Afro Trap</option>
+              <option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Gospel</option>
+              <option>Electronic</option><option>EDM</option><option>Afro House</option><option>House</option>
+              <option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option>
+              <option selected>Afrobeats</option><option>Afroswing</option><option>Highlife</option>
+              <option>Amapiano</option><option>Reggae</option><option>Dancehall</option><option>Jazz</option>
+              <option>Blues</option><option>Classical</option><option>Lo-Fi</option><option>Other</option>
             </select>
           </div>
         </div>
+      </div>
+
+      <div class="grid stack-gap">
         <div class="field">
           <label>Language</label>
-          <input id="language" placeholder="e.g. English, French, Twi">
+          <input id="language" placeholder="e.g. English, Twi">
         </div>
         <div class="field">
           <label>Explicit Content</label>
@@ -743,18 +678,9 @@ option { background: #171725; color: var(--text-primary); }
         <label>Version <div class="required-dot"></div></label>
         <div class="select-wrap">
           <select id="version" required>
-            <option value="">Select version…</option>
-            <option>Original</option>
-            <option>Radio Edit</option>
-            <option>Extended Mix</option>
-            <option>Remix</option>
-            <option>Acoustic</option>
-            <option>Live</option>
-            <option>Instrumental</option>
-            <option>Remastered</option>
-            <option>Cover</option>
-            <option>Sped Up</option>
-            <option>Slowed</option>
+            <option>Original</option><option>Radio Edit</option><option>Extended Mix</option>
+            <option>Remix</option><option>Acoustic</option><option>Live</option><option>Instrumental</option>
+            <option>Remastered</option><option>Cover</option><option>Sped Up</option><option>Slowed</option>
             <option>Other</option>
           </select>
         </div>
@@ -789,7 +715,7 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="section-title-wrap">
           <div class="section-title">Label &amp; Rights</div>
-          <div class="section-desc">Copyright and label ownership information</div>
+          <div class="section-desc">Copyright and label ownership</div>
         </div>
       </div>
 
@@ -800,7 +726,7 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="field">
           <label>Copyright Holder</label>
-          <input id="copyright" placeholder="© 2025 Your Name or Company">
+          <input id="copyright" placeholder="© 2025 Your Name">
         </div>
       </div>
 
@@ -822,7 +748,7 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="field">
           <label>UPC / EAN Barcode</label>
-          <input id="upc" placeholder="Leave blank to auto-assign" maxlength="14">
+          <input id="upc" placeholder="Leave blank to auto-assign">
         </div>
         <div class="field">
           <label>Catalog Number</label>
@@ -837,7 +763,7 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="section-title-wrap">
           <div class="section-title">Production Credits</div>
-          <div class="section-desc">Producers, engineers, and musicians involved</div>
+          <div class="section-desc">Producers, engineers, and musicians</div>
         </div>
       </div>
 
@@ -867,44 +793,27 @@ option { background: #171725; color: var(--text-primary); }
         </div>
       </div>
 
-      <!-- SONGWRITING & PUBLISHING -->
+      <!-- SONGWRITING (no publishing panel — matches app) -->
       <div class="section-head">
         <div class="section-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </div>
         <div class="section-title-wrap">
-          <div class="section-title">Songwriting &amp; Publishing</div>
-          <div class="section-desc">Writers, composers, and publishing information</div>
+          <div class="section-title">Songwriting</div>
+          <div class="section-desc">Writers and composers</div>
         </div>
       </div>
 
-      <div class="credits-grid">
-        <div class="credits-panel required-panel" id="writerPanel">
-          <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            Songwriters &amp; Composers
-            <span class="required-badge">Required</span>
-          </div>
-          <div class="writer-notice">
-            <strong>⚠ Important:</strong> Enter your <strong>real legal name</strong> — not your artist or stage name. This is required for royalty registration and legal copyright purposes.
-          </div>
-          <div class="credits-list" id="writerList"></div>
-          <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add Songwriter / Composer
-          </button>
+      <div class="credits-panel">
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Songwriters &amp; Composers
         </div>
-        <div class="credits-panel">
-          <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            Publishing &amp; PRO
-          </div>
-          <div class="credits-list" id="publishingList"></div>
-          <button type="button" class="add-credit-btn" onclick="addCredit('publishing')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add Publisher / PRO Info
-          </button>
-        </div>
+        <div class="credits-list" id="writerList"></div>
+        <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Songwriter / Composer
+        </button>
       </div>
 
       <!-- CONTACT -->
@@ -914,16 +823,12 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="section-title-wrap">
           <div class="section-title">Contact &amp; Account</div>
-          <div class="section-desc">Your contact information for this release</div>
+          <div class="section-desc">Your contact info for this release</div>
         </div>
       </div>
 
       <div class="field">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Email Address
-          <div class="required-dot"></div>
-        </label>
+        <label>Email Address <div class="required-dot"></div></label>
         <input id="email" type="email" placeholder="your@email.com" required>
       </div>
 
@@ -934,13 +839,13 @@ option { background: #171725; color: var(--text-primary); }
         </div>
         <div class="section-title-wrap">
           <div class="section-title">Lyrics</div>
-          <div class="section-desc">Optional — improves discoverability on streaming platforms</div>
+          <div class="section-desc">Optional — improves discoverability</div>
         </div>
       </div>
 
       <div class="field">
         <label>Lyrics (Optional)</label>
-        <textarea id="description" placeholder="Paste your lyrics here…"></textarea>
+        <textarea id="lyrics" placeholder="Paste your lyrics here…"></textarea>
       </div>
 
       <!-- OWNERSHIP AGREEMENT -->
@@ -965,58 +870,20 @@ option { background: #171725; color: var(--text-primary); }
         <div class="trust-strip">
           <div class="trust-item">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            256-bit SSL Encrypted
+            256-bit SSL
           </div>
           <div class="trust-item">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Data Stored Securely
+            GDPR Compliant
           </div>
           <div class="trust-item">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-            GDPR Compliant
+            Secure Data
           </div>
         </div>
-
-        <p class="form-footer-note">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Your information is used solely for processing your release distribution
-        </p>
       </div>
 
     </form>
-  </div>
-</div>
-
-<!-- MODAL: Add New Artist -->
-<div class="modal-overlay" id="artistModal" style="display:none;" aria-modal="true" role="dialog">
-  <div class="modal-card" id="artistModalCard">
-    <div class="modal-hd">
-      <span class="modal-title">Add New Artist</span>
-      <button class="modal-close" id="modalClose" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-field">
-      <label class="modal-label">Artist Name</label>
-      <input class="modal-input" id="modalArtistName" placeholder="Enter the artist's name" autocomplete="off">
-    </div>
-    <div class="modal-field">
-      <label class="modal-label">Artist Type</label>
-      <div class="modal-sel-wrap">
-        <select class="modal-select" id="modalArtistType">
-          <option value="primary">Primary Artist</option>
-          <option value="collaborating">Collaborating Main Artist</option>
-        </select>
-      </div>
-      <div class="modal-hint">
-        <strong>Primary artists</strong> count toward your subscription limit.<br>
-        Collaborating artists do not affect your limit.
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-save" id="modalSave">Save Artist</button>
-      <button class="modal-cancel" id="modalCancel">Cancel</button>
-    </div>
   </div>
 </div>
 
@@ -1024,6 +891,7 @@ option { background: #171725; color: var(--text-primary); }
 <script>
 (function(){
   const prevDateWrap = document.getElementById('previousReleaseDateWrap');
+  const featWrap     = document.getElementById('featuredArtistsWrap');
 
   document.querySelectorAll('.radio-group').forEach(function(group){
     group.addEventListener('click', function(e){
@@ -1037,6 +905,9 @@ option { background: #171725; color: var(--text-primary); }
         const isYes = btn.dataset.value === 'Yes';
         prevDateWrap.classList.toggle('visible', isYes);
         if (!isYes) document.getElementById('previousReleaseDate').value = '';
+      }
+      if (group.id === 'hasFeaturedGroup') {
+        featWrap.classList.toggle('visible', btn.dataset.value === 'Yes');
       }
     });
   });
@@ -1052,8 +923,8 @@ option { background: #171725; color: var(--text-primary); }
 <script>
 (function(){
   window.ownershipConfirmed = false;
-  const agreementBox      = document.getElementById('agreementBox');
-  const agreementCheckbox  = document.getElementById('agreementCheckbox');
+  const agreementBox     = document.getElementById('agreementBox');
+  const agreementCheckbox = document.getElementById('agreementCheckbox');
   agreementBox.addEventListener('click', function(){
     window.ownershipConfirmed = !window.ownershipConfirmed;
     agreementCheckbox.classList.toggle('checked', window.ownershipConfirmed);
@@ -1062,22 +933,20 @@ option { background: #171725; color: var(--text-primary); }
 })();
 </script>
 
-<!-- CREDITS ENGINE -->
+<!-- CREDITS ENGINE — producer, musician, writer only (mirrors the app: no publishing) -->
 <script>
 const ROLES = {
-  producer:   ['Producer','Executive Producer','Co-Producer','Beat Maker / Beatmaker','Mixing Engineer','Mastering Engineer','Recording Engineer','Assistant Recording Engineer','Assistant Mixing Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor','Vocal Tuning Engineer','Drum Programmer','Synthesizer Programmer'],
-  musician:   ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Lead Guitarist','Rhythm Guitarist','Bassist','Drummer','Percussionist','Pianist','Keyboardist','Organist','Violinist','Cellist','Trumpeter','Saxophonist','Trombonist','Flutist','Harpist','DJ / Turntablist','Session Musician','String Arranger','Horn Arranger','Choir Director','Conductor'],
-  writer:     ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Translator / Adaptor','Top-Liner','Concept Writer','Traditional / Public Domain'],
-  publishing: ['Publishing Company','Sub-Publisher','Music Publisher','PRO Affiliation (ASCAP)','PRO Affiliation (BMI)','PRO Affiliation (SESAC)','PRO Affiliation (SOCAN)','PRO Affiliation (PRS)','PRO Affiliation (GEMA)','PRO Affiliation (APRA)','PRO Affiliation (Other)','Self-Published']
+  producer: ['Producer','Executive Producer','Co-Producer','Beat Maker','Mixing Engineer','Mastering Engineer','Recording Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor'],
+  musician: ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Bassist','Drummer','Pianist','Keyboardist','DJ / Turntablist','Session Musician','String Arranger'],
+  writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer']
 };
 const PLACEHOLDERS = {
-  producer:   { name: 'e.g. Metro Boomin',              role: 'Select role…' },
-  musician:   { name: 'e.g. John Mayer',                role: 'Select role…' },
-  writer:     { name: 'e.g. John Doe (legal name)',     role: 'Select role…' },
-  publishing: { name: 'e.g. Sony Music Publishing',     role: 'Select type…' }
+  producer: { name: 'e.g. Metro Boomin', role: 'Select role…' },
+  musician: { name: 'e.g. John Mayer',   role: 'Select role…' },
+  writer:   { name: 'e.g. John Doe',     role: 'Select role…' }
 };
-const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList', publishing:'publishingList' };
-const credits  = { producer:[], musician:[], writer:[], publishing:[] };
+const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList' };
+const credits  = { producer:[], musician:[], writer:[] };
 
 window.addCredit = function(type) {
   const list = document.getElementById(LIST_IDS[type]);
@@ -1088,17 +957,15 @@ window.addCredit = function(type) {
   row.dataset.type = type; row.dataset.idx = idx;
   const label       = type.charAt(0).toUpperCase() + type.slice(1);
   const roleOptions = ROLES[type].map(r => `<option value="${r}">${r}</option>`).join('');
-  const showIPI     = (type === 'writer' || type === 'publishing');
-  const isWriter    = (type === 'writer');
+  const showIPI     = (type === 'writer');
 
   row.innerHTML = `
     <span class="credit-row-num">${label} ${idx + 1}</span>
     <div class="credit-field-wrap">
-      <div class="credit-field-label">Full ${isWriter ? 'Legal ' : ''}Name</div>
+      <div class="credit-field-label">Full Name</div>
       <input class="credit-input" type="text"
         placeholder="${PLACEHOLDERS[type].name}"
-        oninput="updateCredit('${type}',${idx},'name',this.value)${isWriter ? '; checkWriterName(this)' : ''}">
-      ${isWriter ? '<div class="writer-name-error" id="writerErr_' + idx + '">⚠ Please use your real legal name, not your artist or stage name.</div>' : ''}
+        oninput="updateCredit('${type}',${idx},'name',this.value)">
     </div>
     <div class="credit-field-wrap">
       <div class="credit-field-label">Role</div>
@@ -1109,7 +976,7 @@ window.addCredit = function(type) {
       </div>
     </div>
     ${showIPI ? `<div class="credit-field-wrap" style="grid-column:1/-1;">
-      <div class="credit-field-label">${type === 'writer' ? 'IPI / CAE Number (optional)' : 'Publisher IPI / Account No. (optional)'}</div>
+      <div class="credit-field-label">IPI / CAE Number (optional)</div>
       <input class="credit-input" type="text" placeholder="e.g. 00000000497"
         oninput="updateCredit('${type}',${idx},'ipi',this.value)">
     </div>` : ''}
@@ -1122,23 +989,6 @@ window.addCredit = function(type) {
   row.querySelector('input.credit-input')?.focus();
 };
 
-window.checkWriterName = function(inputEl) {
-  const val         = inputEl.value.trim().toLowerCase();
-  const artistNames = (document.getElementById('artistName').value || '')
-    .split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
-  const row      = inputEl.closest('.credit-row');
-  const idx      = parseInt(row.dataset.idx);
-  const errEl    = document.getElementById('writerErr_' + idx);
-  const isStage  = val !== '' && artistNames.includes(val);
-
-  if (errEl) errEl.style.display = isStage ? 'block' : 'none';
-  if (isStage) {
-    inputEl.classList.add('input-error');
-  } else {
-    inputEl.classList.remove('input-error');
-  }
-};
-
 window.updateCredit = function(type, idx, field, value) {
   if (credits[type][idx]) credits[type][idx][field] = value;
 };
@@ -1146,28 +996,18 @@ window.updateCredit = function(type, idx, field, value) {
 window.removeCredit = function(type, row) {
   const idx = parseInt(row.dataset.idx);
   credits[type].splice(idx, 1);
-  row.style.opacity   = '0';
-  row.style.transform = 'translateY(-4px)';
-  row.style.transition= '0.18s ease';
+  row.style.opacity = '0'; row.style.transform = 'translateY(-4px)'; row.style.transition = '0.18s ease';
   setTimeout(() => {
     row.remove();
     document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r, i) => {
       r.dataset.idx = i;
       const lbl = type.charAt(0).toUpperCase() + type.slice(1);
       r.querySelector('.credit-row-num').textContent = `${lbl} ${i + 1}`;
-      if (type === 'writer') {
-        const errEl = r.querySelector('.writer-name-error');
-        if (errEl) errEl.id = 'writerErr_' + i;
-        const nameInput = r.querySelector('input.credit-input');
-        if (nameInput) {
-          nameInput.setAttribute('oninput',
-            `updateCredit('writer',${i},'name',this.value); checkWriterName(this)`);
-        }
-      }
     });
   }, 180);
 };
 
+// Mirrors the app's _formatCredits — one bullet line per named entry
 window.formatCreditsForEmail = function(arr) {
   if (!arr || arr.length === 0) return 'None';
   const lines = arr.filter(c => c.name && c.name.trim() !== '').map(c => {
@@ -1181,82 +1021,65 @@ window.formatCreditsForEmail = function(arr) {
 
 window.collectCredits = function() {
   const result = {};
-  ['producer','musician','writer','publishing'].forEach(type => {
+  ['producer','musician','writer'].forEach(type => {
     result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
   });
   return result;
 };
 </script>
 
-<!-- ARTIST SEARCH ENGINE -->
+<!-- SHARED APPLE MUSIC SEARCH (used by both Main and Featured artist boxes,
+     mirroring the app's _searchArtistsRemote) -->
+<script>
+async function searchAppleMusicArtists(query, signal) {
+  const itunesUrl = 'https://itunes.apple.com/search?term=' +
+    encodeURIComponent(query) + '&entity=musicArtist&limit=8&media=music';
+  const proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl)
+  ];
+  for (const proxyUrl of proxies) {
+    try {
+      const res = await Promise.race([
+        fetch(proxyUrl, { signal }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
+      ]);
+      if (!res.ok) continue;
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { continue; }
+      if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { continue; } }
+      if (!data || !data.results || !data.results.length) continue;
+      return data.results.filter(r => r.artistName).map(r => ({
+        name:  r.artistName,
+        genre: r.primaryGenreName || '',
+        img:   (r.artworkUrl100 || '').replace('100x100bb', '300x300bb')
+      }));
+    } catch (e) { /* try next proxy */ }
+  }
+  return [];
+}
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+
+<!-- MAIN ARTIST SEARCH ENGINE (multi-select pills) -->
 <script>
 (function(){
-  const selectedArtists  = [];
-  const searchInput      = document.getElementById('artistSearchInput');
-  const pillBox          = document.getElementById('artistPillBox');
-  const dropdown         = document.getElementById('artistDropdown');
-  const hiddenInput      = document.getElementById('artistName');
-  const modal            = document.getElementById('artistModal');
-  const modalCard        = document.getElementById('artistModalCard');
-  const modalNameInput   = document.getElementById('modalArtistName');
-  const modalTypeSelect  = document.getElementById('modalArtistType');
-  const modalSaveBtn     = document.getElementById('modalSave');
-  const modalCancelBtn   = document.getElementById('modalCancel');
-  const modalCloseBtn    = document.getElementById('modalClose');
-  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [];
-  let activeCtrl  = null;
+  const selectedArtists = [];
+  const searchInput = document.getElementById('artistSearchInput');
+  const pillBox      = document.getElementById('artistPillBox');
+  const dropdown     = document.getElementById('artistDropdown');
+  const hiddenInput  = document.getElementById('artistName');
+  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [], activeCtrl = null;
 
-  async function fetchArtists(query) {
+  async function runSearch(query) {
     showLoading();
     if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
     activeCtrl = new AbortController();
-    const signal = activeCtrl.signal;
-
-    const itunesUrl = 'https://itunes.apple.com/search?term=' +
-      encodeURIComponent(query) + '&entity=musicArtist&limit=10&media=music';
-
-    const proxies = [
-      'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
-      'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl),
-      'https://thingproxy.freeboard.io/fetch/' + itunesUrl,
-      'https://api.codetabs.com/v1/proxy?quest=' + itunesUrl
-    ];
-
-    async function tryProxy(proxyUrl) {
-      try {
-        const res = await Promise.race([
-          fetch(proxyUrl, { signal }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
-        ]);
-        if (!res.ok) return null;
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { return null; }
-        if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { return null; } }
-        if (!data || !data.results || !data.results.length) return null;
-        return data.results.filter(r => r.artistName).map(r => ({
-          name:   r.artistName,
-          genre:  r.primaryGenreName || '',
-          img:    (r.artworkUrl100 || '').replace('100x100bb', '300x300bb'),
-          source: 'itunes'
-        }));
-      } catch(e) { return null; }
-    }
-
-    let resolved = false;
-    const results = await new Promise(resolve => {
-      let done = 0;
-      proxies.forEach(p => {
-        tryProxy(p).then(res => {
-          done++;
-          if (res && res.length && !resolved) { resolved = true; resolve(res); }
-          else if (done === proxies.length && !resolved) resolve([]);
-        });
-      });
-    });
-
-    if (signal.aborted) return;
-    renderResults(query, results, 'itunes');
+    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
+    renderResults(query, results);
   }
 
   searchInput.addEventListener('input', function() {
@@ -1265,27 +1088,16 @@ window.collectCredits = function() {
     lastQuery = q;
     clearTimeout(searchTimer);
     if (q.length < 2) { closeDropdown(); return; }
-    showLoading();
-    searchTimer = setTimeout(() => fetchArtists(q), 400);
+    searchTimer = setTimeout(() => runSearch(q), 400);
   });
-
   searchInput.addEventListener('keydown', handleKeyNav);
-
-  let outsideTouchMoved = false;
-  document.addEventListener('touchstart', function() { outsideTouchMoved = false; }, { passive: true });
-  document.addEventListener('touchmove',  function() { outsideTouchMoved = true;  }, { passive: true });
-  document.addEventListener('touchend', function(e) {
-    if (outsideTouchMoved) return;
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  }, { passive: true });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  });
-
   searchInput.addEventListener('focus', function() {
     const q = searchInput.value.trim();
-    if (q.length >= 2 && lastQuery !== q) fetchArtists(q);
+    if (q.length >= 2 && lastQuery !== q) runSearch(q);
     else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
   });
 
   function showLoading() {
@@ -1293,68 +1105,44 @@ window.collectCredits = function() {
     openDropdown();
   }
 
-  function renderResults(query, artists, sourceName) {
+  function renderResults(query, artists) {
     dropdownItems = [];
     let html = '';
-    if (artists && artists.length > 0) {
+    if (artists.length > 0) {
       html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
       artists.forEach((a, i) => {
-        const imgUrl = a.img || '';
-        dropdownItems.push({ name: a.name, imageUrl: imgUrl, genre: a.genre || '', source: a.source || 'itunes' });
-        const initial = esc((a.name || '?').charAt(0).toUpperCase());
-        const av = imgUrl
-          ? `<div class="opt-avatar"><img src="${imgUrl}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+        dropdownItems.push({ name: a.name, imageUrl: a.img || '', genre: a.genre || '', isNew: false });
+        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
+        const av = a.img
+          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
           : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${esc(a.name)}</div>${a.genre ? `<div class="opt-meta">${esc(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
+        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
       });
     }
     const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '', source: 'new' });
+    dropdownItems.push({ name: query, imageUrl: '', isNew: true });
     html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.3rem;font-weight:700;">+</div><div class="opt-info"><div class="opt-name">Add "${esc(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
-
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
     dropdown.innerHTML = html;
-    openDropdown();
-    focused = -1;
-
+    openDropdown(); focused = -1;
     dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e) { e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-      let touchStartX = 0, touchStartY = 0, didScroll = false;
-      el.addEventListener('touchstart', function(e) {
-        touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; didScroll = false;
-      }, { passive: true });
-      el.addEventListener('touchmove', function() { didScroll = true; }, { passive: true });
-      el.addEventListener('touchend', function(e) {
-        if (didScroll) return;
-        e.preventDefault(); e.stopPropagation();
-        selectItem(parseInt(el.dataset.index));
-      });
+      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
     });
   }
 
   function selectItem(idx) {
     const item = dropdownItems[idx];
     if (!item) return;
-    if (item.source === 'new') {
-      modalNameInput.value = item.name;
-      openModal(); closeDropdown();
-      searchInput.value = ''; lastQuery = '';
-      return;
-    }
-    addArtistPill(item.name, item.imageUrl, item.source);
+    addArtist(item.name, item.imageUrl);
     closeDropdown(); searchInput.value = ''; lastQuery = '';
   }
 
-  function addArtistPill(name, imageUrl, source) {
+  function addArtist(name, imageUrl) {
     if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    selectedArtists.push({ name, imageUrl, source });
+    selectedArtists.push({ name, imageUrl });
     syncHiddenInput(); renderPills();
   }
-
-  function removeArtist(idx) {
-    selectedArtists.splice(idx, 1);
-    syncHiddenInput(); renderPills();
-  }
+  function removeArtist(idx) { selectedArtists.splice(idx, 1); syncHiddenInput(); renderPills(); }
 
   function renderPills() {
     pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
@@ -1363,12 +1151,12 @@ window.collectCredits = function() {
       pill.className = 'artist-pill';
       const av = artist.imageUrl
         ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
-        : `<span class="pill-avatar">${esc(artist.name.charAt(0).toUpperCase())}</span>`;
-      pill.innerHTML = `${av}<span>${esc(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${esc(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+        : `<span class="pill-avatar">${escHtml(artist.name.charAt(0).toUpperCase())}</span>`;
+      pill.innerHTML = `${av}<span>${escHtml(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${escHtml(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
       pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
       pillBox.insertBefore(pill, searchInput);
     });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist name…';
+    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Apple Music…';
   }
 
   function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
@@ -1376,62 +1164,145 @@ window.collectCredits = function() {
   function handleKeyNav(e) {
     const items = dropdown.querySelectorAll('.artist-option');
     if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if      (e.key === 'ArrowDown')  { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlightItem(items); }
-    else if (e.key === 'ArrowUp')    { e.preventDefault(); focused = Math.max(focused - 1, 0); highlightItem(items); }
-    else if (e.key === 'Enter')      { e.preventDefault(); if (focused >= 0) selectItem(focused); }
-    else if (e.key === 'Escape')     { closeDropdown(); }
+    if      (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlight(items); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); focused = Math.max(focused - 1, 0); highlight(items); }
+    else if (e.key === 'Enter')     { e.preventDefault(); if (focused >= 0) selectItem(focused); }
+    else if (e.key === 'Escape')    { closeDropdown(); }
   }
-
-  function highlightItem(items) {
+  function highlight(items) {
     items.forEach((el, i) => el.classList.toggle('focused', i === focused));
     if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
   }
-
   function openDropdown()  { dropdown.classList.add('open'); }
   function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
-
-  function openModal() {
-    modal.style.display = 'flex';
-    modal.classList.remove('closing'); modalCard.classList.remove('closing');
-    setTimeout(() => modalNameInput.focus(), 100);
-  }
-  function closeModal(cb) {
-    modal.classList.add('closing'); modalCard.classList.add('closing');
-    setTimeout(() => {
-      modal.style.display = 'none';
-      modal.classList.remove('closing'); modalCard.classList.remove('closing');
-      if (cb) cb();
-    }, 180);
-  }
-
-  modalSaveBtn.addEventListener('click', () => {
-    const name = modalNameInput.value.trim();
-    if (!name) { modalNameInput.focus(); return; }
-    addArtistPill(name, '', 'new');
-    closeModal(() => { modalNameInput.value = ''; modalTypeSelect.value = 'primary'; });
-  });
-  modalCancelBtn.addEventListener('click', () => closeModal());
-  modalCloseBtn.addEventListener('click',  () => closeModal());
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-  modalNameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter')  { e.preventDefault(); modalSaveBtn.click(); }
-    if (e.key === 'Escape') closeModal();
-  });
-  pillBox.addEventListener('click', e => {
-    if (!e.target.closest('.artist-pill')) searchInput.focus();
-  });
-
-  function esc(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
 })();
 </script>
 
-<!-- FIREBASE + OWN BACKEND NOTIFY -->
+<!-- FEATURED / SECONDARY ARTIST SEARCH ENGINE (mirrors the app's mirrored search) -->
+<script>
+(function(){
+  const featuredArtists = []; // {name, imageUrl, role, url}
+  const searchInput = document.getElementById('featArtistSearchInput');
+  const dropdown     = document.getElementById('featArtistDropdown');
+  const listEl       = document.getElementById('featuredArtistsList');
+  let searchTimer = null, lastQuery = '', dropdownItems = [], activeCtrl = null;
+
+  window.formatFeaturedArtistsForEmail = function() {
+    if (featuredArtists.length === 0) return 'None';
+    return featuredArtists.map(e => {
+      let line = `${e.name} (${e.role})`;
+      if (e.url && e.url.trim()) line += ` — ${e.url.trim()}`;
+      return line;
+    }).join('\n');
+  };
+  window.collectFeaturedArtists = function() {
+    return featuredArtists.map(e => ({ name: e.name, role: e.role, url: (e.url || '').trim() }));
+  };
+
+  async function runSearch(query) {
+    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
+    openDropdown();
+    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
+    activeCtrl = new AbortController();
+    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
+    renderResults(query, results);
+  }
+
+  searchInput.addEventListener('input', function() {
+    const q = searchInput.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(searchTimer);
+    if (q.length < 2) { closeDropdown(); return; }
+    searchTimer = setTimeout(() => runSearch(q), 400);
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (!e.target.closest('#featArtistFieldWrap')) closeDropdown();
+  });
+
+  function renderResults(query, artists) {
+    dropdownItems = [];
+    let html = '';
+    if (artists.length > 0) {
+      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
+      artists.forEach((a, i) => {
+        dropdownItems.push({ name: a.name, imageUrl: a.img || '' });
+        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
+        const av = a.img
+          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+          : `<div class="opt-avatar">${initial}</div>`;
+        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
+      });
+    }
+    const newIdx = dropdownItems.length;
+    dropdownItems.push({ name: query, imageUrl: '' });
+    html += '<div class="dropdown-sect-title">Not listed?</div>';
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
+    dropdown.innerHTML = html;
+    openDropdown();
+    dropdown.querySelectorAll('.artist-option').forEach(el => {
+      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+    });
+  }
+
+  function selectItem(idx) {
+    const item = dropdownItems[idx];
+    if (!item) return;
+    addFeaturedArtist(item.name, item.imageUrl);
+    closeDropdown(); searchInput.value = ''; lastQuery = '';
+  }
+
+  function addFeaturedArtist(name, imageUrl) {
+    if (featuredArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
+    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '' });
+    renderList();
+  }
+  function removeFeaturedArtist(idx) { featuredArtists.splice(idx, 1); renderList(); }
+
+  function renderList() {
+    listEl.innerHTML = '';
+    featuredArtists.forEach((entry, i) => {
+      const card = document.createElement('div');
+      card.className = 'feat-card';
+      const av = entry.imageUrl
+        ? `<div class="feat-avatar"><img src="${entry.imageUrl}" alt="" onerror="this.style.display='none'"></div>`
+        : `<div class="feat-avatar">${escHtml((entry.name||'?').charAt(0).toUpperCase())}</div>`;
+      card.innerHTML = `
+        <div class="feat-card-top">
+          ${av}
+          <div class="feat-name">${escHtml(entry.name)}</div>
+          <button type="button" class="feat-remove" aria-label="Remove ${escHtml(entry.name)}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="feat-role-wrap">
+          <select>
+            <option value="Featuring Artist" ${entry.role === 'Featuring Artist' ? 'selected' : ''}>Featuring Artist</option>
+            <option value="Secondary Artist" ${entry.role === 'Secondary Artist' ? 'selected' : ''}>Secondary Artist</option>
+          </select>
+        </div>
+        <div class="feat-url-wrap">
+          <img src="https://cdn.simpleicons.org/spotify/1DB954" alt="" width="14" height="14" onerror="this.style.display='none'">
+          <img src="https://cdn.simpleicons.org/applemusic/fc3c44" alt="" width="14" height="14" onerror="this.style.display='none'">
+          <input type="text" placeholder="Paste Spotify or Apple Music link (optional)" value="${escHtml(entry.url || '')}">
+        </div>`;
+      card.querySelector('.feat-remove').addEventListener('click', () => removeFeaturedArtist(i));
+      card.querySelector('.feat-role-wrap select').addEventListener('change', (e) => { entry.role = e.target.value; });
+      card.querySelector('.feat-url-wrap input').addEventListener('input', (e) => { entry.url = e.target.value; });
+      listEl.appendChild(card);
+    });
+  }
+
+  function openDropdown()  { dropdown.classList.add('open'); }
+  function closeDropdown() { dropdown.classList.remove('open'); }
+})();
+</script>
+
+<!-- FIREBASE + PAYMENT VERIFY/CLAIM + SUBMIT + OWN BACKEND NOTIFY -->
 <script type="module">
 import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged }       from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1449,34 +1320,77 @@ const db   = getFirestore(app);
 const NOTIFY_URL    = "https://444music-backend.bonto.run/api/submissions/notify";
 const NOTIFY_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
 
-let currentUser = null;
+let currentUser       = null;
+let paymentReference  = null;
+let paymentVerified    = false;
+let coverUrl           = '';
+let audioFiles         = [];
+
+// ── read what pricing/upload passed us via URL query params ──
+// (?ref=<paymentReference>&cover=<url>&audio=<json>) — the web
+// equivalent of the app's Navigator route arguments map.
+(function readIncomingParams() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) paymentReference = ref;
+  const cover = params.get('cover');
+  if (cover) coverUrl = cover;
+  const audio = params.get('audio');
+  if (audio) {
+    try {
+      const parsed = JSON.parse(audio);
+      if (Array.isArray(parsed)) {
+        audioFiles = parsed
+          .map(m => ({ title: m.title || '', artist: m.artist || '', url: m.url || '' }))
+          .filter(m => m.url);
+      }
+    } catch (e) { /* ignore malformed audio param */ }
+  }
+})();
+
+async function verifyPayment(reference) {
+  try {
+    const snap = await getDoc(doc(db, 'pendingPayments', reference));
+    if (snap.exists() && snap.data().paid === true) {
+      paymentVerified = true;
+      document.getElementById('paymentBadge').classList.add('show');
+    }
+  } catch (e) {
+    console.error('[Payment verify] ERROR:', e);
+  }
+}
+
 onAuthStateChanged(auth, user => {
-  if (!user) { window.location.href = "login.html"; }
-  else        { currentUser = user; }
+  if (!user) { window.location.href = "login.html"; return; }
+  currentUser = user;
+  if (paymentReference) verifyPayment(paymentReference);
 });
 
 const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
 const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 
+// Mirrors the app's _sendEmails param list exactly, including the
+// payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
+// (the app has no publishing panel).
 async function sendEmails(data) {
-  const fmt    = window.formatCreditsForEmail;
+  const fmt = window.formatCreditsForEmail;
   const params = {
     email:          data.email,
     artist_name:    data.artistName,
-    featuring:      data.featuring      || 'None',
+    featuring:      window.formatFeaturedArtistsForEmail(),
     release_title:  data.releaseTitle,
     release_type:   data.releaseType,
     genre:          data.genre,
-    language:       data.language       || 'Not specified',
-    release_date:   data.releaseDate    || 'Not set',
+    language:       data.language     || 'Not specified',
+    release_date:   data.releaseDate  || 'Not set',
     explicit:       data.explicit,
     country:        data.country,
-    phone:          data.phone          || 'Not provided',
-    label:          data.label          || 'Independent',
-    copyright:      data.copyright      || 'Not provided',
-    isrc:           data.isrc           || 'Not provided',
-    upc:            data.upc            || 'Auto-assign',
-    catalog_number: data.catalogNumber  || 'Not provided',
+    phone:          data.phone        || 'Not provided',
+    label:          data.label        || 'Independent',
+    copyright:      data.copyright    || 'Not provided',
+    isrc:           data.isrc         || 'Not provided',
+    upc:            data.upc          || 'Auto-assign',
+    catalog_number: data.catalogNumber|| 'Not provided',
     version:                data.version,
     previously_released:    data.previouslyReleased,
     previous_release_date:  data.previousReleaseDate || 'N/A',
@@ -1487,21 +1401,20 @@ async function sendEmails(data) {
     producers:      fmt(data.credits?.producer),
     musicians:      fmt(data.credits?.musician),
     songwriters:    fmt(data.credits?.writer),
-    publishers:     fmt(data.credits?.publishing),
-    lyrics:         data.description    || 'Not provided',
+    publishers:     'N/A',
+    lyrics:         data.lyrics        || 'Not provided',
     submitted_at:   new Date(data.createdAt).toLocaleString(),
-    status:         data.status
+    status:         data.status,
+    payment_status: paymentVerified ? 'Paid' : 'Not confirmed',
+    cover_url:      data.coverURL   || '',
+    audio_files:    data.audioFiles || []
   };
 
   const res = await fetch(NOTIFY_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-app-secret": NOTIFY_SECRET
-    },
+    headers: { "Content-Type": "application/json", "x-app-secret": NOTIFY_SECRET },
     body: JSON.stringify(params)
   });
-
   if (!res.ok) {
     const text = await res.text().catch(() => '');
     throw new Error(`Notify request failed (${res.status}): ${text}`);
@@ -1518,103 +1431,121 @@ function resetBtn() {
   submitBtn.innerHTML = `${SUBMIT_SVG} Save &amp; Continue to Stores`;
   isSubmitting = false;
 }
+function showError(msg) { statusMsg.textContent = msg; statusMsg.className = 'error'; }
 
-function showError(msg) {
-  statusMsg.textContent = msg;
-  statusMsg.className   = 'error';
+function toIsoOrEmpty(dateInputValue) {
+  if (!dateInputValue) return '';
+  try { return new Date(dateInputValue).toISOString(); } catch (e) { return dateInputValue; }
+}
+
+// ── VALIDATION — mirrors the app's _validate() exactly: order,
+// messages, and producer (not writer) as the required credit. ──
+function validate() {
+  const artistName = document.getElementById("artistName").value.trim();
+  if (!artistName) return { msg: 'Please add at least one artist.', scrollTo: 'artistPillBox' };
+
+  const releaseTitle = document.getElementById("releaseTitle").value.trim();
+  if (!releaseTitle) return { msg: 'Release title is required.', scrollTo: 'releaseTitle' };
+
+  const releaseDate = document.getElementById("releaseDate").value;
+  if (!releaseDate) return { msg: 'Please select a release date.', scrollTo: 'releaseDate' };
+
+  const producers = credits.producer.filter(p => p.name && p.name.trim() !== '');
+  if (producers.length === 0) return { msg: 'Please add at least one producer name.', scrollTo: 'producerList' };
+
+  const version = document.getElementById("version").value;
+  if (!version) return { msg: 'Please select a version for this track.', scrollTo: 'version' };
+
+  const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
+  const previousReleaseDate = document.getElementById('previousReleaseDate').value;
+  if (previouslyReleased === 'Yes' && !previousReleaseDate) {
+    return { msg: 'Please select the previous release date.', scrollTo: 'previousReleaseDateWrap' };
+  }
+
+  if (!window.ownershipConfirmed) {
+    return { msg: 'Please confirm you own this song / hold the rights to distribute it.', scrollTo: 'agreementBox' };
+  }
+
+  const email = document.getElementById("email").value.trim();
+  if (!email) return { msg: 'Email address is required.', scrollTo: 'email' };
+
+  return null;
 }
 
 form.addEventListener("submit", async e => {
   e.preventDefault();
   if (isSubmitting || !currentUser) return;
 
-  isSubmitting       = true;
+  const error = validate();
+  if (error) {
+    showError('⚠ ' + error.msg);
+    const el = document.getElementById(error.scrollTo);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  isSubmitting = true;
   submitBtn.disabled = true;
   submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
   statusMsg.textContent = 'Please wait…';
   statusMsg.className   = '';
 
-  const artistName = document.getElementById("artistName").value.trim();
-  if (!artistName) {
-    showError("⚠ Please add at least one artist before submitting.");
-    document.getElementById('artistPillBox').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
-  const version = document.getElementById("version").value;
-  if (!version) {
-    showError("⚠ Please select a version for this track.");
-    document.getElementById('version').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
   const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
   const previousReleaseDate = document.getElementById('previousReleaseDate').value;
-  if (previouslyReleased === 'Yes' && !previousReleaseDate) {
-    showError("⚠ Please select the previous release date.");
-    document.getElementById('previousReleaseDateWrap').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
+  const creditsData = window.collectCredits();
 
-  if (!window.ownershipConfirmed) {
-    showError("⚠ Please confirm the ownership agreement before submitting.");
-    document.getElementById('agreementBox').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
-  const writerEntries = (credits['writer'] || []).filter(c => c.name && c.name.trim() !== '');
-  if (writerEntries.length === 0) {
-    showError("⚠ At least one Songwriter / Composer is required. Please add their legal name.");
-    document.getElementById('writerPanel').scrollIntoView({ behavior:'smooth', block:'center' });
-    const panel = document.getElementById('writerPanel');
-    panel.style.borderColor = 'var(--danger)';
-    panel.style.boxShadow   = '0 0 0 3px rgba(248,113,113,0.12)';
-    setTimeout(() => { panel.style.borderColor = ''; panel.style.boxShadow = ''; }, 3000);
-    resetBtn(); return;
-  }
-
-  const artistNamesList = artistName.split(',').map(n => n.trim().toLowerCase());
-  const stageNameMatch  = writerEntries.find(c => artistNamesList.includes(c.name.trim().toLowerCase()));
-  if (stageNameMatch) {
-    showError(`⚠ Writer name "${stageNameMatch.name}" is the same as your artist/stage name. Please enter your real legal name.`);
-    document.getElementById('writerPanel').scrollIntoView({ behavior:'smooth', block:'center' });
-    resetBtn(); return;
-  }
-
-  const creditsData = typeof window.collectCredits === 'function' ? window.collectCredits() : {};
-
+  // Mirrors the app's submission data map field-for-field, including
+  // the payment / cover / audio fields and Review-vs-Pending status.
   const data = {
-    artistName,
+    artistName:    document.getElementById("artistName").value.trim(),
     releaseTitle:  document.getElementById("releaseTitle").value.trim(),
     releaseType:   document.getElementById("releaseType").value,
-    country:       document.getElementById("country").value,
     genre:         document.getElementById("genre").value,
+    country:       document.getElementById("country").value,
     language:      document.getElementById("language").value.trim(),
-    releaseDate:   document.getElementById("releaseDate").value,
+    releaseDate:   toIsoOrEmpty(document.getElementById("releaseDate").value),
     explicit:      document.getElementById("explicit").value,
     email:         document.getElementById("email").value.trim(),
     phone:         document.getElementById("number").value.trim(),
-    featuring:     document.getElementById("featuring").value.trim(),
-    copyright:     document.getElementById("copyright").value.trim(),
     label:         document.getElementById("label").value.trim(),
-    description:   document.getElementById("description").value.trim(),
+    copyright:     document.getElementById("copyright").value.trim(),
     isrc:          document.getElementById("isrc").value.trim(),
     upc:           document.getElementById("upc").value.trim(),
     catalogNumber: document.getElementById("catalogNumber").value.trim(),
-    version:               version,
+    lyrics:        document.getElementById("lyrics").value.trim(),
+    version:               document.getElementById("version").value,
     previouslyReleased:    previouslyReleased,
-    previousReleaseDate:   previouslyReleased === 'Yes' ? previousReleaseDate : '',
+    previousReleaseDate:   previouslyReleased === 'Yes' ? toIsoOrEmpty(previousReleaseDate) : '',
     vocalType:             window.getRadioValue('vocalTypeGroup'),
     ownershipConfirmed:    window.ownershipConfirmed,
-    credits:       creditsData,
-    userId:        currentUser.uid,
-    createdAt:     Date.now(),
-    status:        "Pending"
+    credits:               creditsData,
+    featuredArtists:       window.collectFeaturedArtists(),
+    paid:             paymentVerified ? 'Paid' : 'Unpaid',
+    paymentReference: paymentReference || '',
+    coverURL:         coverUrl || '',
+    audioFiles:       audioFiles,
+    userId:    currentUser.uid,
+    createdAt: Date.now(),
+    status:    paymentVerified ? 'Review' : 'Pending'
   };
 
   try {
+    // 1 — Save to Firestore
     await addDoc(collection(db, "submissions"), data);
+
+    // 2 — Send notification emails via our own backend
     await sendEmails(data);
+
+    // 3 — Mark the payment as claimed so the Pricing resume banner
+    // doesn't show it as unclaimed anymore (mirrors the app's claim step)
+    if (paymentVerified && paymentReference) {
+      try {
+        await updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true });
+      } catch (e) {
+        console.error('[Payment claim] ERROR:', e);
+      }
+    }
+
     window.location.href = "select.html";
   } catch (error) {
     console.error("Submission Error:", error);
