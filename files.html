@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>444Music — Upload Release</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ════════════════════════════════════════════════════════════════
-   444Music — same black & white palette as the Flutter app
-   (_bg #080808, _surface #0E0E0E, _card #111111, _input #171717,
-    _white / _grey / _greyDark / _green / _red / _amber)
+   444Music — mirrors upload_screen.dart 1:1
+   Fonts:  Bebas Neue  → headings / labels  (GoogleFonts.bebasNeue)
+           Nunito      → body text          (GoogleFonts.nunito)
+   Palette pulled directly from the Flutter constants.
    ════════════════════════════════════════════════════════════════ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
 :root{
-  --bg:          #080808;
-  --surface:     #0e0e0e;
-  --card:        #111111;
-  --input:       #171717;
-  --input-focus: #1c1c1c;
-  --border:      rgba(255,255,255,0.10);
-  --border2:     rgba(255,255,255,0.16);
-  --border-focus:rgba(255,255,255,0.40);
-  --white:       #ffffff;
+  --black:       #000000;
+  --black1:      #0A0A0A;
+  --black2:      #111111;
+  --black3:      #1A1A1A;
+  --black4:      #222222;
+  --white:       #FFFFFF;
   --white70:     rgba(255,255,255,0.70);
   --white40:     rgba(255,255,255,0.40);
   --white20:     rgba(255,255,255,0.20);
@@ -32,205 +30,267 @@
   --white06:     rgba(255,255,255,0.06);
   --grey:        #888888;
   --greyDark:    #444444;
-  --green:       #4ade80;
-  --red:         #f87171;
-  --amber:       #f59e0b;
-  --r-sm: 8px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
-  --t: 0.18s cubic-bezier(0.4,0,0.2,1);
-  --font-display: 'Outfit', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  --green:       #22C55E;
+  --greenDim:    rgba(34,197,94,0.12);
+  --greenBorder: rgba(34,197,94,0.20);
+  --red:         #EF4444;
+  --redDim:      rgba(239,68,68,0.09);
+  --redBorder:   rgba(239,68,68,0.20);
+  --amber:       #F59E0B;
+  --amberDim:    rgba(245,158,11,0.09);
+  --amberBorder: rgba(245,158,11,0.20);
+  --font-head: 'Bebas Neue', sans-serif;
+  --font-body: 'Nunito', sans-serif;
 }
 
-html{font-size:16px;-webkit-font-smoothing:antialiased}
-body{font-family:var(--font-body);background:var(--bg);color:var(--white);min-height:100vh}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);background:var(--black);color:var(--white);min-height:100vh}
 
-.app-shell{max-width:680px;margin:0 auto;min-height:100vh;padding-bottom:60px}
+.app-shell{max-width:640px;margin:0 auto;min-height:100vh}
 
 /* ── TOP BAR ─────────────────────────────────────────────────── */
 .top-bar{
-  position:sticky;top:0;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:14px 20px;background:rgba(8,8,8,0.92);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;background:var(--black);
+  border-bottom:1px solid var(--white10);
 }
-.top-bar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.top-bar-inner{
+  height:64px;display:flex;align-items:center;padding:0 22px;
+  padding-top:env(safe-area-inset-top);
+}
 .back-btn{
-  width:36px;height:36px;border-radius:var(--r-md);flex-shrink:0;
-  background:var(--white06);border:1px solid var(--border);
+  width:38px;height:38px;border-radius:12px;flex-shrink:0;
+  background:var(--white06);border:1px solid var(--white10);
   display:flex;align-items:center;justify-content:center;color:var(--white);
-  cursor:pointer;transition:all var(--t);
+  cursor:pointer;
 }
-.back-btn:hover{background:var(--white10);border-color:var(--border2)}
-.back-btn svg{width:15px;height:15px}
-.top-bar-title{font-family:var(--font-display);font-size:1.02rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back-btn svg{width:16px;height:16px}
+.top-bar-title{
+  font-family:var(--font-head);font-size:20px;font-weight:400;letter-spacing:1.5px;
+  margin-left:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 .secure-badge{
-  display:flex;align-items:center;gap:6px;flex-shrink:0;
-  background:var(--white06);border:1px solid var(--border);border-radius:999px;padding:5px 12px;
-  font-family:var(--font-display);font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);
+  margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;
+  background:var(--white06);border:1px solid var(--white10);border-radius:99px;padding:5px 10px;
+  font-size:10px;font-weight:600;color:var(--grey);
 }
 .secure-badge svg{width:10px;height:10px}
 
-.step-track{display:flex;align-items:center;padding:16px 20px;gap:0}
-.step-item{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:0.68rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--greyDark);flex-shrink:0}
+.step-track{display:flex;align-items:center;padding:14px 22px;gap:0;overflow-x:auto}
+.step-item{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-size:15px;font-weight:400;letter-spacing:1px;color:var(--greyDark);flex-shrink:0}
 .step-item.active{color:var(--white)}
-.step-num{width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0}
-.step-item.active .step-num{background:var(--white);border-color:var(--white);color:var(--bg)}
-.step-connector{flex:1;height:1px;min-width:16px;max-width:80px;margin:0 10px;background:var(--border)}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-family:var(--font-body);font-size:11px;font-weight:800;flex-shrink:0}
+.step-item.active .step-num{background:var(--white);border-color:var(--white);color:var(--black)}
+.step-connector{flex:1;height:1px;min-width:14px;max-width:60px;margin:0 8px;background:var(--white10)}
 
-.content{padding:8px 20px 0}
-.page-sub{font-size:0.85rem;color:var(--white70);margin:4px 0 8px;line-height:1.5}
-
-.section-head{display:flex;align-items:center;gap:12px;margin:28px 0 16px}
-.section-head:first-child{margin-top:8px}
-.section-icon{width:32px;height:32px;border-radius:var(--r-sm);background:var(--white06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.section-icon svg{width:15px;height:15px;color:var(--white70)}
-.section-title-wrap{flex:1;min-width:0}
-.section-title{font-family:var(--font-display);font-size:0.88rem;font-weight:700;color:var(--white)}
-.section-desc{font-size:0.72rem;color:var(--greyDark);margin-top:2px}
-.section-req{font-size:0.62rem;color:var(--red);font-weight:600;letter-spacing:0.08em;margin-top:2px;text-transform:uppercase}
-
-/* ── COVER CARD ──────────────────────────────────────────────── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
-.cover-card{padding:20px}
-.cover-body{display:flex;align-items:center;gap:18px}
-.cover-thumb{
-  position:relative;width:92px;height:92px;border-radius:var(--r-lg);overflow:hidden;flex-shrink:0;cursor:pointer;
-  border:2px dashed var(--border2);background:var(--input);transition:border-color var(--t);
+/* ── COVER (hero, matches _buildCoverSection) ───────────────── */
+.cover-hero{
+  position:relative;width:100%;height:320px;background:var(--black1);cursor:pointer;overflow:hidden;
 }
-.cover-thumb:hover{border-color:var(--white40)}
-.cover-thumb.has-img{border-style:solid;border-color:var(--border2)}
-.cover-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.cover-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
-.cover-ph svg{width:24px;height:24px;color:var(--greyDark)}
-.cover-ph-text{font-size:0.5rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--greyDark)}
-.cover-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.78);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;transition:opacity var(--t)}
-.cover-thumb:hover .cover-overlay{opacity:1}
-.cover-overlay svg{width:16px;height:16px;color:var(--white)}
-.cover-ov-text{font-size:0.55rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--white)}
-.cover-right{flex:1;min-width:0}
-.cover-title{font-family:var(--font-display);font-size:0.9rem;font-weight:700;margin-bottom:4px}
-.cover-sub{font-size:0.72rem;color:var(--greyDark);line-height:1.6;margin-bottom:14px}
-.cover-btn{
-  display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--border2);color:var(--white);
-  border-radius:999px;padding:8px 16px;font-family:var(--font-display);font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
-  cursor:pointer;transition:all var(--t);
+@media(max-width:480px){.cover-hero{height:240px}}
+.cover-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-empty{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.cover-btn:hover{border-color:var(--white40);background:var(--white06)}
-.cover-btn svg{width:12px;height:12px}
-.cover-set{display:flex;align-items:center;gap:5px;margin-top:10px;font-size:0.65rem;font-weight:600;color:var(--green);letter-spacing:0.04em}
-.cover-set svg{width:12px;height:12px}
-.cover-err{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:0.65rem;font-weight:600;color:var(--red)}
-.cover-err svg{width:12px;height:12px}
+.cover-empty-icon{
+  width:72px;height:72px;border-radius:18px;background:var(--black3);border:1px solid var(--white10);
+  display:flex;align-items:center;justify-content:center;
+}
+.cover-empty-icon svg{width:32px;height:32px;color:var(--greyDark)}
+.cover-empty-title{font-family:var(--font-head);font-size:18px;letter-spacing:1px;color:var(--grey);margin-top:16px}
+.cover-empty-sub{font-size:12px;font-weight:500;color:var(--greyDark);margin-top:6px}
+.cover-gradient{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.8) 100%);
+  opacity:0;transition:opacity .15s;
+}
+.cover-hero.has-img .cover-gradient{opacity:1}
+.cover-badge-top{
+  position:absolute;top:16px;right:16px;
+  padding:5px 10px;border-radius:99px;background:rgba(0,0,0,0.7);border:1px solid var(--white10);
+  font-family:var(--font-body);font-size:9px;font-weight:800;letter-spacing:1.2px;color:var(--grey);
+}
+.cover-hero.has-img .cover-badge-top{color:var(--green)}
+.cover-tags{position:absolute;bottom:16px;left:16px;right:16px;display:flex;align-items:center;opacity:0}
+.cover-hero.has-img .cover-tags{opacity:1}
+.pill-tag{
+  display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:99px;
+  background:rgba(0,0,0,0.6);border:1px solid var(--white20);font-size:11px;font-weight:600;
+}
+.pill-tag svg{width:12px;height:12px}
+.cover-tags .pill-tag:first-child{color:var(--green)}
+.cover-tags .pill-tag:last-child{margin-left:auto;color:var(--white70)}
+.cover-err-float{
+  position:absolute;bottom:60px;left:16px;padding:5px 10px;border-radius:8px;
+  background:var(--redDim);border:1px solid var(--redBorder);font-size:11px;font-weight:600;color:var(--red);
+  display:none;
+}
 
-/* ── TRACKLIST ───────────────────────────────────────────────── */
-.tracklist-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.tracklist-label{font-family:var(--font-display);font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--greyDark)}
-.tracklist-count{font-family:var(--font-display);font-size:0.68rem;font-weight:700;color:var(--white70)}
+/* ── CONTENT ─────────────────────────────────────────────────── */
+.content{padding:32px 22px 0}
+.tracklist-head{margin-bottom:14px}
+.tracklist-title{font-family:var(--font-head);font-size:18px;font-weight:400;letter-spacing:2px;color:var(--greyDark)}
+.tracklist-count{font-size:12px;font-weight:600;color:var(--grey);margin-top:2px}
 
-.track-row{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden;transition:border-color var(--t)}
-.track-row.done{border-color:rgba(74,222,128,0.28)}
-.track-row.has-err{border-color:rgba(248,113,113,0.32)}
-.track-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
+/* ── TRACK ROW (collapsible, matches _buildTrackRow) ────────── */
+.track-row{
+  margin-bottom:10px;border-radius:16px;background:var(--black2);
+  border:1px solid var(--white10);overflow:hidden;transition:border-color .15s;
+}
+.track-row.expanded{border-color:var(--white20)}
+.track-row.done{border-color:var(--greenBorder)}
+.track-row.has-err{border-color:var(--redBorder)}
+
+.track-head{display:flex;align-items:center;padding:14px 16px;cursor:pointer}
 .track-num{
-  width:26px;height:26px;border-radius:var(--r-sm);flex-shrink:0;background:var(--white06);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.64rem;font-weight:800;color:var(--white70);
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;background:var(--white06);border:1px solid var(--white10);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--white70);
 }
-.track-num.done{background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.25);color:var(--green)}
-.track-num.has-err{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.25);color:var(--red)}
-.track-head-label{flex:1;font-family:var(--font-display);font-size:0.72rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white70)}
-.track-remove{
-  width:26px;height:26px;border-radius:var(--r-sm);flex-shrink:0;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.16);
-  color:rgba(248,113,113,0.55);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t);
-}
-.track-remove:hover{background:rgba(248,113,113,0.14);border-color:rgba(248,113,113,0.4);color:var(--red)}
-.track-remove svg{width:11px;height:11px}
+.track-num.done{background:var(--greenDim);border-color:var(--greenBorder);color:var(--green)}
+.track-num.has-err{background:var(--redDim);border-color:var(--redBorder);color:var(--red)}
+.track-num svg{width:16px;height:16px}
+.track-meta{flex:1;min-width:0;margin-left:12px}
+.track-name{font-size:14px;font-weight:700;color:var(--greyDark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track-name.filled{color:var(--white)}
+.track-sub{font-size:11px;font-weight:500;color:var(--greyDark);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track-sub.uploading{color:var(--white70)}
 
-.track-body{padding:14px}
+.track-remove{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;background:var(--redDim);border:1px solid var(--redBorder);
+  color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:8px;
+}
+.track-remove svg{width:13px;height:13px}
+
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--white10);flex-shrink:0;margin-left:8px}
+.status-dot.done{background:var(--green)}
+.status-dot.err{background:var(--red)}
+.status-dot.uploading{background:var(--white70);animation:pulse 0.9s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+
+.chevron{width:20px;height:20px;flex-shrink:0;margin-left:8px;color:var(--greyDark);transition:transform .2s}
+.track-row.expanded .chevron{transform:rotate(180deg)}
+
+.track-progress{padding:0 16px 12px}
+.track-progress .prog-label{display:flex;justify-content:space-between;font-size:10px;font-weight:600;color:var(--grey);letter-spacing:.5px;margin-bottom:6px}
+.track-progress .prog-track{height:3px;background:var(--white06);border-radius:99px;overflow:hidden}
+.track-progress .prog-fill{height:100%;background:var(--white);border-radius:99px;transition:width .15s}
+
+.track-body{padding:16px;border-top:1px solid var(--white10)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:480px){.grid2{grid-template-columns:1fr}}
+@media(max-width:420px){.grid2{grid-template-columns:1fr}}
 
 .field{display:flex;flex-direction:column;gap:6px}
-.field label{
-  display:flex;align-items:center;gap:5px;font-family:var(--font-display);font-size:0.62rem;font-weight:700;
-  letter-spacing:0.1em;text-transform:uppercase;color:var(--greyDark);
-}
+.field-label{display:flex;align-items:center;gap:4px;font-family:var(--font-head);font-size:13px;font-weight:400;letter-spacing:1.5px;color:var(--greyDark)}
 .req-dot{width:5px;height:5px;border-radius:50%;background:var(--white40);flex-shrink:0}
 .field input{
-  background:var(--input);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--white);
-  font-family:var(--font-body);font-size:0.88rem;padding:11px 13px;outline:none;width:100%;
-  transition:border-color var(--t),background var(--t);
+  background:var(--black3);border:1px solid var(--white10);border-radius:10px;color:var(--white);
+  font-family:var(--font-body);font-size:13px;font-weight:600;padding:11px 13px;outline:none;width:100%;
+  transition:border-color .15s;
 }
-.field input::placeholder{color:var(--greyDark);font-size:0.82rem}
-.field input:hover{border-color:var(--border2)}
-.field input:focus{border-color:var(--border-focus);background:var(--input-focus)}
-.field input:disabled{opacity:0.4;cursor:not-allowed}
-.ferr{font-size:0.62rem;font-weight:600;color:var(--red);display:flex;align-items:center;gap:4px}
+.field input::placeholder{color:var(--greyDark);font-weight:400}
+.field input:focus{border-color:var(--white40)}
+.field input:disabled{background:var(--black3);border-color:var(--white06);opacity:0.55}
+.field.has-err input{border-color:var(--redBorder)}
+.ferr{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--red)}
+.ferr svg{width:11px;height:11px;flex-shrink:0}
 
-.file-zone{
-  grid-column:1/-1;border:1px dashed var(--border2);border-radius:var(--r-sm);
-  padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
-  cursor:pointer;text-align:center;min-height:100px;background:var(--surface);transition:all var(--t);margin-top:12px;
+.mp3-zone-wrap{margin-top:14px}
+.mp3-zone-head{display:flex;align-items:center;margin-bottom:6px}
+.mp3-badge{
+  margin-left:auto;display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;
+  background:var(--amberDim);border:1px solid var(--amberBorder);font-family:var(--font-head);font-size:10px;
+  letter-spacing:1px;color:var(--amber);
 }
-.file-zone:hover,.file-zone.drag{border-color:var(--white40);background:var(--white06)}
-.file-zone svg{color:var(--greyDark);transition:color var(--t)}
-.file-zone:hover svg,.file-zone.drag svg{color:var(--white70)}
-.file-zone-text{font-size:0.78rem;font-weight:600;color:var(--white70)}
-.file-zone-sub{font-size:0.65rem;color:var(--greyDark)}
-.file-sel{display:flex;flex-direction:column;align-items:center;gap:4px}
-.file-name{font-size:0.8rem;font-weight:700;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white)}
-.file-size{font-size:0.62rem;color:var(--white40);font-family:var(--font-body)}
+.mp3-badge svg{width:10px;height:10px}
+.mp3-zone{
+  border:1px solid var(--white10);border-radius:12px;background:var(--black3);padding:20px;cursor:pointer;transition:border-color .15s;
+}
+.mp3-zone.drag,.mp3-zone.has-file{border-color:var(--white20)}
+.mp3-zone.has-err{border-color:var(--redBorder);border-width:1.5px}
+.mp3-empty{display:flex;flex-direction:column;align-items:center;text-align:center}
+.mp3-empty-icon{width:52px;height:52px;border-radius:14px;background:var(--black4);border:1px solid var(--white10);display:flex;align-items:center;justify-content:center}
+.mp3-empty-icon svg{width:24px;height:24px;color:var(--greyDark)}
+.mp3-empty-title{font-family:var(--font-head);font-size:16px;letter-spacing:1px;color:var(--grey);margin-top:12px}
+.mp3-empty-sub{font-size:11px;font-weight:500;color:var(--greyDark);margin-top:4px}
+.format-pills{display:flex;justify-content:center;gap:6px;margin-top:10px;flex-wrap:wrap}
+.fpill{padding:3px 7px;border-radius:5px;font-size:9px;font-weight:700;border:1px solid var(--greyDark);color:var(--greyDark)}
+.fpill.ok{background:var(--greenDim);border-color:var(--greenBorder);color:var(--green)}
 
-.prog-wrap{margin-top:12px}
-.prog-label{display:flex;justify-content:space-between;font-size:0.62rem;font-weight:600;color:var(--greyDark);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase}
-.prog-track{height:3px;background:var(--white06);border-radius:999px;overflow:hidden}
-.prog-fill{height:100%;background:var(--white);border-radius:999px;transition:width 0.15s ease}
+.mp3-filled{display:flex;align-items:center}
+.mp3-file-icon{width:40px;height:40px;border-radius:10px;background:var(--black4);border:1px solid var(--white10);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mp3-file-icon svg{width:18px;height:18px;color:var(--white70)}
+.mp3-file-meta{flex:1;min-width:0;margin-left:12px}
+.mp3-file-name{font-size:13px;font-weight:700;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp3-file-size{font-size:11px;font-weight:500;color:var(--grey);margin-top:1px}
+.mp3-swap{width:16px;height:16px;color:var(--greyDark);flex-shrink:0}
 
+.err-banner{
+  display:flex;align-items:flex-start;gap:8px;padding:12px 14px;border-radius:10px;
+  background:var(--redDim);border:1px solid var(--redBorder);margin-top:12px;
+}
+.err-banner svg{width:16px;height:16px;color:var(--red);flex-shrink:0;margin-top:1px}
+.err-banner span{font-size:12px;font-weight:600;color:var(--red);line-height:1.5}
+
+.done-banner{display:flex;align-items:center;gap:8px;padding:12px;border-radius:10px;background:var(--greenDim);border:1px solid var(--greenBorder);margin-top:12px}
+.done-banner svg{width:16px;height:16px;color:var(--green);flex-shrink:0}
+.done-banner span{font-size:13px;font-weight:600;color:var(--green)}
+
+.collapse-btn{
+  width:100%;margin-top:14px;padding:12px;border-radius:10px;background:var(--white06);border:1px solid var(--white10);
+  display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+}
+.collapse-btn svg{width:14px;height:14px;color:var(--grey)}
+.collapse-btn span{font-size:12px;font-weight:700;color:var(--grey)}
+
+/* ── ADD TRACK ───────────────────────────────────────────────── */
 .add-track{
-  width:100%;background:transparent;border:1px dashed var(--border2);color:var(--greyDark);border-radius:var(--r-lg);padding:14px;
-  font-family:var(--font-display);font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
-  transition:all var(--t);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;
+  width:100%;padding:14px;border-radius:14px;background:transparent;border:1px solid var(--white10);
+  display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-bottom:24px;transition:all .12s;
 }
-.add-track:hover{border-color:var(--white40);color:var(--white70);background:var(--white06)}
-.add-track svg{width:13px;height:13px}
+.add-track:active{background:var(--white06);border-color:var(--white20)}
+.add-track svg{width:16px;height:16px;color:var(--grey)}
+.add-track span{font-family:var(--font-head);font-size:14px;letter-spacing:1.5px;color:var(--grey)}
 
-/* ── GLOBAL PROGRESS ─────────────────────────────────────────── */
-.global-prog{background:var(--card);border:1px solid var(--border2);border-radius:var(--r-xl);padding:20px;margin-bottom:16px}
-.gp-title{font-family:var(--font-display);font-size:0.88rem;font-weight:700;margin-bottom:4px}
-.gp-sub{font-size:0.72rem;color:var(--white70);margin-bottom:16px}
-.gp-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.gp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--border2)}
-.gp-dot.uploading{background:var(--white);animation:pulse 1s ease infinite}
-.gp-dot.done{background:var(--green)}
-.gp-dot.error{background:var(--red)}
-.gp-name{font-size:0.78rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gp-pct{font-size:0.68rem;color:var(--greyDark);flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.75)}}
+/* ── GLOBAL UPLOAD PANEL ─────────────────────────────────────── */
+.upload-panel{padding:18px;border-radius:16px;background:var(--black2);border:1px solid var(--white10);margin-bottom:20px;display:none}
+.upload-panel-title{font-family:var(--font-head);font-size:20px;letter-spacing:1px}
+.upload-panel-sub{font-size:12px;font-weight:500;color:var(--grey);margin-top:4px;margin-bottom:16px}
+.up-row{display:flex;align-items:center;margin-bottom:8px}
+.up-dot{width:7px;height:7px;border-radius:50%;background:var(--greyDark);flex-shrink:0}
+.up-dot.uploading{background:var(--white70);animation:pulse 0.9s ease infinite}
+.up-dot.done{background:var(--green)}
+.up-dot.error{background:var(--red)}
+.up-name{flex:1;min-width:0;margin-left:10px;font-size:13px;font-weight:600;color:var(--white70);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.up-pct{font-size:12px;font-weight:700}
+
+.success-banner{display:none;align-items:center;padding:16px;border-radius:14px;background:var(--greenDim);border:1px solid var(--greenBorder);margin-bottom:20px}
+.success-banner svg{width:22px;height:22px;color:var(--green);flex-shrink:0}
+.success-banner-text{margin-left:12px}
+.success-banner-title{font-family:var(--font-head);font-size:18px;letter-spacing:1px;color:var(--green)}
+.success-banner-sub{font-size:12px;font-weight:500;color:var(--green);margin-top:2px}
+
+.global-err{display:none;align-items:flex-start;gap:8px;padding:12px 14px;border-radius:10px;background:var(--redDim);border:1px solid var(--redBorder);margin-bottom:16px}
+.global-err svg{width:16px;height:16px;color:var(--red);flex-shrink:0;margin-top:1px}
+.global-err span{font-size:12px;font-weight:600;color:var(--red);line-height:1.5}
 
 /* ── SUBMIT ──────────────────────────────────────────────────── */
 .submit-btn{
-  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:17px;
-  background:var(--white);color:var(--bg);border:1px solid var(--white);border-radius:var(--r-lg);
-  font-family:var(--font-display);font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;
-  cursor:pointer;transition:all var(--t);
+  width:100%;padding:17px;border-radius:14px;background:var(--white);border:1px solid var(--white);
+  display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:filter .12s;
 }
-.submit-btn svg{width:17px;height:17px}
-.submit-btn:disabled{background:var(--surface);color:var(--grey);border-color:var(--border);cursor:not-allowed}
-.submit-btn:hover:not(:disabled){filter:brightness(0.93)}
-
-#statusMsg{margin-top:12px;text-align:center;font-size:0.83rem;color:var(--white70);min-height:20px}
-#statusMsg.error{color:var(--red)}
-#statusMsg.success{color:var(--green)}
-
-.trust-strip{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:20px;flex-wrap:wrap}
-.trust-item{display:flex;align-items:center;gap:5px;font-size:0.68rem;color:var(--greyDark)}
-.trust-item svg{width:12px;height:12px}
-
-.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,0.25);border-top-color:var(--bg);border-radius:50%;animation:sp 0.6s linear infinite}
+.submit-btn:active{filter:brightness(0.9)}
+.submit-btn:disabled{background:var(--black3);border-color:var(--white10);cursor:not-allowed}
+.submit-btn svg{width:18px;height:18px;color:var(--black)}
+.submit-btn span{font-family:var(--font-head);font-size:14px;letter-spacing:1.2px;color:var(--black)}
+.submit-btn:disabled span{color:var(--grey)}
+.spin{width:16px;height:16px;border:2px solid var(--white10);border-top-color:var(--grey);border-radius:50%;animation:sp .6s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-input[type="file"]{display:none}
+.footer-note{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:12px}
+.footer-note svg{width:11px;height:11px;color:var(--greyDark)}
+.footer-note span{font-size:11px;font-weight:500;color:var(--greyDark)}
 
-@media(max-width:380px){.content,.top-bar{padding-left:14px;padding-right:14px}}
+.bottom-pad{height:40px}
+input[type="file"]{display:none}
 </style>
 </head>
 <body>
@@ -238,15 +298,15 @@ input[type="file"]{display:none}
 <div class="app-shell">
 
   <header class="top-bar">
-    <div class="top-bar-left">
+    <div class="top-bar-inner">
       <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <span class="top-bar-title">Upload Your Release</span>
-    </div>
-    <div class="secure-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Secure
+      <span class="top-bar-title">UPLOAD RELEASE</span>
+      <div class="secure-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure
+      </div>
     </div>
   </header>
 
@@ -258,112 +318,81 @@ input[type="file"]{display:none}
     <div class="step-item"><div class="step-num">3</div><span>Select Stores</span></div>
   </div>
 
+  <!-- COVER HERO -->
+  <div class="cover-hero" id="coverHero">
+    <div class="cover-empty" id="coverEmpty">
+      <div class="cover-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div class="cover-empty-title">TAP TO ADD COVER ART</div>
+      <div class="cover-empty-sub">3000×3000 px · JPG or PNG</div>
+    </div>
+    <div class="cover-gradient"></div>
+    <div class="cover-badge-top" id="coverBadge">REQUIRED</div>
+    <div class="cover-tags" id="coverTags">
+      <div class="pill-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Cover art set</div>
+      <div class="pill-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Change</div>
+    </div>
+    <div class="cover-err-float" id="coverErr"></div>
+    <input type="file" id="coverInput" accept="image/*">
+  </div>
+
   <div class="content">
-    <p class="page-sub">Upload your cover art and audio files here — you'll add release details on the next step.</p>
-
-    <!-- COVER ART -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Release Cover Art</div>
-        <div class="section-req">★ Required for all releases</div>
-      </div>
-    </div>
-
-    <div class="card cover-card">
-      <div class="cover-body">
-        <div class="cover-thumb" id="coverThumb">
-          <div class="cover-ph" id="coverPh">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <div class="cover-ph-text">No Cover</div>
-          </div>
-          <div class="cover-overlay">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            <div class="cover-ov-text" id="coverOvText">Upload</div>
-          </div>
-        </div>
-        <div class="cover-right">
-          <div class="cover-title">Album / Single Cover</div>
-          <div class="cover-sub">3000×3000 px · JPG or PNG · Square format<br>Min 1400×1400 px for store approval</div>
-          <button type="button" class="cover-btn" id="coverBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Upload Image
-          </button>
-          <div class="cover-set" id="coverSet" style="display:none">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Cover art set
-          </div>
-          <div class="cover-err" id="coverErr" style="display:none"></div>
-        </div>
-      </div>
-      <input type="file" id="coverInput" accept="image/*">
-    </div>
-
-    <!-- TRACKLIST -->
-    <div class="section-head">
-      <div class="section-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      </div>
-      <div class="section-title-wrap">
-        <div class="section-title">Tracklist</div>
-        <div class="section-desc">Add one row per track — singles need just one</div>
-      </div>
-    </div>
-
     <div class="tracklist-head">
-      <div class="tracklist-label">Tracks</div>
+      <div class="tracklist-title">TRACKLIST</div>
       <div class="tracklist-count" id="trackCount">0/1 ready</div>
     </div>
 
     <div id="tracksContainer"></div>
 
     <button type="button" class="add-track" id="addTrackBtn">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Another Track
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>ADD ANOTHER TRACK</span>
     </button>
 
-    <div class="global-prog" id="globalProg" style="display:none">
-      <div class="gp-title">Uploading your files…</div>
-      <div class="gp-sub">Please don't close this page</div>
-      <div id="gpRows"></div>
+    <div class="upload-panel" id="uploadPanel">
+      <div class="upload-panel-title">UPLOADING YOUR RELEASE…</div>
+      <div class="upload-panel-sub">Please don't close this page</div>
+      <div id="upRows"></div>
+    </div>
+
+    <div class="success-banner" id="successBanner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <div class="success-banner-text">
+        <div class="success-banner-title">ALL TRACKS UPLOADED!</div>
+        <div class="success-banner-sub">Redirecting to next step…</div>
+      </div>
+    </div>
+
+    <div class="global-err" id="globalErr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span id="globalErrText"></span>
     </div>
 
     <button type="button" class="submit-btn" id="submitBtn">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span id="submitBtnLabel">Upload &amp; Continue to Release Info</span>
+      <svg id="submitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span id="submitLabel">SUBMIT 1 TRACK TO 444MUSIC</span>
     </button>
-    <div id="statusMsg"></div>
 
-    <div class="trust-strip">
-      <div class="trust-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        256-bit SSL
-      </div>
-      <div class="trust-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        GDPR Compliant
-      </div>
-      <div class="trust-item">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-        Secure Data
-      </div>
+    <div class="footer-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <span>Secured · Powered by Cloudinary</span>
     </div>
+
+    <div class="bottom-pad"></div>
   </div>
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════
-     LOGIC
-     - Same Firebase project as release-info.html (auth guard only —
-       no Firestore writes happen here, that all happens on the
-       release-info page, exactly like the app).
-     - Files go to Cloudinary (unsigned preset), matching the app's
-       upload approach, instead of Supabase.
-     - No emails are sent from this page. The app's pattern is: files
-       are uploaded here, then release-info.html combines the cover +
-       audio URLs with the release metadata into ONE Firestore doc and
-       ONE backend notify() call. This page just hands the URLs off.
+     LOGIC — mirrors upload_screen.dart exactly:
+     - Same Firebase project (auth guard only, no Firestore writes here)
+     - Same Cloudinary cloud/preset/folders the app posts to
+       (dlbgqtvqg / glmamp2y, folder=covers | tracks)
+     - Track model: artistName, releaseTitle, featuring (optional),
+       mp3File, progress, status, errorMsg, errors, fileUrl
+     - On success, hands off exactly what the app passes as Navigator
+       arguments to /release-info: paymentReference, coverUrl, audioFiles
+       (as ?ref=&cover=&audio= query params, since this is a web page)
      ════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -383,18 +412,14 @@ onAuthStateChanged(auth, user => {
   if (!user) window.location.href = "login.html";
 });
 
-// ── CLOUDINARY CONFIG ──────────────────────────────────────────
-// Fill these in with the SAME unsigned upload preset the Flutter
-// app uses (Settings → Cloudinary in your dashboard) so files land
-// in the same media library the app and backend already expect.
-const CLOUDINARY_CLOUD_NAME    = "YOUR_CLOUD_NAME";
-const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_UPLOAD_PRESET";
-const CLOUDINARY_UPLOAD_URL    = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+// ── CLOUDINARY — same cloud + preset the Flutter app uploads to ──
+const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/dlbgqtvqg/auto/upload";
+const CLOUDINARY_PRESET = "glmamp2y";
 
-function uploadToCloudinary(file, onProgress) {
+function uploadToCloudinary(file, folder, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", CLOUDINARY_UPLOAD_URL, true);
+    xhr.open("POST", CLOUDINARY_URL, true);
     xhr.upload.onprogress = e => {
       if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
     };
@@ -408,40 +433,47 @@ function uploadToCloudinary(file, onProgress) {
     xhr.onerror = () => reject(new Error("Network error during upload."));
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+    fd.append("folder", folder);
     xhr.send(fd);
   });
 }
 
-function fmtBytes(b){ return b < 1048576 ? (b/1024).toFixed(1)+' KB' : (b/1048576).toFixed(1)+' MB'; }
-
-// ── STATE ───────────────────────────────────────────────────────
-let _id = 0;
-const mkTrack = () => ({ id: `t${++_id}`, title:'', artist:'', file:null, url:null, progress:0, status:'idle', errorMsg:'', errors:{} });
-
-let tracks   = [mkTrack()];
-let coverFile = null, coverUrl = null;
-
-const tracksContainer = document.getElementById('tracksContainer');
-const trackCount      = document.getElementById('trackCount');
-const coverThumb       = document.getElementById('coverThumb');
-const coverPh          = document.getElementById('coverPh');
-const coverInput       = document.getElementById('coverInput');
-const coverBtn         = document.getElementById('coverBtn');
-const coverSet         = document.getElementById('coverSet');
-const coverErr         = document.getElementById('coverErr');
-const coverOvText      = document.getElementById('coverOvText');
-const submitBtn        = document.getElementById('submitBtn');
-const submitBtnLabel   = document.getElementById('submitBtnLabel');
-const statusMsg        = document.getElementById('statusMsg');
-const globalProg       = document.getElementById('globalProg');
-const gpRows           = document.getElementById('gpRows');
-
+function fmtBytes(b){ return b < 1024*1024 ? (b/1024).toFixed(1)+' KB' : (b/(1024*1024)).toFixed(1)+' MB'; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ── COVER ART ───────────────────────────────────────────────────
-coverThumb.addEventListener('click', () => coverInput.click());
-coverBtn.addEventListener('click', () => coverInput.click());
+// ── STATE ────────────────────────────────────────────────────────
+let _id = 0;
+const mkTrack = () => ({
+  id: `t${++_id}`, artistName:'', releaseTitle:'', featuring:'',
+  mp3File:null, mp3FileName:null, progress:0, status:'idle',
+  errorMsg:'', errors:{}, fileUrl:null,
+});
+
+let tracks    = [mkTrack()];
+let expanded  = new Set([tracks[0].id]);
+let coverFile = null, coverUrl = null;
+let uploading = false, allDone = false, globalError = '';
+
+const coverHero   = document.getElementById('coverHero');
+const coverEmpty  = document.getElementById('coverEmpty');
+const coverInput  = document.getElementById('coverInput');
+const coverBadge  = document.getElementById('coverBadge');
+const coverErr    = document.getElementById('coverErr');
+const tracksContainer = document.getElementById('tracksContainer');
+const trackCount  = document.getElementById('trackCount');
+const addTrackBtn = document.getElementById('addTrackBtn');
+const submitBtn   = document.getElementById('submitBtn');
+const submitLabel = document.getElementById('submitLabel');
+const submitIcon  = document.getElementById('submitIcon');
+const uploadPanel = document.getElementById('uploadPanel');
+const upRows      = document.getElementById('upRows');
+const successBanner = document.getElementById('successBanner');
+const globalErr   = document.getElementById('globalErr');
+const globalErrText = document.getElementById('globalErrText');
+
+// ── COVER ART ────────────────────────────────────────────────────
+coverHero.addEventListener('click', () => coverInput.click());
 coverInput.addEventListener('change', e => {
   const f = e.target.files[0];
   if (!f) return;
@@ -449,73 +481,135 @@ coverInput.addEventListener('change', e => {
   coverErr.style.display = 'none';
   const reader = new FileReader();
   reader.onload = ev => {
-    coverPh.style.display = 'none';
-    let img = coverThumb.querySelector('img');
-    if (!img) { img = document.createElement('img'); coverThumb.insertBefore(img, coverThumb.firstChild); }
+    coverEmpty.style.display = 'none';
+    let img = coverHero.querySelector('img');
+    if (!img) { img = document.createElement('img'); coverHero.insertBefore(img, coverHero.firstChild); }
     img.src = ev.target.result;
-    coverThumb.classList.add('has-img');
-    coverOvText.textContent = 'Change';
-    coverBtn.lastChild.textContent = ' Change Image';
-    coverSet.style.display = 'flex';
+    coverHero.classList.add('has-img');
+    coverBadge.textContent = '✓ SET';
   };
   reader.readAsDataURL(f);
 });
 
-// ── TRACKS ──────────────────────────────────────────────────────
-function renderTracks() {
-  tracksContainer.innerHTML = '';
-  tracks.forEach((t, i) => tracksContainer.appendChild(renderTrackRow(t, i)));
-  const done = tracks.filter(t => t.status === 'success').length;
-  trackCount.textContent = `${done}/${tracks.length} ready`;
+// ── TRACKS ───────────────────────────────────────────────────────
+function completedCount(){ return tracks.filter(t => t.status === 'success').length; }
+
+function updateSubmitLabel(){
+  if (uploading) return;
+  submitLabel.textContent = `SUBMIT ${tracks.length} TRACK${tracks.length > 1 ? 'S' : ''} TO 444MUSIC`;
 }
 
-function renderTrackRow(t, i) {
-  const row = document.createElement('div');
-  row.className = 'track-row' + (t.status === 'success' ? ' done' : '') + (t.errorMsg || Object.values(t.errors).some(Boolean) ? ' has-err' : '');
+function renderTracks() {
+  tracksContainer.innerHTML = '';
+  tracks.forEach((t, i) => tracksContainer.appendChild(buildTrackRow(t, i)));
+  trackCount.textContent = `${completedCount()}/${tracks.length} ready`;
+  updateSubmitLabel();
+}
 
-  const canRemove = tracks.length > 1;
+function buildTrackRow(t, i) {
+  const isExpanded  = expanded.has(t.id);
+  const isDone      = t.status === 'success';
+  const isUploading = t.status === 'uploading';
+  const hasErr      = Object.values(t.errors).some(Boolean) || !!t.errorMsg;
+
+  const displayName = t.releaseTitle.trim() || t.artistName.trim() || `Track ${i + 1}`;
+  const hasName     = !!(t.releaseTitle.trim() || t.artistName.trim());
+
+  const row = document.createElement('div');
+  row.className = 'track-row' + (isExpanded ? ' expanded' : '') + (isDone ? ' done' : '') + (hasErr ? ' has-err' : '');
+
+  const numInner = isDone
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+    : String(i + 1).padStart(2, '0');
+
+  const subText = t.mp3FileName
+    ? escHtml(t.mp3FileName)
+    : isUploading ? `Uploading ${Math.round(t.progress)}%…` : 'Tap to add details';
+
   row.innerHTML = `
-    <div class="track-head">
-      <div class="track-num ${t.status === 'success' ? 'done' : (t.errorMsg ? 'has-err' : '')}">
-        ${t.status === 'success'
-          ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
-          : String(i + 1).padStart(2, '0')}
+    <div class="track-head" data-toggle="${t.id}">
+      <div class="track-num ${isDone ? 'done' : (hasErr ? 'has-err' : '')}">${numInner}</div>
+      <div class="track-meta">
+        <div class="track-name ${hasName ? 'filled' : ''}">${escHtml(displayName)}</div>
+        <div class="track-sub ${isUploading ? 'uploading' : ''}">${subText}</div>
       </div>
-      <div class="track-head-label">${t.title.trim() ? escHtml(t.title) : `Track ${i + 1}`}</div>
-      ${canRemove ? `<button type="button" class="track-remove" data-remove="${t.id}" title="Remove"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+      ${tracks.length > 1 && !uploading && !isDone ? `<button type="button" class="track-remove" data-remove="${t.id}" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+      <div class="status-dot ${isDone ? 'done' : (hasErr ? 'err' : (isUploading ? 'uploading' : ''))}"></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+
+    ${isUploading ? `
+    <div class="track-progress">
+      <div class="prog-label"><span>UPLOADING</span><span>${Math.round(t.progress)}%</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${t.progress}%"></div></div>
+    </div>` : ''}
+
+    ${isExpanded ? `
     <div class="track-body">
       <div class="grid2">
-        <div class="field">
-          <label>Track Title <div class="req-dot"></div></label>
-          <input type="text" placeholder="e.g. Abundance" data-field="title" data-id="${t.id}" value="${escHtml(t.title)}" ${t.status==='success'?'disabled':''}>
-          ${t.errors.title ? `<div class="ferr">${t.errors.title}</div>` : ''}
+        <div class="field ${t.errors.artistName ? 'has-err' : ''}">
+          <label class="field-label">Artist Name<div class="req-dot"></div></label>
+          <input type="text" placeholder="e.g. Burna Boy" data-field="artistName" data-id="${t.id}" value="${escHtml(t.artistName)}" ${uploading || isDone ? 'disabled' : ''}>
+          ${t.errors.artistName ? `<div class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.artistName}</div>` : ''}
         </div>
-        <div class="field">
-          <label>Artist Name <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.62rem;color:var(--greyDark)">— optional</span></label>
-          <input type="text" placeholder="Defaults to main artist" data-field="artist" data-id="${t.id}" value="${escHtml(t.artist)}" ${t.status==='success'?'disabled':''}>
+        <div class="field ${t.errors.releaseTitle ? 'has-err' : ''}">
+          <label class="field-label">Track Title<div class="req-dot"></div></label>
+          <input type="text" placeholder="e.g. Abundance" data-field="releaseTitle" data-id="${t.id}" value="${escHtml(t.releaseTitle)}" ${uploading || isDone ? 'disabled' : ''}>
+          ${t.errors.releaseTitle ? `<div class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.releaseTitle}</div>` : ''}
         </div>
-        <div class="file-zone" data-zone="${t.id}">
-          ${t.file ? `
-            <div class="file-sel">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="24" height="24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-              <div class="file-name">${escHtml(t.file.name)}</div>
-              <div class="file-size">${fmtBytes(t.file.size)}</div>
-            </div>` : `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="file-zone-text">Drop MP3 here or tap to browse</div>
-            <div class="file-zone-sub">MP3 only · max 50 MB</div>`}
-        </div>
-        ${t.errors.mp3 ? `<div class="ferr" style="grid-column:1/-1">${t.errors.mp3}</div>` : ''}
-        ${t.status === 'uploading' ? `
-          <div class="prog-wrap" style="grid-column:1/-1">
-            <div class="prog-label"><span>Uploading</span><span>${t.progress}%</span></div>
-            <div class="prog-track"><div class="prog-fill" style="width:${t.progress}%"></div></div>
-          </div>` : ''}
-        ${t.errorMsg ? `<div class="ferr" style="grid-column:1/-1">${escHtml(t.errorMsg)}</div>` : ''}
       </div>
-    </div>
+
+      <div class="field" style="margin-top:14px">
+        <label class="field-label">Featuring</label>
+        <input type="text" placeholder="Leave blank if none" data-field="featuring" data-id="${t.id}" value="${escHtml(t.featuring)}" ${uploading || isDone ? 'disabled' : ''}>
+      </div>
+
+      <div class="mp3-zone-wrap">
+        <div class="mp3-zone-head">
+          <label class="field-label">Audio File<div class="req-dot"></div></label>
+          <div class="mp3-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>MP3 ONLY</div>
+        </div>
+        <div class="mp3-zone ${t.mp3FileName ? 'has-file' : ''} ${t.errors.mp3 ? 'has-err' : ''}" data-zone="${t.id}">
+          ${t.mp3FileName ? `
+            <div class="mp3-filled">
+              <div class="mp3-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+              <div class="mp3-file-meta">
+                <div class="mp3-file-name">${escHtml(t.mp3FileName)}</div>
+                <div class="mp3-file-size">${t.mp3File ? fmtBytes(t.mp3File.size) : ''}</div>
+              </div>
+              <svg class="mp3-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </div>` : `
+            <div class="mp3-empty">
+              <div class="mp3-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+              <div class="mp3-empty-title">TAP TO SELECT MP3</div>
+              <div class="mp3-empty-sub">Only .mp3 files are accepted · max 50 MB</div>
+              <div class="format-pills">
+                <div class="fpill ok">MP3 ✓</div>
+                <div class="fpill">WAV ✗</div>
+                <div class="fpill">Images ✗</div>
+                <div class="fpill">Docs ✗</div>
+              </div>
+            </div>`}
+        </div>
+        ${t.errors.mp3 ? `<div class="ferr" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.mp3}</div>` : ''}
+      </div>
+
+      ${t.errorMsg ? `<div class="err-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${escHtml(t.errorMsg)}</span></div>` : ''}
+
+      ${isDone ? `<div class="done-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Track uploaded successfully</span></div>` : ''}
+
+      ${!isDone ? `<div class="collapse-btn" data-toggle="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Done — Collapse</span></div>` : ''}
+    </div>` : ''}
   `;
+
+  row.querySelectorAll('[data-toggle]').forEach(el => {
+    el.addEventListener('click', ev => {
+      if (ev.target.closest('[data-remove]') || ev.target.closest('input')) return;
+      const id = el.dataset.toggle;
+      if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+      renderTracks();
+    });
+  });
 
   row.querySelectorAll('input[data-field]').forEach(inp => {
     inp.addEventListener('input', e => {
@@ -524,19 +618,22 @@ function renderTrackRow(t, i) {
     });
   });
 
-  const zone = row.querySelector('.file-zone');
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file'; fileInput.accept = '.mp3,audio/mpeg';
-  zone.appendChild(fileInput);
-  zone.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', e => handleTrackFile(t.id, e.target.files[0]));
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleTrackFile(t.id, e.dataTransfer.files[0]); });
+  const zone = row.querySelector('.mp3-zone');
+  if (zone) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file'; fileInput.accept = '.mp3,audio/mpeg';
+    zone.appendChild(fileInput);
+    zone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => handleTrackFile(t.id, e.target.files[0]));
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleTrackFile(t.id, e.dataTransfer.files[0]); });
+  }
 
   const removeBtn = row.querySelector('[data-remove]');
   if (removeBtn) removeBtn.addEventListener('click', () => {
     tracks = tracks.filter(x => x.id !== t.id);
+    expanded.delete(t.id);
     renderTracks();
   });
 
@@ -547,114 +644,149 @@ function handleTrackFile(id, file) {
   if (!file) return;
   const t = tracks.find(x => x.id === id);
   if (!t) return;
-  if (!file.type.includes('mp3') && !file.name.toLowerCase().endsWith('.mp3')) {
-    t.errors.mp3 = 'Only MP3 files accepted.'; renderTracks(); return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext !== 'mp3') {
+    t.errors.mp3 = `.${ext} files are not accepted. Please select an MP3 file only.`;
+    renderTracks(); return;
   }
   if (file.size > 50 * 1024 * 1024) {
-    t.errors.mp3 = 'File exceeds 50 MB limit.'; renderTracks(); return;
+    t.errors.mp3 = 'File exceeds 50 MB limit.';
+    renderTracks(); return;
   }
-  t.file = file; t.errors.mp3 = null;
+  t.mp3File = file; t.mp3FileName = file.name;
+  delete t.errors.mp3;
   renderTracks();
 }
 
-document.getElementById('addTrackBtn').addEventListener('click', () => {
-  tracks.push(mkTrack());
+addTrackBtn.addEventListener('click', () => {
+  const nt = mkTrack();
+  tracks.push(nt);
+  expanded.add(nt.id);
   renderTracks();
 });
 
-// ── VALIDATION ──────────────────────────────────────────────────
-function validate() {
-  if (!coverFile) { showError('Cover art is required before uploading.'); return false; }
+// ── VALIDATION ───────────────────────────────────────────────────
+function validateAll() {
   let valid = true;
+  if (!coverFile) {
+    coverErr.textContent = 'Cover art is required.';
+    coverErr.style.display = 'block';
+    valid = false;
+  }
   tracks.forEach(t => {
     t.errors = {};
-    if (!t.title.trim()) { t.errors.title = 'Required'; valid = false; }
-    if (!t.file)          { t.errors.mp3   = 'Please select an MP3 file.'; valid = false; }
+    if (!t.artistName.trim())   { t.errors.artistName   = 'Required'; valid = false; }
+    if (!t.releaseTitle.trim()) { t.errors.releaseTitle = 'Required'; valid = false; }
+    if (!t.mp3File)             { t.errors.mp3           = 'Please select an MP3 file.'; valid = false; }
+    if (Object.keys(t.errors).length) expanded.add(t.id);
   });
   renderTracks();
-  if (!valid) showError('Please fix the highlighted fields.');
   return valid;
 }
 
-function showError(msg) { statusMsg.textContent = '⚠ ' + msg; statusMsg.className = 'error'; }
-function showSuccess(msg) { statusMsg.textContent = msg; statusMsg.className = 'success'; }
-
-// ── UPLOAD + HANDOFF ───────────────────────────────────────────
+// ── UPLOAD ALL ───────────────────────────────────────────────────
 submitBtn.addEventListener('click', async () => {
-  statusMsg.textContent = ''; statusMsg.className = '';
-  if (!validate()) return;
+  globalErr.style.display = 'none';
+  if (!validateAll()) return;
 
+  uploading = true; globalError = '';
   submitBtn.disabled = true;
-  submitBtnLabel.textContent = 'Uploading…';
+  submitIcon.style.display = 'none';
   const spinner = document.createElement('span');
   spinner.className = 'spin';
   submitBtn.insertBefore(spinner, submitBtn.firstChild);
-  globalProg.style.display = 'block';
-  renderGlobalProgress();
+  uploadPanel.style.display = 'block';
+  renderUploadPanel();
+  renderTracks();
 
   try {
-    // 1 — cover art
-    updateGP('cover', 'uploading', 0);
-    coverUrl = await uploadToCloudinary(coverFile, pct => updateGP('cover', 'uploading', pct));
-    updateGP('cover', 'done', 100);
-
-    // 2 — audio tracks, sequentially (keeps progress readable + avoids
-    // hammering the upload endpoint all at once)
-    for (const t of tracks) {
-      t.status = 'uploading'; t.progress = 0;
-      updateGP(t.id, 'uploading', 0, t.title);
-      renderTracks();
-      t.url = await uploadToCloudinary(t.file, pct => {
-        t.progress = pct;
-        updateGP(t.id, 'uploading', pct, t.title);
-      });
-      t.status = 'success'; t.progress = 100;
-      updateGP(t.id, 'done', 100, t.title);
-      renderTracks();
+    if (coverFile) {
+      updateUpRow('cover', 'Cover Art', 'uploading', 0);
+      coverUrl = await uploadToCloudinary(coverFile, 'covers', pct => updateUpRow('cover', 'Cover Art', 'uploading', pct));
+      updateUpRow('cover', 'Cover Art', 'done', 100);
     }
 
-    // 3 — hand off to release-info.html exactly like the app hands
-    // {paymentReference, coverUrl, audioFiles} to ReleaseInfoScreen
-    const audioFiles = tracks.map(t => ({ title: t.title.trim(), artist: t.artist.trim(), url: t.url }));
-    const params = new URLSearchParams();
-    const existing = new URLSearchParams(window.location.search);
-    const ref = existing.get('ref');
-    if (ref) params.set('ref', ref);
-    params.set('cover', coverUrl);
-    params.set('audio', JSON.stringify(audioFiles));
+    let anyError = false;
+    for (const t of tracks) {
+      if (t.status === 'success') continue;
+      t.status = 'uploading'; t.progress = 0; t.errorMsg = '';
+      updateUpRow(t.id, t.releaseTitle || 'Track', 'uploading', 0);
+      renderTracks();
+      try {
+        t.fileUrl = await uploadToCloudinary(t.mp3File, 'tracks', pct => {
+          t.progress = pct;
+          updateUpRow(t.id, t.releaseTitle || 'Track', 'uploading', pct);
+          renderTracks();
+        });
+        t.status = 'success'; t.progress = 100;
+        updateUpRow(t.id, t.releaseTitle || 'Track', 'done', 100);
+        renderTracks();
+      } catch (e) {
+        anyError = true;
+        t.status = 'error';
+        t.errorMsg = 'Upload failed. Check connection and retry.';
+        updateUpRow(t.id, t.releaseTitle || 'Track', 'error', 0);
+        renderTracks();
+      }
+    }
 
-    showSuccess('All files uploaded — taking you to release info…');
-    setTimeout(() => { window.location.href = `release-info.html?${params.toString()}`; }, 600);
+    uploading = false;
 
+    if (!anyError) {
+      allDone = true;
+      successBanner.style.display = 'flex';
+      const audioFiles = tracks
+        .filter(t => t.fileUrl)
+        .map(t => ({ title: t.releaseTitle.trim(), artist: t.artistName.trim(), url: t.fileUrl }));
+      const existing = new URLSearchParams(window.location.search);
+      const ref = existing.get('ref');
+      const params = new URLSearchParams();
+      if (ref) params.set('ref', ref);
+      if (coverUrl) params.set('cover', coverUrl);
+      params.set('audio', JSON.stringify(audioFiles));
+      setTimeout(() => { window.location.href = `release-info.html?${params.toString()}`; }, 1800);
+    } else {
+      globalErrText.textContent = 'Some tracks failed. Check errors and retry.';
+      globalErr.style.display = 'flex';
+      submitBtn.disabled = false;
+      submitIcon.style.display = 'inline';
+      spinner.remove();
+      updateSubmitLabel();
+      renderTracks();
+    }
   } catch (err) {
-    console.error('[Upload] ERROR:', err);
-    showError(err.message || 'Upload failed. Please try again.');
+    uploading = false;
+    globalErrText.textContent = err.message || 'Upload failed. Please try again.';
+    globalErr.style.display = 'flex';
     submitBtn.disabled = false;
-    submitBtnLabel.textContent = 'Upload & Continue to Release Info';
+    submitIcon.style.display = 'inline';
     spinner.remove();
+    updateSubmitLabel();
+    renderTracks();
   }
 });
 
-const gpState = {};
-function renderGlobalProgress() {
-  gpState['cover'] = { name: 'Cover Art', status: 'idle', pct: 0 };
-  tracks.forEach(t => { gpState[t.id] = { name: t.title.trim() || 'Track', status: 'idle', pct: 0 }; });
-  drawGP();
+const upState = {};
+function renderUploadPanel() {
+  Object.keys(upState).forEach(k => delete upState[k]);
+  drawUpPanel();
 }
-function updateGP(id, status, pct, name) {
-  if (!gpState[id]) gpState[id] = { name: name || id, status, pct };
-  gpState[id].status = status; gpState[id].pct = pct;
-  if (name) gpState[id].name = name.trim() || gpState[id].name;
-  drawGP();
+function updateUpRow(id, name, status, pct) {
+  upState[id] = { name, status, pct };
+  drawUpPanel();
 }
-function drawGP() {
-  gpRows.innerHTML = Object.values(gpState).map(row => `
-    <div class="gp-row">
-      <div class="gp-dot ${row.status}"></div>
-      <div class="gp-name">${escHtml(row.name)}</div>
-      <div class="gp-pct">${row.status === 'done' ? '✓ Done' : row.status === 'uploading' ? row.pct + '%' : row.status === 'error' ? '✗ Error' : 'Waiting'}</div>
-    </div>
-  `).join('');
+function drawUpPanel() {
+  upRows.innerHTML = Object.values(upState).map(row => {
+    const dotClass = row.status === 'done' ? 'done' : row.status === 'error' ? 'error' : row.status === 'uploading' ? 'uploading' : '';
+    const label = row.status === 'done' ? '✓ Done' : row.status === 'error' ? '✗ Error' : row.status === 'uploading' ? `${Math.round(row.pct)}%` : 'Waiting';
+    const color = row.status === 'done' ? 'var(--green)' : row.status === 'error' ? 'var(--red)' : 'var(--white70)';
+    return `
+    <div class="up-row">
+      <div class="up-dot ${dotClass}"></div>
+      <div class="up-name">${escHtml(row.name)}</div>
+      <div class="up-pct" style="color:${color}">${label}</div>
+    </div>`;
+  }).join('');
 }
 
 renderTracks();
