@@ -191,6 +191,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .check-reasons-btn:hover { background: rgba(239,68,68,0.2); transform: translateY(-1px); }
 .pay-now-btn { background: rgba(6,182,212,0.12); border-color: var(--cyan); color: var(--cyan); }
 .pay-now-btn:hover { background: rgba(6,182,212,0.2); transform: translateY(-1px); }
+.pay-now-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
 .promote-btn { background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); text-decoration: none; }
 .promote-btn:hover { background: rgba(245,158,11,0.2); transform: translateY(-1px); }
 
@@ -397,6 +398,31 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .confirm-btn.primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
 .confirm-btn.primary:hover { opacity: 0.9; }
 
+/* ═══════════════════════════════════════════════
+   PAYMENT WAITING MODAL — mirrors PaymentWaitingScreen:
+   creates the payment, opens Paystack's own checkout in
+   a new tab (Paystack must host that part), then polls
+   /verify-payment/:reference right here instead of ever
+   routing to a separate pay.html page.
+═══════════════════════════════════════════════ */
+.pay-wait-overlay { position: fixed; inset: 0; z-index: 8500; background: rgba(0,0,0,0.9); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+.pay-wait-overlay.open { opacity: 1; pointer-events: all; }
+.pay-wait-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 28px 24px 24px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
+.pay-wait-overlay.open .pay-wait-modal { transform: translateY(0) scale(1); }
+.pay-wait-spinner { width: 46px; height: 46px; border: 3px solid var(--white-10); border-top-color: var(--cyan); border-radius: 50%; margin: 0 auto 18px; animation: spin 0.9s linear infinite; }
+.pay-wait-icon-done { width: 52px; height: 52px; border-radius: 50%; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.pay-wait-icon-done svg { width: 24px; height: 24px; color: var(--green); }
+.pay-wait-icon-error { width: 52px; height: 52px; border-radius: 50%; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.pay-wait-icon-error svg { width: 24px; height: 24px; color: var(--rose); }
+.pay-wait-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+.pay-wait-text { font-size: 13px; color: var(--grey); line-height: 1.6; margin-bottom: 20px; }
+.pay-wait-actions { display: flex; gap: 8px; }
+.pay-wait-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+.pay-wait-btn.secondary { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
+.pay-wait-btn.secondary:hover { background: var(--white-06); }
+.pay-wait-btn.primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
+.pay-wait-btn.primary:hover { opacity: 0.9; }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) {
@@ -570,7 +596,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 <div class="sl-page-overlay" id="slPageOverlay"><div class="sl-page-modal" id="slPageModal"><div id="slPageContent"></div></div></div>
 
-<!-- Generic confirm modal (used before navigating to Pay Now) -->
+<!-- Generic confirm modal (used before creating a payment) -->
 <div class="confirm-overlay" id="payConfirmOverlay">
   <div class="confirm-modal">
     <div class="confirm-icon" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3);">
@@ -583,6 +609,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <button class="confirm-btn primary" id="payConfirmGo">Continue</button>
     </div>
   </div>
+</div>
+
+<!-- Payment waiting modal — same job as the app's PaymentWaitingScreen -->
+<div class="pay-wait-overlay" id="payWaitOverlay">
+  <div class="pay-wait-modal" id="payWaitModal"></div>
 </div>
 
 <script>
@@ -911,13 +942,29 @@ document.getElementById('submissionsContainer').addEventListener('click', functi
   if (releaseId) openMetaModal(releaseId);
 });
 
-/* ── PAY NOW — opens a confirm modal (same "make sure it's right"
-   pattern the app follows), then routes to pay.html with the real
-   submission id + amount so the payment page/webhook can flip the
-   SAME doc to Paid + Review, exactly like PaymentWaitingScreen. ── */
-let _pendingPayId = null, _pendingPayAmount = null;
+/* ═══════════════════════════════════════════════════════
+   PAY NOW — creates a REAL payment via the same backend
+   route the app's PaymentWaitingScreen uses, then polls for
+   confirmation right here on the dashboard. No redirect to
+   a separate pay.html — the flow never leaves this page
+   except for Paystack's own hosted checkout tab, exactly
+   like the app hands off to the phone's browser and waits.
+
+   NOTE: endpoint paths below assume paystackRoutes.js is
+   mounted under /api (POST /api/create-payment and
+   GET /api/verify-payment/:reference). If the real mount
+   prefix differs, update BACKEND_BASE below to match.
+═══════════════════════════════════════════════════════ */
+const BACKEND_BASE        = "https://444music-backend.bonto.run/api";
+const CREATE_PAYMENT_URL  = `${BACKEND_BASE}/create-payment`;
+const VERIFY_PAYMENT_URL  = (ref) => `${BACKEND_BASE}/verify-payment/${encodeURIComponent(ref)}`;
+
+let _pendingPay = null;      // { releaseId, releaseTitle, amount }
+let _pollTimer  = null;
+let _pollDeadline = null;
+
 function requestPayNow(releaseId, releaseTitle, amount) {
-  _pendingPayId = releaseId; _pendingPayAmount = amount;
+  _pendingPay = { releaseId, releaseTitle, amount };
   document.getElementById('payConfirmText').textContent =
     `You'll be taken to a secure payment page to release "${releaseTitle}" (GHC ${amount.toFixed(2)}) for review.`;
   document.getElementById('payConfirmOverlay').classList.add('open');
@@ -925,19 +972,140 @@ function requestPayNow(releaseId, releaseTitle, amount) {
 document.getElementById('payConfirmCancel').addEventListener('click', () => {
   document.getElementById('payConfirmOverlay').classList.remove('open');
 });
-document.getElementById('payConfirmGo').addEventListener('click', () => {
+document.getElementById('payConfirmGo').addEventListener('click', async () => {
   document.getElementById('payConfirmOverlay').classList.remove('open');
-  if (_pendingPayId) window.location.href = `pay.html?id=${encodeURIComponent(_pendingPayId)}&amount=${_pendingPayAmount}&existing=1`;
+  if (_pendingPay) await createAndTrackPayment(_pendingPay);
 });
 
-/* ── CHECK REASONS & FIX — hands the full submission doc to the
-   rejection page via sessionStorage (web has no Navigator arguments),
-   the same way the app passes the whole map into RejectionFixScreen. ── */
+function openPayWait(html) {
+  document.getElementById('payWaitModal').innerHTML = html;
+  document.getElementById('payWaitOverlay').classList.add('open');
+}
+function closePayWait() {
+  document.getElementById('payWaitOverlay').classList.remove('open');
+  if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+}
+
+async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
+  const user = window._currentUser;
+  if (!user) { showToast("Please sign in again to continue.", true); return; }
+
+  openPayWait(`
+    <div class="pay-wait-spinner"></div>
+    <div class="pay-wait-title">Creating payment…</div>
+    <div class="pay-wait-text">Setting up a secure Paystack checkout for "${escHtml(releaseTitle)}".</div>
+  `);
+
+  let payload;
+  try {
+    const res = await fetch(CREATE_PAYMENT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amountGHS: amount,
+        submissionId: releaseId,
+        uid: user.uid,
+        email: user.email || "",
+        isExistingSubmission: true,
+      }),
+    });
+    payload = await res.json();
+    if (!res.ok) throw new Error(payload.message || "Could not start payment.");
+  } catch (err) {
+    console.error("[create-payment] error:", err);
+    openPayWait(`
+      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+      <div class="pay-wait-title">Couldn't start payment</div>
+      <div class="pay-wait-text">${escHtml(err.message || "Please check your connection and try again.")}</div>
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
+    `);
+    return;
+  }
+
+  const authUrl    = payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
+  const reference  = payload.reference || payload.ref;
+  if (!authUrl || !reference) {
+    openPayWait(`
+      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+      <div class="pay-wait-title">Unexpected response</div>
+      <div class="pay-wait-text">The payment server didn't return a checkout link. Please try again shortly.</div>
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
+    `);
+    return;
+  }
+
+  // Paystack hosts its own checkout — that part can't be reproduced
+  // in our own UI, so it opens in a new tab, same as the app opening
+  // it in the phone's browser via url_launcher.
+  window.open(authUrl, "_blank", "noopener");
+
+  openPayWait(`
+    <div class="pay-wait-spinner"></div>
+    <div class="pay-wait-title">Waiting for payment…</div>
+    <div class="pay-wait-text">Complete checkout in the tab that just opened. This will update automatically once Paystack confirms it — no need to refresh.</div>
+    <div class="pay-wait-actions">
+      <button class="pay-wait-btn secondary" onclick="reopenCheckout('${escHtml(authUrl)}')">Reopen checkout</button>
+      <button class="pay-wait-btn secondary" onclick="closePayWait()">Cancel</button>
+    </div>
+  `);
+
+  _pollDeadline = Date.now() + 8 * 60 * 1000; // stop polling after 8 minutes
+  if (_pollTimer) clearInterval(_pollTimer);
+  _pollTimer = setInterval(() => pollPaymentStatus(reference, releaseId), 3000);
+}
+window.reopenCheckout = function(url) { window.open(url, "_blank", "noopener"); };
+window.closePayWait = closePayWait;
+
+async function pollPaymentStatus(reference, releaseId) {
+  if (Date.now() > _pollDeadline) {
+    clearInterval(_pollTimer); _pollTimer = null;
+    openPayWait(`
+      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="pay-wait-title">Still waiting</div>
+      <div class="pay-wait-text">We haven't seen confirmation yet. If you completed checkout, it'll update shortly — you can safely close this and check back.</div>
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
+    `);
+    return;
+  }
+  try {
+    const res  = await fetch(VERIFY_PAYMENT_URL(reference));
+    const data = await res.json();
+    const status = (data.status || data.paymentStatus || "").toString().toLowerCase();
+    if (status === "success" || status === "paid" || data.paid === true) {
+      clearInterval(_pollTimer); _pollTimer = null;
+      openPayWait(`
+        <div class="pay-wait-icon-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="pay-wait-title">Payment confirmed</div>
+        <div class="pay-wait-text">Your release has moved to review — no further action needed.</div>
+        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait(); loadReleasesForCurrentUser();">Done</button></div>
+      `);
+      showToast("Payment confirmed — release moved to review!");
+    } else if (status === "failed" || status === "abandoned") {
+      clearInterval(_pollTimer); _pollTimer = null;
+      openPayWait(`
+        <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+        <div class="pay-wait-title">Payment not completed</div>
+        <div class="pay-wait-text">The checkout was closed or the payment failed. You can try again from the card.</div>
+        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
+      `);
+    }
+    // any other status ("pending" etc.) — keep polling silently.
+  } catch (err) {
+    console.error("[verify-payment] error:", err);
+    // Network hiccup — keep polling, don't interrupt the user.
+  }
+}
+function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
+
+/* ── CHECK REASONS & FIX — hands the full submission doc to
+   rejection-fix.html via sessionStorage (web has no Navigator
+   arguments), the same way the app passes the whole map into
+   RejectionFixScreen. ── */
 function openRejectionFix(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
   sessionStorage.setItem('rejectionFixData', JSON.stringify(data));
-  window.location.href = `rejection.html?id=${encodeURIComponent(releaseId)}`;
+  window.location.href = `rejection-fix.html?id=${encodeURIComponent(releaseId)}`;
 }
 </script>
 
@@ -1004,18 +1172,13 @@ function refreshSmartLinkPanel(releaseId) {
   if (upcEl && data.upc) { upcEl.textContent = data.upc; upcEl.classList.remove('none'); }
 }
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "login.html"; return; }
-  const name = user.displayName || user.email.split("@")[0];
-  document.getElementById("userName").textContent    = name;
-  document.getElementById("userInitial").textContent = name.charAt(0).toUpperCase();
-  const userRef  = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-  if (!userSnap.exists()) await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
+async function loadReleases(user) {
+  container.innerHTML = "";
+  window._releaseMeta = {};
+  allCards = [];
   try {
     const q        = query(collection(db, "submissions"), where("userId", "==", user.uid));
     const snapshot = await getDocs(q);
-    container.innerHTML = "";
     if (snapshot.empty) {
       container.innerHTML = `<div class="empty">
         <div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
@@ -1027,14 +1190,14 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
     const submissionsData = [];
-    snapshot.forEach(async (docSnap) => {
+    let cardIndex = 0;
+    snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const id   = docSnap.id;
       window._releaseMeta[id] = { ...data, _id: id };
 
       const rawStatus = (data.status || "Pending").trim().toLowerCase();
 
-      // Auto-assign UPC/Smart Link once approved — same as the app.
       if (rawStatus === "approved" && (!data.upc || !data.smartLinkURL)) {
         (async () => {
           try {
@@ -1062,12 +1225,14 @@ onAuthStateChanged(auth, async (user) => {
         : `<div class="cover-placeholder cover-image" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Tap to add cover art</span></div>`;
 
       // ── REJECTED — carries the FULL doc through sessionStorage into
-      // rejection.html, same as the app's Navigator arguments. ──
+      // rejection-fix.html, same as the app's Navigator arguments. ──
       const checkReasonsBtn = isRejected
         ? `<button type="button" class="check-reasons-btn" onclick="openRejectionFix('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`
         : "";
 
-      // ── PENDING + UNPAID — Pay Now, same amount logic as the app ──
+      // ── PENDING + UNPAID — Pay Now, opens the confirm modal then
+      // creates a real Paystack payment + polls for confirmation
+      // right here (see createAndTrackPayment above). ──
       const price = priceForReleaseType(data.releaseType);
       const payNowBtn = needsPayment
         ? `<button type="button" class="pay-now-btn" onclick="requestPayNow('${id}', '${escHtml(data.releaseTitle || 'this release')}', ${price})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`
@@ -1114,42 +1279,56 @@ onAuthStateChanged(auth, async (user) => {
           </div>
         </div>`;
       container.appendChild(card);
+      const idx = cardIndex++;
       card.style.opacity = "0"; card.style.transform = "translateY(16px)";
-      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, submissionsData.length * 60);
-      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + submissionsData.length * 60);
+      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, idx * 60);
+      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + idx * 60);
       allCards.push({ card, status: statusClass });
     });
     setTimeout(() => updateStats(submissionsData), 200);
-
-    container.addEventListener("click", (e) => {
-      const target = e.target.closest(".cover-image, .edit-cover-btn");
-      if (!target) return;
-      if (e.target.closest('.card-body-clickable') && !e.target.closest('.edit-cover-btn')) return;
-      const id    = target.dataset.id;
-      const input = container.querySelector(`.cover-input[data-id="${id}"]`);
-      if (input) input.click();
-    });
-    container.addEventListener("change", async (e) => {
-      if (!e.target.classList.contains("cover-input")) return;
-      const file = e.target.files[0];
-      if (!file) return;
-      const id      = e.target.dataset.id;
-      const wrapper = e.target.closest(".image-wrapper");
-      if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64 = ev.target.result;
-        await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
-        if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
-        wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
-        showToast("Cover art updated successfully!");
-      };
-      reader.readAsDataURL(file);
-    });
   } catch (err) {
     console.error("Error loading releases:", err);
     container.innerHTML = `<div class="empty"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
   }
+}
+window._reloadReleases = () => { if (window._currentUser) loadReleases(window._currentUser); };
+
+container.addEventListener("click", (e) => {
+  const target = e.target.closest(".cover-image, .edit-cover-btn");
+  if (!target) return;
+  if (e.target.closest('.card-body-clickable') && !e.target.closest('.edit-cover-btn')) return;
+  const id    = target.dataset.id;
+  const input = container.querySelector(`.cover-input[data-id="${id}"]`);
+  if (input) input.click();
+});
+container.addEventListener("change", async (e) => {
+  if (!e.target.classList.contains("cover-input")) return;
+  const file = e.target.files[0];
+  if (!file) return;
+  const id      = e.target.dataset.id;
+  const wrapper = e.target.closest(".image-wrapper");
+  if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const base64 = ev.target.result;
+    await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
+    if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
+    wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
+    showToast("Cover art updated successfully!");
+  };
+  reader.readAsDataURL(file);
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = "login.html"; return; }
+  window._currentUser = user;
+  const name = user.displayName || user.email.split("@")[0];
+  document.getElementById("userName").textContent    = name;
+  document.getElementById("userInitial").textContent = name.charAt(0).toUpperCase();
+  const userRef  = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
+  await loadReleases(user);
 });
 </script>
 
