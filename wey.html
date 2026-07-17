@@ -1240,7 +1240,12 @@ async function loadReleases(user) {
     }
     const submissionsData = [];
     let cardIndex = 0;
-    snapshot.forEach((docSnap) => {
+    const docsSorted = snapshot.docs.slice().sort((a, b) => {
+      const aTime = a.data().createdAt || 0;
+      const bTime = b.data().createdAt || 0;
+      return bTime - aTime; // newest first
+    });
+    docsSorted.forEach((docSnap) => {
       const data = docSnap.data();
       const id   = docSnap.id;
       window._releaseMeta[id] = { ...data, _id: id };
