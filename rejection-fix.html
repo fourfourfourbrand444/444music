@@ -381,14 +381,17 @@ async function notifyAdmin(kind, { licenseUrl, audioUrl, coverUrl } = {}) {
   };
 
   try {
-    const res = await fetch(NOTIFY_URL, {
+    const res  = await fetch(NOTIFY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-app-secret": APP_SECRET },
       body: JSON.stringify(body),
     });
-    console.log("[Notify resubmit] status=", res.status);
+    const text = await res.text();
+    console.log("[Notify resubmit] status=", res.status, "body=", text);
+    return { ok: res.ok, status: res.status, text };
   } catch (e) {
     console.error("[Notify resubmit] ERROR:", e);
+    return { ok: false, status: 0, text: String(e) };
   }
 }
 
@@ -408,6 +411,7 @@ async function submit() {
   btn.disabled = true;
   btn.innerHTML = `<div class="spinner"></div> Submitting…`;
 
+  let notifyResult = { ok: true };
   try {
     const docRef = doc(db, "submissions", data._id);
     if (copyrightMode) {
@@ -420,7 +424,7 @@ async function submit() {
         resubmittedAt: serverTimestamp(),
         licenseURL: url,
       });
-      await notifyAdmin("license", { licenseUrl: url });
+      notifyResult = await notifyAdmin("license", { licenseUrl: url });
     } else {
       const audioUrl = await uploadToCloudinary(pickedAudio.file, "tracks");
       if (!audioUrl) { throw new Error("Audio upload failed. Check your connection and try again."); }
@@ -434,13 +438,18 @@ async function submit() {
         resubmittedAudioURL: audioUrl,
         resubmittedCoverURL: coverUrl,
       });
-      await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
+      notifyResult = await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
     }
 
     sessionStorage.removeItem("rejectionFixData");
     document.getElementById("pageContent").style.display = "none";
     document.getElementById("successState").style.display = "flex";
-    setTimeout(() => { window.location.href = "releases.html"; }, 1400);
+    if (!notifyResult.ok) {
+      document.querySelector("#successState .success-sub").textContent =
+        "Your fix was saved, but we couldn't reach the admin notification service (status " +
+        notifyResult.status + "). The team may not see this until that's checked.";
+    }
+    setTimeout(() => { window.location.href = "releases.html"; }, notifyResult.ok ? 1400 : 3200);
   } catch (e) {
     console.error("[Resubmit] ERROR:", e);
     submitting = false;
