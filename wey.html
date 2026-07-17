@@ -1059,7 +1059,7 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
     });
     payload   = result.payload;
     _pollBase = result.base;
-    if (!result.ok) throw new Error(payload.message || `Payment server returned ${result.status}.`);
+    if (!result.ok) throw new Error(payload.error || payload.message || `Payment server returned ${result.status}.`);
   } catch (err) {
     console.error("[create-payment] error:", err);
     openPayWait(`
@@ -1071,7 +1071,7 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
     return;
   }
 
-  const authUrl    = payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
+  const authUrl    = payload.paymentUrl || payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
   const reference  = payload.reference || payload.ref;
   if (!authUrl || !reference) {
     openPayWait(`
