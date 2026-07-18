@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create New Release</title>
+<title>My Releases</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -11,9 +11,6 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── PURE BLACK & WHITE — matches the rest of the site/app exactly.
-   No purple/accent color anywhere; all "accent" vars now resolve
-   to white/grey so focus rings, dropdown arrows, etc. stay monochrome. ── */
 :root {
   --bg-base:        #080808;
   --bg-surface:     #0d0d0d;
@@ -23,15 +20,12 @@
   --border:         rgba(255,255,255,0.10);
   --border-focus:   rgba(255,255,255,0.40);
   --border-accent:  rgba(255,255,255,0.20);
-  --accent:         #ffffff;
-  --accent-light:   #ffffff;
-  --accent-bright:  #ffffff;
-  --accent-dim:     rgba(255,255,255,0.06);
   --text-primary:   #e8e8e8;
   --text-secondary: #888888;
   --text-muted:     #444444;
   --success:        #4ade80;
   --danger:         #f87171;
+  --warn:           #fbbf24;
   --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -43,482 +37,236 @@
 }
 
 html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-family: var(--font-body); background: var(--bg-base); color: var(--text-primary); min-height: 100vh; }
 
-body {
-  font-family: var(--font-body);
-  background: var(--bg-base);
-  color: var(--text-primary);
-  min-height: 100vh;
-}
+.app-shell { max-width: 960px; margin: 0 auto; min-height: 100vh; position: relative; }
 
-.app-shell { max-width: 720px; margin: 0 auto; min-height: 100vh; position: relative; }
-
+/* ── TOP BAR ── */
 .top-bar {
   position: sticky; top: 0; z-index: 500;
   display: flex; align-items: center; justify-content: space-between;
   gap: 14px; padding: 14px 20px;
-  background: rgba(8,8,8,0.9);
-  backdrop-filter: blur(10px);
+  background: rgba(8,8,8,0.9); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
 .top-bar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.back-btn {
+.icon-btn {
   width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
   background: rgba(255,255,255,0.04); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   color: var(--text-primary); cursor: pointer; transition: all var(--t);
 }
-.back-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-accent); }
-.back-btn svg { width: 15px; height: 15px; }
-.top-bar-title {
-  font-family: var(--font-display); font-size: 1.02rem; font-weight: 700;
-  color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.icon-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-accent); }
+.icon-btn svg { width: 15px; height: 15px; }
+.top-bar-title-wrap { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.top-bar-title { font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-bar-sub { font-size: 0.7rem; color: var(--text-muted); }
+.new-release-btn {
+  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+  background: var(--text-primary); color: var(--bg-base); border: none;
+  border-radius: 10px; padding: 9px 14px 9px 11px; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.04em; text-transform: uppercase; transition: all var(--t);
 }
-.secure-badge {
-  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: 999px; padding: 5px 12px;
-  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
-}
-.secure-badge svg { width: 10px; height: 10px; }
+.new-release-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.new-release-btn svg { width: 14px; height: 14px; }
 
-.step-track { display: flex; align-items: center; padding: 16px 20px; gap: 0; }
-.step-item {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
-}
-.step-item.active { color: var(--text-primary); }
-.step-num {
-  width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.68rem; font-weight: 700; flex-shrink: 0; transition: all var(--t);
-}
-.step-item.active .step-num { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
-.step-connector { flex: 1; height: 1px; min-width: 16px; max-width: 80px; margin: 0 10px; background: var(--border); }
-
-.content { padding: 8px 20px 80px; }
-.page-sub { font-size: 0.86rem; color: var(--text-secondary); font-weight: 400; margin: 4px 0 8px; letter-spacing: 0.01em; }
-
-.section-head { display: flex; align-items: center; gap: 12px; margin: 28px 0 16px; }
-.section-head:first-child { margin-top: 8px; }
-.section-icon {
-  width: 32px; height: 32px; border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.section-icon svg { width: 15px; height: 15px; color: var(--text-secondary); }
-.section-title-wrap { flex: 1; min-width: 0; }
-.section-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em; color: var(--text-primary); }
-.section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-
-.grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.stack-gap { margin-top: 16px; }
-
-.field { display: flex; flex-direction: column; gap: 7px; }
-.field label {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
-}
-.field label svg { width: 11px; height: 11px; opacity: 0.7; }
-.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
-
-.field input, .field select, .field textarea {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
-  padding: 13px 16px; outline: none;
-  transition: border-color var(--t), background var(--t), box-shadow var(--t);
-  width: 100%; appearance: none; -webkit-appearance: none;
-}
-.field input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
-.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--border-accent); }
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--border-focus); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
-}
-.field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
-
-.select-wrap { position: relative; }
-.select-wrap::after {
-  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
-}
-.select-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
-.select-wrap select { padding-right: 40px; cursor: pointer; }
-
-.country-wrap { position: relative; }
-.country-flag {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 20px; height: 15px; pointer-events: none; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-}
-.country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
-.country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
-.country-wrap::after {
-  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
-}
-.country-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
-
-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t); }
-input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
-
-input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 100px var(--bg-input-focus) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
-  caret-color: var(--text-primary); border-color: var(--border) !important;
-}
-
-option, optgroup { background: #171717; color: var(--text-primary); }
-.field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-
-.radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
-.radio-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 12px 18px;
-  font-family: var(--font-body); font-size: 0.86rem; font-weight: 600;
-  color: var(--text-secondary); cursor: pointer; transition: all var(--t); appearance: none;
-}
-.radio-pill::before {
-  content: ''; width: 15px; height: 15px; border-radius: 50%;
-  border: 1.5px solid var(--text-muted); flex-shrink: 0; transition: all var(--t); position: relative;
-}
-.radio-pill:hover { border-color: var(--border-accent); }
-.radio-pill.selected { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
-.radio-pill.selected::before { border-color: var(--bg-base); background: var(--bg-base); box-shadow: inset 0 0 0 3px var(--text-primary); }
-
-#previousReleaseDateWrap, #featuredArtistsWrap { display: none; }
-#previousReleaseDateWrap.visible, #featuredArtistsWrap.visible { display: block; animation: rowIn 0.2s ease both; }
-
-.agreement-box {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 16px;
-  margin-top: 28px; cursor: pointer; transition: border-color var(--t), background var(--t);
-}
-.agreement-box:hover { border-color: var(--border-accent); }
-.agreement-box.checked { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.03); }
-.agreement-checkbox {
-  width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
-  border: 1.5px solid var(--text-muted); background: transparent;
-  display: flex; align-items: center; justify-content: center; transition: all var(--t);
-}
-.agreement-checkbox.checked { background: var(--text-primary); border-color: var(--text-primary); }
-.agreement-checkbox svg { width: 12px; height: 12px; color: var(--bg-base); opacity: 0; transition: opacity var(--t); }
-.agreement-checkbox.checked svg { opacity: 1; }
-.agreement-text { flex: 1; }
-.agreement-title {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
-}
-.agreement-text p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
-
-.artist-field { position: relative; }
-.artist-pill-box {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 8px 12px;
-  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-  cursor: text; min-height: 50px;
-  transition: border-color var(--t), box-shadow var(--t), background var(--t);
-}
-.artist-pill-box:focus-within {
-  border-color: var(--border-focus); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
-}
-.artist-pill {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 999px; padding: 4px 10px 4px 6px;
-  font-size: 0.82rem; color: var(--text-primary);
-  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
-}
-.pill-avatar {
-  width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 700; color: var(--text-secondary);
-  overflow: hidden; flex-shrink: 0;
-}
-.pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-.pill-remove {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(255,255,255,0.1); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); padding: 0; transition: background var(--t), transform var(--t);
-}
-.pill-remove:hover { background: rgba(255,255,255,0.22); transform: scale(1.15); color: var(--text-primary); }
-.pill-remove svg { width: 8px; height: 8px; }
-.artist-search-input {
-  background: none !important; border: none !important; box-shadow: none !important; outline: none !important;
-  padding: 4px 6px !important; flex: 1; min-width: 140px;
-  font-size: 0.88rem !important; color: var(--text-primary);
-}
-.artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
-
-.artist-dropdown {
-  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-  z-index: 9000; background: #171717;
-  border: 1px solid var(--border-accent); border-radius: var(--radius-md);
-  overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
-  display: none; max-height: 340px; overflow-y: auto;
-}
-.artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
-.dropdown-sect-title {
-  padding: 10px 16px 6px;
-  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+/* ── CONTROLS ── */
+.controls-bar {
+  position: sticky; top: 65px; z-index: 400;
+  background: rgba(8,8,8,0.92); backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
+  padding: 12px 20px 12px;
+  display: flex; flex-direction: column; gap: 10px;
 }
-.artist-option {
-  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
-  cursor: pointer; transition: background var(--t);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+.search-row { display: flex; gap: 10px; }
+.search-wrap { position: relative; flex: 1; }
+.search-wrap svg {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; color: var(--text-muted); pointer-events: none;
 }
-.artist-option:last-child { border-bottom: none; }
-.artist-option:hover, .artist-option.focused { background: rgba(255,255,255,0.05); }
-.opt-avatar {
-  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  overflow: hidden; background: rgba(255,255,255,0.08);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);
-}
-.opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.opt-info { flex: 1; min-width: 0; }
-.opt-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.opt-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-.opt-badge {
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
-  background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--border);
-}
-.dropdown-loading {
-  padding: 20px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
-.artist-dropdown::-webkit-scrollbar { width: 4px; }
-.artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-
-/* Featured / Secondary artist cards — mirrors the app's _featuredArtistCard */
-.feat-card {
-  background: var(--bg-surface); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 12px; margin-bottom: 10px;
-  animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
-}
-.feat-card-top { display: flex; align-items: center; gap: 10px; }
-.feat-avatar {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
-  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
-}
-.feat-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.feat-name { flex: 1; min-width: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.feat-remove {
-  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
-  background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--danger); transition: all var(--t);
-}
-.feat-remove:hover { background: rgba(248,113,113,0.18); transform: scale(1.06); }
-.feat-remove svg { width: 11px; height: 11px; }
-.feat-role-wrap { margin-top: 10px; position: relative; }
-.feat-role-wrap select {
+.search-wrap input {
   width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
-  outline: none; appearance: none; cursor: pointer;
+  border-radius: var(--radius-sm); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.85rem; padding: 10px 14px 10px 36px;
+  outline: none; transition: border-color var(--t), background var(--t), box-shadow var(--t);
 }
-.feat-role-wrap::after {
-  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
-  border-top: 4px solid var(--text-secondary); pointer-events: none;
-}
-.feat-url-wrap {
-  margin-top: 10px; display: flex; align-items: center; gap: 8px;
+.search-wrap input::placeholder { color: var(--text-muted); }
+.search-wrap input:focus { border-color: var(--border-focus); background: var(--bg-input-focus); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
+.sort-wrap { position: relative; flex-shrink: 0; }
+.sort-wrap select {
   background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); padding: 0 10px;
-}
-.feat-url-wrap input {
-  flex: 1; background: none; border: none; outline: none; box-shadow: none;
-  color: var(--text-primary); font-size: 0.82rem; padding: 9px 0;
-}
-.feat-url-wrap input::placeholder { color: var(--text-muted); }
-.feat-url-wrap img { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
-
-.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.credits-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
-.credits-panel.required-panel { border-color: rgba(255,255,255,0.18); }
-.credits-panel-hd {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
-  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
-}
-.credits-panel-hd svg { width: 13px; height: 13px; }
-.required-badge {
-  margin-left: auto; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  border-radius: 999px; padding: 2px 8px;
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
-}
-.writer-notice {
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;
-  font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;
-}
-.writer-notice strong { color: var(--text-primary); }
-.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-.credit-row {
-  background: var(--bg-surface); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 14px;
-  display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;
-  position: relative; animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+  border-radius: var(--radius-sm); color: var(--text-secondary);
+  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 10px 30px 10px 14px; outline: none; appearance: none; cursor: pointer;
   transition: border-color var(--t);
 }
-.credit-row:hover { border-color: var(--border-accent); }
-.credit-row-num {
-  position: absolute; top: -9px; left: 12px;
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
-  background: var(--bg-card); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border);
+.sort-wrap select:focus { border-color: var(--border-focus); }
+.sort-wrap::after {
+  content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none;
 }
-.credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
-.credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
-.credit-input {
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.86rem; padding: 9px 12px; outline: none; width: 100%;
-  transition: border-color var(--t), box-shadow var(--t); appearance: none;
+.chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
+  transition: all var(--t); white-space: nowrap;
 }
-.credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
-.credit-input:hover { border-color: var(--border-accent); }
-.credit-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
-.csel-wrap { position: relative; }
-.csel-wrap::after {
-  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
-  border-top: 4px solid var(--text-secondary); pointer-events: none;
-}
-.csel-wrap select { padding-right: 28px; cursor: pointer; }
-.credit-remove {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.12);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: rgba(248,113,113,0.45); transition: all var(--t); flex-shrink: 0;
-}
-.credit-remove:hover { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: var(--danger); transform: scale(1.08); }
-.credit-remove svg { width: 11px; height: 11px; }
-.add-credit-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: transparent; border: 1px dashed var(--border-accent);
-  border-radius: var(--radius-sm); padding: 10px 16px;
-  font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; width: 100%;
-  transition: all var(--t);
-}
-.add-credit-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.3); color: var(--text-primary); }
-.add-credit-btn svg { width: 13px; height: 13px; }
+.chip:hover { border-color: var(--border-accent); }
+.chip.active { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
+.chip .chip-count { opacity: 0.6; margin-left: 5px; }
 
-.form-actions { margin-top: 40px; }
-.submit-btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 17px 32px;
-  border-radius: var(--radius-md); border: 1px solid var(--text-primary); cursor: pointer;
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--bg-base); background: var(--text-primary);
-  transition: transform var(--t), box-shadow var(--t), filter var(--t), opacity var(--t);
-  position: relative; overflow: hidden;
-}
-.submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
-.submit-btn:active:not(:disabled) { transform: translateY(0); }
-.submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+/* ── GRID / CARDS ── */
+.content { padding: 18px 20px 80px; }
+.releases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 14px; }
 
-#statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
-#statusMsg.error { color: var(--danger); }
-.form-footer-note {
-  margin-top: 20px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
+.release-card {
+  position: relative; border-radius: var(--radius-md); overflow: hidden;
+  cursor: pointer; background: var(--bg-card); border: 1px solid var(--border);
+  transition: transform var(--t), border-color var(--t), box-shadow var(--t);
+  animation: cardIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
 }
-.form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
+.release-card:hover { transform: translateY(-3px); border-color: var(--border-accent); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+.card-art { position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--bg-input); overflow: hidden; }
+.card-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-art-fallback {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(150deg, #161616, #0a0a0a);
+}
+.card-art-fallback svg { width: 30%; height: 30%; color: var(--text-muted); opacity: 0.6; }
+.card-gradient {
+  position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 45%, transparent 70%);
+}
+.card-status {
+  position: absolute; top: 7px; right: 7px; display: flex; align-items: center; gap: 4px;
+  background: rgba(8,8,8,0.75); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px; padding: 3px 8px 3px 6px;
+  font-family: var(--font-display); font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-primary);
+}
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
+.status-dot.st-review, .status-dot.st-processing { background: var(--warn); }
+.status-dot.st-live, .status-dot.st-approved, .status-dot.st-paid { background: var(--success); }
+.status-dot.st-rejected, .status-dot.st-declined { background: var(--danger); }
+.card-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 9px; }
+.card-title { font-size: 0.8rem; font-weight: 600; color: #fff; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-artist { font-size: 0.68rem; color: rgba(255,255,255,0.6); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.trust-strip { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 18px; flex-wrap: wrap; }
-.trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.03em; }
-.trust-item svg { width: 12px; height: 12px; color: var(--text-secondary); opacity: 0.7; }
+/* ── SKELETON / EMPTY ── */
+.skeleton-card { border-radius: var(--radius-md); aspect-ratio: 1/1; background: linear-gradient(100deg, var(--bg-card) 30%, var(--bg-input) 50%, var(--bg-card) 70%); background-size: 200% 100%; animation: shimmer 1.3s ease-in-out infinite; }
+.empty-state, .no-results { text-align: center; padding: 70px 20px; color: var(--text-secondary); }
+.empty-state svg, .no-results svg { width: 44px; height: 44px; color: var(--text-muted); margin-bottom: 16px; }
+.empty-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.empty-desc { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+.empty-cta {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--text-primary); color: var(--bg-base);
+  border: none; border-radius: 10px; padding: 11px 20px; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.empty-cta svg { width: 13px; height: 13px; }
 
-/* Payment badge — shown at the top when a verified payment reference is present */
-.payment-badge {
-  display: none; align-items: center; gap: 8px;
-  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25);
-  border-radius: var(--radius-sm); padding: 10px 14px; margin: 8px 0 4px;
-  font-size: 0.78rem; color: var(--success); font-weight: 600;
+/* ── DETAIL OVERLAY ── */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.22s ease;
 }
-.payment-badge.show { display: flex; }
-.payment-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+.detail-overlay.open { opacity: 1; pointer-events: all; }
+.detail-sheet {
+  width: 100%; max-width: 560px; max-height: 92vh; background: var(--bg-card);
+  border: 1px solid var(--border); border-bottom: none;
+  border-radius: 22px 22px 0 0; display: flex; flex-direction: column; overflow: hidden;
+  transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+.detail-overlay.open .detail-sheet { transform: translateY(0); }
+@media (min-width: 640px) {
+  .detail-overlay { align-items: center; padding: 24px; }
+  .detail-sheet { border-radius: 20px; border-bottom: 1px solid var(--border); max-height: 86vh; }
+  .detail-overlay .detail-sheet { transform: translateY(24px) scale(0.98); }
+  .detail-overlay.open .detail-sheet { transform: translateY(0) scale(1); }
+}
+.sheet-drag { width: 36px; height: 4px; border-radius: 999px; background: var(--border-accent); margin: 10px auto 0; flex-shrink: 0; }
+.sheet-close {
+  position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; color: var(--text-primary);
+  cursor: pointer; z-index: 5; transition: all var(--t);
+}
+.sheet-close:hover { background: rgba(255,255,255,0.12); }
+.sheet-close svg { width: 13px; height: 13px; }
 
-/* ── EARLY RELEASE-DATE WARNING — non-blocking, mirrors the app's
-   dialog but focuses on smooth processing, not playlist placement ── */
-.warn-overlay {
-  position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-}
-.warn-overlay.open { opacity: 1; pointer-events: all; }
-.warn-card {
-  width: 100%; max-width: 360px; background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 22px; text-align: left;
-  transform: translateY(12px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1);
-}
-.warn-overlay.open .warn-card { transform: translateY(0) scale(1); }
-.warn-icon {
-  width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.06);
-  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
-}
-.warn-icon svg { width: 18px; height: 18px; color: var(--text-primary); }
-.warn-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
-.warn-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 18px; }
-.warn-btn {
-  width: 100%; padding: 12px; border-radius: 10px; background: var(--text-primary); color: var(--bg-base);
-  border: none; font-family: var(--font-display); font-size: 0.72rem; font-weight: 800;
-  letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
-}
-.warn-btn:hover { opacity: 0.9; }
+.detail-header { position: relative; padding: 34px 22px 18px; display: flex; gap: 14px; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.detail-art { width: 68px; height: 68px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; background: var(--bg-input); border: 1px solid var(--border); }
+.detail-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.detail-art .card-art-fallback svg { width: 34%; height: 34%; }
+.detail-heading { min-width: 0; flex: 1; }
+.detail-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text-primary); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-artist { font-size: 0.82rem; color: var(--text-secondary); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-display); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-secondary); }
+.pill.st-review, .pill.st-processing { color: var(--warn); border-color: rgba(251,191,36,0.3); }
+.pill.st-live, .pill.st-approved, .pill.st-paid { color: var(--success); border-color: rgba(74,222,128,0.3); }
+.pill.st-rejected, .pill.st-declined { color: var(--danger); border-color: rgba(248,113,113,0.3); }
 
-@keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
-@keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
-@keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-@keyframes spin      { to { transform:rotate(360deg); } }
+.detail-body { padding: 6px 22px 30px; overflow-y: auto; flex: 1; }
+.d-section { margin-top: 22px; }
+.d-section:first-child { margin-top: 18px; }
+.d-section-hd { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.d-icon { width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.d-icon svg { width: 12px; height: 12px; color: var(--text-secondary); }
+.d-section-title { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); }
+.d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.d-row { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.d-row.full { grid-column: 1 / -1; }
+.d-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.d-value { font-size: 0.85rem; color: var(--text-primary); line-height: 1.45; word-break: break-word; }
+.d-value.muted { color: var(--text-muted); font-style: italic; }
+.d-value.mono { font-family: 'Courier New', monospace; letter-spacing: 0.03em; font-size: 0.82rem; }
 
-@media (max-width: 700px) {
-  .grid, .credits-grid { grid-template-columns: 1fr; }
-  .grid-3 { grid-template-columns: 1fr 1fr; }
-  .credit-row { grid-template-columns: 1fr auto; }
-}
-@media (max-width: 640px) {
-  .content { padding: 8px 16px 60px; }
-  .top-bar { padding: 12px 16px; }
-  .step-track { padding: 14px 16px; }
-  .step-connector { min-width: 8px; max-width: 24px; margin: 0 6px; }
-  .step-item { font-size: 0.62rem; letter-spacing: 0.04em; }
-  .grid-3 { grid-template-columns: 1fr; }
-  .trust-strip { gap: 14px; }
-}
-@media (max-width: 420px) {
-  .step-track { gap: 0; }
-  .step-connector { min-width: 4px; max-width: 12px; margin: 0 4px; }
-  .step-item { font-size: 0.58rem; gap: 5px; }
-  .step-num { width: 22px; height: 22px; font-size: 0.6rem; }
-  .submit-btn { font-size: 0.76rem; padding: 15px 18px; }
+.credit-block { margin-bottom: 12px; }
+.credit-block:last-child { margin-bottom: 0; }
+.credit-block-label { font-family: var(--font-display); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; }
+.credit-line { display: flex; align-items: baseline; gap: 6px; font-size: 0.84rem; color: var(--text-primary); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.credit-line:last-child { border-bottom: none; }
+.credit-line .cname { font-weight: 500; }
+.credit-line .crole { color: var(--text-secondary); font-size: 0.78rem; }
+.credit-line .cipi { color: var(--text-muted); font-size: 0.72rem; margin-left: auto; flex-shrink: 0; }
+
+.feat-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.feat-line:last-child { border-bottom: none; }
+.feat-avatar-sm { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: rgba(255,255,255,0.08); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); }
+.feat-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+.feat-line-info { min-width: 0; flex: 1; }
+.feat-line-name { font-size: 0.84rem; color: var(--text-primary); font-weight: 500; }
+.feat-line-role { font-size: 0.72rem; color: var(--text-muted); }
+.feat-line-link { font-size: 0.7rem; color: var(--text-secondary); text-decoration: none; flex-shrink: 0; border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; }
+.feat-line-link:hover { border-color: var(--border-accent); }
+
+.lyrics-block { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 0.84rem; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap; max-height: 220px; overflow-y: auto; }
+
+.audio-row { display: flex; align-items: center; gap: 10px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 8px; }
+.audio-row:last-child { margin-bottom: 0; }
+.audio-meta { min-width: 0; flex-shrink: 0; width: 110px; }
+.audio-title { font-size: 0.78rem; color: var(--text-primary); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.audio-artist { font-size: 0.68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.audio-row audio { flex: 1; height: 30px; filter: invert(0.88) hue-rotate(180deg) brightness(1.05); border-radius: 6px; }
+
+.ownership-note { display: flex; align-items: flex-start; gap: 10px; background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2); border-radius: var(--radius-sm); padding: 12px; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+.ownership-note.not-confirmed { background: rgba(248,113,113,0.06); border-color: rgba(248,113,113,0.2); }
+.ownership-note svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; color: var(--success); }
+.ownership-note.not-confirmed svg { color: var(--danger); }
+
+@keyframes cardIn  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+@media (max-width: 480px) {
+  .d-grid { grid-template-columns: 1fr; }
+  .releases-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
 }
 </style>
 </head>
@@ -528,852 +276,120 @@ option, optgroup { background: #171717; color: var(--text-primary); }
 
   <header class="top-bar">
     <div class="top-bar-left">
-      <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
+      <button type="button" class="icon-btn" onclick="history.back()" aria-label="Back">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <span class="top-bar-title">Create New Release</span>
+      <div class="top-bar-title-wrap">
+        <span class="top-bar-title">My Releases</span>
+        <span class="top-bar-sub" id="releaseCountSub">Loading…</span>
+      </div>
     </div>
-    <div class="secure-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Secure
-    </div>
+    <button type="button" class="new-release-btn" id="newReleaseBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      New
+    </button>
   </header>
 
-  <div class="step-track">
-    <div class="step-item active"><div class="step-num">1</div><span>Release Info</span></div>
-    <div class="step-connector"></div>
-    <div class="step-item"><div class="step-num">2</div><span>Select Stores</span></div>
-    <div class="step-connector"></div>
-    <div class="step-item"><div class="step-num">3</div><span>Review</span></div>
-  </div>
-
-  <div class="content">
-    <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
-
-    <div class="payment-badge" id="paymentBadge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-      Payment verified — this release will go straight to Review
-    </div>
-
-    <form id="releaseForm">
-
-      <!-- ARTIST INFO -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Artist Information</div>
-          <div class="section-desc">Search and select your artist profile</div>
-        </div>
+  <div class="controls-bar">
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search title or artist…" autocomplete="off">
       </div>
-
-      <div class="field artist-field" id="artistFieldWrap">
-        <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Main Artist (Primary)
-          <div class="required-dot" title="Required"></div>
-        </label>
-        <div class="artist-pill-box" id="artistPillBox">
-          <input type="text" id="artistSearchInput" class="artist-search-input"
-            placeholder="Search artist on Apple Music…"
-            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        </div>
-        <input type="hidden" id="artistName" name="artistName">
-        <div class="artist-dropdown" id="artistDropdown"></div>
-        <div class="field-hint">Results pulled from Apple Music</div>
-      </div>
-
-      <div class="field stack-gap">
-        <label>Country of Origin</label>
-        <div class="country-wrap" id="countryWrap">
-          <div class="country-flag">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <select id="country">
-            <option>Ghana</option><option>Nigeria</option><option>Kenya</option><option>South Africa</option>
-            <option>Uganda</option><option>Tanzania</option><option>Cameroon</option>
-            <option>United States of America</option><option>United Kingdom, The</option><option>Canada</option>
-            <option>Australia</option><option>France</option><option>Germany</option><option>Brazil</option>
-            <option>India</option><option>Jamaica</option><option>Trinidad and Tobago</option><option>Senegal</option>
-            <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
-          </select>
-        </div>
-        <div class="field-hint">Phone number has moved down to Contact &amp; Account, next to your email.</div>
-      </div>
-
-      <!-- FEATURED & SECONDARY ARTISTS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Featured &amp; Secondary Artists</div>
-          <div class="section-desc">Optional — add other artists on this track</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Add a featured or secondary artist?</label>
-        <div class="radio-group" id="hasFeaturedGroup" data-value="No">
-          <button type="button" class="radio-pill selected" data-value="No">No</button>
-          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
-        </div>
-      </div>
-
-      <div class="field stack-gap" id="featuredArtistsWrap">
-        <label>Search Artist</label>
-        <div class="artist-field" id="featArtistFieldWrap">
-          <div class="artist-pill-box" style="min-height:auto;">
-            <input type="text" id="featArtistSearchInput" class="artist-search-input"
-              placeholder="Search artist on Apple Music…"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-          </div>
-          <div class="artist-dropdown" id="featArtistDropdown"></div>
-        </div>
-        <div class="field-hint">Results pulled from Apple Music</div>
-        <div id="featuredArtistsList" style="margin-top:12px;"></div>
-      </div>
-
-      <!-- RELEASE DETAILS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Release Details</div>
-          <div class="section-desc">Core metadata for your release</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Release Title <div class="required-dot"></div></label>
-        <input id="releaseTitle" placeholder="Name of your single, EP or album" required>
-      </div>
-
-      <div class="grid stack-gap">
-        <div class="field">
-          <label>Release Type</label>
-          <div class="select-wrap">
-            <select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Genre <div class="required-dot"></div></label>
-          <div class="select-wrap">
-            <select id="genre">
-              <option>Pop</option><option>Indie Pop</option><option>Afropop</option><option>Hip-Hop</option>
-              <option>Rap</option><option>Trap</option><option>Drill</option><option>Afro Trap</option>
-              <option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Gospel</option>
-              <option>Electronic</option><option>EDM</option><option>Afro House</option><option>House</option>
-              <option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option>
-              <option selected>Afrobeats</option><option>Afroswing</option><option>Highlife</option>
-              <option>Amapiano</option><option>Reggae</option><option>Dancehall</option><option>Jazz</option>
-              <option>Blues</option><option>Classical</option><option>Lo-Fi</option><option>Other</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid stack-gap">
-        <div class="field">
-          <label>Language</label>
-          <input id="language" placeholder="e.g. English, Twi">
-        </div>
-        <div class="field">
-          <label>Explicit Content</label>
-          <div class="select-wrap"><select id="explicit"><option>No</option><option>Yes</option></select></div>
-        </div>
-      </div>
-
-      <div class="field stack-gap">
-        <label>Release Date <div class="required-dot"></div></label>
-        <input id="releaseDate" type="date" required>
-      </div>
-
-      <!-- SONG DETAILS & OWNERSHIP -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Song Details &amp; Ownership</div>
-          <div class="section-desc">Version, prior release status, and rights</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Version <div class="required-dot"></div></label>
-        <div class="select-wrap">
-          <select id="version" required>
-            <option>Original</option><option>Radio Edit</option><option>Extended Mix</option>
-            <option>Remix</option><option>Acoustic</option><option>Live</option><option>Instrumental</option>
-            <option>Remastered</option><option>Cover</option><option>Sped Up</option><option>Slowed</option>
-            <option>Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="field stack-gap">
-        <label>Vocals or Instrumental</label>
-        <div class="radio-group" id="vocalTypeGroup" data-value="Vocals">
-          <button type="button" class="radio-pill selected" data-value="Vocals">Vocals</button>
-          <button type="button" class="radio-pill" data-value="Instrumental">Instrumental</button>
-        </div>
-      </div>
-
-      <div class="field stack-gap">
-        <label>Has this song been released before? <div class="required-dot"></div></label>
-        <div class="radio-group" id="previouslyReleasedGroup" data-value="No">
-          <button type="button" class="radio-pill selected" data-value="No">No</button>
-          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
-        </div>
-      </div>
-
-      <div class="field stack-gap" id="previousReleaseDateWrap">
-        <label>Previous Release Date <div class="required-dot"></div></label>
-        <input id="previousReleaseDate" type="date">
-        <div class="field-hint">Used for prior-release / re-release documentation</div>
-      </div>
-
-      <!-- LABEL & RIGHTS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Label &amp; Rights</div>
-          <div class="section-desc">Copyright and label ownership</div>
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label>Label Name</label>
-          <input id="label" placeholder="Independent or label name">
-        </div>
-        <div class="field">
-          <label>Copyright Holder</label>
-          <input id="copyright" placeholder="© 2025 Your Name">
-        </div>
-      </div>
-
-      <!-- IDENTIFIERS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Identifiers</div>
-          <div class="section-desc">ISRC, UPC, and catalog codes</div>
-        </div>
-      </div>
-
-      <div class="grid-3">
-        <div class="field">
-          <label>ISRC Code</label>
-          <input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.07em;">
-        </div>
-        <div class="field">
-          <label>UPC / EAN Barcode</label>
-          <input id="upc" placeholder="Leave blank to auto-assign">
-        </div>
-        <div class="field">
-          <label>Catalog Number</label>
-          <input id="catalogNumber" placeholder="e.g. LAB-001 (optional)">
-        </div>
-      </div>
-
-      <!-- PRODUCTION CREDITS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Production Credits</div>
-          <div class="section-desc">Producers, engineers, and musicians</div>
-        </div>
-      </div>
-
-      <div class="credits-grid">
-        <div class="credits-panel required-panel">
-          <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-            Producers &amp; Engineers
-            <span class="required-badge">Required</span>
-          </div>
-          <div class="credits-list" id="producerList"></div>
-          <button type="button" class="add-credit-btn" onclick="addCredit('producer')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add Producer / Engineer
-          </button>
-        </div>
-        <div class="credits-panel">
-          <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            Musicians &amp; Performers
-          </div>
-          <div class="credits-list" id="musicianList"></div>
-          <button type="button" class="add-credit-btn" onclick="addCredit('musician')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add Musician / Performer
-          </button>
-        </div>
-      </div>
-
-      <!-- SONGWRITING (no publishing panel — matches app) -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Songwriting</div>
-          <div class="section-desc">Writers and composers</div>
-        </div>
-      </div>
-
-      <div class="credits-panel">
-        <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Songwriters &amp; Composers
-        </div>
-        <div class="credits-list" id="writerList"></div>
-        <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Add Songwriter / Composer
-        </button>
-      </div>
-
-      <!-- CONTACT — Email, Phone, and Country of Origin now live here
-           together, instead of Phone/Country sitting up top before the
-           artist search. ── -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Contact &amp; Account</div>
-          <div class="section-desc">Your contact info for this release</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Email Address <div class="required-dot"></div></label>
-        <input id="email" type="email" placeholder="your@email.com" required>
-      </div>
-
-      <div class="field stack-gap">
-        <label>Phone Number</label>
-        <input id="number" type="tel" placeholder="+1 000 000 0000">
-      </div>
-
-      <!-- LYRICS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Lyrics</div>
-          <div class="section-desc">Optional — improves discoverability</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Lyrics (Optional)</label>
-        <textarea id="lyrics" placeholder="Paste your lyrics here…"></textarea>
-      </div>
-
-      <!-- OWNERSHIP AGREEMENT -->
-      <div class="agreement-box" id="agreementBox">
-        <div class="agreement-checkbox" id="agreementCheckbox">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="agreement-text">
-          <div class="agreement-title">Ownership Agreement <div class="required-dot"></div></div>
-          <p>I confirm that this is an original song that I own, or that I hold full legal rights to distribute, and that it does not infringe on any third-party copyrights.</p>
-        </div>
-      </div>
-
-      <!-- SUBMIT -->
-      <div class="form-actions">
-        <button class="submit-btn" id="submitBtn" type="submit">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          Save &amp; Continue to Stores
-        </button>
-        <div id="statusMsg"></div>
-
-        <div class="trust-strip">
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            256-bit SSL
-          </div>
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            GDPR Compliant
-          </div>
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-            Secure Data
-          </div>
-        </div>
-      </div>
-
-    </form>
-  </div>
-</div>
-
-<!-- EARLY RELEASE-DATE WARNING MODAL -->
-<div class="warn-overlay" id="earlyDateOverlay">
-  <div class="warn-card">
-    <div class="warn-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    </div>
-    <div class="warn-title">Early Release Date</div>
-    <div class="warn-text">Picking a date this close doesn't leave much room for everything to process smoothly before release day. Most artists give it a bit more breathing room — but you're welcome to continue with this date if it works for you.</div>
-    <button type="button" class="warn-btn" id="earlyDateDismiss">Got It</button>
-  </div>
-</div>
-
-<!-- RADIO GROUP ENGINE -->
-<script>
-(function(){
-  const prevDateWrap = document.getElementById('previousReleaseDateWrap');
-  const featWrap     = document.getElementById('featuredArtistsWrap');
-
-  document.querySelectorAll('.radio-group').forEach(function(group){
-    group.addEventListener('click', function(e){
-      const btn = e.target.closest('.radio-pill');
-      if (!btn) return;
-      group.querySelectorAll('.radio-pill').forEach(function(b){ b.classList.remove('selected'); });
-      btn.classList.add('selected');
-      group.dataset.value = btn.dataset.value;
-
-      if (group.id === 'previouslyReleasedGroup') {
-        const isYes = btn.dataset.value === 'Yes';
-        prevDateWrap.classList.toggle('visible', isYes);
-        if (!isYes) document.getElementById('previousReleaseDate').value = '';
-      }
-      if (group.id === 'hasFeaturedGroup') {
-        featWrap.classList.toggle('visible', btn.dataset.value === 'Yes');
-      }
-    });
-  });
-
-  window.getRadioValue = function(id) {
-    const el = document.getElementById(id);
-    return el ? el.dataset.value : '';
-  };
-})();
-</script>
-
-<!-- EARLY RELEASE-DATE WARNING ENGINE — fires once per date pick when
-     the chosen date is less than 5 days out, same trigger the app
-     uses, non-blocking (just informational). -->
-<script>
-(function(){
-  const dateInput = document.getElementById('releaseDate');
-  const overlay   = document.getElementById('earlyDateOverlay');
-  const dismissBtn = document.getElementById('earlyDateDismiss');
-
-  dateInput.addEventListener('change', function(){
-    if (!this.value) return;
-    const chosen = new Date(this.value + 'T00:00:00');
-    const today  = new Date();
-    today.setHours(0,0,0,0);
-    const diffDays = Math.round((chosen - today) / 86400000);
-    if (diffDays >= 0 && diffDays < 5) {
-      overlay.classList.add('open');
-    }
-  });
-  dismissBtn.addEventListener('click', function(){ overlay.classList.remove('open'); });
-  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.classList.remove('open'); });
-})();
-</script>
-
-<!-- OWNERSHIP AGREEMENT ENGINE -->
-<script>
-(function(){
-  window.ownershipConfirmed = false;
-  const agreementBox     = document.getElementById('agreementBox');
-  const agreementCheckbox = document.getElementById('agreementCheckbox');
-  agreementBox.addEventListener('click', function(){
-    window.ownershipConfirmed = !window.ownershipConfirmed;
-    agreementCheckbox.classList.toggle('checked', window.ownershipConfirmed);
-    agreementBox.classList.toggle('checked', window.ownershipConfirmed);
-  });
-})();
-</script>
-
-<!-- CREDITS ENGINE — producer, musician, writer only (mirrors the app: no publishing) -->
-<script>
-const ROLES = {
-  producer: ['Producer','Executive Producer','Co-Producer','Beat Maker','Mixing Engineer','Mastering Engineer','Recording Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor'],
-  musician: ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Bassist','Drummer','Pianist','Keyboardist','DJ / Turntablist','Session Musician','String Arranger'],
-  writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer']
-};
-const PLACEHOLDERS = {
-  producer: { name: 'e.g. Metro Boomin', role: 'Select role…' },
-  musician: { name: 'e.g. John Mayer',   role: 'Select role…' },
-  writer:   { name: 'e.g. John Doe',     role: 'Select role…' }
-};
-const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList' };
-const credits  = { producer:[], musician:[], writer:[] };
-
-window.addCredit = function(type) {
-  const list = document.getElementById(LIST_IDS[type]);
-  const idx  = credits[type].length;
-  credits[type].push({ name:'', role:'', ipi:'' });
-  const row  = document.createElement('div');
-  row.className = 'credit-row';
-  row.dataset.type = type; row.dataset.idx = idx;
-  const label       = type.charAt(0).toUpperCase() + type.slice(1);
-  const roleOptions = ROLES[type].map(r => `<option value="${r}">${r}</option>`).join('');
-  const showIPI     = (type === 'writer');
-
-  row.innerHTML = `
-    <span class="credit-row-num">${label} ${idx + 1}</span>
-    <div class="credit-field-wrap">
-      <div class="credit-field-label">Full Name</div>
-      <input class="credit-input" type="text"
-        placeholder="${PLACEHOLDERS[type].name}"
-        oninput="updateCredit('${type}',${idx},'name',this.value)">
-    </div>
-    <div class="credit-field-wrap">
-      <div class="credit-field-label">Role</div>
-      <div class="csel-wrap">
-        <select class="credit-input" onchange="updateCredit('${type}',${idx},'role',this.value)">
-          <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>${roleOptions}
+      <div class="sort-wrap">
+        <select id="sortSelect">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="az">Title A–Z</option>
         </select>
       </div>
     </div>
-    ${showIPI ? `<div class="credit-field-wrap" style="grid-column:1/-1;">
-      <div class="credit-field-label">IPI / CAE Number (optional)</div>
-      <input class="credit-input" type="text" placeholder="e.g. 00000000497"
-        oninput="updateCredit('${type}',${idx},'ipi',this.value)">
-    </div>` : ''}
-    <button type="button" class="credit-remove" title="Remove"
-      onclick="removeCredit('${type}', this.closest('.credit-row'))">
+    <div class="chip-row" id="chipRow"></div>
+  </div>
+
+  <div class="content">
+    <div class="releases-grid" id="releasesGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <div class="empty-title">No releases yet</div>
+      <div class="empty-desc">Once you submit your first release, it'll show up here with its artwork and full details.</div>
+      <button type="button" class="empty-cta" id="emptyCta">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Create Your First Release
+      </button>
+    </div>
+    <div class="no-results" id="noResults" style="display:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <div class="empty-title">No matches</div>
+      <div class="empty-desc">Try a different search term or clear your filters.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-sheet" id="detailSheet">
+    <div class="sheet-drag"></div>
+    <button type="button" class="sheet-close" id="sheetClose" aria-label="Close">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>`;
+    </button>
+    <div class="detail-header" id="detailHeader"></div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+</div>
 
-  list.appendChild(row);
-  row.querySelector('input.credit-input')?.focus();
-};
-
-window.updateCredit = function(type, idx, field, value) {
-  if (credits[type][idx]) credits[type][idx][field] = value;
-};
-
-window.removeCredit = function(type, row) {
-  const idx = parseInt(row.dataset.idx);
-  credits[type].splice(idx, 1);
-  row.style.opacity = '0'; row.style.transform = 'translateY(-4px)'; row.style.transition = '0.18s ease';
-  setTimeout(() => {
-    row.remove();
-    document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r, i) => {
-      r.dataset.idx = i;
-      const lbl = type.charAt(0).toUpperCase() + type.slice(1);
-      r.querySelector('.credit-row-num').textContent = `${lbl} ${i + 1}`;
-    });
-  }, 180);
-};
-
-// Mirrors the app's _formatCredits — one bullet line per named entry
-window.formatCreditsForEmail = function(arr) {
-  if (!arr || arr.length === 0) return 'None';
-  const lines = arr.filter(c => c.name && c.name.trim() !== '').map(c => {
-    let line = `• ${c.name}`;
-    if (c.role) line += ` — ${c.role}`;
-    if (c.ipi)  line += ` (IPI: ${c.ipi})`;
-    return line;
-  });
-  return lines.length > 0 ? lines.join('\n') : 'None';
-};
-
-window.collectCredits = function() {
-  const result = {};
-  ['producer','musician','writer'].forEach(type => {
-    result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
-  });
-  return result;
-};
+<script>
+/* ── EDIT THESE TWO PATHS IF YOUR FILE NAMES DIFFER ── */
+window.CREATE_RELEASE_URL = 'create-release.html';
+window.LOGIN_URL          = 'login.html';
 </script>
 
-<!-- SHARED APPLE MUSIC SEARCH (used by both Main and Featured artist boxes,
-     mirroring the app's _searchArtistsRemote) -->
+<!-- ICONS reused for section headers -->
 <script>
-async function searchAppleMusicArtists(query, signal) {
-  const itunesUrl = 'https://itunes.apple.com/search?term=' +
-    encodeURIComponent(query) + '&entity=musicArtist&limit=8&media=music';
-  const proxies = [
-    'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl)
-  ];
-  for (const proxyUrl of proxies) {
-    try {
-      const res = await Promise.race([
-        fetch(proxyUrl, { signal }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
-      ]);
-      if (!res.ok) continue;
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { continue; }
-      if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { continue; } }
-      if (!data || !data.results || !data.results.length) continue;
-      return data.results.filter(r => r.artistName).map(r => ({
-        name:  r.artistName,
-        genre: r.primaryGenreName || '',
-        img:   (r.artworkUrl100 || '').replace('100x100bb', '300x300bb')
-      }));
-    } catch (e) { /* try next proxy */ }
-  }
-  return [];
+const SECTION_ICONS = {
+  details:  '<circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/>',
+  music:    '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  hash:     '<line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/>',
+  rights:   '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  star:     '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  pencil:   '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  people:   '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  contact:  '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  lines:    '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>',
+  check:    '<polyline points="20 6 9 17 4 12"/>',
+  card:     '<rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>'
+};
+function sectionHeader(iconKey, title) {
+  return `<div class="d-section-hd"><div class="d-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SECTION_ICONS[iconKey]}</svg></div><div class="d-section-title">${title}</div></div>`;
 }
 function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fallbackArt(sizeClass) {
+  return `<div class="card-art-fallback ${sizeClass||''}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+}
+function statusSlug(status) {
+  return String(status || 'pending').toLowerCase().trim();
+}
+function formatDate(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+}
+function formatDateTime(msOrIso) {
+  if (!msOrIso) return null;
+  const d = new Date(msOrIso);
+  if (isNaN(d.getTime())) return String(msOrIso);
+  return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 </script>
 
-<!-- MAIN ARTIST SEARCH ENGINE (multi-select pills) -->
-<script>
-(function(){
-  const selectedArtists = [];
-  const searchInput = document.getElementById('artistSearchInput');
-  const pillBox      = document.getElementById('artistPillBox');
-  const dropdown     = document.getElementById('artistDropdown');
-  const hiddenInput  = document.getElementById('artistName');
-  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [], activeCtrl = null;
-
-  async function runSearch(query) {
-    showLoading();
-    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
-    activeCtrl = new AbortController();
-    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
-    renderResults(query, results);
-  }
-
-  searchInput.addEventListener('input', function() {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
-    clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => runSearch(q), 400);
-  });
-  searchInput.addEventListener('keydown', handleKeyNav);
-  searchInput.addEventListener('focus', function() {
-    const q = searchInput.value.trim();
-    if (q.length >= 2 && lastQuery !== q) runSearch(q);
-    else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
-  });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  });
-
-  function showLoading() {
-    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
-    openDropdown();
-  }
-
-  function renderResults(query, artists) {
-    dropdownItems = [];
-    let html = '';
-    if (artists.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      artists.forEach((a, i) => {
-        dropdownItems.push({ name: a.name, imageUrl: a.img || '', genre: a.genre || '', isNew: false });
-        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
-        const av = a.img
-          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
-          : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
-      });
-    }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '', isNew: true });
-    html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
-    dropdown.innerHTML = html;
-    openDropdown(); focused = -1;
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-    });
-  }
-
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    addArtist(item.name, item.imageUrl);
-    closeDropdown(); searchInput.value = ''; lastQuery = '';
-  }
-
-  function addArtist(name, imageUrl) {
-    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    selectedArtists.push({ name, imageUrl });
-    syncHiddenInput(); renderPills();
-  }
-  function removeArtist(idx) { selectedArtists.splice(idx, 1); syncHiddenInput(); renderPills(); }
-
-  function renderPills() {
-    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
-    selectedArtists.forEach((artist, i) => {
-      const pill = document.createElement('div');
-      pill.className = 'artist-pill';
-      const av = artist.imageUrl
-        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
-        : `<span class="pill-avatar">${escHtml(artist.name.charAt(0).toUpperCase())}</span>`;
-      pill.innerHTML = `${av}<span>${escHtml(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${escHtml(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-      pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
-      pillBox.insertBefore(pill, searchInput);
-    });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Apple Music…';
-  }
-
-  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
-
-  function handleKeyNav(e) {
-    const items = dropdown.querySelectorAll('.artist-option');
-    if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if      (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlight(items); }
-    else if (e.key === 'ArrowUp')   { e.preventDefault(); focused = Math.max(focused - 1, 0); highlight(items); }
-    else if (e.key === 'Enter')     { e.preventDefault(); if (focused >= 0) selectItem(focused); }
-    else if (e.key === 'Escape')    { closeDropdown(); }
-  }
-  function highlight(items) {
-    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
-    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
-  }
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
-})();
-</script>
-
-<!-- FEATURED / SECONDARY ARTIST SEARCH ENGINE (mirrors the app's mirrored search) -->
-<script>
-(function(){
-  const featuredArtists = []; // {name, imageUrl, role, url}
-  const searchInput = document.getElementById('featArtistSearchInput');
-  const dropdown     = document.getElementById('featArtistDropdown');
-  const listEl       = document.getElementById('featuredArtistsList');
-  let searchTimer = null, lastQuery = '', dropdownItems = [], activeCtrl = null;
-
-  window.formatFeaturedArtistsForEmail = function() {
-    if (featuredArtists.length === 0) return 'None';
-    return featuredArtists.map(e => {
-      let line = `${e.name} (${e.role})`;
-      if (e.url && e.url.trim()) line += ` — ${e.url.trim()}`;
-      return line;
-    }).join('\n');
-  };
-  window.collectFeaturedArtists = function() {
-    return featuredArtists.map(e => ({ name: e.name, role: e.role, url: (e.url || '').trim() }));
-  };
-
-  async function runSearch(query) {
-    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
-    openDropdown();
-    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
-    activeCtrl = new AbortController();
-    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
-    renderResults(query, results);
-  }
-
-  searchInput.addEventListener('input', function() {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
-    clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => runSearch(q), 400);
-  });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#featArtistFieldWrap')) closeDropdown();
-  });
-
-  function renderResults(query, artists) {
-    dropdownItems = [];
-    let html = '';
-    if (artists.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      artists.forEach((a, i) => {
-        dropdownItems.push({ name: a.name, imageUrl: a.img || '' });
-        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
-        const av = a.img
-          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
-          : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
-      });
-    }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '' });
-    html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
-    dropdown.innerHTML = html;
-    openDropdown();
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
-    });
-  }
-
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    addFeaturedArtist(item.name, item.imageUrl);
-    closeDropdown(); searchInput.value = ''; lastQuery = '';
-  }
-
-  function addFeaturedArtist(name, imageUrl) {
-    if (featuredArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '' });
-    renderList();
-  }
-  function removeFeaturedArtist(idx) { featuredArtists.splice(idx, 1); renderList(); }
-
-  function renderList() {
-    listEl.innerHTML = '';
-    featuredArtists.forEach((entry, i) => {
-      const card = document.createElement('div');
-      card.className = 'feat-card';
-      const av = entry.imageUrl
-        ? `<div class="feat-avatar"><img src="${entry.imageUrl}" alt="" onerror="this.style.display='none'"></div>`
-        : `<div class="feat-avatar">${escHtml((entry.name||'?').charAt(0).toUpperCase())}</div>`;
-      card.innerHTML = `
-        <div class="feat-card-top">
-          ${av}
-          <div class="feat-name">${escHtml(entry.name)}</div>
-          <button type="button" class="feat-remove" aria-label="Remove ${escHtml(entry.name)}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        <div class="feat-role-wrap">
-          <select>
-            <option value="Featuring Artist" ${entry.role === 'Featuring Artist' ? 'selected' : ''}>Featuring Artist</option>
-            <option value="Secondary Artist" ${entry.role === 'Secondary Artist' ? 'selected' : ''}>Secondary Artist</option>
-          </select>
-        </div>
-        <div class="feat-url-wrap">
-          <img src="https://cdn.simpleicons.org/spotify/1DB954" alt="" width="14" height="14" onerror="this.style.display='none'">
-          <img src="https://cdn.simpleicons.org/applemusic/fc3c44" alt="" width="14" height="14" onerror="this.style.display='none'">
-          <input type="text" placeholder="Paste Spotify or Apple Music link (optional)" value="${escHtml(entry.url || '')}">
-        </div>`;
-      card.querySelector('.feat-remove').addEventListener('click', () => removeFeaturedArtist(i));
-      card.querySelector('.feat-role-wrap select').addEventListener('change', (e) => { entry.role = e.target.value; });
-      card.querySelector('.feat-url-wrap input').addEventListener('input', (e) => { entry.url = e.target.value; });
-      listEl.appendChild(card);
-    });
-  }
-
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); }
-})();
-</script>
-
-<!-- FIREBASE + PAYMENT VERIFY/CLAIM + SUBMIT + OWN BACKEND NOTIFY -->
+<!-- FIREBASE + FETCH + RENDER -->
 <script type="module">
-import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1388,242 +404,290 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-const NOTIFY_URL    = "https://444music-backend.bonto.run/api/submissions/notify";
-const NOTIFY_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
+const grid          = document.getElementById('releasesGrid');
+const emptyState     = document.getElementById('emptyState');
+const noResults       = document.getElementById('noResults');
+const countSub        = document.getElementById('releaseCountSub');
+const chipRow          = document.getElementById('chipRow');
+const searchInput       = document.getElementById('searchInput');
+const sortSelect         = document.getElementById('sortSelect');
+const detailOverlay        = document.getElementById('detailOverlay');
+const detailHeader          = document.getElementById('detailHeader');
+const detailBody             = document.getElementById('detailBody');
 
-let currentUser       = null;
-let paymentReference  = null;
-let paymentVerified    = false;
-let coverUrl           = '';
-let audioFiles         = [];
+document.getElementById('newReleaseBtn').addEventListener('click', () => { window.location.href = window.CREATE_RELEASE_URL || 'create-release.html'; });
+document.getElementById('emptyCta').addEventListener('click', () => { window.location.href = window.CREATE_RELEASE_URL || 'create-release.html'; });
 
-// ── read what pricing/upload passed us via URL query params ──
-// (?ref=<paymentReference>&cover=<url>&audio=<json>) — the web
-// equivalent of the app's Navigator route arguments map.
-(function readIncomingParams() {
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
-  if (ref) paymentReference = ref;
-  const cover = params.get('cover');
-  if (cover) coverUrl = cover;
-  const audio = params.get('audio');
-  if (audio) {
-    try {
-      const parsed = JSON.parse(audio);
-      if (Array.isArray(parsed)) {
-        audioFiles = parsed
-          .map(m => ({ title: m.title || '', artist: m.artist || '', url: m.url || '' }))
-          .filter(m => m.url);
-      }
-    } catch (e) { /* ignore malformed audio param */ }
-  }
-})();
+let allReleases   = [];
+let activeStatus  = 'all';
+let searchTerm    = '';
 
-async function verifyPayment(reference) {
-  try {
-    const snap = await getDoc(doc(db, 'pendingPayments', reference));
-    if (snap.exists() && snap.data().paid === true) {
-      paymentVerified = true;
-      document.getElementById('paymentBadge').classList.add('show');
-    }
-  } catch (e) {
-    console.error('[Payment verify] ERROR:', e);
-  }
-}
+// Render skeleton immediately
+grid.innerHTML = Array.from({length: 8}).map(() => '<div class="skeleton-card"></div>').join('');
 
 onAuthStateChanged(auth, user => {
-  if (!user) { window.location.href = "login.html"; return; }
-  currentUser = user;
-  if (paymentReference) verifyPayment(paymentReference);
+  if (!user) { window.location.href = window.LOGIN_URL || 'login.html'; return; }
+  const q = query(collection(db, 'submissions'), where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
+  onSnapshot(q, snap => {
+    allReleases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    buildChips();
+    renderGrid();
+  }, err => {
+    console.error('[Releases] load error:', err);
+    grid.innerHTML = '';
+    emptyState.style.display = 'block';
+    document.querySelector('#emptyState .empty-title').textContent = 'Could not load releases';
+    document.querySelector('#emptyState .empty-desc').textContent = 'Something went wrong loading your catalog. Please refresh the page.';
+    document.getElementById('emptyCta').style.display = 'none';
+  });
 });
 
-const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
-
-// Mirrors the app's _sendEmails param list exactly, including the
-// payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
-// (the app has no publishing panel).
-async function sendEmails(data) {
-  const fmt = window.formatCreditsForEmail;
-  const params = {
-    email:          data.email,
-    artist_name:    data.artistName,
-    featuring:      window.formatFeaturedArtistsForEmail(),
-    release_title:  data.releaseTitle,
-    release_type:   data.releaseType,
-    genre:          data.genre,
-    language:       data.language     || 'Not specified',
-    release_date:   data.releaseDate  || 'Not set',
-    explicit:       data.explicit,
-    country:        data.country,
-    phone:          data.phone        || 'Not provided',
-    label:          data.label        || 'Independent',
-    copyright:      data.copyright    || 'Not provided',
-    isrc:           data.isrc         || 'Not provided',
-    upc:            data.upc          || 'Auto-assign',
-    catalog_number: data.catalogNumber|| 'Not provided',
-    version:                data.version,
-    previously_released:    data.previouslyReleased,
-    previous_release_date:  data.previousReleaseDate || 'N/A',
-    vocal_type:             data.vocalType,
-    ownership_confirmed:    data.ownershipConfirmed
-      ? 'Yes — confirmed original work'
-      : 'Not confirmed',
-    producers:      fmt(data.credits?.producer),
-    musicians:      fmt(data.credits?.musician),
-    songwriters:    fmt(data.credits?.writer),
-    publishers:     'N/A',
-    lyrics:         data.lyrics        || 'Not provided',
-    submitted_at:   new Date(data.createdAt).toLocaleString(),
-    status:         data.status,
-    payment_status: paymentVerified ? 'Paid' : 'Not confirmed',
-    cover_url:      data.coverURL   || '',
-    audio_files:    data.audioFiles || []
-  };
-
-  const res = await fetch(NOTIFY_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-app-secret": NOTIFY_SECRET },
-    body: JSON.stringify(params)
+function buildChips() {
+  const counts = {};
+  allReleases.forEach(r => {
+    const s = statusSlug(r.status);
+    counts[s] = (counts[s] || 0) + 1;
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`Notify request failed (${res.status}): ${text}`);
+  const statuses = Object.keys(counts).sort();
+  let html = `<button type="button" class="chip ${activeStatus === 'all' ? 'active' : ''}" data-status="all">All <span class="chip-count">${allReleases.length}</span></button>`;
+  statuses.forEach(s => {
+    const label = s.charAt(0).toUpperCase() + s.slice(1);
+    html += `<button type="button" class="chip ${activeStatus === s ? 'active' : ''}" data-status="${s}">${escHtml(label)} <span class="chip-count">${counts[s]}</span></button>`;
+  });
+  chipRow.innerHTML = html;
+  chipRow.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => { activeStatus = chip.dataset.status; renderGrid(); buildChips(); });
+  });
+}
+
+function getFiltered() {
+  let list = allReleases.slice();
+  if (activeStatus !== 'all') list = list.filter(r => statusSlug(r.status) === activeStatus);
+  if (searchTerm.trim()) {
+    const q = searchTerm.trim().toLowerCase();
+    list = list.filter(r =>
+      (r.releaseTitle || '').toLowerCase().includes(q) ||
+      (r.artistName   || '').toLowerCase().includes(q)
+    );
   }
+  const sortVal = sortSelect.value;
+  if (sortVal === 'oldest') list.sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+  else if (sortVal === 'az') list.sort((a,b) => (a.releaseTitle||'').localeCompare(b.releaseTitle||''));
+  else list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+  return list;
 }
 
-const form      = document.getElementById("releaseForm");
-const submitBtn = document.getElementById("submitBtn");
-const statusMsg = document.getElementById("statusMsg");
-let isSubmitting = false;
+function renderGrid() {
+  const list = getFiltered();
+  countSub.textContent = allReleases.length === 1 ? '1 release' : `${allReleases.length} releases`;
 
-function resetBtn() {
-  submitBtn.disabled = false;
-  submitBtn.innerHTML = `${SUBMIT_SVG} Save &amp; Continue to Stores`;
-  isSubmitting = false;
-}
-function showError(msg) { statusMsg.textContent = msg; statusMsg.className = 'error'; }
-
-function toIsoOrEmpty(dateInputValue) {
-  if (!dateInputValue) return '';
-  try { return new Date(dateInputValue).toISOString(); } catch (e) { return dateInputValue; }
-}
-
-// ── VALIDATION — mirrors the app's _validate() exactly: order,
-// messages, and producer (not writer) as the required credit. ──
-function validate() {
-  const artistName = document.getElementById("artistName").value.trim();
-  if (!artistName) return { msg: 'Please add at least one artist.', scrollTo: 'artistPillBox' };
-
-  const releaseTitle = document.getElementById("releaseTitle").value.trim();
-  if (!releaseTitle) return { msg: 'Release title is required.', scrollTo: 'releaseTitle' };
-
-  const releaseDate = document.getElementById("releaseDate").value;
-  if (!releaseDate) return { msg: 'Please select a release date.', scrollTo: 'releaseDate' };
-
-  const producers = credits.producer.filter(p => p.name && p.name.trim() !== '');
-  if (producers.length === 0) return { msg: 'Please add at least one producer name.', scrollTo: 'producerList' };
-
-  const version = document.getElementById("version").value;
-  if (!version) return { msg: 'Please select a version for this track.', scrollTo: 'version' };
-
-  const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
-  const previousReleaseDate = document.getElementById('previousReleaseDate').value;
-  if (previouslyReleased === 'Yes' && !previousReleaseDate) {
-    return { msg: 'Please select the previous release date.', scrollTo: 'previousReleaseDateWrap' };
-  }
-
-  if (!window.ownershipConfirmed) {
-    return { msg: 'Please confirm you own this song / hold the rights to distribute it.', scrollTo: 'agreementBox' };
-  }
-
-  const email = document.getElementById("email").value.trim();
-  if (!email) return { msg: 'Email address is required.', scrollTo: 'email' };
-
-  return null;
-}
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  if (isSubmitting || !currentUser) return;
-
-  const error = validate();
-  if (error) {
-    showError('⚠ ' + error.msg);
-    const el = document.getElementById(error.scrollTo);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (allReleases.length === 0) {
+    grid.innerHTML = ''; emptyState.style.display = 'block'; noResults.style.display = 'none';
     return;
   }
+  emptyState.style.display = 'none';
 
-  isSubmitting = true;
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
-  statusMsg.textContent = 'Please wait…';
-  statusMsg.className   = '';
-
-  const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
-  const previousReleaseDate = document.getElementById('previousReleaseDate').value;
-  const creditsData = window.collectCredits();
-
-  // Mirrors the app's submission data map field-for-field, including
-  // the payment / cover / audio fields and Review-vs-Pending status.
-  const data = {
-    artistName:    document.getElementById("artistName").value.trim(),
-    releaseTitle:  document.getElementById("releaseTitle").value.trim(),
-    releaseType:   document.getElementById("releaseType").value,
-    genre:         document.getElementById("genre").value,
-    country:       document.getElementById("country").value,
-    language:      document.getElementById("language").value.trim(),
-    releaseDate:   toIsoOrEmpty(document.getElementById("releaseDate").value),
-    explicit:      document.getElementById("explicit").value,
-    email:         document.getElementById("email").value.trim(),
-    phone:         document.getElementById("number").value.trim(),
-    label:         document.getElementById("label").value.trim(),
-    copyright:     document.getElementById("copyright").value.trim(),
-    isrc:          document.getElementById("isrc").value.trim(),
-    upc:           document.getElementById("upc").value.trim(),
-    catalogNumber: document.getElementById("catalogNumber").value.trim(),
-    lyrics:        document.getElementById("lyrics").value.trim(),
-    version:               document.getElementById("version").value,
-    previouslyReleased:    previouslyReleased,
-    previousReleaseDate:   previouslyReleased === 'Yes' ? toIsoOrEmpty(previousReleaseDate) : '',
-    vocalType:             window.getRadioValue('vocalTypeGroup'),
-    ownershipConfirmed:    window.ownershipConfirmed,
-    credits:               creditsData,
-    featuredArtists:       window.collectFeaturedArtists(),
-    paid:             paymentVerified ? 'Paid' : 'Unpaid',
-    paymentReference: paymentReference || '',
-    coverURL:         coverUrl || '',
-    audioFiles:       audioFiles,
-    userId:    currentUser.uid,
-    createdAt: Date.now(),
-    status:    paymentVerified ? 'Review' : 'Pending'
-  };
-
-  try {
-    // 1 — Save to Firestore
-    await addDoc(collection(db, "submissions"), data);
-
-    // 2 — Send notification emails via our own backend
-    await sendEmails(data);
-
-    // 3 — Mark the payment as claimed so the Pricing resume banner
-    // doesn't show it as unclaimed anymore (mirrors the app's claim step)
-    if (paymentVerified && paymentReference) {
-      try {
-        await updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true });
-      } catch (e) {
-        console.error('[Payment claim] ERROR:', e);
-      }
-    }
-
-    window.location.href = "select.html";
-  } catch (error) {
-    console.error("Submission Error:", error);
-    showError("Something went wrong. Please try again.");
-    resetBtn();
+  if (list.length === 0) {
+    grid.innerHTML = ''; noResults.style.display = 'block';
+    return;
   }
-});
+  noResults.style.display = 'none';
+
+  grid.innerHTML = list.map(r => {
+    const slug = statusSlug(r.status);
+    const art = r.coverURL
+      ? `<img src="${escHtml(r.coverURL)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='${fallbackArt().replace(/'/g,"\\'")}'">`
+      : fallbackArt();
+    return `
+      <div class="release-card" data-id="${r.id}">
+        <div class="card-art">
+          ${art}
+          <div class="card-gradient"></div>
+          <div class="card-status"><span class="status-dot st-${slug}"></span>${escHtml((r.status || 'Pending'))}</div>
+          <div class="card-info">
+            <div class="card-title">${escHtml(r.releaseTitle || 'Untitled')}</div>
+            <div class="card-artist">${escHtml(r.artistName || 'Unknown Artist')}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.release-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.id));
+  });
+}
+
+searchInput.addEventListener('input', () => { searchTerm = searchInput.value; renderGrid(); });
+sortSelect.addEventListener('change', renderGrid);
+
+/* ── DETAIL SHEET ── */
+function openDetail(id) {
+  const r = allReleases.find(x => x.id === id);
+  if (!r) return;
+  const slug = statusSlug(r.status);
+
+  const art = r.coverURL
+    ? `<img src="${escHtml(r.coverURL)}" alt="" onerror="this.parentElement.innerHTML='${fallbackArt().replace(/'/g,"\\'")}'">`
+    : fallbackArt();
+
+  detailHeader.innerHTML = `
+    <div class="detail-art">${art}</div>
+    <div class="detail-heading">
+      <div class="detail-title">${escHtml(r.releaseTitle || 'Untitled')}</div>
+      <div class="detail-artist">${escHtml(r.artistName || 'Unknown Artist')}</div>
+      <div class="detail-badges">
+        <span class="pill st-${slug}">${escHtml(r.status || 'Pending')}</span>
+        <span class="pill">${escHtml(r.releaseType || 'Single')}</span>
+        ${r.explicit === 'Yes' ? '<span class="pill">Explicit</span>' : ''}
+      </div>
+    </div>`;
+
+  const featuredHtml = (r.featuredArtists && r.featuredArtists.length)
+    ? r.featuredArtists.map(f => `
+        <div class="feat-line">
+          <div class="feat-avatar-sm">${escHtml((f.name||'?').charAt(0).toUpperCase())}</div>
+          <div class="feat-line-info">
+            <div class="feat-line-name">${escHtml(f.name)}</div>
+            <div class="feat-line-role">${escHtml(f.role || 'Featuring Artist')}</div>
+          </div>
+          ${f.url ? `<a class="feat-line-link" href="${escHtml(f.url)}" target="_blank" rel="noopener">Link</a>` : ''}
+        </div>`).join('')
+    : '<div class="d-value muted">No featured or secondary artists</div>';
+
+  function creditBlock(list, label) {
+    if (!list || !list.length) return '';
+    const lines = list.map(c => `
+      <div class="credit-line">
+        <span class="cname">${escHtml(c.name)}</span>
+        ${c.role ? `<span class="crole">— ${escHtml(c.role)}</span>` : ''}
+        ${c.ipi ? `<span class="cipi">IPI ${escHtml(c.ipi)}</span>` : ''}
+      </div>`).join('');
+    return `<div class="credit-block"><div class="credit-block-label">${label}</div>${lines}</div>`;
+  }
+  const producers = creditBlock(r.credits?.producer, 'Producers &amp; Engineers');
+  const musicians = creditBlock(r.credits?.musician, 'Musicians &amp; Performers');
+  const writers   = creditBlock(r.credits?.writer, 'Songwriters &amp; Composers');
+  const hasCredits = producers || musicians;
+  const hasWriters = !!writers;
+
+  const audioHtml = (r.audioFiles && r.audioFiles.length)
+    ? r.audioFiles.map(a => `
+        <div class="audio-row">
+          <div class="audio-meta">
+            <div class="audio-title">${escHtml(a.title || 'Untitled track')}</div>
+            <div class="audio-artist">${escHtml(a.artist || '')}</div>
+          </div>
+          <audio controls src="${escHtml(a.url)}" preload="none"></audio>
+        </div>`).join('')
+    : '';
+
+  const releaseDateFmt  = formatDate(r.releaseDate) || '<span class="d-value muted">Not set</span>';
+  const prevDateFmt     = r.previouslyReleased === 'Yes' ? (formatDate(r.previousReleaseDate) || '<span class="d-value muted">Not set</span>') : null;
+  const submittedFmt    = formatDateTime(r.createdAt) || '<span class="d-value muted">Unknown</span>';
+
+  detailBody.innerHTML = `
+
+    <div class="d-section">
+      ${sectionHeader('details','Release Details')}
+      <div class="d-grid">
+        <div class="d-row"><div class="d-label">Release Type</div><div class="d-value">${escHtml(r.releaseType || 'Single')}</div></div>
+        <div class="d-row"><div class="d-label">Genre</div><div class="d-value">${escHtml(r.genre || 'Not specified')}</div></div>
+        <div class="d-row"><div class="d-label">Language</div><div class="d-value">${escHtml(r.language || 'Not specified')}</div></div>
+        <div class="d-row"><div class="d-label">Explicit Content</div><div class="d-value">${escHtml(r.explicit || 'No')}</div></div>
+        <div class="d-row"><div class="d-label">Release Date</div><div class="d-value">${releaseDateFmt}</div></div>
+        <div class="d-row"><div class="d-label">Country of Origin</div><div class="d-value">${escHtml(r.country || 'Not specified')}</div></div>
+        <div class="d-row"><div class="d-label">Version</div><div class="d-value">${escHtml(r.version || 'Original')}</div></div>
+        <div class="d-row"><div class="d-label">Vocals / Instrumental</div><div class="d-value">${escHtml(r.vocalType || 'Vocals')}</div></div>
+        <div class="d-row"><div class="d-label">Previously Released</div><div class="d-value">${escHtml(r.previouslyReleased || 'No')}</div></div>
+        ${prevDateFmt ? `<div class="d-row"><div class="d-label">Previous Release Date</div><div class="d-value">${prevDateFmt}</div></div>` : ''}
+      </div>
+    </div>
+
+    <div class="d-section">
+      ${sectionHeader('people','Featured &amp; Secondary Artists')}
+      ${featuredHtml}
+    </div>
+
+    <div class="d-section">
+      ${sectionHeader('rights','Label &amp; Rights')}
+      <div class="d-grid">
+        <div class="d-row"><div class="d-label">Label Name</div><div class="d-value">${escHtml(r.label || 'Independent')}</div></div>
+        <div class="d-row"><div class="d-label">Copyright Holder</div><div class="d-value">${escHtml(r.copyright || 'Not provided')}</div></div>
+      </div>
+    </div>
+
+    <div class="d-section">
+      ${sectionHeader('hash','Identifiers')}
+      <div class="d-grid">
+        <div class="d-row"><div class="d-label">ISRC Code</div><div class="d-value mono">${escHtml(r.isrc || 'Not assigned')}</div></div>
+        <div class="d-row"><div class="d-label">UPC / EAN Barcode</div><div class="d-value mono">${escHtml(r.upc || 'Auto-assign')}</div></div>
+        <div class="d-row full"><div class="d-label">Catalog Number</div><div class="d-value mono">${escHtml(r.catalogNumber || 'Not provided')}</div></div>
+      </div>
+    </div>
+
+    ${hasCredits ? `
+    <div class="d-section">
+      ${sectionHeader('star','Production Credits')}
+      ${producers}${musicians}
+    </div>` : ''}
+
+    ${hasWriters ? `
+    <div class="d-section">
+      ${sectionHeader('pencil','Songwriting')}
+      ${writers}
+    </div>` : ''}
+
+    <div class="d-section">
+      ${sectionHeader('contact','Contact')}
+      <div class="d-grid">
+        <div class="d-row"><div class="d-label">Email Address</div><div class="d-value">${escHtml(r.email || 'Not provided')}</div></div>
+        <div class="d-row"><div class="d-label">Phone Number</div><div class="d-value">${escHtml(r.phone || 'Not provided')}</div></div>
+      </div>
+    </div>
+
+    ${r.lyrics ? `
+    <div class="d-section">
+      ${sectionHeader('lines','Lyrics')}
+      <div class="lyrics-block">${escHtml(r.lyrics)}</div>
+    </div>` : ''}
+
+    ${audioHtml ? `
+    <div class="d-section">
+      ${sectionHeader('music','Audio Files')}
+      ${audioHtml}
+    </div>` : ''}
+
+    <div class="d-section">
+      ${sectionHeader('check','Ownership Agreement')}
+      <div class="ownership-note ${r.ownershipConfirmed ? '' : 'not-confirmed'}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        ${r.ownershipConfirmed ? 'Confirmed original work / full rights to distribute.' : 'Ownership was not confirmed at submission.'}
+      </div>
+    </div>
+
+    <div class="d-section">
+      ${sectionHeader('card','Payment &amp; Submission')}
+      <div class="d-grid">
+        <div class="d-row"><div class="d-label">Payment Status</div><div class="d-value">${escHtml(r.paid || 'Unpaid')}</div></div>
+        <div class="d-row"><div class="d-label">Payment Reference</div><div class="d-value mono">${escHtml(r.paymentReference || 'None')}</div></div>
+        <div class="d-row"><div class="d-label">Current Status</div><div class="d-value">${escHtml(r.status || 'Pending')}</div></div>
+        <div class="d-row"><div class="d-label">Submitted</div><div class="d-value">${submittedFmt}</div></div>
+        <div class="d-row full"><div class="d-label">Submission ID</div><div class="d-value mono">${escHtml(r.id)}</div></div>
+      </div>
+    </div>
+  `;
+
+  detailOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  detailOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('sheetClose').addEventListener('click', closeDetail);
+detailOverlay.addEventListener('click', e => { if (e.target === detailOverlay) closeDetail(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 </script>
 
 </body>
