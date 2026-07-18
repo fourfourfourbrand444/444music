@@ -125,42 +125,45 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .filter-chip:hover { border-color: var(--white-20); color: var(--white-70); }
 .filter-chip.active { background: var(--white); border-color: var(--white); color: var(--black); }
 
-/* ===== GRID ===== */
-.container { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+/* ===== LIST ===== */
+.list-head-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 0 10px 10px; border-bottom: 1px solid var(--white-10); margin-bottom: 4px; }
+.list-head-row span { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); }
+.container { display: flex; flex-direction: column; }
 
-/* ===== CARD ===== */
-.card { background: var(--black-2); border: 1px solid var(--white-10); border-radius: 20px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
-.card:hover { border-color: var(--white-20); transform: translateY(-2px); }
-.card.status-rejected { border-color: rgba(239,68,68,0.4); }
-.card.status-rejected:hover { border-color: rgba(239,68,68,0.65); }
-
-.image-wrapper { height: 200px; position: relative; overflow: hidden; background: var(--black-3); cursor: pointer; }
-.cover-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
-.card:hover .cover-image { transform: scale(1.03); }
-.cover-placeholder { width: 100%; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--grey-dark); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--black-3); }
-.cover-placeholder:hover { background: var(--black-4); color: var(--grey); }
-.cover-placeholder svg { width: 28px; height: 28px; opacity: 0.5; }
-.play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s; z-index: 5; }
-.card:hover .play-overlay { opacity: 1; }
-.play-btn-circle { width: 46px; height: 46px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(255,255,255,0.15); }
-.play-btn-circle svg { width: 18px; height: 18px; color: var(--black); }
-
-.card-body { padding: 16px; }
-.card-body h3 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.2px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.artist-name { color: var(--grey); font-size: 13px; font-weight: 600; }
-.feat { font-size: 11px; color: var(--grey); margin-top: 8px; padding: 5px 9px; background: var(--black-3); border-radius: 7px; border: 1px solid var(--white-10); font-weight: 600; }
-.feat strong { color: var(--white-70); }
-.release-date { margin-top: 10px; font-size: 11px; color: var(--grey); display: flex; align-items: center; gap: 5px; }
-.release-date svg { width: 12px; height: 12px; color: var(--grey-dark); }
-.card-divider { height: 1px; background: var(--white-10); margin: 12px 0; }
-.status-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-
-/* ===== PROGRESS BAR ===== */
-.progress-wrap { margin-top: 10px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--grey); margin-bottom: 5px; font-weight: 600; }
-.progress-bar { height: 3px; background: var(--black-4); border-radius: 2px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--white-70); transition: width 0.8s ease; }
-.progress-fill.rejected-fill { background: var(--rose); }
+/* ===== ROW ===== */
+.release-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 13px 10px; border-bottom: 1px solid var(--white-10); cursor: pointer; transition: background 0.15s; position: relative; }
+.release-row:hover { background: var(--black-2); }
+.release-row.status-rejected { background: rgba(239,68,68,0.03); }
+.row-index { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); text-align: center; }
+.row-thumb { width: 52px; height: 52px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--black-3); position: relative; }
+.row-thumb img.cover-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+.row-thumb .cover-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--black-3); cursor: pointer; transition: background 0.15s; }
+.row-thumb .cover-placeholder:hover { background: var(--black-4); }
+.row-thumb .cover-placeholder svg { width: 16px; height: 16px; color: var(--grey-dark); }
+.row-thumb .cover-placeholder span { display: none; }
+.row-info { min-width: 0; }
+.row-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -0.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-artist { font-size: 12.5px; color: var(--grey); font-weight: 600; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-meta-line { font-size: 11px; color: var(--grey-dark); margin-top: 5px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.row-type-tag { font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--grey); }
+.row-dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--grey-dark); flex-shrink: 0; }
+.row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.row-right-top { display: flex; align-items: center; gap: 6px; }
+.row-action-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 8px;
+  font-size: 11px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer;
+  transition: all 0.15s; border-width: 1.5px; border-style: solid; white-space: nowrap; text-decoration: none;
+}
+.row-action-pill svg { width: 12px; height: 12px; flex-shrink: 0; }
+.row-action-pill.pay    { background: rgba(6,182,212,0.12); border-color: var(--cyan); color: var(--cyan); }
+.row-action-pill.pay:hover { background: rgba(6,182,212,0.22); }
+.row-action-pill.promote{ background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); }
+.row-action-pill.promote:hover { background: rgba(245,158,11,0.22); }
+.row-action-pill.fix    { background: rgba(239,68,68,0.12); border-color: var(--rose); color: var(--rose); }
+.row-action-pill.fix:hover { background: rgba(239,68,68,0.22); }
+.row-chevron { color: var(--grey-dark); flex-shrink: 0; transition: color 0.15s; }
+.release-row:hover .row-chevron { color: var(--white-70); }
+.row-chevron svg { width: 14px; height: 14px; }
 
 /* ===== BADGES ===== */
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
@@ -179,30 +182,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .badge.unpaid::before { background: var(--amber); }
 @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-/* ===== ACTION BUTTONS BELOW BADGES ===== */
-.check-reasons-btn, .pay-now-btn, .promote-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 12px 14px; margin-top: 12px;
-  border-radius: 10px; font-size: 13px; font-weight: 800;
-  font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.18s; border-width: 1.5px; border-style: solid;
+/* ===== TOP-OF-MODAL ACTION BAR ===== */
+.modal-top-action {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 14px 16px; font-size: 13px; font-weight: 800; font-family: 'Nunito', sans-serif;
+  cursor: pointer; transition: all 0.15s; border-bottom: 1px solid var(--white-10);
+  position: sticky; top: 0; z-index: 4; text-decoration: none;
 }
-.check-reasons-btn svg, .pay-now-btn svg, .promote-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
-.check-reasons-btn { background: rgba(239,68,68,0.12); border-color: var(--rose); color: var(--rose); }
-.check-reasons-btn:hover { background: rgba(239,68,68,0.2); transform: translateY(-1px); }
-.pay-now-btn { background: rgba(6,182,212,0.12); border-color: var(--cyan); color: var(--cyan); }
-.pay-now-btn:hover { background: rgba(6,182,212,0.2); transform: translateY(-1px); }
-.pay-now-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
-.promote-btn { background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); text-decoration: none; }
-.promote-btn:hover { background: rgba(245,158,11,0.2); transform: translateY(-1px); }
-
-.card-actions { display: flex; gap: 7px; margin-top: 10px; }
-.action-btn { flex: 1; padding: 9px; border-radius: 9px; border: 1px solid var(--white-20); background: transparent; color: var(--white-70); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
-.action-btn:hover { background: var(--white-06); border-color: var(--white-40); color: var(--white); }
-.action-btn.highlight { background: var(--white-06); border-color: var(--white-40); color: var(--white); }
-.action-btn svg { width: 12px; height: 12px; }
+.modal-top-action svg { width: 16px; height: 16px; flex-shrink: 0; }
+.modal-top-action.pay     { background: rgba(6,182,212,0.14); color: var(--cyan); }
+.modal-top-action.pay:hover { background: rgba(6,182,212,0.22); }
+.modal-top-action.promote { background: rgba(245,158,11,0.14); color: var(--amber); }
+.modal-top-action.promote:hover { background: rgba(245,158,11,0.22); }
+.modal-top-action.fix     { background: rgba(239,68,68,0.14); color: var(--rose); }
+.modal-top-action.fix:hover { background: rgba(239,68,68,0.22); }
 
 /* ===== EMPTY STATE ===== */
-.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
+.empty { text-align: center; padding: 80px 20px; }
 .empty-icon-wrap { width: 72px; height: 72px; margin: 0 auto 18px; background: var(--black-2); border-radius: 20px; border: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; }
 .empty-icon-wrap svg { width: 34px; height: 34px; color: var(--grey); }
 .empty h3 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--white); margin-bottom: 7px; }
@@ -213,11 +209,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ===== SKELETON ===== */
 .skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.04) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-.skeleton-card { border-radius: 20px; overflow: hidden; border: 1px solid var(--white-10); }
-.skeleton-img { height: 200px; }
-.skeleton-body { padding: 16px; }
-.skeleton-line { height: 13px; margin-bottom: 9px; }
-.skeleton-line.w-80 { width: 80%; }
+.skeleton-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 13px 10px; border-bottom: 1px solid var(--white-10); }
+.skeleton-thumb { width: 52px; height: 52px; border-radius: 10px; }
+.skeleton-line { height: 12px; margin-bottom: 7px; }
 .skeleton-line.w-60 { width: 60%; }
 .skeleton-line.w-40 { width: 40%; }
 
@@ -229,12 +223,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
-
-/* ===== CARD CLICKABLE ===== */
-.card-body-clickable { cursor: pointer; position: relative; }
-.expand-hint { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--grey-dark); vertical-align: middle; margin-left: 6px; opacity: 0; transition: opacity 0.15s; }
-.card:hover .expand-hint { opacity: 1; }
-.expand-hint svg { width: 10px; height: 10px; }
 
 /* ═══════════════════════════════════════════════
    META VIEW MODAL — matches app bottom-sheet style
@@ -284,6 +272,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-no-credits  { font-size: 12px; color: var(--grey-dark); font-style: italic; padding: 4px 0; }
 .meta-lyrics { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 13px; font-size: 12px; line-height: 1.8; color: var(--grey); white-space: pre-wrap; word-break: break-word; max-height: 220px; overflow-y: auto; }
 .meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
+.meta-rejection-reason { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 4px; }
+.meta-rejection-reason strong { color: var(--rose); display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
 
 /* ═══════════════════════════════════════════════
    SMART LINK PANEL — same as before but monochrome
@@ -434,7 +424,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .page-content { padding: 20px 16px; }
   .topbar { padding: 14px 16px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .container { grid-template-columns: 1fr; }
   .toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(110%); }
   .toast.show { transform: translateY(0); }
   .meta-modal { max-height: 92vh; border-radius: 18px 18px 0 0; align-self: flex-end; width: 100%; }
@@ -442,11 +431,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .meta-fields-grid { grid-template-columns: 1fr; }
   .meta-field.full { grid-column: 1; }
   .sl-actions { flex-wrap: wrap; }
+  .list-head-row { grid-template-columns: 20px 40px 1fr auto; padding: 0 6px 8px; }
+  .release-row { grid-template-columns: 20px 40px 1fr auto; padding: 10px 6px; gap: 10px; }
+  .row-thumb { width: 40px; height: 40px; }
+  .row-right { align-items: flex-end; }
+  .row-action-pill span { display: none; }
+  .row-action-pill { padding: 7px; }
 }
 @media (max-width: 480px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
   .stat-value { font-size: 1.6rem; }
   .topbar-title { font-size: 0.95rem; }
+  .row-meta-line { display: none; }
 }
 </style>
 </head>
@@ -541,9 +537,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <div class="stat-sub">All time</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Pending</div>
+        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Draft</div>
         <div class="stat-value amber" id="statPending">—</div>
-        <div class="stat-sub">In queue</div>
+        <div class="stat-sub">Not yet paid</div>
       </div>
       <div class="stat-card">
         <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approved</div>
@@ -561,17 +557,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="section-title"><div class="section-dot"></div>All Releases</div>
       <div class="filter-row">
         <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="pending">Pending</button>
-        <button class="filter-chip" data-filter="approved">Approved</button>
+        <button class="filter-chip" data-filter="pending">Draft</button>
         <button class="filter-chip" data-filter="review">In Review</button>
-        <button class="filter-chip" data-filter="rejected">Rejected</button>
+        <button class="filter-chip" data-filter="approved">Approved</button>
+        <button class="filter-chip" data-filter="rejected">Needs Edits</button>
       </div>
     </div>
 
+    <div class="list-head-row">
+      <span></span><span></span><span>Release</span><span>Status</span>
+    </div>
+
     <div class="container" id="submissionsContainer">
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
+      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
+      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
+      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
     </div>
   </div>
 </div>
@@ -623,6 +623,16 @@ const overlay   = document.getElementById("sidebarOverlay");
 const hamburger = document.getElementById("hamburgerBtn");
 hamburger.onclick = () => { sidebar.classList.toggle("open"); overlay.classList.toggle("show"); };
 overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); };
+
+/* --- STATUS LABEL MAPPING — display only.
+   Backend/Firestore keeps reading and writing "Pending" exactly as
+   before; only what the user SEES on screen changes to "Draft". --- */
+function statusDisplayLabel(rawStatus) {
+  const s = (rawStatus || "Pending").trim();
+  if (s.toLowerCase() === "pending") return "Draft";
+  if (s.toLowerCase() === "rejected") return "Needs Edits";
+  return s;
+}
 
 /* --- FILTER CHIPS --- */
 let activeFilter = "all";
@@ -687,17 +697,6 @@ function animateCount(id, target) {
     el.textContent = current;
     if (current >= target) clearInterval(timer);
   }, 40);
-}
-
-/* --- PROGRESS — same 4-stage model as the app --- */
-function getProgress(status) {
-  switch ((status || "").toLowerCase()) {
-    case "pending":  return { pct: 25,  label: "Awaiting payment" };
-    case "review":   return { pct: 60,  label: "Under review" };
-    case "approved": return { pct: 100, label: "Live on stores" };
-    case "rejected": return { pct: 10,  label: "Action needed" };
-    default:         return { pct: 10,  label: "Processing" };
-  }
 }
 
 /* === UPC GENERATION === */
@@ -848,6 +847,24 @@ function renderCreditsSection(arr) {
       </div></div>`).join('') + '</div>';
 }
 
+/* ── TOP-OF-MODAL ACTION BAR — Pay Now (Draft/unpaid), Promote
+   (Approved), or Check Reasons & Fix (Rejected), rendered as a
+   sticky bar at the very top of the details modal. ── */
+function renderModalTopAction(data, releaseId, statusClass) {
+  const paid = isPaidValue(data.paid);
+  if (statusClass === "pending" && !paid) {
+    const price = priceForReleaseType(data.releaseType);
+    return `<button type="button" class="modal-top-action pay" onclick="closeMetaModal(); requestPayNow('${releaseId}', '${escHtml(data.releaseTitle || 'this release')}', ${price})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`;
+  }
+  if (statusClass === "approved") {
+    return `<a href="https://444musicblog.vercel.app" target="_blank" class="modal-top-action promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote This Release</a>`;
+  }
+  if (statusClass === "rejected") {
+    return `<button type="button" class="modal-top-action fix" onclick="openRejectionFix('${releaseId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`;
+  }
+  return "";
+}
+
 async function openMetaModal(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
@@ -859,28 +876,34 @@ async function openMetaModal(releaseId) {
   const rawStatus    = (data.status || 'Pending').trim();
   const statusClass  = rawStatus.toLowerCase().replace(/\s+/g, '-');
   const isApproved   = statusClass === 'approved';
+  const isRejected   = statusClass === 'rejected';
   const credits      = data.credits || {};
   const hasProducers  = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
   const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
   const hasWriters    = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
   const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
   const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
+  const topAction = renderModalTopAction(data, releaseId, statusClass);
   const coverHtml = data.coverURL
     ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
     : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
   let smartLinkHtml = '';
   if (isApproved) smartLinkHtml = (!data.upc || !data.smartLinkURL) ? renderSmartLinkPanel(data, releaseId, null, null, true) : renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
   const paid = isPaidValue(data.paid);
+  const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
+    ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
   content.innerHTML = `
+    ${topAction}
     ${coverHtml}
     <div class="meta-modal-body">
       ${isApproved ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link & UPC</div><div id="smartLinkPanelContainer-${releaseId}">${smartLinkHtml}</div></div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Status</div>
         <div class="meta-status-row">
-          <span class="badge ${statusClass}">${escHtml(rawStatus)}</span>
+          <span class="badge ${statusClass}">${escHtml(statusDisplayLabel(rawStatus))}</span>
           <span class="badge ${paid ? 'paid' : 'unpaid'}">${paid ? 'Paid' : 'Unpaid'}</span>
           ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--grey-dark);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
         </div>
+        ${rejectionReasonHtml}
       </div>
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
         <div class="meta-fields-grid">
@@ -934,29 +957,29 @@ function closeMetaModal() { document.getElementById('metaOverlay').classList.rem
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
 document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); } });
+
+/* Clicking anywhere on a row opens the modal, EXCEPT the inline
+   action pill (pay / promote / fix) or the cover thumbnail (which
+   only appears clickable when the cover is blank, for uploading). */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
-  const cardBody = e.target.closest('.card-body-clickable');
-  if (!cardBody) return;
-  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn') || e.target.closest('.promote-btn') || e.target.closest('.pay-now-btn')) return;
-  const releaseId = cardBody.dataset.releaseId;
+  const row = e.target.closest('.release-row');
+  if (!row) return;
+  if (e.target.closest('.row-action-pill') || e.target.closest('.cover-placeholder')) return;
+  const releaseId = row.dataset.releaseId;
   if (releaseId) openMetaModal(releaseId);
 });
 
 /* ═══════════════════════════════════════════════════════
    PAY NOW — creates a REAL payment via the same backend
-   route the app's PaymentWaitingScreen uses, then polls for
-   confirmation right here on the dashboard. No redirect to
-   a separate pay.html — the flow never leaves this page
-   except for Paystack's own hosted checkout tab, exactly
-   like the app hands off to the phone's browser and waits.
+   route the app's PaymentWaitingScreen uses, then polls
+   for confirmation right here on the dashboard. No redirect
+   to a separate pay.html — the flow never leaves this page
+   except for Paystack's own hosted checkout tab.
 
    The exact mount prefix for paystackRoutes.js isn't confirmed
-   from the browser's side, so instead of hardcoding one guess
-   (which 404'd as "Route not found; POST /api/create-payment"),
-   this probes a short list of likely prefixes on the first call
-   and remembers whichever one actually answers — same backend,
-   same host, just found the right path automatically instead of
-   assuming /api.
+   from the browser's side, so this probes a short list of
+   likely prefixes on the first call and remembers whichever
+   one actually answers.
 ═══════════════════════════════════════════════════════ */
 const PAYMENT_HOST = "https://444music-backend.bonto.run";
 const PAYMENT_BASE_CANDIDATES = [
@@ -972,10 +995,6 @@ function looksLikeRouteNotFound(status, text) {
   return /route not found/i.test(text || "");
 }
 
-// Tries each candidate base until one responds with something other
-// than "route not found", then remembers it in sessionStorage so
-// every later call (this create, and every verify poll) goes straight
-// to the right place without re-probing.
 async function postCreatePaymentWithProbing(body) {
   const cached = sessionStorage.getItem("paymentApiBase");
   const ordered = cached
@@ -1000,7 +1019,7 @@ async function postCreatePaymentWithProbing(body) {
       sessionStorage.setItem("paymentApiBase", base);
       return { ok: res.ok, status: res.status, payload: json, base };
     } catch (e) {
-      lastError = e; // network error on this candidate — try the next one
+      lastError = e;
     }
   }
   throw lastError || new Error("No working payment endpoint found.");
@@ -1010,10 +1029,10 @@ function verifyPaymentUrl(base, reference) {
   return `${base}/verify-payment/${encodeURIComponent(reference)}`;
 }
 
-let _pendingPay = null;      // { releaseId, releaseTitle, amount }
+let _pendingPay = null;
 let _pollTimer  = null;
 let _pollDeadline = null;
-let _pollBase   = null;      // the payment base that worked, reused for verify polls
+let _pollBase   = null;
 
 function requestPayNow(releaseId, releaseTitle, amount) {
   _pendingPay = { releaseId, releaseTitle, amount };
@@ -1083,9 +1102,6 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
     return;
   }
 
-  // Paystack hosts its own checkout — that part can't be reproduced
-  // in our own UI, so it opens in a new tab, same as the app opening
-  // it in the phone's browser via url_launcher.
   window.open(authUrl, "_blank", "noopener");
 
   openPayWait(`
@@ -1098,12 +1114,13 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
     </div>
   `);
 
-  _pollDeadline = Date.now() + 8 * 60 * 1000; // stop polling after 8 minutes
+  _pollDeadline = Date.now() + 8 * 60 * 1000;
   if (_pollTimer) clearInterval(_pollTimer);
   _pollTimer = setInterval(() => pollPaymentStatus(reference, releaseId), 3000);
 }
 window.reopenCheckout = function(url) { window.open(url, "_blank", "noopener"); };
 window.closePayWait = closePayWait;
+window.requestPayNow = requestPayNow;
 
 async function pollPaymentStatus(reference, releaseId) {
   if (Date.now() > _pollDeadline) {
@@ -1134,14 +1151,12 @@ async function pollPaymentStatus(reference, releaseId) {
       openPayWait(`
         <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
         <div class="pay-wait-title">Payment not completed</div>
-        <div class="pay-wait-text">The checkout was closed or the payment failed. You can try again from the card.</div>
+        <div class="pay-wait-text">The checkout was closed or the payment failed. You can try again from the release.</div>
         <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
       `);
     }
-    // any other status ("pending" etc.) — keep polling silently.
   } catch (err) {
     console.error("[verify-payment] error:", err);
-    // Network hiccup — keep polling, don't interrupt the user.
   }
 }
 function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
@@ -1149,13 +1164,17 @@ function loadReleasesForCurrentUser() { if (window._reloadReleases) window._relo
 /* ── CHECK REASONS & FIX — hands the full submission doc to
    rejection-fix.html via sessionStorage (web has no Navigator
    arguments), the same way the app passes the whole map into
-   RejectionFixScreen. ── */
+   RejectionFixScreen. After the person resubmits there, that
+   page is expected to set status back to "Review" — this
+   dashboard already re-reads live from Firestore so it reflects
+   the change automatically the next time it loads. ── */
 function openRejectionFix(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
   sessionStorage.setItem('rejectionFixData', JSON.stringify(data));
   window.location.href = `rejection-fix.html?id=${encodeURIComponent(releaseId)}`;
 }
+window.openRejectionFix = openRejectionFix;
 </script>
 
 <script type="module">
@@ -1239,11 +1258,11 @@ async function loadReleases(user) {
       return;
     }
     const submissionsData = [];
-    let cardIndex = 0;
+    let rowIndex = 0;
     const docsSorted = snapshot.docs.slice().sort((a, b) => {
       const aTime = a.data().createdAt || 0;
       const bTime = b.data().createdAt || 0;
-      return bTime - aTime; // newest first
+      return bTime - aTime;
     });
     docsSorted.forEach((docSnap) => {
       const data = docSnap.data();
@@ -1272,72 +1291,50 @@ async function loadReleases(user) {
       const isPending    = statusClass === "pending";
       const paid         = isPaidValue(data.paid);
       const needsPayment = isPending && !paid;
-      const { pct, label } = getProgress(rawStatus);
 
-      const imageSection = data.coverURL
-        ? `<img src="${data.coverURL}" class="cover-image" data-id="${id}" alt="Cover art">`
-        : `<div class="cover-placeholder cover-image" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Tap to add cover art</span></div>`;
+      /* Cover art: ONLY show the "tap to add cover" affordance when
+         the release truly has no coverURL yet. If one exists, the
+         thumbnail is just a plain image — no upload trigger at all. */
+      const thumbSection = data.coverURL
+        ? `<img src="${data.coverURL}" class="cover-image" alt="Cover art">`
+        : `<div class="cover-placeholder" data-id="${id}" title="Add cover art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;"></div>`;
 
-      // ── REJECTED — carries the FULL doc through sessionStorage into
-      // rejection-fix.html, same as the app's Navigator arguments. ──
-      const checkReasonsBtn = isRejected
-        ? `<button type="button" class="check-reasons-btn" onclick="openRejectionFix('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`
+      const rowActionPill = isRejected
+        ? `<button type="button" class="row-action-pill fix" onclick="openRejectionFix('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Fix</span></button>`
+        : needsPayment
+        ? `<button type="button" class="row-action-pill pay" onclick="requestPayNow('${id}', '${escHtml(data.releaseTitle || 'this release')}', ${priceForReleaseType(data.releaseType)})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Pay Now</span></button>`
+        : isApproved
+        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="row-action-pill promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Promote</span></a>`
         : "";
 
-      // ── PENDING + UNPAID — Pay Now, opens the confirm modal then
-      // creates a real Paystack payment + polls for confirmation
-      // right here (see createAndTrackPayment above). ──
-      const price = priceForReleaseType(data.releaseType);
-      const payNowBtn = needsPayment
-        ? `<button type="button" class="pay-now-btn" onclick="requestPayNow('${id}', '${escHtml(data.releaseTitle || 'this release')}', ${price})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`
-        : "";
-
-      const promoteBtn = isApproved
-        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote</a>`
-        : "";
-
-      const secondaryActionBtn = isApproved
-        ? `<button class="action-btn highlight" data-id="${id}" onclick="openMetaModal('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</button>`
-        : `<button class="action-btn" onclick="location.href='pricing.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</button>`;
-
-      const card = document.createElement("div");
-      card.className = `card${isRejected ? " status-rejected" : ""}`;
-      card.dataset.status = statusClass;
-      card.innerHTML = `
-        <div class="image-wrapper">
-          ${imageSection}
-          <div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
-          <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
+      const row = document.createElement("div");
+      row.className = `release-row${isRejected ? " status-rejected" : ""}`;
+      row.dataset.status = statusClass;
+      row.dataset.releaseId = id;
+      row.innerHTML = `
+        <div class="row-index">${rowIndex + 1}</div>
+        <div class="row-thumb">${thumbSection}</div>
+        <div class="row-info">
+          <div class="row-title">${data.releaseTitle || "Untitled Release"}</div>
+          <div class="row-artist">${data.artistName || "Unknown Artist"}${data.featuring && data.featuring.trim() ? ` ft. ${data.featuring}` : ""}</div>
+          <div class="row-meta-line">
+            <span class="row-type-tag">${data.releaseType || "Single"}</span>
+            <span class="row-dot-sep"></span>
+            <span>${isPending ? "Scheduled: " : "Release: "}${releaseDate}</span>
+          </div>
         </div>
-        <div class="card-body card-body-clickable" data-release-id="${id}">
-          <h3>${data.releaseTitle || "Untitled Release"}<span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/></svg></span></h3>
-          <p class="artist-name">${data.artistName || "Unknown Artist"}</p>
-          ${data.featuring && data.featuring.trim() ? `<p class="feat"><strong>ft.</strong> ${data.featuring}</p>` : ""}
-          <p class="release-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Release: <strong>${releaseDate}</strong></p>
-          <div class="progress-wrap">
-            <div class="progress-label"><span>${label}</span><span>${pct}%</span></div>
-            <div class="progress-bar"><div class="progress-fill${isRejected ? " rejected-fill" : ""}" style="width:0%" data-pct="${pct}"></div></div>
+        <div class="row-right">
+          <div class="row-right-top">
+            <span class="badge ${statusClass}">${statusDisplayLabel(data.status)}</span>
+            <span class="row-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
           </div>
-          <div class="card-divider"></div>
-          <div class="status-row">
-            <span class="badge ${statusClass}">${(data.status || 'Pending').trim()}</span>
-            <span class="badge ${paid ? "paid" : "unpaid"}">${paid ? "Paid" : "Unpaid"}</span>
-            ${isApproved ? `<span style="font-size:10px;color:var(--green);font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>Live</span>` : ''}
-          </div>
-          ${checkReasonsBtn}
-          ${payNowBtn}
-          ${promoteBtn}
-          <div class="card-actions">
-            <button class="action-btn edit-cover-btn" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Cover</button>
-            ${secondaryActionBtn}
-          </div>
+          ${rowActionPill}
         </div>`;
-      container.appendChild(card);
-      const idx = cardIndex++;
-      card.style.opacity = "0"; card.style.transform = "translateY(16px)";
-      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, idx * 60);
-      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + idx * 60);
-      allCards.push({ card, status: statusClass });
+      container.appendChild(row);
+      const idx = rowIndex++;
+      row.style.opacity = "0"; row.style.transform = "translateY(8px)";
+      setTimeout(() => { row.style.transition = "opacity 0.3s ease, transform 0.3s ease"; row.style.opacity = "1"; row.style.transform = "translateY(0)"; }, idx * 45);
+      allCards.push({ card: row, status: statusClass });
     });
     setTimeout(() => updateStats(submissionsData), 200);
   } catch (err) {
@@ -1347,27 +1344,28 @@ async function loadReleases(user) {
 }
 window._reloadReleases = () => { if (window._currentUser) loadReleases(window._currentUser); };
 
+/* Uploading cover art — ONLY reachable via the blank-cover placeholder,
+   since a filled cover has no upload trigger at all per the new rule. */
 container.addEventListener("click", (e) => {
-  const target = e.target.closest(".cover-image, .edit-cover-btn");
-  if (!target) return;
-  if (e.target.closest('.card-body-clickable') && !e.target.closest('.edit-cover-btn')) return;
-  const id    = target.dataset.id;
-  const input = container.querySelector(`.cover-input[data-id="${id}"]`);
+  const placeholder = e.target.closest(".cover-placeholder");
+  if (!placeholder) return;
+  const id    = placeholder.dataset.id;
+  const input = placeholder.querySelector(".cover-input");
   if (input) input.click();
 });
 container.addEventListener("change", async (e) => {
   if (!e.target.classList.contains("cover-input")) return;
   const file = e.target.files[0];
   if (!file) return;
-  const id      = e.target.dataset.id;
-  const wrapper = e.target.closest(".image-wrapper");
+  const id     = e.target.dataset.id;
+  const thumb  = e.target.closest(".row-thumb");
   if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
   const reader = new FileReader();
   reader.onload = async (ev) => {
     const base64 = ev.target.result;
     await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
     if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
-    wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
+    thumb.innerHTML = `<img src="${base64}" class="cover-image" alt="Cover art">`;
     showToast("Cover art updated successfully!");
   };
   reader.readAsDataURL(file);
