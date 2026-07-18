@@ -4,16 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>444Music – Verify Email</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --black:      #000000;
+      --black-1:    #080808;
+      --black-2:    #0d0d0d;
+      --black-3:    #111111;
+      --black-4:    #161616;
+      --white:      #ffffff;
+      --white-90:   rgba(255,255,255,0.90);
+      --white-70:   rgba(255,255,255,0.70);
+      --white-40:   rgba(255,255,255,0.40);
+      --white-20:   rgba(255,255,255,0.20);
+      --white-10:   rgba(255,255,255,0.10);
+      --white-06:   rgba(255,255,255,0.06);
+      --grey:       #888888;
+      --grey-dark:  #444444;
+      --green:      #22c55e;
+      --amber:      #f59e0b;
+      --rose:       #ef4444;
+    }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     html, body {
       height: 100%;
       width: 100%;
-      font-family: 'DM Sans', sans-serif;
-      background: #020203;
-      color: #e8e8f0;
+      font-family: 'Nunito', sans-serif;
+      background: var(--black);
+      color: var(--white);
       overflow: hidden;
     }
 
@@ -22,7 +43,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      background: #020203;
+      background: var(--black);
     }
 
     .body {
@@ -31,58 +52,55 @@
       flex-direction: column;
       padding: 24px 26px 36px;
       overflow-y: auto;
-      background:
-        radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.015) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(255,255,255,0.01) 0%, transparent 60%),
-        #020203;
+      background: var(--black);
     }
 
     .back-btn {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.35);
+      background: var(--white-06);
+      border: 1px solid var(--white-10);
+      color: var(--grey);
       cursor: pointer;
-      padding: 4px;
+      border-radius: 10px;
       font-size: 22px;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 24px;
-      transition: color 0.2s;
+      transition: all 0.2s;
     }
-    .back-btn:hover { color: #c4b5fd; }
+    .back-btn:hover { background: var(--black-4); color: var(--white); border-color: var(--white-20); }
 
     .icon-box {
       width: 56px;
       height: 56px;
       border-radius: 16px;
-      background: #14101f;
-      border: 1px solid rgba(167,139,250,0.18);
+      background: var(--white-06);
+      border: 1px solid var(--white-10);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 24px;
-      box-shadow: 0 4px 24px rgba(139,92,246,0.12);
     }
 
     .icon-box svg { width: 26px; height: 26px; }
 
     h1 {
+      font-family: 'Outfit', sans-serif;
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.02em;
       margin-bottom: 10px;
     }
 
     .subtitle {
       font-size: 13.5px;
-      color: rgba(255,255,255,0.45);
+      color: var(--grey);
       line-height: 1.55;
       margin-bottom: 36px;
     }
-    .subtitle strong { color: #c4b5fd; font-weight: 600; }
+    .subtitle strong { color: var(--white); font-weight: 700; }
 
     .code-row {
       display: flex;
@@ -94,23 +112,23 @@
     .code-box {
       width: 100%;
       aspect-ratio: 1 / 1.15;
-      background: #14101f;
-      border: 1px solid rgba(167,139,250,0.16);
+      background: var(--black-3);
+      border: 1px solid var(--white-10);
       border-radius: 12px;
       text-align: center;
       font-size: 20px;
       font-weight: 700;
-      color: #e8e8f0;
-      font-family: 'DM Sans', sans-serif;
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
       outline: none;
-      caret-color: #a78bfa;
+      caret-color: var(--white);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .code-box:focus {
-      border-color: rgba(167,139,250,0.65);
-      box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+      border-color: var(--white-40);
+      box-shadow: 0 0 0 3px var(--white-06);
     }
-    .code-row.error .code-box { border-color: rgba(248,113,113,0.5); }
+    .code-row.error .code-box { border-color: rgba(239,68,68,0.5); }
 
     @keyframes shake {
       0%,100% { transform:translateX(0); }
@@ -127,16 +145,16 @@
       min-height: 16px;
       opacity: 0;
       transition: opacity 0.3s;
-      font-weight: 500;
+      font-weight: 600;
       line-height: 1.5;
       display: flex;
       align-items: flex-start;
       gap: 6px;
     }
     .msg.visible { opacity:1; }
-    .msg.error   { color: #f87171; }
-    .msg.success { color: #4ade80; }
-    .msg.warn    { color: #fb923c; }
+    .msg.error   { color: var(--rose); }
+    .msg.success { color: var(--green); }
+    .msg.warn    { color: var(--amber); }
     .msg svg { flex-shrink: 0; margin-top: 1px; }
 
     .submit-btn {
@@ -144,31 +162,29 @@
       padding: 17px;
       border: none;
       border-radius: 50px;
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-      color: #ffffff;
-      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      font-family: 'Nunito', sans-serif;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       letter-spacing: 0.03em;
-      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      transition: opacity 0.2s, transform 0.15s;
       margin-top: 32px;
-      box-shadow: 0 4px 24px rgba(139,92,246,0.28);
     }
     .submit-btn:hover:not(:disabled) {
-      opacity: 0.94;
+      opacity: 0.9;
       transform: translateY(-1px);
-      box-shadow: 0 8px 32px rgba(139,92,246,0.36);
     }
     .submit-btn:active:not(:disabled) { opacity:1; transform:translateY(0); }
-    .submit-btn:disabled { opacity:0.2; cursor:not-allowed; }
+    .submit-btn:disabled { opacity:0.25; cursor:not-allowed; }
 
     .btn-text { display:block; }
     .spinner {
       display:none;
       width:18px; height:18px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #ffffff;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: var(--black);
       border-radius:50%;
       animation: spin 0.65s linear infinite;
       margin: 0 auto;
@@ -181,29 +197,29 @@
       text-align: center;
       margin-top: 22px;
       font-size: 13px;
-      color: rgba(255,255,255,0.25);
+      color: var(--grey-dark);
     }
     .resend-row a, .resend-row span.link {
-      color: #a78bfa;
-      font-weight: 600;
+      color: var(--white-90);
+      font-weight: 700;
       text-decoration: none;
       cursor: pointer;
       transition: color 0.2s;
     }
-    .resend-row span.link:hover { color: #c4b5fd; }
-    .resend-row span.disabled { color: rgba(255,255,255,0.2); cursor: not-allowed; }
+    .resend-row span.link:hover { color: var(--white); }
+    .resend-row span.disabled { color: var(--grey-dark); cursor: not-allowed; }
 
     .spam-note {
       text-align: center;
       margin-top: 6px;
       font-size: 11px;
-      color: rgba(255,255,255,0.18);
+      color: var(--grey-dark);
       letter-spacing: 0.01em;
     }
 
     .body::-webkit-scrollbar { width:3px; }
     .body::-webkit-scrollbar-track { background:transparent; }
-    .body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.06); border-radius:3px; }
+    .body::-webkit-scrollbar-thumb { background:var(--black-4); border-radius:3px; }
   </style>
 </head>
 <body>
@@ -218,8 +234,7 @@
     </button>
 
     <div class="icon-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 4h16v16H4z" opacity="0"/>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--white-70);">
         <rect x="2" y="4" width="20" height="16" rx="2"/>
         <path d="M22 6l-10 7L2 6"/>
       </svg>
@@ -279,7 +294,6 @@
   const name  = sessionStorage.getItem('pendingVerifyName');
 
   if (!uid || !email) {
-    // Nothing to verify — bounce back to signup
     window.location.href = 'login.html';
   } else {
     $('emailDisplay').textContent = email;
