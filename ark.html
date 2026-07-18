@@ -74,35 +74,17 @@ body::before {
 @keyframes orbDrift { 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.05); } 66%{ transform:translate(-20px,40px) scale(0.95); } }
 
 /* =========================================
-   SLIDING HERO IMAGES — BACKGROUND
+   VIDEO HERO BACKGROUND — 5 clips, cross-fade, random order
    ========================================= */
-@keyframes slideKen1 {
-  0%   { transform: scale(1.08) translateX(0);    opacity: 1; }
-  28%  { transform: scale(1.14) translateX(-2%);  opacity: 1; }
-  33%  { opacity: 0; }
-  100% { transform: scale(1.08) translateX(0);    opacity: 0; }
+.hero-bg-slider { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: #000; }
+.hero-bg-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  filter: grayscale(1) contrast(1.12) brightness(0.82);
+  transition: opacity 1.4s ease;
+  will-change: opacity;
 }
-@keyframes slideKen2 {
-  0%   { opacity: 0; }
-  30%  { opacity: 0; }
-  33%  { opacity: 1; transform: scale(1.08) translateX(0); }
-  61%  { transform: scale(1.14) translateX(2%); opacity: 1; }
-  66%  { opacity: 0; }
-  100% { opacity: 0; }
-}
-@keyframes slideKen3 {
-  0%   { opacity: 0; }
-  63%  { opacity: 0; }
-  66%  { opacity: 1; transform: scale(1.08) translateX(0); }
-  95%  { transform: scale(1.13) translateX(-1.5%); opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.hero-bg-slider { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.hero-bg-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; will-change: transform, opacity; filter: grayscale(1) contrast(1.05); }
-.hero-bg-slide:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1800&q=85&auto=format&fit=crop'); animation: slideKen1 18s ease-in-out infinite; opacity: 1; }
-.hero-bg-slide:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1800&q=85&auto=format&fit=crop'); animation: slideKen2 18s ease-in-out infinite; }
-.hero-bg-slide:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1800&q=85&auto=format&fit=crop'); animation: slideKen3 18s ease-in-out infinite; }
+.hero-bg-video.active { opacity: 1; }
 
 .hero-bg-overlay-base { position: absolute; inset: 0; background: rgba(4,4,4,0.68); z-index: 1; pointer-events: none; }
 .hero-bg-overlay-left {
@@ -573,10 +555,10 @@ body::before {
 <!-- ===== HERO ===== -->
 <section class="hero">
 
-  <div class="hero-bg-slider" aria-hidden="true">
-    <div class="hero-bg-slide"></div>
-    <div class="hero-bg-slide"></div>
-    <div class="hero-bg-slide"></div>
+  <!-- 5-clip video background, shuffled + cross-faded via JS below -->
+  <div class="hero-bg-slider" id="heroBgSlider" aria-hidden="true">
+    <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
+    <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
   </div>
 
   <div class="hero-bg-overlay-base"  aria-hidden="true"></div>
@@ -587,6 +569,8 @@ body::before {
     <div class="slide-dot active" data-idx="0"></div>
     <div class="slide-dot" data-idx="1"></div>
     <div class="slide-dot" data-idx="2"></div>
+    <div class="slide-dot" data-idx="3"></div>
+    <div class="slide-dot" data-idx="4"></div>
   </div>
 
   <div class="slide-caption" id="slideCaption">
@@ -1099,50 +1083,85 @@ loadFeatured();
 </script>
 
 <script>
-/* ── HERO SLIDER JS ── */
-const SLIDE_DATA = [
-  { icon: 'fa-solid fa-compact-disc', title: 'Live on Stage',      sub:  'From upload to the world'       },
-  { icon: 'fa-solid fa-laptop',       title: 'Upload & Distribute', sub:  'Studio session → Global stores' },
-  { icon: 'fa-solid fa-headphones',   title: 'Studio Quality',      sub:  'WAV · FLAC · Pro delivery'     },
+/* ── HERO VIDEO BACKGROUND — 5 clips, random order, cross-fade ── */
+/* Drop 5 short muted clips into a "media" folder next to this file:
+   media/hero-1.mp4 … media/hero-5.mp4  (any short concert/studio/upload footage works) */
+const HERO_CLIPS = [
+  { src: 'media/hero-1.mp4', icon: 'fa-solid fa-compact-disc', title: 'Live on Stage',      sub: 'From upload to the world'       },
+  { src: 'media/hero-2.mp4', icon: 'fa-solid fa-laptop',       title: 'Upload & Distribute', sub: 'Studio session → Global stores' },
+  { src: 'media/hero-3.mp4', icon: 'fa-solid fa-headphones',   title: 'Studio Quality',      sub: 'WAV · FLAC · Pro delivery'      },
+  { src: 'media/hero-4.mp4', icon: 'fa-solid fa-tower-broadcast', title: 'Global Reach',     sub: '100+ stores worldwide'          },
+  { src: 'media/hero-5.mp4', icon: 'fa-solid fa-chart-line',   title: 'Real Royalties',      sub: 'Track every stream live'        },
 ];
-const CYCLE = 6000;
-let currentSlide = 0;
-const dots    = document.querySelectorAll('.slide-dot');
-const caption = document.getElementById('slideCaption');
-const capIcon = caption ? caption.querySelector('.slide-caption-icon i') : null;
-const capTitle= document.getElementById('captionTitle');
-const capSub  = document.getElementById('captionSub');
 
-function activateDot(idx) {
-  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
-function updateCaption(idx) {
+
+const bgVideos = document.querySelectorAll('#heroBgSlider .hero-bg-video');
+const dots     = document.querySelectorAll('.slide-dot');
+const caption  = document.getElementById('slideCaption');
+const capIcon  = caption ? caption.querySelector('.slide-caption-icon i') : null;
+const capTitle = document.getElementById('captionTitle');
+const capSub   = document.getElementById('captionSub');
+
+let queue = shuffle(HERO_CLIPS);
+let qPos = 0;
+let dotPos = 0;
+let activeVidIdx = 0;
+
+function activateDot(idx) { dots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
+
+function updateCaption(item) {
   if (!caption) return;
-  const d = SLIDE_DATA[idx];
   caption.style.opacity = '0';
   setTimeout(() => {
-    if (capIcon)  { capIcon.className = d.icon; }
-    if (capTitle) capTitle.textContent = d.title;
-    if (capSub)   capSub.textContent   = d.sub;
+    if (capIcon) capIcon.className = item.icon;
+    if (capTitle) capTitle.textContent = item.title;
+    if (capSub) capSub.textContent = item.sub;
     caption.style.opacity = '1';
   }, 280);
 }
 
-const sliderInterval = setInterval(() => {
-  currentSlide = (currentSlide + 1) % 3;
-  activateDot(currentSlide);
-  updateCaption(currentSlide);
-}, CYCLE);
+function playClip(item, videoEl) {
+  videoEl.src = item.src;
+  videoEl.load();
+  const p = videoEl.play();
+  if (p && p.catch) p.catch(() => {});
+}
 
-dots.forEach(dot => {
-  dot.addEventListener('click', () => {
-    const idx = parseInt(dot.dataset.idx, 10);
-    currentSlide = idx;
-    activateDot(idx);
-    updateCaption(idx);
-  });
-});
+function nextClip() {
+  if (qPos >= queue.length) { queue = shuffle(HERO_CLIPS); qPos = 0; }
+  const item = queue[qPos++];
+  const incoming = bgVideos[(activeVidIdx + 1) % 2];
+  const outgoing = bgVideos[activeVidIdx];
+  playClip(item, incoming);
+  incoming.classList.add('active');
+  outgoing.classList.remove('active');
+  activeVidIdx = (activeVidIdx + 1) % 2;
+  dotPos = (dotPos + 1) % 5;
+  activateDot(dotPos);
+  updateCaption(item);
+}
 
+(function initHero() {
+  if (!bgVideos.length) return;
+  const first = queue[qPos++];
+  playClip(first, bgVideos[0]);
+  bgVideos[0].classList.add('active');
+  updateCaption(first);
+  activateDot(0);
+})();
+
+setInterval(nextClip, 9000);
+dots.forEach(dot => dot.addEventListener('click', nextClip));
+
+/* ── FAQ ── */
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
     const item = q.closest('.faq-item');
