@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Payment Confirmed — 444Music</title>
-<link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,7 +16,7 @@
     font-family: 'Inter', sans-serif;
     position: relative;
     overflow: hidden;
-    background: #080808;
+    background: #070707;
   }
 
   .bg {
@@ -25,7 +25,7 @@
     background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&q=80');
     background-size: cover;
     background-position: center;
-    filter: brightness(0.22) saturate(1.4);
+    filter: grayscale(1) brightness(0.2) contrast(1.1);
     z-index: 0;
   }
 
@@ -34,9 +34,9 @@
     inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(88, 28, 135, 0.55) 0%,
-      rgba(8, 8, 8, 0.82) 50%,
-      rgba(15, 10, 30, 0.92) 100%
+      rgba(7,7,7,0.7) 0%,
+      rgba(7,7,7,0.88) 50%,
+      rgba(3,3,3,0.95) 100%
     );
     z-index: 1;
   }
@@ -54,28 +54,20 @@
     gap: 0;
   }
 
-  .logo {
-    margin-bottom: 3rem;
-  }
-
-  .logo img {
-    height: 36px;
-    width: auto;
-    opacity: 0.9;
-    display: block;
-  }
+  .logo { margin-bottom: 3rem; }
+  .logo img { height: 36px; width: auto; opacity: 0.9; display: block; filter: grayscale(1) brightness(1.4); }
 
   .check-wrap {
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1.5px solid rgba(139, 92, 246, 0.4);
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.75rem;
-    animation: pop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   }
 
   .check-wrap svg { display: block; }
@@ -92,48 +84,19 @@
 
   .sub {
     font-size: 0.875rem;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.42);
     line-height: 1.6;
     margin-bottom: 2.25rem;
     max-width: 300px;
   }
 
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: rgba(255,255,255,0.07);
-    margin-bottom: 2.25rem;
-  }
+  .divider { width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 2.25rem; }
 
-  .meta {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 2.5rem;
-  }
-
-  .meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .meta-label {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 0.01em;
-  }
-
-  .meta-value {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: rgba(255,255,255,0.75);
-  }
-
-  .meta-value.ok {
-    color: #a78bfa;
-  }
+  .meta { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 2.5rem; }
+  .meta-row { display: flex; align-items: center; justify-content: space-between; }
+  .meta-label { font-size: 0.78rem; color: rgba(255,255,255,0.32); letter-spacing: 0.01em; }
+  .meta-value { font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.75); }
+  .meta-value.ok { color: #ffffff; }
 
   .btn {
     display: flex;
@@ -142,8 +105,8 @@
     gap: 8px;
     width: 100%;
     padding: 0.9rem 1.5rem;
-    background: #7c3aed;
-    color: #fff;
+    background: #ffffff;
+    color: #080808;
     font-family: 'Inter', sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
@@ -152,13 +115,13 @@
     border-radius: 500px;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.18s, transform 0.12s, opacity 0.2s;
+    transition: background 0.15s ease, transform 0.1s ease, opacity 0.2s ease;
     margin-bottom: 0.6rem;
     position: relative;
     overflow: hidden;
   }
 
-  .btn:hover:not(.loading) { background: #6d28d9; transform: scale(1.015); }
+  .btn:hover:not(.loading) { background: #d9d9d9; }
   .btn:active:not(.loading) { transform: scale(0.99); }
   .btn.loading { cursor: default; opacity: 0.85; }
 
@@ -166,24 +129,18 @@
     position: absolute;
     left: 0; top: 0; bottom: 0;
     width: 0%;
-    background: rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.12);
     border-radius: 500px;
-    transition: width 0.35s ease;
+    transition: width 0.3s ease;
   }
 
-  .btn-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .btn-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
 
   .spinner {
     width: 15px;
     height: 15px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: #080808;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     display: none;
@@ -192,7 +149,7 @@
 
   .redirect-note {
     font-size: 0.72rem;
-    color: rgba(167,139,250,0.7);
+    color: rgba(255,255,255,0.5);
     letter-spacing: 0.01em;
     min-height: 1.1rem;
     margin-bottom: 0.4rem;
@@ -202,9 +159,7 @@
 
   .redirect-note.show { opacity: 1; }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .secure {
     font-size: 0.72rem;
@@ -223,9 +178,7 @@
     to   { opacity: 1; transform: scale(1); }
   }
 
-  @media (max-width: 480px) {
-    h1 { font-size: 1.5rem; }
-  }
+  @media (max-width: 480px) { h1 { font-size: 1.5rem; } }
 </style>
 </head>
 <body>
@@ -241,7 +194,7 @@
 
   <div class="check-wrap">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 14.5L11.5 20L22 9" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6 14.5L11.5 20L22 9" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -282,7 +235,7 @@
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     </svg>
-    Payment Secured by paystack-444Music 
+    Payment secured
   </div>
 
 </div>
@@ -316,7 +269,7 @@
 
     const steps = [
       { at: 0,    pct: 8,   msg: 'Opening submission form…' },
-      { at: 1500, pct: 30,  msg: 'Connecting to Tally…' },
+      { at: 1500, pct: 30,  msg: 'Connecting to form service…' },
       { at: 3500, pct: 55,  msg: 'Loading your form…' },
       { at: 6000, pct: 78,  msg: 'Almost there…' },
       { at: 8500, pct: 92,  msg: 'Redirecting now…' },
