@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-/* ── RESET & ROOT — matches the Flutter app's palette exactly ──── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
@@ -47,6 +46,41 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ── PAGE LOADER — covers everything until we know whether to show
+   the resume-lock popup or the normal pricing grid, so the popup
+   (when it applies) is the very first thing the user sees instead
+   of flashing the grid first. ─────────────────────────────────── */
+.page-loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.15s ease;
+}
+.page-loader.hide { opacity: 0; pointer-events: none; }
+.loader-spin {
+  width: 34px; height: 34px; border: 3px solid var(--white-10);
+  border-top-color: var(--white); border-radius: 50%;
+  animation: loaderSpin 0.8s linear infinite;
+}
+@keyframes loaderSpin { to { transform: rotate(360deg); } }
+
+/* ── PENDING PAYMENT BANNER — manual fallback if a payment was
+   started this session and we haven't auto-confirmed it yet ──── */
+.pending-pay-banner {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 4000; display: none; align-items: center; gap: 12px;
+  background: var(--black-2); border: 1px solid var(--white-20);
+  border-radius: 14px; padding: 12px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+  font-size: 12.5px; color: var(--white-70); max-width: 92vw;
+}
+.pending-pay-banner button {
+  background: var(--white); color: var(--black); border: none;
+  border-radius: 8px; padding: 8px 14px; font-family: inherit;
+  font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
+}
+.pending-pay-banner button:hover { opacity: 0.9; }
 
 /* ── TOPBAR ────────────────────────────────────────────────────── */
 .topbar {
@@ -311,6 +345,9 @@ body {
 </head>
 <body>
 
+<!-- ── PAGE LOADER — hides everything until we know the payment state ── -->
+<div class="page-loader" id="pageLoader"><div class="loader-spin"></div></div>
+
 <!-- ── TOPBAR ── -->
 <nav class="topbar">
   <a href="index.html" class="topbar-logo">
@@ -538,6 +575,13 @@ body {
   </div>
 </div>
 
+<!-- ── PENDING PAYMENT BANNER — manual fallback for "I've completed
+     payment" if the auto-check hasn't confirmed it yet ── -->
+<div class="pending-pay-banner" id="pendingPayBanner">
+  <span>Finished paying on the checkout tab?</span>
+  <button type="button" id="pendingPayBtn">I've completed payment</button>
+</div>
+
 <script>
 /* ── REVEAL ANIMATIONS ────────────────────────────────────────── */
 const observer = new IntersectionObserver((entries) => {
@@ -565,11 +609,70 @@ const BACKEND_BASE = 'https://444music-backend.bonto.run';
 
 let currentUser = null; // set once Firebase auth resolves
 
+/* ── PAGE LOADER COORDINATION ──────────────────────────────────
+   Two independent checks have to both finish before we reveal
+   anything: (1) did a payment started THIS session just clear
+   (auto-redirect to payment-success.html), and (2) does this user
+   have an older unclaimed paid record (resume-lock). Whichever
+   finishes first waits for the other, so the popup never has to
+   race the pricing grid into view. ───────────────────────────── */
+let pendingCheckDone = false;
+let authCheckDone    = false;
+let redirecting      = false;
+
+function hidePageLoader() { document.getElementById('pageLoader').classList.add('hide'); }
+function maybeHideLoader() {
+  if (redirecting) return;
+  if (pendingCheckDone && authCheckDone) hidePageLoader();
+}
+
+function showPendingPayBanner(reference) {
+  const banner = document.getElementById('pendingPayBanner');
+  if (!banner) return;
+  banner.style.display = 'flex';
+  document.getElementById('pendingPayBtn').onclick = () => {
+    window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`;
+  };
+}
+
+/* Fast, Firebase-independent check: was a payment started this
+   session, and has Paystack already confirmed it? Runs immediately
+   on load, and again whenever the tab regains focus (covers the
+   "user pays, then switches back to this tab" case automatically). */
+async function checkPendingPaymentAndMaybeRedirect() {
+  const reference = sessionStorage.getItem('pendingPaymentRef');
+  if (!reference) { pendingCheckDone = true; maybeHideLoader(); return; }
+
+  try {
+    const res  = await fetch(`${BACKEND_BASE}/api/paystack/verify-payment/${encodeURIComponent(reference)}`);
+    const data = await res.json();
+    if (data && data.paid === true) {
+      redirecting = true;
+      sessionStorage.removeItem('pendingPaymentRef');
+      sessionStorage.removeItem('pendingPaymentPlan');
+      window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`;
+      return;
+    }
+  } catch (err) {
+    console.error('[Pending payment check] ERROR:', err);
+  }
+  pendingCheckDone = true;
+  maybeHideLoader();
+  showPendingPayBanner(reference);
+}
+checkPendingPaymentAndMaybeRedirect();
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && sessionStorage.getItem('pendingPaymentRef')) {
+    checkPendingPaymentAndMaybeRedirect();
+  }
+});
+
 /* ── PAYMENT WIRING — POST /api/paystack/create-payment, same
    payload shape as PaymentWaitingScreen in the app, then redirect
-   the tab to the returned paymentUrl (web's equivalent of the app's
-   external-browser launch). isExistingSubmission stays false here —
-   this is the Pricing screen flow, no submission exists yet. ────── */
+   the tab to the returned paymentUrl. Stashes the reference first
+   so this page can auto-detect completion the moment it's confirmed,
+   whether that's an auto-redirect on return or the manual button. */
 async function startPayment(planKey, amountGHS, btnEl) {
   if (!currentUser) {
     window.location.href = 'login.html';
@@ -605,6 +708,9 @@ async function startPayment(planKey, amountGHS, btnEl) {
     const data = await res.json();
 
     if (!data.paymentUrl || !data.reference) throw new Error('missing-fields');
+
+    sessionStorage.setItem('pendingPaymentRef', data.reference);
+    sessionStorage.setItem('pendingPaymentPlan', planKey);
 
     window.location.href = data.paymentUrl;
   } catch (err) {
@@ -645,10 +751,13 @@ import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(async (
 
   onAuthStateChanged(auth, async (user) => {
     currentUser = user; // pricing.html stays public — we only gate the *payment click*, not the page itself
-    if (!user) return;
+    if (!user) { authCheckDone = true; maybeHideLoader(); return; }
 
     // ── RESUME-LOCK — same check as the app's _checkForUnclaimedPayment:
-    // pendingPayments where uid matches, paid:true, claimed:false. ──
+    // pendingPayments where uid matches, paid:true, claimed:false. Runs
+    // in parallel with the pending-payment check above; the popup is
+    // toggled open here BEFORE the loader is hidden, so it's the first
+    // thing revealed instead of a second popup after the grid flashes. ──
     try {
       const q = query(
         collection(db, 'pendingPayments'),
@@ -664,7 +773,13 @@ import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(async (
     } catch (err) {
       console.error('Resume-lock check failed:', err);
     }
+    authCheckDone = true;
+    maybeHideLoader();
   });
+}).catch(() => {
+  // Firebase failed to load — don't leave the loader stuck forever.
+  authCheckDone = true;
+  maybeHideLoader();
 });
 
 function showLockOverlay(reference) {
