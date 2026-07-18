@@ -635,44 +635,32 @@ function showPendingPayBanner(reference) {
   };
 }
 
-/* Fast, Firebase-independent check: was a payment started this
-   session, and has Paystack already confirmed it? Runs immediately
-   on load, and again whenever the tab regains focus (covers the
-   "user pays, then switches back to this tab" case automatically). */
-async function checkPendingPaymentAndMaybeRedirect() {
-  const reference = sessionStorage.getItem('pendingPaymentRef');
-  if (!reference) { pendingCheckDone = true; maybeHideLoader(); return; }
+/* ── THE FIX ───────────────────────────────────────────────────
+   startPayment() used to save ONLY Paystack's own transaction
+   reference (data.reference) into sessionStorage, and that value
+   is what got forwarded downstream as ?ref=... on every later page.
 
-  try {
-    const res  = await fetch(`${BACKEND_BASE}/api/paystack/verify-payment/${encodeURIComponent(reference)}`);
-    const data = await res.json();
-    if (data && data.paid === true) {
-      redirecting = true;
-      sessionStorage.removeItem('pendingPaymentRef');
-      sessionStorage.removeItem('pendingPaymentPlan');
-      window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`;
-      return;
-    }
-  } catch (err) {
-    console.error('[Pending payment check] ERROR:', err);
-  }
-  pendingCheckDone = true;
-  maybeHideLoader();
-  showPendingPayBanner(reference);
-}
-checkPendingPaymentAndMaybeRedirect();
+   But averagee.html's verifyPayment() looks a document up BY ID:
+     doc(db, 'pendingPayments', reference)
+   and the backend's /create-payment route creates that pendingPayments
+   document using submissionId (tempReference, generated right here)
+   as the document ID — NOT Paystack's reference. Paystack's reference
+   is only ever stored as a *field* inside that doc.
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && sessionStorage.getItem('pendingPaymentRef')) {
-    checkPendingPaymentAndMaybeRedirect();
-  }
-});
+   So the value being forwarded through the whole page chain never
+   matched the actual Firestore document ID, and verifyPayment()
+   always came back empty — the release kept saving as
+   Pending/Unpaid even after a successful payment.
 
-/* ── PAYMENT WIRING — POST /api/paystack/create-payment, same
-   payload shape as PaymentWaitingScreen in the app, then redirect
-   the tab to the returned paymentUrl. Stashes the reference first
-   so this page can auto-detect completion the moment it's confirmed,
-   whether that's an auto-redirect on return or the manual button. */
+   Fix: track both IDs separately.
+     - pendingPaymentRef          -> tempReference (submissionId).
+       This is what gets forwarded as ?ref=... to payment-success.html
+       and beyond, since every downstream page/lookup expects the
+       Firestore doc ID.
+     - pendingPaymentPaystackRef  -> data.reference (Paystack's own
+       transaction reference). Only needed locally, to poll
+       Paystack's own /verify-payment endpoint.
+   ─────────────────────────────────────────────────────────────── */
 async function startPayment(planKey, amountGHS, btnEl) {
   if (!currentUser) {
     window.location.href = 'login.html';
@@ -689,7 +677,7 @@ async function startPayment(planKey, amountGHS, btnEl) {
 
   const uid = currentUser.uid || '';
   const email = currentUser.email || '';
-  const tempReference = `${uid || 'guest'}_${Date.now()}`;
+  const tempReference = `${uid || 'guest'}_${Date.now()}`; // this becomes the pendingPayments doc ID
 
   try {
     const res = await fetch(`${BACKEND_BASE}/api/paystack/create-payment`, {
@@ -709,7 +697,10 @@ async function startPayment(planKey, amountGHS, btnEl) {
 
     if (!data.paymentUrl || !data.reference) throw new Error('missing-fields');
 
-    sessionStorage.setItem('pendingPaymentRef', data.reference);
+    // submissionId (Firestore doc ID) — forwarded downstream as ?ref=...
+    sessionStorage.setItem('pendingPaymentRef', tempReference);
+    // Paystack's own transaction reference — used only to poll Paystack's verify endpoint
+    sessionStorage.setItem('pendingPaymentPaystackRef', data.reference);
     sessionStorage.setItem('pendingPaymentPlan', planKey);
 
     window.location.href = data.paymentUrl;
@@ -730,6 +721,46 @@ function hideError(planKey) {
   const el = document.getElementById(`err-${planKey}`);
   if (el) el.classList.remove('show');
 }
+
+/* Fast, Firebase-independent check: was a payment started this
+   session, and has Paystack already confirmed it? Runs immediately
+   on load, and again whenever the tab regains focus (covers the
+   "user pays, then switches back to this tab" case automatically).
+
+   ── FIX applied here too: poll Paystack using the Paystack reference,
+   but forward/display the submissionId (the Firestore doc ID) as
+   ?ref=... — matching what verifyPayment() on averagee.html expects. */
+async function checkPendingPaymentAndMaybeRedirect() {
+  const reference   = sessionStorage.getItem('pendingPaymentRef');           // submissionId
+  const paystackRef = sessionStorage.getItem('pendingPaymentPaystackRef');   // Paystack's own reference
+
+  if (!reference || !paystackRef) { pendingCheckDone = true; maybeHideLoader(); return; }
+
+  try {
+    const res  = await fetch(`${BACKEND_BASE}/api/paystack/verify-payment/${encodeURIComponent(paystackRef)}`);
+    const data = await res.json();
+    if (data && data.paid === true) {
+      redirecting = true;
+      sessionStorage.removeItem('pendingPaymentRef');
+      sessionStorage.removeItem('pendingPaymentPaystackRef');
+      sessionStorage.removeItem('pendingPaymentPlan');
+      window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`; // submissionId
+      return;
+    }
+  } catch (err) {
+    console.error('[Pending payment check] ERROR:', err);
+  }
+  pendingCheckDone = true;
+  maybeHideLoader();
+  showPendingPayBanner(reference); // submissionId
+}
+checkPendingPaymentAndMaybeRedirect();
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && sessionStorage.getItem('pendingPaymentRef')) {
+    checkPendingPaymentAndMaybeRedirect();
+  }
+});
 
 /* ── FIREBASE — auth + resume-lock check ──────────────────────── */
 import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(async ({ initializeApp }) => {
@@ -757,7 +788,9 @@ import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(async (
     // pendingPayments where uid matches, paid:true, claimed:false. Runs
     // in parallel with the pending-payment check above; the popup is
     // toggled open here BEFORE the loader is hidden, so it's the first
-    // thing revealed instead of a second popup after the grid flashes. ──
+    // thing revealed instead of a second popup after the grid flashes.
+    // snap.docs[0].id here is ALREADY the correct submissionId/doc ID,
+    // so this path needed no change. ──
     try {
       const q = query(
         collection(db, 'pendingPayments'),
