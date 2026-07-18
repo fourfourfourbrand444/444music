@@ -249,7 +249,7 @@
   document.getElementById('ts').textContent = mo + ' ' + d.getDate() + ', ' + h + ':' + m + ' ' + ap;
 
   const TARGET = 'files.html';
-  const DURATION = 10000;
+  const DURATION = 1400;
   let started = false;
 
   function startRedirect() {
@@ -268,11 +268,9 @@
     spinner.style.display = 'block';
 
     const steps = [
-      { at: 0,    pct: 8,   msg: 'Opening submission form…' },
-      { at: 1500, pct: 30,  msg: 'Connecting to form service…' },
-      { at: 3500, pct: 55,  msg: 'Loading your form…' },
-      { at: 6000, pct: 78,  msg: 'Almost there…' },
-      { at: 8500, pct: 92,  msg: 'Redirecting now…' },
+      { at: 0,    pct: 20,  msg: 'Opening submission form…' },
+      { at: 400,  pct: 55,  msg: 'Loading your form…' },
+      { at: 900,  pct: 88,  msg: 'Redirecting now…' },
     ];
 
     note.classList.add('show');
@@ -281,7 +279,7 @@
       setTimeout(() => {
         progress.style.width = pct + '%';
         text.textContent = msg;
-        note.textContent = 'Please wait — this may take a few seconds';
+        note.textContent = 'Please wait…';
       }, at);
     });
 
@@ -289,7 +287,7 @@
       progress.style.width = '100%';
       text.textContent = 'Redirecting…';
       note.textContent = "You're being redirected now";
-      setTimeout(() => { window.location.href = TARGET; }, 400);
+      setTimeout(() => { window.location.href = TARGET; }, 250);
     }, DURATION);
   }
 </script>
