@@ -173,6 +173,17 @@
 
   .secure svg { opacity: 0.5; }
 
+  .ref-note {
+    font-size: 0.68rem;
+    color: rgba(239,68,68,0.85);
+    letter-spacing: 0.01em;
+    margin-top: 0.9rem;
+    max-width: 300px;
+    line-height: 1.5;
+    display: none;
+  }
+  .ref-note.show { display: block; }
+
   @keyframes pop {
     from { opacity: 0; transform: scale(0.6); }
     to   { opacity: 1; transform: scale(1); }
@@ -238,6 +249,10 @@
     Payment secured
   </div>
 
+  <div class="ref-note" id="refWarning">
+    We couldn't find your payment reference on this page. If your next screen asks you to pay again, go back to Pricing and use "I've completed payment" instead of reloading this link directly.
+  </div>
+
 </div>
 
 <script>
@@ -248,7 +263,30 @@
   const ap = d.getHours() >= 12 ? 'PM' : 'AM';
   document.getElementById('ts').textContent = mo + ' ' + d.getDate() + ', ' + h + ':' + m + ' ' + ap;
 
-  const TARGET = 'files.html';
+  /* ── THE FIX ────────────────────────────────────────────────────
+     Previously this page redirected to a bare 'files.html' with no
+     payment reference attached at all, so every page after this one
+     lost track of which payment/submission this was — that's the
+     root cause of releases staying "Pending"/"Unpaid" after paying.
+
+     Now: read the reference from the URL's own ?ref= param first
+     (covers being linked to directly, e.g. from the manual
+     "I've completed payment" button on pricing.html), and fall back
+     to sessionStorage's 'pendingPaymentRef' (covers the normal
+     Paystack-redirect-back case, since Paystack's own redirect won't
+     necessarily preserve custom query params). Whichever is found,
+     it gets forwarded as ?ref=... on the next page. ──────────────── */
+  const urlParams  = new URLSearchParams(window.location.search);
+  const reference  = urlParams.get('ref') || sessionStorage.getItem('pendingPaymentRef') || '';
+
+  if (!reference) {
+    document.getElementById('refWarning').classList.add('show');
+  }
+
+  const TARGET = reference
+    ? `files.html?ref=${encodeURIComponent(reference)}`
+    : 'files.html';
+
   const DURATION = 1400;
   let started = false;
 
