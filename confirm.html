@@ -1,522 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Agreement • 444Music</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg:        #070707;
-    --surface:   #111111;
-    --surface2:  #161616;
-    --border:    rgba(255,255,255,0.09);
-    --border2:   rgba(255,255,255,0.055);
-    --text:      #f2f2f2;
-    --muted:     rgba(242,242,242,0.42);
-    --dim:       rgba(242,242,242,0.18);
-  }
-
-  html, body {
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    background: rgba(7,7,7,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
-  .logo-mark {
-    width: 30px; height: 30px;
-    background: #ffffff;
-    border-radius: 8px;
-    display: grid;
-    place-items: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: #080808;
-  }
-  .logo-text {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--text);
-    letter-spacing: -0.1px;
-  }
-
-  .nav-tag {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--muted);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-  }
-
-  /* PAGE */
-  .page {
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 90px 20px 60px;
-  }
-
-  /* STEP */
-  .step-line { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
-  .step-dots { display: flex; gap: 5px; }
-  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); }
-  .step-dot.on { background: #ffffff; }
-  .step-text { font-size: 12px; color: var(--muted); letter-spacing: 0.3px; }
-
-  /* HEADING */
-  h1 {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 1.15;
-    letter-spacing: -0.6px;
-    color: #ffffff;
-    margin-bottom: 8px;
-  }
-  .sub { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
-
-  /* DIVIDER */
-  hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
-
-  /* NOTICE */
-  .notice {
-    padding: 16px 18px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid rgba(255,255,255,0.4);
-    border-radius: 10px;
-    margin-bottom: 28px;
-  }
-  .notice-head {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 7px;
-  }
-  .notice-head svg { flex-shrink: 0; }
-  .notice p { font-size: 13.5px; color: #b8b8b8; line-height: 1.6; }
-  .notice strong { color: #ffffff; font-weight: 600; }
-
-  /* SECTION LABEL */
-  .label {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-  }
-
-  /* TERMS */
-  .terms { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
-  .terms li {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 13px 15px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    font-size: 13.5px;
-    color: #aaaaaa;
-    line-height: 1.5;
-  }
-  .terms li .ico {
-    flex-shrink: 0;
-    width: 18px; height: 18px;
-    display: grid;
-    place-items: center;
-    color: var(--muted);
-    margin-top: 1px;
-  }
-  .terms li strong { color: var(--text); font-weight: 500; }
-
-  /* ALERT */
-  .alert {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 13px 16px;
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 9px;
-    font-size: 13.5px;
-    color: #d6d6d6;
-    margin-bottom: 28px;
-    line-height: 1.5;
-  }
-  .alert svg { flex-shrink: 0; margin-top: 2px; }
-  .alert strong { color: #ffffff; font-weight: 600; }
-
-  /* COMPARISON */
-  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 32px; }
-  .col { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .col.highlight { border-color: rgba(255,255,255,0.28); }
-  .col-title {
-    padding: 11px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    background: var(--surface2);
-  }
-  .col.highlight .col-title { color: #ffffff; }
-  .badge { font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; border: 1px solid rgba(255,255,255,0.18); }
-  .b-later { background: rgba(255,255,255,0.05); color: #bdbdbd; }
-  .b-now   { background: rgba(255,255,255,0.12); color: #ffffff; }
-  .col ul { list-style: none; padding: 12px 14px; display: flex; flex-direction: column; gap: 7px; }
-  .col ul li { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-  .col ul li.y { color: #b8b8b8; }
-  .col ul li.n { color: var(--dim); }
-  .col ul li .mark { flex-shrink: 0; width: 13px; display: inline-flex; }
-
-  /* AGREEMENT BOX */
-  .agree-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .check-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    cursor: pointer;
-    padding: 14px;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .check-row:hover { background: rgba(255,255,255,0.025); border-color: var(--border); }
-  .check-row.on { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-
-  .box {
-    flex-shrink: 0;
-    width: 18px; height: 18px;
-    border-radius: 5px;
-    border: 1.5px solid rgba(255,255,255,0.28);
-    background: transparent;
-    display: grid;
-    place-items: center;
-    margin-top: 2px;
-    transition: all 0.15s;
-  }
-  .box.on { border-color: #ffffff; background: #ffffff; }
-  .box svg { display: none; }
-  .box.on svg { display: block; }
-
-  .check-label { font-size: 13.5px; color: #b8b8b8; line-height: 1.55; user-select: none; }
-  .check-label strong { color: var(--text); font-weight: 500; }
-
-  /* TIMESTAMP */
-  .ts {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 9px 13px;
-    border-radius: 7px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .ts-dot {
-    display: inline-block;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #ffffff;
-    margin-right: 4px;
-    animation: blink 2s infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-  /* WARN MSG */
-  .warn-msg {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 13px;
-    border-radius: 8px;
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.18);
-    font-size: 12.5px;
-    color: #d6d6d6;
-    margin-bottom: 12px;
-  }
-  .warn-msg svg { flex-shrink: 0; }
-
-  /* BUTTON */
-  .btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    background: #ffffff;
-    color: #080808;
-    font-family: 'Inter', sans-serif;
-    font-size: 14.5px;
-    font-weight: 600;
-    letter-spacing: 0.1px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.15s, transform 0.1s;
-    margin-bottom: 10px;
-  }
-  .btn:hover:not(:disabled) { background: #d9d9d9; }
-  .btn:active:not(:disabled) { transform: scale(0.99); }
-  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-size: 11.5px;
-    color: var(--muted);
-  }
-
-  /* FOOTER */
-  footer {
-    text-align: center;
-    padding: 0 20px 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  .foot-links { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
-  .foot-links a { font-size: 12px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
-  .foot-links a:hover { color: #ffffff; }
-  .foot-copy { font-size: 11.5px; color: var(--dim); }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* MOBILE */
-  @media (max-width: 600px) {
-    nav { padding: 0 18px; }
-    .page { padding: 80px 16px 50px; }
-    h1 { font-size: 25px; }
-    .compare { grid-template-columns: 1fr; }
-    .agree-box { padding: 16px 14px; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation Required — 444Music Distribution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="confirm.css">
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a class="logo" href="#">
-    <div class="logo-mark">4</div>
-    <span class="logo-text">444Music</span>
-  </a>
-  <span class="nav-tag">Distribution Portal</span>
-</nav>
+<div class="overlay">
 
-<main class="page">
+  <!-- Ambient background orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-  <!-- step -->
-  <div class="step-line">
-    <div class="step-dots">
-      <div class="step-dot on"></div>
-      <div class="step-dot on"></div>
-      <div class="step-dot"></div>
-      <div class="step-dot"></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
+        <span class="brand-name">444Music</span>
+      </div>
+      <button class="close-btn" aria-label="Close dialog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
-    <span class="step-text">Step 2 of 4</span>
-  </div>
 
-  <!-- heading -->
-  <h1>Release Payment<br>Agreement</h1>
-  <p class="sub">Read through the terms below and confirm before uploading your release.</p>
-
-  <!-- notice -->
-  <div class="notice">
-    <div class="notice-head">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      Important Notice
-    </div>
-    <p>If you selected <strong>"Release &amp; Pay Later (GHS 0)"</strong>, your music <strong>will NOT go live</strong> on digital stores immediately. Distribution only begins after payment is confirmed.</p>
-  </div>
-
-  <hr>
-
-  <!-- terms -->
-  <p class="label">What happens with Pay Later</p>
-  <ul class="terms">
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M9 8h1"/><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span> Your release will be reviewed and metadata prepared by our team.</li>
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg></span> Your music stays in <strong>pending status</strong> — not visible on any store.</li>
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> <strong>Distribution only begins after payment is made and confirmed.</strong></li>
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg></span> Once paid, your music goes out to <strong>100+ stores immediately.</strong></li>
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Stores may take <strong>3–7 business days</strong> to reflect the release.</li>
-    <li><span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Your content and ownership rights are always fully yours.</li>
-  </ul>
-
-  <!-- alert -->
-  <div class="alert">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-    <span>Your release will <strong>not go live</strong> on any store until payment is completed and verified.</span>
-  </div>
-
-  <!-- comparison -->
-  <p class="label">Plan comparison</p>
-  <div class="compare">
-    <div class="col">
-      <div class="col-title">Pay Later <span class="badge b-later">GHS 0</span></div>
-      <ul>
-        <li class="y"><span class="mark">✓</span> Instant submission</li>
-        <li class="y"><span class="mark">✓</span> Reviewed &amp; prepared</li>
-        <li class="n"><span class="mark">–</span> Distributed right away</li>
-        <li class="n"><span class="mark">–</span> Goes live today</li>
-        <li class="y"><span class="mark">✓</span> Live after payment</li>
-      </ul>
-    </div>
-    <div class="col highlight">
-      <div class="col-title">Paid Plan <span class="badge b-now">Immediate</span></div>
-      <ul>
-        <li class="y"><span class="mark">✓</span> Payment confirmed first</li>
-        <li class="y"><span class="mark">✓</span> Reviewed &amp; prepared</li>
-        <li class="y"><span class="mark">✓</span> Distributed right away</li>
-        <li class="y"><span class="mark">✓</span> Goes live ASAP</li>
-        <li class="y"><span class="mark">✓</span> 100+ store coverage</li>
-      </ul>
-    </div>
-  </div>
-
-  <hr>
-
-  <!-- agreement -->
-  <p class="label">Acknowledgement</p>
-  <div class="agree-box">
-
-    <div class="check-row" id="row1" onclick="toggle('b1','row1')">
-      <div class="box" id="b1">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-          <path d="M1.5 5.5l2 2 5-5" stroke="#080808" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Title block -->
+    <div class="title-block">
+      <div class="shield-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <span class="check-label">I understand my release will only go live <strong>after payment confirmation</strong> and stays pending until then.</span>
-    </div>
-
-    <div class="check-row" id="row2" onclick="toggle('b2','row2')">
-      <div class="box" id="b2">
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-          <path d="M1.5 5.5l2 2 5-5" stroke="#080808" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <div>
+        <h2 id="modal-title">Confirmation Required</h2>
+        <p class="sub-text">Read and confirm all terms below before distributing your release.</p>
       </div>
-      <span class="check-label">I agree to the <strong>444Music Distribution Terms of Service</strong> and confirm that uploading alone does not activate my release.</span>
     </div>
 
-    <div class="ts">
-      <span><span class="ts-dot"></span>Session active</span>
-      <span id="clock">—</span>
-      <span>Logged for compliance</span>
+    <div class="divider"></div>
+
+    <!-- Progress indicator -->
+    <div class="progress-row">
+      <span class="progress-label">Agreement Progress</span>
+      <span class="progress-count" id="progressCount">0 of 3</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <!-- Terms -->
+    <div class="terms-list">
+
+      <label class="terms-box" tabindex="0">
+        <input type="checkbox" class="term-checkbox" hidden>
+        <div class="custom-check" aria-hidden="true">
+          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="term-content">
+          <div class="term-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 9h6M9 13h6M9 17h4"/>
+            </svg>
+          </div>
+          <div class="term-text">
+            <strong>Copyright Ownership</strong>
+            <span>I own or have legally licensed all copyrights to the sound recordings, compositions and artwork embodied in this release and agree to all terms in the distribution agreement.</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="terms-box" tabindex="0">
+        <input type="checkbox" class="term-checkbox" hidden>
+        <div class="custom-check" aria-hidden="true">
+          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="term-content">
+          <div class="term-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="term-text">
+            <strong>Track Accuracy</strong>
+            <span>I confirm that I have truthfully indicated the Track Origin and Track Properties for each track to ensure full compliance with DSP requirements.</span>
+          </div>
+        </div>
+      </label>
+
+      <label class="terms-box" tabindex="0">
+        <input type="checkbox" class="term-checkbox" hidden>
+        <div class="custom-check" aria-hidden="true">
+          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="term-content">
+          <div class="term-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="term-text">
+            <strong>Streaming Integrity</strong>
+            <span>I acknowledge that artificial streaming and misleading promotion violates platform policies and may result in content removal, withheld royalties, or account penalties.</span>
+          </div>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- Notice -->
+    <div class="notice">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>This agreement is legally binding once confirmed. Review all terms carefully.</span>
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-group">
+      <button class="cancel-btn" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        Cancel
+      </button>
+      <button class="confirm-btn" id="confirmBtn" disabled type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Confirm &amp; Distribute
+      </button>
     </div>
 
   </div>
-
-  <!-- validation -->
-  <div class="warn-msg" id="warnMsg">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    Please check both boxes to continue.
-  </div>
-
-  <!-- button -->
-  <button class="btn" id="btn" disabled>
-    Continue to Upload
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-  </button>
-  <p class="btn-hint">
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Secured by SSL · Your data is never sold
-  </p>
-
-</main>
-
-<footer>
-  <hr style="width:100%;border-color:rgba(255,255,255,0.06);margin-bottom:28px;">
-  <div class="foot-links">
-    <a href="#">Terms</a>
-    <a href="#">Privacy</a>
-    <a href="#">FAQ</a>
-    <a href="#">Support</a>
-  </div>
-  <p class="foot-copy">© 2026 444Music Distribution. All rights reserved.</p>
-</footer>
+</div>
 
 <script>
-  // Clock
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function tick(){
-    const t = new Date();
-    document.getElementById('clock').textContent =
-      `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())} GMT`;
-  }
-  tick(); setInterval(tick, 1000);
+  const checkboxes = document.querySelectorAll(".term-checkbox");
+  const confirmBtn = document.getElementById("confirmBtn");
+  const progressFill = document.getElementById("progressFill");
+  const progressCount = document.getElementById("progressCount");
+  const termBoxes = document.querySelectorAll(".terms-box");
 
-  // Checkboxes
-  const s = { b1: false, b2: false };
-  function toggle(id, rowId){
-    s[id] = !s[id];
-    document.getElementById(id).classList.toggle('on', s[id]);
-    document.getElementById(rowId).classList.toggle('on', s[id]);
-    validate();
-  }
+  function updateProgress() {
+    const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+    const total = checkboxes.length;
+    const pct = (checked / total) * 100;
 
-  // Validate — only the two checkboxes are required, no typed input
-  const btn = document.getElementById('btn');
-  function validate(){
-    btn.disabled = !(s.b1 && s.b2);
-    document.getElementById('warnMsg').style.display = 'none';
+    progressFill.style.width = pct + "%";
+    progressCount.textContent = checked + " of " + total;
+
+    confirmBtn.disabled = checked < total;
+    if (checked === total) {
+      confirmBtn.classList.add("ready");
+    } else {
+      confirmBtn.classList.remove("ready");
+    }
   }
 
-  // Submit
-  btn.addEventListener('click', function(){
-    if(btn.disabled){ document.getElementById('warnMsg').style.display='flex'; return; }
-    btn.textContent = 'Redirecting…';
-    btn.disabled = true;
-    setTimeout(() => { window.location.href = 'files.html'; }, 500);
+  // Click/keyboard on label
+  termBoxes.forEach((box, i) => {
+    const cb = checkboxes[i];
+    const check = box.querySelector(".custom-check");
+
+    cb.addEventListener("change", () => {
+      if (cb.checked) {
+        box.classList.add("checked");
+      } else {
+        box.classList.remove("checked");
+      }
+      updateProgress();
+    });
+
+    // Keyboard support
+    box.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event("change"));
+      }
+    });
+  });
+
+  confirmBtn.addEventListener("click", () => {
+    if (!confirmBtn.disabled) {
+      confirmBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Submitting...`;
+      confirmBtn.disabled = true;
+      setTimeout(() => {
+        window.location.href = "after-submission.html";
+      }, 1200);
+    }
+  });
+
+  document.querySelector(".close-btn").addEventListener("click", () => {
+    document.querySelector(".modal").classList.add("closing");
+    setTimeout(() => window.location.href = "javascript:history.back()", 300);
+  });
+
+  document.querySelector(".cancel-btn").addEventListener("click", () => {
+    document.querySelector(".modal").classList.add("closing");
+    setTimeout(() => window.location.href = "javascript:history.back()", 300);
   });
 </script>
 </body>
