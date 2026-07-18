@@ -103,18 +103,22 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ===== PAGE CONTENT ===== */
 .page-content { padding: 28px; flex: 1; }
 
-/* ===== STATS ROW ===== */
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.stat-card { background: var(--black-2); border: 1px solid var(--white-10); border-radius: 14px; padding: 18px 20px; transition: border-color 0.2s; }
-.stat-card:hover { border-color: var(--white-20); }
-.stat-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 10px; }
-.stat-label svg { width: 12px; height: 12px; }
-.stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -1px; line-height: 1; }
-.stat-value.white  { color: var(--white-70); }
-.stat-value.amber  { color: var(--amber); }
-.stat-value.green  { color: var(--green); }
-.stat-value.cyan   { color: var(--cyan); }
-.stat-sub { font-size: 11px; color: var(--grey-dark); margin-top: 5px; }
+/* ===== SEARCH BAR ===== */
+.search-bar-wrap {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--black-2); border: 1px solid var(--white-10); border-radius: 14px;
+  padding: 12px 16px; margin-bottom: 18px; transition: border-color 0.15s;
+}
+.search-bar-wrap:focus-within { border-color: var(--white-40); }
+.search-bar-wrap svg { width: 16px; height: 16px; color: var(--grey-dark); flex-shrink: 0; }
+.search-bar-wrap input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--white); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+}
+.search-bar-wrap input::placeholder { color: var(--grey-dark); font-weight: 500; }
+.search-clear-btn { display: none; width: 20px; height: 20px; border-radius: 50%; background: var(--white-10); align-items: center; justify-content: center; color: var(--grey); flex-shrink: 0; }
+.search-clear-btn svg { width: 10px; height: 10px; }
+.search-clear-btn.show { display: flex; }
 
 /* ===== SECTION HEADER ===== */
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
@@ -126,46 +130,32 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .filter-chip.active { background: var(--white); border-color: var(--white); color: var(--black); }
 
 /* ===== LIST ===== */
-.list-head-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 0 10px 10px; border-bottom: 1px solid var(--white-10); margin-bottom: 4px; }
+.list-head-row { display: grid; grid-template-columns: 28px 62px 1fr auto; align-items: center; gap: 14px; padding: 0 10px 10px; border-bottom: 1px solid var(--white-10); margin-bottom: 4px; }
 .list-head-row span { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); }
 .container { display: flex; flex-direction: column; }
 
-/* ===== ROW ===== */
-.release-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 13px 10px; border-bottom: 1px solid var(--white-10); cursor: pointer; transition: background 0.15s; position: relative; }
+/* ===== ROW (slightly bigger than before) ===== */
+.release-row { display: grid; grid-template-columns: 28px 62px 1fr auto; align-items: center; gap: 16px; padding: 16px 12px; border-bottom: 1px solid var(--white-10); cursor: pointer; transition: background 0.15s; position: relative; }
 .release-row:hover { background: var(--black-2); }
-.release-row.status-rejected { background: rgba(239,68,68,0.03); }
 .row-index { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); text-align: center; }
-.row-thumb { width: 52px; height: 52px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--black-3); position: relative; }
+.row-thumb { width: 62px; height: 62px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: var(--black-3); position: relative; }
 .row-thumb img.cover-image { width: 100%; height: 100%; object-fit: cover; display: block; }
-.row-thumb .cover-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--black-3); cursor: pointer; transition: background 0.15s; }
-.row-thumb .cover-placeholder:hover { background: var(--black-4); }
-.row-thumb .cover-placeholder svg { width: 16px; height: 16px; color: var(--grey-dark); }
-.row-thumb .cover-placeholder span { display: none; }
+.row-thumb .cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--black-3); }
+.row-thumb .cover-placeholder svg { width: 18px; height: 18px; color: var(--grey-dark); }
 .row-info { min-width: 0; }
-.row-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -0.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row-artist { font-size: 12.5px; color: var(--grey); font-weight: 600; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row-meta-line { font-size: 11px; color: var(--grey-dark); margin-top: 5px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.row-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-artist { font-size: 13px; color: var(--grey); font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-meta-line { font-size: 11px; color: var(--grey-dark); margin-top: 6px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .row-type-tag { font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--grey); }
 .row-dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--grey-dark); flex-shrink: 0; }
 .row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
-.row-right-top { display: flex; align-items: center; gap: 6px; }
-.row-action-pill {
-  display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: 8px;
-  font-size: 11px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer;
-  transition: all 0.15s; border-width: 1.5px; border-style: solid; white-space: nowrap; text-decoration: none;
-}
-.row-action-pill svg { width: 12px; height: 12px; flex-shrink: 0; }
-.row-action-pill.pay    { background: rgba(6,182,212,0.12); border-color: var(--cyan); color: var(--cyan); }
-.row-action-pill.pay:hover { background: rgba(6,182,212,0.22); }
-.row-action-pill.promote{ background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); }
-.row-action-pill.promote:hover { background: rgba(245,158,11,0.22); }
-.row-action-pill.fix    { background: rgba(239,68,68,0.12); border-color: var(--rose); color: var(--rose); }
-.row-action-pill.fix:hover { background: rgba(239,68,68,0.22); }
+.row-right-top { display: flex; align-items: center; gap: 8px; }
+.row-countdown { font-size: 11px; font-weight: 800; color: var(--amber); background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; border-radius: 8px; white-space: nowrap; }
 .row-chevron { color: var(--grey-dark); flex-shrink: 0; transition: color 0.15s; }
 .release-row:hover .row-chevron { color: var(--white-70); }
 .row-chevron svg { width: 14px; height: 14px; }
 
-/* ===== BADGES ===== */
+/* ===== BADGES (used inside the opened modal only) ===== */
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .badge.pending  { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
@@ -209,8 +199,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ===== SKELETON ===== */
 .skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.04) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-.skeleton-row { display: grid; grid-template-columns: 28px 52px 1fr auto; align-items: center; gap: 14px; padding: 13px 10px; border-bottom: 1px solid var(--white-10); }
-.skeleton-thumb { width: 52px; height: 52px; border-radius: 10px; }
+.skeleton-row { display: grid; grid-template-columns: 28px 62px 1fr auto; align-items: center; gap: 16px; padding: 16px 12px; border-bottom: 1px solid var(--white-10); }
+.skeleton-thumb { width: 62px; height: 62px; border-radius: 12px; }
 .skeleton-line { height: 12px; margin-bottom: 7px; }
 .skeleton-line.w-60 { width: 60%; }
 .skeleton-line.w-40 { width: 40%; }
@@ -247,7 +237,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-cover-strip img { width: 100%; height: 100%; object-fit: cover; }
 .meta-cover-strip-placeholder { width: 100%; height: 100%; background: var(--black-3); display: flex; align-items: center; justify-content: center; }
 .meta-cover-strip-placeholder svg { width: 44px; height: 44px; color: var(--grey-dark); }
-.meta-cover-strip::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, var(--black-2), transparent); }
+.meta-cover-strip::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, var(--black-2), transparent); pointer-events: none; }
+.meta-cover-edit-btn {
+  position: absolute; bottom: 12px; right: 14px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 13px; border-radius: 10px;
+  background: rgba(0,0,0,0.55); border: 1px solid var(--white-20);
+  backdrop-filter: blur(6px);
+  color: var(--white); font-size: 11px; font-weight: 800; font-family: 'Nunito', sans-serif;
+  cursor: pointer; transition: all 0.15s;
+}
+.meta-cover-edit-btn svg { width: 12px; height: 12px; }
+.meta-cover-edit-btn:hover { background: rgba(0,0,0,0.75); border-color: var(--white-40); transform: translateY(-1px); }
+.meta-cover-edit-btn.uploading { pointer-events: none; opacity: 0.7; }
 
 .meta-modal-body { padding: 20px 22px 26px; }
 .meta-section { margin-bottom: 20px; }
@@ -371,7 +373,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .sl-brand-logo svg { width: 11px; height: 11px; color: var(--black); }
 
 /* ═══════════════════════════════════════════════
-   CONFIRM MODAL (generic — used for pay/other confirms)
+   CONFIRM MODAL (generic — used before creating a payment)
 ═══════════════════════════════════════════════ */
 .confirm-overlay { position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .confirm-overlay.open { opacity: 1; pointer-events: all; }
@@ -389,11 +391,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .confirm-btn.primary:hover { opacity: 0.9; }
 
 /* ═══════════════════════════════════════════════
-   PAYMENT WAITING MODAL — mirrors PaymentWaitingScreen:
-   creates the payment, opens Paystack's own checkout in
-   a new tab (Paystack must host that part), then polls
-   /verify-payment/:reference right here instead of ever
-   routing to a separate pay.html page.
+   PAYMENT WAITING MODAL
 ═══════════════════════════════════════════════ */
 .pay-wait-overlay { position: fixed; inset: 0; z-index: 8500; background: rgba(0,0,0,0.9); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .pay-wait-overlay.open { opacity: 1; pointer-events: all; }
@@ -414,7 +412,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pay-wait-btn.primary:hover { opacity: 0.9; }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
@@ -423,7 +420,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .hamburger-btn { display: flex; }
   .page-content { padding: 20px 16px; }
   .topbar { padding: 14px 16px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(110%); }
   .toast.show { transform: translateY(0); }
   .meta-modal { max-height: 92vh; border-radius: 18px 18px 0 0; align-self: flex-end; width: 100%; }
@@ -431,16 +427,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .meta-fields-grid { grid-template-columns: 1fr; }
   .meta-field.full { grid-column: 1; }
   .sl-actions { flex-wrap: wrap; }
-  .list-head-row { grid-template-columns: 20px 40px 1fr auto; padding: 0 6px 8px; }
-  .release-row { grid-template-columns: 20px 40px 1fr auto; padding: 10px 6px; gap: 10px; }
-  .row-thumb { width: 40px; height: 40px; }
+  .list-head-row { grid-template-columns: 20px 48px 1fr auto; padding: 0 6px 8px; }
+  .release-row { grid-template-columns: 20px 48px 1fr auto; padding: 12px 6px; gap: 12px; }
+  .row-thumb { width: 48px; height: 48px; }
   .row-right { align-items: flex-end; }
-  .row-action-pill span { display: none; }
-  .row-action-pill { padding: 7px; }
+  .row-countdown { font-size: 10px; padding: 3px 8px; }
+  .search-bar-wrap { padding: 11px 14px; }
 }
 @media (max-width: 480px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .stat-value { font-size: 1.6rem; }
   .topbar-title { font-size: 0.95rem; }
   .row-meta-line { display: none; }
 }
@@ -530,27 +524,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   </div>
 
   <div class="page-content">
-    <div class="stats-row" id="statsRow">
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Total Releases</div>
-        <div class="stat-value white" id="statTotal">—</div>
-        <div class="stat-sub">All time</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Draft</div>
-        <div class="stat-value amber" id="statPending">—</div>
-        <div class="stat-sub">Not yet paid</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approved</div>
-        <div class="stat-value green" id="statApproved">—</div>
-        <div class="stat-sub">Live</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Paid</div>
-        <div class="stat-value cyan" id="statPaid">—</div>
-        <div class="stat-sub">Confirmed</div>
-      </div>
+
+    <div class="search-bar-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by title or artist...">
+      <button type="button" class="search-clear-btn" id="searchClearBtn" aria-label="Clear search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
     <div class="section-header">
@@ -560,12 +540,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <button class="filter-chip" data-filter="pending">Draft</button>
         <button class="filter-chip" data-filter="review">In Review</button>
         <button class="filter-chip" data-filter="approved">Approved</button>
-        <button class="filter-chip" data-filter="rejected">Needs Edits</button>
+        <button class="filter-chip" data-filter="rejected">Rejection</button>
       </div>
     </div>
 
     <div class="list-head-row">
-      <span></span><span></span><span>Release</span><span>Status</span>
+      <span></span><span></span><span>Release</span><span></span>
     </div>
 
     <div class="container" id="submissionsContainer">
@@ -626,15 +606,31 @@ overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.
 
 /* --- STATUS LABEL MAPPING — display only.
    Backend/Firestore keeps reading and writing "Pending" exactly as
-   before; only what the user SEES on screen changes to "Draft". --- */
+   before; only what the user SEES on screen changes. --- */
 function statusDisplayLabel(rawStatus) {
   const s = (rawStatus || "Pending").trim();
   if (s.toLowerCase() === "pending") return "Draft";
-  if (s.toLowerCase() === "rejected") return "Needs Edits";
+  if (s.toLowerCase() === "rejected") return "Rejection";
   return s;
 }
 
-/* --- FILTER CHIPS --- */
+/* --- RELEASE COUNTDOWN — shown alongside the row instead of any
+   status indicator. If the release date is in the future, shows
+   "X days left". If it's today, released, or unknown, shows nothing. --- */
+function releaseCountdownLabel(releaseDateStr) {
+  if (!releaseDateStr) return "";
+  const releaseDate = new Date(releaseDateStr);
+  if (isNaN(releaseDate.getTime())) return "";
+  const now = new Date();
+  const startOfToday   = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfRelease = new Date(releaseDate.getFullYear(), releaseDate.getMonth(), releaseDate.getDate());
+  const diffDays = Math.round((startOfRelease - startOfToday) / (1000 * 60 * 60 * 24));
+  if (diffDays > 1) return `${diffDays} days left`;
+  if (diffDays === 1) return `1 day left`;
+  return ""; // releasing today or already out — show nothing
+}
+
+/* --- FILTER CHIPS + SEARCH --- */
 let activeFilter = "all";
 let allCards = [];
 document.querySelectorAll(".filter-chip").forEach(btn => {
@@ -645,10 +641,24 @@ document.querySelectorAll(".filter-chip").forEach(btn => {
     filterCards();
   });
 });
+const searchInput    = document.getElementById("searchInput");
+const searchClearBtn = document.getElementById("searchClearBtn");
+searchInput.addEventListener("input", () => {
+  searchClearBtn.classList.toggle("show", searchInput.value.trim().length > 0);
+  filterCards();
+});
+searchClearBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  searchClearBtn.classList.remove("show");
+  filterCards();
+  searchInput.focus();
+});
 function filterCards() {
+  const q = searchInput.value.trim().toLowerCase();
   allCards.forEach(({ card, status }) => {
-    const show = activeFilter === "all" || status === activeFilter;
-    card.style.display = show ? "" : "none";
+    const statusMatch = activeFilter === "all" || status === activeFilter;
+    const searchMatch = !q || (card.dataset.searchText || "").includes(q);
+    card.style.display = (statusMatch && searchMatch) ? "" : "none";
   });
 }
 
@@ -666,37 +676,18 @@ function showToast(msg, isError = false) {
 /* ── PAID HELPER — reads the SAME real field the app reads.
    The backend/admin panel writes `paid` as text "Paid"/"Unpaid",
    never a `paymentVerified` boolean — so that's the only field
-   this page (and every badge/stat on it) ever checks. ── */
+   this page (and every badge on it) ever checks. ── */
 function isPaidValue(paidField) {
   return (paidField || "").toString().toLowerCase() === "paid";
 }
 
 /* ── PRICE HELPER — mirrors the app's _priceForReleaseType so the
-   Pay Now button on a Pending+Unpaid card always shows/charges the
+   Pay Now action on a Draft+Unpaid release always shows/charges the
    same amount the app would. ── */
 function priceForReleaseType(releaseType) {
   const t = (releaseType || "").toString().toLowerCase();
   if (t === "single") return 39.99;
   return 69.99; // EP / Album / unset
-}
-
-/* --- STATS --- */
-function updateStats(submissions) {
-  animateCount("statTotal",    submissions.length);
-  animateCount("statPending",  submissions.filter(d => (d.status || "").toLowerCase() === "pending").length);
-  animateCount("statApproved", submissions.filter(d => (d.status || "").toLowerCase() === "approved").length);
-  animateCount("statPaid",     submissions.filter(d => isPaidValue(d.paid)).length);
-}
-function animateCount(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let current = 0;
-  const step  = Math.max(1, Math.floor(target / 20));
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = current;
-    if (current >= target) clearInterval(timer);
-  }, 40);
 }
 
 /* === UPC GENERATION === */
@@ -719,7 +710,7 @@ function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
   return `https://ffm.to/${[artistSlug, titleSlug].filter(Boolean).join("-")}`;
 }
 
-/* === STORE ICONS (unchanged — real brand marks, not emoji) === */
+/* === STORE ICONS (real brand marks, not emoji) === */
 const STORE_ICONS = {
   spotify: `<svg viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`,
   applemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="amlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fc3c44"/><stop offset="100%" style="stop-color:#ff6a6a"/></linearGradient></defs><rect width="24" height="24" rx="5" fill="url(#amlg)"/><path d="M17.05 8.49a.5.5 0 0 0-.35-.48l-5.5-1.5a.5.5 0 0 0-.65.48v6.54a2 2 0 1 0 1 1.73V10.6l4.5 1.23v3.68a2 2 0 1 0 1 1.73V8.49z" fill="white"/></svg>`,
@@ -848,8 +839,7 @@ function renderCreditsSection(arr) {
 }
 
 /* ── TOP-OF-MODAL ACTION BAR — Pay Now (Draft/unpaid), Promote
-   (Approved), or Check Reasons & Fix (Rejected), rendered as a
-   sticky bar at the very top of the details modal. ── */
+   (Approved), or Check Reasons & Fix (Rejection). ── */
 function renderModalTopAction(data, releaseId, statusClass) {
   const paid = isPaidValue(data.paid);
   if (statusClass === "pending" && !paid) {
@@ -884,9 +874,14 @@ async function openMetaModal(releaseId) {
   const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
   const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
   const topAction = renderModalTopAction(data, releaseId, statusClass);
+
+  /* Cover strip now always shows a "Change Cover" edit control,
+     whether or not artwork already exists — editing happens here,
+     inside the opened card, and nowhere else. */
   const coverHtml = data.coverURL
-    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
-    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
+    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art">${renderCoverEditControl(releaseId)}</div>`
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>${renderCoverEditControl(releaseId)}</div>`;
+
   let smartLinkHtml = '';
   if (isApproved) smartLinkHtml = (!data.upc || !data.smartLinkURL) ? renderSmartLinkPanel(data, releaseId, null, null, true) : renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
   const paid = isPaidValue(data.paid);
@@ -952,19 +947,30 @@ async function openMetaModal(releaseId) {
   document.body.style.overflow = 'hidden';
   if (isApproved && (!data.upc || !data.smartLinkURL)) triggerSmartLinkGeneration(releaseId);
 }
+
+/* Cover edit control — pencil button + hidden file input, rendered
+   inside the modal's cover strip for both blank and filled covers. */
+function renderCoverEditControl(releaseId) {
+  return `
+    <button type="button" class="meta-cover-edit-btn" id="coverEditBtn-${releaseId}" onclick="document.getElementById('coverEditInput-${releaseId}').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Change Cover
+    </button>
+    <input type="file" accept="image/*" id="coverEditInput-${releaseId}" style="display:none;" onchange="handleCoverEditChange(event, '${releaseId}')">
+  `;
+}
+
 async function triggerSmartLinkGeneration(releaseId) { if (window._generateSmartLink) window._generateSmartLink(releaseId); }
 function closeMetaModal() { document.getElementById('metaOverlay').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
 document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); } });
 
-/* Clicking anywhere on a row opens the modal, EXCEPT the inline
-   action pill (pay / promote / fix) or the cover thumbnail (which
-   only appears clickable when the cover is blank, for uploading). */
+/* Clicking anywhere on a row opens the modal (the row itself has no
+   other interactive controls left on it — editing happens once open). */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const row = e.target.closest('.release-row');
   if (!row) return;
-  if (e.target.closest('.row-action-pill') || e.target.closest('.cover-placeholder')) return;
   const releaseId = row.dataset.releaseId;
   if (releaseId) openMetaModal(releaseId);
 });
@@ -972,14 +978,7 @@ document.getElementById('submissionsContainer').addEventListener('click', functi
 /* ═══════════════════════════════════════════════════════
    PAY NOW — creates a REAL payment via the same backend
    route the app's PaymentWaitingScreen uses, then polls
-   for confirmation right here on the dashboard. No redirect
-   to a separate pay.html — the flow never leaves this page
-   except for Paystack's own hosted checkout tab.
-
-   The exact mount prefix for paystackRoutes.js isn't confirmed
-   from the browser's side, so this probes a short list of
-   likely prefixes on the first call and remembers whichever
-   one actually answers.
+   for confirmation right here on the dashboard.
 ═══════════════════════════════════════════════════════ */
 const PAYMENT_HOST = "https://444music-backend.bonto.run";
 const PAYMENT_BASE_CANDIDATES = [
@@ -1162,12 +1161,7 @@ async function pollPaymentStatus(reference, releaseId) {
 function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
 
 /* ── CHECK REASONS & FIX — hands the full submission doc to
-   rejection-fix.html via sessionStorage (web has no Navigator
-   arguments), the same way the app passes the whole map into
-   RejectionFixScreen. After the person resubmits there, that
-   page is expected to set status back to "Review" — this
-   dashboard already re-reads live from Firestore so it reflects
-   the change automatically the next time it loads. ── */
+   rejection-fix.html via sessionStorage. ── */
 function openRejectionFix(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
@@ -1240,6 +1234,55 @@ function refreshSmartLinkPanel(releaseId) {
   if (upcEl && data.upc) { upcEl.textContent = data.upc; upcEl.classList.remove('none'); }
 }
 
+/* ── COVER ART EDIT — reachable only from inside the opened card.
+   Stores the new image as a base64 data URL directly on the
+   submission doc in Firestore, exactly like the previous flow did. ── */
+window.handleCoverEditChange = async function(e, releaseId) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
+
+  const btn = document.getElementById(`coverEditBtn-${releaseId}`);
+  const originalBtnHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.classList.add('uploading');
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading…`;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const base64 = ev.target.result;
+    try {
+      await updateDoc(doc(db, "submissions", releaseId), { coverURL: base64 });
+      if (window._releaseMeta[releaseId]) window._releaseMeta[releaseId].coverURL = base64;
+
+      const stripImg = document.querySelector('#metaModalContent .meta-cover-strip img');
+      const stripPlaceholder = document.querySelector('#metaModalContent .meta-cover-strip-placeholder');
+      if (stripImg) {
+        stripImg.src = base64;
+      } else if (stripPlaceholder) {
+        const strip = stripPlaceholder.closest('.meta-cover-strip');
+        stripPlaceholder.remove();
+        const img = document.createElement('img');
+        img.src = base64;
+        img.alt = "Cover Art";
+        strip.insertBefore(img, strip.firstChild);
+      }
+
+      const rowThumb = document.querySelector(`.release-row[data-release-id="${releaseId}"] .row-thumb`);
+      if (rowThumb) rowThumb.innerHTML = `<img src="${base64}" class="cover-image" alt="Cover art">`;
+
+      if (btn) { btn.classList.remove('uploading'); btn.innerHTML = originalBtnHtml; }
+      showToast("Cover art updated successfully!");
+    } catch (err) {
+      console.error("Cover art update error:", err);
+      if (btn) { btn.classList.remove('uploading'); btn.innerHTML = originalBtnHtml; }
+      showToast("Failed to update cover art. Please try again.", true);
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
 async function loadReleases(user) {
   container.innerHTML = "";
   window._releaseMeta = {};
@@ -1254,10 +1297,8 @@ async function loadReleases(user) {
         <p>Create your first release to start distributing your music worldwide.</p>
         <a class="empty-cta" href="pricing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</a>
       </div>`;
-      updateStats([]);
       return;
     }
-    const submissionsData = [];
     let rowIndex = 0;
     const docsSorted = snapshot.docs.slice().sort((a, b) => {
       const aTime = a.data().createdAt || 0;
@@ -1283,34 +1324,20 @@ async function loadReleases(user) {
         })();
       }
 
-      submissionsData.push(data);
       const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
       const statusClass  = rawStatus.replace(/\s+/g, "-");
-      const isRejected   = statusClass === "rejected";
-      const isApproved   = statusClass === "approved";
       const isPending    = statusClass === "pending";
-      const paid         = isPaidValue(data.paid);
-      const needsPayment = isPending && !paid;
+      const countdown    = releaseCountdownLabel(data.releaseDate);
 
-      /* Cover art: ONLY show the "tap to add cover" affordance when
-         the release truly has no coverURL yet. If one exists, the
-         thumbnail is just a plain image — no upload trigger at all. */
       const thumbSection = data.coverURL
         ? `<img src="${data.coverURL}" class="cover-image" alt="Cover art">`
-        : `<div class="cover-placeholder" data-id="${id}" title="Add cover art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;"></div>`;
-
-      const rowActionPill = isRejected
-        ? `<button type="button" class="row-action-pill fix" onclick="openRejectionFix('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Fix</span></button>`
-        : needsPayment
-        ? `<button type="button" class="row-action-pill pay" onclick="requestPayNow('${id}', '${escHtml(data.releaseTitle || 'this release')}', ${priceForReleaseType(data.releaseType)})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Pay Now</span></button>`
-        : isApproved
-        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="row-action-pill promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Promote</span></a>`
-        : "";
+        : `<div class="cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
 
       const row = document.createElement("div");
-      row.className = `release-row${isRejected ? " status-rejected" : ""}`;
+      row.className = "release-row";
       row.dataset.status = statusClass;
       row.dataset.releaseId = id;
+      row.dataset.searchText = `${(data.releaseTitle || "")} ${(data.artistName || "")}`.toLowerCase();
       row.innerHTML = `
         <div class="row-index">${rowIndex + 1}</div>
         <div class="row-thumb">${thumbSection}</div>
@@ -1325,10 +1352,9 @@ async function loadReleases(user) {
         </div>
         <div class="row-right">
           <div class="row-right-top">
-            <span class="badge ${statusClass}">${statusDisplayLabel(data.status)}</span>
+            ${countdown ? `<span class="row-countdown">${countdown}</span>` : ''}
             <span class="row-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
           </div>
-          ${rowActionPill}
         </div>`;
       container.appendChild(row);
       const idx = rowIndex++;
@@ -1336,40 +1362,12 @@ async function loadReleases(user) {
       setTimeout(() => { row.style.transition = "opacity 0.3s ease, transform 0.3s ease"; row.style.opacity = "1"; row.style.transform = "translateY(0)"; }, idx * 45);
       allCards.push({ card: row, status: statusClass });
     });
-    setTimeout(() => updateStats(submissionsData), 200);
   } catch (err) {
     console.error("Error loading releases:", err);
     container.innerHTML = `<div class="empty"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
   }
 }
 window._reloadReleases = () => { if (window._currentUser) loadReleases(window._currentUser); };
-
-/* Uploading cover art — ONLY reachable via the blank-cover placeholder,
-   since a filled cover has no upload trigger at all per the new rule. */
-container.addEventListener("click", (e) => {
-  const placeholder = e.target.closest(".cover-placeholder");
-  if (!placeholder) return;
-  const id    = placeholder.dataset.id;
-  const input = placeholder.querySelector(".cover-input");
-  if (input) input.click();
-});
-container.addEventListener("change", async (e) => {
-  if (!e.target.classList.contains("cover-input")) return;
-  const file = e.target.files[0];
-  if (!file) return;
-  const id     = e.target.dataset.id;
-  const thumb  = e.target.closest(".row-thumb");
-  if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    const base64 = ev.target.result;
-    await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
-    if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
-    thumb.innerHTML = `<img src="${base64}" class="cover-image" alt="Cover art">`;
-    showToast("Cover art updated successfully!");
-  };
-  reader.readAsDataURL(file);
-});
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "login.html"; return; }
