@@ -1,25 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmation Required — 444Music Distribution</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="confirm.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmation Required — 444Music Distribution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --black:      #000000;
+  --black-1:    #080808;
+  --black-2:    #0d0d0d;
+  --black-3:    #111111;
+  --black-4:    #161616;
+  --white:      #ffffff;
+  --white-90:   rgba(255,255,255,0.90);
+  --white-70:   rgba(255,255,255,0.70);
+  --white-40:   rgba(255,255,255,0.40);
+  --white-20:   rgba(255,255,255,0.20);
+  --white-10:   rgba(255,255,255,0.10);
+  --white-06:   rgba(255,255,255,0.06);
+  --grey:       #888888;
+  --grey-dark:  #444444;
+  --green:      #22c55e;
+  --amber:      #f59e0b;
+  --rose:       #ef4444;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(--white); }
+
+.overlay {
+  min-height: 100vh; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; position: relative; overflow: hidden;
+  background: var(--black);
+}
+.orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; pointer-events: none; }
+.orb-1 { width: 380px; height: 380px; background: rgba(255,255,255,0.05); top: -140px; left: -100px; }
+.orb-2 { width: 320px; height: 320px; background: rgba(255,255,255,0.03); bottom: -120px; right: -100px; }
+
+.modal {
+  position: relative; z-index: 2;
+  width: 100%; max-width: 480px;
+  background: var(--black-2);
+  border: 1px solid var(--white-10);
+  border-radius: 22px;
+  padding: 30px 28px 26px;
+  max-height: 90vh; overflow-y: auto;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.modal.closing { opacity: 0; transform: translateY(10px) scale(0.98); }
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(--black-4); border-radius: 2px; }
+
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--white); color: var(--black);
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-name { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: -0.2px; }
+.close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--white-06); border: 1px solid var(--white-10);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey); cursor: pointer; transition: all 0.15s;
+}
+.close-btn:hover { background: var(--black-4); color: var(--white); border-color: var(--white-20); }
+
+.title-block { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+.shield-icon {
+  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+  background: var(--white-06); border: 1px solid var(--white-10);
+  color: var(--white); display: flex; align-items: center; justify-content: center;
+}
+.title-block h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 5px; }
+.sub-text { font-size: 13px; color: var(--grey); line-height: 1.5; }
+
+.divider { height: 1px; background: var(--white-10); margin-bottom: 18px; }
+
+.progress-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.progress-label { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); }
+.progress-count { font-size: 12px; font-weight: 800; color: var(--white-70); font-family: 'Outfit', sans-serif; }
+.progress-track { width: 100%; height: 4px; background: var(--black-4); border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
+.progress-fill { height: 100%; width: 0%; background: var(--white); border-radius: 4px; transition: width 0.35s ease; }
+
+.terms-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.terms-box {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--black-3); border: 1px solid var(--white-10);
+  border-radius: 14px; padding: 14px 15px; cursor: pointer;
+  transition: all 0.15s; outline: none;
+}
+.terms-box:hover { border-color: var(--white-20); }
+.terms-box:focus-visible { border-color: var(--white-40); }
+.terms-box.checked { background: var(--black-4); border-color: var(--white-40); }
+
+.custom-check {
+  width: 21px; height: 21px; border-radius: 6px; flex-shrink: 0; margin-top: 1px;
+  background: var(--black-4); border: 1.5px solid var(--white-20);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.check-icon { opacity: 0; transform: scale(0.6); transition: all 0.15s; color: var(--black); }
+.terms-box.checked .custom-check { background: var(--white); border-color: var(--white); }
+.terms-box.checked .check-icon { opacity: 1; transform: scale(1); }
+
+.term-content { display: flex; align-items: flex-start; gap: 11px; flex: 1; min-width: 0; }
+.term-icon {
+  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+  background: var(--white-06); border: 1px solid var(--white-10);
+  color: var(--white-70); display: flex; align-items: center; justify-content: center;
+}
+.term-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.term-text strong { font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--white); }
+.term-text span { font-size: 12px; color: var(--grey); line-height: 1.5; }
+
+.notice {
+  display: flex; align-items: flex-start; gap: 9px;
+  background: var(--white-06); border: 1px solid var(--white-10);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 22px;
+  color: var(--white-70); font-size: 12px; line-height: 1.5;
+}
+.notice svg { flex-shrink: 0; margin-top: 1px; color: var(--white-40); }
+
+.button-group { display: flex; gap: 10px; }
+.cancel-btn, .confirm-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px; border-radius: 12px; font-family: 'Nunito', sans-serif;
+  font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.15s;
+}
+.cancel-btn { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
+.cancel-btn:hover { background: var(--white-06); border-color: var(--white-40); }
+.confirm-btn { background: var(--black-4); border: 1px solid var(--white-10); color: var(--grey-dark); cursor: not-allowed; }
+.confirm-btn.ready { background: var(--white); border-color: var(--white); color: var(--black); cursor: pointer; }
+.confirm-btn.ready:hover { opacity: 0.9; transform: translateY(-1px); }
+.confirm-btn:disabled { pointer-events: none; }
+
+@media (max-width: 480px) {
+  .modal { padding: 24px 18px 20px; border-radius: 18px; }
+  .button-group { flex-direction: column-reverse; }
+}
+</style>
 </head>
 <body>
 
 <div class="overlay">
 
-  <!-- Ambient background orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
 
-    <!-- Header -->
     <div class="modal-header">
       <div class="brand">
         <div class="brand-icon">
@@ -39,10 +174,9 @@
       </button>
     </div>
 
-    <!-- Title block -->
     <div class="title-block">
       <div class="shield-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
@@ -54,7 +188,6 @@
 
     <div class="divider"></div>
 
-    <!-- Progress indicator -->
     <div class="progress-row">
       <span class="progress-label">Agreement Progress</span>
       <span class="progress-count" id="progressCount">0 of 3</span>
@@ -63,7 +196,6 @@
       <div class="progress-fill" id="progressFill" style="width: 0%"></div>
     </div>
 
-    <!-- Terms -->
     <div class="terms-list">
 
       <label class="terms-box" tabindex="0">
@@ -133,7 +265,6 @@
 
     </div>
 
-    <!-- Notice -->
     <div class="notice">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -141,7 +272,6 @@
       <span>This agreement is legally binding once confirmed. Review all terms carefully.</span>
     </div>
 
-    <!-- Buttons -->
     <div class="button-group">
       <button class="cancel-btn" type="button">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -184,10 +314,8 @@
     }
   }
 
-  // Click/keyboard on label
   termBoxes.forEach((box, i) => {
     const cb = checkboxes[i];
-    const check = box.querySelector(".custom-check");
 
     cb.addEventListener("change", () => {
       if (cb.checked) {
@@ -198,7 +326,6 @@
       updateProgress();
     });
 
-    // Keyboard support
     box.addEventListener("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
