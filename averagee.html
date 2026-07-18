@@ -6,29 +6,25 @@
 <title>Create New Release</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-base:        #080810;
-  --bg-surface:     #0e0e18;
-  --bg-card:        #111120;
-  --bg-input:       #171725;
-  --bg-input-focus: #1c1c2c;
-  --border:         rgba(160,100,255,0.1);
-  --border-focus:   rgba(160,100,255,0.45);
-  --border-accent:  rgba(160,100,255,0.2);
-  --accent:         #b06ef3;
-  --accent-light:   #c48ff7;
-  --accent-bright:  #d8b4fe;
-  --accent-dim:     rgba(160,100,255,0.08);
-  --text-primary:   #e8e8e8;
+  --bg-base:        #000000;
+  --bg-surface:     #0a0a0a;
+  --bg-card:        #0d0d0d;
+  --bg-input:       #141414;
+  --bg-input-focus: #1a1a1a;
+  --border:         rgba(255,255,255,0.10);
+  --border-focus:   rgba(255,255,255,0.40);
+  --border-accent:  rgba(255,255,255,0.20);
+  --text-primary:   #ffffff;
   --text-secondary: #888888;
   --text-muted:     #444444;
-  --success:        #4ade80;
-  --danger:         #f87171;
+  --success:        #22c55e;
+  --danger:         #ef4444;
   --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -36,7 +32,7 @@
   --radius-xl: 24px;
   --t: 0.2s cubic-bezier(0.4,0,0.2,1);
   --font-display: 'Outfit', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  --font-body:    'Nunito', sans-serif;
 }
 
 html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -52,33 +48,24 @@ body {
 
 .top-bar {
   position: sticky; top: 0; z-index: 500;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 14px; padding: 14px 20px;
-  background: rgba(8,8,16,0.9);
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+  background: rgba(0,0,0,0.9);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
-.top-bar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .back-btn {
   width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
   background: rgba(255,255,255,0.04); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   color: var(--text-primary); cursor: pointer; transition: all var(--t);
 }
-.back-btn:hover { background: rgba(160,100,255,0.08); border-color: var(--border-accent); }
+.back-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-accent); }
 .back-btn svg { width: 15px; height: 15px; }
 .top-bar-title {
   font-family: var(--font-display); font-size: 1.02rem; font-weight: 700;
   color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.secure-badge {
-  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: 999px; padding: 5px 12px;
-  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
-}
-.secure-badge svg { width: 10px; height: 10px; }
 
 .step-track { display: flex; align-items: center; padding: 16px 20px; gap: 0; }
 .step-item {
@@ -97,19 +84,15 @@ body {
 .step-connector { flex: 1; height: 1px; min-width: 16px; max-width: 80px; margin: 0 10px; background: var(--border); }
 
 .content { padding: 8px 20px 80px; }
-.page-sub { font-size: 0.86rem; color: var(--text-secondary); font-weight: 400; margin: 4px 0 8px; letter-spacing: 0.01em; }
 
-.section-head { display: flex; align-items: center; gap: 12px; margin: 28px 0 16px; }
-.section-head:first-child { margin-top: 8px; }
-.section-icon {
-  width: 32px; height: 32px; border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.section-label-row {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary);
+  margin: 34px 0 16px;
 }
-.section-icon svg { width: 15px; height: 15px; color: var(--text-secondary); }
-.section-title-wrap { flex: 1; min-width: 0; }
-.section-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em; color: var(--text-primary); }
-.section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.section-label-row::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-label-row:first-of-type { margin-top: 10px; }
 
 .grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
@@ -121,7 +104,6 @@ body {
   font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
 }
-.field label svg { width: 11px; height: 11px; opacity: 0.7; }
 .required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
 
 .field input, .field select, .field textarea {
@@ -136,7 +118,7 @@ body {
 .field input:hover, .field select:hover, .field textarea:hover { border-color: var(--border-accent); }
 .field input:focus, .field select:focus, .field textarea:focus {
   border-color: var(--border-focus); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(160,100,255,0.08);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
 }
 .field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
 
@@ -146,23 +128,8 @@ body {
   width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
   border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
 }
-.select-wrap:focus-within::after { border-top-color: var(--accent-light); transform: translateY(-50%) rotate(180deg); }
+.select-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
 .select-wrap select { padding-right: 40px; cursor: pointer; }
-
-.country-wrap { position: relative; }
-.country-flag {
-  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-  width: 20px; height: 15px; pointer-events: none; z-index: 1;
-  display: flex; align-items: center; justify-content: center;
-}
-.country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
-.country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
-.country-wrap::after {
-  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
-  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
-}
-.country-wrap:focus-within::after { border-top-color: var(--accent-light); transform: translateY(-50%) rotate(180deg); }
 
 input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t); }
 input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
@@ -173,8 +140,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
   caret-color: var(--text-primary); border-color: var(--border) !important;
 }
 
-option, optgroup { background: #171725; color: var(--text-primary); }
-.field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+option, optgroup { background: #141414; color: var(--text-primary); }
 
 .radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
 .radio-pill {
@@ -199,7 +165,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
   display: flex; align-items: flex-start; gap: 12px;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: 16px;
-  margin-top: 28px; cursor: pointer; transition: border-color var(--t), background var(--t);
+  margin-top: 30px; cursor: pointer; transition: border-color var(--t), background var(--t);
 }
 .agreement-box:hover { border-color: var(--border-accent); }
 .agreement-box.checked { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.03); }
@@ -229,7 +195,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 }
 .artist-pill-box:focus-within {
   border-color: var(--border-focus); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(160,100,255,0.08);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
 }
 .artist-pill {
   display: inline-flex; align-items: center; gap: 7px;
@@ -262,7 +228,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 
 .artist-dropdown {
   position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-  z-index: 9000; background: #171725;
+  z-index: 9000; background: #141414;
   border: 1px solid var(--border-accent); border-radius: var(--radius-md);
   overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
   display: none; max-height: 340px; overflow-y: auto;
@@ -304,9 +270,8 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 .spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
 .artist-dropdown::-webkit-scrollbar { width: 4px; }
 .artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(160,100,255,0.2); border-radius: 2px; }
+.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
 
-/* Featured / Secondary artist cards — mirrors the app's _featuredArtistCard */
 .feat-card {
   background: var(--bg-surface); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: 12px; margin-bottom: 10px;
@@ -322,11 +287,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 .feat-name { flex: 1; min-width: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .feat-remove {
   width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
-  background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   color: var(--danger); transition: all var(--t);
 }
-.feat-remove:hover { background: rgba(248,113,113,0.18); transform: scale(1.06); }
+.feat-remove:hover { background: rgba(239,68,68,0.18); transform: scale(1.06); }
 .feat-remove svg { width: 11px; height: 11px; }
 .feat-role-wrap { margin-top: 10px; position: relative; }
 .feat-role-wrap select {
@@ -360,19 +325,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
   font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
 }
-.credits-panel-hd svg { width: 13px; height: 13px; }
 .required-badge {
-  margin-left: auto; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-  border-radius: 999px; padding: 2px 8px;
+  margin-left: auto;
   font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
 }
-.writer-notice {
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;
-  font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;
-}
-.writer-notice strong { color: var(--text-primary); }
 .credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
 .credit-row {
   background: var(--bg-surface); border: 1px solid var(--border);
@@ -398,7 +355,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 }
 .credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
 .credit-input:hover { border-color: var(--border-accent); }
-.credit-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(160,100,255,0.08); }
+.credit-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
 .csel-wrap { position: relative; }
 .csel-wrap::after {
   content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
@@ -408,11 +365,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 .csel-wrap select { padding-right: 28px; cursor: pointer; }
 .credit-remove {
   width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.12);
+  background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.12);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: rgba(248,113,113,0.45); transition: all var(--t); flex-shrink: 0;
+  color: rgba(239,68,68,0.5); transition: all var(--t); flex-shrink: 0;
 }
-.credit-remove:hover { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: var(--danger); transform: scale(1.08); }
+.credit-remove:hover { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: var(--danger); transform: scale(1.08); }
 .credit-remove svg { width: 11px; height: 11px; }
 .add-credit-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -442,20 +399,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 
 #statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
 #statusMsg.error { color: var(--danger); }
-.form-footer-note {
-  margin-top: 20px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
-
-.trust-strip { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 18px; flex-wrap: wrap; }
-.trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.03em; }
-.trust-item svg { width: 12px; height: 12px; color: var(--text-secondary); opacity: 0.7; }
 
 /* Payment badge — shown at the top when a verified payment reference is present */
 .payment-badge {
   display: none; align-items: center; gap: 8px;
-  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25);
+  background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);
   border-radius: var(--radius-sm); padding: 10px 14px; margin: 8px 0 4px;
   font-size: 0.78rem; color: var(--success); font-weight: 600;
 }
@@ -479,7 +427,6 @@ option, optgroup { background: #171725; color: var(--text-primary); }
   .step-connector { min-width: 8px; max-width: 24px; margin: 0 6px; }
   .step-item { font-size: 0.62rem; letter-spacing: 0.04em; }
   .grid-3 { grid-template-columns: 1fr; }
-  .trust-strip { gap: 14px; }
 }
 @media (max-width: 420px) {
   .step-track { gap: 0; }
@@ -495,16 +442,10 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 <div class="app-shell">
 
   <header class="top-bar">
-    <div class="top-bar-left">
-      <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      <span class="top-bar-title">Create New Release</span>
-    </div>
-    <div class="secure-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Secure
-    </div>
+    <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="top-bar-title">Create New Release</span>
   </header>
 
   <div class="step-track">
@@ -516,7 +457,6 @@ option, optgroup { background: #171725; color: var(--text-primary); }
   </div>
 
   <div class="content">
-    <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
 
     <div class="payment-badge" id="paymentBadge">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
@@ -525,21 +465,12 @@ option, optgroup { background: #171725; color: var(--text-primary); }
 
     <form id="releaseForm">
 
-      <!-- ARTIST INFO -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Artist Information</div>
-          <div class="section-desc">Search and select your artist profile</div>
-        </div>
-      </div>
+      <!-- ARTIST -->
+      <div class="section-label-row">Artist</div>
 
       <div class="field artist-field" id="artistFieldWrap">
         <label>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Main Artist (Primary)
+          Main Artist
           <div class="required-dot" title="Required"></div>
         </label>
         <div class="artist-pill-box" id="artistPillBox">
@@ -549,44 +480,10 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         </div>
         <input type="hidden" id="artistName" name="artistName">
         <div class="artist-dropdown" id="artistDropdown"></div>
-        <div class="field-hint">Results pulled from Apple Music</div>
       </div>
 
       <div class="field stack-gap">
-        <label>Phone Number</label>
-        <input id="number" type="tel" placeholder="+1 000 000 0000">
-      </div>
-
-      <div class="field stack-gap">
-        <label>Country of Origin</label>
-        <div class="country-wrap" id="countryWrap">
-          <div class="country-flag">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <select id="country">
-            <option>Ghana</option><option>Nigeria</option><option>Kenya</option><option>South Africa</option>
-            <option>Uganda</option><option>Tanzania</option><option>Cameroon</option>
-            <option>United States of America</option><option>United Kingdom, The</option><option>Canada</option>
-            <option>Australia</option><option>France</option><option>Germany</option><option>Brazil</option>
-            <option>India</option><option>Jamaica</option><option>Trinidad and Tobago</option><option>Senegal</option>
-            <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- FEATURED & SECONDARY ARTISTS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Featured &amp; Secondary Artists</div>
-          <div class="section-desc">Optional — add other artists on this track</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Add a featured or secondary artist?</label>
+        <label>Featuring another artist?</label>
         <div class="radio-group" id="hasFeaturedGroup" data-value="No">
           <button type="button" class="radio-pill selected" data-value="No">No</button>
           <button type="button" class="radio-pill" data-value="Yes">Yes</button>
@@ -603,20 +500,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
           </div>
           <div class="artist-dropdown" id="featArtistDropdown"></div>
         </div>
-        <div class="field-hint">Results pulled from Apple Music</div>
         <div id="featuredArtistsList" style="margin-top:12px;"></div>
       </div>
 
       <!-- RELEASE DETAILS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Release Details</div>
-          <div class="section-desc">Core metadata for your release</div>
-        </div>
-      </div>
+      <div class="section-label-row">Release Details</div>
 
       <div class="field">
         <label>Release Title <div class="required-dot"></div></label>
@@ -663,16 +551,8 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         <input id="releaseDate" type="date" required>
       </div>
 
-      <!-- SONG DETAILS & OWNERSHIP -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Song Details &amp; Ownership</div>
-          <div class="section-desc">Version, prior release status, and rights</div>
-        </div>
-      </div>
+      <!-- SONG DETAILS -->
+      <div class="section-label-row">Song Details</div>
 
       <div class="field">
         <label>Version <div class="required-dot"></div></label>
@@ -695,7 +575,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
       </div>
 
       <div class="field stack-gap">
-        <label>Has this song been released before? <div class="required-dot"></div></label>
+        <label>Previously released? <div class="required-dot"></div></label>
         <div class="radio-group" id="previouslyReleasedGroup" data-value="No">
           <button type="button" class="radio-pill selected" data-value="No">No</button>
           <button type="button" class="radio-pill" data-value="Yes">Yes</button>
@@ -705,19 +585,10 @@ option, optgroup { background: #171725; color: var(--text-primary); }
       <div class="field stack-gap" id="previousReleaseDateWrap">
         <label>Previous Release Date <div class="required-dot"></div></label>
         <input id="previousReleaseDate" type="date">
-        <div class="field-hint">Used for prior-release / re-release documentation</div>
       </div>
 
       <!-- LABEL & RIGHTS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Label &amp; Rights</div>
-          <div class="section-desc">Copyright and label ownership</div>
-        </div>
-      </div>
+      <div class="section-label-row">Label &amp; Rights</div>
 
       <div class="grid">
         <div class="field">
@@ -731,15 +602,7 @@ option, optgroup { background: #171725; color: var(--text-primary); }
       </div>
 
       <!-- IDENTIFIERS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Identifiers</div>
-          <div class="section-desc">ISRC, UPC, and catalog codes</div>
-        </div>
-      </div>
+      <div class="section-label-row">Identifiers</div>
 
       <div class="grid-3">
         <div class="field">
@@ -757,20 +620,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
       </div>
 
       <!-- PRODUCTION CREDITS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Production Credits</div>
-          <div class="section-desc">Producers, engineers, and musicians</div>
-        </div>
-      </div>
+      <div class="section-label-row">Production Credits</div>
 
       <div class="credits-grid">
         <div class="credits-panel required-panel">
           <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
             Producers &amp; Engineers
             <span class="required-badge">Required</span>
           </div>
@@ -782,7 +636,6 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         </div>
         <div class="credits-panel">
           <div class="credits-panel-hd">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
             Musicians &amp; Performers
           </div>
           <div class="credits-list" id="musicianList"></div>
@@ -793,20 +646,11 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         </div>
       </div>
 
-      <!-- SONGWRITING (no publishing panel — matches app) -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Songwriting</div>
-          <div class="section-desc">Writers and composers</div>
-        </div>
-      </div>
+      <!-- SONGWRITING -->
+      <div class="section-label-row">Songwriting</div>
 
       <div class="credits-panel">
         <div class="credits-panel-hd">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           Songwriters &amp; Composers
         </div>
         <div class="credits-list" id="writerList"></div>
@@ -816,32 +660,8 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         </button>
       </div>
 
-      <!-- CONTACT -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Contact &amp; Account</div>
-          <div class="section-desc">Your contact info for this release</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Email Address <div class="required-dot"></div></label>
-        <input id="email" type="email" placeholder="your@email.com" required>
-      </div>
-
       <!-- LYRICS -->
-      <div class="section-head">
-        <div class="section-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        </div>
-        <div class="section-title-wrap">
-          <div class="section-title">Lyrics</div>
-          <div class="section-desc">Optional — improves discoverability</div>
-        </div>
-      </div>
+      <div class="section-label-row">Lyrics</div>
 
       <div class="field">
         <label>Lyrics (Optional)</label>
@@ -859,6 +679,34 @@ option, optgroup { background: #171725; color: var(--text-primary); }
         </div>
       </div>
 
+      <!-- CONTACT -->
+      <div class="section-label-row">Contact</div>
+
+      <div class="field">
+        <label>Email Address <div class="required-dot"></div></label>
+        <input id="email" type="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="grid stack-gap">
+        <div class="field">
+          <label>Phone Number</label>
+          <input id="number" type="tel" placeholder="+1 000 000 0000">
+        </div>
+        <div class="field">
+          <label>Country of Origin</label>
+          <div class="select-wrap">
+            <select id="country">
+              <option>Ghana</option><option>Nigeria</option><option>Kenya</option><option>South Africa</option>
+              <option>Uganda</option><option>Tanzania</option><option>Cameroon</option>
+              <option>United States of America</option><option>United Kingdom, The</option><option>Canada</option>
+              <option>Australia</option><option>France</option><option>Germany</option><option>Brazil</option>
+              <option>India</option><option>Jamaica</option><option>Trinidad and Tobago</option><option>Senegal</option>
+              <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- SUBMIT -->
       <div class="form-actions">
         <button class="submit-btn" id="submitBtn" type="submit">
@@ -866,21 +714,6 @@ option, optgroup { background: #171725; color: var(--text-primary); }
           Save &amp; Continue to Stores
         </button>
         <div id="statusMsg"></div>
-
-        <div class="trust-strip">
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            256-bit SSL
-          </div>
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            GDPR Compliant
-          </div>
-          <div class="trust-item">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-            Secure Data
-          </div>
-        </div>
       </div>
 
     </form>
