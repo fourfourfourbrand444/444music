@@ -1,900 +1,1217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>444Music Distribution</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    :root {
-      --black:      #000000;
-      --black-1:    #080808;
-      --black-2:    #0a0a0a;
-      --black-3:    #0e0e0e;
-      --black-4:    #161616;
-      --white:      #ffffff;
-      --white-90:   rgba(255,255,255,0.90);
-      --white-70:   rgba(255,255,255,0.70);
-      --white-40:   rgba(255,255,255,0.40);
-      --white-20:   rgba(255,255,255,0.20);
-      --white-10:   rgba(255,255,255,0.10);
-      --white-06:   rgba(255,255,255,0.06);
-      --grey:       #888888;
-      --grey-dark:  #444444;
-      --rose:       #f87171;
-      --border:        var(--white-10);
-      --border-hover:  var(--white-40);
-      --glow:       rgba(255,255,255,0.10);
-      --glow-str:   rgba(255,255,255,0.18);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music Distribution</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
 
-    *, *::before, *::as { margin:0; padding:0; box-sizing:border-box; }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* =========================================
+   RESET & ROOT — pure monochrome system
+   ========================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+:root {
+  --bg:        #070707;
+  --bg2:       #0d0d0d;
+  --surface:   #111111;
+  --surface2:  #161616;
+  --surface3:  #1c1c1c;
+  --border:    rgba(255,255,255,0.09);
+  --border2:   rgba(255,255,255,0.055);
+  --line:      rgba(255,255,255,0.16);
+  --white:     #f5f5f5;
+  --dim:       rgba(255,255,255,0.09);
+  --text:      #f2f2f2;
+  --text2:     #9a9a9a;
+  --text3:     #4d4d4d;
+  --radius:    12px;
+  --radius2:   16px;
+  --radius3:   20px;
+}
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--black);
-      color: var(--white);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
+html { scroll-behavior: smooth; }
 
-    /* ─── HEADER ─── */
-    header {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 2000;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 28px;
-      height: 64px;
-      background: rgba(0,0,0,0.9);
-      backdrop-filter: blur(18px) saturate(1.4);
-      border-bottom: 1px solid var(--border);
-      transition: background 0.3s;
-    }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    .logo {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800; font-size: 22px;
-      color: var(--white);
-      letter-spacing: -0.5px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .logo-icon {
-      height: 32px; width: auto;
-      object-fit: contain;
-      display: block;
-    }
-    .logo-icon-fallback {
-      width: 36px; height: 36px;
-      background: var(--white);
-      color: var(--black);
-      border-radius: 10px;
-      align-items: center; justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-    .logo-icon-fallback svg { width: 18px; height: 18px; }
+html, body { max-width: 100%; overflow-x: hidden; }
+img, video { max-width: 100%; height: auto; }
+*, *::before, *::after { min-width: 0; }
 
-    .nav-icon {
-      width: 42px; height: 42px;
-      display: grid; place-items: center;
-      cursor: pointer; border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--white-06);
-      color: var(--white-70);
-      font-size: 18px;
-      transition: all 0.25s;
-    }
-    .nav-icon:hover {
-      background: var(--black-4);
-      border-color: var(--border-hover);
-      color: var(--white);
-    }
-    .nav-icon i { transition: transform 0.3s; }
-    .nav-icon:hover i { transform: rotate(90deg); }
+.display { font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif; font-weight: 800; }
 
-    /* ─── SIDEBAR ─── */
-    .sidebar-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(4px);
-      z-index: 2500;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.35s;
-    }
-    .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
 
-    .sidebar {
-      position: fixed; top: 0; right: -300px; bottom: 0;
-      width: 272px;
-      z-index: 3000;
-      background: var(--black-1);
-      border-left: 1px solid var(--border);
-      box-shadow: -20px 0 60px rgba(0,0,0,0.9);
-      display: flex; flex-direction: column;
-      padding: 24px 18px 28px;
-      transition: right 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .sidebar.active { right: 0; }
+/* =========================================
+   KEYFRAMES
+   ========================================= */
+@keyframes float { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+@keyframes fillup { from{ width:0; } to{ width:78%; } }
+@keyframes scroll { 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
+@keyframes heroFadeUp { from{ opacity:0; transform:translateY(48px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes heroFadeRight { from{ opacity:0; transform:translateX(40px); } to{ opacity:1; transform:translateX(0); } }
+@keyframes wordReveal { from{ opacity:0; transform:translateY(60px) skewY(4deg); } to{ opacity:1; transform:translateY(0) skewY(0deg); } }
+@keyframes subReveal { from{ opacity:0; transform:translateY(20px); filter:blur(4px); } to{ opacity:1; transform:translateY(0); filter:blur(0); } }
+@keyframes chipBob { 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-8px) rotate(1deg); } }
+@keyframes chipBob2 { 0%,100%{ transform:translateY(0) rotate(1deg); } 50%{ transform:translateY(-6px) rotate(-1deg); } }
+@keyframes statIn { from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes tickScroll { 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
+@keyframes orbDrift { 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.05); } 66%{ transform:translate(-20px,40px) scale(0.95); } }
 
-    .sidebar-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 32px; padding-bottom: 18px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-header .s-logo {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800; font-size: 18px;
-      color: var(--white);
-      display: flex; align-items: center; gap: 9px;
-    }
-    .sidebar-header .s-logo-icon {
-      height: 26px; width: auto;
-      object-fit: contain;
-      display: block;
-    }
-    .sidebar-header .s-logo-icon-fallback {
-      width: 30px; height: 30px;
-      background: var(--white);
-      color: var(--black);
-      border-radius: 8px;
-      align-items: center; justify-content: center;
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-    .sidebar-header .s-logo-icon-fallback svg { width: 15px; height: 15px; }
-    .sidebar-close {
-      width: 32px; height: 32px; display: grid; place-items: center;
-      border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; color: var(--grey); font-size: 15px;
-      transition: all 0.2s;
-    }
-    .sidebar-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
+/* =========================================
+   VIDEO HERO BACKGROUND — 5 clips, cross-fade, random order
+   ========================================= */
+.hero-bg-slider { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: #000; }
+.hero-bg-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  filter: grayscale(1) contrast(1.12) brightness(0.82);
+  transition: opacity 1.4s ease;
+  will-change: opacity;
+}
+.hero-bg-video.active { opacity: 1; }
 
-    .sidebar-section-label {
-      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--grey-dark); margin: 4px 0 8px 12px;
-      font-weight: 700;
-    }
+.hero-bg-overlay-base { position: absolute; inset: 0; background: rgba(4,4,4,0.68); z-index: 1; pointer-events: none; }
+.hero-bg-overlay-left {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(105deg, rgba(7,7,7,0.94) 0%, rgba(7,7,7,0.80) 30%, rgba(7,7,7,0.40) 58%, rgba(7,7,7,0.08) 80%, transparent 100%);
+}
+.hero-bg-overlay-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 38%; z-index: 2; pointer-events: none; background: linear-gradient(to top, var(--bg) 0%, transparent 100%); }
 
-    .sidebar a {
-      display: flex; align-items: center; gap: 13px;
-      padding: 12px 14px; margin-bottom: 3px;
-      text-decoration: none; color: var(--grey);
-      border-radius: 11px; font-size: 14px; font-weight: 600;
-      transition: all 0.25s;
-      position: relative; overflow: hidden;
-    }
-    .sidebar a::before {
-      content: ''; position: absolute; left: 0; top: 50%;
-      transform: translateY(-50%);
-      width: 3px; height: 0; border-radius: 0 3px 3px 0;
-      background: var(--white);
-      transition: height 0.25s;
-    }
-    .sidebar a:hover { background: var(--white-06); color: var(--white); padding-left: 18px; }
-    .sidebar a:hover::before { height: 60%; }
-    .sidebar a i { width: 18px; text-align: center; font-size: 14px; color: var(--white-70); flex-shrink: 0; }
+.slide-dots { position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 8px; align-items: center; }
+.slide-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.28); cursor: pointer; transition: width 0.4s, background 0.4s; }
+.slide-dot.active { width: 22px; border-radius: 4px; background: var(--white); }
 
-    .sidebar-divider { height: 1px; background: var(--border); margin: 14px 0; }
+/* =========================================
+   NAVBAR
+   ========================================= */
+.navbar {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%;
+  background: rgba(7,7,7,0.6);
+  backdrop-filter: blur(28px) saturate(120%);
+  -webkit-backdrop-filter: blur(28px) saturate(120%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  animation: heroFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: -0.3px; }
+.nav-logo-img { height: 36px; width: auto; filter: grayscale(1) brightness(1.3); }
+.nav-logo-fallback { width: 36px; height: 36px; border-radius: 10px; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #000; font-family: 'Outfit', sans-serif; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-links a { padding: 7px 13px; border-radius: 8px; color: rgba(255,255,255,0.68); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color 0.15s, background 0.15s; }
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-login { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: 0.15s; }
+.nav-login:hover { color: var(--text); }
+.nav-cta { background: var(--white); color: #080808; padding: 9px 20px; border-radius: 9px; text-decoration: none; font-size: 13.5px; font-weight: 700; transition: background 0.2s, transform 0.15s; letter-spacing: -0.1px; }
+.nav-cta:hover { background: #d4d4d4; transform: translateY(-1px); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; text-decoration: none; color: inherit; }
+.hamburger span { width: 21px; height: 1.5px; background: rgba(255,255,255,0.7); border-radius: 2px; display: block; }
 
-    .sidebar a.logout { color: var(--rose); margin-top: auto; }
-    .sidebar a.logout i { color: var(--rose); }
-    .sidebar a.logout:hover { background: rgba(248,113,113,0.08); color: #fca5a5; }
-    .sidebar a.logout:hover::before { background: var(--rose); }
+/* =========================================
+   HERO
+   ========================================= */
+.hero { min-height: 100vh; padding: 130px 5% 90px; display: flex; align-items: center; position: relative; overflow: hidden; }
+.hero-inner { max-width: 1200px; margin: auto; width: 100%; display: grid; grid-template-columns: 1fr 440px; gap: 64px; align-items: center; position: relative; z-index: 10; }
+.hero-title { font-family: 'Outfit', sans-serif; font-size: clamp(56px, 8.5vw, 96px); font-weight: 900; line-height: 0.9; letter-spacing: -3.5px; margin-bottom: 22px; text-align: left !important; overflow: hidden; text-shadow: 0 2px 40px rgba(0,0,0,0.5); }
+.hero-title .line1 { display: block; animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
+.hero-title .line2 { display: block; margin-top: 4px; animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s both; }
+.hero-title .accent { display: block; margin-top: 4px; font-size: 1.18em; color: var(--white); animation: wordReveal 0.8s cubic-bezier(0.22,1,0.36,1) 0.45s both; }
+.hero-sub { font-size: 17px; color: rgba(255,255,255,0.68); line-height: 1.75; max-width: 500px; margin-bottom: 40px; font-weight: 400; text-align: left !important; animation: subReveal 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s both; text-shadow: 0 1px 12px rgba(0,0,0,0.6); }
+.hero-btns { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; justify-content: flex-start !important; animation: heroFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.75s both; }
+.btn-primary { display: inline-flex; align-items: center; gap: 9px; background: var(--white); color: #080808; padding: 15px 30px; border-radius: 12px; font-size: 15px; font-weight: 700; text-decoration: none; letter-spacing: -0.2px; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; }
+.btn-primary:hover { background: #d8d8d8; transform: translateY(-3px); box-shadow: 0 12px 32px rgba(255,255,255,0.12); }
+.btn-secondary { display: inline-flex; align-items: center; gap: 8px; color: var(--text); padding: 14px 26px; border-radius: 12px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.09); transform: translateY(-2px); }
+.hero-social-proof { display: flex; align-items: center; gap: 14px; justify-content: flex-start !important; animation: heroFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.9s both; }
+.proof-avatars { display: flex; }
+.proof-av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #070707; margin-right: -10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #080808; transition: transform 0.2s; background: var(--white); }
+.proof-av:hover { transform: scale(1.15) translateY(-2px); z-index: 1; }
+.proof-av.dim { background: #cfcfcf; }
+.proof-av.dim2 { background: #a8a8a8; }
+.proof-text { font-size: 13.5px; color: rgba(255,255,255,0.65); margin-left: 20px; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.proof-text strong { color: white; }
 
-    /* sidebar stagger animation */
-    .sidebar.active a { animation: slideIn 0.3s ease forwards; opacity: 0; }
-    .sidebar.active a:nth-child(1) { animation-delay: 0.05s; }
-    .sidebar.active a:nth-child(2) { animation-delay: 0.1s; }
-    .sidebar.active a:nth-child(3) { animation-delay: 0.15s; }
-    .sidebar.active a:nth-child(4) { animation-delay: 0.2s; }
-    .sidebar.active a:nth-child(5) { animation-delay: 0.25s; }
-    .sidebar.active a:nth-child(6) { animation-delay: 0.3s; }
-    .sidebar.active a:nth-child(7) { animation-delay: 0.35s; }
-    .sidebar.active a:nth-child(8) { animation-delay: 0.4s; }
+.slide-caption {
+  position: absolute; bottom: 60px; right: 5%; z-index: 10;
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(7,7,7,0.5); backdrop-filter: blur(18px) saturate(120%); -webkit-backdrop-filter: blur(18px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 12px 18px; min-width: 240px; transition: opacity 0.5s;
+}
+.slide-caption-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #080808; flex-shrink: 0; }
+.slide-caption-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; }
+.slide-caption-text span { display: block; font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
-    @keyframes slideIn {
-      from { opacity:0; transform: translateX(20px); }
-      to   { opacity:1; transform: translateX(0); }
-    }
+/* =========================================
+   HERO CARD
+   ========================================= */
+.hero-card {
+  background: rgba(17,17,17,0.74); backdrop-filter: blur(24px) saturate(110%); -webkit-backdrop-filter: blur(24px) saturate(110%);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius3); padding: 24px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.06);
+  animation: heroFadeRight 1s cubic-bezier(0.22,1,0.36,1) 0.3s both, float 6s ease-in-out infinite 1.3s;
+  position: relative; overflow: visible;
+}
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.card-header-left { display: flex; align-items: center; gap: 10px; }
+.card-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #080808; }
+.card-header-text h4 { font-size: 13.5px; font-weight: 700; }
+.card-header-text p { font-size: 11.5px; color: var(--text2); }
+.card-live { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: #f0f0f0; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; display: flex; align-items: center; gap: 5px; }
+.card-live::before { content:''; width:5px; height:5px; border-radius:50%; background:#f0f0f0; }
+.dropzone { border: 1.5px dashed rgba(255,255,255,0.2); border-radius: var(--radius); padding: 24px; text-align: center; background: rgba(255,255,255,0.03); margin-bottom: 16px; cursor: pointer; transition: border-color 0.3s, background 0.3s, transform 0.2s; }
+.dropzone:hover { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); transform: scale(1.01); }
+.dropzone i { font-size: 22px; color: var(--text2); margin-bottom: 8px; }
+.dropzone p { font-size: 12px; color: var(--text2); }
+.dropzone strong { color: var(--text); font-size: 13px; }
+.track-row { display: flex; align-items: center; gap: 11px; background: rgba(22,22,22,0.8); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; transition: border-color 0.2s, transform 0.2s; }
+.track-row:hover { border-color: var(--border); transform: translateX(4px); }
+.track-art { width: 38px; height: 38px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; background: var(--surface3); border: 1px solid var(--border); color: var(--text2); }
+.track-info { flex: 1; min-width: 0; }
+.track-info h5 { font-size: 12.5px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-info p { font-size: 11px; color: var(--text2); }
+.track-badge { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+.t-live { background: rgba(255,255,255,0.1); color: #f0f0f0; border: 1px solid rgba(255,255,255,0.2); }
+.t-proc { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
+.t-pend { background: rgba(255,255,255,0.03); color: var(--text3); border: 1px solid var(--border2); }
+.card-progress { margin-top: 14px; }
+.prog-header { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+.prog-track { width: 100%; height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--white); border-radius: 4px; animation: fillup 3s ease forwards; }
+.chip { position: absolute; border-radius: 11px; background: rgba(17,17,17,0.84); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); padding: 10px 14px; font-size: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.chip.stores { top: -18px; right: -16px; display: flex; align-items: center; gap: 7px; animation: chipBob 4s ease-in-out infinite 1s; }
+.chip.stores i { color: #ddd; }
+.chip.royalty { bottom: 16px; left: -24px; animation: chipBob2 5s ease-in-out infinite 0.5s; }
+.chip.royalty .amount { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
+.chip.royalty .label { font-size: 11px; color: var(--text2); margin-top: 3px; }
 
-    /* ─── HERO ─── */
-    .hero {
-      position: relative; z-index: 1;
-      min-height: 100svh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      padding: 110px 24px 80px;
-      overflow: hidden;
-    }
+/* =========================================
+   TICKER
+   ========================================= */
+.ticker { border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); background: var(--surface); padding: 14px 0; overflow: hidden; }
+.ticker-inner { display: flex; animation: tickScroll 30s linear infinite; }
+.ticker-inner:hover { animation-play-state: paused; }
+.tick-item { display: flex; align-items: center; gap: 8px; padding: 0 28px; white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--text2); border-right: 1px solid var(--border2); flex-shrink: 0; transition: color 0.2s; }
+.tick-item:hover { color: var(--text); }
+.tick-item i { color: var(--text2); font-size: 15px; }
 
-    /* video background layer */
-    .hero-video-wrap {
-      position: absolute; inset: 0;
-      z-index: -2;
-      overflow: hidden;
-      background: #000;
-    }
-    .hero-video-wrap video {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 100%; height: 100%;
-      min-width: 100%; min-height: 100%;
-      object-fit: cover;
-      transform: translate(-50%, -50%);
-      /* filter desaturates the raw footage into the site's black & white
-         palette and keeps it subtle enough that text stays readable */
-      filter: grayscale(1) brightness(0.5) contrast(1.1);
-      opacity: 0;
-      transition: opacity 1.2s ease;
-    }
-    .hero-video-wrap video.loaded { opacity: 1; }
+/* =========================================
+   SHARED SECTION STYLES
+   ========================================= */
+.section { padding: 80px 5%; max-width: 1200px; margin: 0 auto; }
+.section-full { padding: 80px 5%; }
+.label-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text2); margin-bottom: 16px; }
+.label-tag::before { content: ''; width: 18px; height: 1.5px; background: var(--text2); }
+.section-h { font-family: 'Outfit', sans-serif; font-size: clamp(30px, 3.8vw, 46px); font-weight: 800; letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 14px; }
+.section-p { font-size: 15px; color: var(--text2); line-height: 1.7; max-width: 500px; margin-bottom: 48px; }
+.centered { text-align: center; }
+.centered .section-p { margin-left: auto; margin-right: auto; }
+.centered .label-tag { justify-content: center; }
+.centered .label-tag::before { display: none; }
 
-    /* gradient overlay to tie the video into the black & white theme */
-    .hero-video-overlay {
-      position: absolute; inset: 0;
-      z-index: -1;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.08), transparent 70%),
-        linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 35%, rgba(0,0,0,0.85) 78%, #000 100%);
-    }
+/* =========================================
+   STATS
+   ========================================= */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border2); border: 1px solid var(--border2); border-radius: var(--radius2); overflow: hidden; }
+.stat-item { background: var(--surface); padding: 36px 28px; transition: background 0.2s; animation: statIn 0.7s ease both; }
+.stat-item:nth-child(1){ animation-delay:0.1s; } .stat-item:nth-child(2){ animation-delay:0.2s; } .stat-item:nth-child(3){ animation-delay:0.3s; } .stat-item:nth-child(4){ animation-delay:0.4s; }
+.stat-item:hover { background: var(--surface2); }
+.stat-num { font-family: 'Outfit', sans-serif; font-size: 46px; font-weight: 900; letter-spacing: -2.5px; color: var(--text); line-height: 1; margin-bottom: 8px; }
+.stat-label { font-size: 13.5px; color: var(--text2); font-weight: 400; }
 
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--white-06);
-      border: 1px solid var(--white-20);
-      border-radius: 100px;
-      padding: 7px 16px;
-      font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase;
-      color: var(--white-70); font-weight: 700;
-      margin-bottom: 28px;
-      animation: fadeUp 0.8s ease both;
-    }
-    .hero-badge i { font-size: 10px; color: var(--white); animation: pulse 2s infinite; }
+/* =========================================
+   PHOTO STRIP
+   ========================================= */
+.photo-strip-section { max-width: 1200px; margin: 0 auto; padding: 24px 5% 0; }
+.photo-strip { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 12px; }
+.photo-strip-item { border-radius: var(--radius2); overflow: hidden; position: relative; cursor: pointer; background: var(--surface2); }
+.photo-strip-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) brightness(0.75) contrast(1.05); transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.3s; }
+.photo-strip-item:hover img { transform: scale(1.05); filter: grayscale(1) brightness(0.9) contrast(1.1); }
+.photo-strip-item.tall { min-height: 330px; }
+.photo-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 32px 18px 16px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); pointer-events: none; }
+.photo-label strong { display: block; font-size: 13px; font-weight: 700; color: #fff; }
+.photo-label span { display: block; font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+/* =========================================
+   PLATFORMS
+   ========================================= */
+.platform-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border2); border: 1px solid var(--border2); border-radius: var(--radius2); overflow: hidden; }
+.platform-item { background: var(--surface); padding: 24px 12px; display: flex; flex-direction: column; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 500; color: var(--text2); cursor: pointer; transition: background 0.2s, color 0.2s, transform 0.2s; }
+.platform-item:hover { background: var(--surface2); color: var(--text); transform: translateY(-3px); }
+.platform-item i { font-size: 24px; color: var(--text2); transition: transform 0.2s, color 0.2s; }
+.platform-item:hover i { transform: scale(1.15); color: var(--text); }
 
-    .hero h1 {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: clamp(38px, 8vw, 72px);
-      line-height: 1.05;
-      letter-spacing: -2px;
-      margin-bottom: 22px;
-      animation: fadeUp 0.8s 0.1s ease both;
-      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
-    }
+/* =========================================
+   HOW IT WORKS
+   ========================================= */
+.steps-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border2); border: 1px solid var(--border2); border-radius: var(--radius2); overflow: hidden; margin-top: 48px; }
+.step { background: var(--surface); padding: 36px 28px; transition: background 0.2s; position: relative; }
+.step:hover { background: var(--surface2); }
+.step:hover .step-num { transform: scale(1.06); }
+.step-num { width: 40px; height: 40px; border-radius: 9px; background: var(--white); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; color: #080808; margin-bottom: 20px; transition: transform 0.3s; }
+.step h3 { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.3px; }
+.step p { font-size: 13.5px; color: var(--text2); line-height: 1.65; }
 
-    .hero h1 span {
-      background: linear-gradient(120deg, var(--white) 0%, var(--white-70) 50%, var(--white-40) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+/* =========================================
+   FEATURE SPLIT
+   ========================================= */
+.feature-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; max-width: 1200px; margin: 0 auto; padding: 72px 5%; }
+.feature-split.reverse { direction: rtl; }
+.feature-split.reverse > * { direction: ltr; }
+.fsplit-img { border-radius: var(--radius3); overflow: hidden; position: relative; background: var(--surface2); }
+.fsplit-img img { width: 100%; height: 380px; object-fit: cover; display: block; filter: grayscale(1) brightness(0.8) contrast(1.05); transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.fsplit-img:hover img { transform: scale(1.03); }
+.fsplit-badge { position: absolute; top: 16px; left: 16px; background: rgba(7,7,7,0.78); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 7px; color: var(--text); }
+.fsplit-badge i { color: var(--text2); }
+.fsplit-text .label-tag { margin-bottom: 14px; }
+.fsplit-text h2 { font-family: 'Outfit', sans-serif; font-size: clamp(26px, 3vw, 38px); font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin-bottom: 16px; }
+.fsplit-text p { font-size: 14.5px; color: var(--text2); line-height: 1.75; margin-bottom: 24px; }
+.feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.feature-bullets li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text2); }
+.feature-bullets li i { color: var(--white); font-size: 12px; margin-top: 3px; flex-shrink: 0; }
+.feature-bullets li strong { color: var(--text); }
 
-    .hero p {
-      max-width: 560px; margin: 0 auto 36px;
-      color: var(--grey); font-size: 16px; line-height: 1.75;
-      animation: fadeUp 0.8s 0.2s ease both;
-    }
-    .hero p strong { color: var(--white-90); font-weight: 700; }
+/* =========================================
+   UPLOAD FLOW
+   ========================================= */
+.upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; margin-top: 48px; }
+.steps-list { display: flex; flex-direction: column; gap: 4px; }
+.step-item { display: flex; gap: 16px; padding: 18px 20px; border-radius: var(--radius); border: 1px solid transparent; cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.step-item:hover, .step-item.active { background: var(--surface); border-color: var(--border); }
+.step-item.active { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.04); }
+.step-item:hover { transform: translateX(4px); }
+.step-n { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--text2); }
+.step-item.active .step-n { background: var(--white); border-color: var(--white); color: #080808; }
+.step-text h4 { font-size: 15px; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.2px; }
+.step-text p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.upload-form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3); padding: 28px; }
+.form-tabs { display: flex; gap: 6px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--border2); }
+.form-tab { font-size: 13px; padding: 7px 14px; border-radius: 7px; cursor: pointer; font-weight: 500; color: var(--text2); transition: 0.15s; }
+.form-tab.active { background: rgba(255,255,255,0.08); color: var(--text); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 11.5px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px; }
+.form-input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; color: var(--text); font-size: 13.5px; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: 0.15s; }
+.form-input:focus { border-color: rgba(255,255,255,0.4); box-shadow: 0 0 0 3px rgba(255,255,255,0.06); }
+.cover-drop { width: 96px; height: 96px; border: 1.5px dashed rgba(255,255,255,0.2); border-radius: 11px; background: rgba(255,255,255,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 6px; font-size: 11px; color: var(--text2); transition: 0.2s; }
+.cover-drop:hover { border-color: rgba(255,255,255,0.4); transform: scale(1.04); }
+.cover-drop i { font-size: 20px; color: var(--text2); }
+.form-submit { width: 100%; padding: 13px; border: none; border-radius: 10px; background: var(--white); color: #080808; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.2s, transform 0.15s; margin-top: 4px; }
+.form-submit:hover { background: #d8d8d8; transform: translateY(-1px); }
 
-    .hero-btns {
-      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
-      animation: fadeUp 0.8s 0.3s ease both;
-    }
+/* =========================================
+   TOOLS
+   ========================================= */
+.tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border2); border: 1px solid var(--border2); border-radius: var(--radius2); overflow: hidden; margin-top: 48px; }
+.tool { background: var(--surface); padding: 36px 32px; transition: background 0.25s; position: relative; overflow: hidden; }
+.tool:hover { background: var(--surface2); }
+.tool-ico { width: 50px; height: 50px; border-radius: 12px; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 20px; transition: background 0.2s, border-color 0.2s, transform 0.3s; color: var(--text); }
+.tool:hover .tool-ico { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); transform: scale(1.08) rotate(-2deg); }
+.tool h3 { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.3px; }
+.tool p { font-size: 13.5px; color: var(--text2); line-height: 1.65; margin-bottom: 18px; }
+.tool-link { font-size: 13px; color: var(--text); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: gap 0.2s, color 0.2s; }
+.tool-link:hover { gap: 10px; color: var(--white); }
 
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 9px;
-      padding: 15px 30px; border-radius: 100px;
-      background: var(--white);
-      color: var(--black); font-size: 15px; font-weight: 800;
-      text-decoration: none; border: none; cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      transition: all 0.3s;
-      font-family: 'Nunito', sans-serif;
-      position: relative; overflow: hidden;
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      opacity: 0.9;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-    }
+/* =========================================
+   BENTO PHOTO GRID
+   ========================================= */
+.bento-section { max-width: 1200px; margin: 0 auto; padding: 80px 5%; }
+.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 210px 210px; gap: 12px; margin-top: 48px; }
+.bento-cell { border-radius: var(--radius2); overflow: hidden; position: relative; cursor: pointer; }
+.bento-cell img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) brightness(0.78) contrast(1.05); transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.3s; }
+.bento-cell:hover img { transform: scale(1.06); filter: grayscale(1) brightness(0.92) contrast(1.1); }
+.bento-cell.span2 { grid-column: span 2; }
+.bento-cell.tall { grid-row: span 2; }
+.bento-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%); display: flex; align-items: flex-end; padding: 16px; pointer-events: none; }
+.bento-tag { background: rgba(255,255,255,0.92); color: #0a0a0a; font-size: 11.5px; font-weight: 700; padding: 4px 13px; border-radius: 100px; letter-spacing: 0.2px; }
 
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 9px;
-      padding: 14px 30px; border-radius: 100px;
-      background: transparent;
-      color: var(--white-90); font-size: 15px; font-weight: 800;
-      text-decoration: none; cursor: pointer;
-      border: 1.5px solid var(--white-20);
-      transition: all 0.3s;
-      font-family: 'Nunito', sans-serif;
-    }
-    .btn-secondary:hover {
-      background: var(--white-06);
-      border-color: var(--white-40);
-      transform: translateY(-3px);
-    }
+/* =========================================
+   TESTIMONIALS
+   ========================================= */
+.testi-overflow { overflow: hidden; }
+.testi-track { display: flex; gap: 16px; animation: scroll 40s linear infinite; }
+.testi-track:hover { animation-play-state: paused; }
+.testi-card { flex-shrink: 0; width: 300px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); padding: 24px; transition: border-color 0.2s, transform 0.2s; }
+.testi-card:hover { border-color: var(--border); transform: translateY(-4px); }
+.testi-stars { color: var(--text); font-size: 12px; margin-bottom: 12px; letter-spacing: 1px; }
+.testi-quote { font-size: 13.5px; color: var(--text2); line-height: 1.7; margin-bottom: 18px; }
+.testi-author { display: flex; align-items: center; gap: 11px; }
+.testi-av { width: 36px; height: 36px; border-radius: 50%; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--text); flex-shrink: 0; }
+.testi-name { font-size: 13.5px; font-weight: 600; }
+.testi-role { font-size: 11.5px; color: var(--text2); }
 
-    /* ─── SCROLL INDICATOR ─── */
-    .scroll-hint {
-      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      color: var(--grey); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-      font-weight: 700;
-      animation: fadeUp 1s 0.8s ease both;
-      z-index: 1;
-    }
-    .scroll-hint i { animation: bounce 2s infinite; font-size: 14px; color: var(--white-70); }
-    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+/* =========================================
+   PRICING
+   ========================================= */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+.price-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3); padding: 36px 32px; position: relative; transition: border-color 0.2s, transform 0.25s; }
+.price-card:hover { border-color: rgba(255,255,255,0.16); transform: translateY(-6px); }
+.price-card.featured { background: var(--surface2); border-color: rgba(255,255,255,0.28); }
+.price-card.featured:hover { border-color: rgba(255,255,255,0.4); }
+.price-popular { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--white); color: #080808; font-size: 11px; font-weight: 700; padding: 5px 16px; border-radius: 100px; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
+.price-tier { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
+.price-name { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.5px; }
+.price-amount { display: flex; align-items: flex-start; gap: 2px; margin-bottom: 5px; }
+.price-cur { font-size: 15px; color: var(--text2); padding-top: 10px; font-weight: 500; }
+.price-num { font-family: 'Outfit', sans-serif; font-size: 52px; font-weight: 900; line-height: 1; letter-spacing: -3px; }
+.price-period { font-size: 12.5px; color: var(--text2); margin-bottom: 28px; }
+.price-divider { height: 1px; background: var(--border2); margin: 24px 0; }
+.price-list { list-style: none; margin-bottom: 28px; }
+.price-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text2); margin-bottom: 12px; }
+.price-list li i { color: var(--white); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+.price-btn-fill { display: block; text-align: center; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; background: var(--white); color: #080808; transition: background 0.2s, transform 0.15s; }
+.price-btn-fill:hover { background: #d8d8d8; transform: translateY(-2px); }
+.price-btn-ghost { display: block; text-align: center; padding: 13px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--text); border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s; }
+.price-btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: var(--surface3); }
 
-    /* ─── STATS BAR ─── */
-    .stats-bar {
-      position: relative; z-index: 1;
-      display: grid; grid-template-columns: repeat(3,1fr);
-      max-width: 700px; margin: 0 auto;
-      background: var(--black-2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      animation: fadeUp 0.8s 0.4s ease both;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-    .stat-item {
-      padding: 28px 20px; text-align: center;
-      position: relative;
-    }
-    .stat-item + .stat-item {
-      border-left: 1px solid var(--border);
-    }
-    .stat-item h2 {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800; font-size: 34px;
-      color: var(--white);
-      line-height: 1;
-    }
-    .stat-item p { font-size: 12px; color: var(--grey); margin-top: 5px; letter-spacing: 0.5px; font-weight: 600; }
+/* =========================================
+   RELEASES
+   ========================================= */
+.release-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; margin-top: 40px; }
+.release-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2); overflow: hidden; transition: border-color 0.2s, transform 0.25s; cursor: pointer; }
+.release-card:hover { border-color: var(--border); transform: translateY(-6px) scale(1.02); }
+.release-card img { width:100%; aspect-ratio:1; object-fit:cover; display:block; filter: grayscale(1); }
+.release-placeholder { width:100%; aspect-ratio:1; background: var(--surface2); display:flex; align-items:center; justify-content:center; font-size:28px; color: var(--text2); }
+.release-body { padding: 12px; }
+.release-body h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.release-body p { font-size: 11.5px; color: var(--text2); }
+.release-new { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.92); color: #0a0a0a; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
 
-    /* ─── SECTION ─── */
-    section.section {
-      position: relative; z-index: 1;
-      max-width: 1100px; margin: 0 auto;
-      padding: 100px 24px;
-    }
+/* =========================================
+   FAQ
+   ========================================= */
+.faq-wrap { max-width: 740px; margin: 0 auto; }
+.faq-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 36px; justify-content: center; }
+.faq-filters button { padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border); background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
+.faq-filters button:hover, .faq-filters button.active { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.22); }
+.faq-items { display: flex; flex-direction: column; gap: 6px; }
+.faq-item { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s; }
+.faq-item:hover { border-color: var(--border); }
+.faq-item.open { border-color: rgba(255,255,255,0.22); }
+.faq-q { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; cursor: pointer; font-size: 14.5px; font-weight: 500; gap: 12px; }
+.faq-icon { width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0; background: var(--surface3); display: flex; align-items: center; justify-content: center; color: var(--text2); font-size: 17px; font-weight: 300; transition: background 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.faq-item.open .faq-icon { background: var(--white); color: #080808; transform: rotate(45deg); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.faq-answer p { padding: 0 20px 18px; font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+.faq-item.open .faq-answer { max-height: 300px; }
 
-    .section-label {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--white-70); font-weight: 800; margin-bottom: 14px;
-    }
-    .section-label::before {
-      content: ''; display: block; width: 20px; height: 1px; background: var(--white-40);
-    }
+/* =========================================
+   CTA BANNER
+   ========================================= */
+.cta-banner { margin: 0 5%; border-radius: var(--radius3); background: var(--surface); border: 1px solid var(--border); padding: 80px 60px; text-align: center; position: relative; overflow: hidden; }
+.cta-banner::before { content: ''; position: absolute; top: -120px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%); filter: blur(60px); pointer-events: none; animation: orbDrift 15s ease-in-out infinite; }
+.cta-banner h2 { font-family: 'Outfit', sans-serif; font-size: clamp(32px, 4vw, 54px); font-weight: 900; letter-spacing: -1.5px; margin-bottom: 14px; position: relative; }
+.cta-banner h2 .accent { color: var(--white); }
+.cta-banner p { font-size: 15px; color: var(--text2); margin-bottom: 36px; position: relative; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
 
-    .section-title {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800; font-size: clamp(28px, 5vw, 42px);
-      letter-spacing: -1px; line-height: 1.1;
-      margin-bottom: 14px;
-    }
-    .section-sub { color: var(--grey); font-size: 15px; line-height: 1.7; max-width: 520px; }
+/* =========================================
+   FOOTER
+   ========================================= */
+.footer { padding: 64px 5% 32px; border-top: 1px solid var(--border2); margin-top: 80px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; max-width: 1200px; margin: 0 auto 52px; }
+.footer-brand-text { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 260px; margin: 14px 0 22px; }
+.footer-socials { display: flex; gap: 8px; }
+.social-ico { width: 36px; height: 36px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--text2); font-size: 14px; text-decoration: none; transition: border-color 0.15s, color 0.15s, transform 0.2s; }
+.social-ico:hover { border-color: var(--border); color: var(--text); transform: translateY(-3px); }
+.footer-col h4 { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 18px; letter-spacing: -0.2px; }
+.footer-col a { display: block; font-size: 13.5px; color: var(--text2); text-decoration: none; margin-bottom: 11px; transition: color 0.15s; }
+.footer-col a:hover { color: var(--text); }
+.footer-bottom { max-width: 1200px; margin: 0 auto; border-top: 1px solid var(--border2); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--text3); flex-wrap: wrap; gap: 10px; }
 
-    /* ─── FEATURES GRID ─── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px; margin-top: 56px;
-    }
+/* =========================================
+   REVEAL
+   ========================================= */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
 
-    .feat-card {
-      background: var(--black-2);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 28px 26px;
-      transition: all 0.35s;
-      position: relative; overflow: hidden;
-    }
-    .feat-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(400px at 0% 0%, rgba(255,255,255,0.04), transparent);
-      opacity: 0; transition: opacity 0.4s;
-    }
-    .feat-card:hover { border-color: var(--border-hover); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
-    .feat-card:hover::before { opacity: 1; }
+.testi-overflow-padded { padding: 0 5%; }
+.testi-header-pad { padding: 0 5%; }
 
-    .feat-icon {
-      width: 46px; height: 46px;
-      background: var(--white-06);
-      border: 1px solid var(--white-10);
-      border-radius: 12px;
-      display: grid; place-items: center;
-      font-size: 18px; color: var(--white-70);
-      margin-bottom: 18px;
-      transition: all 0.3s;
-    }
-    .feat-card:hover .feat-icon {
-      background: var(--black-4);
-      border-color: var(--white-20);
-      color: var(--white);
-    }
-    .feat-card h3 {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700; font-size: 17px; margin-bottom: 9px;
-      color: var(--white);
-    }
-    .feat-card p { font-size: 14px; color: var(--grey); line-height: 1.65; }
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-card { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .platform-grid { grid-template-columns: repeat(4, 1fr); }
+  .steps-row { grid-template-columns: repeat(2, 1fr); }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+  .feature-split { grid-template-columns: 1fr; gap: 32px; }
+  .feature-split.reverse { direction: ltr; }
+  .photo-strip { grid-template-columns: 1fr 1fr; }
+  .bento-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .bento-cell.span2 { grid-column: span 1; }
+  .bento-cell.tall { grid-row: span 1; }
+  .slide-caption { display: none; }
+}
 
-    /* large feature card */
-    .feat-card.large {
-      grid-column: span 2;
-      display: flex; gap: 30px; align-items: flex-start;
-    }
-    @media (max-width: 700px) { .feat-card.large { grid-column: span 1; flex-direction: column; } }
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .navbar { padding: 0 4%; height: 58px; }
+  .hero { padding: 90px 4% 56px; min-height: auto; }
+  .hero-title { font-size: clamp(42px, 11vw, 62px) !important; letter-spacing: -2px; text-align: left !important; line-height: 0.92; }
+  .hero-sub { font-size: 15px; text-align: left !important; }
+  .hero-btns { flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  .section { padding: 56px 4%; }
+  .section-full { padding: 56px 4%; }
+  .section-h { font-size: clamp(26px, 7vw, 36px); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-item { padding: 24px 18px; }
+  .stat-num { font-size: 36px; }
+  .platform-grid { grid-template-columns: repeat(3, 1fr); }
+  .steps-row { grid-template-columns: 1fr; }
+  .upload-grid { grid-template-columns: 1fr; gap: 0; }
+  .upload-form-card { display: none; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .testi-card { width: 270px; padding: 20px; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
+  .release-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cta-banner { margin: 0 4%; padding: 44px 24px; }
+  .cta-btns { flex-direction: column; align-items: center; }
+  .footer { padding: 48px 4% 28px; margin-top: 56px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .photo-strip { grid-template-columns: 1fr; }
+  .photo-strip-item.short { min-height: 220px; }
+  .photo-strip-item.tall { min-height: 260px; }
+  .bento-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; }
+  .bento-cell, .bento-cell.span2, .bento-cell.tall { grid-column: span 1; grid-row: span 1; height: 200px; }
+  .bento-section { padding: 56px 4%; }
+  .feature-split { padding: 56px 4%; }
+  .fsplit-img img { height: 260px; }
+  .photo-strip-section { padding: 16px 4% 0; }
+  .slide-dots { bottom: 20px; }
+  .hero-bg-overlay-left { background: linear-gradient(180deg, rgba(7,7,7,0.85) 0%, rgba(7,7,7,0.72) 60%, rgba(7,7,7,0.38) 100%); }
+}
 
-    /* ─── PLATFORM PILLS ─── */
-    .platforms {
-      position: relative; z-index: 1;
-      padding: 0 24px 100px;
-      overflow: hidden;
-    }
-    .platforms-inner { max-width: 1100px; margin: 0 auto; }
-    .platforms h2 {
-      font-family: 'Outfit', sans-serif; font-weight: 800;
-      font-size: clamp(24px, 4vw, 36px); letter-spacing: -0.5px;
-      text-align: center; margin-bottom: 36px;
-    }
-    .pill-row {
-      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
-    }
-    .pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 18px; border-radius: 100px;
-      background: var(--black-2);
-      border: 1px solid var(--border);
-      font-size: 13px; color: var(--grey); font-weight: 600;
-      transition: all 0.25s; cursor: default;
-    }
-    .pill i { color: var(--white-70); font-size: 13px; }
-    .pill:hover { border-color: var(--border-hover); color: var(--white); background: var(--black-3); }
+@media (max-width: 480px) {
+  .hero-title { font-size: clamp(36px, 12vw, 52px) !important; }
+  .platform-grid { grid-template-columns: repeat(3, 1fr); }
+  .footer-grid { grid-template-columns: 1fr; }
+  .release-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-cta { padding: 8px 12px !important; font-size: 12px !important; }
+  .cta-btns .btn-primary, .cta-btns .btn-secondary { width: 100%; max-width: 300px; justify-content: center; }
+}
 
-    /* ─── HOW IT WORKS ─── */
-    .steps {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 30px; margin-top: 56px; position: relative;
-    }
-    .step { text-align: center; }
-    .step-num {
-      width: 56px; height: 56px; border-radius: 50%;
-      background: var(--white-06);
-      border: 1.5px solid var(--white-20);
-      display: grid; place-items: center;
-      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px;
-      color: var(--white); margin: 0 auto 18px;
-    }
-    .step h3 {
-      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 16px;
-      margin-bottom: 8px;
-    }
-    .step p { font-size: 13px; color: var(--grey); line-height: 1.6; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
 
-    /* ─── CTA ─── */
-    .cta-block {
-      position: relative; z-index: 1;
-      max-width: 800px; margin: 0 auto 100px;
-      background: var(--black-3);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 60px 40px;
-      text-align: center;
-      overflow: hidden;
-    }
-    .cta-block::before {
-      content: '';
-      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
-      pointer-events: none;
-    }
-    .cta-block h2 {
-      font-family: 'Outfit', sans-serif; font-weight: 800;
-      font-size: clamp(26px, 5vw, 40px); letter-spacing: -1px;
-      margin-bottom: 14px;
-    }
-    .cta-block p { color: var(--grey); font-size: 15px; margin-bottom: 30px; }
-    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-
-    /* ─── FOOTER ─── */
-    footer {
-      position: relative; z-index: 1;
-      background: var(--black);
-      border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
-      color: var(--grey); font-size: 13px;
-    }
-    footer span { color: var(--white-90); font-weight: 700; }
-
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0; transform: translateY(32px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* ─── MOBILE ─── */
-    @media (max-width: 640px) {
-      header { padding: 0 18px; }
-      .hero p { font-size: 15px; }
-      .stats-bar { grid-template-columns: 1fr; border-radius: 16px; }
-      .stat-item + .stat-item { border-left: none; border-top: 1px solid var(--border); }
-      section.section { padding: 70px 18px; }
-      .cta-block { padding: 44px 22px; }
-    }
-
-    /* Respect users who prefer reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .hero-video-wrap video { transition: none; }
-    }
-  </style>
+</style>
 </head>
 <body>
 
-<!-- ─── HEADER ─── -->
-<header>
-  <div class="logo">
-    <img src="https://www.444musicdistro.com/black.png" alt="444Music" class="logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="logo-icon-fallback" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18V5l12-2v13"/>
-        <circle cx="6" cy="18" r="3"/>
-        <circle cx="18" cy="16" r="3"/>
-      </svg>
-    </div>
-  </div>
-  <div class="nav-icon" id="navToggle" role="button" aria-label="Open menu">
-    <i class="fa-solid fa-bars"></i>
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <a href="#" class="nav-logo">
+    <img src="logo.png" alt="444Music" class="nav-logo-img"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="nav-logo-fallback" style="display:none;">4</div>
+    444Music
+  </a>
+  <nav class="nav-links">
+    <a href="#">Home</a>
+    <a href="#tools">Tools</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#">Analytics</a>
+    <a href="#">Partners</a>
+    <a href="#">Contact</a>
+  </nav>
+  <div class="nav-right">
+    <a href="https://444musicblog.vercel.app/" class="nav-login">Promo</a>
+    <a href="https://444musicblog.vercel.app/" class="nav-cta">Visit Blog</a>
+    <a href="nav.html" class="hamburger" id="menuBtn">
+      <span></span><span></span><span></span>
+    </a>
   </div>
 </header>
 
-<!-- ─── SIDEBAR OVERLAY ─── -->
-<div class="sidebar-overlay" id="overlay"></div>
-
-<!-- ─── SIDEBAR ─── -->
-<nav class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="s-logo">
-      <img src="https://www.444musicdistro.com/black.png" alt="444Music" class="s-logo-icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="s-logo-icon-fallback" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18V5l12-2v13"/>
-          <circle cx="6" cy="18" r="3"/>
-          <circle cx="18" cy="16" r="3"/>
-        </svg>
-      </div>
-    </div>
-    <div class="sidebar-close" id="closeSidebar">
-      <i class="fa-solid fa-xmark"></i>
-    </div>
-  </div>
-
-  <div class="sidebar-section-label">Navigation</div>
-
-  <a href="profile.html">
-    <i class="fa-solid fa-user"></i>
-    <span>Account</span>
-  </a>
-  <a href="wey.html">
-    <i class="fa-solid fa-gauge-high"></i>
-    <span>Dashboard</span>
-  </a>
-  <a href="pricing.html">
-    <i class="fa-solid fa-upload"></i>
-    <span>Upload Release</span>
-  </a>
-  <a href="insights.html">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Analytics</span>
-  </a>
-  <a href="ear.html">
-    <i class="fa-solid fa-wallet"></i>
-    <span>Earnings</span>
-  </a>
-
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section-label">More</div>
-
-  <a href="tools.html">
-    <i class="fa-solid fa-toolbox"></i>
-    <span>More Tools</span>
-  </a>
-  <a href="legal.html">
-    <i class="fa-solid fa-circle-info"></i>
-    <span>About Us</span>
-  </a>
- <a href="mailto:444musicdistro@gmail.com">
-  <i class="fa-solid fa-envelope"></i>
-  <span>Contact Support</span>
-</a>
-  <div class="sidebar-divider"></div>
-
-  <a href="ark.html" class="logout">
-    <i class="fa-solid fa-right-from-bracket"></i>
-    <span>Logout</span>
-  </a>
-</nav>
-
-<!-- ─── HERO ─── -->
+<!-- ===== HERO ===== -->
 <section class="hero">
 
-  <!-- VIDEO BACKGROUND
-       Candidate clips (all real, direct Mixkit files, verified live):
-       1. Guitarist on stage (default) → https://assets.mixkit.co/videos/475/475-360.mp4
-       2. DJ playing on stage          → https://assets.mixkit.co/videos/4026/4026-360.mp4
-       3. Rock band live performance   → https://assets.mixkit.co/videos/485/485-360.mp4
-       4. Person singing on stage      → https://assets.mixkit.co/videos/490/490-360.mp4
-       To switch: just change the src on the <source> tag below to any of the above. -->
-  <div class="hero-video-wrap">
-    <video id="heroVideo" autoplay muted loop playsinline preload="auto">
-      <source src="https://assets.mixkit.co/videos/475/475-360.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="hero-video-overlay"></div>
-
-  <h1>Distribute Your Music<br><span>to the World</span></h1>
-
-  <p>
-    Fast, reliable and affordable music distribution to every major streaming platform —
-    built for independent artists who demand more.
-    <strong>Made in Ghana. Built for the World.</strong>
-  </p>
-
-  <div class="hero-btns">
-    <a href="pricing.html" class="btn-primary">
-      <i class="fa-solid fa-rocket"></i> Create New Release 
-    </a>
-    <a href="wey.html" class="btn-secondary">
-      <i class="fa-solid fa-play"></i> View Dashboard
-    </a>
+  <!-- 5-clip video background, shuffled + cross-faded via JS below -->
+  <div class="hero-bg-slider" id="heroBgSlider" aria-hidden="true">
+    <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
+    <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
   </div>
 
-  <div class="scroll-hint">
-    Scroll <i class="fa-solid fa-chevron-down"></i>
-  </div>
-</section>
+  <div class="hero-bg-overlay-base"  aria-hidden="true"></div>
+  <div class="hero-bg-overlay-left"  aria-hidden="true"></div>
+  <div class="hero-bg-overlay-bottom" aria-hidden="true"></div>
 
-<!-- ─── STATS ─── -->
-<div style="position:relative;z-index:1;max-width:700px;margin:0 auto;padding:0 24px 80px;">
-  <div class="stats-bar reveal">
-    <div class="stat-item">
-      <h2>150+</h2>
-      <p>Artists Distributed</p>
-    </div>
-    <div class="stat-item">
-      <h2>30+</h2>
-      <p>Global Stores</p>
-    </div>
-    <div class="stat-item">
-      <h2>100%</h2>
-      <p>Artist Ownership</p>
-    </div>
-  </div>
-</div>
-
-<!-- ─── FEATURES ─── -->
-<section class="section">
-  <div class="reveal">
-    <div class="section-label">What We Offer</div>
-    <h2 class="section-title">Everything you need to<br>succeed as an artist</h2>
-    <p class="section-sub">From distribution to analytics, 444Music gives you the full toolkit — no middlemen, no hidden fees.</p>
+  <div class="slide-dots" aria-hidden="true">
+    <div class="slide-dot active" data-idx="0"></div>
+    <div class="slide-dot" data-idx="1"></div>
+    <div class="slide-dot" data-idx="2"></div>
+    <div class="slide-dot" data-idx="3"></div>
+    <div class="slide-dot" data-idx="4"></div>
   </div>
 
-  <div class="features-grid">
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-globe"></i></div>
-      <h3>Global Reach</h3>
-      <p>Your music reaches Spotify, Apple Music, Boomplay, Audiomack and 30+ platforms worldwide in days.</p>
+  <div class="slide-caption" id="slideCaption">
+    <div class="slide-caption-icon"><i class="fa-solid fa-music"></i></div>
+    <div class="slide-caption-text">
+      <strong id="captionTitle">Live on Stage</strong>
+      <span id="captionSub">From upload to the world</span>
     </div>
+  </div>
 
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-bolt"></i></div>
-      <h3>Fast Delivery</h3>
-      <p>Upload today, go live in days. Our streamlined pipeline gets your music out faster than anyone.</p>
-    </div>
-
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-shield-halved"></i></div>
-      <h3>Full Ownership</h3>
-      <p>You keep your masters, your rights and 100% of your royalties. Always.</p>
-    </div>
-
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-chart-bar"></i></div>
-      <h3>Real-Time Insights</h3>
-      <p>Track streams, listeners and revenue across all platforms from one clean dashboard.</p>
-    </div>
-
-    <div class="feat-card large reveal">
-      <div class="feat-icon" style="flex-shrink:0;width:54px;height:54px;"><i class="fa-solid fa-coins"></i></div>
-      <div>
-        <h3>Transparent Earnings</h3>
-        <p>Know exactly where every cedi and dollar comes from. Monthly payouts, no delays, no funny maths. We believe artists should be paid what they're owed — fully and on time.</p>
+  <div class="hero-inner">
+    <div>
+      <h1 class="hero-title display">
+        <span class="line1">Distribution +</span>
+        <span class="line2">Industry</span>
+        <span class="accent">Building</span>
+      </h1>
+      <p class="hero-sub">
+        444Music Distribution powers independent artists with global streaming access,
+        real-time royalty tracking, and industry-grade tools — all in one place.
+      </p>
+      <div class="hero-btns">
+        <a href="maintenance.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Create Account</a>
+        <a href="maintenance.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i> Sign In</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="proof-avatars">
+          <div class="proof-av">A</div>
+          <div class="proof-av dim">K</div>
+          <div class="proof-av dim2">M</div>
+          <div class="proof-av dim">J</div>
+          <div class="proof-av dim2">T</div>
+        </div>
+        <div class="proof-text" style="margin-left:18px;"><strong>7,000+</strong> artists already distributing</div>
       </div>
     </div>
 
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-headphones"></i></div>
-      <h3>Artist Support</h3>
-      <p>Dedicated support via WhatsApp. Real humans who actually care about your career.</p>
-    </div>
-
-    <div class="feat-card reveal">
-      <div class="feat-icon"><i class="fa-solid fa-id-badge"></i></div>
-      <h3>Artist Profile</h3>
-      <p>Build your branded artist page, manage releases and showcase your catalogue.</p>
+    <!-- Hero Dashboard Card -->
+    <div class="hero-card">
+      <div class="chip stores"><i class="fa-solid fa-circle-check"></i><span style="color:var(--text);font-weight:600;">Live on 100+ stores</span></div>
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon"><i class="fa-solid fa-music"></i></div>
+          <div class="card-header-text"><h4>New Release Upload</h4><p>Artist Dashboard</p></div>
+        </div>
+        <div class="card-live">Live</div>
+      </div>
+      <div class="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p><strong>Drop your audio here</strong><br>WAV · FLAC · MP3 supported</p>
+      </div>
+      <div class="track-row">
+        <div class="track-art"><i class="fa-solid fa-waveform-lines"></i></div>
+        <div class="track-info"><h5>Better Days</h5><p>Uploaded · 3.2 MB · WAV</p></div>
+        <span class="track-badge t-live">Live</span>
+      </div>
+      <div class="track-row">
+        <div class="track-art"><i class="fa-solid fa-compact-disc"></i></div>
+        <div class="track-info"><h5>Rise Up (feat. Kojo)</h5><p>Processing · 4.1 MB · WAV</p></div>
+        <span class="track-badge t-proc">Processing</span>
+      </div>
+      <div class="track-row">
+        <div class="track-art"><i class="fa-solid fa-music"></i></div>
+        <div class="track-info"><h5>Midnight Drive</h5><p>Queued · 3.8 MB · WAV</p></div>
+        <span class="track-badge t-pend">Pending</span>
+      </div>
+      <div class="card-progress">
+        <div class="prog-header"><span>Distributing to stores…</span><span>78%</span></div>
+        <div class="prog-track"><div class="prog-fill"></div></div>
+      </div>
+      <div class="chip royalty">
+        <div class="amount">GHS 4,280</div>
+        <div class="label">Royalties this month</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ─── PLATFORMS ─── -->
-<div class="platforms">
-  <div class="platforms-inner">
-    <div class="reveal">
-      <div class="section-label" style="justify-content:center;">Platforms</div>
-      <h2>We distribute to 30+ stores</h2>
-    </div>
-    <div class="pill-row reveal">
-      <div class="pill"><i class="fa-brands fa-spotify"></i> Spotify</div>
-      <div class="pill"><i class="fa-brands fa-apple"></i> Apple Music</div>
-      <div class="pill"><i class="fa-brands fa-youtube"></i> YouTube Music</div>
-      <div class="pill"><i class="fa-solid fa-music"></i> Boomplay</div>
-      <div class="pill"><i class="fa-solid fa-headphones"></i> Audiomack</div>
-      <div class="pill"><i class="fa-brands fa-amazon"></i> Amazon Music</div>
-      <div class="pill"><i class="fa-solid fa-record-vinyl"></i> Deezer</div>
-      <div class="pill"><i class="fa-solid fa-play"></i> Tidal</div>
-      <div class="pill"><i class="fa-solid fa-compact-disc"></i> Napster</div>
-      <div class="pill"><i class="fa-solid fa-ellipsis"></i> & 20+ more</div>
+<!-- ===== TICKER ===== -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="tick-item"><i class="fa-brands fa-spotify"></i> Spotify</div>
+    <div class="tick-item"><i class="fa-brands fa-apple"></i> Apple Music</div>
+    <div class="tick-item"><i class="fa-brands fa-amazon"></i> Amazon Music</div>
+    <div class="tick-item"><i class="fa-brands fa-youtube"></i> YouTube Music</div>
+    <div class="tick-item"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+    <div class="tick-item"><i class="fa-brands fa-instagram"></i> Instagram</div>
+    <div class="tick-item"><i class="fa-solid fa-music"></i> Boomplay</div>
+    <div class="tick-item"><i class="fa-solid fa-headphones"></i> Audiomack</div>
+    <div class="tick-item"><i class="fa-solid fa-circle-play"></i> Deezer</div>
+    <div class="tick-item"><i class="fa-solid fa-magnifying-glass"></i> Shazam</div>
+    <div class="tick-item"><i class="fa-solid fa-globe"></i> Anghami</div>
+    <div class="tick-item"><i class="fa-solid fa-compact-disc"></i> Trebel</div>
+    <div class="tick-item"><i class="fa-brands fa-spotify"></i> Spotify</div>
+    <div class="tick-item"><i class="fa-brands fa-apple"></i> Apple Music</div>
+    <div class="tick-item"><i class="fa-brands fa-amazon"></i> Amazon Music</div>
+    <div class="tick-item"><i class="fa-brands fa-youtube"></i> YouTube Music</div>
+    <div class="tick-item"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+    <div class="tick-item"><i class="fa-brands fa-instagram"></i> Instagram</div>
+    <div class="tick-item"><i class="fa-solid fa-music"></i> Boomplay</div>
+    <div class="tick-item"><i class="fa-solid fa-headphones"></i> Audiomack</div>
+    <div class="tick-item"><i class="fa-solid fa-circle-play"></i> Deezer</div>
+    <div class="tick-item"><i class="fa-solid fa-magnifying-glass"></i> Shazam</div>
+    <div class="tick-item"><i class="fa-solid fa-globe"></i> Anghami</div>
+    <div class="tick-item"><i class="fa-solid fa-compact-disc"></i> Trebel</div>
+  </div>
+</div>
+
+<!-- ===== STATS ===== -->
+<div class="section reveal">
+  <div class="stats-grid">
+    <div class="stat-item"><div class="stat-num">7K+</div><div class="stat-label">Artists Using 444Music</div></div>
+    <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Releases Distributed</div></div>
+    <div class="stat-item"><div class="stat-num">100+</div><div class="stat-label">Digital Stores</div></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Royalties Kept by Artists</div></div>
+  </div>
+</div>
+
+<!-- ===== PHOTO STRIP ===== -->
+<div class="photo-strip-section">
+  <div class="photo-strip">
+    <div class="photo-strip-item tall">
+      <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&q=80&auto=format&fit=crop"
+           alt="Artist performing on stage" loading="lazy">
+      <div class="photo-label">
+        <strong>From upload to stage</strong>
+        <span>Global reach in days</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ─── HOW IT WORKS ─── -->
-<section class="section" style="padding-top:0;">
-  <div class="reveal">
-    <div class="section-label">Process</div>
-    <h2 class="section-title">Live in 3 simple steps</h2>
-    <p class="section-sub">No confusing forms, no long waiting. Just upload, review and go.</p>
-  </div>
-
-  <div class="steps">
-    <div class="step reveal">
-      <div class="step-num">01</div>
-      <h3>Create Account</h3>
-      <p>Sign up for free in under 60 seconds. No credit card required to get started.</p>
-    </div>
-    <div class="step reveal">
-      <div class="step-num">02</div>
-      <h3>Upload Your Release</h3>
-      <p>Add your tracks, artwork and metadata. Our smart form makes it quick and painless.</p>
-    </div>
-    <div class="step reveal">
-      <div class="step-num">03</div>
-      <h3>Go Live Worldwide</h3>
-      <p>We push your music to every major platform. You get streams, we handle the rest.</p>
+<!-- ===== PLATFORMS ===== -->
+<div class="section reveal">
+  <div style="max-width:1200px;margin:auto;">
+    <div class="label-tag centered" style="justify-content:center;">Distribution Network</div>
+    <h2 class="section-h centered display">Distribute to all major platforms</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Your music, everywhere your fans are. One upload, infinite reach across 100+ global stores.</p>
+    <div class="platform-grid">
+      <div class="platform-item"><i class="fa-brands fa-spotify"></i>Spotify</div>
+      <div class="platform-item"><i class="fa-brands fa-apple"></i>Apple Music</div>
+      <div class="platform-item"><i class="fa-brands fa-amazon"></i>Amazon</div>
+      <div class="platform-item"><i class="fa-brands fa-youtube"></i>YouTube</div>
+      <div class="platform-item"><i class="fa-brands fa-tiktok"></i>TikTok</div>
+      <div class="platform-item"><i class="fa-brands fa-instagram"></i>Instagram</div>
+      <div class="platform-item"><i class="fa-solid fa-music"></i>Boomplay</div>
+      <div class="platform-item"><i class="fa-solid fa-headphones"></i>Audiomack</div>
+      <div class="platform-item"><i class="fa-solid fa-circle-play"></i>Deezer</div>
+      <div class="platform-item"><i class="fa-solid fa-magnifying-glass"></i>Shazam</div>
+      <div class="platform-item"><i class="fa-solid fa-globe"></i>Anghami</div>
+      <div class="platform-item"><i class="fa-solid fa-compact-disc"></i>Trebel</div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ─── CTA ─── -->
-<div style="position:relative;z-index:1;padding:0 24px;">
-  <div class="cta-block reveal">
-    <h2>Ready to release<br>your next hit?</h2>
-    <p>Join 150+ independent artists already distributing with 444Music.</p>
+<!-- ===== HOW IT WORKS ===== -->
+<div class="section reveal" id="how">
+  <div class="label-tag">The Process</div>
+  <h2 class="section-h display">How 444Music Works</h2>
+  <p class="section-p">From upload to global — four simple steps to get your music everywhere.</p>
+  <div class="steps-row">
+    <div class="step"><div class="step-num">01</div><h3>Create an Account</h3><p>Sign up in minutes and access your full artist dashboard with all tools ready to use.</p></div>
+    <div class="step"><div class="step-num">02</div><h3>Upload Your Music</h3><p>Add your audio files, cover artwork, and metadata. ISRC codes are included automatically.</p></div>
+    <div class="step"><div class="step-num">03</div><h3>Select Platforms</h3><p>Choose from 100+ stores and streaming services. Set your release date and schedule ahead.</p></div>
+    <div class="step"><div class="step-num">04</div><h3>Start Earning</h3><p>Track streams, downloads, and royalties in real-time. Withdraw your earnings anytime.</p></div>
+  </div>
+</div>
+
+<!-- ===== FEATURE SPLIT 1 ===== -->
+<div class="feature-split reveal">
+  <div class="fsplit-img">
+    <img src="https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=900&q=80&auto=format&fit=crop"
+         alt="Artist at laptop uploading music to 444Music dashboard" loading="lazy">
+    <div class="fsplit-badge"><i class="fa-solid fa-signal"></i> Live on Spotify · Apple Music</div>
+  </div>
+  <div class="fsplit-text">
+    <div class="label-tag">Built for Creators</div>
+    <h2 class="display">Your music. Your money. Your terms.</h2>
+    <p>444Music puts independent artists first. Upload once and watch your tracks go live across every major platform — while every GHS earned stays in your account.</p>
+    <ul class="feature-bullets">
+      <li><i class="fa-solid fa-check"></i><span><strong>100% royalties</strong> — no cuts, no subscriptions taking your earnings</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>Fast delivery</strong> — your release live within 2–5 business days</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>ISRC &amp; Barcode</strong> — auto-generated free with every release</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>Withdraw anytime</strong> — no minimum thresholds or waiting periods</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== FEATURE SPLIT 2 ===== -->
+<div class="feature-split reverse reveal">
+  <div class="fsplit-img">
+    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&q=80&auto=format&fit=crop"
+         alt="Artist with headphones in professional recording studio" loading="lazy">
+    <div class="fsplit-badge"><i class="fa-solid fa-shield-halved"></i> Rights protected</div>
+  </div>
+  <div class="fsplit-text">
+    <div class="label-tag">Studio to Store</div>
+    <h2 class="display">From the booth to every speaker on earth</h2>
+    <p>Whether you're recording in Accra, Lagos, or London — 444Music delivers your sound to 100+ streaming stores worldwide with zero technical headaches.</p>
+    <ul class="feature-bullets">
+      <li><i class="fa-solid fa-check"></i><span><strong>WAV &amp; FLAC support</strong> — professional quality, lossless delivery</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>African platforms first</strong> — Boomplay, Audiomack, Mdundo &amp; more</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>Label &amp; solo friendly</strong> — manage one artist or an entire roster</span></li>
+      <li><i class="fa-solid fa-check"></i><span><strong>Playlist pitching</strong> — editorial support on Pro plan</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== UPLOAD FLOW ===== -->
+<div class="section reveal">
+  <div class="label-tag">Release Manager</div>
+  <h2 class="section-h display">The easiest release workflow</h2>
+  <p class="section-p">Upload once and we handle delivery, metadata, and store submission for you.</p>
+  <div class="upload-grid">
+    <div class="steps-list">
+      <div class="step-item active"><div class="step-n">1</div><div class="step-text"><h4>Add Track Info</h4><p>Enter title, artist name, genre, release date, and credits. Auto-generate ISRC codes.</p></div></div>
+      <div class="step-item"><div class="step-n">2</div><div class="step-text"><h4>Upload Audio &amp; Cover Art</h4><p>Drop your WAV or FLAC file and a 3000×3000px cover image. Quality check included.</p></div></div>
+      <div class="step-item"><div class="step-n">3</div><div class="step-text"><h4>Choose Your Stores</h4><p>Select from 100+ platforms or go global with one click. Territory restrictions available.</p></div></div>
+      <div class="step-item"><div class="step-n">4</div><div class="step-text"><h4>Review &amp; Submit</h4><p>Our team reviews your release and delivers it on schedule. Track status in dashboard.</p></div></div>
+    </div>
+    <div class="upload-form-card">
+      <div class="form-tabs">
+        <div class="form-tab active">Track Info</div>
+        <div class="form-tab">Cover Art</div>
+        <div class="form-tab">Platforms</div>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:14px;">
+        <div class="cover-drop"><i class="fa-solid fa-image"></i><span>Cover</span></div>
+        <div style="flex:1;">
+          <div class="form-field"><label>Track Title</label><input class="form-input" value="Better Days" readonly></div>
+          <div class="form-field"><label>Primary Artist</label><input class="form-input" value="Kwame Asante" readonly></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Genre</label><input class="form-input" value="Afrobeats" readonly></div>
+        <div class="form-field"><label>Release Date</label><input class="form-input" value="2026-04-15" readonly></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Language</label><input class="form-input" value="English" readonly></div>
+        <div class="form-field"><label>ISRC Code</label><input class="form-input" value="Auto-generated" readonly style="color:var(--text2);"></div>
+      </div>
+      <button class="form-submit"><i class="fa-solid fa-paper-plane"></i>&nbsp; Submit Release</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOOLS ===== -->
+<div class="section reveal" id="tools">
+  <div style="max-width:1200px;margin:auto;">
+    <div class="label-tag">Artist Tools</div>
+    <h2 class="section-h display">Powerful tools for every artist</h2>
+    <p class="section-p">Everything you need to grow, protect, and monetize your music — in one platform.</p>
+    <div class="tools-grid">
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-sack-dollar"></i></div><h3>Music Monetization</h3><p>Earn from streaming platforms, social media, and digital music services worldwide. Transparent royalty splits.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-shield-halved"></i></div><h3>Rights Protection</h3><p>Protect your music from unauthorized use and ensure you receive accurate royalties from every platform globally.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-chart-line"></i></div><h3>Artist Growth</h3><p>Promote releases, pitch to editorial playlists, and reach new fans across global platforms with real analytics.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-chart-simple"></i></div><h3>Real-Time Analytics</h3><p>Track streams, saves, playlists, and audience demographics live across all your releases and platforms.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-user-group"></i></div><h3>Label Management</h3><p>Manage multiple artists and releases from one dashboard. Perfect for labels, collectives, and managers.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="tool"><div class="tool-ico"><i class="fa-solid fa-link"></i></div><h3>Referral Program</h3><p>Invite other artists and earn rewards when they release music through 444Music. Build passive income.</p><a href="#" class="tool-link">Learn more <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TESTIMONIALS ===== -->
+<div class="section-full reveal" style="padding-top:80px;padding-bottom:80px;">
+  <div style="max-width:1200px;margin:0 auto 40px;" class="testi-header-pad">
+    <div class="label-tag centered" style="justify-content:center;">Artist Stories</div>
+    <h2 class="section-h centered display">Artists love 444Music</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Thousands of independent artists trust us to get their music to the world.</p>
+  </div>
+  <div class="testi-overflow testi-overflow-padded">
+    <div class="testi-track">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"444Music got my EP on Spotify and Apple Music within 3 days. The dashboard is so clean and easy to use."</p><div class="testi-author"><div class="testi-av">KA</div><div><div class="testi-name">Kwame Asante</div><div class="testi-role">Afrobeats Artist · Accra</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"I love that I keep 100% of my royalties. No hidden fees, no drama. Just pure distribution."</p><div class="testi-author"><div class="testi-av">MA</div><div><div class="testi-name">Maame Akosua</div><div class="testi-role">Gospel Artist · Kumasi</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"The analytics tool helped me understand where my fans are. Now I know exactly who to target."</p><div class="testi-author"><div class="testi-av">JB</div><div><div class="testi-name">Jay Blaze</div><div class="testi-role">Hip-Hop Artist · Lagos</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Best music distribution for African artists. The Boomplay and Audiomack integration is top tier."</p><div class="testi-author"><div class="testi-av">TA</div><div><div class="testi-name">Temi A.</div><div class="testi-role">Afropop Artist · Abuja</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"444Music is the real deal. My single hit 100K streams in two weeks after I uploaded through them."</p><div class="testi-author"><div class="testi-av">DK</div><div><div class="testi-name">DJ Kofi</div><div class="testi-role">DJ / Producer · Tema</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"444Music got my EP on Spotify and Apple Music within 3 days. The dashboard is so clean and easy to use."</p><div class="testi-author"><div class="testi-av">KA</div><div><div class="testi-name">Kwame Asante</div><div class="testi-role">Afrobeats Artist · Accra</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"I love that I keep 100% of my royalties. No hidden fees, no drama. Just pure distribution."</p><div class="testi-author"><div class="testi-av">MA</div><div><div class="testi-name">Maame Akosua</div><div class="testi-role">Gospel Artist · Kumasi</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"The analytics tool helped me understand where my fans are. Now I know exactly who to target."</p><div class="testi-author"><div class="testi-av">JB</div><div><div class="testi-name">Jay Blaze</div><div class="testi-role">Hip-Hop Artist · Lagos</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Best music distribution for African artists. The Boomplay and Audiomack integration is top tier."</p><div class="testi-author"><div class="testi-av">TA</div><div><div class="testi-name">Temi A.</div><div class="testi-role">Afropop Artist · Abuja</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-quote">"444Music is the real deal. My single hit 100K streams in two weeks after I uploaded through them."</p><div class="testi-author"><div class="testi-av">DK</div><div><div class="testi-name">DJ Kofi</div><div class="testi-role">DJ / Producer · Tema</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BENTO PHOTO GRID ===== -->
+<div class="bento-section reveal">
+  <div class="label-tag centered" style="justify-content:center;">The Artist Journey</div>
+  <h2 class="section-h centered display">Built for every stage of your career</h2>
+  <p class="section-p centered" style="margin-left:auto;margin-right:auto;">From bedroom producer to festival headliner — 444Music scales with you.</p>
+  <div class="bento-grid">
+    <div class="bento-cell span2">
+      <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1000&q=80&auto=format&fit=crop"
+           alt="Producer uploading music on laptop in studio" loading="lazy">
+      <div class="bento-overlay"><span class="bento-tag">Upload &amp; Distribute</span></div>
+    </div>
+    <div class="bento-cell">
+      <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=80&auto=format&fit=crop"
+           alt="Artist checking royalties on phone" loading="lazy">
+      <div class="bento-overlay"><span class="bento-tag">Earn Royalties</span></div>
+    </div>
+    <div class="bento-cell">
+      <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80&auto=format&fit=crop"
+           alt="Artist on stage performing live" loading="lazy">
+      <div class="bento-overlay"><span class="bento-tag">Grow Your Fanbase</span></div>
+    </div>
+    <div class="bento-cell">
+      <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80&auto=format&fit=crop"
+           alt="Artist in recording studio with headphones" loading="lazy">
+      <div class="bento-overlay"><span class="bento-tag">Studio Quality</span></div>
+    </div>
+    <div class="bento-cell">
+      <img src="https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=600&q=80&auto=format&fit=crop"
+           alt="Music streaming analytics on screen" loading="lazy">
+      <div class="bento-overlay"><span class="bento-tag">Real-Time Analytics</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRICING ===== -->
+<div class="section reveal" id="pricing">
+  <div class="label-tag centered" style="justify-content:center;">Pricing</div>
+  <h2 class="section-h centered display">Simple &amp; Transparent Pricing</h2>
+  <p class="section-p centered" style="margin-left:auto;margin-right:auto;">No hidden fees. Keep 100% of your royalties on every plan.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-name">Release &amp; Pay Later</div>
+      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">0</span></div>
+      <div class="price-period">No upfront payment required</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>1 free upload</li>
+        <li><i class="fa-solid fa-check"></i>100+ stores</li>
+        <li><i class="fa-solid fa-check"></i>Free ISRC &amp; Barcode</li>
+        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
+        <li><i class="fa-solid fa-check"></i>Basic analytics</li>
+      </ul>
+      <a href="register.html" class="price-btn-ghost">Get Started Free</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-popular">Most Popular</div>
+      <div class="price-tier">Single</div>
+      <div class="price-name">Single Release</div>
+      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">39.99</span></div>
+      <div class="price-period">Per single release</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>Spotify &amp; Apple priority delivery</li>
+        <li><i class="fa-solid fa-check"></i>Global distribution</li>
+        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
+        <li><i class="fa-solid fa-check"></i>Fast release (2–5 days)</li>
+        <li><i class="fa-solid fa-check"></i>Full analytics dashboard</li>
+      </ul>
+      <a href="register.html" class="price-btn-fill">Release Single</a>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Pro</div>
+      <div class="price-name">EP / Album</div>
+      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">69.99</span></div>
+      <div class="price-period">Per project release</div>
+      <div class="price-divider"></div>
+      <ul class="price-list">
+        <li><i class="fa-solid fa-check"></i>Up to 20 tracks</li>
+        <li><i class="fa-solid fa-check"></i>Global release everywhere</li>
+        <li><i class="fa-solid fa-check"></i>Detailed royalty reports</li>
+        <li><i class="fa-solid fa-check"></i>Priority support</li>
+        <li><i class="fa-solid fa-check"></i>Playlist pitching support</li>
+      </ul>
+      <a href="register.html" class="price-btn-ghost">Release Project</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RELEASES ===== -->
+<div class="section reveal">
+  <div class="label-tag">Latest</div>
+  <h2 class="section-h display">Latest Releases</h2>
+  <p class="section-p">Fresh music distributed through 444Music. Every day, new artists go global.</p>
+  <div id="featuredGrid" class="release-grid">
+    <div class="release-card" style="position:relative;"><div class="release-placeholder"><i class="fa-solid fa-music"></i></div><div class="release-body"><h4>Loading...</h4><p>Artist</p></div></div>
+  </div>
+</div>
+
+<!-- ===== FAQ ===== -->
+<div class="section-full reveal" style="padding:80px 5%;">
+  <div class="faq-wrap">
+    <div class="label-tag centered" style="justify-content:center;">FAQ</div>
+    <h2 class="section-h centered display">Frequently Asked Questions</h2>
+    <p class="section-p centered" style="margin-left:auto;margin-right:auto;">Everything you need to know about releasing music with 444Music.</p>
+    <div class="faq-filters">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="distribution">Distribution</button>
+      <button data-cat="payments">Payments</button>
+      <button data-cat="account">Account</button>
+      <button data-cat="referrals">Referrals</button>
+    </div>
+    <div class="faq-items">
+      <div class="faq-item" data-cat="distribution"><div class="faq-q"><span>How do I upload my music to 444Music?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Log in to your dashboard, create a new release, upload your audio file, cover art, and fill in the required details such as artist name, release date, and genre.</p></div></div>
+      <div class="faq-item" data-cat="distribution"><div class="faq-q"><span>Which stores will my music be sent to?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Your music can be delivered to major streaming platforms including Spotify, Apple Music, TikTok, YouTube Music, Audiomack, Boomplay, and many more global stores — 100+ in total.</p></div></div>
+      <div class="faq-item" data-cat="distribution"><div class="faq-q"><span>How long does it take for my release to go live?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Most releases are processed within 2–5 business days. We recommend submitting at least 7 days before your target release date.</p></div></div>
+      <div class="faq-item" data-cat="distribution"><div class="faq-q"><span>What audio format should I upload?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>We recommend WAV files (16-bit or 24-bit) for best quality. FLAC is also accepted. We transcode to the required format for each store automatically.</p></div></div>
+      <div class="faq-item" data-cat="payments"><div class="faq-q"><span>How do I earn money from my music?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>You earn royalties whenever people stream or download your music on supported platforms. Earnings are collected and shown in your dashboard — you keep 100% of what's yours.</p></div></div>
+      <div class="faq-item" data-cat="payments"><div class="faq-q"><span>When will I receive my royalties?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Streaming platforms usually report earnings monthly, but some may take 2–3 months before the first royalties appear in your dashboard.</p></div></div>
+      <div class="faq-item" data-cat="account"><div class="faq-q"><span>Can labels use 444Music Distribution?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Yes. Labels can manage multiple artists and releases from a single dashboard, with separate royalty tracking for each artist.</p></div></div>
+      <div class="faq-item" data-cat="account"><div class="faq-q"><span>Is my music ownership protected?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Yes. You keep 100% ownership of your music. We only distribute your content to digital stores — we never claim any ownership or rights.</p></div></div>
+      <div class="faq-item" data-cat="referrals"><div class="faq-q"><span>How does the referral program work?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Share your referral link with new artists. When they join and release music through 444Music, you earn referral rewards from their activity — passively.</p></div></div>
+      <div class="faq-item" data-cat="referrals"><div class="faq-q"><span>Where can I find my referral link?</span><div class="faq-icon">+</div></div><div class="faq-answer"><p>Your referral link is inside your dashboard under the Referrals section. You can share it directly or copy it for social media.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="section-full reveal" style="padding:0 0 80px;">
+  <div class="cta-banner">
+    <h2 class="display">Ready to go global?<br><span class="accent">Start distributing today.</span></h2>
+    <p>Join 7,000+ independent artists who trust 444Music to reach their fans worldwide.</p>
     <div class="cta-btns">
-      <a href="pricing.html" class="btn-primary">
-        <i class="fa-solid fa-rocket"></i> Start Distributing
-      </a>
-      <a href="mailto:444musicdistro@gmail.com" class="btn-secondary">
-        <i class="fa-solid fa-envelope"></i> Email Us
-      </a>
+      <a href="register.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i>Create Free Account</a>
+      <a href="login.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i>Sign In</a>
     </div>
   </div>
 </div>
 
-<!-- ─── FOOTER ─── -->
-<footer>
-  © 2026 <span>444Music Distribution</span> — All Rights Reserved · Made in Ghana
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="text-decoration:none;">
+        <img src="logo.png" alt="444Music" class="nav-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="nav-logo-fallback" style="display:none;">4</div>
+        444Music
+      </a>
+      <p class="footer-brand-text">Global music distribution platform for independent artists. Upload once — distribute everywhere.</p>
+      <div class="footer-socials">
+        <a class="social-ico" href="https://www.instagram.com/444music_distribution?igsh=cDdhbTJzYXdkd2lp"><i class="fa-brands fa-instagram"></i></a>
+        <a class="social-ico" href="#"><i class="fa-brands fa-twitter"></i></a>
+        <a class="social-ico" href="https://www.facebook.com/share/g/1BogQQDH5P/"><i class="fa-brands fa-facebook"></i></a>
+        <a class="social-ico" href="https://www.tiktok.com/@444musicdistribution?_r=1&_t=ZS-957m4qSvgj2"><i class="fa-brands fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="about.html">About</a>
+      <a href="register.html">Pricing</a>
+      <a href="support.html">Contact</a>
+      <a href="faq.html">FAQ</a>
+      <a href="https://ofbluhface.vercel.app/">Developer</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="legal.html">Terms of Service</a>
+      <a href="legal.html">Privacy Policy</a>
+      <a href="legal.html">Cookie Policy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Artists</h4>
+      <a href="register.html">Create Account</a>
+      <a href="login.html">Login</a>
+      <a href="#">Dashboard</a>
+      <a href="#">Analytics</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 444Music Distribution. All rights reserved.</span>
+    <span style="display:flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-shield-halved" style="color:var(--text2);"></i>
+      Secured &amp; Independent
+    </span>
+  </div>
 </footer>
 
-<!-- ─── FIREBASE + SCRIPTS ─── -->
+<!-- ===== FIREBASE ===== -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const grid = document.getElementById("featuredGrid");
+async function loadFeatured() {
+  try {
+    const snapshot = await getDocs(collection(db, "submissions"));
+    grid.innerHTML = '';
+    let count = 0;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (!data.coverURL) return;
+      count++;
+      const card = document.createElement("div");
+      card.className = "release-card";
+      card.style.position = "relative";
+      card.innerHTML = `<img src="${data.coverURL}" alt="${data.title || 'Release'}" loading="lazy"><div class="release-new">New</div><div class="release-body"><h4>${data.title || "New Release"}</h4><p>${data.artist || "Artist"}</p></div>`;
+      grid.appendChild(card);
+    });
+    if (count === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:48px 0;"><i class="fa-solid fa-music" style="font-size:26px;margin-bottom:12px;display:block;opacity:0.25;"></i>No releases yet. Be the first to upload.</div>`;
+    }
+  } catch(err) { grid.innerHTML = ''; console.log("Firebase:", err); }
+}
+loadFeatured();
+</script>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-    authDomain: "usersubmissionsportal.firebaseapp.com",
-    projectId: "usersubmissionsportal",
-    storageBucket: "usersubmissionsportal.firebasestorage.app",
-    messagingSenderId: "734783502459",
-    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-  };
+<script>
+/* ── HERO VIDEO BACKGROUND — 5 clips, random order, cross-fade ── */
+/* Drop 5 short muted clips into a "media" folder next to this file:
+   media/hero-1.mp4 … media/hero-5.mp4  (any short concert/studio/upload footage works) */
+const HERO_CLIPS = [
+  { src: 'media/hero-1.mp4', icon: 'fa-solid fa-compact-disc', title: 'Live on Stage',      sub: 'From upload to the world'       },
+  { src: 'media/hero-2.mp4', icon: 'fa-solid fa-laptop',       title: 'Upload & Distribute', sub: 'Studio session → Global stores' },
+  { src: 'media/hero-3.mp4', icon: 'fa-solid fa-headphones',   title: 'Studio Quality',      sub: 'WAV · FLAC · Pro delivery'      },
+  { src: 'media/hero-4.mp4', icon: 'fa-solid fa-tower-broadcast', title: 'Global Reach',     sub: '100+ stores worldwide'          },
+  { src: 'media/hero-5.mp4', icon: 'fa-solid fa-chart-line',   title: 'Real Royalties',      sub: 'Track every stream live'        },
+];
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { location.href = "login.html"; return; }
-    const analyticsRef = doc(db, "analytics", user.uid);
-    const snap = await getDoc(analyticsRef);
-    if (!snap.exists()) {
-      await setDoc(analyticsRef, {
-        name: user.displayName || "Artist",
-        email: user.email,
-        totalStreams: 0, spotifyStreams: 0,
-        appleStreams: 0, youtubeStreams: 0
+const bgVideos = document.querySelectorAll('#heroBgSlider .hero-bg-video');
+const dots     = document.querySelectorAll('.slide-dot');
+const caption  = document.getElementById('slideCaption');
+const capIcon  = caption ? caption.querySelector('.slide-caption-icon i') : null;
+const capTitle = document.getElementById('captionTitle');
+const capSub   = document.getElementById('captionSub');
+
+let queue = shuffle(HERO_CLIPS);
+let qPos = 0;
+let dotPos = 0;
+let activeVidIdx = 0;
+
+function activateDot(idx) { dots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
+
+function updateCaption(item) {
+  if (!caption) return;
+  caption.style.opacity = '0';
+  setTimeout(() => {
+    if (capIcon) capIcon.className = item.icon;
+    if (capTitle) capTitle.textContent = item.title;
+    if (capSub) capSub.textContent = item.sub;
+    caption.style.opacity = '1';
+  }, 280);
+}
+
+function playClip(item, videoEl) {
+  videoEl.src = item.src;
+  videoEl.load();
+  const p = videoEl.play();
+  if (p && p.catch) p.catch(() => {});
+}
+
+function nextClip() {
+  if (qPos >= queue.length) { queue = shuffle(HERO_CLIPS); qPos = 0; }
+  const item = queue[qPos++];
+  const incoming = bgVideos[(activeVidIdx + 1) % 2];
+  const outgoing = bgVideos[activeVidIdx];
+  playClip(item, incoming);
+  incoming.classList.add('active');
+  outgoing.classList.remove('active');
+  activeVidIdx = (activeVidIdx + 1) % 2;
+  dotPos = (dotPos + 1) % 5;
+  activateDot(dotPos);
+  updateCaption(item);
+}
+
+(function initHero() {
+  if (!bgVideos.length) return;
+  const first = queue[qPos++];
+  playClip(first, bgVideos[0]);
+  bgVideos[0].classList.add('active');
+  updateCaption(first);
+  activateDot(0);
+})();
+
+setInterval(nextClip, 9000);
+dots.forEach(dot => dot.addEventListener('click', nextClip));
+
+/* ── FAQ ── */
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-icon').textContent = '+'; });
+    if (!isOpen) { item.classList.add('open'); }
+  });
+});
+
+document.querySelectorAll('.faq-filters button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.faq-filters button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.style.display = (cat === 'all' || item.dataset.cat === cat) ? 'block' : 'none';
+    });
+  });
+});
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+document.querySelectorAll('.step-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.step-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.form-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+const statObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.stat-item').forEach((el, i) => {
+        el.style.animationDelay = `${i * 0.1}s`;
+        el.style.animationPlayState = 'running';
       });
     }
   });
-
-  /* ─ Sidebar ─ */
-  const toggle   = document.getElementById("navToggle");
-  const sidebar  = document.getElementById("sidebar");
-  const overlay  = document.getElementById("overlay");
-  const closeBtn = document.getElementById("closeSidebar");
-
-  function openSidebar() {
-    sidebar.classList.add("active");
-    overlay.classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
-  function closeSidebar() {
-    sidebar.classList.remove("active");
-    overlay.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-
-  toggle.addEventListener("click", openSidebar);
-  closeBtn.addEventListener("click", closeSidebar);
-  overlay.addEventListener("click", closeSidebar);
-
-  /* ─ Scroll reveal ─ */
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add("visible");
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
-
-  /* ─ Hero video: fade in once it can actually play, and fail gracefully
-       (falls back to the plain black background if the clip can't load,
-       so the hero never looks broken) ─ */
-  const heroVideo = document.getElementById("heroVideo");
-  if (heroVideo) {
-    heroVideo.addEventListener("canplay", () => heroVideo.classList.add("loaded"));
-    heroVideo.addEventListener("error", () => {
-      const wrap = heroVideo.closest(".hero-video-wrap");
-      if (wrap) wrap.style.display = "none";
-    });
-  }
+}, { threshold: 0.2 });
+document.querySelectorAll('.stats-grid').forEach(g => statObs.observe(g));
 </script>
 </body>
 </html>
