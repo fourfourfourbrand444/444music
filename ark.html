@@ -74,7 +74,7 @@ body::before {
 @keyframes orbDrift { 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.05); } 66%{ transform:translate(-20px,40px) scale(0.95); } }
 
 /* =========================================
-   VIDEO HERO BACKGROUND — 5 clips, cross-fade, random order
+   VIDEO HERO BACKGROUND — 3 clips, cross-fade, random order
    ========================================= */
 .hero-bg-slider { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: #000; }
 .hero-bg-video {
@@ -555,7 +555,7 @@ body::before {
 <!-- ===== HERO ===== -->
 <section class="hero">
 
-  <!-- 5-clip video background, shuffled + cross-faded via JS below -->
+  <!-- 3-clip video background, shuffled + cross-faded via JS below -->
   <div class="hero-bg-slider" id="heroBgSlider" aria-hidden="true">
     <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
     <video class="hero-bg-video" muted autoplay loop playsinline preload="auto"></video>
@@ -569,8 +569,6 @@ body::before {
     <div class="slide-dot active" data-idx="0"></div>
     <div class="slide-dot" data-idx="1"></div>
     <div class="slide-dot" data-idx="2"></div>
-    <div class="slide-dot" data-idx="3"></div>
-    <div class="slide-dot" data-idx="4"></div>
   </div>
 
   <div class="slide-caption" id="slideCaption">
@@ -593,8 +591,8 @@ body::before {
         real-time royalty tracking, and industry-grade tools — all in one place.
       </p>
       <div class="hero-btns">
-        <a href="maintenance.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Create Account</a>
-        <a href="maintenance.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i> Sign In</a>
+        <a href="login.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Create Account</a>
+        <a href="login.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i> Sign In</a>
       </div>
       <div class="hero-social-proof">
         <div class="proof-avatars">
@@ -910,7 +908,7 @@ body::before {
         <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
         <li><i class="fa-solid fa-check"></i>Basic analytics</li>
       </ul>
-      <a href="register.html" class="price-btn-ghost">Get Started Free</a>
+      <a href="login.html" class="price-btn-ghost">Get Started Free</a>
     </div>
     <div class="price-card featured">
       <div class="price-popular">Most Popular</div>
@@ -926,7 +924,7 @@ body::before {
         <li><i class="fa-solid fa-check"></i>Fast release (2–5 days)</li>
         <li><i class="fa-solid fa-check"></i>Full analytics dashboard</li>
       </ul>
-      <a href="register.html" class="price-btn-fill">Release Single</a>
+      <a href="login.html" class="price-btn-fill">Release Single</a>
     </div>
     <div class="price-card">
       <div class="price-tier">Pro</div>
@@ -941,7 +939,7 @@ body::before {
         <li><i class="fa-solid fa-check"></i>Priority support</li>
         <li><i class="fa-solid fa-check"></i>Playlist pitching support</li>
       </ul>
-      <a href="register.html" class="price-btn-ghost">Release Project</a>
+      <a href="login.html" class="price-btn-ghost">Release Project</a>
     </div>
   </div>
 </div>
@@ -990,7 +988,7 @@ body::before {
     <h2 class="display">Ready to go global?<br><span class="accent">Start distributing today.</span></h2>
     <p>Join 7,000+ independent artists who trust 444Music to reach their fans worldwide.</p>
     <div class="cta-btns">
-      <a href="register.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i>Create Free Account</a>
+      <a href="login.html" class="btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i>Create Free Account</a>
       <a href="login.html" class="btn-secondary"><i class="fa-solid fa-arrow-right"></i>Sign In</a>
     </div>
   </div>
@@ -1016,7 +1014,7 @@ body::before {
     <div class="footer-col">
       <h4>Company</h4>
       <a href="about.html">About</a>
-      <a href="register.html">Pricing</a>
+      <a href="login.html">Pricing</a>
       <a href="support.html">Contact</a>
       <a href="faq.html">FAQ</a>
       <a href="https://ofbluhface.vercel.app/">Developer</a>
@@ -1029,10 +1027,10 @@ body::before {
     </div>
     <div class="footer-col">
       <h4>Artists</h4>
-      <a href="register.html">Create Account</a>
+      <a href="login.html">Create Account</a>
       <a href="login.html">Login</a>
-      <a href="#">Dashboard</a>
-      <a href="#">Analytics</a>
+      <a href="login.html">Dashboard</a>
+      <a href="login.html">Analytics</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -1083,15 +1081,12 @@ loadFeatured();
 </script>
 
 <script>
-/* ── HERO VIDEO BACKGROUND — 5 clips, random order, cross-fade ── */
-/* Drop 5 short muted clips into a "media" folder next to this file:
-   media/hero-1.mp4 … media/hero-5.mp4  (any short concert/studio/upload footage works) */
+/* ── HERO VIDEO BACKGROUND — 3 clips, random order, cross-fade ──
+   Verified working direct-hosted mp4 sources (Mixkit free stock video CDN). */
 const HERO_CLIPS = [
-  { src: 'media/hero-1.mp4', icon: 'fa-solid fa-compact-disc', title: 'Live on Stage',      sub: 'From upload to the world'       },
-  { src: 'media/hero-2.mp4', icon: 'fa-solid fa-laptop',       title: 'Upload & Distribute', sub: 'Studio session → Global stores' },
-  { src: 'media/hero-3.mp4', icon: 'fa-solid fa-headphones',   title: 'Studio Quality',      sub: 'WAV · FLAC · Pro delivery'      },
-  { src: 'media/hero-4.mp4', icon: 'fa-solid fa-tower-broadcast', title: 'Global Reach',     sub: '100+ stores worldwide'          },
-  { src: 'media/hero-5.mp4', icon: 'fa-solid fa-chart-line',   title: 'Real Royalties',      sub: 'Track every stream live'        },
+  { src: 'https://assets.mixkit.co/videos/17631/17631-720.mp4', icon: 'fa-solid fa-compact-disc',      title: 'Live on Stage',       sub: 'From upload to the world'       },
+  { src: 'https://assets.mixkit.co/videos/4026/4026-720.mp4',   icon: 'fa-solid fa-tower-broadcast',   title: 'Every Stage, Everywhere', sub: 'Distributed to 100+ stores'  },
+  { src: 'https://assets.mixkit.co/videos/475/475-720.mp4',     icon: 'fa-solid fa-headphones',        title: 'Studio Quality',      sub: 'WAV · FLAC · Pro delivery'      },
 ];
 
 function shuffle(arr) {
@@ -1144,7 +1139,7 @@ function nextClip() {
   incoming.classList.add('active');
   outgoing.classList.remove('active');
   activeVidIdx = (activeVidIdx + 1) % 2;
-  dotPos = (dotPos + 1) % 5;
+  dotPos = (dotPos + 1) % HERO_CLIPS.length;
   activateDot(dotPos);
   updateCaption(item);
 }
