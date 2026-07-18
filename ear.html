@@ -11,23 +11,24 @@
     html { scroll-behavior: smooth; }
 
     :root {
-      --bg: #060606;
-      --surface: #0d0d0d;
-      --surface2: #111111;
-      --surface3: #161616;
+      --bg: #050505;
+      --surface: #0c0c0c;
+      --surface2: #101010;
+      --surface3: #151515;
       --border: rgba(255,255,255,0.06);
-      --border-h: rgba(255,255,255,0.12);
-      --accent: #7c3aed;
-      --accent2: #a78bfa;
-      --accent-dim: rgba(124,58,237,0.12);
-      --green: #22c55e;
-      --green-dim: rgba(34,197,94,0.1);
-      --cyan: #06b6d4;
-      --cyan-dim: rgba(6,182,212,0.1);
-      --warn: #f59e0b;
-      --warn-dim: rgba(245,158,11,0.1);
-      --danger: #ef4444;
-      --danger-dim: rgba(239,68,68,0.1);
+      --border-h: rgba(255,255,255,0.14);
+
+      /* monochrome accent scale — replaces all prior color hues */
+      --mono: #ffffff;
+      --mono-dim: rgba(255,255,255,0.09);
+      --mono-glow: rgba(255,255,255,0.22);
+      --bright: #e9e9e9;
+      --mid: #b8b8b8;
+      --soft: #8a8a8a;
+      --bright-dim: rgba(233,233,233,0.10);
+      --mid-dim: rgba(184,184,184,0.09);
+      --soft-dim: rgba(138,138,138,0.09);
+
       --text: #efefef;
       --muted: #555;
       --muted2: #888;
@@ -56,8 +57,8 @@
     ══════════════════════════════════════ */
 
     @keyframes logo-pulse {
-      0%, 100% { box-shadow: 0 0 16px rgba(124,58,237,0.45); }
-      50%       { box-shadow: 0 0 30px rgba(124,58,237,0.8); }
+      0%, 100% { box-shadow: 0 0 16px rgba(255,255,255,0.25); }
+      50%       { box-shadow: 0 0 30px rgba(255,255,255,0.5); }
     }
     @keyframes blink {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -81,17 +82,17 @@
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     @keyframes balance-glow {
-      0%, 100% { border-color: rgba(124,58,237,0.1); }
-      50%       { border-color: rgba(124,58,237,0.28); box-shadow: 0 0 40px rgba(124,58,237,0.06); }
+      0%, 100% { border-color: rgba(255,255,255,0.08); }
+      50%       { border-color: rgba(255,255,255,0.22); box-shadow: 0 0 40px rgba(255,255,255,0.05); }
     }
     @keyframes icon-float {
       0%, 100% { transform: translateY(0); }
       50%       { transform: translateY(-4px); }
     }
     @keyframes pulse-ring {
-      0%  { box-shadow: 0 0 0 0 rgba(124,58,237,0.4); }
-      70% { box-shadow: 0 0 0 12px rgba(124,58,237,0); }
-      100%{ box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+      0%  { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+      70% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(255,255,255,0); }
     }
     @keyframes count-up {
       from { opacity: 0; transform: translateY(10px) scale(0.96); }
@@ -128,8 +129,8 @@
     .pbar {
       position: fixed; top: 0; left: 0; height: 2px; width: 0;
       z-index: 1002;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 10px rgba(124,58,237,0.7);
+      background: var(--mono);
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
       transition: width 0.1s linear;
     }
 
@@ -140,7 +141,7 @@
       position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 32px; height: 62px;
-      background: rgba(6,6,6,0.94); backdrop-filter: blur(24px);
+      background: rgba(5,5,5,0.94); backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       animation: nav-in 0.5s cubic-bezier(0.22,1,0.36,1) both;
     }
@@ -148,8 +149,8 @@
     .tb-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
     .tb-logo-icon {
       width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
-      background: var(--accent); display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 13px;
+      background: var(--mono); display: flex; align-items: center; justify-content: center;
+      color: #000; font-size: 13px;
       animation: logo-pulse 3s ease-in-out infinite;
     }
     .tb-logo-text { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; color: var(--white); }
@@ -165,12 +166,12 @@
 
     .tb-status {
       display: flex; align-items: center; gap: 6px;
-      background: var(--green-dim); border: 1px solid rgba(34,197,94,0.2);
-      color: #4ade80; font-size: 11.5px; font-weight: 600;
+      background: var(--bright-dim); border: 1px solid rgba(255,255,255,0.16);
+      color: var(--bright); font-size: 11.5px; font-weight: 600;
       padding: 5px 12px; border-radius: 100px; white-space: nowrap;
     }
     .tb-status .dot {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      width: 6px; height: 6px; border-radius: 50%; background: var(--bright);
       animation: blink 2s ease-in-out infinite;
     }
 
@@ -180,7 +181,7 @@
       display: flex; align-items: center; justify-content: center;
       color: var(--muted2); font-size: 14px; cursor: pointer; transition: all 0.2s;
     }
-    .tb-avatar:hover { border-color: var(--accent); color: var(--accent2); }
+    .tb-avatar:hover { border-color: var(--white); color: var(--white); }
 
     /* ── BURGER ── */
     .tb-burger {
@@ -201,7 +202,7 @@
     .mobile-drawer {
       display: none;
       position: fixed; top: 62px; left: 0; right: 0;
-      background: rgba(8,8,8,0.98); backdrop-filter: blur(28px);
+      background: rgba(5,5,5,0.98); backdrop-filter: blur(28px);
       border-bottom: 1px solid var(--border);
       flex-direction: column; gap: 3px;
       padding: 14px 16px 18px; z-index: 99;
@@ -217,7 +218,7 @@
     }
     .mobile-drawer a i { width: 16px; text-align: center; color: var(--muted); font-size: 13px; }
     .mobile-drawer a:hover, .mobile-drawer a.active { color: var(--white); background: var(--surface2); }
-    .mobile-drawer a.active i { color: var(--accent2); }
+    .mobile-drawer a.active i { color: var(--bright); }
     .drawer-divider { height: 1px; background: var(--border); margin: 6px 0; }
 
     /* ══════════════════════════════════════
@@ -233,8 +234,8 @@
 
     .hero-label {
       display: inline-flex; align-items: center; gap: 7px;
-      background: var(--accent-dim); border: 1px solid rgba(124,58,237,0.22);
-      color: var(--accent2); font-size: 11px; font-weight: 600;
+      background: var(--mono-dim); border: 1px solid rgba(255,255,255,0.16);
+      color: var(--bright); font-size: 11px; font-weight: 600;
       padding: 4px 12px; border-radius: 100px;
       letter-spacing: .07em; text-transform: uppercase; margin-bottom: 14px;
       animation: hero-label-in 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both;
@@ -266,9 +267,9 @@
       width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 13px;
     }
-    .hq-icon.g { background: var(--green-dim); color: #4ade80; }
-    .hq-icon.p { background: var(--accent-dim); color: var(--accent2); }
-    .hq-icon.c { background: var(--cyan-dim); color: var(--cyan); }
+    .hq-icon.g { background: var(--bright-dim); color: var(--bright); }
+    .hq-icon.p { background: var(--mid-dim); color: var(--mid); }
+    .hq-icon.c { background: var(--soft-dim); color: var(--soft); }
 
     /* ══════════════════════════════════════
        MAIN GRID
@@ -300,7 +301,7 @@
       letter-spacing: .08em; text-transform: uppercase; color: var(--muted2);
       display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
     }
-    .card-title i { color: var(--accent2); animation: icon-float 3.5s ease-in-out infinite; }
+    .card-title i { color: var(--bright); animation: icon-float 3.5s ease-in-out infinite; }
 
     /* ══════════════════════════════════════
        BALANCE CARD
@@ -312,7 +313,7 @@
     .balance-card::before {
       content: ''; position: absolute; top: -80px; right: -80px;
       width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(124,58,237,0.08), transparent 70%);
+      background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
       pointer-events: none;
     }
 
@@ -324,9 +325,9 @@
     }
     .bal-icon {
       width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
-      background: var(--accent-dim); border: 1px solid rgba(124,58,237,0.2);
+      background: var(--mono-dim); border: 1px solid rgba(255,255,255,0.16);
       display: flex; align-items: center; justify-content: center;
-      color: var(--accent2); font-size: 20px;
+      color: var(--bright); font-size: 20px;
       animation: pulse-ring 3s ease-in-out infinite;
     }
     .bal-label { font-size: 12px; color: var(--muted2); margin-bottom: 3px; }
@@ -349,9 +350,9 @@
       width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 11px;
     }
-    .bb-green { background: var(--green-dim); color: #4ade80; }
-    .bb-cyan  { background: var(--cyan-dim);  color: var(--cyan); }
-    .bb-warn  { background: var(--warn-dim);  color: #fbbf24; }
+    .bb-green { background: var(--bright-dim); color: var(--bright); }
+    .bb-cyan  { background: var(--mid-dim);  color: var(--mid); }
+    .bb-warn  { background: var(--soft-dim);  color: var(--soft); }
     .bal-badge-info small  { display: block; font-size: 11px; color: var(--muted2); }
     .bal-badge-info strong { font-size: 14px; font-weight: 700; color: var(--white); }
 
@@ -367,7 +368,7 @@
     .thresh-track { height: 5px; background: var(--surface3); border-radius: 100px; overflow: hidden; }
     .thresh-fill {
       height: 100%; border-radius: 100px; width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background: linear-gradient(90deg, var(--mid), var(--white), var(--mid));
       background-size: 200% auto;
       transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
       animation: progress-shine 3s linear infinite;
@@ -380,8 +381,8 @@
       padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
       text-decoration: none; transition: all 0.22s; white-space: nowrap;
     }
-    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 18px rgba(124,58,237,0.3); }
-    .btn-primary:hover { background: #6d28d9; transform: translateY(-2px); box-shadow: 0 4px 28px rgba(124,58,237,0.55); }
+    .btn-primary { background: var(--mono); color: #000; box-shadow: 0 0 18px rgba(255,255,255,0.18); }
+    .btn-primary:hover { background: #d6d6d6; transform: translateY(-2px); box-shadow: 0 4px 28px rgba(255,255,255,0.32); }
     .btn-primary:active { transform: translateY(0); }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted2); }
     .btn-outline:hover { border-color: var(--border-h); color: var(--white); transform: translateY(-1px); }
@@ -393,7 +394,7 @@
       padding: 13px 15px; font-size: 12.5px; color: var(--muted2); line-height: 1.65;
       display: flex; gap: 10px; align-items: flex-start;
     }
-    .info-note i { color: var(--accent2); flex-shrink: 0; margin-top: 2px; font-size: 13px; }
+    .info-note i { color: var(--bright); flex-shrink: 0; margin-top: 2px; font-size: 13px; }
 
     /* ── CHART ── */
     .chart-bars {
@@ -406,15 +407,15 @@
       background: var(--surface2); border: 1px solid var(--border);
       position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.2s;
     }
-    .bar:hover { border-color: rgba(124,58,237,0.45); }
+    .bar:hover { border-color: rgba(255,255,255,0.35); }
     .bar:hover .bar-fill { filter: brightness(1.15); }
     .bar-fill {
       position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(180deg, var(--accent2), var(--accent));
+      background: linear-gradient(180deg, var(--bright), var(--mid));
       border-radius: 6px 6px 0 0;
       height: 0%; transition: height 1.3s cubic-bezier(0.22,1,0.36,1);
     }
-    .bar-fill.glow { box-shadow: 0 -5px 14px rgba(124,58,237,0.55); }
+    .bar-fill.glow { box-shadow: 0 -5px 14px rgba(255,255,255,0.35); }
     .bar-lbl { font-size: 10.5px; color: var(--muted); margin-top: 7px; }
 
     .chart-legend { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -444,12 +445,12 @@
     }
     .act-info small { font-size: 11.5px; color: var(--muted2); }
     .act-val { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; flex-shrink: 0; }
-    .val-green { color: #4ade80; }
-    .val-cyan  { color: var(--cyan); }
+    .val-green { color: var(--bright); }
+    .val-cyan  { color: var(--mid); }
     .val-muted { color: var(--muted2); }
     .act-badge { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 100px; flex-shrink: 0; }
-    .ab-pending { background: var(--warn-dim); color: #fbbf24; }
-    .ab-done    { background: var(--green-dim); color: #4ade80; }
+    .ab-pending { background: var(--soft-dim); color: var(--soft); }
+    .ab-done    { background: var(--bright-dim); color: var(--bright); }
 
     /* ── PLATFORMS ── */
     .platform-list { display: flex; flex-direction: column; gap: 13px; }
@@ -458,20 +459,20 @@
       width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 14px;
     }
-    .pi-spotify { background: rgba(29,185,84,0.12); color: #1DB954; }
+    .pi-spotify { background: rgba(255,255,255,0.08); color: var(--bright); }
     .pi-apple   { background: rgba(255,255,255,0.06); color: #f5f5f5; }
-    .pi-youtube { background: rgba(255,0,0,0.10); color: #ff4444; }
-    .pi-amazon  { background: rgba(255,153,0,0.10); color: #ff9900; }
-    .pi-tidal   { background: rgba(6,182,212,0.10); color: var(--cyan); }
+    .pi-youtube { background: rgba(255,255,255,0.06); color: var(--mid); }
+    .pi-amazon  { background: rgba(255,255,255,0.06); color: var(--soft); }
+    .pi-tidal   { background: rgba(255,255,255,0.06); color: var(--mid); }
     .plat-info { flex: 1; min-width: 0; }
     .plat-name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
     .plat-track { height: 4px; background: var(--surface3); border-radius: 100px; overflow: hidden; }
     .plat-fill { height: 100%; border-radius: 100px; transition: width 1.5s cubic-bezier(0.22,1,0.36,1); }
-    .pf-spotify { background: linear-gradient(90deg,#1DB954,#4ade80); }
+    .pf-spotify { background: linear-gradient(90deg,var(--soft),var(--white)); }
     .pf-apple   { background: linear-gradient(90deg,#aaa,#fff); }
-    .pf-youtube { background: linear-gradient(90deg,#ff4444,#ff8888); }
-    .pf-amazon  { background: linear-gradient(90deg,#ff9900,#ffcc44); }
-    .pf-tidal   { background: linear-gradient(90deg,var(--cyan),#a5f3fc); }
+    .pf-youtube { background: linear-gradient(90deg,var(--soft),var(--mid)); }
+    .pf-amazon  { background: linear-gradient(90deg,var(--soft),var(--mid)); }
+    .pf-tidal   { background: linear-gradient(90deg,var(--mid),#e8e8e8); }
     .plat-pct { font-size: 12px; color: var(--muted2); white-space: nowrap; }
 
     /* ── TIPS ── */
@@ -511,7 +512,7 @@
     /* ── POPUP ── */
     .popup-overlay {
       position: fixed; inset: 0; z-index: 5000;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
       display: flex; align-items: center; justify-content: center;
       opacity: 0; pointer-events: none; transition: opacity 0.3s;
       padding: 20px;
@@ -520,14 +521,14 @@
     .popup-box {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 20px; padding: 32px 28px; max-width: 400px; width: 100%;
-      text-align: center; box-shadow: 0 28px 70px rgba(0,0,0,0.85);
+      text-align: center; box-shadow: 0 28px 70px rgba(0,0,0,0.9);
       animation: pop-in 0.35s cubic-bezier(0.22,1,0.36,1) both;
     }
     .popup-icon {
       width: 58px; height: 58px; border-radius: 16px;
-      background: var(--warn-dim); border: 1px solid rgba(245,158,11,0.25);
+      background: var(--soft-dim); border: 1px solid rgba(255,255,255,0.18);
       display: flex; align-items: center; justify-content: center;
-      color: #fbbf24; font-size: 24px; margin: 0 auto 18px;
+      color: var(--soft); font-size: 24px; margin: 0 auto 18px;
       animation: warn-float 2.5s ease-in-out infinite;
     }
     .popup-box h2 { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--white); margin-bottom: 10px; letter-spacing: -0.3px; }
@@ -540,14 +541,14 @@
       border-radius: 10px; padding: 13px; margin: 16px 0;
       font-size: 13px; color: var(--muted2);
     }
-    .popup-threshold strong { color: var(--warn); font-size: 17px; font-family: 'Sora', sans-serif; }
+    .popup-threshold strong { color: var(--white); font-size: 17px; font-family: 'Sora', sans-serif; }
     .popup-btn {
       width: 100%; padding: 12px; border: none; border-radius: 10px;
-      background: var(--accent); color: #fff; font-family: 'DM Sans', sans-serif;
+      background: var(--mono); color: #000; font-family: 'DM Sans', sans-serif;
       font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.22s;
-      box-shadow: 0 0 18px rgba(124,58,237,0.35); margin-top: 6px;
+      box-shadow: 0 0 18px rgba(255,255,255,0.2); margin-top: 6px;
     }
-    .popup-btn:hover { background: #6d28d9; transform: translateY(-1px); box-shadow: 0 4px 24px rgba(124,58,237,0.55); }
+    .popup-btn:hover { background: #d6d6d6; transform: translateY(-1px); box-shadow: 0 4px 24px rgba(255,255,255,0.35); }
 
     /* ══════════════════════════════════════
        RESPONSIVE — TABLET  ≤ 860px
@@ -679,7 +680,7 @@
   <div class="hero-left">
     <div class="hero-label"><i class="fa-solid fa-circle-dollar-to-slot"></i> Earnings Dashboard</div>
     <h1>Your Revenue Center</h1>
-    <p>Real-time earnings from all streaming platforms. Withdraw once you hit $20.</p>
+    <p>Real-time earnings from all streaming platforms. Withdraw once you hit $50.</p>
   </div>
   <div class="hero-quick">
     <div class="hq-pill">
@@ -732,7 +733,7 @@
       <div class="threshold-bar">
         <div class="thresh-top">
           <span>Payout threshold progress</span>
-          <strong>$0 / $20</strong>
+          <strong>$0 / $50</strong>
         </div>
         <div class="thresh-track"><div class="thresh-fill" id="threshFill"></div></div>
       </div>
@@ -751,7 +752,7 @@
 
       <div class="info-note">
         <i class="fa-solid fa-circle-info"></i>
-        <span>Balances update after platform reports — typically 45–60 days after month end. Minimum withdrawal is <strong style="color:var(--white)">$20.00</strong>.</span>
+        <span>Balances update after platform reports — typically 45–60 days after month end. Minimum withdrawal is <strong style="color:var(--white)">$50.00</strong>.</span>
       </div>
     </div>
 
@@ -760,7 +761,7 @@
       <div class="card-title"><i class="fa-solid fa-chart-column"></i> Earnings Over Time</div>
       <div class="chart-bars" id="chartBars"></div>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Daily Revenue</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--bright)"></div> Daily Revenue</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--surface3);border:1px solid var(--border)"></div> No Data</div>
       </div>
     </div>
@@ -770,27 +771,27 @@
       <div class="card-title"><i class="fa-solid fa-list-ul"></i> Recent Activity</div>
       <div class="act-list">
         <div class="act-row">
-          <div class="act-icon" style="background:var(--green-dim);color:#4ade80;"><i class="fa-solid fa-music"></i></div>
+          <div class="act-icon" style="background:var(--bright-dim);color:var(--bright);"><i class="fa-solid fa-music"></i></div>
           <div class="act-info"><strong>Streams</strong><small>All platforms · This month</small></div>
           <span class="act-val val-muted">—</span>
         </div>
         <div class="act-row">
-          <div class="act-icon" style="background:var(--cyan-dim);color:var(--cyan);"><i class="fa-solid fa-download"></i></div>
+          <div class="act-icon" style="background:var(--mid-dim);color:var(--mid);"><i class="fa-solid fa-download"></i></div>
           <div class="act-info"><strong>Downloads</strong><small>All platforms · This month</small></div>
           <span class="act-val val-muted">—</span>
         </div>
         <div class="act-row">
-          <div class="act-icon" style="background:var(--accent-dim);color:var(--accent2);"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="act-icon" style="background:var(--mono-dim);color:var(--bright);"><i class="fa-solid fa-dollar-sign"></i></div>
           <div class="act-info"><strong>Revenue Pending</strong><small>Awaiting platform report</small></div>
           <span class="act-badge ab-pending">Pending</span>
         </div>
         <div class="act-row">
-          <div class="act-icon" style="background:var(--warn-dim);color:#fbbf24;"><i class="fa-solid fa-heart"></i></div>
+          <div class="act-icon" style="background:var(--soft-dim);color:var(--soft);"><i class="fa-solid fa-heart"></i></div>
           <div class="act-info"><strong>Saves / Likes</strong><small>Spotify, Apple Music</small></div>
           <span class="act-val val-muted">—</span>
         </div>
         <div class="act-row">
-          <div class="act-icon" style="background:rgba(239,68,68,0.1);color:#f87171;"><i class="fa-brands fa-youtube"></i></div>
+          <div class="act-icon" style="background:rgba(255,255,255,0.05);color:#c9c9c9;"><i class="fa-brands fa-youtube"></i></div>
           <div class="act-info"><strong>YouTube Content ID</strong><small>Monetisation active</small></div>
           <span class="act-badge ab-done">Active</span>
         </div>
@@ -841,19 +842,19 @@
       <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> Payout Methods</div>
       <div class="pay-grid">
         <div class="pay-method">
-          <div class="pay-method-icon" style="background:rgba(29,185,84,0.1);color:#1DB954;"><i class="fa-brands fa-paypal"></i></div>
+          <div class="pay-method-icon" style="background:rgba(255,255,255,0.06);color:var(--bright);"><i class="fa-brands fa-paypal"></i></div>
           <div class="pay-method-info"><strong>PayPal</strong><small>3–5 days</small></div>
         </div>
         <div class="pay-method">
-          <div class="pay-method-icon" style="background:rgba(6,182,212,0.1);color:var(--cyan);"><i class="fa-solid fa-building-columns"></i></div>
+          <div class="pay-method-icon" style="background:rgba(255,255,255,0.06);color:var(--mid);"><i class="fa-solid fa-building-columns"></i></div>
           <div class="pay-method-info"><strong>Bank Transfer</strong><small>5–7 days</small></div>
         </div>
         <div class="pay-method">
-          <div class="pay-method-icon" style="background:rgba(245,158,11,0.1);color:#fbbf24;"><i class="fa-brands fa-google-pay"></i></div>
+          <div class="pay-method-icon" style="background:rgba(255,255,255,0.06);color:var(--soft);"><i class="fa-brands fa-google-pay"></i></div>
           <div class="pay-method-info"><strong>Mobile Money</strong><small>1–3 days</small></div>
         </div>
         <div class="pay-method">
-          <div class="pay-method-icon" style="background:rgba(124,58,237,0.12);color:var(--accent2);"><i class="fa-solid fa-bitcoin-sign"></i></div>
+          <div class="pay-method-icon" style="background:rgba(255,255,255,0.06);color:var(--mid);"><i class="fa-solid fa-bitcoin-sign"></i></div>
           <div class="pay-method-info"><strong>Crypto</strong><small>Coming soon</small></div>
         </div>
       </div>
@@ -863,19 +864,19 @@
       <div class="card-title"><i class="fa-solid fa-lightbulb"></i> Growth Tips</div>
       <div class="tip-list">
         <div class="tip-item">
-          <div class="tip-icon" style="background:var(--green-dim);color:#4ade80;"><i class="fa-solid fa-share-nodes"></i></div>
+          <div class="tip-icon" style="background:var(--bright-dim);color:var(--bright);"><i class="fa-solid fa-share-nodes"></i></div>
           <div class="tip-text"><strong>Promote your releases</strong><span>Share on social media to drive streams and grow your audience.</span></div>
         </div>
         <div class="tip-item">
-          <div class="tip-icon" style="background:var(--accent-dim);color:var(--accent2);"><i class="fa-solid fa-list-music"></i></div>
+          <div class="tip-icon" style="background:var(--mono-dim);color:var(--bright);"><i class="fa-solid fa-list-music"></i></div>
           <div class="tip-text"><strong>Pitch to playlists</strong><span>Submit for editorial playlists at least 7 days before release.</span></div>
         </div>
         <div class="tip-item">
-          <div class="tip-icon" style="background:var(--cyan-dim);color:var(--cyan);"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="tip-icon" style="background:var(--mid-dim);color:var(--mid);"><i class="fa-solid fa-calendar-check"></i></div>
           <div class="tip-text"><strong>Release consistently</strong><span>Regular releases keep the algorithm working in your favour.</span></div>
         </div>
         <div class="tip-item">
-          <div class="tip-icon" style="background:var(--warn-dim);color:#fbbf24;"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="tip-icon" style="background:var(--soft-dim);color:var(--soft);"><i class="fa-solid fa-chart-line"></i></div>
           <div class="tip-text"><strong>Monitor your analytics</strong><span>Check reports weekly to track which tracks perform best.</span></div>
         </div>
       </div>
@@ -891,8 +892,8 @@
     <h2>Minimum Not Reached</h2>
     <p>Your balance is below the minimum withdrawal threshold.</p>
     <div class="popup-threshold">
-      <i class="fa-solid fa-circle-dollar-to-slot" style="color:var(--warn);"></i>
-      Your balance must reach <strong>$20.00</strong> to withdraw
+      <i class="fa-solid fa-circle-dollar-to-slot" style="color:var(--soft);"></i>
+      Your balance must reach <strong>$50.00</strong> to withdraw
     </div>
     <p class="popup-note">Keep promoting your music to build streams. Your balance updates automatically as earnings are reported.</p>
     <button id="closePopup" class="popup-btn">Got it</button>
@@ -923,12 +924,13 @@
   const closeBtn= document.getElementById('closePopup');
   const fill    = document.getElementById('threshFill');
 
+  const MIN_WITHDRAWAL = 50;
   let userBalance = 0;
 
   function updateBalance(amount) {
     userBalance = amount;
     balEl.textContent = amount.toFixed(2);
-    const pct = Math.min((amount / 20) * 100, 100);
+    const pct = Math.min((amount / MIN_WITHDRAWAL) * 100, 100);
     setTimeout(() => { fill.style.width = pct + '%'; }, 500);
   }
 
@@ -942,7 +944,7 @@
 
   // Withdraw guard
   wBtn.addEventListener('click', (e) => {
-    if (userBalance < 20) { e.preventDefault(); popup.classList.add('active'); }
+    if (userBalance < MIN_WITHDRAWAL) { e.preventDefault(); popup.classList.add('active'); }
   });
   closeBtn.addEventListener('click', () => popup.classList.remove('active'));
   popup.addEventListener('click', (e) => { if (e.target === popup) popup.classList.remove('active'); });
