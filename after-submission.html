@@ -1,38 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saving Release • 444Music</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --black:      #000000;
+  --black-1:    #080808;
+  --black-2:    #0d0d0d;
+  --black-3:    #111111;
+  --black-4:    #161616;
+  --white:      #ffffff;
+  --white-90:   rgba(255,255,255,0.90);
+  --white-70:   rgba(255,255,255,0.70);
+  --white-40:   rgba(255,255,255,0.40);
+  --white-20:   rgba(255,255,255,0.20);
+  --white-10:   rgba(255,255,255,0.10);
+  --white-06:   rgba(255,255,255,0.06);
+  --grey:       #888888;
+  --grey-dark:  #444444;
+  --green:      #22c55e;
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   min-height: 100vh;
-  background: #0a0a0f;
+  background: var(--black);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  font-family: 'Nunito', sans-serif;
   padding: 40px 20px;
+  color: var(--white);
 }
 
 .card {
   width: 100%;
   max-width: 400px;
-  background: #111118;
+  background: var(--black-2);
   border-radius: 20px;
-  border: 1px solid #1e1e2e;
+  border: 1px solid var(--white-10);
   padding: 40px 32px;
   text-align: center;
 }
@@ -42,26 +56,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 9px;
   margin-bottom: 36px;
 }
 
 .brand-icon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-  border-radius: 8px;
+  background: var(--white);
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  color: #fff;
+  color: var(--black);
 }
+.brand-icon svg { width: 17px; height: 17px; }
 
 .brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: #e2e2e2;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--white-90);
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -74,7 +89,7 @@ body {
   margin: 0 auto 28px;
 }
 
-.upload-ring svg {
+.upload-ring svg.ring-svg {
   width: 80px;
   height: 80px;
   transform: rotate(-90deg);
@@ -82,13 +97,13 @@ body {
 
 .ring-bg {
   fill: none;
-  stroke: #1e1e2e;
+  stroke: var(--black-4);
   stroke-width: 3;
 }
 
 .ring-fill {
   fill: none;
-  stroke: #8b5cf6;
+  stroke: var(--white);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 220;
@@ -106,24 +121,26 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 22px;
-  color: #a78bfa;
+  color: var(--white-70);
+  display: flex; align-items: center; justify-content: center;
 }
+.ring-icon svg { width: 22px; height: 22px; }
 
 /* Headings */
 .title {
+  font-family: 'Outfit', sans-serif;
   font-size: 20px;
-  font-weight: 700;
-  color: #f0f0f5;
+  font-weight: 800;
+  color: var(--white);
   margin-bottom: 6px;
   letter-spacing: -0.3px;
 }
 
 .subtitle {
   font-size: 13px;
-  color: #5a5a7a;
+  color: var(--grey);
   margin-bottom: 32px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* Steps */
@@ -140,53 +157,53 @@ body {
   padding: 14px 16px;
   border-radius: 12px;
   border: 1px solid transparent;
-  background: #16161f;
+  background: var(--black-3);
   transition: all 0.4s ease;
   text-align: left;
 }
 
 .step.active {
-  background: #1a1030;
-  border-color: #4c2889;
+  background: var(--black-4);
+  border-color: var(--white-20);
 }
 
 .step.done {
-  background: #111a18;
-  border-color: #1d3a32;
+  background: rgba(34,197,94,0.06);
+  border-color: rgba(34,197,94,0.25);
 }
 
 .step-dot {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1e1e2e;
-  border: 1px solid #2a2a3e;
+  background: var(--black-4);
+  border: 1px solid var(--white-10);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 13px;
-  color: #3a3a5a;
+  color: var(--grey-dark);
   transition: all 0.4s ease;
 }
+.step-dot svg { width: 14px; height: 14px; }
 
 .step.active .step-dot {
-  background: #8b5cf6;
-  border-color: #8b5cf6;
-  color: #fff;
+  background: var(--white);
+  border-color: var(--white);
+  color: var(--black);
 }
 
 .step.done .step-dot {
-  background: #1d6b52;
-  border-color: #1d6b52;
-  color: #4ade80;
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--black);
 }
 
 .step-pulse {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: var(--white);
   animation: pulse 1.2s ease infinite;
   display: none;
   flex-shrink: 0;
@@ -203,20 +220,20 @@ body {
 
 .step-label {
   font-size: 13px;
-  font-weight: 500;
-  color: #3a3a5a;
+  font-weight: 600;
+  color: var(--grey-dark);
   flex: 1;
   transition: color 0.4s ease;
 }
 
-.step.active .step-label { color: #c4b5fd; }
-.step.done  .step-label  { color: #4ade80; }
+.step.active .step-label { color: var(--white-90); }
+.step.done  .step-label  { color: var(--green); }
 
 /* Progress bar */
 .progress-bar {
   width: 100%;
   height: 2px;
-  background: #1e1e2e;
+  background: var(--black-4);
   border-radius: 2px;
   margin-top: 28px;
   overflow: hidden;
@@ -224,7 +241,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+  background: var(--white);
   border-radius: 2px;
   width: 0%;
   animation: progressFill 3.5s ease forwards;
@@ -243,17 +260,29 @@ body {
 
   <!-- Brand -->
   <div class="brand">
-    <div class="brand-icon"><i class="fa-solid fa-music"></i></div>
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"/>
+        <circle cx="6" cy="18" r="3"/>
+        <circle cx="18" cy="16" r="3"/>
+      </svg>
+    </div>
     <span class="brand-name">444Music</span>
   </div>
 
   <!-- Ring -->
   <div class="upload-ring">
-    <svg viewBox="0 0 80 80">
+    <svg class="ring-svg" viewBox="0 0 80 80">
       <circle class="ring-bg"   cx="40" cy="40" r="35"/>
       <circle class="ring-fill" cx="40" cy="40" r="35"/>
     </svg>
-    <div class="ring-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+    <div class="ring-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+        <path d="M12 12v9"/>
+        <path d="m16 16-4-4-4 4"/>
+      </svg>
+    </div>
   </div>
 
   <p class="title">Saving Your Release</p>
@@ -263,25 +292,47 @@ body {
   <div class="steps">
 
     <div class="step active" id="s1">
-      <div class="step-dot"><i class="fa-solid fa-upload"></i></div>
+      <div class="step-dot" id="s1-dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+          <path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>
+        </svg>
+      </div>
       <span class="step-label">Uploading release files</span>
       <div class="step-pulse"></div>
     </div>
 
     <div class="step" id="s2">
-      <div class="step-dot"><i class="fa-solid fa-shield-check"></i></div>
+      <div class="step-dot" id="s2-dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
       <span class="step-label">Checking metadata</span>
       <div class="step-pulse"></div>
     </div>
 
     <div class="step" id="s3">
-      <div class="step-dot"><i class="fa-solid fa-globe"></i></div>
+      <div class="step-dot" id="s3-dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
       <span class="step-label">Preparing distribution</span>
       <div class="step-pulse"></div>
     </div>
 
     <div class="step" id="s4">
-      <div class="step-dot"><i class="fa-solid fa-rocket"></i></div>
+      <div class="step-dot" id="s4-dot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+          <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+          <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+          <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+        </svg>
+      </div>
       <span class="step-label">Finalizing submission</span>
       <div class="step-pulse"></div>
     </div>
@@ -315,6 +366,7 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 const allSteps = ['s1','s2','s3','s4'];
+const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
 function setStep(id) {
   allSteps.forEach(sid => {
@@ -324,7 +376,7 @@ function setStep(id) {
     if (idx < active) {
       el.classList.remove('active');
       el.classList.add('done');
-      el.querySelector('.step-dot').innerHTML = '<i class="fa-solid fa-check"></i>';
+      document.getElementById(sid + '-dot').innerHTML = checkIcon;
     } else if (sid === id) {
       el.classList.add('active');
       el.classList.remove('done');
