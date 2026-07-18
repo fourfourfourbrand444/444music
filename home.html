@@ -5,34 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>444Music Distribution</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
-      --bg-deep:    #000000;
-      --bg-dark:    #000000;
-      --bg-card:    #0a0a0a;
-      --bg-card2:   #0e0e0e;
-      --purple:     #8b5cf6;
-      --purple-lt:  #a78bfa;
-      --purple-dim: #5b3fd1;
-      --accent:     #c4b5fd;
-      --glow:       rgba(139,92,246,0.25);
-      --glow-str:   rgba(139,92,246,0.5);
-      --text:       #f0eeff;
-      --muted:      #7a7a8a;
-      --border:     rgba(139,92,246,0.15);
-      --border-hover: rgba(139,92,246,0.45);
+      --black:      #000000;
+      --black-1:    #080808;
+      --black-2:    #0a0a0a;
+      --black-3:    #0e0e0e;
+      --black-4:    #161616;
+      --white:      #ffffff;
+      --white-90:   rgba(255,255,255,0.90);
+      --white-70:   rgba(255,255,255,0.70);
+      --white-40:   rgba(255,255,255,0.40);
+      --white-20:   rgba(255,255,255,0.20);
+      --white-10:   rgba(255,255,255,0.10);
+      --white-06:   rgba(255,255,255,0.06);
+      --grey:       #888888;
+      --grey-dark:  #444444;
+      --rose:       #f87171;
+      --border:        var(--white-10);
+      --border-hover:  var(--white-40);
+      --glow:       rgba(255,255,255,0.10);
+      --glow-str:   rgba(255,255,255,0.18);
     }
 
+    *, *::before, *::as { margin:0; padding:0; box-sizing:border-box; }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: #000000;
-      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      background: var(--black);
+      color: var(--white);
       overflow-x: hidden;
       min-height: 100vh;
     }
@@ -53,17 +59,14 @@
     .logo {
       font-family: 'Outfit', sans-serif;
       font-weight: 800; font-size: 22px;
-      color: var(--purple-lt);
+      color: var(--white);
       letter-spacing: -0.5px;
       display: flex; align-items: center; gap: 10px;
     }
     .logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--purple-dim), var(--purple));
-      border-radius: 10px;
-      display: grid; place-items: center;
-      font-size: 16px;
-      box-shadow: 0 0 18px var(--glow);
+      height: 32px; width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .nav-icon {
@@ -71,15 +74,15 @@
       display: grid; place-items: center;
       cursor: pointer; border-radius: 10px;
       border: 1px solid var(--border);
-      background: rgba(139,92,246,0.06);
-      color: var(--accent);
+      background: var(--white-06);
+      color: var(--white-70);
       font-size: 18px;
       transition: all 0.25s;
     }
     .nav-icon:hover {
-      background: rgba(139,92,246,0.18);
+      background: var(--black-4);
       border-color: var(--border-hover);
-      box-shadow: 0 0 16px var(--glow);
+      color: var(--white);
     }
     .nav-icon i { transition: transform 0.3s; }
     .nav-icon:hover i { transform: rotate(90deg); }
@@ -99,7 +102,7 @@
       position: fixed; top: 0; right: -300px; bottom: 0;
       width: 272px;
       z-index: 3000;
-      background: #000000;
+      background: var(--black-1);
       border-left: 1px solid var(--border);
       box-shadow: -20px 0 60px rgba(0,0,0,0.9);
       display: flex; flex-direction: column;
@@ -116,35 +119,33 @@
     .sidebar-header .s-logo {
       font-family: 'Outfit', sans-serif;
       font-weight: 800; font-size: 18px;
-      color: var(--purple-lt);
+      color: var(--white);
       display: flex; align-items: center; gap: 9px;
     }
     .sidebar-header .s-logo-icon {
-      width: 30px; height: 30px;
-      background: linear-gradient(135deg, var(--purple-dim), var(--purple));
-      border-radius: 8px;
-      display: grid; place-items: center;
-      font-size: 13px;
+      height: 26px; width: auto;
+      object-fit: contain;
+      display: block;
     }
     .sidebar-close {
       width: 32px; height: 32px; display: grid; place-items: center;
       border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; color: var(--muted); font-size: 15px;
+      cursor: pointer; color: var(--grey); font-size: 15px;
       transition: all 0.2s;
     }
-    .sidebar-close:hover { background: rgba(255,80,80,0.1); border-color: rgba(255,80,80,0.3); color: #ff6060; }
+    .sidebar-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
 
     .sidebar-section-label {
       font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); margin: 4px 0 8px 12px;
-      font-weight: 500;
+      color: var(--grey-dark); margin: 4px 0 8px 12px;
+      font-weight: 700;
     }
 
     .sidebar a {
       display: flex; align-items: center; gap: 13px;
       padding: 12px 14px; margin-bottom: 3px;
-      text-decoration: none; color: var(--muted);
-      border-radius: 11px; font-size: 14px; font-weight: 400;
+      text-decoration: none; color: var(--grey);
+      border-radius: 11px; font-size: 14px; font-weight: 600;
       transition: all 0.25s;
       position: relative; overflow: hidden;
     }
@@ -152,19 +153,19 @@
       content: ''; position: absolute; left: 0; top: 50%;
       transform: translateY(-50%);
       width: 3px; height: 0; border-radius: 0 3px 3px 0;
-      background: var(--purple);
+      background: var(--white);
       transition: height 0.25s;
     }
-    .sidebar a:hover { background: rgba(139,92,246,0.1); color: var(--text); padding-left: 18px; }
+    .sidebar a:hover { background: var(--white-06); color: var(--white); padding-left: 18px; }
     .sidebar a:hover::before { height: 60%; }
-    .sidebar a i { width: 18px; text-align: center; font-size: 14px; color: var(--purple); flex-shrink: 0; }
+    .sidebar a i { width: 18px; text-align: center; font-size: 14px; color: var(--white-70); flex-shrink: 0; }
 
     .sidebar-divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-    .sidebar a.logout { color: #f87171; margin-top: auto; }
-    .sidebar a.logout i { color: #f87171; }
+    .sidebar a.logout { color: var(--rose); margin-top: auto; }
+    .sidebar a.logout i { color: var(--rose); }
     .sidebar a.logout:hover { background: rgba(248,113,113,0.08); color: #fca5a5; }
-    .sidebar a.logout:hover::before { background: #f87171; }
+    .sidebar a.logout:hover::before { background: var(--rose); }
 
     /* sidebar stagger animation */
     .sidebar.active a { animation: slideIn 0.3s ease forwards; opacity: 0; }
@@ -198,7 +199,7 @@
       position: absolute; inset: 0;
       z-index: -2;
       overflow: hidden;
-      background: #000; /* fallback while video loads / if it fails */
+      background: #000;
     }
     .hero-video-wrap video {
       position: absolute;
@@ -207,35 +208,35 @@
       min-width: 100%; min-height: 100%;
       object-fit: cover;
       transform: translate(-50%, -50%);
-      /* filter blends the raw footage into the site's dark-purple palette
-         and keeps it subtle enough that text stays readable */
-      filter: grayscale(0.35) brightness(0.55) contrast(1.05) saturate(1.3);
+      /* filter desaturates the raw footage into the site's black & white
+         palette and keeps it subtle enough that text stays readable */
+      filter: grayscale(1) brightness(0.5) contrast(1.1);
       opacity: 0;
       transition: opacity 1.2s ease;
     }
     .hero-video-wrap video.loaded { opacity: 1; }
 
-    /* gradient + color wash overlay to tie the video into the purple/black theme */
+    /* gradient overlay to tie the video into the black & white theme */
     .hero-video-overlay {
       position: absolute; inset: 0;
       z-index: -1;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(139,92,246,0.22), transparent 70%),
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.08), transparent 70%),
         linear-gradient(180deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 35%, rgba(0,0,0,0.85) 78%, #000 100%);
     }
 
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(139,92,246,0.1);
-      border: 1px solid rgba(139,92,246,0.3);
+      background: var(--white-06);
+      border: 1px solid var(--white-20);
       border-radius: 100px;
       padding: 7px 16px;
       font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase;
-      color: var(--accent); font-weight: 500;
+      color: var(--white-70); font-weight: 700;
       margin-bottom: 28px;
       animation: fadeUp 0.8s ease both;
     }
-    .hero-badge i { font-size: 10px; color: var(--purple); animation: pulse 2s infinite; }
+    .hero-badge i { font-size: 10px; color: var(--white); animation: pulse 2s infinite; }
 
     @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
@@ -251,7 +252,7 @@
     }
 
     .hero h1 span {
-      background: linear-gradient(120deg, var(--purple-lt) 0%, #c084fc 50%, var(--accent) 100%);
+      background: linear-gradient(120deg, var(--white) 0%, var(--white-70) 50%, var(--white-40) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -259,10 +260,10 @@
 
     .hero p {
       max-width: 560px; margin: 0 auto 36px;
-      color: var(--muted); font-size: 16px; line-height: 1.75;
+      color: var(--grey); font-size: 16px; line-height: 1.75;
       animation: fadeUp 0.8s 0.2s ease both;
     }
-    .hero p strong { color: var(--accent); font-weight: 500; }
+    .hero p strong { color: var(--white-90); font-weight: 700; }
 
     .hero-btns {
       display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
@@ -272,51 +273,46 @@
     .btn-primary {
       display: inline-flex; align-items: center; gap: 9px;
       padding: 15px 30px; border-radius: 100px;
-      background: linear-gradient(135deg, var(--purple-dim), var(--purple));
-      color: #fff; font-size: 15px; font-weight: 500;
+      background: var(--white);
+      color: var(--black); font-size: 15px; font-weight: 800;
       text-decoration: none; border: none; cursor: pointer;
-      box-shadow: 0 0 30px var(--glow-str), 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       transition: all 0.3s;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Nunito', sans-serif;
       position: relative; overflow: hidden;
-    }
-    .btn-primary::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
-      border-radius: inherit;
     }
     .btn-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 0 50px var(--glow-str), 0 8px 30px rgba(0,0,0,0.5);
+      opacity: 0.9;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
     }
 
     .btn-secondary {
       display: inline-flex; align-items: center; gap: 9px;
       padding: 14px 30px; border-radius: 100px;
       background: transparent;
-      color: var(--purple-lt); font-size: 15px; font-weight: 500;
+      color: var(--white-90); font-size: 15px; font-weight: 800;
       text-decoration: none; cursor: pointer;
-      border: 1.5px solid rgba(139,92,246,0.4);
+      border: 1.5px solid var(--white-20);
       transition: all 0.3s;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Nunito', sans-serif;
     }
     .btn-secondary:hover {
-      background: rgba(139,92,246,0.12);
-      border-color: var(--purple);
+      background: var(--white-06);
+      border-color: var(--white-40);
       transform: translateY(-3px);
-      box-shadow: 0 0 24px var(--glow);
     }
 
     /* ─── SCROLL INDICATOR ─── */
     .scroll-hint {
       position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 6px;
-      color: var(--muted); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--grey); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      font-weight: 700;
       animation: fadeUp 1s 0.8s ease both;
       z-index: 1;
     }
-    .scroll-hint i { animation: bounce 2s infinite; font-size: 14px; color: var(--purple); }
+    .scroll-hint i { animation: bounce 2s infinite; font-size: 14px; color: var(--white-70); }
     @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
 
     /* ─── STATS BAR ─── */
@@ -324,7 +320,7 @@
       position: relative; z-index: 1;
       display: grid; grid-template-columns: repeat(3,1fr);
       max-width: 700px; margin: 0 auto;
-      background: var(--bg-card);
+      background: var(--black-2);
       border: 1px solid var(--border);
       border-radius: 20px;
       overflow: hidden;
@@ -341,10 +337,10 @@
     .stat-item h2 {
       font-family: 'Outfit', sans-serif;
       font-weight: 800; font-size: 34px;
-      color: var(--purple-lt);
+      color: var(--white);
       line-height: 1;
     }
-    .stat-item p { font-size: 12px; color: var(--muted); margin-top: 5px; letter-spacing: 0.5px; }
+    .stat-item p { font-size: 12px; color: var(--grey); margin-top: 5px; letter-spacing: 0.5px; font-weight: 600; }
 
     /* ─── SECTION ─── */
     section.section {
@@ -356,10 +352,10 @@
     .section-label {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--purple); font-weight: 600; margin-bottom: 14px;
+      color: var(--white-70); font-weight: 800; margin-bottom: 14px;
     }
     .section-label::before {
-      content: ''; display: block; width: 20px; height: 1px; background: var(--purple);
+      content: ''; display: block; width: 20px; height: 1px; background: var(--white-40);
     }
 
     .section-title {
@@ -368,7 +364,7 @@
       letter-spacing: -1px; line-height: 1.1;
       margin-bottom: 14px;
     }
-    .section-sub { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 520px; }
+    .section-sub { color: var(--grey); font-size: 15px; line-height: 1.7; max-width: 520px; }
 
     /* ─── FEATURES GRID ─── */
     .features-grid {
@@ -378,7 +374,7 @@
     }
 
     .feat-card {
-      background: var(--bg-card);
+      background: var(--black-2);
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 28px 26px;
@@ -388,32 +384,33 @@
     .feat-card::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(400px at 0% 0%, rgba(139,92,246,0.07), transparent);
+      background: radial-gradient(400px at 0% 0%, rgba(255,255,255,0.04), transparent);
       opacity: 0; transition: opacity 0.4s;
     }
-    .feat-card:hover { border-color: var(--border-hover); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px var(--glow); }
+    .feat-card:hover { border-color: var(--border-hover); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
     .feat-card:hover::before { opacity: 1; }
 
     .feat-icon {
       width: 46px; height: 46px;
-      background: rgba(139,92,246,0.12);
-      border: 1px solid rgba(139,92,246,0.2);
+      background: var(--white-06);
+      border: 1px solid var(--white-10);
       border-radius: 12px;
       display: grid; place-items: center;
-      font-size: 18px; color: var(--purple-lt);
+      font-size: 18px; color: var(--white-70);
       margin-bottom: 18px;
       transition: all 0.3s;
     }
     .feat-card:hover .feat-icon {
-      background: rgba(139,92,246,0.22);
-      box-shadow: 0 0 20px var(--glow);
+      background: var(--black-4);
+      border-color: var(--white-20);
+      color: var(--white);
     }
     .feat-card h3 {
       font-family: 'Outfit', sans-serif;
       font-weight: 700; font-size: 17px; margin-bottom: 9px;
-      color: var(--text);
+      color: var(--white);
     }
-    .feat-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+    .feat-card p { font-size: 14px; color: var(--grey); line-height: 1.65; }
 
     /* large feature card */
     .feat-card.large {
@@ -440,46 +437,39 @@
     .pill {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 18px; border-radius: 100px;
-      background: var(--bg-card);
+      background: var(--black-2);
       border: 1px solid var(--border);
-      font-size: 13px; color: var(--muted);
+      font-size: 13px; color: var(--grey); font-weight: 600;
       transition: all 0.25s; cursor: default;
     }
-    .pill i { color: var(--purple); font-size: 13px; }
-    .pill:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card2); box-shadow: 0 0 20px var(--glow); }
+    .pill i { color: var(--white-70); font-size: 13px; }
+    .pill:hover { border-color: var(--border-hover); color: var(--white); background: var(--black-3); }
 
     /* ─── HOW IT WORKS ─── */
     .steps {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 30px; margin-top: 56px; position: relative;
     }
-    .steps::before {
-      content: '';
-      position: absolute; top: 32px; left: 10%; right: 10%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      display: none;
-    }
     .step { text-align: center; }
     .step-num {
       width: 56px; height: 56px; border-radius: 50%;
-      background: rgba(139,92,246,0.1);
-      border: 1.5px solid rgba(139,92,246,0.3);
+      background: var(--white-06);
+      border: 1.5px solid var(--white-20);
       display: grid; place-items: center;
       font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px;
-      color: var(--purple-lt); margin: 0 auto 18px;
-      box-shadow: 0 0 24px var(--glow);
+      color: var(--white); margin: 0 auto 18px;
     }
     .step h3 {
       font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 16px;
       margin-bottom: 8px;
     }
-    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .step p { font-size: 13px; color: var(--grey); line-height: 1.6; }
 
     /* ─── CTA ─── */
     .cta-block {
       position: relative; z-index: 1;
       max-width: 800px; margin: 0 auto 100px;
-      background: var(--bg-card2);
+      background: var(--black-3);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 60px 40px;
@@ -490,7 +480,7 @@
       content: '';
       position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(139,92,246,0.2), transparent 70%);
+      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
       pointer-events: none;
     }
     .cta-block h2 {
@@ -498,19 +488,19 @@
       font-size: clamp(26px, 5vw, 40px); letter-spacing: -1px;
       margin-bottom: 14px;
     }
-    .cta-block p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+    .cta-block p { color: var(--grey); font-size: 15px; margin-bottom: 30px; }
     .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
     /* ─── FOOTER ─── */
     footer {
       position: relative; z-index: 1;
-      background: #000000;
+      background: var(--black);
       border-top: 1px solid var(--border);
       padding: 32px 24px;
       text-align: center;
-      color: var(--muted); font-size: 13px;
+      color: var(--grey); font-size: 13px;
     }
-    footer span { color: var(--purple); }
+    footer span { color: var(--white-90); font-weight: 700; }
 
     /* ─── ANIMATIONS ─── */
     @keyframes fadeUp {
@@ -534,7 +524,7 @@
       .cta-block { padding: 44px 22px; }
     }
 
-    /* Respect users who prefer reduced motion: freeze on first frame look (still show video, just no filter transition jump) */
+    /* Respect users who prefer reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .hero-video-wrap video { transition: none; }
     }
@@ -545,8 +535,7 @@
 <!-- ─── HEADER ─── -->
 <header>
   <div class="logo">
-    <div class="logo-icon"><i class="fa-solid fa-music"></i></div>
-    444Music
+    <img src="https://www.444musicdistro.com/black.png" alt="444Music" class="logo-icon">
   </div>
   <div class="nav-icon" id="navToggle" role="button" aria-label="Open menu">
     <i class="fa-solid fa-bars"></i>
@@ -560,8 +549,7 @@
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="s-logo">
-      <div class="s-logo-icon"><i class="fa-solid fa-music"></i></div>
-      
+      <img src="https://www.444musicdistro.com/black.png" alt="444Music" class="s-logo-icon">
     </div>
     <div class="sidebar-close" id="closeSidebar">
       <i class="fa-solid fa-xmark"></i>
@@ -603,7 +591,7 @@
     <span>About Us</span>
   </a>
  <a href="mailto:444musicdistro@gmail.com">
-  <i class="fa-brands fa-google"></i>
+  <i class="fa-solid fa-envelope"></i>
   <span>Contact Support</span>
 </a>
   <div class="sidebar-divider"></div>
@@ -784,8 +772,8 @@
       <a href="pricing.html" class="btn-primary">
         <i class="fa-solid fa-rocket"></i> Start Distributing
       </a>
-      <a href="https://wa.me/+233530399523" class="btn-secondary">
-        <i class="fa-brands fa-whatsapp"></i> Talk to Us
+      <a href="mailto:444musicdistro@gmail.com" class="btn-secondary">
+        <i class="fa-solid fa-envelope"></i> Email Us
       </a>
     </div>
   </div>
@@ -793,7 +781,7 @@
 
 <!-- ─── FOOTER ─── -->
 <footer>
-  © 2026 <span>444Music Distribution</span> — All Rights Reserved · Made with 🎵 in Ghana
+  © 2026 <span>444Music Distribution</span> — All Rights Reserved · Made in Ghana
 </footer>
 
 <!-- ─── FIREBASE + SCRIPTS ─── -->
@@ -863,8 +851,8 @@
   document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 
   /* ─ Hero video: fade in once it can actually play, and fail gracefully
-       (falls back to the plain black/purple gradient background if the
-       clip can't load, so the hero never looks broken) ─ */
+       (falls back to the plain black background if the clip can't load,
+       so the hero never looks broken) ─ */
   const heroVideo = document.getElementById("heroVideo");
   if (heroVideo) {
     heroVideo.addEventListener("canplay", () => heroVideo.classList.add("loaded"));
