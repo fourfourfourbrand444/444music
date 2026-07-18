@@ -3,1165 +3,1377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Releases — 444Music</title>
+<title>Create New Release</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
-/* ═══════════════════════════════════════════════════════
-   444MUSIC — MY RELEASES (WEB)
-   Theme: pure Black & White Luxury — matches the Flutter app
-   exactly. No purple/accent color anywhere except the same
-   status colors the app uses (green / amber / rose / cyan).
-   Font: Nunito (body) + Outfit (display) — same as the app.
-═══════════════════════════════════════════════════════ */
-:root {
-  --black:      #000000;
-  --black-1:    #080808;
-  --black-2:    #0d0d0d;
-  --black-3:    #111111;
-  --black-4:    #161616;
-  --black-5:    #1a1a1a;
-  --white:      #ffffff;
-  --white-90:   rgba(255,255,255,0.90);
-  --white-70:   rgba(255,255,255,0.70);
-  --white-40:   rgba(255,255,255,0.40);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-10:   rgba(255,255,255,0.10);
-  --white-06:   rgba(255,255,255,0.06);
-  --grey:       #888888;
-  --grey-dark:  #444444;
-  --green:      #22c55e;
-  --amber:      #f59e0b;
-  --rose:       #ef4444;
-  --cyan:       #06b6d4;
-  --sidebar-w:  240px;
-}
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+
+/* ── PURE BLACK & WHITE — matches the rest of the site/app exactly.
+   No purple/accent color anywhere; all "accent" vars now resolve
+   to white/grey so focus rings, dropdown arrows, etc. stay monochrome. ── */
+:root {
+  --bg-base:        #080808;
+  --bg-surface:     #0d0d0d;
+  --bg-card:        #111111;
+  --bg-input:       #171717;
+  --bg-input-focus: #1c1c1c;
+  --border:         rgba(255,255,255,0.10);
+  --border-focus:   rgba(255,255,255,0.40);
+  --border-accent:  rgba(255,255,255,0.20);
+  --accent:         #ffffff;
+  --accent-light:   #ffffff;
+  --accent-bright:  #ffffff;
+  --accent-dim:     rgba(255,255,255,0.06);
+  --text-primary:   #e8e8e8;
+  --text-secondary: #888888;
+  --text-muted:     #444444;
+  --success:        #4ade80;
+  --danger:         #f87171;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --t: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --font-display: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
 body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--black);
-  color: var(--white);
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
   min-height: 100vh;
-  overflow-x: hidden;
 }
-a { text-decoration: none; color: inherit; }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-.icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.125em; }
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-  position: fixed; top: 0; left: 0;
-  width: var(--sidebar-w); height: 100vh;
-  background: var(--black-1); border-right: 1px solid var(--white-10);
-  display: flex; flex-direction: column; z-index: 200;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  overflow-y: auto;
+.app-shell { max-width: 720px; margin: 0 auto; min-height: 100vh; position: relative; }
+
+.top-bar {
+  position: sticky; top: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; padding: 14px 20px;
+  background: rgba(8,8,8,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
 }
-.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; border-bottom: 1px solid var(--white-10); }
-.sidebar-logo img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
-.sidebar-logo-fallback { width: 32px; height: 32px; background: var(--white); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sidebar-logo-fallback svg { width: 18px; height: 18px; color: var(--black); }
-.sidebar-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--white); }
-.sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
-.nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); padding: 12px 8px 6px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 10px;
-  color: var(--grey); font-size: 14px; font-weight: 600;
-  transition: all 0.15s; cursor: pointer; position: relative;
+.top-bar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.back-btn {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-primary); cursor: pointer; transition: all var(--t);
 }
-.nav-item:hover { background: var(--black-4); color: var(--white-90); }
-.nav-item.active { background: var(--white-10); color: var(--white); border: 1px solid var(--white-10); }
-.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
-.nav-item.active svg { opacity: 1; }
-.sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--white-10); }
-.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--black-3); border: 1px solid var(--white-10); }
-.user-avatar { width: 32px; height: 32px; border-radius: 8px; background: var(--white-20); border: 1px solid var(--white-20); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--white); flex-shrink: 0; }
-.user-info { min-width: 0; }
-.user-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role { font-size: 11px; color: var(--grey-dark); }
-.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 190; }
+.back-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-accent); }
+.back-btn svg { width: 15px; height: 15px; }
+.top-bar-title {
+  font-family: var(--font-display); font-size: 1.02rem; font-weight: 700;
+  color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.secure-badge {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 999px; padding: 5px 12px;
+  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+}
+.secure-badge svg { width: 10px; height: 10px; }
 
-/* ===== MAIN ===== */
-.main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--white-10); background: var(--black); position: sticky; top: 0; z-index: 100; }
-.topbar-left { display: flex; align-items: center; gap: 14px; }
-.hamburger-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--white-06); border: 1px solid var(--white-10); border-radius: 11px; color: var(--white); }
-.topbar-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--white); }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.topbar-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 10px; background: var(--white); color: var(--black); font-size: 12px; font-weight: 800; transition: all 0.15s; }
-.topbar-btn:hover { transform: translateY(-1px); opacity: 0.9; }
-.topbar-btn svg { width: 14px; height: 14px; }
-.topbar-icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--white-06); border: 1px solid var(--white-10); border-radius: 11px; color: var(--grey); transition: all 0.15s; }
-.topbar-icon-btn:hover { background: var(--black-4); color: var(--white); border-color: var(--white-20); }
-.topbar-icon-btn svg { width: 15px; height: 15px; }
+.step-track { display: flex; align-items: center; padding: 16px 20px; gap: 0; }
+.step-item {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
+}
+.step-item.active { color: var(--text-primary); }
+.step-num {
+  width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 700; flex-shrink: 0; transition: all var(--t);
+}
+.step-item.active .step-num { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
+.step-connector { flex: 1; height: 1px; min-width: 16px; max-width: 80px; margin: 0 10px; background: var(--border); }
 
-/* ===== PAGE CONTENT ===== */
-.page-content { padding: 28px; flex: 1; }
+.content { padding: 8px 20px 80px; }
+.page-sub { font-size: 0.86rem; color: var(--text-secondary); font-weight: 400; margin: 4px 0 8px; letter-spacing: 0.01em; }
 
-/* ===== STATS ROW ===== */
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.stat-card { background: var(--black-2); border: 1px solid var(--white-10); border-radius: 14px; padding: 18px 20px; transition: border-color 0.2s; }
-.stat-card:hover { border-color: var(--white-20); }
-.stat-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 10px; }
-.stat-label svg { width: 12px; height: 12px; }
-.stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -1px; line-height: 1; }
-.stat-value.white  { color: var(--white-70); }
-.stat-value.amber  { color: var(--amber); }
-.stat-value.green  { color: var(--green); }
-.stat-value.cyan   { color: var(--cyan); }
-.stat-sub { font-size: 11px; color: var(--grey-dark); margin-top: 5px; }
+.section-head { display: flex; align-items: center; gap: 12px; margin: 28px 0 16px; }
+.section-head:first-child { margin-top: 8px; }
+.section-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.section-icon svg { width: 15px; height: 15px; color: var(--text-secondary); }
+.section-title-wrap { flex: 1; min-width: 0; }
+.section-title { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em; color: var(--text-primary); }
+.section-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
-/* ===== SECTION HEADER ===== */
-.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-.section-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-.section-dot { width: 6px; height: 6px; background: var(--white); border-radius: 50%; }
-.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-chip { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--white-10); background: transparent; color: var(--grey); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: inherit; }
-.filter-chip:hover { border-color: var(--white-20); color: var(--white-70); }
-.filter-chip.active { background: var(--white); border-color: var(--white); color: var(--black); }
+.grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.stack-gap { margin-top: 16px; }
 
-/* ===== GRID ===== */
-.container { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+}
+.field label svg { width: 11px; height: 11px; opacity: 0.7; }
+.required-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--text-secondary); flex-shrink: 0; }
 
-/* ===== CARD ===== */
-.card { background: var(--black-2); border: 1px solid var(--white-10); border-radius: 20px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
-.card:hover { border-color: var(--white-20); transform: translateY(-2px); }
-.card.status-rejected { border-color: rgba(239,68,68,0.4); }
-.card.status-rejected:hover { border-color: rgba(239,68,68,0.65); }
+.field input, .field select, .field textarea {
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.9rem; font-weight: 400;
+  padding: 13px 16px; outline: none;
+  transition: border-color var(--t), background var(--t), box-shadow var(--t);
+  width: 100%; appearance: none; -webkit-appearance: none;
+}
+.field input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--border-accent); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--border-focus); background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+}
+.field textarea { min-height: 120px; resize: vertical; line-height: 1.65; }
 
-.image-wrapper { height: 200px; position: relative; overflow: hidden; background: var(--black-3); cursor: pointer; }
-.cover-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
-.card:hover .cover-image { transform: scale(1.03); }
-.cover-placeholder { width: 100%; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--grey-dark); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: var(--black-3); }
-.cover-placeholder:hover { background: var(--black-4); color: var(--grey); }
-.cover-placeholder svg { width: 28px; height: 28px; opacity: 0.5; }
-.play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s; z-index: 5; }
-.card:hover .play-overlay { opacity: 1; }
-.play-btn-circle { width: 46px; height: 46px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(255,255,255,0.15); }
-.play-btn-circle svg { width: 18px; height: 18px; color: var(--black); }
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
+}
+.select-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
+.select-wrap select { padding-right: 40px; cursor: pointer; }
 
-.card-body { padding: 16px; }
-.card-body h3 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.2px; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.artist-name { color: var(--grey); font-size: 13px; font-weight: 600; }
-.feat { font-size: 11px; color: var(--grey); margin-top: 8px; padding: 5px 9px; background: var(--black-3); border-radius: 7px; border: 1px solid var(--white-10); font-weight: 600; }
-.feat strong { color: var(--white-70); }
-.release-date { margin-top: 10px; font-size: 11px; color: var(--grey); display: flex; align-items: center; gap: 5px; }
-.release-date svg { width: 12px; height: 12px; color: var(--grey-dark); }
-.card-divider { height: 1px; background: var(--white-10); margin: 12px 0; }
-.status-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.country-wrap { position: relative; }
+.country-flag {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 15px; pointer-events: none; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.country-flag svg { width: 18px; height: 18px; color: var(--text-secondary); }
+.country-wrap select { padding-left: 38px; padding-right: 40px; cursor: pointer; }
+.country-wrap::after {
+  content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-secondary); pointer-events: none; transition: all var(--t);
+}
+.country-wrap:focus-within::after { border-top-color: var(--text-primary); transform: translateY(-50%) rotate(180deg); }
 
-/* ===== PROGRESS BAR ===== */
-.progress-wrap { margin-top: 10px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--grey); margin-bottom: 5px; font-weight: 600; }
-.progress-bar { height: 3px; background: var(--black-4); border-radius: 2px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--white-70); transition: width 0.8s ease; }
-.progress-fill.rejected-fill { background: var(--rose); }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; opacity: 0.5; transition: opacity var(--t); }
+input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.9; }
 
-/* ===== BADGES ===== */
-.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
-.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.badge.pending  { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
-.badge.pending::before { background: var(--amber); }
-.badge.review   { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.5); }
-.badge.review::before { background: var(--cyan); }
-.badge.approved { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.5); }
-.badge.approved::before { background: var(--green); }
-.badge.rejected { background: rgba(239,68,68,0.15); color: var(--rose); border: 1px solid rgba(239,68,68,0.5); }
-.badge.rejected::before { background: var(--rose); animation: pulseDot 1.5s infinite; }
-.badge.paid   { background: rgba(34,197,94,0.15);  color: var(--green); border: 1px solid rgba(34,197,94,0.5); }
-.badge.paid::before { background: var(--green); }
-.badge.unpaid { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
-.badge.unpaid::before { background: var(--amber); }
-@keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-input-focus) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  caret-color: var(--text-primary); border-color: var(--border) !important;
+}
 
-/* ===== ACTION BUTTONS BELOW BADGES ===== */
-.check-reasons-btn, .pay-now-btn, .promote-btn {
+option, optgroup { background: #171717; color: var(--text-primary); }
+.field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+.radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.radio-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 18px;
+  font-family: var(--font-body); font-size: 0.86rem; font-weight: 600;
+  color: var(--text-secondary); cursor: pointer; transition: all var(--t); appearance: none;
+}
+.radio-pill::before {
+  content: ''; width: 15px; height: 15px; border-radius: 50%;
+  border: 1.5px solid var(--text-muted); flex-shrink: 0; transition: all var(--t); position: relative;
+}
+.radio-pill:hover { border-color: var(--border-accent); }
+.radio-pill.selected { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
+.radio-pill.selected::before { border-color: var(--bg-base); background: var(--bg-base); box-shadow: inset 0 0 0 3px var(--text-primary); }
+
+#previousReleaseDateWrap, #featuredArtistsWrap { display: none; }
+#previousReleaseDateWrap.visible, #featuredArtistsWrap.visible { display: block; animation: rowIn 0.2s ease both; }
+
+.agreement-box {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 16px;
+  margin-top: 28px; cursor: pointer; transition: border-color var(--t), background var(--t);
+}
+.agreement-box:hover { border-color: var(--border-accent); }
+.agreement-box.checked { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.03); }
+.agreement-checkbox {
+  width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+  border: 1.5px solid var(--text-muted); background: transparent;
+  display: flex; align-items: center; justify-content: center; transition: all var(--t);
+}
+.agreement-checkbox.checked { background: var(--text-primary); border-color: var(--text-primary); }
+.agreement-checkbox svg { width: 12px; height: 12px; color: var(--bg-base); opacity: 0; transition: opacity var(--t); }
+.agreement-checkbox.checked svg { opacity: 1; }
+.agreement-text { flex: 1; }
+.agreement-title {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+}
+.agreement-text p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
+
+.artist-field { position: relative; }
+.artist-pill-box {
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  cursor: text; min-height: 50px;
+  transition: border-color var(--t), box-shadow var(--t), background var(--t);
+}
+.artist-pill-box:focus-within {
+  border-color: var(--border-focus); background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+}
+.artist-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px; padding: 4px 10px 4px 6px;
+  font-size: 0.82rem; color: var(--text-primary);
+  animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.pill-avatar {
+  width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; color: var(--text-secondary);
+  overflow: hidden; flex-shrink: 0;
+}
+.pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.pill-remove {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); padding: 0; transition: background var(--t), transform var(--t);
+}
+.pill-remove:hover { background: rgba(255,255,255,0.22); transform: scale(1.15); color: var(--text-primary); }
+.pill-remove svg { width: 8px; height: 8px; }
+.artist-search-input {
+  background: none !important; border: none !important; box-shadow: none !important; outline: none !important;
+  padding: 4px 6px !important; flex: 1; min-width: 140px;
+  font-size: 0.88rem !important; color: var(--text-primary);
+}
+.artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
+
+.artist-dropdown {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  z-index: 9000; background: #171717;
+  border: 1px solid var(--border-accent); border-radius: var(--radius-md);
+  overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
+  display: none; max-height: 340px; overflow-y: auto;
+}
+.artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+.dropdown-sect-title {
+  padding: 10px 16px 6px;
+  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.artist-option {
+  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+  cursor: pointer; transition: background var(--t);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.artist-option:last-child { border-bottom: none; }
+.artist-option:hover, .artist-option.focused { background: rgba(255,255,255,0.05); }
+.opt-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  overflow: hidden; background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);
+}
+.opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.opt-info { flex: 1; min-width: 0; }
+.opt-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.opt-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.opt-badge {
+  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
+  background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--border);
+}
+.dropdown-loading {
+  padding: 20px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+.artist-dropdown::-webkit-scrollbar { width: 4px; }
+.artist-dropdown::-webkit-scrollbar-track { background: transparent; }
+.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+/* Featured / Secondary artist cards — mirrors the app's _featuredArtistCard */
+.feat-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 12px; margin-bottom: 10px;
+  animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+.feat-card-top { display: flex; align-items: center; gap: 10px; }
+.feat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
+}
+.feat-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.feat-name { flex: 1; min-width: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feat-remove {
+  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+  background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--danger); transition: all var(--t);
+}
+.feat-remove:hover { background: rgba(248,113,113,0.18); transform: scale(1.06); }
+.feat-remove svg { width: 11px; height: 11px; }
+.feat-role-wrap { margin-top: 10px; position: relative; }
+.feat-role-wrap select {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
+  outline: none; appearance: none; cursor: pointer;
+}
+.feat-role-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid var(--text-secondary); pointer-events: none;
+}
+.feat-url-wrap {
+  margin-top: 10px; display: flex; align-items: center; gap: 8px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); padding: 0 10px;
+}
+.feat-url-wrap input {
+  flex: 1; background: none; border: none; outline: none; box-shadow: none;
+  color: var(--text-primary); font-size: 0.82rem; padding: 9px 0;
+}
+.feat-url-wrap input::placeholder { color: var(--text-muted); }
+.feat-url-wrap img { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
+
+.credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.credits-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+.credits-panel.required-panel { border-color: rgba(255,255,255,0.18); }
+.credits-panel-hd {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
+}
+.credits-panel-hd svg { width: 13px; height: 13px; }
+.required-badge {
+  margin-left: auto; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  border-radius: 999px; padding: 2px 8px;
+  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary);
+}
+.writer-notice {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;
+  font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;
+}
+.writer-notice strong { color: var(--text-primary); }
+.credits-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.credit-row {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px;
+  display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;
+  position: relative; animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+  transition: border-color var(--t);
+}
+.credit-row:hover { border-color: var(--border-accent); }
+.credit-row-num {
+  position: absolute; top: -9px; left: 12px;
+  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary);
+  background: var(--bg-card); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border);
+}
+.credit-field-wrap { display: flex; flex-direction: column; gap: 5px; }
+.credit-field-label { font-family: var(--font-display); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.credit-input {
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.86rem; padding: 9px 12px; outline: none; width: 100%;
+  transition: border-color var(--t), box-shadow var(--t); appearance: none;
+}
+.credit-input::placeholder { color: var(--text-muted); font-size: 0.82rem; }
+.credit-input:hover { border-color: var(--border-accent); }
+.credit-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
+.csel-wrap { position: relative; }
+.csel-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid var(--text-secondary); pointer-events: none;
+}
+.csel-wrap select { padding-right: 28px; cursor: pointer; }
+.credit-remove {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.12);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: rgba(248,113,113,0.45); transition: all var(--t); flex-shrink: 0;
+}
+.credit-remove:hover { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: var(--danger); transform: scale(1.08); }
+.credit-remove svg { width: 11px; height: 11px; }
+.add-credit-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 12px 14px; margin-top: 12px;
-  border-radius: 10px; font-size: 13px; font-weight: 800;
-  font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.18s; border-width: 1.5px; border-style: solid;
+  background: transparent; border: 1px dashed var(--border-accent);
+  border-radius: var(--radius-sm); padding: 10px 16px;
+  font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; width: 100%;
+  transition: all var(--t);
 }
-.check-reasons-btn svg, .pay-now-btn svg, .promote-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
-.check-reasons-btn { background: rgba(239,68,68,0.12); border-color: var(--rose); color: var(--rose); }
-.check-reasons-btn:hover { background: rgba(239,68,68,0.2); transform: translateY(-1px); }
-.pay-now-btn { background: rgba(6,182,212,0.12); border-color: var(--cyan); color: var(--cyan); }
-.pay-now-btn:hover { background: rgba(6,182,212,0.2); transform: translateY(-1px); }
-.pay-now-btn:disabled { opacity: 0.6; cursor: default; transform: none; }
-.promote-btn { background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); text-decoration: none; }
-.promote-btn:hover { background: rgba(245,158,11,0.2); transform: translateY(-1px); }
+.add-credit-btn:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.3); color: var(--text-primary); }
+.add-credit-btn svg { width: 13px; height: 13px; }
 
-.card-actions { display: flex; gap: 7px; margin-top: 10px; }
-.action-btn { flex: 1; padding: 9px; border-radius: 9px; border: 1px solid var(--white-20); background: transparent; color: var(--white-70); font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
-.action-btn:hover { background: var(--white-06); border-color: var(--white-40); color: var(--white); }
-.action-btn.highlight { background: var(--white-06); border-color: var(--white-40); color: var(--white); }
-.action-btn svg { width: 12px; height: 12px; }
-
-/* ===== EMPTY STATE ===== */
-.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
-.empty-icon-wrap { width: 72px; height: 72px; margin: 0 auto 18px; background: var(--black-2); border-radius: 20px; border: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; }
-.empty-icon-wrap svg { width: 34px; height: 34px; color: var(--grey); }
-.empty h3 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--white); margin-bottom: 7px; }
-.empty p { font-size: 13px; color: var(--grey); max-width: 300px; margin: 0 auto 24px; line-height: 1.5; }
-.empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 12px; background: var(--white); color: var(--black); font-size: 14px; font-weight: 800; }
-.empty-cta svg { width: 18px; height: 18px; }
-
-/* ===== SKELETON ===== */
-.skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.04) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
-@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-.skeleton-card { border-radius: 20px; overflow: hidden; border: 1px solid var(--white-10); }
-.skeleton-img { height: 200px; }
-.skeleton-body { padding: 16px; }
-.skeleton-line { height: 13px; margin-bottom: 9px; }
-.skeleton-line.w-80 { width: 80%; }
-.skeleton-line.w-60 { width: 60%; }
-.skeleton-line.w-40 { width: 40%; }
-
-/* ===== TOAST ===== */
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--white-20); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; color: var(--white); font-size: 13px; font-weight: 600; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.toast.show { transform: translateX(0); }
-.toast-icon { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; }
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
-
-/* ===== CARD CLICKABLE ===== */
-.card-body-clickable { cursor: pointer; position: relative; }
-.expand-hint { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--grey-dark); vertical-align: middle; margin-left: 6px; opacity: 0; transition: opacity 0.15s; }
-.card:hover .expand-hint { opacity: 1; }
-.expand-hint svg { width: 10px; height: 10px; }
-
-/* ═══════════════════════════════════════════════
-   META VIEW MODAL — matches app bottom-sheet style
-═══════════════════════════════════════════════ */
-.meta-overlay { position: fixed; inset: 0; z-index: 6000; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px) saturate(0.7); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.meta-overlay.open { opacity: 1; pointer-events: all; }
-.meta-modal { background: var(--black-2); border: 1px solid var(--white-20); border-radius: 22px; width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; transform: translateY(22px) scale(0.97); transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1); position: relative; scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
-.meta-overlay.open .meta-modal { transform: translateY(0) scale(1); }
-.meta-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--white-40) 45%, var(--white) 50%, var(--white-40) 55%, transparent 100%); border-radius: 22px 22px 0 0; z-index: 2; }
-.meta-modal::-webkit-scrollbar { width: 4px; }
-.meta-modal::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
-
-.meta-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 16px; border-bottom: 1px solid var(--white-10); position: sticky; top: 0; background: var(--black-2); z-index: 3; border-radius: 22px 22px 0 0; }
-.meta-modal-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--white); }
-.meta-modal-title svg { width: 15px; height: 15px; color: var(--white-70); }
-.meta-modal-subtitle { font-size: 11px; color: var(--grey-dark); font-weight: 500; margin-top: 1px; }
-.meta-modal-close { width: 30px; height: 30px; border-radius: 50%; background: var(--white-06); border: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; color: var(--grey); cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
-.meta-modal-close svg { width: 13px; height: 13px; }
-.meta-modal-close:hover { background: var(--black-5); color: var(--white); }
-
-.meta-cover-strip { width: 100%; height: 180px; overflow: hidden; position: relative; }
-.meta-cover-strip img { width: 100%; height: 100%; object-fit: cover; }
-.meta-cover-strip-placeholder { width: 100%; height: 100%; background: var(--black-3); display: flex; align-items: center; justify-content: center; }
-.meta-cover-strip-placeholder svg { width: 44px; height: 44px; color: var(--grey-dark); }
-.meta-cover-strip::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, var(--black-2), transparent); }
-
-.meta-modal-body { padding: 20px 22px 26px; }
-.meta-section { margin-bottom: 20px; }
-.meta-section:last-child { margin-bottom: 0; }
-.meta-section-label { font-size: 9px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: var(--white-70); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.meta-section-label svg { width: 11px; height: 11px; }
-.meta-section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--white-20), transparent); }
-.meta-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.meta-field { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 9px 12px; }
-.meta-field.full { grid-column: 1 / -1; }
-.meta-field-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 4px; }
-.meta-field-value { font-size: 13px; color: var(--white); font-weight: 600; word-break: break-word; line-height: 1.4; }
-.meta-field-value.none { color: var(--grey-dark); font-weight: 400; font-style: italic; font-size: 12px; }
-.meta-credits-list { display: flex; flex-direction: column; gap: 6px; }
-.meta-credit-item { display: flex; align-items: flex-start; gap: 10px; background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 9px 12px; transition: border-color 0.15s; }
-.meta-credit-item:hover { border-color: var(--white-20); }
-.meta-credit-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--white); flex-shrink: 0; margin-top: 4px; }
-.meta-credit-info { min-width: 0; flex: 1; }
-.meta-credit-name { font-size: 13px; font-weight: 700; color: var(--white); }
-.meta-credit-role { font-size: 11px; color: var(--grey); margin-top: 2px; }
-.meta-credit-ipi  { font-size: 10px; color: var(--grey-dark); margin-top: 2px; font-family: monospace; }
-.meta-no-credits  { font-size: 12px; color: var(--grey-dark); font-style: italic; padding: 4px 0; }
-.meta-lyrics { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 13px; font-size: 12px; line-height: 1.8; color: var(--grey); white-space: pre-wrap; word-break: break-word; max-height: 220px; overflow-y: auto; }
-.meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
-
-/* ═══════════════════════════════════════════════
-   SMART LINK PANEL — same as before but monochrome
-═══════════════════════════════════════════════ */
-.smart-link-generating { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 14px; }
-.sl-spinner { width: 32px; height: 32px; border: 2px solid var(--white-10); border-top-color: var(--white); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.sl-generating-text strong { display: block; font-size: 13px; font-weight: 700; color: var(--white); }
-.sl-generating-text span { font-size: 11px; color: var(--grey-dark); }
-
-.smart-link-card { background: var(--black-3); border: 1px solid var(--white-20); border-radius: 16px; overflow: hidden; position: relative; }
-.smart-link-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--white-40), var(--white), var(--white-40)); }
-.sl-card-header { padding: 16px 18px 12px; display: flex; align-items: center; justify-content: space-between; }
-.sl-card-title { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--white-70); }
-.sl-card-title svg { width: 13px; height: 13px; }
-.sl-live-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.35); font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 0.5px; text-transform: uppercase; }
-.sl-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: livePulse 1.8s ease-in-out infinite; }
-@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.7);} }
-
-.sl-url-row { margin: 0 18px 14px; display: flex; align-items: center; gap: 8px; background: var(--black-4); border: 1px solid var(--white-10); border-radius: 10px; padding: 10px 12px; }
-.sl-url-icon { width: 28px; height: 28px; background: var(--white-06); border: 1px solid var(--white-10); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sl-url-icon svg { width: 13px; height: 13px; color: var(--white-70); }
-.sl-url-text { flex: 1; min-width: 0; font-size: 12px; color: var(--grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; letter-spacing: 0.02em; }
-.sl-copy-btn { flex-shrink: 0; padding: 6px 11px; border-radius: 7px; background: var(--white); border: none; color: var(--black); font-size: 11px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
-.sl-copy-btn:hover { transform: scale(1.03); }
-.sl-copy-btn svg { width: 11px; height: 11px; }
-.sl-copy-btn.copied { background: var(--green); color: var(--white); }
-
-.sl-upc-row { margin: 0 18px 14px; display: flex; align-items: center; justify-content: space-between; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); border-radius: 9px; padding: 8px 12px; }
-.sl-upc-label { font-size: 9px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: 5px; }
-.sl-upc-label svg { width: 11px; height: 11px; }
-.sl-upc-value { font-family: monospace; font-size: 14px; font-weight: 800; color: var(--white); letter-spacing: 0.1em; }
-
-.sl-stores-row { margin: 0 18px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.sl-stores-label { font-size: 10px; color: var(--grey-dark); font-weight: 700; margin-right: 2px; }
-.sl-store-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; background: var(--black-4); border: 1px solid var(--white-10); font-size: 10px; font-weight: 700; color: var(--grey-dark); }
-.sl-store-chip.has-link { border-color: var(--white-20); color: var(--white-70); background: var(--white-06); }
-
-.sl-actions { padding: 12px 18px 16px; display: flex; gap: 8px; border-top: 1px solid var(--white-10); }
-.sl-btn { flex: 1; padding: 10px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
-.sl-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
-.sl-btn-primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
-.sl-btn-primary:hover { transform: translateY(-1px); opacity: 0.9; }
-.sl-btn-secondary { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
-.sl-btn-secondary:hover { background: var(--black-4); color: var(--white); border-color: var(--white-40); }
-.sl-btn-share { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
-.sl-btn-share:hover { background: rgba(34,197,94,0.18); transform: translateY(-1px); }
-
-/* ===== SMART LINK PAGE MODAL ===== */
-.sl-page-overlay { position: fixed; inset: 0; z-index: 7000; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-.sl-page-overlay.open { opacity: 1; pointer-events: all; }
-.sl-page-modal { background: #0a0a0a; border: 1px solid var(--white-10); border-radius: 20px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; transform: scale(0.94) translateY(20px); transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1); scrollbar-width: none; }
-.sl-page-overlay.open .sl-page-modal { transform: scale(1) translateY(0); }
-.sl-page-modal::-webkit-scrollbar { display: none; }
-.sl-page-close-row { display: flex; justify-content: flex-end; padding: 16px 16px 0; }
-.sl-page-close { width: 30px; height: 30px; border-radius: 50%; background: var(--white-06); border: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; color: var(--grey); cursor: pointer; transition: all 0.15s; }
-.sl-page-close svg { width: 13px; height: 13px; }
-.sl-page-close:hover { background: var(--white-10); color: var(--white); }
-
-.sl-page-cover-hero { margin: 8px 20px 0; border-radius: 16px; overflow: hidden; aspect-ratio: 1; background: #1a1a1a; box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px var(--white-10); position: relative; }
-.sl-page-cover-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sl-page-cover-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--black-4); }
-.sl-page-cover-placeholder svg { width: 60px; height: 60px; opacity: 0.2; color: var(--grey); }
-
-.sl-page-info { padding: 20px 20px 0; text-align: center; }
-.sl-page-release-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: #fff; margin-bottom: 6px; }
-.sl-page-artist { font-size: 14px; color: var(--grey); font-weight: 600; margin-bottom: 4px; }
-.sl-page-featuring { font-size: 12px; color: var(--grey-dark); }
-.sl-page-meta-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 12px; }
-.sl-page-meta-item { font-size: 10px; text-align: center; }
-.sl-page-meta-label { color: var(--grey-dark); font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
-.sl-page-meta-value { color: var(--white-70); font-weight: 700; }
-.sl-page-divider { width: 1px; height: 24px; background: var(--white-10); }
-
-.sl-page-stores { padding: 20px 20px; }
-.sl-page-stores-title { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 10px; text-align: center; }
-.sl-page-store-links { display: flex; flex-direction: column; gap: 8px; }
-.sl-store-link-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--white-06); border: 1px solid var(--white-10); color: var(--white-70); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.18s; font-family: 'Nunito', sans-serif; text-decoration: none; }
-.sl-store-link-btn:hover { background: var(--white-10); border-color: var(--white-20); color: var(--white); transform: translateX(2px); }
-.sl-store-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-.sl-store-icon img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
-.sl-store-icon svg { width: 20px; height: 20px; }
-.sl-store-link-text { flex: 1; }
-.sl-store-link-name { font-size: 13px; font-weight: 700; }
-.sl-store-link-sub { font-size: 10px; color: var(--grey-dark); margin-top: 1px; }
-.sl-store-arrow { color: var(--grey-dark); }
-.sl-store-arrow svg { width: 14px; height: 14px; }
-
-.sl-page-upc-footer { margin: 0 20px 20px; padding: 10px 14px; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
-.sl-page-upc-label { font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: rgba(6,182,212,0.8); }
-.sl-page-upc-val { font-family: monospace; font-size: 12px; color: var(--grey); letter-spacing: 0.08em; }
-
-.sl-page-branding { padding: 14px 20px 20px; border-top: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 11px; color: var(--grey-dark); font-weight: 700; }
-.sl-brand-logo { width: 18px; height: 18px; background: var(--white); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-.sl-brand-logo svg { width: 11px; height: 11px; color: var(--black); }
-
-/* ═══════════════════════════════════════════════
-   CONFIRM MODAL (generic — used for pay/other confirms)
-═══════════════════════════════════════════════ */
-.confirm-overlay { position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-.confirm-overlay.open { opacity: 1; pointer-events: all; }
-.confirm-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 24px 22px 20px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
-.confirm-overlay.open .confirm-modal { transform: translateY(0) scale(1); }
-.confirm-icon { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-.confirm-icon svg { width: 24px; height: 24px; }
-.confirm-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
-.confirm-text { font-size: 13px; color: var(--grey); line-height: 1.6; margin-bottom: 20px; }
-.confirm-actions { display: flex; gap: 8px; }
-.confirm-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.15s; }
-.confirm-btn.secondary { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
-.confirm-btn.secondary:hover { background: var(--white-06); }
-.confirm-btn.primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
-.confirm-btn.primary:hover { opacity: 0.9; }
-
-/* ═══════════════════════════════════════════════
-   PAYMENT WAITING MODAL — mirrors PaymentWaitingScreen:
-   creates the payment, opens Paystack's own checkout in
-   a new tab (Paystack must host that part), then polls
-   /verify-payment/:reference right here instead of ever
-   routing to a separate pay.html page.
-═══════════════════════════════════════════════ */
-.pay-wait-overlay { position: fixed; inset: 0; z-index: 8500; background: rgba(0,0,0,0.9); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-.pay-wait-overlay.open { opacity: 1; pointer-events: all; }
-.pay-wait-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 28px 24px 24px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
-.pay-wait-overlay.open .pay-wait-modal { transform: translateY(0) scale(1); }
-.pay-wait-spinner { width: 46px; height: 46px; border: 3px solid var(--white-10); border-top-color: var(--cyan); border-radius: 50%; margin: 0 auto 18px; animation: spin 0.9s linear infinite; }
-.pay-wait-icon-done { width: 52px; height: 52px; border-radius: 50%; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-.pay-wait-icon-done svg { width: 24px; height: 24px; color: var(--green); }
-.pay-wait-icon-error { width: 52px; height: 52px; border-radius: 50%; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-.pay-wait-icon-error svg { width: 24px; height: 24px; color: var(--rose); }
-.pay-wait-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
-.pay-wait-text { font-size: 13px; color: var(--grey); line-height: 1.6; margin-bottom: 20px; }
-.pay-wait-actions { display: flex; gap: 8px; }
-.pay-wait-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.15s; }
-.pay-wait-btn.secondary { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
-.pay-wait-btn.secondary:hover { background: var(--white-06); }
-.pay-wait-btn.primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
-.pay-wait-btn.primary:hover { opacity: 0.9; }
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 900px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .sidebar-overlay.show { display: block; }
-  .main { margin-left: 0; }
-  .hamburger-btn { display: flex; }
-  .page-content { padding: 20px 16px; }
-  .topbar { padding: 14px 16px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .container { grid-template-columns: 1fr; }
-  .toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(110%); }
-  .toast.show { transform: translateY(0); }
-  .meta-modal { max-height: 92vh; border-radius: 18px 18px 0 0; align-self: flex-end; width: 100%; }
-  .meta-overlay { align-items: flex-end; padding: 0; }
-  .meta-fields-grid { grid-template-columns: 1fr; }
-  .meta-field.full { grid-column: 1; }
-  .sl-actions { flex-wrap: wrap; }
+.form-actions { margin-top: 40px; }
+.submit-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 17px 32px;
+  border-radius: var(--radius-md); border: 1px solid var(--text-primary); cursor: pointer;
+  font-family: var(--font-display); font-size: 0.82rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--bg-base); background: var(--text-primary);
+  transition: transform var(--t), box-shadow var(--t), filter var(--t), opacity var(--t);
+  position: relative; overflow: hidden;
 }
-@media (max-width: 480px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .stat-value { font-size: 1.6rem; }
-  .topbar-title { font-size: 0.95rem; }
+.submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+.submit-btn:active:not(:disabled) { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+#statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
+#statusMsg.error { color: var(--danger); }
+.form-footer-note {
+  margin-top: 20px; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.03em;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.form-footer-note svg { width: 13px; height: 13px; opacity: 0.5; }
+
+.trust-strip { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 18px; flex-wrap: wrap; }
+.trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.03em; }
+.trust-item svg { width: 12px; height: 12px; color: var(--text-secondary); opacity: 0.7; }
+
+/* Payment badge — shown at the top when a verified payment reference is present */
+.payment-badge {
+  display: none; align-items: center; gap: 8px;
+  background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin: 8px 0 4px;
+  font-size: 0.78rem; color: var(--success); font-weight: 600;
+}
+.payment-badge.show { display: flex; }
+.payment-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── EARLY RELEASE-DATE WARNING — non-blocking, mirrors the app's
+   dialog but focuses on smooth processing, not playlist placement ── */
+.warn-overlay {
+  position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.warn-overlay.open { opacity: 1; pointer-events: all; }
+.warn-card {
+  width: 100%; max-width: 360px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 22px; text-align: left;
+  transform: translateY(12px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1);
+}
+.warn-overlay.open .warn-card { transform: translateY(0) scale(1); }
+.warn-icon {
+  width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+}
+.warn-icon svg { width: 18px; height: 18px; color: var(--text-primary); }
+.warn-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+.warn-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 18px; }
+.warn-btn {
+  width: 100%; padding: 12px; border-radius: 10px; background: var(--text-primary); color: var(--bg-base);
+  border: none; font-family: var(--font-display); font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+}
+.warn-btn:hover { opacity: 0.9; }
+
+@keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
+@keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+@keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+@keyframes spin      { to { transform:rotate(360deg); } }
+
+@media (max-width: 700px) {
+  .grid, .credits-grid { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .credit-row { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 640px) {
+  .content { padding: 8px 16px 60px; }
+  .top-bar { padding: 12px 16px; }
+  .step-track { padding: 14px 16px; }
+  .step-connector { min-width: 8px; max-width: 24px; margin: 0 6px; }
+  .step-item { font-size: 0.62rem; letter-spacing: 0.04em; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .trust-strip { gap: 14px; }
+}
+@media (max-width: 420px) {
+  .step-track { gap: 0; }
+  .step-connector { min-width: 4px; max-width: 12px; margin: 0 4px; }
+  .step-item { font-size: 0.58rem; gap: 5px; }
+  .step-num { width: 22px; height: 22px; font-size: 0.6rem; }
+  .submit-btn { font-size: 0.76rem; padding: 15px 18px; }
 }
 </style>
 </head>
+
 <body>
+<div class="app-shell">
 
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <img src="logo.png" alt="444Music" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="sidebar-logo-fallback" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-    </div>
-    <span class="sidebar-brand">444Music</span>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">Main</div>
-    <a class="nav-item" href="home.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Home
-    </a>
-    <a class="nav-item active" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      My Releases
-    </a>
-    <a class="nav-item" href="pricing.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      New Release
-    </a>
-    <div class="nav-section-label">Finance</div>
-    <a class="nav-item" href="ear.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Royalties
-    </a>
-    <a class="nav-item" href="pay.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      Pay Now
-    </a>
-    <a class="nav-item" href="splits.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Royalty Split
-    </a>
-    <div class="nav-section-label">Tools</div>
-    <a class="nav-item" href="https://444musicblog.vercel.app/">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/><path d="M12 12H3M16 6H3M12 18H3"/></svg>
-      Promote/Playlist
-    </a>
-    <a class="nav-item" href="analytics.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Analytics
-    </a>
-    <a class="nav-item" href="support.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      Support
-    </a>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="user-avatar" id="userInitial">—</div>
-      <div class="user-info">
-        <div class="user-name" id="userName">Loading...</div>
-        <div class="user-role">Artist</div>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<div class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <button type="button" class="back-btn" onclick="history.back()" aria-label="Back">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       </button>
-      <span class="topbar-title">My Releases</span>
+      <span class="top-bar-title">Create New Release</span>
     </div>
-    <div class="topbar-right">
-      <a class="topbar-btn" href="pricing.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        New Release
-      </a>
-      <a class="topbar-icon-btn" href="support.html" title="Help">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
-      </a>
+    <div class="secure-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secure
     </div>
+  </header>
+
+  <div class="step-track">
+    <div class="step-item active"><div class="step-num">1</div><span>Release Info</span></div>
+    <div class="step-connector"></div>
+    <div class="step-item"><div class="step-num">2</div><span>Select Stores</span></div>
+    <div class="step-connector"></div>
+    <div class="step-item"><div class="step-num">3</div><span>Review</span></div>
   </div>
 
-  <div class="page-content">
-    <div class="stats-row" id="statsRow">
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Total Releases</div>
-        <div class="stat-value white" id="statTotal">—</div>
-        <div class="stat-sub">All time</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Pending</div>
-        <div class="stat-value amber" id="statPending">—</div>
-        <div class="stat-sub">In queue</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approved</div>
-        <div class="stat-value green" id="statApproved">—</div>
-        <div class="stat-sub">Live</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Paid</div>
-        <div class="stat-value cyan" id="statPaid">—</div>
-        <div class="stat-sub">Confirmed</div>
-      </div>
+  <div class="content">
+    <p class="page-sub">Enter your release details below. You'll select stores on the next step.</p>
+
+    <div class="payment-badge" id="paymentBadge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      Payment verified — this release will go straight to Review
     </div>
 
-    <div class="section-header">
-      <div class="section-title"><div class="section-dot"></div>All Releases</div>
-      <div class="filter-row">
-        <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="pending">Pending</button>
-        <button class="filter-chip" data-filter="approved">Approved</button>
-        <button class="filter-chip" data-filter="review">In Review</button>
-        <button class="filter-chip" data-filter="rejected">Rejected</button>
-      </div>
-    </div>
+    <form id="releaseForm">
 
-    <div class="container" id="submissionsContainer">
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-80"></div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div></div>
-    </div>
+      <!-- ARTIST INFO -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Artist Information</div>
+          <div class="section-desc">Search and select your artist profile</div>
+        </div>
+      </div>
+
+      <div class="field artist-field" id="artistFieldWrap">
+        <label>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Main Artist (Primary)
+          <div class="required-dot" title="Required"></div>
+        </label>
+        <div class="artist-pill-box" id="artistPillBox">
+          <input type="text" id="artistSearchInput" class="artist-search-input"
+            placeholder="Search artist on Apple Music…"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <input type="hidden" id="artistName" name="artistName">
+        <div class="artist-dropdown" id="artistDropdown"></div>
+        <div class="field-hint">Results pulled from Apple Music</div>
+      </div>
+
+      <div class="field stack-gap">
+        <label>Country of Origin</label>
+        <div class="country-wrap" id="countryWrap">
+          <div class="country-flag">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <select id="country">
+            <option>Ghana</option><option>Nigeria</option><option>Kenya</option><option>South Africa</option>
+            <option>Uganda</option><option>Tanzania</option><option>Cameroon</option>
+            <option>United States of America</option><option>United Kingdom, The</option><option>Canada</option>
+            <option>Australia</option><option>France</option><option>Germany</option><option>Brazil</option>
+            <option>India</option><option>Jamaica</option><option>Trinidad and Tobago</option><option>Senegal</option>
+            <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field-hint">Phone number has moved down to Contact &amp; Account, next to your email.</div>
+      </div>
+
+      <!-- FEATURED & SECONDARY ARTISTS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Featured &amp; Secondary Artists</div>
+          <div class="section-desc">Optional — add other artists on this track</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Add a featured or secondary artist?</label>
+        <div class="radio-group" id="hasFeaturedGroup" data-value="No">
+          <button type="button" class="radio-pill selected" data-value="No">No</button>
+          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
+        </div>
+      </div>
+
+      <div class="field stack-gap" id="featuredArtistsWrap">
+        <label>Search Artist</label>
+        <div class="artist-field" id="featArtistFieldWrap">
+          <div class="artist-pill-box" style="min-height:auto;">
+            <input type="text" id="featArtistSearchInput" class="artist-search-input"
+              placeholder="Search artist on Apple Music…"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          </div>
+          <div class="artist-dropdown" id="featArtistDropdown"></div>
+        </div>
+        <div class="field-hint">Results pulled from Apple Music</div>
+        <div id="featuredArtistsList" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- RELEASE DETAILS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Release Details</div>
+          <div class="section-desc">Core metadata for your release</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Release Title <div class="required-dot"></div></label>
+        <input id="releaseTitle" placeholder="Name of your single, EP or album" required>
+      </div>
+
+      <div class="grid stack-gap">
+        <div class="field">
+          <label>Release Type</label>
+          <div class="select-wrap">
+            <select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Genre <div class="required-dot"></div></label>
+          <div class="select-wrap">
+            <select id="genre">
+              <option>Pop</option><option>Indie Pop</option><option>Afropop</option><option>Hip-Hop</option>
+              <option>Rap</option><option>Trap</option><option>Drill</option><option>Afro Trap</option>
+              <option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Gospel</option>
+              <option>Electronic</option><option>EDM</option><option>Afro House</option><option>House</option>
+              <option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option>
+              <option selected>Afrobeats</option><option>Afroswing</option><option>Highlife</option>
+              <option>Amapiano</option><option>Reggae</option><option>Dancehall</option><option>Jazz</option>
+              <option>Blues</option><option>Classical</option><option>Lo-Fi</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid stack-gap">
+        <div class="field">
+          <label>Language</label>
+          <input id="language" placeholder="e.g. English, Twi">
+        </div>
+        <div class="field">
+          <label>Explicit Content</label>
+          <div class="select-wrap"><select id="explicit"><option>No</option><option>Yes</option></select></div>
+        </div>
+      </div>
+
+      <div class="field stack-gap">
+        <label>Release Date <div class="required-dot"></div></label>
+        <input id="releaseDate" type="date" required>
+      </div>
+
+      <!-- SONG DETAILS & OWNERSHIP -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Song Details &amp; Ownership</div>
+          <div class="section-desc">Version, prior release status, and rights</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Version <div class="required-dot"></div></label>
+        <div class="select-wrap">
+          <select id="version" required>
+            <option>Original</option><option>Radio Edit</option><option>Extended Mix</option>
+            <option>Remix</option><option>Acoustic</option><option>Live</option><option>Instrumental</option>
+            <option>Remastered</option><option>Cover</option><option>Sped Up</option><option>Slowed</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field stack-gap">
+        <label>Vocals or Instrumental</label>
+        <div class="radio-group" id="vocalTypeGroup" data-value="Vocals">
+          <button type="button" class="radio-pill selected" data-value="Vocals">Vocals</button>
+          <button type="button" class="radio-pill" data-value="Instrumental">Instrumental</button>
+        </div>
+      </div>
+
+      <div class="field stack-gap">
+        <label>Has this song been released before? <div class="required-dot"></div></label>
+        <div class="radio-group" id="previouslyReleasedGroup" data-value="No">
+          <button type="button" class="radio-pill selected" data-value="No">No</button>
+          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
+        </div>
+      </div>
+
+      <div class="field stack-gap" id="previousReleaseDateWrap">
+        <label>Previous Release Date <div class="required-dot"></div></label>
+        <input id="previousReleaseDate" type="date">
+        <div class="field-hint">Used for prior-release / re-release documentation</div>
+      </div>
+
+      <!-- LABEL & RIGHTS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Label &amp; Rights</div>
+          <div class="section-desc">Copyright and label ownership</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label>Label Name</label>
+          <input id="label" placeholder="Independent or label name">
+        </div>
+        <div class="field">
+          <label>Copyright Holder</label>
+          <input id="copyright" placeholder="© 2025 Your Name">
+        </div>
+      </div>
+
+      <!-- IDENTIFIERS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="9" x2="3" y2="20"/><line x1="7" y1="5" x2="7" y2="20"/><line x1="11" y1="9" x2="11" y2="20"/><line x1="15" y1="5" x2="15" y2="20"/><line x1="19" y1="9" x2="19" y2="20"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Identifiers</div>
+          <div class="section-desc">ISRC, UPC, and catalog codes</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label>ISRC Code</label>
+          <input id="isrc" placeholder="e.g. USRC17607839" maxlength="12" style="letter-spacing:0.07em;">
+        </div>
+        <div class="field">
+          <label>UPC / EAN Barcode</label>
+          <input id="upc" placeholder="Leave blank to auto-assign">
+        </div>
+        <div class="field">
+          <label>Catalog Number</label>
+          <input id="catalogNumber" placeholder="e.g. LAB-001 (optional)">
+        </div>
+      </div>
+
+      <!-- PRODUCTION CREDITS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Production Credits</div>
+          <div class="section-desc">Producers, engineers, and musicians</div>
+        </div>
+      </div>
+
+      <div class="credits-grid">
+        <div class="credits-panel required-panel">
+          <div class="credits-panel-hd">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            Producers &amp; Engineers
+            <span class="required-badge">Required</span>
+          </div>
+          <div class="credits-list" id="producerList"></div>
+          <button type="button" class="add-credit-btn" onclick="addCredit('producer')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Producer / Engineer
+          </button>
+        </div>
+        <div class="credits-panel">
+          <div class="credits-panel-hd">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Musicians &amp; Performers
+          </div>
+          <div class="credits-list" id="musicianList"></div>
+          <button type="button" class="add-credit-btn" onclick="addCredit('musician')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Musician / Performer
+          </button>
+        </div>
+      </div>
+
+      <!-- SONGWRITING (no publishing panel — matches app) -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Songwriting</div>
+          <div class="section-desc">Writers and composers</div>
+        </div>
+      </div>
+
+      <div class="credits-panel">
+        <div class="credits-panel-hd">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Songwriters &amp; Composers
+        </div>
+        <div class="credits-list" id="writerList"></div>
+        <button type="button" class="add-credit-btn" onclick="addCredit('writer')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Songwriter / Composer
+        </button>
+      </div>
+
+      <!-- CONTACT — Email, Phone, and Country of Origin now live here
+           together, instead of Phone/Country sitting up top before the
+           artist search. ── -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Contact &amp; Account</div>
+          <div class="section-desc">Your contact info for this release</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email Address <div class="required-dot"></div></label>
+        <input id="email" type="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="field stack-gap">
+        <label>Phone Number</label>
+        <input id="number" type="tel" placeholder="+1 000 000 0000">
+      </div>
+
+      <!-- LYRICS -->
+      <div class="section-head">
+        <div class="section-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+        </div>
+        <div class="section-title-wrap">
+          <div class="section-title">Lyrics</div>
+          <div class="section-desc">Optional — improves discoverability</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Lyrics (Optional)</label>
+        <textarea id="lyrics" placeholder="Paste your lyrics here…"></textarea>
+      </div>
+
+      <!-- OWNERSHIP AGREEMENT -->
+      <div class="agreement-box" id="agreementBox">
+        <div class="agreement-checkbox" id="agreementCheckbox">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="agreement-text">
+          <div class="agreement-title">Ownership Agreement <div class="required-dot"></div></div>
+          <p>I confirm that this is an original song that I own, or that I hold full legal rights to distribute, and that it does not infringe on any third-party copyrights.</p>
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="form-actions">
+        <button class="submit-btn" id="submitBtn" type="submit">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Save &amp; Continue to Stores
+        </button>
+        <div id="statusMsg"></div>
+
+        <div class="trust-strip">
+          <div class="trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            256-bit SSL
+          </div>
+          <div class="trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            GDPR Compliant
+          </div>
+          <div class="trust-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Secure Data
+          </div>
+        </div>
+      </div>
+
+    </form>
   </div>
 </div>
 
-<div class="toast" id="toast">
-  <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toastMsg">Cover art updated!</span>
-</div>
-
-<div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true">
-  <div class="meta-modal" id="metaModal">
-    <div class="meta-modal-header">
-      <div>
-        <div class="meta-modal-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Release Details</div>
-        <div class="meta-modal-subtitle" id="metaModalSubtitle">View-only metadata</div>
-      </div>
-      <button class="meta-modal-close" id="metaModalClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<!-- EARLY RELEASE-DATE WARNING MODAL -->
+<div class="warn-overlay" id="earlyDateOverlay">
+  <div class="warn-card">
+    <div class="warn-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     </div>
-    <div id="metaModalContent"></div>
+    <div class="warn-title">Early Release Date</div>
+    <div class="warn-text">Picking a date this close doesn't leave much room for everything to process smoothly before release day. Most artists give it a bit more breathing room — but you're welcome to continue with this date if it works for you.</div>
+    <button type="button" class="warn-btn" id="earlyDateDismiss">Got It</button>
   </div>
 </div>
 
-<div class="sl-page-overlay" id="slPageOverlay"><div class="sl-page-modal" id="slPageModal"><div id="slPageContent"></div></div></div>
-
-<!-- Generic confirm modal (used before creating a payment) -->
-<div class="confirm-overlay" id="payConfirmOverlay">
-  <div class="confirm-modal">
-    <div class="confirm-icon" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3);">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-    </div>
-    <div class="confirm-title">Proceed to payment?</div>
-    <div class="confirm-text" id="payConfirmText">You'll be taken to a secure payment page to release this submission for review.</div>
-    <div class="confirm-actions">
-      <button class="confirm-btn secondary" id="payConfirmCancel">Cancel</button>
-      <button class="confirm-btn primary" id="payConfirmGo">Continue</button>
-    </div>
-  </div>
-</div>
-
-<!-- Payment waiting modal — same job as the app's PaymentWaitingScreen -->
-<div class="pay-wait-overlay" id="payWaitOverlay">
-  <div class="pay-wait-modal" id="payWaitModal"></div>
-</div>
-
+<!-- RADIO GROUP ENGINE -->
 <script>
-/* --- SIDEBAR --- */
-const sidebar   = document.getElementById("sidebar");
-const overlay   = document.getElementById("sidebarOverlay");
-const hamburger = document.getElementById("hamburgerBtn");
-hamburger.onclick = () => { sidebar.classList.toggle("open"); overlay.classList.toggle("show"); };
-overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); };
+(function(){
+  const prevDateWrap = document.getElementById('previousReleaseDateWrap');
+  const featWrap     = document.getElementById('featuredArtistsWrap');
 
-/* --- FILTER CHIPS --- */
-let activeFilter = "all";
-let allCards = [];
-document.querySelectorAll(".filter-chip").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    activeFilter = btn.dataset.filter;
-    filterCards();
-  });
-});
-function filterCards() {
-  allCards.forEach(({ card, status }) => {
-    const show = activeFilter === "all" || status === activeFilter;
-    card.style.display = show ? "" : "none";
-  });
-}
+  document.querySelectorAll('.radio-group').forEach(function(group){
+    group.addEventListener('click', function(e){
+      const btn = e.target.closest('.radio-pill');
+      if (!btn) return;
+      group.querySelectorAll('.radio-pill').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      group.dataset.value = btn.dataset.value;
 
-/* --- TOAST --- */
-function showToast(msg, isError = false) {
-  const toast    = document.getElementById("toast");
-  const toastMsg = document.getElementById("toastMsg");
-  const icon     = toast.querySelector(".toast-icon");
-  toastMsg.textContent = msg;
-  icon.style.color = isError ? "var(--rose)" : "var(--green)";
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 3200);
-}
-
-/* ── PAID HELPER — reads the SAME real field the app reads.
-   The backend/admin panel writes `paid` as text "Paid"/"Unpaid",
-   never a `paymentVerified` boolean — so that's the only field
-   this page (and every badge/stat on it) ever checks. ── */
-function isPaidValue(paidField) {
-  return (paidField || "").toString().toLowerCase() === "paid";
-}
-
-/* ── PRICE HELPER — mirrors the app's _priceForReleaseType so the
-   Pay Now button on a Pending+Unpaid card always shows/charges the
-   same amount the app would. ── */
-function priceForReleaseType(releaseType) {
-  const t = (releaseType || "").toString().toLowerCase();
-  if (t === "single") return 39.99;
-  return 69.99; // EP / Album / unset
-}
-
-/* --- STATS --- */
-function updateStats(submissions) {
-  animateCount("statTotal",    submissions.length);
-  animateCount("statPending",  submissions.filter(d => (d.status || "").toLowerCase() === "pending").length);
-  animateCount("statApproved", submissions.filter(d => (d.status || "").toLowerCase() === "approved").length);
-  animateCount("statPaid",     submissions.filter(d => isPaidValue(d.paid)).length);
-}
-function animateCount(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let current = 0;
-  const step  = Math.max(1, Math.floor(target / 20));
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = current;
-    if (current >= target) clearInterval(timer);
-  }, 40);
-}
-
-/* --- PROGRESS — same 4-stage model as the app --- */
-function getProgress(status) {
-  switch ((status || "").toLowerCase()) {
-    case "pending":  return { pct: 25,  label: "Awaiting payment" };
-    case "review":   return { pct: 60,  label: "Under review" };
-    case "approved": return { pct: 100, label: "Live on stores" };
-    case "rejected": return { pct: 10,  label: "Action needed" };
-    default:         return { pct: 10,  label: "Processing" };
-  }
-}
-
-/* === UPC GENERATION === */
-function generateUPCCandidate() {
-  let code = "731";
-  for (let i = 0; i < 8; i++) { code += Math.floor(Math.random() * 10).toString(); }
-  let odd = 0, even = 0;
-  for (let i = 0; i < 11; i++) { const d = parseInt(code[i]); i % 2 === 0 ? odd += d : even += d; }
-  const checkDigit = (10 - ((odd * 3 + even) % 10)) % 10;
-  return code + checkDigit.toString();
-}
-function slugify(str, maxLen) {
-  let s = (str || "").toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, "");
-  if (maxLen) s = s.substring(0, maxLen).replace(/-+$/g, "");
-  return s;
-}
-function buildSmartLinkURL(releaseId, artistName, releaseTitle) {
-  const artistSlug = slugify(artistName);
-  const titleSlug  = slugify(releaseTitle, 30);
-  return `https://ffm.to/${[artistSlug, titleSlug].filter(Boolean).join("-")}`;
-}
-
-/* === STORE ICONS (unchanged — real brand marks, not emoji) === */
-const STORE_ICONS = {
-  spotify: `<svg viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`,
-  applemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="amlg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fc3c44"/><stop offset="100%" style="stop-color:#ff6a6a"/></linearGradient></defs><rect width="24" height="24" rx="5" fill="url(#amlg)"/><path d="M17.05 8.49a.5.5 0 0 0-.35-.48l-5.5-1.5a.5.5 0 0 0-.65.48v6.54a2 2 0 1 0 1 1.73V10.6l4.5 1.23v3.68a2 2 0 1 0 1 1.73V8.49z" fill="white"/></svg>`,
-  audiomack: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ffa200"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" fill="white"/></svg>`,
-  boomplay: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff6600"/><path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm3.5 9.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74z" fill="white"/></svg>`,
-  youtubemusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ff0000"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3.5 8.87l-5 2.88A1 1 0 0 1 9 14.88V9.12a1 1 0 0 1 1.5-.87l5 2.88a1 1 0 0 1 0 1.74zm-1.28-4.74l-1.5.87V7.35l1.5-.87v1.65z" fill="white"/></svg>`,
-  tidal: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#000000"/><path d="M12 5.5L9.33 8.17 6.67 5.5 4 8.17l2.67 2.66L4 13.5l2.67 2.67 2.66-2.67L12 16.17l2.67-2.67-2.67-2.67 2.67-2.66L12 5.5zm2.67 2.67L17.33 5.5 20 8.17l-2.67 2.66L20 13.5l-2.67 2.67-2.66-2.67 2.66-2.66-2.66-2.67z" fill="white"/></svg>`,
-  deezer: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#a238ff"/><rect x="3" y="14" width="3" height="6" rx="1" fill="#40E0D0"/><rect x="7" y="11" width="3" height="9" rx="1" fill="#ff6600"/><rect x="11" y="8" width="3" height="12" rx="1" fill="#ff69b4"/><rect x="15" y="5" width="3" height="15" rx="1" fill="#40E0D0"/><rect x="19" y="3" width="3" height="17" rx="1" fill="#ff6600"/></svg>`,
-  amazonmusic: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#00a8e0"/><path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c2.04 0 3.9-.76 5.31-2.01l-1.42-1.42A5.96 5.96 0 0 1 12 18a6 6 0 1 1 5.65-8.04l1.73-1a8 8 0 1 0 .62 3.04h-2c0-.34-.05-.67-.13-.99L16 12l-4-2v4h4l-1.4-1.4A4 4 0 0 1 12 14a4 4 0 1 1 4-4" fill="white"/></svg>`
-};
-function getStoreIconHtml(storeKey) {
-  const icon = STORE_ICONS[storeKey.toLowerCase().replace(/\s/g,'')];
-  if (icon) return `<div class="sl-store-icon">${icon}</div>`;
-  return `<div class="sl-store-icon" style="background:var(--white-06);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:var(--grey);width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
-}
-const STORE_CONFIG = [
-  { key: "spotifyLink",      name: "Spotify",       iconKey: "spotify",      sub: "Stream on Spotify" },
-  { key: "appleMusicLink",   name: "Apple Music",   iconKey: "applemusic",   sub: "Listen on Apple Music" },
-  { key: "audiomackLink",    name: "Audiomack",     iconKey: "audiomack",    sub: "Play on Audiomack" },
-  { key: "boomplayLink",     name: "Boomplay",      iconKey: "boomplay",     sub: "Listen on Boomplay" },
-  { key: "youtubeMusicLink", name: "YouTube Music", iconKey: "youtubemusic", sub: "Watch on YouTube Music" },
-  { key: "tidalLink",        name: "Tidal",         iconKey: "tidal",        sub: "Stream on Tidal" },
-  { key: "deezerLink",       name: "Deezer",        iconKey: "deezer",       sub: "Play on Deezer" },
-  { key: "amazonMusicLink",  name: "Amazon Music",  iconKey: "amazonmusic",  sub: "Listen on Amazon Music" },
-];
-
-function escHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
-
-function renderSmartLinkPanel(data, releaseId, upcCode, smartLinkURL, isGenerating) {
-  if (isGenerating) return `<div class="smart-link-generating"><div class="sl-spinner"></div><div class="sl-generating-text"><strong>Generating Smart Link & UPC…</strong><span>Setting up your release profile</span></div></div>`;
-  const storeChips = STORE_CONFIG.map(s => { const hasLink = data[s.key] && data[s.key].trim(); return `<span class="sl-store-chip ${hasLink ? 'has-link' : ''}">${s.name}</span>`; }).join('');
-  const upcDisplay = upcCode ? `${upcCode.substring(0,3)} ${upcCode.substring(3,6)} ${upcCode.substring(6,9)} ${upcCode.substring(9)}` : '—';
-  return `
-    <div class="smart-link-card">
-      <div class="sl-card-header">
-        <div class="sl-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</div>
-        <div class="sl-live-badge"><div class="sl-live-dot"></div>Live</div>
-      </div>
-      <div class="sl-url-row">
-        <div class="sl-url-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-        <span class="sl-url-text" id="slUrlDisplay-${releaseId}">${escHtml(smartLinkURL)}</span>
-        <button class="sl-copy-btn" id="slCopyBtn-${releaseId}" onclick="copySmartLink('${releaseId}', '${escHtml(smartLinkURL)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>
-      </div>
-      <div class="sl-upc-row">
-        <div class="sl-upc-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14M3 10h4M8 10h4M12 10h5M17 10h4"/></svg>UPC / Barcode</div>
-        <div class="sl-upc-value">${escHtml(upcDisplay)}</div>
-      </div>
-      <div class="sl-stores-row"><span class="sl-stores-label">Stores:</span>${storeChips}</div>
-      <div class="sl-actions">
-        <button class="sl-btn sl-btn-primary" onclick="openSmartLinkPage('${releaseId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open Smart Link</button>
-        <button class="sl-btn sl-btn-share" onclick="shareSmartLink('${releaseId}', '${escHtml(smartLinkURL)}', '${escHtml(data.releaseTitle || '')}', '${escHtml(data.artistName || '')}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
-      </div>
-    </div>`;
-}
-
-function copySmartLink(releaseId, url) {
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById(`slCopyBtn-${releaseId}`);
-    if (btn) {
-      btn.classList.add('copied');
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
-      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`; }, 2200);
-    }
-    showToast("Smart Link copied to clipboard!");
-  }).catch(() => showToast("Copy failed — please copy manually", true));
-}
-function shareSmartLink(releaseId, url, title, artist) {
-  const shareData = { title: `${title} by ${artist}`, text: `Listen to "${title}" by ${artist} on all streaming platforms`, url };
-  if (navigator.share) { navigator.share(shareData).catch(() => {}); }
-  else { copySmartLink(releaseId, url); showToast("Link copied! Share it anywhere."); }
-}
-function openSmartLinkPage(releaseId) {
-  const data = window._releaseMeta[releaseId];
-  if (!data) return;
-  const upc = data.upc || '';
-  const releaseDate = data.releaseDate ? new Date(data.releaseDate).getFullYear() : new Date().getFullYear();
-  const storeLinks = STORE_CONFIG.filter(s => data[s.key] && data[s.key].trim()).map(s => `
-    <a class="sl-store-link-btn" href="${escHtml(data[s.key])}" target="_blank" rel="noopener">
-      ${getStoreIconHtml(s.iconKey)}
-      <div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">${s.sub}</div></div>
-      <div class="sl-store-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
-    </a>`).join('');
-  const storeSection = storeLinks || `<div class="sl-page-store-links">${STORE_CONFIG.map(s => `<div class="sl-store-link-btn" style="opacity:0.4;cursor:default;">${getStoreIconHtml(s.iconKey)}<div class="sl-store-link-text"><div class="sl-store-link-name">${s.name}</div><div class="sl-store-link-sub">Coming soon</div></div></div>`).join('')}</div>`;
-  const coverHtml = data.coverURL
-    ? `<img src="${escHtml(data.coverURL)}" alt="${escHtml(data.releaseTitle)}">`
-    : `<div class="sl-page-cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
-  const upcFormatted = upc ? `${upc.substring(0,3)} ${upc.substring(3,6)} ${upc.substring(6,9)} ${upc.substring(9)}` : '—';
-  document.getElementById('slPageContent').innerHTML = `
-    <div class="sl-page-close-row"><button class="sl-page-close" onclick="closeSmartLinkPage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <div class="sl-page-cover-hero">${coverHtml}</div>
-    <div class="sl-page-info">
-      <div class="sl-page-release-title">${escHtml(data.releaseTitle || 'Untitled')}</div>
-      <div class="sl-page-artist">${escHtml(data.artistName || '')}</div>
-      ${data.featuring && data.featuring.trim() ? `<div class="sl-page-featuring">feat. ${escHtml(data.featuring)}</div>` : ''}
-      <div class="sl-page-meta-row">
-        ${data.genre ? `<div class="sl-page-meta-item"><div class="sl-page-meta-label">Genre</div><div class="sl-page-meta-value">${escHtml(data.genre)}</div></div><div class="sl-page-divider"></div>` : ''}
-        <div class="sl-page-meta-item"><div class="sl-page-meta-label">Year</div><div class="sl-page-meta-value">${releaseDate}</div></div>
-        ${data.releaseType ? `<div class="sl-page-divider"></div><div class="sl-page-meta-item"><div class="sl-page-meta-label">Type</div><div class="sl-page-meta-value">${escHtml(data.releaseType)}</div></div>` : ''}
-      </div>
-    </div>
-    <div class="sl-page-stores"><div class="sl-page-stores-title">Listen Now</div>${storeSection}</div>
-    ${upc ? `<div class="sl-page-upc-footer"><div class="sl-page-upc-label">UPC Barcode</div><div class="sl-page-upc-val">${escHtml(upcFormatted)}</div></div>` : ''}
-    <div class="sl-page-branding"><div class="sl-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>Distributed by 444Music</div>`;
-  document.getElementById('slPageOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeSmartLinkPage() {
-  document.getElementById('slPageOverlay').classList.remove('open');
-  if (!document.getElementById('metaOverlay').classList.contains('open')) document.body.style.overflow = '';
-}
-document.getElementById('slPageOverlay').addEventListener('click', function(e) { if (e.target === this) closeSmartLinkPage(); });
-
-/* === META MODAL === */
-window._releaseMeta = {};
-function renderCreditsSection(arr) {
-  if (!arr || arr.length === 0) return '<p class="meta-no-credits">None added</p>';
-  const filtered = arr.filter(c => c && c.name && c.name.trim());
-  if (filtered.length === 0) return '<p class="meta-no-credits">None added</p>';
-  return '<div class="meta-credits-list">' + filtered.map(c => `
-    <div class="meta-credit-item"><div class="meta-credit-dot"></div>
-      <div class="meta-credit-info"><div class="meta-credit-name">${escHtml(c.name)}</div>
-        ${c.role ? `<div class="meta-credit-role">${escHtml(c.role)}</div>` : ''}
-        ${c.ipi  ? `<div class="meta-credit-ipi">IPI / CAE: ${escHtml(c.ipi)}</div>` : ''}
-      </div></div>`).join('') + '</div>';
-}
-
-async function openMetaModal(releaseId) {
-  const data = window._releaseMeta[releaseId];
-  if (!data) return;
-  const content  = document.getElementById('metaModalContent');
-  const subtitle = document.getElementById('metaModalSubtitle');
-  subtitle.textContent = data.releaseTitle || 'Release Details';
-  const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
-  const submittedAt  = data.createdAt   ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
-  const rawStatus    = (data.status || 'Pending').trim();
-  const statusClass  = rawStatus.toLowerCase().replace(/\s+/g, '-');
-  const isApproved   = statusClass === 'approved';
-  const credits      = data.credits || {};
-  const hasProducers  = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
-  const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
-  const hasWriters    = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
-  const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
-  const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
-  const coverHtml = data.coverURL
-    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
-    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
-  let smartLinkHtml = '';
-  if (isApproved) smartLinkHtml = (!data.upc || !data.smartLinkURL) ? renderSmartLinkPanel(data, releaseId, null, null, true) : renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
-  const paid = isPaidValue(data.paid);
-  content.innerHTML = `
-    ${coverHtml}
-    <div class="meta-modal-body">
-      ${isApproved ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link & UPC</div><div id="smartLinkPanelContainer-${releaseId}">${smartLinkHtml}</div></div>` : ''}
-      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Status</div>
-        <div class="meta-status-row">
-          <span class="badge ${statusClass}">${escHtml(rawStatus)}</span>
-          <span class="badge ${paid ? 'paid' : 'unpaid'}">${paid ? 'Paid' : 'Unpaid'}</span>
-          ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--grey-dark);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
-        </div>
-      </div>
-      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
-        <div class="meta-fields-grid">
-          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
-          ${data.featuring && data.featuring.trim() ? `<div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value">${escHtml(data.featuring)}</div></div>` : ''}
-          <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Language</div><div class="meta-field-value">${escHtml(metaVal(data.language))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Release Date</div><div class="meta-field-value">${escHtml(releaseDate)}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Explicit Content</div><div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div></div>
-        </div>
-      </div>
-      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Label & Rights</div>
-        <div class="meta-fields-grid">
-          <div class="meta-field"><div class="meta-field-label">Label Name</div><div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">${escHtml(metaVal(data.label, 'Independent'))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Copyright Holder</div><div class="meta-field-value ${!data.copyright || !data.copyright.trim() ? 'none' : ''}">${escHtml(metaVal(data.copyright))}</div></div>
-        </div>
-      </div>
-      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Identifiers</div>
-        <div class="meta-fields-grid">
-          <div class="meta-field"><div class="meta-field-label">ISRC Code</div><div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">${escHtml(metaVal(data.isrc))}</div></div>
-          <div class="meta-field" id="upcDisplayField-${releaseId}"><div class="meta-field-label">UPC / EAN Barcode</div><div class="meta-field-value ${!data.upc ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;" id="upcFieldValue-${releaseId}">${data.upc ? escHtml(data.upc) : (isApproved ? 'Generating…' : 'Auto-assign')}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">${escHtml(metaVal(data.catalogNumber))}</div></div>
-        </div>
-      </div>
-      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Contact & Location</div>
-        <div class="meta-fields-grid">
-          <div class="meta-field"><div class="meta-field-label">Country</div><div class="meta-field-value">${escHtml(metaVal(data.country))}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Phone</div><div class="meta-field-value ${!data.phone || !data.phone.trim() ? 'none' : ''}">${escHtml(metaVal(data.phone))}</div></div>
-          <div class="meta-field full"><div class="meta-field-label">Email</div><div class="meta-field-value">${escHtml(metaVal(data.email))}</div></div>
-          ${data.refferal && data.refferal.trim() ? `<div class="meta-field"><div class="meta-field-label">Referral Code</div><div class="meta-field-value">${escHtml(data.refferal)}</div></div>` : ''}
-        </div>
-      </div>
-      ${hasAnyCredits ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>Production Credits</div>
-        ${hasProducers ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>${renderCreditsSection(credits.producer)}` : ''}
-        ${hasMusicians ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:12px;">Musicians</div>${renderCreditsSection(credits.musician)}` : ''}
-      </div>` : ''}
-      ${(hasWriters || hasPublishers) ? `<div class="meta-section"><div class="meta-section-label">Songwriting & Publishing</div>
-        ${hasWriters ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>${renderCreditsSection(credits.writer)}` : ''}
-        ${hasPublishers ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>${renderCreditsSection(credits.publishing)}` : ''}
-      </div>` : ''}
-      ${data.description && data.description.trim() ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lyrics</div><div class="meta-lyrics">${escHtml(data.description)}</div></div>` : ''}
-    </div>`;
-  document.getElementById('metaOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (isApproved && (!data.upc || !data.smartLinkURL)) triggerSmartLinkGeneration(releaseId);
-}
-async function triggerSmartLinkGeneration(releaseId) { if (window._generateSmartLink) window._generateSmartLink(releaseId); }
-function closeMetaModal() { document.getElementById('metaOverlay').classList.remove('open'); document.body.style.overflow = ''; }
-document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
-document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSmartLinkPage(); closeMetaModal(); } });
-document.getElementById('submissionsContainer').addEventListener('click', function(e) {
-  const cardBody = e.target.closest('.card-body-clickable');
-  if (!cardBody) return;
-  if (e.target.closest('.card-actions') || e.target.closest('.check-reasons-btn') || e.target.closest('.promote-btn') || e.target.closest('.pay-now-btn')) return;
-  const releaseId = cardBody.dataset.releaseId;
-  if (releaseId) openMetaModal(releaseId);
-});
-
-/* ═══════════════════════════════════════════════════════
-   PAY NOW — creates a REAL payment via the same backend
-   route the app's PaymentWaitingScreen uses, then polls for
-   confirmation right here on the dashboard. No redirect to
-   a separate pay.html — the flow never leaves this page
-   except for Paystack's own hosted checkout tab, exactly
-   like the app hands off to the phone's browser and waits.
-
-   The exact mount prefix for paystackRoutes.js isn't confirmed
-   from the browser's side, so instead of hardcoding one guess
-   (which 404'd as "Route not found; POST /api/create-payment"),
-   this probes a short list of likely prefixes on the first call
-   and remembers whichever one actually answers — same backend,
-   same host, just found the right path automatically instead of
-   assuming /api.
-═══════════════════════════════════════════════════════ */
-const PAYMENT_HOST = "https://444music-backend.bonto.run";
-const PAYMENT_BASE_CANDIDATES = [
-  `${PAYMENT_HOST}/api/paystack`,
-  `${PAYMENT_HOST}/api/payments`,
-  `${PAYMENT_HOST}/api/payment`,
-  `${PAYMENT_HOST}/api`,
-  `${PAYMENT_HOST}`,
-];
-
-function looksLikeRouteNotFound(status, text) {
-  if (status === 404) return true;
-  return /route not found/i.test(text || "");
-}
-
-// Tries each candidate base until one responds with something other
-// than "route not found", then remembers it in sessionStorage so
-// every later call (this create, and every verify poll) goes straight
-// to the right place without re-probing.
-async function postCreatePaymentWithProbing(body) {
-  const cached = sessionStorage.getItem("paymentApiBase");
-  const ordered = cached
-    ? [cached, ...PAYMENT_BASE_CANDIDATES.filter(b => b !== cached)]
-    : PAYMENT_BASE_CANDIDATES;
-
-  let lastError = null;
-  for (const base of ordered) {
-    try {
-      const res  = await fetch(`${base}/create-payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const text = await res.text();
-      if (looksLikeRouteNotFound(res.status, text)) {
-        lastError = new Error(`Route not found at ${base}/create-payment`);
-        continue;
+      if (group.id === 'previouslyReleasedGroup') {
+        const isYes = btn.dataset.value === 'Yes';
+        prevDateWrap.classList.toggle('visible', isYes);
+        if (!isYes) document.getElementById('previousReleaseDate').value = '';
       }
-      let json = {};
-      try { json = JSON.parse(text); } catch (e) { /* non-JSON body */ }
-      sessionStorage.setItem("paymentApiBase", base);
-      return { ok: res.ok, status: res.status, payload: json, base };
-    } catch (e) {
-      lastError = e; // network error on this candidate — try the next one
-    }
-  }
-  throw lastError || new Error("No working payment endpoint found.");
-}
-
-function verifyPaymentUrl(base, reference) {
-  return `${base}/verify-payment/${encodeURIComponent(reference)}`;
-}
-
-let _pendingPay = null;      // { releaseId, releaseTitle, amount }
-let _pollTimer  = null;
-let _pollDeadline = null;
-let _pollBase   = null;      // the payment base that worked, reused for verify polls
-
-function requestPayNow(releaseId, releaseTitle, amount) {
-  _pendingPay = { releaseId, releaseTitle, amount };
-  document.getElementById('payConfirmText').textContent =
-    `You'll be taken to a secure payment page to release "${releaseTitle}" (GHC ${amount.toFixed(2)}) for review.`;
-  document.getElementById('payConfirmOverlay').classList.add('open');
-}
-document.getElementById('payConfirmCancel').addEventListener('click', () => {
-  document.getElementById('payConfirmOverlay').classList.remove('open');
-});
-document.getElementById('payConfirmGo').addEventListener('click', async () => {
-  document.getElementById('payConfirmOverlay').classList.remove('open');
-  if (_pendingPay) await createAndTrackPayment(_pendingPay);
-});
-
-function openPayWait(html) {
-  document.getElementById('payWaitModal').innerHTML = html;
-  document.getElementById('payWaitOverlay').classList.add('open');
-}
-function closePayWait() {
-  document.getElementById('payWaitOverlay').classList.remove('open');
-  if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
-}
-
-async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
-  const user = window._currentUser;
-  if (!user) { showToast("Please sign in again to continue.", true); return; }
-
-  openPayWait(`
-    <div class="pay-wait-spinner"></div>
-    <div class="pay-wait-title">Creating payment…</div>
-    <div class="pay-wait-text">Setting up a secure Paystack checkout for "${escHtml(releaseTitle)}".</div>
-  `);
-
-  let payload;
-  try {
-    const result = await postCreatePaymentWithProbing({
-      amountGHS: amount,
-      submissionId: releaseId,
-      uid: user.uid,
-      email: user.email || "",
-      isExistingSubmission: true,
+      if (group.id === 'hasFeaturedGroup') {
+        featWrap.classList.toggle('visible', btn.dataset.value === 'Yes');
+      }
     });
-    payload   = result.payload;
-    _pollBase = result.base;
-    if (!result.ok) throw new Error(payload.error || payload.message || `Payment server returned ${result.status}.`);
-  } catch (err) {
-    console.error("[create-payment] error:", err);
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
-      <div class="pay-wait-title">Couldn't start payment</div>
-      <div class="pay-wait-text">${escHtml(err.message || "Please check your connection and try again.")}</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
-    return;
-  }
+  });
 
-  const authUrl    = payload.paymentUrl || payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
-  const reference  = payload.reference || payload.ref;
-  if (!authUrl || !reference) {
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
-      <div class="pay-wait-title">Unexpected response</div>
-      <div class="pay-wait-text">The payment server didn't return a checkout link. Please try again shortly.</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
-    return;
-  }
+  window.getRadioValue = function(id) {
+    const el = document.getElementById(id);
+    return el ? el.dataset.value : '';
+  };
+})();
+</script>
 
-  // Paystack hosts its own checkout — that part can't be reproduced
-  // in our own UI, so it opens in a new tab, same as the app opening
-  // it in the phone's browser via url_launcher.
-  window.open(authUrl, "_blank", "noopener");
+<!-- EARLY RELEASE-DATE WARNING ENGINE — fires once per date pick when
+     the chosen date is less than 5 days out, same trigger the app
+     uses, non-blocking (just informational). -->
+<script>
+(function(){
+  const dateInput = document.getElementById('releaseDate');
+  const overlay   = document.getElementById('earlyDateOverlay');
+  const dismissBtn = document.getElementById('earlyDateDismiss');
 
-  openPayWait(`
-    <div class="pay-wait-spinner"></div>
-    <div class="pay-wait-title">Waiting for payment…</div>
-    <div class="pay-wait-text">Complete checkout in the tab that just opened. This will update automatically once Paystack confirms it — no need to refresh.</div>
-    <div class="pay-wait-actions">
-      <button class="pay-wait-btn secondary" onclick="reopenCheckout('${escHtml(authUrl)}')">Reopen checkout</button>
-      <button class="pay-wait-btn secondary" onclick="closePayWait()">Cancel</button>
-    </div>
-  `);
-
-  _pollDeadline = Date.now() + 8 * 60 * 1000; // stop polling after 8 minutes
-  if (_pollTimer) clearInterval(_pollTimer);
-  _pollTimer = setInterval(() => pollPaymentStatus(reference, releaseId), 3000);
-}
-window.reopenCheckout = function(url) { window.open(url, "_blank", "noopener"); };
-window.closePayWait = closePayWait;
-
-async function pollPaymentStatus(reference, releaseId) {
-  if (Date.now() > _pollDeadline) {
-    clearInterval(_pollTimer); _pollTimer = null;
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div class="pay-wait-title">Still waiting</div>
-      <div class="pay-wait-text">We haven't seen confirmation yet. If you completed checkout, it'll update shortly — you can safely close this and check back.</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
-    return;
-  }
-  try {
-    const res  = await fetch(verifyPaymentUrl(_pollBase || PAYMENT_BASE_CANDIDATES[0], reference));
-    const data = await res.json();
-    const status = (data.status || data.paymentStatus || "").toString().toLowerCase();
-    if (status === "success" || status === "paid" || data.paid === true) {
-      clearInterval(_pollTimer); _pollTimer = null;
-      openPayWait(`
-        <div class="pay-wait-icon-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="pay-wait-title">Payment confirmed</div>
-        <div class="pay-wait-text">Your release has moved to review — no further action needed.</div>
-        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait(); loadReleasesForCurrentUser();">Done</button></div>
-      `);
-      showToast("Payment confirmed — release moved to review!");
-    } else if (status === "failed" || status === "abandoned") {
-      clearInterval(_pollTimer); _pollTimer = null;
-      openPayWait(`
-        <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
-        <div class="pay-wait-title">Payment not completed</div>
-        <div class="pay-wait-text">The checkout was closed or the payment failed. You can try again from the card.</div>
-        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-      `);
+  dateInput.addEventListener('change', function(){
+    if (!this.value) return;
+    const chosen = new Date(this.value + 'T00:00:00');
+    const today  = new Date();
+    today.setHours(0,0,0,0);
+    const diffDays = Math.round((chosen - today) / 86400000);
+    if (diffDays >= 0 && diffDays < 5) {
+      overlay.classList.add('open');
     }
-    // any other status ("pending" etc.) — keep polling silently.
-  } catch (err) {
-    console.error("[verify-payment] error:", err);
-    // Network hiccup — keep polling, don't interrupt the user.
-  }
-}
-function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
+  });
+  dismissBtn.addEventListener('click', function(){ overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.classList.remove('open'); });
+})();
+</script>
 
-/* ── CHECK REASONS & FIX — hands the full submission doc to
-   rejection-fix.html via sessionStorage (web has no Navigator
-   arguments), the same way the app passes the whole map into
-   RejectionFixScreen. ── */
-function openRejectionFix(releaseId) {
-  const data = window._releaseMeta[releaseId];
-  if (!data) return;
-  sessionStorage.setItem('rejectionFixData', JSON.stringify(data));
-  window.location.href = `rejection-fix.html?id=${encodeURIComponent(releaseId)}`;
+<!-- OWNERSHIP AGREEMENT ENGINE -->
+<script>
+(function(){
+  window.ownershipConfirmed = false;
+  const agreementBox     = document.getElementById('agreementBox');
+  const agreementCheckbox = document.getElementById('agreementCheckbox');
+  agreementBox.addEventListener('click', function(){
+    window.ownershipConfirmed = !window.ownershipConfirmed;
+    agreementCheckbox.classList.toggle('checked', window.ownershipConfirmed);
+    agreementBox.classList.toggle('checked', window.ownershipConfirmed);
+  });
+})();
+</script>
+
+<!-- CREDITS ENGINE — producer, musician, writer only (mirrors the app: no publishing) -->
+<script>
+const ROLES = {
+  producer: ['Producer','Executive Producer','Co-Producer','Beat Maker','Mixing Engineer','Mastering Engineer','Recording Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor'],
+  musician: ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Bassist','Drummer','Pianist','Keyboardist','DJ / Turntablist','Session Musician','String Arranger'],
+  writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer']
+};
+const PLACEHOLDERS = {
+  producer: { name: 'e.g. Metro Boomin', role: 'Select role…' },
+  musician: { name: 'e.g. John Mayer',   role: 'Select role…' },
+  writer:   { name: 'e.g. John Doe',     role: 'Select role…' }
+};
+const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList' };
+const credits  = { producer:[], musician:[], writer:[] };
+
+window.addCredit = function(type) {
+  const list = document.getElementById(LIST_IDS[type]);
+  const idx  = credits[type].length;
+  credits[type].push({ name:'', role:'', ipi:'' });
+  const row  = document.createElement('div');
+  row.className = 'credit-row';
+  row.dataset.type = type; row.dataset.idx = idx;
+  const label       = type.charAt(0).toUpperCase() + type.slice(1);
+  const roleOptions = ROLES[type].map(r => `<option value="${r}">${r}</option>`).join('');
+  const showIPI     = (type === 'writer');
+
+  row.innerHTML = `
+    <span class="credit-row-num">${label} ${idx + 1}</span>
+    <div class="credit-field-wrap">
+      <div class="credit-field-label">Full Name</div>
+      <input class="credit-input" type="text"
+        placeholder="${PLACEHOLDERS[type].name}"
+        oninput="updateCredit('${type}',${idx},'name',this.value)">
+    </div>
+    <div class="credit-field-wrap">
+      <div class="credit-field-label">Role</div>
+      <div class="csel-wrap">
+        <select class="credit-input" onchange="updateCredit('${type}',${idx},'role',this.value)">
+          <option value="" disabled selected>${PLACEHOLDERS[type].role}</option>${roleOptions}
+        </select>
+      </div>
+    </div>
+    ${showIPI ? `<div class="credit-field-wrap" style="grid-column:1/-1;">
+      <div class="credit-field-label">IPI / CAE Number (optional)</div>
+      <input class="credit-input" type="text" placeholder="e.g. 00000000497"
+        oninput="updateCredit('${type}',${idx},'ipi',this.value)">
+    </div>` : ''}
+    <button type="button" class="credit-remove" title="Remove"
+      onclick="removeCredit('${type}', this.closest('.credit-row'))">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+
+  list.appendChild(row);
+  row.querySelector('input.credit-input')?.focus();
+};
+
+window.updateCredit = function(type, idx, field, value) {
+  if (credits[type][idx]) credits[type][idx][field] = value;
+};
+
+window.removeCredit = function(type, row) {
+  const idx = parseInt(row.dataset.idx);
+  credits[type].splice(idx, 1);
+  row.style.opacity = '0'; row.style.transform = 'translateY(-4px)'; row.style.transition = '0.18s ease';
+  setTimeout(() => {
+    row.remove();
+    document.getElementById(LIST_IDS[type]).querySelectorAll('.credit-row').forEach((r, i) => {
+      r.dataset.idx = i;
+      const lbl = type.charAt(0).toUpperCase() + type.slice(1);
+      r.querySelector('.credit-row-num').textContent = `${lbl} ${i + 1}`;
+    });
+  }, 180);
+};
+
+// Mirrors the app's _formatCredits — one bullet line per named entry
+window.formatCreditsForEmail = function(arr) {
+  if (!arr || arr.length === 0) return 'None';
+  const lines = arr.filter(c => c.name && c.name.trim() !== '').map(c => {
+    let line = `• ${c.name}`;
+    if (c.role) line += ` — ${c.role}`;
+    if (c.ipi)  line += ` (IPI: ${c.ipi})`;
+    return line;
+  });
+  return lines.length > 0 ? lines.join('\n') : 'None';
+};
+
+window.collectCredits = function() {
+  const result = {};
+  ['producer','musician','writer'].forEach(type => {
+    result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
+  });
+  return result;
+};
+</script>
+
+<!-- SHARED APPLE MUSIC SEARCH (used by both Main and Featured artist boxes,
+     mirroring the app's _searchArtistsRemote) -->
+<script>
+async function searchAppleMusicArtists(query, signal) {
+  const itunesUrl = 'https://itunes.apple.com/search?term=' +
+    encodeURIComponent(query) + '&entity=musicArtist&limit=8&media=music';
+  const proxies = [
+    'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl)
+  ];
+  for (const proxyUrl of proxies) {
+    try {
+      const res = await Promise.race([
+        fetch(proxyUrl, { signal }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
+      ]);
+      if (!res.ok) continue;
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { continue; }
+      if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { continue; } }
+      if (!data || !data.results || !data.results.length) continue;
+      return data.results.filter(r => r.artistName).map(r => ({
+        name:  r.artistName,
+        genre: r.primaryGenreName || '',
+        img:   (r.artworkUrl100 || '').replace('100x100bb', '300x300bb')
+      }));
+    } catch (e) { /* try next proxy */ }
+  }
+  return [];
+}
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 
+<!-- MAIN ARTIST SEARCH ENGINE (multi-select pills) -->
+<script>
+(function(){
+  const selectedArtists = [];
+  const searchInput = document.getElementById('artistSearchInput');
+  const pillBox      = document.getElementById('artistPillBox');
+  const dropdown     = document.getElementById('artistDropdown');
+  const hiddenInput  = document.getElementById('artistName');
+  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [], activeCtrl = null;
+
+  async function runSearch(query) {
+    showLoading();
+    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
+    activeCtrl = new AbortController();
+    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
+    renderResults(query, results);
+  }
+
+  searchInput.addEventListener('input', function() {
+    const q = searchInput.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(searchTimer);
+    if (q.length < 2) { closeDropdown(); return; }
+    searchTimer = setTimeout(() => runSearch(q), 400);
+  });
+  searchInput.addEventListener('keydown', handleKeyNav);
+  searchInput.addEventListener('focus', function() {
+    const q = searchInput.value.trim();
+    if (q.length >= 2 && lastQuery !== q) runSearch(q);
+    else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
+  });
+
+  function showLoading() {
+    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
+    openDropdown();
+  }
+
+  function renderResults(query, artists) {
+    dropdownItems = [];
+    let html = '';
+    if (artists.length > 0) {
+      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
+      artists.forEach((a, i) => {
+        dropdownItems.push({ name: a.name, imageUrl: a.img || '', genre: a.genre || '', isNew: false });
+        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
+        const av = a.img
+          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+          : `<div class="opt-avatar">${initial}</div>`;
+        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
+      });
+    }
+    const newIdx = dropdownItems.length;
+    dropdownItems.push({ name: query, imageUrl: '', isNew: true });
+    html += '<div class="dropdown-sect-title">Not listed?</div>';
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
+    dropdown.innerHTML = html;
+    openDropdown(); focused = -1;
+    dropdown.querySelectorAll('.artist-option').forEach(el => {
+      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+    });
+  }
+
+  function selectItem(idx) {
+    const item = dropdownItems[idx];
+    if (!item) return;
+    addArtist(item.name, item.imageUrl);
+    closeDropdown(); searchInput.value = ''; lastQuery = '';
+  }
+
+  function addArtist(name, imageUrl) {
+    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
+    selectedArtists.push({ name, imageUrl });
+    syncHiddenInput(); renderPills();
+  }
+  function removeArtist(idx) { selectedArtists.splice(idx, 1); syncHiddenInput(); renderPills(); }
+
+  function renderPills() {
+    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
+    selectedArtists.forEach((artist, i) => {
+      const pill = document.createElement('div');
+      pill.className = 'artist-pill';
+      const av = artist.imageUrl
+        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
+        : `<span class="pill-avatar">${escHtml(artist.name.charAt(0).toUpperCase())}</span>`;
+      pill.innerHTML = `${av}<span>${escHtml(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${escHtml(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+      pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
+      pillBox.insertBefore(pill, searchInput);
+    });
+    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Apple Music…';
+  }
+
+  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
+
+  function handleKeyNav(e) {
+    const items = dropdown.querySelectorAll('.artist-option');
+    if (!dropdown.classList.contains('open') || items.length === 0) return;
+    if      (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlight(items); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); focused = Math.max(focused - 1, 0); highlight(items); }
+    else if (e.key === 'Enter')     { e.preventDefault(); if (focused >= 0) selectItem(focused); }
+    else if (e.key === 'Escape')    { closeDropdown(); }
+  }
+  function highlight(items) {
+    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
+    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
+  }
+  function openDropdown()  { dropdown.classList.add('open'); }
+  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
+})();
+</script>
+
+<!-- FEATURED / SECONDARY ARTIST SEARCH ENGINE (mirrors the app's mirrored search) -->
+<script>
+(function(){
+  const featuredArtists = []; // {name, imageUrl, role, url}
+  const searchInput = document.getElementById('featArtistSearchInput');
+  const dropdown     = document.getElementById('featArtistDropdown');
+  const listEl       = document.getElementById('featuredArtistsList');
+  let searchTimer = null, lastQuery = '', dropdownItems = [], activeCtrl = null;
+
+  window.formatFeaturedArtistsForEmail = function() {
+    if (featuredArtists.length === 0) return 'None';
+    return featuredArtists.map(e => {
+      let line = `${e.name} (${e.role})`;
+      if (e.url && e.url.trim()) line += ` — ${e.url.trim()}`;
+      return line;
+    }).join('\n');
+  };
+  window.collectFeaturedArtists = function() {
+    return featuredArtists.map(e => ({ name: e.name, role: e.role, url: (e.url || '').trim() }));
+  };
+
+  async function runSearch(query) {
+    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
+    openDropdown();
+    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
+    activeCtrl = new AbortController();
+    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
+    renderResults(query, results);
+  }
+
+  searchInput.addEventListener('input', function() {
+    const q = searchInput.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(searchTimer);
+    if (q.length < 2) { closeDropdown(); return; }
+    searchTimer = setTimeout(() => runSearch(q), 400);
+  });
+  document.addEventListener('mousedown', function(e) {
+    if (!e.target.closest('#featArtistFieldWrap')) closeDropdown();
+  });
+
+  function renderResults(query, artists) {
+    dropdownItems = [];
+    let html = '';
+    if (artists.length > 0) {
+      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
+      artists.forEach((a, i) => {
+        dropdownItems.push({ name: a.name, imageUrl: a.img || '' });
+        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
+        const av = a.img
+          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+          : `<div class="opt-avatar">${initial}</div>`;
+        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
+      });
+    }
+    const newIdx = dropdownItems.length;
+    dropdownItems.push({ name: query, imageUrl: '' });
+    html += '<div class="dropdown-sect-title">Not listed?</div>';
+    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
+    dropdown.innerHTML = html;
+    openDropdown();
+    dropdown.querySelectorAll('.artist-option').forEach(el => {
+      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+    });
+  }
+
+  function selectItem(idx) {
+    const item = dropdownItems[idx];
+    if (!item) return;
+    addFeaturedArtist(item.name, item.imageUrl);
+    closeDropdown(); searchInput.value = ''; lastQuery = '';
+  }
+
+  function addFeaturedArtist(name, imageUrl) {
+    if (featuredArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
+    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '' });
+    renderList();
+  }
+  function removeFeaturedArtist(idx) { featuredArtists.splice(idx, 1); renderList(); }
+
+  function renderList() {
+    listEl.innerHTML = '';
+    featuredArtists.forEach((entry, i) => {
+      const card = document.createElement('div');
+      card.className = 'feat-card';
+      const av = entry.imageUrl
+        ? `<div class="feat-avatar"><img src="${entry.imageUrl}" alt="" onerror="this.style.display='none'"></div>`
+        : `<div class="feat-avatar">${escHtml((entry.name||'?').charAt(0).toUpperCase())}</div>`;
+      card.innerHTML = `
+        <div class="feat-card-top">
+          ${av}
+          <div class="feat-name">${escHtml(entry.name)}</div>
+          <button type="button" class="feat-remove" aria-label="Remove ${escHtml(entry.name)}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="feat-role-wrap">
+          <select>
+            <option value="Featuring Artist" ${entry.role === 'Featuring Artist' ? 'selected' : ''}>Featuring Artist</option>
+            <option value="Secondary Artist" ${entry.role === 'Secondary Artist' ? 'selected' : ''}>Secondary Artist</option>
+          </select>
+        </div>
+        <div class="feat-url-wrap">
+          <img src="https://cdn.simpleicons.org/spotify/1DB954" alt="" width="14" height="14" onerror="this.style.display='none'">
+          <img src="https://cdn.simpleicons.org/applemusic/fc3c44" alt="" width="14" height="14" onerror="this.style.display='none'">
+          <input type="text" placeholder="Paste Spotify or Apple Music link (optional)" value="${escHtml(entry.url || '')}">
+        </div>`;
+      card.querySelector('.feat-remove').addEventListener('click', () => removeFeaturedArtist(i));
+      card.querySelector('.feat-role-wrap select').addEventListener('change', (e) => { entry.role = e.target.value; });
+      card.querySelector('.feat-url-wrap input').addEventListener('input', (e) => { entry.url = e.target.value; });
+      listEl.appendChild(card);
+    });
+  }
+
+  function openDropdown()  { dropdown.classList.add('open'); }
+  function closeDropdown() { dropdown.classList.remove('open'); }
+})();
+</script>
+
+<!-- FIREBASE + PAYMENT VERIFY/CLAIM + SUBMIT + OWN BACKEND NOTIFY -->
 <script type="module">
-import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1172,217 +1384,245 @@ const firebaseConfig = {
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
 
-const app       = initializeApp(firebaseConfig);
-const auth      = getAuth(app);
-const db        = getFirestore(app);
-const container = document.getElementById("submissionsContainer");
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-async function generateUniqueUPC() {
-  let attempts = 0;
-  while (attempts < 20) {
-    const candidate = generateUPCCandidate();
-    const q = query(collection(db, "submissions"), where("upc", "==", candidate));
-    const snap = await getDocs(q);
-    if (snap.empty) return candidate;
-    attempts++;
-  }
-  return generateUPCCandidate();
-}
+const NOTIFY_URL    = "https://444music-backend.bonto.run/api/submissions/notify";
+const NOTIFY_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
 
-window._generateSmartLink = async function(releaseId) {
-  try {
-    const docRef  = doc(db, "submissions", releaseId);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) return;
-    const existing = docSnap.data();
-    if (existing.upc && existing.smartLinkURL) {
-      window._releaseMeta[releaseId].upc = existing.upc;
-      window._releaseMeta[releaseId].smartLinkURL = existing.smartLinkURL;
-      refreshSmartLinkPanel(releaseId);
-      return;
-    }
-    const upc          = await generateUniqueUPC();
-    const smartLinkURL = buildSmartLinkURL(releaseId, existing.artistName || '', existing.releaseTitle || '');
-    await updateDoc(docRef, { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
-    window._releaseMeta[releaseId].upc = upc;
-    window._releaseMeta[releaseId].smartLinkURL = smartLinkURL;
-    refreshSmartLinkPanel(releaseId);
-    showToast("Smart Link & UPC generated successfully!");
-  } catch (err) {
-    console.error("Smart link generation error:", err);
-    showToast("Failed to generate smart link. Please try again.", true);
-  }
-};
-function refreshSmartLinkPanel(releaseId) {
-  const data  = window._releaseMeta[releaseId];
-  const panel = document.getElementById(`smartLinkPanelContainer-${releaseId}`);
-  const upcEl = document.getElementById(`upcFieldValue-${releaseId}`);
-  if (panel && data.upc && data.smartLinkURL) panel.innerHTML = renderSmartLinkPanel(data, releaseId, data.upc, data.smartLinkURL, false);
-  if (upcEl && data.upc) { upcEl.textContent = data.upc; upcEl.classList.remove('none'); }
-}
+let currentUser       = null;
+let paymentReference  = null;
+let paymentVerified    = false;
+let coverUrl           = '';
+let audioFiles         = [];
 
-async function loadReleases(user) {
-  container.innerHTML = "";
-  window._releaseMeta = {};
-  allCards = [];
-  try {
-    const q        = query(collection(db, "submissions"), where("userId", "==", user.uid));
-    const snapshot = await getDocs(q);
-    if (snapshot.empty) {
-      container.innerHTML = `<div class="empty">
-        <div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-        <h3>No releases yet</h3>
-        <p>Create your first release to start distributing your music worldwide.</p>
-        <a class="empty-cta" href="pricing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</a>
-      </div>`;
-      updateStats([]);
-      return;
-    }
-    const submissionsData = [];
-    let cardIndex = 0;
-    const docsSorted = snapshot.docs.slice().sort((a, b) => {
-      const aTime = a.data().createdAt || 0;
-      const bTime = b.data().createdAt || 0;
-      return bTime - aTime; // newest first
-    });
-    docsSorted.forEach((docSnap) => {
-      const data = docSnap.data();
-      const id   = docSnap.id;
-      window._releaseMeta[id] = { ...data, _id: id };
-
-      const rawStatus = (data.status || "Pending").trim().toLowerCase();
-
-      if (rawStatus === "approved" && (!data.upc || !data.smartLinkURL)) {
-        (async () => {
-          try {
-            const upc = await generateUniqueUPC();
-            const smartLinkURL = buildSmartLinkURL(id, data.artistName || '', data.releaseTitle || '');
-            await updateDoc(doc(db, "submissions", id), { upc, smartLinkURL, smartLinkGeneratedAt: serverTimestamp() });
-            window._releaseMeta[id].upc = upc;
-            window._releaseMeta[id].smartLinkURL = smartLinkURL;
-          } catch(e) { console.error("BG smart link gen error:", e); }
-        })();
+// ── read what pricing/upload passed us via URL query params ──
+// (?ref=<paymentReference>&cover=<url>&audio=<json>) — the web
+// equivalent of the app's Navigator route arguments map.
+(function readIncomingParams() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) paymentReference = ref;
+  const cover = params.get('cover');
+  if (cover) coverUrl = cover;
+  const audio = params.get('audio');
+  if (audio) {
+    try {
+      const parsed = JSON.parse(audio);
+      if (Array.isArray(parsed)) {
+        audioFiles = parsed
+          .map(m => ({ title: m.title || '', artist: m.artist || '', url: m.url || '' }))
+          .filter(m => m.url);
       }
+    } catch (e) { /* ignore malformed audio param */ }
+  }
+})();
 
-      submissionsData.push(data);
-      const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
-      const statusClass  = rawStatus.replace(/\s+/g, "-");
-      const isRejected   = statusClass === "rejected";
-      const isApproved   = statusClass === "approved";
-      const isPending    = statusClass === "pending";
-      const paid         = isPaidValue(data.paid);
-      const needsPayment = isPending && !paid;
-      const { pct, label } = getProgress(rawStatus);
-
-      const imageSection = data.coverURL
-        ? `<img src="${data.coverURL}" class="cover-image" data-id="${id}" alt="Cover art">`
-        : `<div class="cover-placeholder cover-image" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Tap to add cover art</span></div>`;
-
-      // ── REJECTED — carries the FULL doc through sessionStorage into
-      // rejection-fix.html, same as the app's Navigator arguments. ──
-      const checkReasonsBtn = isRejected
-        ? `<button type="button" class="check-reasons-btn" onclick="openRejectionFix('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`
-        : "";
-
-      // ── PENDING + UNPAID — Pay Now, opens the confirm modal then
-      // creates a real Paystack payment + polls for confirmation
-      // right here (see createAndTrackPayment above). ──
-      const price = priceForReleaseType(data.releaseType);
-      const payNowBtn = needsPayment
-        ? `<button type="button" class="pay-now-btn" onclick="requestPayNow('${id}', '${escHtml(data.releaseTitle || 'this release')}', ${price})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`
-        : "";
-
-      const promoteBtn = isApproved
-        ? `<a href="https://444musicblog.vercel.app" target="_blank" class="promote-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote</a>`
-        : "";
-
-      const secondaryActionBtn = isApproved
-        ? `<button class="action-btn highlight" data-id="${id}" onclick="openMetaModal('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</button>`
-        : `<button class="action-btn" onclick="location.href='pricing.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New Release</button>`;
-
-      const card = document.createElement("div");
-      card.className = `card${isRejected ? " status-rejected" : ""}`;
-      card.dataset.status = statusClass;
-      card.innerHTML = `
-        <div class="image-wrapper">
-          ${imageSection}
-          <div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
-          <input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">
-        </div>
-        <div class="card-body card-body-clickable" data-release-id="${id}">
-          <h3>${data.releaseTitle || "Untitled Release"}<span class="expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/></svg></span></h3>
-          <p class="artist-name">${data.artistName || "Unknown Artist"}</p>
-          ${data.featuring && data.featuring.trim() ? `<p class="feat"><strong>ft.</strong> ${data.featuring}</p>` : ""}
-          <p class="release-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Release: <strong>${releaseDate}</strong></p>
-          <div class="progress-wrap">
-            <div class="progress-label"><span>${label}</span><span>${pct}%</span></div>
-            <div class="progress-bar"><div class="progress-fill${isRejected ? " rejected-fill" : ""}" style="width:0%" data-pct="${pct}"></div></div>
-          </div>
-          <div class="card-divider"></div>
-          <div class="status-row">
-            <span class="badge ${statusClass}">${(data.status || 'Pending').trim()}</span>
-            <span class="badge ${paid ? "paid" : "unpaid"}">${paid ? "Paid" : "Unpaid"}</span>
-            ${isApproved ? `<span style="font-size:10px;color:var(--green);font-weight:700;display:inline-flex;align-items:center;gap:4px;"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>Live</span>` : ''}
-          </div>
-          ${checkReasonsBtn}
-          ${payNowBtn}
-          ${promoteBtn}
-          <div class="card-actions">
-            <button class="action-btn edit-cover-btn" data-id="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Cover</button>
-            ${secondaryActionBtn}
-          </div>
-        </div>`;
-      container.appendChild(card);
-      const idx = cardIndex++;
-      card.style.opacity = "0"; card.style.transform = "translateY(16px)";
-      setTimeout(() => { card.style.transition = "opacity 0.35s ease, transform 0.35s ease"; card.style.opacity = "1"; card.style.transform = "translateY(0)"; }, idx * 60);
-      setTimeout(() => { const fill = card.querySelector(".progress-fill"); if (fill) fill.style.width = fill.dataset.pct + "%"; }, 500 + idx * 60);
-      allCards.push({ card, status: statusClass });
-    });
-    setTimeout(() => updateStats(submissionsData), 200);
-  } catch (err) {
-    console.error("Error loading releases:", err);
-    container.innerHTML = `<div class="empty"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
+async function verifyPayment(reference) {
+  try {
+    const snap = await getDoc(doc(db, 'pendingPayments', reference));
+    if (snap.exists() && snap.data().paid === true) {
+      paymentVerified = true;
+      document.getElementById('paymentBadge').classList.add('show');
+    }
+  } catch (e) {
+    console.error('[Payment verify] ERROR:', e);
   }
 }
-window._reloadReleases = () => { if (window._currentUser) loadReleases(window._currentUser); };
 
-container.addEventListener("click", (e) => {
-  const target = e.target.closest(".cover-image, .edit-cover-btn");
-  if (!target) return;
-  if (e.target.closest('.card-body-clickable') && !e.target.closest('.edit-cover-btn')) return;
-  const id    = target.dataset.id;
-  const input = container.querySelector(`.cover-input[data-id="${id}"]`);
-  if (input) input.click();
-});
-container.addEventListener("change", async (e) => {
-  if (!e.target.classList.contains("cover-input")) return;
-  const file = e.target.files[0];
-  if (!file) return;
-  const id      = e.target.dataset.id;
-  const wrapper = e.target.closest(".image-wrapper");
-  if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    const base64 = ev.target.result;
-    await updateDoc(doc(db, "submissions", id), { coverURL: base64 });
-    if (window._releaseMeta[id]) window._releaseMeta[id].coverURL = base64;
-    wrapper.innerHTML = `<img src="${base64}" class="cover-image" data-id="${id}" alt="Cover art" style="width:100%;height:200px;object-fit:cover;"><div class="play-overlay"><div class="play-btn-circle"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><input type="file" accept="image/*" class="cover-input" data-id="${id}" style="display:none;">`;
-    showToast("Cover art updated successfully!");
-  };
-  reader.readAsDataURL(file);
-});
-
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, user => {
   if (!user) { window.location.href = "login.html"; return; }
-  window._currentUser = user;
-  const name = user.displayName || user.email.split("@")[0];
-  document.getElementById("userName").textContent    = name;
-  document.getElementById("userInitial").textContent = name.charAt(0).toUpperCase();
-  const userRef  = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-  if (!userSnap.exists()) await setDoc(userRef, { name, email: user.email, earnings: 0, createdAt: serverTimestamp() });
-  await loadReleases(user);
+  currentUser = user;
+  if (paymentReference) verifyPayment(paymentReference);
+});
+
+const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
+
+// Mirrors the app's _sendEmails param list exactly, including the
+// payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
+// (the app has no publishing panel).
+async function sendEmails(data) {
+  const fmt = window.formatCreditsForEmail;
+  const params = {
+    email:          data.email,
+    artist_name:    data.artistName,
+    featuring:      window.formatFeaturedArtistsForEmail(),
+    release_title:  data.releaseTitle,
+    release_type:   data.releaseType,
+    genre:          data.genre,
+    language:       data.language     || 'Not specified',
+    release_date:   data.releaseDate  || 'Not set',
+    explicit:       data.explicit,
+    country:        data.country,
+    phone:          data.phone        || 'Not provided',
+    label:          data.label        || 'Independent',
+    copyright:      data.copyright    || 'Not provided',
+    isrc:           data.isrc         || 'Not provided',
+    upc:            data.upc          || 'Auto-assign',
+    catalog_number: data.catalogNumber|| 'Not provided',
+    version:                data.version,
+    previously_released:    data.previouslyReleased,
+    previous_release_date:  data.previousReleaseDate || 'N/A',
+    vocal_type:             data.vocalType,
+    ownership_confirmed:    data.ownershipConfirmed
+      ? 'Yes — confirmed original work'
+      : 'Not confirmed',
+    producers:      fmt(data.credits?.producer),
+    musicians:      fmt(data.credits?.musician),
+    songwriters:    fmt(data.credits?.writer),
+    publishers:     'N/A',
+    lyrics:         data.lyrics        || 'Not provided',
+    submitted_at:   new Date(data.createdAt).toLocaleString(),
+    status:         data.status,
+    payment_status: paymentVerified ? 'Paid' : 'Not confirmed',
+    cover_url:      data.coverURL   || '',
+    audio_files:    data.audioFiles || []
+  };
+
+  const res = await fetch(NOTIFY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-app-secret": NOTIFY_SECRET },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Notify request failed (${res.status}): ${text}`);
+  }
+}
+
+const form      = document.getElementById("releaseForm");
+const submitBtn = document.getElementById("submitBtn");
+const statusMsg = document.getElementById("statusMsg");
+let isSubmitting = false;
+
+function resetBtn() {
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = `${SUBMIT_SVG} Save &amp; Continue to Stores`;
+  isSubmitting = false;
+}
+function showError(msg) { statusMsg.textContent = msg; statusMsg.className = 'error'; }
+
+function toIsoOrEmpty(dateInputValue) {
+  if (!dateInputValue) return '';
+  try { return new Date(dateInputValue).toISOString(); } catch (e) { return dateInputValue; }
+}
+
+// ── VALIDATION — mirrors the app's _validate() exactly: order,
+// messages, and producer (not writer) as the required credit. ──
+function validate() {
+  const artistName = document.getElementById("artistName").value.trim();
+  if (!artistName) return { msg: 'Please add at least one artist.', scrollTo: 'artistPillBox' };
+
+  const releaseTitle = document.getElementById("releaseTitle").value.trim();
+  if (!releaseTitle) return { msg: 'Release title is required.', scrollTo: 'releaseTitle' };
+
+  const releaseDate = document.getElementById("releaseDate").value;
+  if (!releaseDate) return { msg: 'Please select a release date.', scrollTo: 'releaseDate' };
+
+  const producers = credits.producer.filter(p => p.name && p.name.trim() !== '');
+  if (producers.length === 0) return { msg: 'Please add at least one producer name.', scrollTo: 'producerList' };
+
+  const version = document.getElementById("version").value;
+  if (!version) return { msg: 'Please select a version for this track.', scrollTo: 'version' };
+
+  const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
+  const previousReleaseDate = document.getElementById('previousReleaseDate').value;
+  if (previouslyReleased === 'Yes' && !previousReleaseDate) {
+    return { msg: 'Please select the previous release date.', scrollTo: 'previousReleaseDateWrap' };
+  }
+
+  if (!window.ownershipConfirmed) {
+    return { msg: 'Please confirm you own this song / hold the rights to distribute it.', scrollTo: 'agreementBox' };
+  }
+
+  const email = document.getElementById("email").value.trim();
+  if (!email) return { msg: 'Email address is required.', scrollTo: 'email' };
+
+  return null;
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (isSubmitting || !currentUser) return;
+
+  const error = validate();
+  if (error) {
+    showError('⚠ ' + error.msg);
+    const el = document.getElementById(error.scrollTo);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  isSubmitting = true;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
+  statusMsg.textContent = 'Please wait…';
+  statusMsg.className   = '';
+
+  const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
+  const previousReleaseDate = document.getElementById('previousReleaseDate').value;
+  const creditsData = window.collectCredits();
+
+  // Mirrors the app's submission data map field-for-field, including
+  // the payment / cover / audio fields and Review-vs-Pending status.
+  const data = {
+    artistName:    document.getElementById("artistName").value.trim(),
+    releaseTitle:  document.getElementById("releaseTitle").value.trim(),
+    releaseType:   document.getElementById("releaseType").value,
+    genre:         document.getElementById("genre").value,
+    country:       document.getElementById("country").value,
+    language:      document.getElementById("language").value.trim(),
+    releaseDate:   toIsoOrEmpty(document.getElementById("releaseDate").value),
+    explicit:      document.getElementById("explicit").value,
+    email:         document.getElementById("email").value.trim(),
+    phone:         document.getElementById("number").value.trim(),
+    label:         document.getElementById("label").value.trim(),
+    copyright:     document.getElementById("copyright").value.trim(),
+    isrc:          document.getElementById("isrc").value.trim(),
+    upc:           document.getElementById("upc").value.trim(),
+    catalogNumber: document.getElementById("catalogNumber").value.trim(),
+    lyrics:        document.getElementById("lyrics").value.trim(),
+    version:               document.getElementById("version").value,
+    previouslyReleased:    previouslyReleased,
+    previousReleaseDate:   previouslyReleased === 'Yes' ? toIsoOrEmpty(previousReleaseDate) : '',
+    vocalType:             window.getRadioValue('vocalTypeGroup'),
+    ownershipConfirmed:    window.ownershipConfirmed,
+    credits:               creditsData,
+    featuredArtists:       window.collectFeaturedArtists(),
+    paid:             paymentVerified ? 'Paid' : 'Unpaid',
+    paymentReference: paymentReference || '',
+    coverURL:         coverUrl || '',
+    audioFiles:       audioFiles,
+    userId:    currentUser.uid,
+    createdAt: Date.now(),
+    status:    paymentVerified ? 'Review' : 'Pending'
+  };
+
+  try {
+    // 1 — Save to Firestore
+    await addDoc(collection(db, "submissions"), data);
+
+    // 2 — Send notification emails via our own backend
+    await sendEmails(data);
+
+    // 3 — Mark the payment as claimed so the Pricing resume banner
+    // doesn't show it as unclaimed anymore (mirrors the app's claim step)
+    if (paymentVerified && paymentReference) {
+      try {
+        await updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true });
+      } catch (e) {
+        console.error('[Payment claim] ERROR:', e);
+      }
+    }
+
+    window.location.href = "select.html";
+  } catch (error) {
+    console.error("Submission Error:", error);
+    showError("Something went wrong. Please try again.");
+    resetBtn();
+  }
 });
 </script>
 
