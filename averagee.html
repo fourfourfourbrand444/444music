@@ -399,6 +399,7 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 
 #statusMsg { margin-top: 14px; text-align: center; font-size: 0.84rem; color: var(--text-secondary); min-height: 20px; }
 #statusMsg.error { color: var(--danger); }
+#statusMsg.success { color: var(--success); }
 
 /* Payment badge — shown at the top when a verified payment reference is present */
 .payment-badge {
@@ -1135,7 +1136,7 @@ function escHtml(str) {
 <script type="module">
 import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1201,10 +1202,13 @@ onAuthStateChanged(auth, user => {
 
 const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
 const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
+const CHECK_SVG  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M20 6 9 17l-5-5"/></svg>`;
 
 // Mirrors the app's _sendEmails param list exactly, including the
 // payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
 // (the app has no publishing panel).
+// NOTE: this is a best-effort side-effect (see submit handler below) —
+// it must NEVER be allowed to make the app think the release wasn't saved.
 async function sendEmails(data) {
   const fmt = window.formatCreditsForEmail;
   const params = {
@@ -1243,10 +1247,13 @@ async function sendEmails(data) {
     audio_files:    data.audioFiles || []
   };
 
+  // keepalive: true lets this request keep running even though we
+  // navigate away right after the Firestore save succeeds.
   const res = await fetch(NOTIFY_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-app-secret": NOTIFY_SECRET },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
+    keepalive: true
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
@@ -1254,17 +1261,60 @@ async function sendEmails(data) {
   }
 }
 
+// ── DUPLICATE-SUBMISSION GUARD (works for paid AND free releases) ──
+// A refresh right after a successful save resets hasSubmittedSuccessfully,
+// so relying on that flag (or on paymentReference, which free releases
+// don't even have) isn't enough. Instead, before writing, check whether
+// this user already has a submission with the same title + artist created
+// in the last few minutes. If so, treat it as the same release rather
+// than creating a second document.
+const DUPLICATE_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+
+async function findRecentDuplicate(data) {
+  try {
+    const q = query(collection(db, "submissions"), where("userId", "==", currentUser.uid));
+    const snap = await getDocs(q);
+    const cutoff = Date.now() - DUPLICATE_WINDOW_MS;
+    let match = null;
+    snap.forEach(docSnap => {
+      const existing = docSnap.data();
+      if (
+        existing.releaseTitle === data.releaseTitle &&
+        existing.artistName === data.artistName &&
+        typeof existing.createdAt === 'number' &&
+        existing.createdAt >= cutoff
+      ) {
+        // keep the most recent match if there happens to be more than one
+        if (!match || existing.createdAt > match.createdAt) {
+          match = { id: docSnap.id, ...existing };
+        }
+      }
+    });
+    return match;
+  } catch (e) {
+    // Never let a failed duplicate-check block a genuine submission —
+    // log it and fall through to the normal save path.
+    console.error('[Duplicate check] ERROR (non-fatal, proceeding with save):', e);
+    return null;
+  }
+}
+
 const form      = document.getElementById("releaseForm");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 let isSubmitting = false;
+// Once a release has been saved for this form load, the form is retired —
+// there is no scenario in which clicking Submit again should be allowed
+// to create a second Firestore document.
+let hasSubmittedSuccessfully = false;
 
 function resetBtn() {
   submitBtn.disabled = false;
   submitBtn.innerHTML = `${SUBMIT_SVG} Save &amp; Continue to Stores`;
   isSubmitting = false;
 }
-function showError(msg) { statusMsg.textContent = msg; statusMsg.className = 'error'; }
+function showError(msg)   { statusMsg.textContent = msg; statusMsg.className = 'error'; }
+function showSuccess(msg) { statusMsg.textContent = msg; statusMsg.className = 'success'; }
 
 function toIsoOrEmpty(dateInputValue) {
   if (!dateInputValue) return '';
@@ -1307,7 +1357,11 @@ function validate() {
 
 form.addEventListener("submit", async e => {
   e.preventDefault();
-  if (isSubmitting || !currentUser) return;
+
+  // Hard guard: if we've already saved this release once, do not allow
+  // a second Firestore write no matter how many times this fires
+  // (double-click, Enter key repeat, etc).
+  if (isSubmitting || hasSubmittedSuccessfully || !currentUser) return;
 
   const error = validate();
   if (error) {
@@ -1319,7 +1373,7 @@ form.addEventListener("submit", async e => {
 
   isSubmitting = true;
   submitBtn.disabled = true;
-  submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
+  submitBtn.innerHTML = `${SPIN_SVG} Checking…`;
   statusMsg.textContent = 'Please wait…';
   statusMsg.className   = '';
 
@@ -1362,29 +1416,64 @@ form.addEventListener("submit", async e => {
     status:    paymentVerified ? 'Review' : 'Pending'
   };
 
-  try {
-    // 1 — Save to Firestore
-    await addDoc(collection(db, "submissions"), data);
+  // ── STEP 0 (critical, runs for BOTH paid and free releases): check
+  // whether this exact release (same user, same title, same artist) was
+  // already saved in the last few minutes. This is what actually catches
+  // the "refresh right after success, then resubmit" case — it does not
+  // depend on paymentReference existing, so it protects free/Pending
+  // releases too, not just paid ones.
+  const duplicate = await findRecentDuplicate(data);
+  if (duplicate) {
+    hasSubmittedSuccessfully = true;
+    submitBtn.innerHTML = `${CHECK_SVG} Already Saved`;
+    showSuccess('This release was already submitted — redirecting…');
 
-    // 2 — Send notification emails via our own backend
-    await sendEmails(data);
-
-    // 3 — Mark the payment as claimed so the Pricing resume banner
-    // doesn't show it as unclaimed anymore (mirrors the app's claim step)
+    // Still worth a best-effort retry of the payment claim here, in case
+    // the original attempt's claim update silently failed.
     if (paymentVerified && paymentReference) {
-      try {
-        await updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true });
-      } catch (e) {
-        console.error('[Payment claim] ERROR:', e);
-      }
+      updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true })
+        .catch(err => console.error('[Payment claim] ERROR (non-fatal):', err));
     }
 
-    window.location.href = "select.html";
-  } catch (error) {
-    console.error("Submission Error:", error);
-    showError("Something went wrong. Please try again.");
-    resetBtn();
+    setTimeout(() => { window.location.href = "select.html"; }, 450);
+    return;
   }
+
+  submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
+
+  // ── STEP 1 (critical): save the release. This is the ONLY step
+  // whose failure should show an error and let the user try again.
+  let docRef;
+  try {
+    docRef = await addDoc(collection(db, "submissions"), data);
+  } catch (error) {
+    console.error("Submission Error (Firestore save failed):", error);
+    showError("Couldn't save your release. Please check your connection and try again.");
+    resetBtn();
+    return;
+  }
+
+  // The release is now safely saved. Lock the form permanently so no
+  // retry — accidental or intentional — can ever create a duplicate.
+  hasSubmittedSuccessfully = true;
+  submitBtn.innerHTML = `${CHECK_SVG} Saved`;
+  showSuccess('Release saved. Redirecting…');
+
+  // ── STEP 2 (best-effort, non-blocking): notify email + claim payment.
+  // Neither of these can fail the submission from the user's point of
+  // view — they just log quietly if something goes wrong on the backend.
+  sendEmails(data).catch(err => {
+    console.error("Notify email failed (release was still saved):", err);
+  });
+
+  if (paymentVerified && paymentReference) {
+    updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true })
+      .catch(err => console.error('[Payment claim] ERROR (non-fatal):', err));
+  }
+
+  // ── STEP 3: move on. A short delay lets the "Saved" state register
+  // visually before navigating away.
+  setTimeout(() => { window.location.href = "select.html"; }, 450);
 });
 </script>
 
