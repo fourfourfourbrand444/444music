@@ -536,6 +536,7 @@
   country: 'Ghana',
   earnings: 0,
   emailOptIn: true,
+  emailVerified: true, // Google accounts are pre-verified by Google itself
   createdAt: serverTimestamp()
 });
       await setDoc(doc(db, 'analytics', user.uid), {
@@ -555,7 +556,7 @@
     window.location.href = 'home.html';
   }
 
-  /* LOGIN */
+  /* LOGIN — now gated on emailVerified before granting access */
   window.doLogin = async () => {
     clearMsg('loginMsg');
     const email = $('loginEmail').value.trim();
@@ -564,7 +565,24 @@
     if (!pass)  { shake('loginFieldPass');  showMsg('loginMsg','Enter your password.','warn'); return; }
     setLoad('loginBtn', true);
     try {
-      await signInWithEmailAndPassword(auth, email, pass);
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const uid  = cred.user.uid;
+
+      // Check emailVerified in Firestore before letting them into the app.
+      // Unverified accounts get sent back to the verify-code screen instead.
+      const userSnap = await getDoc(doc(db, 'users', uid));
+      const isVerified = userSnap.exists() && userSnap.data().emailVerified === true;
+
+      if (!isVerified) {
+        setLoad('loginBtn', false);
+        showMsg('loginMsg', 'Please verify your email to continue.', 'warn');
+        sessionStorage.setItem('pendingVerifyUid', uid);
+        sessionStorage.setItem('pendingVerifyEmail', email);
+        sessionStorage.setItem('pendingVerifyName', userSnap.exists() ? (userSnap.data().name || '') : '');
+        setTimeout(() => window.location.href = 'verify-code.html', 900);
+        return;
+      }
+
       showMsg('loginMsg','Signing in…','success');
       setTimeout(() => window.location.href = 'home.html', 700);
     } catch(err) {
@@ -658,7 +676,7 @@
     } catch(err) { showMsg('loginMsg', err.message, 'error'); }
   });
 
-  /* SIGN UP */
+  /* SIGN UP — success message now points to verifying, not "account is live" */
   window.doSignup = async () => {
     clearMsg('signupMsg');
     const name    = $('signupName').value.trim();
@@ -680,6 +698,7 @@
   country: 'Ghana',
   earnings: 0,
   emailOptIn: true,
+  emailVerified: false, // flips to true only after the code is verified
   createdAt: serverTimestamp()
 });
       await setDoc(doc(db,'analytics',uid), {
@@ -701,7 +720,9 @@
       sessionStorage.setItem('pendingVerifyEmail', email);
       sessionStorage.setItem('pendingVerifyName', name);
 
-      showMsg('signupMsg','Account created. Check your email for a code.','success');
+      // Deliberately does NOT say "account created" — sign-up isn't
+      // complete until the code is verified, so don't imply it's live.
+      showMsg('signupMsg','Enter the code sent to your email to complete sign up.','success');
       setTimeout(() => window.location.href = 'verify-code.html', 1200);
     } catch(err) {
       setLoad('signupBtn', false);
