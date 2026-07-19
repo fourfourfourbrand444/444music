@@ -3,28 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading... • 444Music</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <title>444Music</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #070707;
-      --surface: #111111;
-      --border: rgba(255,255,255,0.1);
-      --text: #f5f5f5;
+      --white: #ffffff;
       --muted: #7a7a7a;
     }
 
     html, body {
       height: 100%;
       background: var(--bg);
-      color: var(--text);
+      color: var(--white);
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow: hidden;
     }
 
-    /* subtle grain, matches homepage */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0;
@@ -34,167 +31,202 @@
 
     .stage {
       position: relative; z-index: 1;
-      min-height: 100dvh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem;
-      gap: 2.25rem;
+      height: 100dvh; width: 100%;
+      display: flex; align-items: center; justify-content: center;
     }
 
-    /* Brand mark */
-    .brand {
-      display: flex; align-items: center; gap: 0.65rem;
-      animation: fadeUp 0.6s ease both;
+    /* ═══ LOADING SCREEN — logo only, no text ═══ */
+    #loadScreen {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .brand-icon {
-      width: 42px; height: 42px;
-      background: var(--text);
-      border-radius: 11px;
-      display: grid; place-items: center;
+    #loadScreen.hide {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    .logo-wrap {
+      position: relative;
+      width: 132px; height: 132px;
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn 0.5s ease both, breathe 1.9s ease-in-out 0.5s infinite;
+    }
+
+    .logo-wrap img {
+      width: 60px; height: auto;
+      filter: brightness(0) invert(1);
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      animation: logoIn 0.5s ease 0.1s both;
+    }
+
+    /* fallback mark if the image fails to load */
+    .logo-fallback {
+      position: absolute; z-index: 2;
       font-family: 'Outfit', sans-serif;
       font-weight: 900;
-      font-size: 18px;
-      color: #000;
-    }
-    .brand-name {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.2rem; font-weight: 800;
-      letter-spacing: -0.3px;
-      color: var(--text);
-    }
-
-    /* Simple single spinner ring */
-    .spinner {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      border: 2.5px solid rgba(255,255,255,0.12);
-      border-top-color: var(--text);
-      animation: spin 0.85s linear infinite;
-      animation-delay: 0.15s;
+      font-size: 34px;
+      color: var(--white);
+      display: none;
       opacity: 0;
-      animation: fadeUp 0.6s ease 0.1s both, spin 0.85s linear infinite;
+      animation: logoIn 0.5s ease 0.1s both;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .headline {
+    /* progress ring around the logo */
+    .ring-svg {
+      position: absolute; inset: 0;
+      transform: rotate(-90deg);
+      z-index: 1;
+    }
+    .ring-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1.5; }
+    .ring-fill  {
+      fill: none; stroke: var(--white); stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-dasharray: 377;
+      stroke-dashoffset: 377;
+      transition: stroke-dashoffset 0.2s linear;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes logoIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes breathe {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.045); }
+    }
+
+    /* ═══ SUCCESS SCREEN ═══ */
+    #successScreen {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 22px;
+      opacity: 0;
+      transform: scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.55s ease 0.1s, transform 0.55s ease 0.1s;
+    }
+    #successScreen.show {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: all;
+    }
+
+    .check-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.16);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .check-circle svg { width: 30px; height: 30px; }
+    .check-circle path {
+      fill: none;
+      stroke: var(--white);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+    }
+    #successScreen.show .check-circle path {
+      animation: draw 0.5s ease 0.35s forwards;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    .success-text {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(1.3rem, 4vw, 1.6rem);
       font-weight: 800;
-      letter-spacing: -0.4px;
-      color: var(--text);
+      font-size: 1.15rem;
+      letter-spacing: -0.2px;
+      color: var(--white);
       text-align: center;
-      animation: fadeUp 0.6s ease 0.05s both;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.4s ease 0.55s, transform 0.4s ease 0.55s;
+    }
+    #successScreen.show .success-text {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .sub {
-      font-size: 0.85rem;
+    .success-link {
+      font-size: 0.8rem;
       color: var(--muted);
-      font-weight: 400;
-      text-align: center;
-      margin-top: -0.9rem;
-      animation: fadeUp 0.6s ease 0.15s both;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s ease, border-color 0.2s ease, opacity 0.4s ease 0.65s, transform 0.4s ease 0.65s;
+      opacity: 0;
+      transform: translateY(6px);
     }
-
-    /* Progress bar */
-    .progress-wrap {
-      width: min(260px, 78vw);
-      animation: fadeUp 0.6s ease 0.2s both;
+    #successScreen.show .success-link {
+      opacity: 1;
+      transform: translateY(0);
     }
-    .progress-track {
-      width: 100%; height: 2px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background: var(--text);
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.25s ease;
-    }
-    .progress-label {
-      display: flex; justify-content: space-between;
-      margin-top: 0.55rem;
-      font-size: 0.68rem;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-    }
-    #pct { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-
-    /* Fade-out on complete */
-    .fade-out {
-      position: fixed; inset: 0; z-index: 99;
-      background: var(--bg);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.45s ease;
-    }
-    .fade-out.active { opacity: 1; pointer-events: all; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .success-link:hover { color: var(--white); border-color: var(--white); }
   </style>
 </head>
 <body>
 
-  <div class="fade-out" id="fadeOut"></div>
-
   <main class="stage">
 
-    <div class="brand">
-      <div class="brand-icon">4</div>
-      <span class="brand-name">444Music</span>
+    <div id="loadScreen">
+      <div class="logo-wrap">
+        <svg class="ring-svg" viewBox="0 0 132 132">
+          <circle class="ring-track" cx="66" cy="66" r="60"></circle>
+          <circle class="ring-fill" id="ringFill" cx="66" cy="66" r="60"></circle>
+        </svg>
+        <img src="https://www.444musicdistro.com/black.png" alt=""
+             onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='flex';">
+        <div class="logo-fallback">4</div>
+      </div>
     </div>
 
-    <div class="spinner"></div>
-
-    <div>
-      <h1 class="headline">Getting things ready</h1>
-      <p class="sub">Just a moment.</p>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-track">
-        <div class="progress-bar" id="bar"></div>
+    <div id="successScreen">
+      <div class="check-circle">
+        <svg viewBox="0 0 24 24"><path d="M4 12.5L9.5 18L20 6"></path></svg>
       </div>
-      <div class="progress-label">
-        <span>Loading</span>
-        <span id="pct">0%</span>
-      </div>
+      <div class="success-text">Account Created Successfully</div>
+      <a href="login.html" class="success-link">Continue →</a>
     </div>
 
   </main>
 
   <script>
-    const bar    = document.getElementById('bar');
-    const pct    = document.getElementById('pct');
-    const fadeEl = document.getElementById('fadeOut');
+    const ring = document.getElementById('ringFill');
+    const loadScreen = document.getElementById('loadScreen');
+    const successScreen = document.getElementById('successScreen');
+    const CIRCUMFERENCE = 377;
 
     let progress = 0;
-    const duration = 1800; // ms total — kept short and simple
-    const start    = performance.now();
+    const duration = 1900;
+    const start = performance.now();
 
     function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
 
     function tick(now) {
       const elapsed = now - start;
-      const raw     = Math.min(elapsed / duration, 1);
-      progress      = ease(raw) * 100;
+      const raw = Math.min(elapsed / duration, 1);
+      progress = ease(raw);
 
-      bar.style.width = progress + '%';
-      pct.textContent = Math.round(progress) + '%';
+      ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
       if (raw < 1) {
         requestAnimationFrame(tick);
       } else {
-        bar.style.width = '100%';
-        pct.textContent = '100%';
         setTimeout(() => {
-          fadeEl.classList.add('active');
-          setTimeout(() => { window.location.href = 'home.html'; }, 460);
-        }, 200);
+          loadScreen.classList.add('hide');
+          successScreen.classList.add('show');
+        }, 150);
+
+        // auto-continue after showing success briefly
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2600);
       }
     }
 
