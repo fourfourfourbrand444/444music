@@ -328,7 +328,12 @@ async function notifyAdmin(kind, { licenseUrl, audioUrl, coverUrl } = {}) {
   const reason   = (data.rejectionReason || "").toString().trim();
   const credits  = data.credits || {};
 
-  const resolvedCoverUrl = coverUrl || data.coverURL || "";
+  // Prefer the freshly-fixed cover from THIS resubmit; fall back to the
+  // official cover (original upload) rather than the possibly-stale
+  // dashboard-edited coverURL, for the same reason mapSubmissionForEmail
+  // on the backend prefers officialCoverURL — a dashboard "Change Cover"
+  // quick-edit should never leak into an admin-facing email.
+  const resolvedCoverUrl = coverUrl || data.officialCoverURL || data.coverURL || "";
   let audioFiles;
   if (audioUrl) {
     audioFiles = [{ title: data.releaseTitle || "", url: audioUrl }];
@@ -437,6 +442,13 @@ async function submit() {
         resubmittedAt: serverTimestamp(),
         resubmittedAudioURL: audioUrl,
         resubmittedCoverURL: coverUrl,
+        // Also sync the two fields any future email (e.g. a later Pay
+        // Now resend) actually reads from. Without this, coverURL and
+        // officialCoverURL would stay frozen on the original — pre-fix
+        // — cover art forever, and only THIS immediate notify call
+        // would ever show the corrected artwork.
+        coverURL: coverUrl,
+        officialCoverURL: coverUrl,
       });
       notifyResult = await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
     }
