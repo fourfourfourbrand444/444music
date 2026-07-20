@@ -1410,6 +1410,11 @@ form.addEventListener("submit", async e => {
     paid:             paymentVerified ? 'Paid' : 'Unpaid',
     paymentReference: paymentReference || '',
     coverURL:         coverUrl || '',
+    // officialCoverURL mirrors coverURL only at this initial-submission
+    // moment. It's the field admin/payment emails read from — the
+    // dashboard's "Change Cover" quick-edit only ever writes to coverURL,
+    // so it can never affect this value once set here.
+    officialCoverURL: coverUrl || '',
     audioFiles:       audioFiles,
     userId:    currentUser.uid,
     createdAt: Date.now(),
