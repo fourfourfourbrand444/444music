@@ -521,24 +521,34 @@
   }
 
   /* Creates the user/analytics docs the first time someone signs in with Google.
-     Runs in the BACKGROUND after redirecting to asap.html, not before it —
-     a Firestore permission error can no longer strand the user on this page. */
+     FIXED — previously this was fired-and-forgotten (called without awaiting
+     it) right before window.location.href navigated away. That's a race
+     condition: the moment the page starts unloading for the new URL, the
+     browser can kill this in-flight Firestore write before it ever reaches
+     the server — with no offline-persistence queue here to retry it. The
+     result: some Google sign-ins ended up with a users/{uid} doc that was
+     missing `name` entirely (or wasn't created at all until a later visit),
+     which is exactly why they showed up admin-side generically as "Artist"
+     instead of their real name.
+     Now this function is awaited by every caller before navigating, so the
+     write is guaranteed to complete (or fail loudly in the catch below)
+     before the page ever leaves. */
   async function ensureUserDocs(user) {
     try {
       const userRef = doc(db, 'users', user.uid);
       const existing = await getDoc(userRef);
       if (existing.exists()) return;
-     await setDoc(userRef, {
-  name: user.displayName || 'New Artist',
-  email: user.email,
-  artistType: 'Independent Artist',
-  genre: 'Afrobeats',
-  country: 'Ghana',
-  earnings: 0,
-  emailOptIn: true,
-  emailVerified: true, // Google accounts are pre-verified by Google itself
-  createdAt: serverTimestamp()
-});
+      await setDoc(userRef, {
+        name: user.displayName || 'New Artist',
+        email: user.email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        emailVerified: true, // Google accounts are pre-verified by Google itself
+        createdAt: serverTimestamp()
+      });
       await setDoc(doc(db, 'analytics', user.uid), {
         totalStreams:0, spotifyStreams:0, appleStreams:0,
         youtubeStreams:0, tiktokStreams:0,
@@ -547,12 +557,14 @@
         createdAt: serverTimestamp()
       });
     } catch (e) {
-      console.error('ensureUserDocs failed (non-blocking):', e);
+      console.error('ensureUserDocs failed:', e);
     }
   }
 
-  function goToApp(user) {
-    ensureUserDocs(user);
+  /* FIXED — now async and awaits ensureUserDocs() before navigating, so the
+     Firestore write can never be cut off mid-flight by the page unload. */
+  async function goToApp(user) {
+    await ensureUserDocs(user);
     window.location.href = 'home.html';
   }
 
@@ -633,7 +645,9 @@
 
     try {
       const result = await signInWithPopup(auth, provider);
-      goToApp(result.user);
+      // FIXED — awaited so the Firestore user doc is guaranteed written
+      // before this page navigates away to home.html.
+      await goToApp(result.user);
     } catch (err) {
       btn.disabled = false;
       $('googleBtnText').textContent = 'Continue with Google';
@@ -653,10 +667,11 @@
   });
 
   /* Catch the result when the page reloads after a redirect sign-in */
-  getRedirectResult(auth).then((result) => {
+  getRedirectResult(auth).then(async (result) => {
     if (result && result.user) {
       showMsg('loginMsg','Signing in…','success');
-      goToApp(result.user);
+      // FIXED — awaited for the same reason as the popup path above.
+      await goToApp(result.user);
     }
   }).catch((err) => {
     if (err && err.code && err.code !== 'auth/no-current-user') {
@@ -692,15 +707,15 @@
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid  = cred.user.uid;
       await setDoc(doc(db,'users',uid), {
-  name, email,
-  artistType: 'Independent Artist',
-  genre: 'Afrobeats',
-  country: 'Ghana',
-  earnings: 0,
-  emailOptIn: true,
-  emailVerified: false, // flips to true only after the code is verified
-  createdAt: serverTimestamp()
-});
+        name, email,
+        artistType: 'Independent Artist',
+        genre: 'Afrobeats',
+        country: 'Ghana',
+        earnings: 0,
+        emailOptIn: true,
+        emailVerified: false, // flips to true only after the code is verified
+        createdAt: serverTimestamp()
+      });
       await setDoc(doc(db,'analytics',uid), {
         totalStreams:0, spotifyStreams:0, appleStreams:0,
         youtubeStreams:0, tiktokStreams:0,
@@ -708,7 +723,7 @@
         monthlyStreams:[0,0,0,0,0,0,0,0,0,0,0,0],
         createdAt: serverTimestamp()
       });
-     // Fire the verification code email — best-effort, doesn't block
+      // Fire the verification code email — best-effort, doesn't block
       // navigation if it fails (verify page offers a resend option).
       fetch('https://444music-backend.bonto.run/api/verification/send-code', {
         method: 'POST',
