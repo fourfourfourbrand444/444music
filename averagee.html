@@ -71,8 +71,7 @@ body {
 .step-item {
   display: flex; align-items: center; gap: 8px;
   font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
 }
 .step-item.active { color: var(--text-primary); }
 .step-num {
@@ -305,6 +304,18 @@ option, optgroup { background: #141414; color: var(--text-primary); }
   width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
   border-top: 4px solid var(--text-secondary); pointer-events: none;
 }
+.feat-track-wrap { margin-top: 10px; position: relative; }
+.feat-track-wrap select {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius-xs); color: var(--text-primary);
+  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
+  outline: none; appearance: none; cursor: pointer;
+}
+.feat-track-wrap::after {
+  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid var(--text-secondary); pointer-events: none;
+}
 .feat-url-wrap {
   margin-top: 10px; display: flex; align-items: center; gap: 8px;
   background: var(--bg-input); border: 1px solid var(--border);
@@ -476,7 +487,7 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 
     <div class="prefill-badge" id="prefillBadge">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-      Artist and title carried over from your upload — check they're correct below
+      Artist, title, and per-track featuring carried over from your upload — check they're correct below
     </div>
 
     <form id="releaseForm">
@@ -1038,7 +1049,7 @@ function escHtml(str) {
 <!-- FEATURED / SECONDARY ARTIST SEARCH ENGINE (mirrors the app's mirrored search) -->
 <script>
 (function(){
-  const featuredArtists = []; // {name, imageUrl, role, url}
+  const featuredArtists = []; // {name, imageUrl, role, url, track}
   const searchInput = document.getElementById('featArtistSearchInput');
   const dropdown     = document.getElementById('featArtistDropdown');
   const listEl       = document.getElementById('featuredArtistsList');
@@ -1109,21 +1120,35 @@ function escHtml(str) {
     closeDropdown(); searchInput.value = ''; lastQuery = '';
   }
 
-  function addFeaturedArtist(name, imageUrl) {
+  function addFeaturedArtist(name, imageUrl, track) {
     if (featuredArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '' });
+    // If there's only one track on this release, there's no ambiguity —
+    // tag it automatically. Otherwise leave it unassigned until the
+    // admin picks a track below (or it arrives pre-tagged from the
+    // Files/Upload page, see prefillFeaturedArtist).
+    const knownTracks = window.__uploadedAudioFiles || [];
+    const resolvedTrack = (track && track.trim())
+      ? track.trim()
+      : (knownTracks.length === 1 ? (knownTracks[0].title || '') : '');
+    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '', track: resolvedTrack });
     renderList();
   }
   function removeFeaturedArtist(idx) { featuredArtists.splice(idx, 1); renderList(); }
 
   function renderList() {
     listEl.innerHTML = '';
+    const knownTracks = window.__uploadedAudioFiles || [];
+    const showTrackPicker = knownTracks.length > 1;
     featuredArtists.forEach((entry, i) => {
       const card = document.createElement('div');
       card.className = 'feat-card';
       const av = entry.imageUrl
         ? `<div class="feat-avatar"><img src="${entry.imageUrl}" alt="" onerror="this.style.display='none'"></div>`
         : `<div class="feat-avatar">${escHtml((entry.name||'?').charAt(0).toUpperCase())}</div>`;
+      const trackOptions = knownTracks.map(t => {
+        const label = t.title || 'Untitled track';
+        return `<option value="${escHtml(label)}" ${entry.track === label ? 'selected' : ''}>${escHtml(label)}</option>`;
+      }).join('');
       card.innerHTML = `
         <div class="feat-card-top">
           ${av}
@@ -1132,6 +1157,13 @@ function escHtml(str) {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+        ${showTrackPicker ? `
+        <div class="feat-track-wrap">
+          <select>
+            <option value="" ${!entry.track ? 'selected' : ''}>Which track is this featured on?</option>
+            ${trackOptions}
+          </select>
+        </div>` : ''}
         <div class="feat-role-wrap">
           <select>
             <option value="Featuring Artist" ${entry.role === 'Featuring Artist' ? 'selected' : ''}>Featuring Artist</option>
@@ -1144,6 +1176,9 @@ function escHtml(str) {
           <input type="text" placeholder="Paste Spotify or Apple Music link (optional)" value="${escHtml(entry.url || '')}">
         </div>`;
       card.querySelector('.feat-remove').addEventListener('click', () => removeFeaturedArtist(i));
+      if (showTrackPicker) {
+        card.querySelector('.feat-track-wrap select').addEventListener('change', (e) => { entry.track = e.target.value; });
+      }
       card.querySelector('.feat-role-wrap select').addEventListener('change', (e) => { entry.role = e.target.value; });
       card.querySelector('.feat-url-wrap input').addEventListener('input', (e) => { entry.url = e.target.value; });
       listEl.appendChild(card);
@@ -1155,10 +1190,10 @@ function escHtml(str) {
 
   // Exposed so the Firebase module script below can prefill the
   // Featuring Artist list using the "featuring" text typed per-track
-  // on the Files/Upload page — previously that value was collected
-  // there and then simply discarded once the user reached this page.
-  window.prefillFeaturedArtist = function(name) {
-    if (name && name.trim()) addFeaturedArtist(name.trim(), '');
+  // on the Files/Upload page, now carrying which track it belongs to
+  // so pills are never merged across tracks.
+  window.prefillFeaturedArtist = function(name, track) {
+    if (name && name.trim()) addFeaturedArtist(name.trim(), '', track || '');
   };
 })();
 </script>
@@ -1219,6 +1254,13 @@ let audioFiles         = [];
   }
 })();
 
+// Expose the per-track upload data globally so the Featured Artist
+// engine (defined earlier on this page) can offer a "which track is
+// this featured on?" picker and correctly tag each featured artist to
+// its own track, instead of every featured artist being lumped into
+// one release-wide bucket with no track association.
+window.__uploadedAudioFiles = audioFiles;
+
 // ── Prefill Main Artist / Featuring / Release Title from what was
 // entered on the Files page, so those details are never silently
 // dropped and the artist doesn't have to retype them here. ──
@@ -1246,21 +1288,25 @@ function prefillFromUpload() {
     }
   }
 
-  // Featuring artist(s) — gathered from every track, de-duplicated,
-  // comma-split so "Wizkid, Tems" becomes two separate pills.
-  const featuringNames = [...new Set(
-    audioFiles
-      .map(f => (f.featuring || '').trim())
-      .filter(Boolean)
-      .flatMap(f => f.split(',').map(s => s.trim()).filter(Boolean))
-  )];
+  // Featuring artist(s) — pulled per TRACK, not merged across tracks,
+  // so each featured artist stays tied to the exact track it was typed
+  // against on the Files page. A track with "Wizkid, Tems" in its
+  // Featuring box becomes two pills, both correctly tagged to that
+  // same track — they never bleed into another track's featured list.
+  let anyFeaturing = false;
+  audioFiles.forEach(f => {
+    const namesForTrack = (f.featuring || '').trim()
+      ? f.featuring.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+    namesForTrack.forEach(name => {
+      if (window.prefillFeaturedArtist) window.prefillFeaturedArtist(name, f.title);
+      anyFeaturing = true;
+    });
+  });
 
-  if (featuringNames.length > 0) {
+  if (anyFeaturing) {
     const yesBtn = document.querySelector('#hasFeaturedGroup .radio-pill[data-value="Yes"]');
     if (yesBtn) yesBtn.click();
-    featuringNames.forEach(name => {
-      if (window.prefillFeaturedArtist) window.prefillFeaturedArtist(name);
-    });
     didPrefill = true;
   }
 
@@ -1470,6 +1516,24 @@ form.addEventListener("submit", async e => {
   const previousReleaseDate = document.getElementById('previousReleaseDate').value;
   const creditsData = window.collectCredits();
 
+  // Merge each featured artist's track-tag into that specific track's
+  // own `featuring` value, so the admin email's Audio Files section can
+  // show — per track — exactly which artist is the main artist and
+  // which artist is featured, instead of every featured artist across
+  // every track being combined into one undifferentiated bucket.
+  // The existing merged/flat "Featuring" row under Release Details
+  // (built from taggedFeaturedArtists below) is left completely as-is —
+  // this only ADDS the per-track breakdown alongside it.
+  const taggedFeaturedArtists = window.collectFeaturedArtists();
+  const audioFilesWithFeaturing = audioFiles.map(f => {
+    const namesForThisTrack = taggedFeaturedArtists
+      .filter(fe => fe.track && fe.track === f.title)
+      .map(fe => fe.name);
+    const existingNames = (f.featuring || '').split(',').map(s => s.trim()).filter(Boolean);
+    const combinedNames = [...new Set([...existingNames, ...namesForThisTrack])];
+    return { ...f, featuring: combinedNames.join(', ') };
+  });
+
   // Mirrors the app's submission data map field-for-field, including
   // the payment / cover / audio fields and Review-vs-Pending status.
   const data = {
@@ -1495,7 +1559,7 @@ form.addEventListener("submit", async e => {
     vocalType:             window.getRadioValue('vocalTypeGroup'),
     ownershipConfirmed:    window.ownershipConfirmed,
     credits:               creditsData,
-    featuredArtists:       window.collectFeaturedArtists(),
+    featuredArtists:       taggedFeaturedArtists,
     paid:             paymentVerified ? 'Paid' : 'Unpaid',
     paymentReference: paymentReference || '',
     coverURL:         coverUrl || '',
@@ -1504,7 +1568,7 @@ form.addEventListener("submit", async e => {
     // dashboard's "Change Cover" quick-edit only ever writes to coverURL,
     // so it can never affect this value once set here.
     officialCoverURL: coverUrl || '',
-    audioFiles:       audioFiles,
+    audioFiles:       audioFilesWithFeaturing,
     userId:    currentUser.uid,
     createdAt: Date.now(),
     status:    paymentVerified ? 'Review' : 'Pending'
