@@ -393,6 +393,10 @@ input[type="file"]{display:none}
      - On success, hands off exactly what the app passes as Navigator
        arguments to /release-info: paymentReference, coverUrl, audioFiles
        (as ?ref=&cover=&audio= query params, since this is a web page)
+     - audioFiles now also carries `featuring` per track (previously
+       only title/artist/url made it through), so the details entered
+       here are no longer lost — release-info.html reads and prefills
+       from them, and the admin notification email displays them too.
      ════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -735,9 +739,18 @@ submitBtn.addEventListener('click', async () => {
     if (!anyError) {
       allDone = true;
       successBanner.style.display = 'flex';
+      // Now includes `featuring` per track, alongside title/artist/url —
+      // previously this only carried title/artist/url, so the featuring
+      // artist typed here on the Files page silently vanished and had
+      // to be re-typed on the next screen.
       const audioFiles = tracks
         .filter(t => t.fileUrl)
-        .map(t => ({ title: t.releaseTitle.trim(), artist: t.artistName.trim(), url: t.fileUrl }));
+        .map(t => ({
+          title:     t.releaseTitle.trim(),
+          artist:    t.artistName.trim(),
+          featuring: t.featuring.trim(),
+          url:       t.fileUrl
+        }));
       const existing = new URLSearchParams(window.location.search);
       const ref = existing.get('ref');
       const params = new URLSearchParams();
