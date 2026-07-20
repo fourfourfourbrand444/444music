@@ -411,6 +411,16 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .payment-badge.show { display: flex; }
 .payment-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
 
+/* Prefill notice — shown when details were carried over from the Files page */
+.prefill-badge {
+  display: none; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin: 8px 0 4px;
+  font-size: 0.78rem; color: var(--text-secondary); font-weight: 600;
+}
+.prefill-badge.show { display: flex; }
+.prefill-badge svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--text-primary); }
+
 @keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
 @keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
 @keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
@@ -462,6 +472,11 @@ option, optgroup { background: #141414; color: var(--text-primary); }
     <div class="payment-badge" id="paymentBadge">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
       Payment verified — this release will go straight to Review
+    </div>
+
+    <div class="prefill-badge" id="prefillBadge">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      Artist and title carried over from your upload — check they're correct below
     </div>
 
     <form id="releaseForm">
@@ -1009,6 +1024,14 @@ function escHtml(str) {
   }
   function openDropdown()  { dropdown.classList.add('open'); }
   function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
+
+  // Exposed so the Firebase module script below can prefill the Main
+  // Artist pill using the artist name typed on the Files/Upload page —
+  // without this, that name was collected there but never carried
+  // forward, forcing the user to retype it here.
+  window.prefillMainArtist = function(name) {
+    if (name && name.trim()) addArtist(name.trim(), '');
+  };
 })();
 </script>
 
@@ -1129,6 +1152,14 @@ function escHtml(str) {
 
   function openDropdown()  { dropdown.classList.add('open'); }
   function closeDropdown() { dropdown.classList.remove('open'); }
+
+  // Exposed so the Firebase module script below can prefill the
+  // Featuring Artist list using the "featuring" text typed per-track
+  // on the Files/Upload page — previously that value was collected
+  // there and then simply discarded once the user reached this page.
+  window.prefillFeaturedArtist = function(name) {
+    if (name && name.trim()) addFeaturedArtist(name.trim(), '');
+  };
 })();
 </script>
 
@@ -1162,7 +1193,8 @@ let audioFiles         = [];
 
 // ── read what pricing/upload passed us via URL query params ──
 // (?ref=<paymentReference>&cover=<url>&audio=<json>) — the web
-// equivalent of the app's Navigator route arguments map.
+// equivalent of the app's Navigator route arguments map. `audio` now
+// also carries `featuring` per track (see prefillFromUpload below).
 (function readIncomingParams() {
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -1175,12 +1207,68 @@ let audioFiles         = [];
       const parsed = JSON.parse(audio);
       if (Array.isArray(parsed)) {
         audioFiles = parsed
-          .map(m => ({ title: m.title || '', artist: m.artist || '', url: m.url || '' }))
+          .map(m => ({
+            title:     m.title     || '',
+            artist:    m.artist    || '',
+            featuring: m.featuring || '',
+            url:       m.url       || ''
+          }))
           .filter(m => m.url);
       }
     } catch (e) { /* ignore malformed audio param */ }
   }
 })();
+
+// ── Prefill Main Artist / Featuring / Release Title from what was
+// entered on the Files page, so those details are never silently
+// dropped and the artist doesn't have to retype them here. ──
+function prefillFromUpload() {
+  if (!audioFiles.length) return;
+
+  const firstTrack = audioFiles[0];
+  let didPrefill = false;
+
+  // Main artist — taken from the first track (tracks on one release
+  // are almost always credited to the same main artist).
+  if (firstTrack.artist && window.prefillMainArtist) {
+    window.prefillMainArtist(firstTrack.artist);
+    didPrefill = true;
+  }
+
+  // Release title — only safe to prefill for a single track, since
+  // for an EP/Album the overall release title is usually different
+  // from any one track's title.
+  if (audioFiles.length === 1 && firstTrack.title) {
+    const titleInput = document.getElementById('releaseTitle');
+    if (titleInput && !titleInput.value) {
+      titleInput.value = firstTrack.title;
+      didPrefill = true;
+    }
+  }
+
+  // Featuring artist(s) — gathered from every track, de-duplicated,
+  // comma-split so "Wizkid, Tems" becomes two separate pills.
+  const featuringNames = [...new Set(
+    audioFiles
+      .map(f => (f.featuring || '').trim())
+      .filter(Boolean)
+      .flatMap(f => f.split(',').map(s => s.trim()).filter(Boolean))
+  )];
+
+  if (featuringNames.length > 0) {
+    const yesBtn = document.querySelector('#hasFeaturedGroup .radio-pill[data-value="Yes"]');
+    if (yesBtn) yesBtn.click();
+    featuringNames.forEach(name => {
+      if (window.prefillFeaturedArtist) window.prefillFeaturedArtist(name);
+    });
+    didPrefill = true;
+  }
+
+  if (didPrefill) {
+    document.getElementById('prefillBadge').classList.add('show');
+  }
+}
+prefillFromUpload();
 
 async function verifyPayment(reference) {
   try {
@@ -1206,7 +1294,8 @@ const CHECK_SVG  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 
 // Mirrors the app's _sendEmails param list exactly, including the
 // payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
-// (the app has no publishing panel).
+// (the app has no publishing panel). audio_files now also carries
+// artist/featuring per track, since those are collected upstream.
 // NOTE: this is a best-effort side-effect (see submit handler below) —
 // it must NEVER be allowed to make the app think the release wasn't saved.
 async function sendEmails(data) {
