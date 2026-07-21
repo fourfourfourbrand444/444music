@@ -122,8 +122,84 @@ body::before {
 .nav-login:hover { color: var(--text); }
 .nav-cta { background: var(--white); color: #080808; padding: 9px 20px; border-radius: 9px; text-decoration: none; font-size: 13.5px; font-weight: 700; transition: background 0.2s, transform 0.15s; letter-spacing: -0.1px; }
 .nav-cta:hover { background: #d4d4d4; transform: translateY(-1px); }
-.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; text-decoration: none; color: inherit; }
-.hamburger span { width: 21px; height: 1.5px; background: rgba(255,255,255,0.7); border-radius: 2px; display: block; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; text-decoration: none; color: inherit; background: none; border: none; }
+.hamburger span { width: 21px; height: 1.5px; background: rgba(255,255,255,0.7); border-radius: 2px; display: block; transition: transform 0.25s ease, opacity 0.2s ease; }
+
+/* =========================================
+   FULL-SCREEN MOBILE NAV OVERLAY
+   ========================================= */
+.mobile-nav-overlay {
+  position: fixed; inset: 0; z-index: 3000;
+  background: rgba(3,3,3,0.99);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex; flex-direction: column;
+  padding: 0 6% 40px;
+  opacity: 0; visibility: hidden;
+  transform: translateY(-12px);
+  transition: opacity 0.32s cubic-bezier(0.22,1,0.36,1), transform 0.32s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0.32s;
+}
+.mobile-nav-overlay.open {
+  opacity: 1; visibility: visible; transform: translateY(0);
+  transition: opacity 0.32s cubic-bezier(0.22,1,0.36,1), transform 0.32s cubic-bezier(0.22,1,0.36,1), visibility 0s linear 0s;
+}
+.mobile-nav-top { display: flex; align-items: center; justify-content: space-between; height: 64px; flex-shrink: 0; }
+.mobile-nav-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; color: var(--text); }
+.mobile-nav-close {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  color: var(--text); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+.mobile-nav-close:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.22); transform: rotate(90deg); }
+
+.mobile-nav-links {
+  flex: 1;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.mobile-nav-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--border2);
+  text-decoration: none;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 6vw, 42px);
+  letter-spacing: -1px;
+  transition: color 0.2s, padding-left 0.25s cubic-bezier(0.22,1,0.36,1);
+}
+.mobile-nav-link:first-child { border-top: 1px solid var(--border2); }
+.mobile-nav-link i {
+  font-size: 16px; color: var(--text2);
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), color 0.2s;
+  flex-shrink: 0;
+}
+.mobile-nav-link:hover { color: var(--white); padding-left: 14px; }
+.mobile-nav-link:hover i { transform: translateX(6px); color: var(--white); }
+
+.mobile-nav-footer {
+  flex-shrink: 0;
+  padding-top: 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+.mobile-nav-cta {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--white); color: #080808;
+  padding: 14px 28px; border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 14.5px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.mobile-nav-cta:hover { background: #d8d8d8; transform: translateY(-2px); }
+.mobile-nav-meta { font-size: 12.5px; color: var(--text3); font-weight: 500; }
+
+body.nav-open { overflow: hidden; }
 
 /* =========================================
    HERO
@@ -358,30 +434,6 @@ body::before {
 .testi-role { font-size: 11.5px; color: var(--text2); }
 
 /* =========================================
-   PRICING
-   ========================================= */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
-.price-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius3); padding: 36px 32px; position: relative; transition: border-color 0.2s, transform 0.25s; }
-.price-card:hover { border-color: rgba(255,255,255,0.16); transform: translateY(-6px); }
-.price-card.featured { background: var(--surface2); border-color: rgba(255,255,255,0.28); }
-.price-card.featured:hover { border-color: rgba(255,255,255,0.4); }
-.price-popular { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--white); color: #080808; font-size: 11px; font-weight: 700; padding: 5px 16px; border-radius: 100px; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
-.price-tier { font-size: 11.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
-.price-name { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.5px; }
-.price-amount { display: flex; align-items: flex-start; gap: 2px; margin-bottom: 5px; }
-.price-cur { font-size: 15px; color: var(--text2); padding-top: 10px; font-weight: 500; }
-.price-num { font-family: 'Outfit', sans-serif; font-size: 52px; font-weight: 900; line-height: 1; letter-spacing: -3px; }
-.price-period { font-size: 12.5px; color: var(--text2); margin-bottom: 28px; }
-.price-divider { height: 1px; background: var(--border2); margin: 24px 0; }
-.price-list { list-style: none; margin-bottom: 28px; }
-.price-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--text2); margin-bottom: 12px; }
-.price-list li i { color: var(--white); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
-.price-btn-fill { display: block; text-align: center; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none; background: var(--white); color: #080808; transition: background 0.2s, transform 0.15s; }
-.price-btn-fill:hover { background: #d8d8d8; transform: translateY(-2px); }
-.price-btn-ghost { display: block; text-align: center; padding: 13px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--text); border: 1px solid var(--border); transition: border-color 0.2s, background 0.2s; }
-.price-btn-ghost:hover { border-color: rgba(255,255,255,0.2); background: var(--surface3); }
-
-/* =========================================
    RELEASES
    ========================================= */
 .release-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; margin-top: 40px; }
@@ -455,7 +507,6 @@ body::before {
   .platform-grid { grid-template-columns: repeat(4, 1fr); }
   .steps-row { grid-template-columns: repeat(2, 1fr); }
   .tools-grid { grid-template-columns: repeat(2, 1fr); }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-brand { grid-column: 1 / -1; }
   .feature-split { grid-template-columns: 1fr; gap: 32px; }
@@ -488,7 +539,6 @@ body::before {
   .upload-form-card { display: none; }
   .tools-grid { grid-template-columns: 1fr; }
   .testi-card { width: 270px; padding: 20px; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
   .release-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .cta-banner { margin: 0 4%; padding: 44px 24px; }
   .cta-btns { flex-direction: column; align-items: center; }
@@ -538,7 +588,7 @@ body::before {
   <nav class="nav-links">
     <a href="#">Home</a>
     <a href="#tools">Tools</a>
-    <a href="#pricing">Pricing</a>
+    <a href="nav.html">Pricing</a>
     <a href="#">Analytics</a>
     <a href="#">Partners</a>
     <a href="#">Contact</a>
@@ -546,11 +596,32 @@ body::before {
   <div class="nav-right">
     <a href="https://444musicblog.vercel.app/" class="nav-login">Promo</a>
     <a href="https://444musicblog.vercel.app/" class="nav-cta">Visit Blog</a>
-    <a href="nav.html" class="hamburger" id="menuBtn">
+    <button type="button" class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
-    </a>
+    </button>
   </div>
 </header>
+
+<!-- ===== FULL-SCREEN NAV OVERLAY ===== -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" role="dialog" aria-modal="true" aria-label="Site navigation">
+  <div class="mobile-nav-top">
+    <span class="mobile-nav-brand">444MUSIC</span>
+    <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <nav class="mobile-nav-links">
+    <a href="nav.html" class="mobile-nav-link"><span>Pricing</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="about.html" class="mobile-nav-link"><span>About</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="faq.html" class="mobile-nav-link"><span>FAQ</span><i class="fa-solid fa-arrow-right"></i></a>
+    <a href="https://www.youtube.com/@444musicdistribution" target="_blank" rel="noopener" class="mobile-nav-link"><span>Watch Tutorials</span><i class="fa-brands fa-youtube"></i></a>
+    <a href="mailto:444musicdistro@gmail.com" class="mobile-nav-link"><span>Contact</span><i class="fa-solid fa-envelope"></i></a>
+  </nav>
+  <div class="mobile-nav-footer">
+    <a href="login.html" class="mobile-nav-cta"><i class="fa-solid fa-arrow-up-right-from-square"></i> Create Account</a>
+    <span class="mobile-nav-meta">444Music Distribution</span>
+  </div>
+</div>
 
 <!-- ===== HERO ===== -->
 <section class="hero">
@@ -889,61 +960,6 @@ body::before {
   </div>
 </div>
 
-<!-- ===== PRICING ===== -->
-<div class="section reveal" id="pricing">
-  <div class="label-tag centered" style="justify-content:center;">Pricing</div>
-  <h2 class="section-h centered display">Simple &amp; Transparent Pricing</h2>
-  <p class="section-p centered" style="margin-left:auto;margin-right:auto;">No hidden fees. Keep 100% of your royalties on every plan.</p>
-  <div class="pricing-grid">
-    <div class="price-card">
-      <div class="price-tier">Free</div>
-      <div class="price-name">Release &amp; Pay Later</div>
-      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">0</span></div>
-      <div class="price-period">No upfront payment required</div>
-      <div class="price-divider"></div>
-      <ul class="price-list">
-        <li><i class="fa-solid fa-check"></i>1 free upload</li>
-        <li><i class="fa-solid fa-check"></i>100+ stores</li>
-        <li><i class="fa-solid fa-check"></i>Free ISRC &amp; Barcode</li>
-        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
-        <li><i class="fa-solid fa-check"></i>Basic analytics</li>
-      </ul>
-      <a href="login.html" class="price-btn-ghost">Get Started Free</a>
-    </div>
-    <div class="price-card featured">
-      <div class="price-popular">Most Popular</div>
-      <div class="price-tier">Single</div>
-      <div class="price-name">Single Release</div>
-      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">39.99</span></div>
-      <div class="price-period">Per single release</div>
-      <div class="price-divider"></div>
-      <ul class="price-list">
-        <li><i class="fa-solid fa-check"></i>Spotify &amp; Apple priority delivery</li>
-        <li><i class="fa-solid fa-check"></i>Global distribution</li>
-        <li><i class="fa-solid fa-check"></i>Keep 100% royalties</li>
-        <li><i class="fa-solid fa-check"></i>Fast release (2–5 days)</li>
-        <li><i class="fa-solid fa-check"></i>Full analytics dashboard</li>
-      </ul>
-      <a href="login.html" class="price-btn-fill">Release Single</a>
-    </div>
-    <div class="price-card">
-      <div class="price-tier">Pro</div>
-      <div class="price-name">EP / Album</div>
-      <div class="price-amount"><span class="price-cur">GHS</span><span class="price-num">69.99</span></div>
-      <div class="price-period">Per project release</div>
-      <div class="price-divider"></div>
-      <ul class="price-list">
-        <li><i class="fa-solid fa-check"></i>Up to 20 tracks</li>
-        <li><i class="fa-solid fa-check"></i>Global release everywhere</li>
-        <li><i class="fa-solid fa-check"></i>Detailed royalty reports</li>
-        <li><i class="fa-solid fa-check"></i>Priority support</li>
-        <li><i class="fa-solid fa-check"></i>Playlist pitching support</li>
-      </ul>
-      <a href="login.html" class="price-btn-ghost">Release Project</a>
-    </div>
-  </div>
-</div>
-
 <!-- ===== RELEASES ===== -->
 <div class="section reveal">
   <div class="label-tag">Latest</div>
@@ -1155,6 +1171,31 @@ function nextClip() {
 
 setInterval(nextClip, 9000);
 dots.forEach(dot => dot.addEventListener('click', nextClip));
+
+/* ── FULL-SCREEN NAV OVERLAY ── */
+const menuBtn      = document.getElementById('menuBtn');
+const navOverlay   = document.getElementById('mobileNavOverlay');
+const navCloseBtn  = document.getElementById('mobileNavClose');
+
+function openNav() {
+  navOverlay.classList.add('open');
+  menuBtn.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('nav-open');
+}
+function closeNav() {
+  navOverlay.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('nav-open');
+}
+
+menuBtn.addEventListener('click', openNav);
+navCloseBtn.addEventListener('click', closeNav);
+document.querySelectorAll('.mobile-nav-link, .mobile-nav-cta').forEach(link => {
+  link.addEventListener('click', closeNav);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && navOverlay.classList.contains('open')) closeNav();
+});
 
 /* ── FAQ ── */
 document.querySelectorAll('.faq-q').forEach(q => {
