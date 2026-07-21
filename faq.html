@@ -1,282 +1,544 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FAQ - 444Music Distribution</title>
-<link rel="stylesheet" href="faq.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg-deep: #000000;
+    --bg-card: rgba(255,255,255,0.04);
+    --white: #ffffff;
+    --dim: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.14);
+    --text: #ffffff;
+    --text-muted: rgba(255,255,255,0.55);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 700; color: #fff; text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 16px rgba(255,255,255,0.28);
+  }
+  .nav-logo-mark i { font-size: 14px; color: #000; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-links a i { font-size: 11px; }
+  .nav-links a:hover, .nav-links a.active { color: #fff; }
+  .nav-cta {
+    background: #ffffff !important;
+    color: #000 !important; padding: 8px 20px; border-radius: 999px;
+    box-shadow: 0 0 18px rgba(255,255,255,0.2);
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .nav-cta:hover { box-shadow: 0 0 30px rgba(255,255,255,0.4) !important; transform: translateY(-1px) !important; color: #000 !important; }
+
+  /* ─── HERO ─── */
+  .faq-hero {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 64px 24px 36px;
+  }
+  .faq-hero h1 {
+    font-size: clamp(28px, 4.6vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .faq-hero p {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.8;
+  }
+  .faq-hero p strong { color: #fff; font-weight: 600; }
+
+  .faq-categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+  }
+  .faq-categories button {
+    font-family: 'Poppins', sans-serif;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .faq-categories button:hover {
+    border-color: rgba(255,255,255,0.4);
+    color: #fff;
+  }
+  .faq-categories button.active {
+    background: #ffffff;
+    color: #000;
+    border-color: #ffffff;
+    font-weight: 600;
+  }
+
+  /* ─── FAQ LIST ─── */
+  .faq-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 24px 90px;
+  }
+
+  .faq-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .faq-item:hover {
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    cursor: pointer;
+  }
+  .faq-question span {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.5;
+  }
+  .faq-question .icon {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    color: var(--text-muted);
+    transition: background 0.2s, color 0.2s, transform 0.25s, border-color 0.2s;
+  }
+  .faq-item.active .icon {
+    background: #ffffff;
+    color: #000;
+    border-color: #ffffff;
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 22px;
+  }
+  .faq-item.active .faq-answer {
+    max-height: 300px;
+    padding: 0 22px 22px;
+  }
+  .faq-answer span {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .faq-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    padding: 40px 0;
+    display: none;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-logo {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px;
+  }
+  .footer-logo-mark {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-logo-mark i { font-size: 12px; color: #000; }
+  .footer-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; }
+  .footer-socials { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+  .social-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); text-decoration: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .social-btn:hover { background: var(--dim); color: #fff; border-color: #fff; }
+  .social-btn i { font-size: 14px; }
+  .footer-copy { font-size: 11.5px; color: rgba(255,255,255,0.32); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width:700px) {
+    nav { padding: 0 18px; }
+    .nav-links { gap: 14px; }
+    .nav-links a span { display: none; }
+    .faq-hero { padding: 48px 20px 28px; }
+    .faq-container { padding: 16px 18px 70px; }
+    .faq-question { padding: 17px 18px; }
+    .faq-question span { font-size: 13.5px; }
+  }
+</style>
 </head>
 <body>
 
-<section class="faq-hero">
-<h1>Frequently Asked Questions</h1>
-<p>
-Learn everything about releasing music, royalties, referrals, and managing
-your account on <strong>444Music Distribution</strong>.
-</p>
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark"><i class="fa-solid fa-music"></i></div>
+    444Music
+  </a>
+  <div class="nav-links">
+    <a href="#"><i class="fa-solid fa-house"></i> <span>About</span></a>
+    <a href="#"><i class="fa-solid fa-satellite-dish"></i> <span>Distribution</span></a>
+    <a href="#" class="active"><i class="fa-solid fa-circle-question"></i> <span>FAQ</span></a>
+    <a href="#" class="nav-cta"><i class="fa-solid fa-rocket"></i> <span>Get Started</span></a>
+  </div>
+</nav>
 
-<div class="faq-categories">
-<button class="active" data-category="all">All</button>
-<button data-category="distribution">Distribution</button>
-<button data-category="payments">Payments</button>
-<button data-category="account">Account</button>
-<button data-category="referrals">Referrals</button>
-</div>
+<section class="faq-hero">
+  <h1>Frequently Asked Questions</h1>
+  <p>
+    Learn everything about releasing music, royalties, referrals, and managing
+    your account on <strong>444Music Distribution</strong>.
+  </p>
+
+  <div class="faq-categories">
+    <button class="active" data-category="all">All</button>
+    <button data-category="distribution">Distribution</button>
+    <button data-category="payments">Payments</button>
+    <button data-category="account">Account</button>
+    <button data-category="referrals">Referrals</button>
+  </div>
 </section>
 
 <section class="faq-container">
 
-<!-- DISTRIBUTION -->
+  <!-- DISTRIBUTION -->
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>How do I upload my music to 444Music Distribution?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Log in to your dashboard, create a new release, upload your audio file,
-cover art, and fill in the required details such as artist name,
-release date, and genre.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>How do I upload my music to 444Music Distribution?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Log in to your dashboard, create a new release, upload your audio file,
+        cover art, and fill in the required details such as artist name,
+        release date, and genre.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>Which stores will my music be sent to?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Your music can be delivered to major streaming platforms including Spotify,
-Apple Music, TikTok, YouTube Music, Audiomack, and many more global stores.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>Which stores will my music be sent to?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Your music can be delivered to major streaming platforms including Spotify,
+        Apple Music, TikTok, YouTube Music, Audiomack, and many more global stores.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>How long does it take for my release to go live?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Most releases are processed within 2–5 business days, but some platforms
-may take longer depending on their approval system.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>How long does it take for my release to go live?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Most releases are processed within 2–5 business days, but some platforms
+        may take longer depending on their approval system.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>Can I schedule a future release date?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Yes. We recommend scheduling your release at least 7 days in advance
-to ensure it reaches all platforms on time.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>Can I schedule a future release date?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Yes. We recommend scheduling your release at least 7 days in advance
+        to ensure it reaches all platforms on time.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>What audio format should I upload?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-We recommend uploading WAV files (16-bit or 24-bit) with high audio quality
-for the best distribution results.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>What audio format should I upload?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        We recommend uploading WAV files (16-bit or 24-bit) with high audio quality
+        for the best distribution results.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="distribution">
-<div class="faq-question">
-<span>Why was my release rejected?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-This usually happens due to copyright issues, poor audio quality,
-incorrect metadata, or artwork that doesn't meet store guidelines.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="distribution">
+    <div class="faq-question">
+      <span>Why was my release rejected?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        This usually happens due to copyright issues, poor audio quality,
+        incorrect metadata, or artwork that doesn't meet store guidelines.
+      </span>
+    </div>
+  </div>
 
-<!-- PAYMENTS -->
+  <!-- PAYMENTS -->
 
-<div class="faq-item" data-category="payments">
-<div class="faq-question">
-<span>How do I earn money from my music?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-You earn royalties whenever people stream or download your music
-on supported platforms. Earnings are collected and shown in your dashboard.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="payments">
+    <div class="faq-question">
+      <span>How do I earn money from my music?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        You earn royalties whenever people stream or download your music
+        on supported platforms. Earnings are collected and shown in your dashboard.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="payments">
-<div class="faq-question">
-<span>When will I receive my royalties?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Streaming platforms usually report earnings every month,
-but some may take 2–3 months before the first royalties appear.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="payments">
+    <div class="faq-question">
+      <span>When will I receive my royalties?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Streaming platforms usually report earnings every month,
+        but some may take 2–3 months before the first royalties appear.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="payments">
-<div class="faq-question">
-<span>What is the minimum withdrawal amount?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-You must reach the minimum payout balance before requesting a withdrawal.
-You can check this requirement in your earnings dashboard.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="payments">
+    <div class="faq-question">
+      <span>What is the minimum withdrawal amount?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        You must reach the minimum payout balance before requesting a withdrawal.
+        You can check this requirement in your earnings dashboard.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="payments">
-<div class="faq-question">
-<span>Why did my withdrawal fail?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Withdrawals may fail if your balance is insufficient or
-your payment information is incomplete or incorrect.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="payments">
+    <div class="faq-question">
+      <span>Why did my withdrawal fail?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Withdrawals may fail if your balance is insufficient or
+        your payment information is incomplete or incorrect.
+      </span>
+    </div>
+  </div>
 
-<!-- ACCOUNT -->
+  <!-- ACCOUNT -->
 
-<div class="faq-item" data-category="account">
-<div class="faq-question">
-<span>Can I edit my release after submitting?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Yes, but only before the release is delivered to stores.
-Contact support immediately if changes are required.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="account">
+    <div class="faq-question">
+      <span>Can I edit my release after submitting?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Yes, but only before the release is delivered to stores.
+        Contact support immediately if changes are required.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="account">
-<div class="faq-question">
-<span>Can labels use 444Music Distribution?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Yes. Labels can manage multiple artists and releases
-from a single dashboard.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="account">
+    <div class="faq-question">
+      <span>Can labels use 444Music Distribution?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Yes. Labels can manage multiple artists and releases
+        from a single dashboard.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="account">
-<div class="faq-question">
-<span>Is my music ownership protected?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Yes. You keep 100% ownership of your music. We only distribute
-your content to digital stores.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="account">
+    <div class="faq-question">
+      <span>Is my music ownership protected?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Yes. You keep 100% ownership of your music. We only distribute
+        your content to digital stores.
+      </span>
+    </div>
+  </div>
 
-<!-- REFERRALS -->
+  <!-- REFERRALS -->
 
-<div class="faq-item" data-category="referrals">
-<div class="faq-question">
-<span>How does the referral program work?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Share your referral link with new artists. When they join and release
-music, you earn referral rewards from their activity.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="referrals">
+    <div class="faq-question">
+      <span>How does the referral program work?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Share your referral link with new artists. When they join and release
+        music, you earn referral rewards from their activity.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="referrals">
-<div class="faq-question">
-<span>Where can I find my referral link?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Your referral link is available inside your dashboard under
-the referral or affiliate section.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="referrals">
+    <div class="faq-question">
+      <span>Where can I find my referral link?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Your referral link is available inside your dashboard under
+        the referral or affiliate section.
+      </span>
+    </div>
+  </div>
 
-<div class="faq-item" data-category="referrals">
-<div class="faq-question">
-<span>When do I get paid from referrals?</span>
-<div class="icon">+</div>
-</div>
-<div class="faq-answer">
-<span>
-Referral earnings are added to your account once the referred
-user completes payments or releases through the platform.
-</span>
-</div>
-</div>
+  <div class="faq-item" data-category="referrals">
+    <div class="faq-question">
+      <span>When do I get paid from referrals?</span>
+      <div class="icon">+</div>
+    </div>
+    <div class="faq-answer">
+      <span>
+        Referral earnings are added to your account once the referred
+        user completes payments or releases through the platform.
+      </span>
+    </div>
+  </div>
+
+  <div class="faq-empty">No questions in this category yet.</div>
 
 </section>
 
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">
+    <div class="footer-logo-mark"><i class="fa-solid fa-music"></i></div>
+    444Music Distribution
+  </div>
+  <p class="footer-sub">Empowering Independent Artists Worldwide</p>
+  <div class="footer-socials">
+    <a href="https://www.instagram.com/444music_distribution?igsh=cDdhbTJzYXdkd2lp" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-btn"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="https://www.tiktok.com/@444musicdistribution?_r=1&_t=ZS-957vAs1JNvc" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="http://www.youtube.com/@444musicdistribution" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+    <a href="https://www.facebook.com/profile.php?id=61587219568878" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+  </div>
+  <div class="footer-copy">© 2026 444Music Distribution. All Rights Reserved.</div>
+</footer>
+
 <script>
-const items = document.querySelectorAll(".faq-item");
-const buttons = document.querySelectorAll(".faq-categories button");
+  const items = document.querySelectorAll(".faq-item");
+  const buttons = document.querySelectorAll(".faq-categories button");
+  const emptyMsg = document.querySelector(".faq-empty");
 
-items.forEach(item => {
-const question = item.querySelector(".faq-question");
-const icon = item.querySelector(".icon");
+  items.forEach(item => {
+    const question = item.querySelector(".faq-question");
+    const icon = item.querySelector(".icon");
 
-question.addEventListener("click", () => {
-item.classList.toggle("active");
-icon.textContent = item.classList.contains("active") ? "×" : "+";
-});
-});
+    question.addEventListener("click", () => {
+      item.classList.toggle("active");
+      icon.textContent = item.classList.contains("active") ? "×" : "+";
+    });
+  });
 
-buttons.forEach(button => {
-button.addEventListener("click", () => {
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      buttons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
 
-buttons.forEach(btn => btn.classList.remove("active"));
-button.classList.add("active");
+      const category = button.dataset.category;
+      let visibleCount = 0;
 
-const category = button.dataset.category;
+      items.forEach(item => {
+        if (category === "all" || item.dataset.category === category) {
+          item.style.display = "block";
+          visibleCount++;
+        } else {
+          item.style.display = "none";
+        }
+      });
 
-items.forEach(item => {
-if(category === "all" || item.dataset.category === category){
-item.style.display = "block";
-}else{
-item.style.display = "none";
-}
-});
-
-});
-});
+      emptyMsg.style.display = visibleCount === 0 ? "block" : "none";
+    });
+  });
 </script>
-
 </body>
-  </html>
+</html>
