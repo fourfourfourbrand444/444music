@@ -2,289 +2,617 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>444 Navigation</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<title>Pricing — 444Music Distribution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+  :root{
+    --black:#060606;
+    --panel:#0e0e0e;
+    --panel-2:#131313;
+    --line: rgba(255,255,255,0.11);
+    --line-soft: rgba(255,255,255,0.06);
+    --white:#ffffff;
+    --muted: rgba(255,255,255,0.58);
+    --muted-2: rgba(255,255,255,0.38);
+    --radius: 16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--black);
+    color:var(--white);
+    font-family:'DM Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Sora', sans-serif;
+    margin:0;
+  }
+  .mono{
+    font-family:'DM Mono', monospace;
+    letter-spacing:0.02em;
+  }
+  a{color:inherit;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px;
+  }
 
-:root {
-  --bg:            #0B0A0E;
-  --surface:       #161319;
-  --surface-hover: #1F1A26;
-  --border:        #2A2530;
-  --border-strong: #3A3344;
+  /* ── Nav ── */
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:26px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Sora', sans-serif;
+    font-weight:700;
+    font-size:17px;
+    letter-spacing:-0.01em;
+  }
+  .logo .mark{
+    width:26px;height:26px;
+    border-radius:7px;
+    background:var(--white);
+    color:var(--black);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'DM Mono', monospace;
+    font-size:12px;
+    font-weight:500;
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    font-size:14px;
+    color:var(--muted);
+  }
+  .nav-links a{text-decoration:none;}
+  .nav-links a:hover{color:var(--white);}
+  .nav-cta{
+    font-size:13px;
+    font-weight:600;
+    padding:9px 18px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--white); color:var(--black); border-color:var(--white);}
 
-  --purple:        #8B5CF6;
-  --purple-deep:   #6D28D9;
-  --purple-wash:   #1E1730;
+  /* ── Hero ── */
+  .hero{
+    padding:88px 0 56px;
+    text-align:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'DM Mono', monospace;
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:7px 14px;
+    border-radius:100px;
+    margin-bottom:26px;
+  }
+  .eyebrow .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#3ecf6a;
+  }
+  .hero h1{
+    font-size:clamp(34px, 5.2vw, 58px);
+    font-weight:800;
+    line-height:1.06;
+    letter-spacing:-0.02em;
+    max-width:780px;
+    margin:0 auto;
+  }
+  .hero p{
+    max-width:520px;
+    margin:22px auto 0;
+    color:var(--muted);
+    font-size:16.5px;
+    line-height:1.6;
+  }
 
-  --text:          #F3F1F6;
-  --text-soft:     #A6A1AE;
-  --text-mute:     #6E6877;
+  /* ── Pipeline strip ── */
+  .pipeline{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:0;
+    margin:56px 0 8px;
+    flex-wrap:wrap;
+  }
+  .pstep{
+    flex:1 1 0;
+    min-width:130px;
+    padding:20px 14px;
+    text-align:center;
+    position:relative;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    border-left:1px solid var(--line);
+  }
+  .pstep:last-child{border-right:1px solid var(--line);}
+  .pstep .num{
+    font-family:'DM Mono', monospace;
+    font-size:11px;
+    color:var(--muted-2);
+    display:block;
+    margin-bottom:8px;
+  }
+  .pstep .label{
+    font-family:'Sora', sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+  }
+  .pstep .sub{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:5px;
+    line-height:1.4;
+  }
+  .pstep::after{
+    content:"→";
+    position:absolute;
+    right:-11px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted-2);
+    font-size:14px;
+    z-index:2;
+    background:var(--black);
+    width:20px;
+  }
+  .pstep:last-child::after{content:none;}
 
-  --ff-display: 'Poppins', sans-serif;
-  --ff-body:    'Inter', sans-serif;
+  /* ── Pricing grid ── */
+  .pricing{
+    padding:72px 0 40px;
+  }
+  .section-head{
+    text-align:center;
+    margin-bottom:44px;
+  }
+  .section-head h2{
+    font-size:clamp(24px,3vw,32px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .section-head p{
+    color:var(--muted);
+    font-size:14.5px;
+    margin-top:10px;
+  }
+  .currency-note{
+    display:inline-flex;
+    gap:6px;
+    align-items:center;
+    font-family:'DM Mono', monospace;
+    font-size:12px;
+    color:var(--muted-2);
+    margin-top:14px;
+  }
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --t: 0.18s cubic-bezier(0.4,0,0.2,1);
-}
+  .plans{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width: 860px){
+    .plans{grid-template-columns:1fr;}
+    .pipeline{flex-direction:column;}
+    .pstep{border:1px solid var(--line) !important;}
+    .pstep::after{content:none;}
+  }
 
-html, body {
-  height: 100%;
-  font-family: var(--ff-body);
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
+  .plan{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:30px 26px 26px;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .plan:hover{ transform: translateY(-3px); border-color: rgba(255,255,255,0.22); }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  overflow: hidden;
-  position: relative;
-}
+  .plan.featured{
+    background:var(--white);
+    color:var(--black);
+    border-color:var(--white);
+  }
+  .plan.featured .plan-desc{ color: rgba(0,0,0,0.6); }
+  .plan.featured .price .amount{ color: var(--black); }
+  .plan.featured .price .sub{ color: rgba(0,0,0,0.5); }
+  .plan.featured .feat{ color: rgba(0,0,0,0.78); }
+  .plan.featured .feat svg{ stroke:#060606; }
+  .plan.featured .plan-cta{ background:var(--black); color:var(--white); }
+  .plan.featured .plan-cta:hover{ background:#222; }
+  .plan.featured hr{ border-color: rgba(0,0,0,0.12); }
 
-/* ============ BACKGROUND (flat, no gradients) ============ */
-.animated-bg {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 0;
-}
-.animated-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.18;
-  mask-image: radial-gradient(circle at center, black 0%, transparent 75%);
-  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 75%);
-}
+  .badge{
+    position:absolute;
+    top:-11px; left:26px;
+    background:var(--white);
+    color:var(--black);
+    font-family:'DM Mono', monospace;
+    font-size:10.5px;
+    font-weight:500;
+    padding:4px 10px;
+    border-radius:100px;
+    letter-spacing:0.03em;
+  }
+  .plan.featured .badge{
+    background:var(--black);
+    color:var(--white);
+  }
 
-/* ============ PARTICLES — flat dots, gentle float, no gradient ============ */
-.particles {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(var(--purple) 1.5px, transparent 1.5px),
-    radial-gradient(var(--border-strong) 1.5px, transparent 1.5px),
-    radial-gradient(var(--purple) 1px, transparent 1px);
-  background-size: 220px 220px, 160px 160px, 300px 300px;
-  background-position: 20px 30px, 90px 140px, 200px 60px;
-  opacity: 0.35;
-  animation: drift 18s linear infinite;
-}
-@keyframes drift {
-  0%   { background-position: 20px 30px, 90px 140px, 200px 60px; }
-  100% { background-position: 20px 250px, 90px 360px, 200px 280px; }
-}
+  .plan-name{
+    font-size:13px;
+    font-family:'DM Mono', monospace;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .plan.featured .plan-name{ color:rgba(0,0,0,0.5); }
 
-/* ============ OVERLAY ============ */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(11,10,14,0.4);
-  z-index: 2;
-}
+  .plan-title{
+    font-size:21px;
+    font-weight:700;
+    margin-top:8px;
+    font-family:'Sora', sans-serif;
+  }
+  .plan-desc{
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:8px;
+    line-height:1.55;
+    min-height:56px;
+  }
 
-/* ============ NAV MODAL ============ */
-.nav-modal {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  max-width: 420px;
-  margin: 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px 28px 28px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-}
+  .price{
+    margin-top:22px;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .price .amount{
+    font-family:'Sora', sans-serif;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:-0.02em;
+  }
+  .price .sub{
+    font-size:13px;
+    color:var(--muted);
+    font-family:'DM Mono', monospace;
+  }
 
-.nav-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-}
-.nav-header h2 {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-.nav-header i {
-  font-size: 1.3rem;
-  color: var(--purple);
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--purple-wash);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-}
+  hr{
+    border:none;
+    border-top:1px solid var(--line);
+    margin:22px 0 18px;
+  }
 
-.section-title {
-  font-family: var(--ff-body);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-mute);
-  margin: 22px 0 12px;
-}
-.section-title:first-of-type { margin-top: 0; }
+  .features{
+    list-style:none;
+    padding:0; margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    flex:1;
+  }
+  .feat{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    font-size:13.5px;
+    color: rgba(255,255,255,0.82);
+    line-height:1.5;
+  }
+  .feat svg{
+    flex-shrink:0;
+    margin-top:2px;
+    width:15px; height:15px;
+    stroke:#fff;
+    stroke-width:2;
+    fill:none;
+  }
 
-.nav-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
+  .plan-cta{
+    margin-top:26px;
+    display:block;
+    text-align:center;
+    padding:13px;
+    border-radius:10px;
+    background:var(--white);
+    color:var(--black);
+    text-decoration:none;
+    font-weight:700;
+    font-size:14px;
+    border:1px solid transparent;
+    cursor:pointer;
+  }
+  .plan-cta:hover{ background:#eee; }
+  .plan:not(.featured) .plan-cta{
+    background:transparent;
+    color:var(--white);
+    border:1px solid var(--line);
+  }
+  .plan:not(.featured) .plan-cta:hover{
+    background:rgba(255,255,255,0.06);
+    border-color:rgba(255,255,255,0.3);
+  }
 
-.nav-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  text-decoration: none;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 18px 16px;
-  transition: border-color var(--t), background var(--t), transform var(--t);
-}
-.nav-card i {
-  font-size: 1.2rem;
-  color: var(--purple);
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--purple-wash);
-  border-radius: var(--radius-sm);
-  transition: background var(--t), color var(--t);
-}
-.nav-card span {
-  font-family: var(--ff-body);
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--text-soft);
-  transition: color var(--t);
-}
-.nav-card:hover {
-  border-color: var(--purple-deep);
-  background: var(--surface-hover);
-  transform: translateY(-2px);
-}
-.nav-card:hover span { color: var(--text); }
-.nav-card:focus-visible {
-  outline: 2px solid var(--purple);
-  outline-offset: 2px;
-}
+  /* ── Trust strip ── */
+  .trust{
+    padding:56px 0;
+    border-top:1px solid var(--line-soft);
+    border-bottom:1px solid var(--line-soft);
+    margin-top:60px;
+  }
+  .trust-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:28px;
+    text-align:center;
+  }
+  @media (max-width:760px){
+    .trust-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  .trust-item .num{
+    font-family:'Sora', sans-serif;
+    font-size:26px;
+    font-weight:800;
+  }
+  .trust-item .label{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:6px;
+  }
 
-.switch-link {
-  display: block;
-  text-decoration: none;
-  margin-top: 22px;
-}
-.switch-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  background: var(--purple);
-  color: #0B0A0E;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  font-family: var(--ff-body);
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: background var(--t), transform var(--t);
-}
-.switch-btn i { font-size: 1rem; }
-.switch-btn:hover { background: var(--purple-deep); color: var(--text); }
-.switch-btn:active { transform: scale(0.98); }
+  /* ── FAQ ── */
+  .faq{
+    padding:70px 0;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .faq-item{
+    border-bottom:1px solid var(--line-soft);
+    padding:22px 0;
+  }
+  .faq-item h3{
+    font-size:15.5px;
+    font-weight:600;
+    font-family:'DM Sans', sans-serif;
+  }
+  .faq-item p{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:10px 0 0;
+    line-height:1.6;
+  }
 
-/* ============ MOTION SAFETY ============ */
-@media (prefers-reduced-motion: reduce) {
-  .particles { animation: none; }
-}
+  /* ── Footer CTA ── */
+  .footer-cta{
+    text-align:center;
+    padding:70px 24px 90px;
+  }
+  .footer-cta h2{
+    font-size:clamp(24px,3.4vw,36px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+  }
+  .footer-cta p{
+    color:var(--muted);
+    margin-top:14px;
+    font-size:14.5px;
+  }
+  .footer-cta .plan-cta{
+    display:inline-block;
+    margin-top:26px;
+    padding:14px 32px;
+  }
+  footer{
+    border-top:1px solid var(--line-soft);
+    padding:26px 0;
+    text-align:center;
+    color:var(--muted-2);
+    font-size:12.5px;
+  }
 
-/* ============ RESPONSIVE ============ */
-@media (max-width: 480px) {
-  .nav-modal { padding: 26px 20px 22px; }
-  .nav-grid { gap: 8px; }
-  .nav-card { padding: 16px 14px; }
-}
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
 </style>
 </head>
 <body>
-<!-- Animated Gradient Background -->
-<div class="animated-bg"></div>
-<!-- Floating Particles -->
-<div class="particles"></div>
-<!-- Overlay -->
-<div id="navOverlay" class="overlay"></div>
-<!-- NAV MODAL -->
-<div id="navModal" class="nav-modal">
-<div class="nav-header">
-<h2>444Music</h2>
-<i class="ri-sound-module-line"></i>
+
+<div class="wrap">
+  <nav>
+    <div class="logo"><span class="mark">4</span>444Music</div>
+    <div class="nav-links">
+      <a href="#pricing">Pricing</a>
+      <a href="#pipeline">How it works</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="login.html" class="nav-cta">Release a track</a>
+  </nav>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Built for independent artists in Ghana, Nigeria &amp; beyond</span>
+    <h1>Your music, out there.<br>No label, no gatekeepers.</h1>
+    <p>Upload once, distribute everywhere — Spotify, Apple Music, Boomplay, Audiomack and more. Pay only when you're ready to go live.</p>
+  </section>
+
+  <div id="pipeline" class="pipeline">
+    <div class="pstep">
+      <span class="num mono">01</span>
+      <div class="label">Submit</div>
+      <div class="sub">Upload your track & artwork</div>
+    </div>
+    <div class="pstep">
+      <span class="num mono">02</span>
+      <div class="label">Draft</div>
+      <div class="sub">Sits safely on your dashboard</div>
+    </div>
+    <div class="pstep">
+      <span class="num mono">03</span>
+      <div class="label">Pay</div>
+      <div class="sub">Whenever you're ready</div>
+    </div>
+    <div class="pstep">
+      <span class="num mono">04</span>
+      <div class="label">Live</div>
+      <div class="sub">On every platform, worldwide</div>
+    </div>
+  </div>
 </div>
-<p class="section-title">WHERE TO?</p>
-<div class="nav-grid">
-<a href="about.html" class="nav-card">
-<i class="ri-information-line"></i>
-<span>About Us</span>
-</a>
-<a href="login.html" class="nav-card">
-<i class="ri-login-circle-line"></i>
-<span>Login</span>
-</a>
-<a href="faq.html" class="nav-card">
-<i class="ri-question-line"></i>
-<span>FAQ</span>
-</a>
-<a href="https://444musicblog.vercel.app/" class="nav-card">
-<i class="ri-music-line"></i>
-<span> Playlist/Promote</span>
-</a>
+
+<div class="wrap">
+  <section class="pricing" id="pricing">
+    <div class="section-head">
+      <h2>Simple pricing. No subscriptions.</h2>
+      <p>Pay per release — never a monthly fee. Prices shown in Ghana cedis and US dollars.</p>
+      <div class="currency-note mono">GHS · USD — same rate everywhere</div>
+    </div>
+
+    <div class="plans">
+
+      <!-- Plan 1: Draft & Release -->
+      <div class="plan">
+        <div class="plan-name mono">Single</div>
+        <div class="plan-title">Draft &amp; Release</div>
+        <div class="plan-desc">Upload now, decide later. Your track saves as a draft the moment you submit it — nothing is charged until you choose to publish.</div>
+        <div class="price">
+          <span class="amount">Free</span>
+          <span class="sub">to submit</span>
+        </div>
+        <hr>
+        <ul class="features">
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Upload your track & cover art anytime</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Appears instantly on your dashboard</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Held as a draft — no expiry, no pressure</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Pay GHS 39 / $3 whenever you're ready to go live</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Standard review before release</li>
+        </ul>
+        <a href="login.html" class="plan-cta">Start a draft</a>
+      </div>
+
+      <!-- Plan 2: Instant Release -->
+      <div class="plan featured">
+        <div class="badge mono">MOST POPULAR</div>
+        <div class="plan-name mono">Single</div>
+        <div class="plan-title">Instant Release</div>
+        <div class="plan-desc">Ready now? Pay upfront and skip the wait — your track moves straight into review the moment payment clears.</div>
+        <div class="price">
+          <span class="amount">GHS 39</span>
+          <span class="sub mono">≈ $3 USD</span>
+        </div>
+        <hr>
+        <ul class="features">
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Goes to review as soon as payment is confirmed</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No draft-holding step — fastest path to live</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Distributed to Spotify, Apple Music, Boomplay & more</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Full earnings dashboard from day one</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One-time payment — track is yours, forever</li>
+        </ul>
+        <a href="login.html" class="plan-cta">Release instantly</a>
+      </div>
+
+      <!-- Plan 3: EP / Album -->
+      <div class="plan">
+        <div class="plan-name mono">Project</div>
+        <div class="plan-title">EP / Album</div>
+        <div class="plan-desc">One price for the whole project. Upload as many tracks as your EP or album needs — no per-track charges, ever.</div>
+        <div class="price">
+          <span class="amount">GHS 69</span>
+          <span class="sub mono">≈ $6 USD</span>
+        </div>
+        <hr>
+        <ul class="features">
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Unlimited tracklist — 3 tracks or 30</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Same fast pipeline: pay → review → live</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One shared cover art & metadata set for the project</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Best value per track for full projects</li>
+          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Delivered to every major platform worldwide</li>
+        </ul>
+        <a href="login.html" class="plan-cta">Release your project</a>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="trust">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="num">100%</div>
+        <div class="label">Royalties kept by the artist</div>
+      </div>
+      <div class="trust-item">
+        <div class="num">$50</div>
+        <div class="label">Minimum withdrawal</div>
+      </div>
+      <div class="trust-item">
+        <div class="num">GHS · $</div>
+        <div class="label">Priced in cedis & dollars</div>
+      </div>
+      <div class="trust-item">
+        <div class="num">No expiry</div>
+        <div class="label">Drafts never disappear</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="section-head" style="margin-bottom:34px;">
+      <h2>Questions, answered</h2>
+    </div>
+
+    <div class="faq-item">
+      <h3>What's the difference between Draft &amp; Release and Instant Release?</h3>
+      <p>Both cost the same — GHS 39 / $3 — the only difference is timing. Draft & Release lets you upload now and pay whenever you decide to publish. Instant Release charges upfront so your track skips straight to review with no waiting.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I release an EP or full album?</h3>
+      <p>Yes. The EP/Album plan is a flat GHS 69 / $6 for the entire project, no matter how many tracks it contains — one cover, one set of metadata, one release.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do prices change based on my location?</h3>
+      <p>No. Every plan is shown in both Ghana cedis and US dollars at the same rate, so artists releasing from anywhere pay the same fair price.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is there a subscription or recurring fee?</h3>
+      <p>Never. You pay once per release. There's no monthly plan, no renewal, and no hidden charge after your track goes live.</p>
+    </div>
+  </section>
+
+  <section class="footer-cta">
+    <h2>Your next release starts here.</h2>
+    <p>Upload your track, choose your plan, and go live on every major platform.</p>
+    <a href="login.html" class="plan-cta">Get started free</a>
+  </section>
 </div>
-<p class="section-title">RESOURCES</p>
-<div class="nav-grid">
-<a href="login.html" class="nav-card">
-<i class="ri-user-star-line"></i>
-<span>Account</span>
-</a>
-</div>
-<a href="support.html" class="switch-link">
-<button class="switch-btn">
-<i class="ri-customer-service-2-line"></i>
-Contact Support/Help
-</button>
-</a>
-</div>
+
+<footer>
+  © 444Music Distribution — built for independent artists worldwide.
+</footer>
+
 </body>
 </html>
