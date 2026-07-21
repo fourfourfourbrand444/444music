@@ -8,15 +8,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root {
-    --bg-deep: #07090f;
+    --bg-deep: #000000;
     --bg-card: rgba(255,255,255,0.04);
-    --purple: #9333ea;
-    --purple-light: #c084fc;
-    --purple-dim: rgba(147,51,234,0.14);
-    --purple-border: rgba(147,51,234,0.22);
-    --accent: #e879f9;
-    --text: #f1f5f9;
-    --text-muted: rgba(241,245,249,0.55);
+    --white: #ffffff;
+    --grey: #9a9a9a;
+    --dim: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.14);
+    --text: #ffffff;
+    --text-muted: rgba(255,255,255,0.55);
   }
 
   *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -34,37 +33,15 @@
   .bg-wrap {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   }
-  .orb {
-    position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.16;
-    animation: orbDrift 14s ease-in-out infinite alternate;
-  }
-  .orb-1 { width:520px; height:520px; background:#6d28d9; top:-160px; left:-140px; animation-delay:0s; }
-  .orb-2 { width:420px; height:420px; background:#9333ea; bottom:-120px; right:-120px; animation-delay:-5s; }
-  .orb-3 { width:260px; height:260px; background:#c084fc; top:42%; left:58%; animation-delay:-9s; }
-
-  @keyframes orbDrift {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(38px,28px) scale(1.07); }
-  }
-
-  .bg-wrap::after {
-    content:''; position:absolute; inset:0;
-    background-image:
-      linear-gradient(rgba(147,51,234,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(147,51,234,0.04) 1px, transparent 1px);
-    background-size: 56px 56px;
-    animation: gridMove 24s linear infinite;
-  }
-  @keyframes gridMove { to { background-position: 56px 56px; } }
 
   /* ─── NAV ─── */
   nav {
     position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 40px; height: 64px;
-    background: rgba(7,9,15,0.78);
+    background: rgba(0,0,0,0.82);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--purple-border);
+    border-bottom: 1px solid var(--border);
   }
   .nav-logo {
     display: flex; align-items: center; gap: 10px;
@@ -72,11 +49,11 @@
   }
   .nav-logo-mark {
     width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 16px rgba(147,51,234,0.45);
+    box-shadow: 0 0 16px rgba(255,255,255,0.28);
   }
-  .nav-logo-mark i { font-size: 14px; color: #fff; }
+  .nav-logo-mark i { font-size: 14px; color: #000; }
   .nav-links { display: flex; gap: 28px; align-items: center; }
   .nav-links a {
     color: var(--text-muted); text-decoration: none;
@@ -85,14 +62,14 @@
     transition: color 0.2s;
   }
   .nav-links a i { font-size: 11px; }
-  .nav-links a:hover, .nav-links a.active { color: var(--purple-light); }
+  .nav-links a:hover, .nav-links a.active { color: #fff; }
   .nav-cta {
-    background: linear-gradient(135deg, #6d28d9, #9333ea) !important;
-    color: #fff !important; padding: 8px 20px; border-radius: 999px;
-    box-shadow: 0 0 18px rgba(147,51,234,0.3);
+    background: #ffffff !important;
+    color: #000 !important; padding: 8px 20px; border-radius: 999px;
+    box-shadow: 0 0 18px rgba(255,255,255,0.2);
     transition: box-shadow 0.25s, transform 0.25s;
   }
-  .nav-cta:hover { box-shadow: 0 0 30px rgba(147,51,234,0.55) !important; transform: translateY(-1px) !important; color: #fff !important; }
+  .nav-cta:hover { box-shadow: 0 0 30px rgba(255,255,255,0.4) !important; transform: translateY(-1px) !important; color: #000 !important; }
 
   /* ─── LAYOUT ─── */
   .container {
@@ -106,25 +83,12 @@
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.8s 0.1s ease forwards;
   }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--purple-dim); border: 1px solid var(--purple-border);
-    border-radius: 999px; padding: 7px 20px;
-    font-size: 11px; font-weight: 600; color: var(--purple-light);
-    letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 30px;
-    animation: badgePulse 3s ease-in-out infinite;
-  }
-  .hero-badge i { font-size: 9px; }
-  @keyframes badgePulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(147,51,234,0); }
-    50%      { box-shadow: 0 0 18px 4px rgba(147,51,234,0.22); }
-  }
   .hero h1 {
     font-size: clamp(32px, 5.5vw, 56px); font-weight: 700; line-height: 1.15;
     margin-bottom: 20px;
   }
   .hero h1 .grad {
-    background: linear-gradient(90deg, #9333ea, #e879f9, #c084fc, #9333ea);
+    background: linear-gradient(90deg, #ffffff, #9a9a9a, #ffffff, #cfcfcf);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text; background-size: 300% auto;
     animation: shimmer 4s linear infinite;
@@ -137,21 +101,21 @@
   .hero-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
   .btn-primary {
     display: inline-flex; align-items: center; gap: 9px;
-    background: linear-gradient(135deg, #6d28d9, #9333ea);
-    color: #fff; padding: 13px 30px; border-radius: 999px;
+    background: #ffffff;
+    color: #000; padding: 13px 30px; border-radius: 999px;
     font-size: 14px; font-weight: 600; text-decoration: none;
-    box-shadow: 0 0 28px rgba(147,51,234,0.38);
+    box-shadow: 0 0 28px rgba(255,255,255,0.22);
     transition: transform 0.22s, box-shadow 0.22s;
   }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 44px rgba(147,51,234,0.56); }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 44px rgba(255,255,255,0.4); }
   .btn-ghost {
     display: inline-flex; align-items: center; gap: 9px;
-    border: 1px solid var(--purple-border); color: var(--text-muted);
+    border: 1px solid var(--border); color: var(--text-muted);
     padding: 12px 28px; border-radius: 999px;
     font-size: 14px; font-weight: 500; text-decoration: none;
     transition: border-color 0.2s, color 0.2s;
   }
-  .btn-ghost:hover { border-color: var(--purple-light); color: var(--purple-light); }
+  .btn-ghost:hover { border-color: #fff; color: #fff; }
 
   /* ─── STATS ─── */
   .stats-strip {
@@ -161,7 +125,7 @@
     animation: fadeUp 0.8s 0.3s ease forwards;
   }
   .stat-box {
-    background: var(--bg-card); border: 1px solid var(--purple-border);
+    background: var(--bg-card); border: 1px solid var(--border);
     border-radius: 16px; padding: 28px 20px; text-align: center;
     backdrop-filter: blur(10px); position: relative; overflow: hidden;
     transition: transform 0.25s, border-color 0.25s;
@@ -169,18 +133,18 @@
   }
   .stat-box::before {
     content:''; position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg, transparent, var(--purple), transparent);
+    background: linear-gradient(90deg, transparent, #fff, transparent);
     opacity:0; transition: opacity 0.3s;
   }
-  .stat-box:hover { transform: translateY(-5px); border-color: rgba(147,51,234,0.5); }
+  .stat-box:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.4); }
   .stat-box:hover::before { opacity: 1; }
-  .stat-icon { font-size: 22px; color: var(--purple-light); margin-bottom: 10px; }
+  .stat-icon { font-size: 22px; color: #fff; margin-bottom: 10px; }
   .stat-num { font-size: 30px; font-weight: 700; color: #fff; display: block; margin-bottom: 4px; }
   .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; }
 
   /* ─── CARD BASE ─── */
   .card {
-    background: var(--bg-card); border: 1px solid var(--purple-border);
+    background: var(--bg-card); border: 1px solid var(--border);
     border-radius: 20px; padding: 36px; margin-bottom: 22px;
     backdrop-filter: blur(14px); position: relative; overflow: hidden;
     opacity: 0; transform: translateY(24px);
@@ -190,10 +154,10 @@
     opacity:1; transform:translateY(0);
     transition: opacity 0.65s ease, transform 0.65s ease, border-color 0.3s;
   }
-  .card:hover { border-color: rgba(147,51,234,0.42); }
+  .card:hover { border-color: rgba(255,255,255,0.34); }
   .card-glow {
     position:absolute; top:-50px; right:-50px; width:200px; height:200px;
-    background: radial-gradient(circle, rgba(147,51,234,0.09), transparent 65%);
+    background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 65%);
     pointer-events:none;
   }
   .card-header {
@@ -201,11 +165,11 @@
   }
   .card-icon {
     width: 48px; height: 48px; flex-shrink: 0; border-radius: 13px;
-    background: linear-gradient(135deg, rgba(109,40,217,0.35), rgba(147,51,234,0.2));
-    border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
   }
-  .card-icon i { font-size: 19px; color: var(--purple-light); }
+  .card-icon i { font-size: 19px; color: #fff; }
   .card-header h2 { font-size: 19px; font-weight: 600; color: #fff; }
   .card p { font-size: 14.5px; color: var(--text-muted); font-weight: 300; line-height: 1.85; margin-bottom: 14px; }
   .card p:last-of-type { margin-bottom: 0; }
@@ -216,19 +180,19 @@
   }
   .why-item {
     display: flex; align-items: flex-start; gap: 14px;
-    background: rgba(147,51,234,0.06); border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
     border-radius: 14px; padding: 20px;
     transition: background 0.22s, transform 0.22s;
   }
-  .why-item:hover { background: rgba(147,51,234,0.12); transform: translateY(-3px); }
+  .why-item:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
   .why-icon {
     width: 38px; height: 38px; flex-shrink:0; border-radius: 10px;
-    background: linear-gradient(135deg, rgba(109,40,217,0.4), rgba(147,51,234,0.25));
-    border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
   }
-  .why-icon i { font-size: 15px; color: var(--purple-light); }
-  .why-title { font-size: 13.5px; font-weight: 600; color: #e9d5ff; margin-bottom: 4px; }
+  .why-icon i { font-size: 15px; color: #fff; }
+  .why-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px; }
   .why-desc  { font-size: 12.5px; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
 
   /* ─── VALUES ─── */
@@ -237,19 +201,19 @@
     gap: 14px; margin-top: 8px;
   }
   .value-item {
-    background: rgba(147,51,234,0.07); border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
     border-radius: 14px; padding: 22px 18px;
     transition: background 0.25s, transform 0.25s, border-color 0.25s;
   }
-  .value-item:hover { background: rgba(147,51,234,0.14); transform: translateY(-4px); border-color: rgba(147,51,234,0.45); }
+  .value-item:hover { background: rgba(255,255,255,0.1); transform: translateY(-4px); border-color: rgba(255,255,255,0.4); }
   .value-icon-wrap {
     width: 40px; height: 40px; border-radius: 10px; margin-bottom: 12px;
-    background: linear-gradient(135deg, rgba(109,40,217,0.4), rgba(147,51,234,0.25));
-    border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
   }
-  .value-icon-wrap i { font-size: 16px; color: var(--purple-light); }
-  .value-title { font-size: 13.5px; font-weight: 600; color: #e9d5ff; margin-bottom: 6px; }
+  .value-icon-wrap i { font-size: 16px; color: #fff; }
+  .value-title { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 6px; }
   .value-desc  { font-size: 12.5px; color: var(--text-muted); font-weight: 300; line-height: 1.65; }
 
   /* ─── PLATFORMS ─── */
@@ -264,14 +228,14 @@
     transition: background 0.22s, border-color 0.22s, transform 0.22s;
     cursor: default;
   }
-  .platform-card:hover { background: var(--purple-dim); border-color: var(--purple-border); transform: translateY(-2px); }
-  .platform-icon { font-size: 18px; flex-shrink: 0; width: 22px; text-align: center; }
+  .platform-card:hover { background: var(--dim); border-color: var(--border); transform: translateY(-2px); }
+  .platform-icon { font-size: 18px; flex-shrink: 0; width: 22px; text-align: center; color: #fff; }
   .platform-name { font-size: 13px; font-weight: 500; color: var(--text); }
   .platform-more {
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    background: var(--purple-dim); border: 1px dashed var(--purple-border);
+    background: var(--dim); border: 1px dashed var(--border);
     border-radius: 12px; padding: 16px 14px;
-    font-size: 13px; color: var(--purple-light); font-weight: 600;
+    font-size: 13px; color: #fff; font-weight: 600;
   }
 
   /* ─── TEAM ─── */
@@ -280,26 +244,26 @@
     gap: 14px; margin-top: 8px;
   }
   .team-card {
-    background: rgba(147,51,234,0.06); border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
     border-radius: 16px; padding: 26px 16px; text-align: center;
     transition: transform 0.25s, border-color 0.25s, background 0.25s;
   }
-  .team-card:hover { transform: translateY(-5px); border-color: rgba(147,51,234,0.55); background: rgba(147,51,234,0.1); }
+  .team-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.09); }
   .avatar {
     width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, #6d28d9, #c084fc);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 14px;
-    box-shadow: 0 0 20px rgba(147,51,234,0.38);
+    box-shadow: 0 0 20px rgba(255,255,255,0.25);
   }
-  .avatar i { font-size: 22px; color: #fff; }
+  .avatar i { font-size: 22px; color: #000; }
   .team-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
-  .team-role { font-size: 12px; color: var(--purple-light); font-weight: 400; }
+  .team-role { font-size: 12px; color: var(--text-muted); font-weight: 400; }
 
   /* ─── FOOTER ─── */
   footer {
     position: relative; z-index: 1; text-align: center;
-    padding: 32px 24px; border-top: 1px solid var(--purple-border);
+    padding: 32px 24px; border-top: 1px solid var(--border);
   }
   .footer-logo {
     display: inline-flex; align-items: center; gap: 9px;
@@ -307,22 +271,22 @@
   }
   .footer-logo-mark {
     width: 28px; height: 28px; border-radius: 7px;
-    background: linear-gradient(135deg, #6d28d9, #9333ea);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
   }
-  .footer-logo-mark i { font-size: 12px; color: #fff; }
+  .footer-logo-mark i { font-size: 12px; color: #000; }
   .footer-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; }
   .footer-socials { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
   .social-btn {
     width: 36px; height: 36px; border-radius: 50%;
-    background: rgba(147,51,234,0.12); border: 1px solid var(--purple-border);
+    background: rgba(255,255,255,0.08); border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     color: var(--text-muted); text-decoration: none;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
   }
-  .social-btn:hover { background: var(--purple-dim); color: var(--purple-light); border-color: var(--purple-light); }
+  .social-btn:hover { background: var(--dim); color: #fff; border-color: #fff; }
   .social-btn i { font-size: 14px; }
-  .footer-copy { font-size: 11.5px; color: rgba(241,245,249,0.35); }
+  .footer-copy { font-size: 11.5px; color: rgba(255,255,255,0.32); }
 
   /* ─── KEYFRAMES ─── */
   @keyframes fadeUp {
@@ -346,11 +310,7 @@
 </head>
 <body>
 
-<div class="bg-wrap">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
+<div class="bg-wrap"></div>
 
 <!-- Nav -->
 <nav>
@@ -370,9 +330,6 @@
 
   <!-- Hero -->
   <div class="hero">
-    <div class="hero-badge">
-      <i class="fa-solid fa-star"></i> Independent Artist Platform
-    </div>
     <h1>Distribute Your Music<br>to the <span class="grad">World</span></h1>
     <p class="hero-sub">Fast, reliable and affordable music distribution to every major streaming platform — built for independent artists who demand more.</p>
     <div class="hero-actions">
@@ -492,35 +449,35 @@
     <p>Your music gets delivered to all the places your fans are already listening.</p>
     <div class="platforms-grid">
       <div class="platform-card">
-        <i class="fa-brands fa-spotify platform-icon" style="color:#1db954"></i>
+        <i class="fa-brands fa-spotify platform-icon"></i>
         <span class="platform-name">Spotify</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-apple platform-icon" style="color:#f5f5f5"></i>
+        <i class="fa-brands fa-apple platform-icon"></i>
         <span class="platform-name">Apple Music</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-youtube platform-icon" style="color:#ff0000"></i>
+        <i class="fa-brands fa-youtube platform-icon"></i>
         <span class="platform-name">YouTube Music</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-soundcloud platform-icon" style="color:#ff6600"></i>
+        <i class="fa-brands fa-soundcloud platform-icon"></i>
         <span class="platform-name">SoundCloud</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-amazon platform-icon" style="color:#ff9900"></i>
+        <i class="fa-brands fa-amazon platform-icon"></i>
         <span class="platform-name">Amazon Music</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-tiktok platform-icon" style="color:#e8e8e8"></i>
+        <i class="fa-brands fa-tiktok platform-icon"></i>
         <span class="platform-name">TikTok</span>
       </div>
       <div class="platform-card">
-        <i class="fa-solid fa-music platform-icon" style="color:#00b4d8"></i>
+        <i class="fa-solid fa-music platform-icon"></i>
         <span class="platform-name">Deezer</span>
       </div>
       <div class="platform-card">
-        <i class="fa-brands fa-facebook platform-icon" style="color:#1877f2"></i>
+        <i class="fa-brands fa-facebook platform-icon"></i>
         <span class="platform-name">Meta / FB</span>
       </div>
       <div class="platform-more">
