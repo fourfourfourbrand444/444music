@@ -71,14 +71,6 @@
     font-size:12px;
     font-weight:500;
   }
-  .nav-links{
-    display:flex;
-    gap:28px;
-    font-size:14px;
-    color:var(--muted);
-  }
-  .nav-links a{text-decoration:none;}
-  .nav-links a:hover{color:var(--white);}
   .nav-cta{
     font-size:13px;
     font-weight:600;
@@ -94,22 +86,6 @@
   .hero{
     padding:88px 0 56px;
     text-align:center;
-  }
-  .eyebrow{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    font-family:'DM Mono', monospace;
-    font-size:12px;
-    color:var(--muted);
-    border:1px solid var(--line);
-    padding:7px 14px;
-    border-radius:100px;
-    margin-bottom:26px;
-  }
-  .eyebrow .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:#3ecf6a;
   }
   .hero h1{
     font-size:clamp(34px, 5.2vw, 58px);
@@ -376,6 +352,9 @@
   @media (max-width:760px){
     .trust-grid{grid-template-columns:repeat(2,1fr);}
   }
+  @media (max-width:420px){
+    .trust-grid{grid-template-columns:1fr; gap:22px;}
+  }
   .trust-item .num{
     font-family:'Sora', sans-serif;
     font-size:26px;
@@ -440,6 +419,23 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; }
   }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px){
+    .wrap{ padding:0 18px; }
+    nav{ padding:18px 0; }
+    .logo{ font-size:15px; }
+    .nav-cta{ font-size:12.5px; padding:8px 14px; }
+    .hero{ padding:52px 0 36px; }
+    .hero p{ font-size:15px; }
+    .pipeline{ margin:36px 0 8px; }
+    .pstep{ min-width:0; flex:1 1 45%; padding:16px 10px; }
+    .pricing{ padding:52px 0 24px; }
+    .plan{ padding:24px 20px 22px; }
+    .trust{ padding:40px 0; margin-top:40px; }
+    .faq{ padding:48px 0; }
+    .footer-cta{ padding:52px 20px 64px; }
+  }
 </style>
 </head>
 <body>
@@ -447,16 +443,10 @@
 <div class="wrap">
   <nav>
     <div class="logo"><span class="mark">4</span>444Music</div>
-    <div class="nav-links">
-      <a href="#pricing">Pricing</a>
-      <a href="#pipeline">How it works</a>
-      <a href="#faq">FAQ</a>
-    </div>
     <a href="login.html" class="nav-cta">Release a track</a>
   </nav>
 
   <section class="hero">
-    <span class="eyebrow"><span class="dot"></span>Built for independent artists in Ghana, Nigeria &amp; beyond</span>
     <h1>Your music, out there.<br>No label, no gatekeepers.</h1>
     <p>Upload once, distribute everywhere — Spotify, Apple Music, Boomplay, Audiomack and more. Pay only when you're ready to go live.</p>
   </section>
