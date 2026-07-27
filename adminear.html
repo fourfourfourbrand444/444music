@@ -107,7 +107,7 @@
 
   .page-title span { color: var(--accent); }
 
-  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; }
+  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; line-height: 1.7; }
 
   /* STATS */
   .stats-bar {
@@ -163,7 +163,7 @@
   .card {
     background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 22px 24px;
-    display: flex; align-items: center; gap: 16px;
+    display: flex; flex-direction: column; gap: 16px;
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     animation: fadeUp 0.3s ease both;
   }
@@ -178,6 +178,8 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.35);
   }
+
+  .card-top { display: flex; align-items: center; gap: 16px; }
 
   .avatar {
     width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
@@ -250,6 +252,59 @@
   .save-btn.saving { background: var(--text-dim); color: var(--bg-void); pointer-events: none; }
   .save-btn.saved  { background: var(--green);   color: white;          pointer-events: none; }
 
+  /* SPLITS CONTEXT PANEL */
+  .card-splits {
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .splits-heading {
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-dim); margin-bottom: 2px;
+  }
+
+  .split-chip {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+  }
+
+  .split-chip-song {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+    color: var(--text-pri); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  .owner-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    background: var(--accent-dim); color: var(--accent);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 5px; padding: 2px 6px;
+  }
+
+  .split-chip-owner {
+    font-size: 10.5px; color: var(--text-sec); margin-top: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .split-chip-pcts { display: flex; gap: 18px; flex-shrink: 0; }
+
+  .split-pct-block { text-align: right; }
+
+  .split-pct-label {
+    font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-dim); display: block; margin-bottom: 2px;
+  }
+
+  .split-pct-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; }
+  .split-pct-value.owner { color: var(--text-sec); }
+  .split-pct-value.mine  { color: var(--accent); }
+
+  .no-splits-note {
+    font-size: 11px; color: var(--text-dim); font-style: italic;
+  }
+
   /* TOAST */
   .toast-container {
     position: fixed; bottom: 28px; right: 28px;
@@ -295,10 +350,11 @@
     .header { padding: 0 16px; }
     .main { padding: 24px 14px 60px; }
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .card { flex-wrap: wrap; }
+    .card-top { flex-wrap: wrap; }
     .earnings-control { width: 100%; justify-content: flex-end; }
     .earnings-input { width: 110px; }
     .page-title { font-size: 26px; }
+    .split-chip { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -322,7 +378,7 @@
 
 <main class="main">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Edit each artist's earnings — writes directly to <code>users/{uid}.earnings</code></div>
+  <div class="page-sub">Edit each artist's earnings — writes directly to <code>users/{uid}.earnings</code>. Each card also shows every locked split this person belongs to, with the release owner's % alongside theirs, so you can cross-check before saving a figure.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -344,7 +400,7 @@
   <div class="search-wrapper">
     <span class="search-icon">⌕</span>
     <input type="text" class="search-input" id="search"
-      placeholder="Search by name, email or UID…" autocomplete="off" spellcheck="false">
+      placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
   </div>
 
   <!-- TOOLBAR -->
@@ -380,8 +436,11 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 let allUsers = [];
+let splitsMap = {}; // lowercased email -> array of split context entries
 
 /* ── HELPERS ── */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function resolveName(d) {
   return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim();
 }
@@ -408,7 +467,7 @@ function toast(msg, type = 'success') {
   const c = document.getElementById('toasts');
   const t = document.createElement('div');
   t.className = `toast ${type}`;
-  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${esc(msg)}</span>`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3200);
 }
@@ -422,6 +481,39 @@ function updateStats(data) {
   document.getElementById('statActive').textContent = active;
 }
 
+/* ── SPLITS MAP ──
+   Builds: lowercased email -> [{ songTitle, artistName, ownerEmail, ownerPct, myPct, isOwner }]
+   ownerPct is the owner's OWN percentage inside that split's contributors array
+   (found by matching contributor.email === split.ownerEmail); null if the
+   owner didn't list themselves as a contributor on that split. */
+async function loadSplitsMap() {
+  const snap = await getDocs(collection(db, 'splits'));
+  const map = {};
+  snap.forEach(ds => {
+    const data = ds.data();
+    const contributors = Array.isArray(data.contributors) ? data.contributors : [];
+    const ownerEmail = (data.ownerEmail || '').toLowerCase().trim();
+    const ownerEntry = contributors.find(c => (c.email || '').toLowerCase().trim() === ownerEmail);
+    const ownerPct = ownerEntry ? (parseFloat(ownerEntry.pct) || 0) : null;
+
+    contributors.forEach(c => {
+      const em = (c.email || '').toLowerCase().trim();
+      if (!em) return;
+      if (!map[em]) map[em] = [];
+      map[em].push({
+        splitId:    ds.id,
+        songTitle:  data.songTitle  || 'Untitled',
+        artistName: data.artistName || '',
+        ownerEmail: data.ownerEmail || '',
+        ownerPct,
+        myPct:      parseFloat(c.pct) || 0,
+        isOwner:    em === ownerEmail
+      });
+    });
+  });
+  return map;
+}
+
 /* ── LOAD ── */
 window.loadUsers = async function () {
   document.getElementById('results').innerHTML =
@@ -429,8 +521,13 @@ window.loadUsers = async function () {
   document.getElementById('countLabel').textContent = 'Loading…';
 
   try {
-    const snap = await getDocs(collection(db, 'users'));
-    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const [usersSnap, sMap] = await Promise.all([
+      getDocs(collection(db, 'users')),
+      loadSplitsMap()
+    ]);
+
+    allUsers  = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    splitsMap = sMap;
 
     // Sort: highest earnings first, then alphabetically
     allUsers.sort((a, b) => {
@@ -446,7 +543,7 @@ window.loadUsers = async function () {
       `<div class="empty">
         <div class="empty-icon">⚠</div>
         <div class="empty-text">Failed to load users</div>
-        <div class="empty-sub">${err.message}</div>
+        <div class="empty-sub">${esc(err.message)}</div>
       </div>`;
     document.getElementById('countLabel').textContent = 'Error';
     toast('Load failed: ' + err.message, 'error');
@@ -454,6 +551,45 @@ window.loadUsers = async function () {
 };
 
 loadUsers();
+
+/* ── SPLITS PANEL HTML ── */
+function buildSplitsPanel(email) {
+  const norm = (email || '').toLowerCase().trim();
+  const entries = norm ? (splitsMap[norm] || []) : [];
+
+  if (!entries.length) {
+    return `<div class="card-splits"><div class="no-splits-note">Not part of any locked split yet</div></div>`;
+  }
+
+  const chips = entries.map(s => {
+    const ownerPctDisplay = s.ownerPct !== null ? s.ownerPct + '%' : '—';
+    return `
+      <div class="split-chip">
+        <div>
+          <div class="split-chip-song">
+            ${esc(s.songTitle)}
+            ${s.isOwner ? '<span class="owner-tag">Owner</span>' : ''}
+          </div>
+          <div class="split-chip-owner">Owner: ${esc(s.ownerEmail || '—')}</div>
+        </div>
+        <div class="split-chip-pcts">
+          <div class="split-pct-block">
+            <span class="split-pct-label">Owner %</span>
+            <span class="split-pct-value owner">${ownerPctDisplay}</span>
+          </div>
+          <div class="split-pct-block">
+            <span class="split-pct-label">This user</span>
+            <span class="split-pct-value mine">${s.myPct}%</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `<div class="card-splits">
+      <div class="splits-heading">Splits (${entries.length})</div>
+      ${chips}
+    </div>`;
+}
 
 /* ── RENDER ── */
 function render(data) {
@@ -485,46 +621,59 @@ function render(data) {
     card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
 
     card.innerHTML = `
-      <div class="avatar">${ini}</div>
+      <div class="card-top">
+        <div class="avatar">${esc(ini)}</div>
 
-      <div class="card-info">
-        <div class="artist-name">${name}</div>
-        <div class="artist-email">${email}</div>
-        <div class="artist-id">UID: ${u.id}</div>
-      </div>
-
-      <div class="earnings-control">
-        <div class="currency-tag">GHS</div>
-        <div class="earnings-wrap">
-          <span class="currency-symbol">₵</span>
-          <input
-            class="earnings-input"
-            id="earn-${u.id}"
-            type="number"
-            min="0"
-            step="0.01"
-            value="${earn.toFixed(2)}"
-          >
+        <div class="card-info">
+          <div class="artist-name">${esc(name)}</div>
+          <div class="artist-email">${esc(email)}</div>
+          <div class="artist-id">UID: ${esc(u.id)}</div>
         </div>
-        <button class="save-btn" onclick="window.saveEarnings('${u.id}', this)">
-          Save
-        </button>
+
+        <div class="earnings-control">
+          <div class="currency-tag">GHS</div>
+          <div class="earnings-wrap">
+            <span class="currency-symbol">₵</span>
+            <input
+              class="earnings-input"
+              id="earn-${u.id}"
+              type="number"
+              min="0"
+              step="0.01"
+              value="${earn.toFixed(2)}"
+            >
+          </div>
+          <button class="save-btn" onclick="window.saveEarnings('${u.id}', this)">
+            Save
+          </button>
+        </div>
       </div>
+
+      ${buildSplitsPanel(email)}
     `;
 
     el.appendChild(card);
   });
 }
 
-/* ── SEARCH ── */
+/* ── SEARCH ──
+   Matches on name, email, UID, plus each user's split song titles and owner
+   emails, so typing a song or owner name surfaces the right contributors. */
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const filtered = q
-    ? allUsers.filter(u =>
-        (resolveName(u)  || '').toLowerCase().includes(q) ||
-        (resolveEmail(u) || '').toLowerCase().includes(q) ||
-        (u.id            || '').toLowerCase().includes(q)
-      )
+    ? allUsers.filter(u => {
+        const email = (resolveEmail(u) || '').toLowerCase();
+        const entries = splitsMap[email.trim()] || [];
+        const splitsMatch = entries.some(s =>
+          s.songTitle.toLowerCase().includes(q) ||
+          (s.ownerEmail || '').toLowerCase().includes(q)
+        );
+        return (resolveName(u)  || '').toLowerCase().includes(q) ||
+               email.includes(q) ||
+               (u.id || '').toLowerCase().includes(q) ||
+               splitsMatch;
+      })
     : allUsers;
   render(filtered);
   updateStats(filtered);
