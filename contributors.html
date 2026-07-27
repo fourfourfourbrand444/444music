@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contributor Earnings — 444Music Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:         #000000;
+  --black-1:       #080808;
+  --black-2:       #0d0d0d;
+  --black-3:       #111111;
+  --black-4:       #161616;
+  --black-5:       #1a1a1a;
+  --border:        rgba(255,255,255,0.06);
+  --border-light:  rgba(255,255,255,0.10);
+  --purple:        #7c5cfc;
+  --purple-light:  #9b7fff;
+  --purple-dim:    rgba(124,92,252,0.12);
+  --purple-border: rgba(124,92,252,0.28);
+  --text:          #f5f5f5;
+  --text-2:        #a0a0a0;
+  --text-3:        #606060;
+  --green:         #22c55e;
+  --amber:         #f59e0b;
+  --rose:          #ef4444;
+  --cyan:          #06b6d4;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 28px 24px 64px;
+}
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; }
+.page-wrap { max-width: 1180px; margin: 0 auto; }
+
+/* HEADER */
+.page-head { margin-bottom: 22px; }
+.page-title { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
+.page-title svg { width: 22px; height: 22px; color: var(--purple-light); }
+.page-sub { font-size: 12.5px; color: var(--text-3); margin-top: 4px; }
+
+/* SUMMARY STRIP */
+.summary-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.sum-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+.sum-label { font-size: 9px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.sum-value { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; }
+.sum-value.accent-green { color: var(--green); }
+.sum-value.accent-purple { color: var(--purple-light); }
+.sum-value.accent-amber { color: var(--amber); }
+
+/* CONTROLS */
+.controls-bar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.search-wrap { flex: 1; min-width: 220px; position: relative; }
+.search-wrap svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-3); pointer-events: none; }
+.search-input { width: 100%; background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px 11px 38px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s; }
+.search-input:focus { border-color: var(--purple-border); }
+.search-input::placeholder { color: var(--text-3); }
+.sort-select { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text-2); font-size: 13px; font-family: inherit; outline: none; cursor: pointer; }
+.sort-select:focus { border-color: var(--purple-border); }
+.sort-select option { background: var(--black-2); }
+
+/* TABLE */
+.table-wrap { background: var(--black-2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.table-head-row { display: grid; grid-template-columns: 1.6fr 1.5fr 0.7fr 1.1fr 1fr 1fr; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--black-3); }
+.th { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
+.contrib-row { display: grid; grid-template-columns: 1.6fr 1.5fr 0.7fr 1.1fr 1fr 1fr; gap: 10px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+.contrib-row:last-child { border-bottom: none; }
+.contrib-row:hover { background: rgba(255,255,255,0.015); }
+.cr-person { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.cr-avatar { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 800; color: white; flex-shrink: 0; }
+.cr-info { min-width: 0; }
+.cr-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-role { font-size: 10.5px; color: var(--text-3); margin-top: 1px; }
+.cr-song { min-width: 0; }
+.cr-song-title { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-song-meta { font-size: 10.5px; color: var(--text-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-pct { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; }
+.cr-contact { min-width: 0; }
+.cr-contact div { font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-contact div:first-child { margin-bottom: 2px; }
+.cr-owner { font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-owner-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px; }
+.cr-balance-wrap { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.bal-display { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--green); cursor: pointer; padding: 6px 10px; border-radius: 7px; transition: background 0.15s; border: 1px solid transparent; }
+.bal-display:hover { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.20); }
+.bal-edit-row { display: flex; gap: 5px; align-items: center; }
+.bal-input { width: 78px; background: var(--black-4); border: 1px solid var(--purple-border); border-radius: 7px; padding: 6px 8px; color: var(--text); font-size: 12px; font-family: inherit; outline: none; text-align: right; }
+.bal-save, .bal-cancel { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.bal-save { background: var(--green); color: #000; }
+.bal-save:hover { background: #16a34a; }
+.bal-cancel { background: var(--black-4); border: 1px solid var(--border); color: var(--text-3); }
+.bal-cancel:hover { color: var(--text-2); }
+.bal-save svg, .bal-cancel svg { width: 12px; height: 12px; }
+
+/* EMPTY / LOADING */
+.empty-state { text-align: center; padding: 80px 20px; }
+.empty-ico { width: 56px; height: 56px; background: var(--black-3); border: 1px solid var(--border); border-radius: 14px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.empty-ico svg { width: 24px; height: 24px; color: var(--text-3); opacity: 0.35; }
+.empty-state h3 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-2); margin-bottom: 7px; }
+.empty-state p { font-size: 13px; color: var(--text-3); max-width: 340px; margin: 0 auto; line-height: 1.6; }
+.skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.03) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; height: 12px; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skel-row { display: flex; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--border); align-items: center; }
+.skel-row .skeleton:nth-child(1) { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; }
+.skel-row .skeleton:nth-child(2) { width: 25%; }
+.skel-row .skeleton:nth-child(3) { width: 20%; }
+.skel-row .skeleton:nth-child(4) { width: 10%; }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--border-light); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.toast.show { transform: translateX(0); }
+.toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
+
+@media (max-width: 900px) {
+  .summary-strip { grid-template-columns: repeat(2, 1fr); }
+  .table-head-row { display: none; }
+  .contrib-row { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
+  .cr-balance-wrap { justify-content: flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="page-head">
+    <div class="page-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Contributor Earnings
+    </div>
+    <div class="page-sub">Every contributor across every locked split — search, sort, and update balances.</div>
+  </div>
+
+  <div class="summary-strip" id="summaryStrip">
+    <div class="sum-card"><div class="sum-label">Contributors</div><div class="sum-value" id="sumContribs">—</div></div>
+    <div class="sum-card"><div class="sum-label">Songs Locked</div><div class="sum-value accent-purple" id="sumSongs">—</div></div>
+    <div class="sum-card"><div class="sum-label">Total Balance Owed</div><div class="sum-value accent-green" id="sumBalance">—</div></div>
+    <div class="sum-card"><div class="sum-label">Unpaid Contributors</div><div class="sum-value accent-amber" id="sumUnpaid">—</div></div>
+  </div>
+
+  <div class="controls-bar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search by contributor, song, or owner email...">
+    </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="recent">Sort: Most recently locked</option>
+      <option value="song">Sort: Song title (A–Z)</option>
+      <option value="name">Sort: Contributor name (A–Z)</option>
+      <option value="pct">Sort: Percentage (high to low)</option>
+      <option value="balance">Sort: Balance owed (high to low)</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-head-row">
+      <div class="th">Contributor</div>
+      <div class="th">Song</div>
+      <div class="th">Split %</div>
+      <div class="th">Contact</div>
+      <div class="th">Owner</div>
+      <div class="th" style="text-align:right;">Balance</div>
+    </div>
+    <div id="tableBody">
+      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
+const clr = i => PALETTE[i % PALETTE.length];
+function initials(n){ if(!n)return'?'; const p=n.trim().split(/\s+/); return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtMoney(n){ return 'GHS '+ (parseFloat(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(iso){ if(!iso)return '—'; const d=new Date(iso); if(isNaN(d))return '—'; return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+
+function showToast(msg,type){
+  const t=document.getElementById('toast'),ic=document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent=msg;
+  ic.style.color=type==='error'?'var(--rose)':'var(--green)';
+  ic.innerHTML=type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>':'<polyline points="20 6 9 17 4 12"/>';
+  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// Flat row shape: { splitDocId, contribIndex, name, role, email, phone, pct, emailStatus, balance,
+//                    songTitle, artistName, releaseType, genre, ownerEmail, lockedAt }
+let ALL_ROWS = [];
+
+function buildRows(splitDocs){
+  const rows=[];
+  splitDocs.forEach(({id,data})=>{
+    (data.contributors||[]).forEach((c,idx)=>{
+      rows.push({
+        splitDocId: id,
+        contribIndex: idx,
+        name: c.name||'Unnamed',
+        role: c.role||'',
+        email: c.email||'',
+        phone: c.phone||'',
+        pct: parseFloat(c.pct)||0,
+        emailStatus: c.emailStatus||'unknown',
+        balance: parseFloat(c.balance)||0,
+        songTitle: data.songTitle||'Untitled',
+        artistName: data.artistName||'',
+        releaseType: data.releaseType||'',
+        genre: data.genre||'',
+        ownerEmail: data.ownerEmail||'',
+        lockedAt: data.lockedAt||''
+      });
+    });
+  });
+  return rows;
+}
+
+function renderSummary(rows){
+  const songs=new Set(rows.map(r=>r.splitDocId));
+  const totalBalance=rows.reduce((s,r)=>s+r.balance,0);
+  const unpaid=rows.filter(r=>r.balance<=0).length;
+  document.getElementById('sumContribs').textContent=rows.length;
+  document.getElementById('sumSongs').textContent=songs.size;
+  document.getElementById('sumBalance').textContent=fmtMoney(totalBalance);
+  document.getElementById('sumUnpaid').textContent=unpaid;
+}
+
+function applyFilterSort(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const sortBy=document.getElementById('sortSelect').value;
+  let rows=ALL_ROWS.filter(r=>{
+    if(!q) return true;
+    return r.name.toLowerCase().includes(q)
+      || r.email.toLowerCase().includes(q)
+      || r.songTitle.toLowerCase().includes(q)
+      || r.artistName.toLowerCase().includes(q)
+      || r.ownerEmail.toLowerCase().includes(q);
+  });
+  rows=[...rows];
+  if(sortBy==='song') rows.sort((a,b)=>a.songTitle.localeCompare(b.songTitle));
+  else if(sortBy==='name') rows.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sortBy==='pct') rows.sort((a,b)=>b.pct-a.pct);
+  else if(sortBy==='balance') rows.sort((a,b)=>b.balance-a.balance);
+  else rows.sort((a,b)=>new Date(b.lockedAt)-new Date(a.lockedAt));
+  renderRows(rows);
+}
+
+function renderRows(rows){
+  const body=document.getElementById('tableBody');
+  if(rows.length===0){
+    body.innerHTML=`<div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <h3>No contributors found</h3>
+      <p>Try a different search, or check back once a split has been locked.</p>
+    </div>`;
+    return;
+  }
+  body.innerHTML=rows.map((r,i)=>{
+    const meta=[r.artistName,r.releaseType,r.genre].filter(Boolean).join(' · ');
+    return `
+    <div class="contrib-row" data-doc="${esc(r.splitDocId)}" data-idx="${r.contribIndex}">
+      <div class="cr-person">
+        <div class="cr-avatar" style="background:${clr(i)}">${esc(initials(r.name))}</div>
+        <div class="cr-info">
+          <div class="cr-name">${esc(r.name)}</div>
+          <div class="cr-role">${esc(r.role)}</div>
+        </div>
+      </div>
+      <div class="cr-song">
+        <div class="cr-song-title">${esc(r.songTitle)}</div>
+        <div class="cr-song-meta">${esc(meta)} · locked ${esc(fmtDate(r.lockedAt))}</div>
+      </div>
+      <div class="cr-pct" style="color:${clr(i)}">${r.pct}%</div>
+      <div class="cr-contact">
+        <div>${esc(r.email)}</div>
+        <div>${esc(r.phone)}</div>
+      </div>
+      <div>
+        <div class="cr-owner-lbl">Release owner</div>
+        <div class="cr-owner">${esc(r.ownerEmail)}</div>
+      </div>
+      <div class="cr-balance-wrap">
+        <div class="bal-display" data-doc="${esc(r.splitDocId)}" data-idx="${r.contribIndex}" data-val="${r.balance}">${fmtMoney(r.balance)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('tableBody').addEventListener('click', e=>{
+  const disp=e.target.closest('.bal-display');
+  if(!disp) return;
+  const wrap=disp.parentElement;
+  const docId=disp.dataset.doc, idx=disp.dataset.idx, curVal=disp.dataset.val;
+  wrap.innerHTML=`
+    <div class="bal-edit-row">
+      <input class="bal-input" type="number" step="0.01" value="${curVal}">
+      <button class="bal-save" title="Save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+      <button class="bal-cancel" title="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`;
+  const input=wrap.querySelector('.bal-input');
+  input.focus(); input.select();
+  wrap.querySelector('.bal-cancel').onclick=()=>applyFilterSort();
+  wrap.querySelector('.bal-save').onclick=()=>saveBalance(docId,parseInt(idx),parseFloat(input.value)||0);
+  input.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter') saveBalance(docId,parseInt(idx),parseFloat(input.value)||0);
+    if(ev.key==='Escape') applyFilterSort();
+  });
+});
+
+async function saveBalance(docId, idx, newBalance){
+  const {doc,updateDoc,getDoc}=window._FF;
+  try{
+    const ref=doc(window._DB,'splits',docId);
+    const snap=await getDoc(ref);
+    if(!snap.exists()){showToast('Split record not found','error');return;}
+    const data=snap.data();
+    const contributors=[...(data.contributors||[])];
+    if(!contributors[idx]){showToast('Contributor not found','error');return;}
+    contributors[idx]={...contributors[idx], balance:newBalance};
+    await updateDoc(ref,{contributors});
+    // update local cache
+    ALL_ROWS=ALL_ROWS.map(r=> (r.splitDocId===docId && r.contribIndex===idx) ? {...r,balance:newBalance} : r);
+    renderSummary(ALL_ROWS);
+    applyFilterSort();
+    showToast('Balance updated','success');
+  }catch(e){
+    console.error(e);
+    showToast('Failed to save — please try again','error');
+  }
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilterSort);
+document.getElementById('sortSelect').addEventListener('change', applyFilterSort);
+
+window._DB=null; window._FF={};
+</script>
+
+<script type="module">
+import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+window._DB = db;
+window._FF = { doc, updateDoc, collection, getDoc };
+
+// ADMIN GATE: admins collection is keyed by the admin's email address
+// (e.g. admins/444musicdistro@gmail.com), with a matching `email` field.
+// A signed-in user only gets past this if a doc with their email exists there.
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href='login.html'; return; }
+
+  const userEmail = (user.email || '').toLowerCase().trim();
+  let isAdmin = false;
+  try {
+    const adminSnap = await getDoc(doc(db, 'admins', userEmail));
+    isAdmin = adminSnap.exists();
+  } catch(e) {
+    console.error('[Admin check failed]', e);
+  }
+
+  if (!isAdmin) {
+    document.querySelector('.page-wrap').innerHTML = `<div class="empty-state" style="padding-top:120px;">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <h3>Admin access only</h3>
+      <p>This page is restricted to 444Music admin accounts. You're signed in as ${esc(userEmail)}, which isn't on the admin list.</p>
+    </div>`;
+    return;
+  }
+
+  try {
+    const snap = await getDocs(collection(db,'splits'));
+    const splitDocs = [];
+    snap.forEach(d => splitDocs.push({ id: d.id, data: d.data() }));
+    window._ROWS_SOURCE = splitDocs;
+    const rows = buildRowsPublic(splitDocs);
+    window.ALL_ROWS_INIT(rows);
+  } catch(e) {
+    console.error(e);
+    document.getElementById('tableBody').innerHTML = `<div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h3>Failed to load contributors</h3>
+      <p>Please refresh the page. If this keeps happening, check your Firestore rules allow this account to read the splits collection.</p>
+    </div>`;
+  }
+});
+
+function buildRowsPublic(splitDocs){
+  const rows=[];
+  splitDocs.forEach(({id,data})=>{
+    (data.contributors||[]).forEach((c,idx)=>{
+      rows.push({
+        splitDocId: id, contribIndex: idx,
+        name: c.name||'Unnamed', role: c.role||'', email: c.email||'', phone: c.phone||'',
+        pct: parseFloat(c.pct)||0, emailStatus: c.emailStatus||'unknown', balance: parseFloat(c.balance)||0,
+        songTitle: data.songTitle||'Untitled', artistName: data.artistName||'',
+        releaseType: data.releaseType||'', genre: data.genre||'',
+        ownerEmail: data.ownerEmail||'', lockedAt: data.lockedAt||''
+      });
+    });
+  });
+  return rows;
+}
+window.ALL_ROWS_INIT = (rows)=>{
+  ALL_ROWS = rows;
+  renderSummary(ALL_ROWS);
+  applyFilterSort();
+};
+</script>
+</body>
+</html>
