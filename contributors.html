@@ -128,10 +128,43 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .contrib-row { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
   .cr-balance-wrap { justify-content: flex-start; }
 }
+
+/* LOGIN GATE */
+.login-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-box { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--border-light); border-radius: 18px; padding: 32px 28px; text-align: center; }
+.login-icon { width: 52px; height: 52px; background: var(--purple-dim); border: 1px solid var(--purple-border); border-radius: 14px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; }
+.login-icon svg { width: 24px; height: 24px; color: var(--purple-light); }
+.login-box h2 { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; }
+.login-box p { font-size: 12.5px; color: var(--text-3); margin-bottom: 22px; line-height: 1.6; }
+.login-form { display: flex; flex-direction: column; gap: 10px; }
+.login-input { width: 100%; background: var(--black-4); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 13.5px; font-family: inherit; outline: none; text-align: center; transition: border-color 0.15s; }
+.login-input:focus { border-color: var(--purple-border); }
+.login-input::placeholder { color: var(--text-3); }
+.login-btn { width: 100%; padding: 12px; border-radius: 10px; background: var(--purple); color: white; font-size: 13.5px; font-weight: 700; transition: background 0.15s; }
+.login-btn:hover:not(:disabled) { background: var(--purple-light); }
+.login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.login-error { min-height: 16px; font-size: 12px; color: var(--rose); margin-top: 12px; }
 </style>
 </head>
 <body>
-<div class="page-wrap">
+
+<!-- LOGIN GATE -->
+<div class="login-gate" id="loginGate">
+  <div class="login-box">
+    <div class="login-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2>Admin Access</h2>
+    <p>Enter your admin email to view contributor earnings.</p>
+    <div class="login-form">
+      <input class="login-input" id="loginEmailInput" type="email" placeholder="you@444musicdistro.com" autocomplete="email">
+      <button class="login-btn" id="loginSubmitBtn">Continue</button>
+    </div>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div class="page-wrap" id="mainContent" style="display:none;">
   <div class="page-head">
     <div class="page-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -350,11 +383,10 @@ window._DB=null; window._FF={};
 </script>
 
 <script type="module">
-import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged }  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { initializeApp }        from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, updateDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -371,35 +403,26 @@ const db   = getFirestore(app);
 window._DB = db;
 window._FF = { doc, updateDoc, collection, getDoc };
 
+const SESSION_KEY = 'admin444_email';
+
 // ADMIN GATE: admins collection is keyed by the admin's email address
-// (e.g. admins/444musicdistro@gmail.com), with a matching `email` field.
-// A signed-in user only gets past this if a doc with their email exists there.
-onAuthStateChanged(auth, async user => {
-  if (!user) { window.location.href='login.html'; return; }
+// (e.g. admins/444musicdistro@gmail.com). Typing an email that matches a
+// document ID there is what unlocks the page — there's no separate
+// Firebase Auth login step from the user's point of view. We still sign in
+// anonymously behind the scenes so Firestore rules requiring request.auth
+// still work.
+async function checkAdminEmail(rawEmail){
+  const email = (rawEmail||'').toLowerCase().trim();
+  if(!email) return false;
+  const snap = await getDoc(doc(db, 'admins', email));
+  return snap.exists();
+}
 
-  const userEmail = (user.email || '').toLowerCase().trim();
-  let isAdmin = false;
-  try {
-    const adminSnap = await getDoc(doc(db, 'admins', userEmail));
-    isAdmin = adminSnap.exists();
-  } catch(e) {
-    console.error('[Admin check failed]', e);
-  }
-
-  if (!isAdmin) {
-    document.querySelector('.page-wrap').innerHTML = `<div class="empty-state" style="padding-top:120px;">
-      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <h3>Admin access only</h3>
-      <p>This page is restricted to 444Music admin accounts. You're signed in as ${esc(userEmail)}, which isn't on the admin list.</p>
-    </div>`;
-    return;
-  }
-
+async function loadDashboard(){
   try {
     const snap = await getDocs(collection(db,'splits'));
     const splitDocs = [];
     snap.forEach(d => splitDocs.push({ id: d.id, data: d.data() }));
-    window._ROWS_SOURCE = splitDocs;
     const rows = buildRowsPublic(splitDocs);
     window.ALL_ROWS_INIT(rows);
   } catch(e) {
@@ -407,10 +430,61 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('tableBody').innerHTML = `<div class="empty-state">
       <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
       <h3>Failed to load contributors</h3>
-      <p>Please refresh the page. If this keeps happening, check your Firestore rules allow this account to read the splits collection.</p>
+      <p>Please refresh the page. If this keeps happening, check your Firestore rules allow reads on the splits collection.</p>
     </div>`;
   }
+}
+
+function unlockDashboard(){
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+  loadDashboard();
+}
+
+async function attemptLogin(){
+  const input = document.getElementById('loginEmailInput');
+  const btn = document.getElementById('loginSubmitBtn');
+  const errEl = document.getElementById('loginError');
+  const email = input.value.trim();
+  errEl.textContent = '';
+  if(!email || !email.includes('@')){
+    errEl.textContent = 'Enter a valid email address.';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+  try{
+    const ok = await checkAdminEmail(email);
+    if(ok){
+      sessionStorage.setItem(SESSION_KEY, email.toLowerCase().trim());
+      unlockDashboard();
+    } else {
+      errEl.textContent = "That email isn't on the admin list.";
+    }
+  }catch(e){
+    console.error(e);
+    errEl.textContent = 'Something went wrong — please try again.';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Continue';
+  }
+}
+
+document.getElementById('loginSubmitBtn').addEventListener('click', attemptLogin);
+document.getElementById('loginEmailInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') attemptLogin();
 });
+
+// Boot: sign in anonymously (for Firestore rule access), then check for a
+// remembered admin email from this session before showing the login form.
+signInAnonymously(auth).catch(e=>console.error('[Anon auth failed]', e));
+const remembered = sessionStorage.getItem(SESSION_KEY);
+if(remembered){
+  checkAdminEmail(remembered).then(ok=>{
+    if(ok) unlockDashboard();
+    else sessionStorage.removeItem(SESSION_KEY);
+  });
+}
 
 function buildRowsPublic(splitDocs){
   const rows=[];
