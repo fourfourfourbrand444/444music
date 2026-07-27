@@ -497,7 +497,7 @@ body.select-mode .card { cursor: pointer; }
 
 /* UPC BADGE */
 .upc-badge {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   background: rgba(52,211,153,0.06);
   border: 1px solid rgba(52,211,153,0.2);
   border-radius: 8px;
@@ -618,6 +618,25 @@ option { background: #13132a; }
 .edit-reason-btn:hover {
   background: rgba(248,113,113,0.15);
   border-color: rgba(248,113,113,0.4);
+}
+
+/* EDIT UPC BUTTON (reuses edit-reason-btn look, green tint) */
+.edit-upc-btn {
+  width: 100%; margin-top: 2px;
+  padding: 10px;
+  background: rgba(52,211,153,0.06);
+  border: 1px solid rgba(52,211,153,0.18);
+  border-radius: 8px;
+  color: var(--green);
+  font-family: var(--ff-head); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--trans);
+}
+.edit-upc-btn:hover {
+  background: rgba(52,211,153,0.15);
+  border-color: rgba(52,211,153,0.4);
 }
 
 /* DELETE BUTTON */
@@ -1006,6 +1025,34 @@ option { background: #13132a; }
   </div>
 </div>
 
+<!-- UPC / CATALOG NUMBER DIALOG — shown when approving a submission,
+     or when editing identifiers on an already-approved one. The admin
+     always supplies the real UPC + catalog number here; nothing is
+     auto-generated anymore. -->
+<div class="reason-overlay" id="upcOverlay" style="display:none;">
+  <div class="reason-card">
+    <div class="reason-icon" style="background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.22); color:#34d399;">✓</div>
+    <div class="reason-title" id="upcTitle">Approve Submission</div>
+    <div class="reason-sub" id="upcSub">Enter the UPC code and catalog number for this release.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-family:var(--ff-head);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;">UPC Code</label>
+      <input type="text" id="upcInput"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-md);border-radius:10px;color:var(--text);font-family:var(--ff-body);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="e.g. 731648123456">
+    </div>
+    <div style="margin-bottom:18px;">
+      <label style="display:block;font-family:var(--ff-head);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;">Catalog Number</label>
+      <input type="text" id="catalogInput"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-md);border-radius:10px;color:var(--text);font-family:var(--ff-body);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="e.g. 444M-0001">
+    </div>
+    <div class="reason-btns">
+      <button class="reason-submit" id="upcSubmit" style="background:#34d399;box-shadow:0 4px 20px rgba(52,211,153,0.3);">Approve &amp; Save</button>
+      <button class="reason-cancel" id="upcCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp }
@@ -1062,19 +1109,12 @@ function isSubmissionPaid(item) {
   return item.paymentVerified === true || item.paid === 'Paid';
 }
 
-/* ─── UPC GENERATOR ─────────────────────── */
-function generateUPC() {
-  const prefix = "731648";
-  const random = Math.floor(Math.random() * 9999999).toString().padStart(7, "0");
-  return prefix + random;
-}
-
 /* ─── SEND APPROVAL EMAIL ────────────────────────────────────────────
    EmailJS template must have these variables:
      {{to_name}}    — artist name shown in greeting
      {{to_email}}   — recipient address (set as "To Email" in template)
      {{song_title}} — release title
-     {{upc_code}}   — generated UPC
+     {{upc_code}}   — UPC entered by the admin
    ─────────────────────────────────────────────────────────────────── */
 async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
   if (!email) {
@@ -1145,6 +1185,13 @@ const reasonTextarea  = document.getElementById("reasonTextarea");
 const reasonCategoryEl = document.getElementById("reasonCategory");
 const reasonSubmit    = document.getElementById("reasonSubmit");
 const reasonCancel    = document.getElementById("reasonCancel");
+const upcOverlay      = document.getElementById("upcOverlay");
+const upcTitle        = document.getElementById("upcTitle");
+const upcSub          = document.getElementById("upcSub");
+const upcInputEl      = document.getElementById("upcInput");
+const catalogInputEl  = document.getElementById("catalogInput");
+const upcSubmit       = document.getElementById("upcSubmit");
+const upcCancel       = document.getElementById("upcCancel");
 
 let submissions   = [];
 let pendingDelete = null; // string id, or array of ids for bulk delete
@@ -1394,6 +1441,7 @@ function display(data) {
     const isRejected = statusKey === "rejected";
     const initial    = name.charAt(0).toUpperCase();
     const existingUPC = item.upc || '';
+    const existingCatalog = item.catalogNumber || '';
     const rejectionReason = item.rejectionReason || '';
     const rejectionCategory = item.rejectionCategory || '';
     const licenseProofUrl = item.licenseProofUrl || '';
@@ -1432,10 +1480,11 @@ function display(data) {
          </a>`
       : '';
 
-    const upcHtml = existingUPC
+    const upcHtml = (existingUPC || existingCatalog)
       ? `<div class="upc-badge">
            <span class="upc-label">UPC</span>
-           <span class="upc-value">${escHtml(existingUPC)}</span>
+           <span class="upc-value">${escHtml(existingUPC || '—')}</span>
+           ${existingCatalog ? `<span class="upc-label" style="margin-left:8px;">CAT#</span><span class="upc-value">${escHtml(existingCatalog)}</span>` : ''}
          </div>`
       : '';
 
@@ -1472,6 +1521,15 @@ function display(data) {
       ? `<button class="edit-reason-btn" data-id="${item.id}" data-current="${escHtml(rejectionReason)}" data-current-category="${escHtml(rejectionCategory)}">
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
            ${rejectionReason ? 'Edit Rejection Reason' : 'Add Rejection Reason'}
+         </button>`
+      : '';
+
+    // Let admin edit the UPC / catalog number after approval, without
+    // re-triggering the status dropdown / approval email.
+    const editUpcHtml = isApproved
+      ? `<button class="edit-upc-btn" data-id="${item.id}" data-current-upc="${escHtml(existingUPC)}" data-current-catalog="${escHtml(existingCatalog)}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+           ${existingUPC ? 'Edit UPC / Catalog Number' : 'Add UPC / Catalog Number'}
          </button>`
       : '';
 
@@ -1536,7 +1594,8 @@ function display(data) {
             data-email="${escHtml(item.email || '')}"
             data-artist="${escHtml(name)}"
             data-title="${escHtml(title)}"
-            data-upc="${escHtml(existingUPC)}">
+            data-upc="${escHtml(existingUPC)}"
+            data-catalog="${escHtml(existingCatalog)}">
             <option value="">— Change Status —</option>
             <option value="Pending"  ${statusKey==='pending'  ?'selected':''}>Pending</option>
             <option value="Review"   ${statusKey==='review'   ?'selected':''}>Review</option>
@@ -1554,13 +1613,15 @@ function display(data) {
         </div>
         ${resendHtml}
         ${editReasonHtml}
+        ${editUpcHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
         </button>
       </div>`;
 
-    /* ── STATUS CHANGE → REASON PROMPT ON REJECT, AUTO EMAIL ON APPROVED ── */
+    /* ── STATUS CHANGE → REASON PROMPT ON REJECT, UPC/CATALOG PROMPT ON
+       APPROVE, AUTO EMAIL ON APPROVED ── */
     card.querySelector('[data-type="status"]').addEventListener('change', async function() {
       if (!this.value) return;
 
@@ -1570,6 +1631,7 @@ function display(data) {
       const songTitle   = this.dataset.title;
       const email       = this.dataset.email;
       let   upc         = this.dataset.upc;
+      let   catalog     = this.dataset.catalog;
 
       // Rejecting always routes through the reason dialog instead of
       // saving instantly — the reason is the whole point of rejecting.
@@ -1599,9 +1661,46 @@ function display(data) {
         return;
       }
 
+      // Approving always routes through the UPC / catalog number
+      // dialog — the admin supplies the real identifiers here; nothing
+      // is auto-generated anymore.
+      if (newStatus === "Approved") {
+        const result = await promptForUpcCatalog({
+          title: 'Approve Submission',
+          sub: `Enter the UPC code and catalog number for "${songTitle}" by ${artistName}.`,
+          existingUpc: upc || '',
+          existingCatalog: catalog || ''
+        });
+        if (result === null) {
+          this.value = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+          return;
+        }
+        this.disabled = true;
+        const updateData = {
+          status: newStatus,
+          upc: result.upc,
+          catalogNumber: result.catalogNumber,
+          rejectionReason: '',
+          rejectionCategory: '',
+          licenseProofUrl: ''
+        };
+        this.dataset.upc = result.upc;
+        this.dataset.catalog = result.catalogNumber;
+        const ok = await safeUpdate(subId, updateData);
+        if (ok) {
+          toast('✅', `Status → "Approved"`);
+          toast('📤', 'Sending approval email…');
+          await sendApprovalEmail({ email, artistName, songTitle, upc: result.upc });
+          setTimeout(() => startListener(), 800);
+        } else {
+          this.disabled = false;
+        }
+        return;
+      }
+
       this.disabled = true;
 
-      // Build Firestore update payload
+      // Build Firestore update payload (Pending / Review)
       const updateData = { status: newStatus };
 
       // Clear any old rejection reason once a submission moves past
@@ -1612,25 +1711,10 @@ function display(data) {
         updateData.licenseProofUrl = '';
       }
 
-      // Generate UPC when approving if one doesn't exist yet
-      if (newStatus === "Approved" && !upc) {
-        upc = generateUPC();
-        updateData.upc = upc;
-        // Update dataset so resend button picks it up correctly
-        this.dataset.upc = upc;
-      }
-
       const ok = await safeUpdate(subId, updateData);
 
       if (ok) {
         toast('✅', `Status → "${newStatus}"`);
-
-        if (newStatus === "Approved") {
-          toast('📤', 'Sending approval email…');
-          await sendApprovalEmail({ email, artistName, songTitle, upc });
-        }
-
-        // Refresh to show updated UPC badge + resend button
         setTimeout(() => startListener(), 800);
       } else {
         this.disabled = false;
@@ -1739,6 +1823,33 @@ function display(data) {
       });
     }
 
+    /* ── EDIT/ADD UPC & CATALOG NUMBER WITHOUT TOUCHING STATUS ── */
+    const editUpcBtn = card.querySelector('.edit-upc-btn');
+    if (editUpcBtn) {
+      editUpcBtn.addEventListener('click', async function() {
+        const subId = this.dataset.id;
+        const curUpc = this.dataset.currentUpc || '';
+        const curCatalog = this.dataset.currentCatalog || '';
+        const result = await promptForUpcCatalog({
+          title: 'Edit UPC / Catalog Number',
+          sub: `Update identifiers for "${this.dataset.title}" by ${this.dataset.artist}.`,
+          existingUpc: curUpc,
+          existingCatalog: curCatalog
+        });
+        if (result === null) return; // cancelled
+        this.disabled = true;
+        const ok = await safeUpdate(subId, {
+          upc: result.upc,
+          catalogNumber: result.catalogNumber
+        });
+        if (ok) {
+          toast('✅', 'UPC / Catalog Number updated');
+          setTimeout(() => startListener(), 500);
+        }
+        this.disabled = false;
+      });
+    }
+
     /* ── DELETE ── */
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
@@ -1822,6 +1933,57 @@ function promptForReason({ title, sub, existing, existingCategory }) {
     reasonSubmit.addEventListener('click', onSubmit);
     reasonCancel.addEventListener('click', onCancel);
     reasonOverlay.addEventListener('click', onOverlayClick);
+  });
+}
+
+/* ─── UPC / CATALOG NUMBER DIALOG (approve + edit) ──────────────────
+   Returns a Promise<{upc, catalogNumber}|null> — resolves with the
+   values the admin typed (trimmed), or null if cancelled. A UPC is
+   required to submit; catalog number is optional. This is the single
+   place that owns identifier entry — nothing is auto-generated.
+   ─────────────────────────────────────────────────────────────────── */
+function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
+  return new Promise((resolve) => {
+    upcTitle.textContent = title;
+    upcSub.textContent = sub;
+    upcInputEl.value = existingUpc || '';
+    catalogInputEl.value = existingCatalog || '';
+    upcOverlay.style.display = 'flex';
+    upcOverlay.classList.remove('hide');
+    upcSubmit.disabled = false;
+    upcSubmit.textContent = 'Approve & Save';
+    setTimeout(() => upcInputEl.focus(), 50);
+
+    function cleanup(result) {
+      upcOverlay.classList.add('hide');
+      setTimeout(() => {
+        upcOverlay.style.display = 'none';
+        upcOverlay.classList.remove('hide');
+      }, 180);
+      upcSubmit.removeEventListener('click', onSubmit);
+      upcCancel.removeEventListener('click', onCancel);
+      upcOverlay.removeEventListener('click', onOverlayClick);
+      resolve(result);
+    }
+    function onSubmit() {
+      const upcVal = upcInputEl.value.trim();
+      const catVal = catalogInputEl.value.trim();
+      if (!upcVal) {
+        upcInputEl.style.borderColor = '#f87171';
+        upcInputEl.focus();
+        return;
+      }
+      cleanup({ upc: upcVal, catalogNumber: catVal });
+    }
+    function onCancel() {
+      cleanup(null);
+    }
+    function onOverlayClick(e) {
+      if (e.target === upcOverlay) cleanup(null);
+    }
+    upcSubmit.addEventListener('click', onSubmit);
+    upcCancel.addEventListener('click', onCancel);
+    upcOverlay.addEventListener('click', onOverlayClick);
   });
 }
 
@@ -1970,6 +2132,10 @@ async function bulkUpdateStatus(newStatus) {
   setTimeout(() => startListener(), 500);
 }
 
+// Bulk approve applies one shared UPC/catalog prefix is NOT appropriate
+// per-submission, so bulk approve intentionally still just flips the
+// status — use the per-card "Edit UPC / Catalog Number" button (or the
+// single-item Approve flow) to assign real identifiers afterward.
 bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('Approved'));
 
 // Bulk reject also collects a single shared reason applied to every
@@ -2028,7 +2194,7 @@ function toCsvValue(v) {
 
 exportBtn.addEventListener('click', () => {
   const rows = [
-    ['Artist', 'Title', 'Email', 'Phone', 'Status', 'Rejection Reason', 'Rejection Category', 'Paid', 'UPC', 'Genre', 'Country', 'Submitted']
+    ['Artist', 'Title', 'Email', 'Phone', 'Status', 'Rejection Reason', 'Rejection Category', 'Paid', 'UPC', 'Catalog Number', 'Genre', 'Country', 'Submitted']
   ];
   submissions.forEach(item => {
     let date = '';
@@ -2041,7 +2207,7 @@ exportBtn.addEventListener('click', () => {
       item.artistName || '', item.releaseTitle || item.songTitle || item.title || '',
       item.email || '', item.phone || '', item.status || 'Pending',
       item.rejectionReason || '', item.rejectionCategory || '',
-      isSubmissionPaid(item) ? 'Paid' : 'Unpaid', item.upc || '',
+      isSubmissionPaid(item) ? 'Paid' : 'Unpaid', item.upc || '', item.catalogNumber || '',
       item.genre || '', item.country || '', date
     ]);
   });
