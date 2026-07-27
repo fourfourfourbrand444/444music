@@ -18,10 +18,10 @@
   --black-5:       #1a1a1a;
   --border:        rgba(255,255,255,0.06);
   --border-light:  rgba(255,255,255,0.10);
-  --purple:        #7c5cfc;
-  --purple-light:  #9b7fff;
-  --purple-dim:    rgba(124,92,252,0.12);
-  --purple-border: rgba(124,92,252,0.28);
+  --purple:        #ffffff;
+  --purple-light:  #d4d4d4;
+  --purple-dim:    rgba(255,255,255,0.08);
+  --purple-border: rgba(255,255,255,0.25);
   --text:          #f5f5f5;
   --text-2:        #a0a0a0;
   --text-3:        #606060;
@@ -108,8 +108,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .collab-del:hover { background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.22); color: var(--rose); }
 .collab-del svg { width: 11px; height: 11px; pointer-events: none; }
 .no-collabs { font-size: 12px; color: var(--text-3); font-style: italic; padding: 4px 0 10px; }
-.add-toggle { width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px dashed rgba(124,92,252,0.30); background: var(--purple-dim); color: var(--purple-light); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.15s; }
-.add-toggle:hover { border-color: var(--purple-border); background: rgba(124,92,252,0.18); }
+.add-toggle { width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px dashed rgba(255,255,255,0.25); background: var(--purple-dim); color: var(--purple-light); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.15s; }
+.add-toggle:hover { border-color: var(--purple-border); background: rgba(255,255,255,0.14); }
 .add-toggle svg { width: 13px; height: 13px; }
 .add-form { background: var(--black-3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 10px; display: none; flex-direction: column; gap: 11px; }
 .add-form.open { display: flex; }
@@ -131,7 +131,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .rem-pill.warn   { background: rgba(245,158,11,0.10); color: var(--amber); }
 .rem-pill.danger { background: rgba(239,68,68,0.10);  color: var(--rose); }
 .form-actions { display: flex; gap: 8px; margin-top: 2px; }
-.btn-add { flex: 1; padding: 10px; border-radius: 8px; background: var(--purple); color: white; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
+.btn-add { flex: 1; padding: 10px; border-radius: 8px; background: var(--purple); color: #000; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
 .btn-add:hover:not(:disabled) { background: var(--purple-light); }
 .btn-add:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-add svg { width: 12px; height: 12px; }
@@ -241,6 +241,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn-confirm-back { padding: 12px 20px; border-radius: 10px; background: transparent; border: 1px solid var(--border-light); color: var(--text-2); font-size: 13px; font-weight: 600; transition: all 0.15s; }
 .btn-confirm-back:hover { background: var(--black-4); color: var(--text); }
 
+/* ===== ROLE SELECT MODAL ===== */
+.role-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.94); backdrop-filter: blur(9px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+.role-overlay.open { opacity: 1; pointer-events: all; }
+.role-box { background: var(--black-2); border: 1px solid var(--border-light); border-radius: 20px; width: 100%; max-width: 420px; overflow: hidden; transform: scale(0.95) translateY(16px); transition: transform 0.3s cubic-bezier(0.34,1.3,0.64,1); text-align: center; }
+.role-overlay.open .role-box { transform: scale(1) translateY(0); }
+.role-box::before { content: ''; display: block; height: 2px; background: linear-gradient(90deg, transparent, #ffffff 50%, transparent); }
+.role-head { padding: 30px 28px 6px; }
+.role-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--black-4); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+.role-icon svg { width: 24px; height: 24px; color: var(--text); }
+.role-head h2 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 8px; }
+.role-head p { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
+.role-options { display: flex; flex-direction: column; gap: 10px; padding: 22px 28px 28px; }
+.role-option { display: flex; align-items: center; gap: 14px; background: var(--black-3); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: left; transition: all 0.15s; color: var(--text); }
+.role-option:hover { border-color: var(--border-light); background: var(--black-4); transform: translateY(-1px); }
+.role-option-ico { width: 38px; height: 38px; border-radius: 9px; background: var(--black-4); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.role-option-ico svg { width: 17px; height: 17px; color: var(--text); }
+.role-option-txt { flex: 1; min-width: 0; }
+.role-option-title { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; }
+.role-option-sub { font-size: 11px; color: var(--text-3); }
+.role-option-arrow { color: var(--text-3); flex-shrink: 0; }
+.role-option-arrow svg { width: 14px; height: 14px; }
+
 /* ===== SKELETON ===== */
 .skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.03) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
@@ -254,7 +276,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .empty-ico svg { width: 24px; height: 24px; color: var(--text-3); opacity: 0.35; }
 .empty-state h3 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-2); margin-bottom: 7px; }
 .empty-state p  { font-size: 13px; color: var(--text-3); max-width: 300px; margin: 0 auto 16px; line-height: 1.6; }
-.empty-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; background: var(--purple); color: white; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+.empty-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; background: var(--purple); color: #000; font-size: 13px; font-weight: 600; transition: all 0.15s; }
 .empty-link:hover { background: var(--purple-light); }
 .empty-link svg { width: 13px; height: 13px; }
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--border-light); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
@@ -280,6 +302,45 @@ button { font-family: inherit; cursor: pointer; border: none; }
     <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
     <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
     <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
+  </div>
+</div>
+
+<!-- ROLE SELECT MODAL -->
+<div class="role-overlay open" id="roleOverlay">
+  <div class="role-box">
+    <div class="role-head">
+      <div class="role-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h2>Who are you signing in as?</h2>
+      <p>This helps us take you to the right place.</p>
+    </div>
+    <div class="role-options">
+      <button class="role-option" id="roleArtist">
+        <div class="role-option-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div class="role-option-txt">
+          <div class="role-option-title">I'm an Artist</div>
+          <div class="role-option-sub">Manage your own releases &amp; royalty splits</div>
+        </div>
+        <div class="role-option-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </button>
+      <button class="role-option" id="roleContributor">
+        <div class="role-option-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="role-option-txt">
+          <div class="role-option-title">I'm a Contributor</div>
+          <div class="role-option-sub">Check the splits you've been added to</div>
+        </div>
+        <div class="role-option-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -831,6 +892,16 @@ function openView(rid){
 document.getElementById('viewClose').onclick=()=>{document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';};
 document.getElementById('viewOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('viewOverlay').classList.remove('open');document.getElementById('confirmOverlay').classList.remove('open');document.body.style.overflow='';}});
+
+/* ── ROLE SELECT ── */
+document.getElementById('roleArtist').onclick=()=>{
+  document.getElementById('roleOverlay').classList.remove('open');
+  document.body.style.overflow='';
+};
+document.getElementById('roleContributor').onclick=()=>{
+  window.location.href='contributor.html';
+};
+document.body.style.overflow='hidden';
 
 const spinStyle=document.createElement('style');
 spinStyle.textContent='@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
