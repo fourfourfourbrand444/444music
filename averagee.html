@@ -432,6 +432,50 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .prefill-badge.show { display: flex; }
 .prefill-badge svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--text-primary); }
 
+/* Release-date advisory popup — shown when the chosen release date is
+   less than 5 days out, since the distribution backend can take 2–5
+   days after approval to land the release on stores. */
+.rd-popup-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.rd-popup-overlay.show { display: flex; animation: rdFadeIn 0.18s ease both; }
+.rd-popup {
+  width: 100%; max-width: 380px;
+  background: var(--bg-card); border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg); padding: 24px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  animation: rdPopIn 0.22s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+.rd-popup-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px; color: var(--text-primary);
+}
+.rd-popup-icon svg { width: 18px; height: 18px; }
+.rd-popup-title {
+  font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 10px;
+}
+.rd-popup-body {
+  font-size: 0.86rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;
+}
+.rd-popup-actions { display: flex; gap: 10px; }
+.rd-popup-actions button {
+  flex: 1; padding: 12px 16px; border-radius: var(--radius-sm); cursor: pointer;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; transition: all var(--t);
+  border: 1px solid var(--border);
+}
+#rdPopupIgnore { background: transparent; color: var(--text-secondary); }
+#rdPopupIgnore:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); border-color: var(--border-accent); }
+#rdPopupUpdate { background: var(--text-primary); color: var(--bg-base); border-color: var(--text-primary); }
+#rdPopupUpdate:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
+@keyframes rdFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rdPopIn   { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
+
 @keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
 @keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
 @keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
@@ -549,14 +593,67 @@ option, optgroup { background: #141414; color: var(--text-primary); }
           <label>Genre <div class="required-dot"></div></label>
           <div class="select-wrap">
             <select id="genre">
-              <option>Pop</option><option>Indie Pop</option><option>Afropop</option><option>Hip-Hop</option>
-              <option>Rap</option><option>Trap</option><option>Drill</option><option>Afro Trap</option>
-              <option>R&amp;B</option><option>Soul</option><option>Neo Soul</option><option>Gospel</option>
-              <option>Electronic</option><option>EDM</option><option>Afro House</option><option>House</option>
-              <option>Rock</option><option>Alternative Rock</option><option>Indie Rock</option>
-              <option selected>Afrobeats</option><option>Afroswing</option><option>Highlife</option>
-              <option>Amapiano</option><option>Reggae</option><option>Dancehall</option><option>Jazz</option>
-              <option>Blues</option><option>Classical</option><option>Lo-Fi</option><option>Other</option>
+              <option>Alternative Rock</option>
+              <option>Alternativo &amp; Rock Latino</option>
+              <option>Anime</option>
+              <option>Baladas y Boleros</option>
+              <option>Big Band</option>
+              <option>Blues</option>
+              <option>Brazilian</option>
+              <option>C-Pop</option>
+              <option>Cantopop/HK-Pop</option>
+              <option>Children's</option>
+              <option>Chinese</option>
+              <option>Christian</option>
+              <option>Classical</option>
+              <option>Comedy</option>
+              <option>Contemporary Latin</option>
+              <option>Country</option>
+              <option>Dance</option>
+              <option>Easy Listening</option>
+              <option>Educational</option>
+              <option>Electronic</option>
+              <option>Enka</option>
+              <option>Experimental</option>
+              <option>Fitness &amp; Workout</option>
+              <option>Folk</option>
+              <option>French Pop</option>
+              <option>German Folk</option>
+              <option>German Pop</option>
+              <option>Hip-Hop/Rap</option>
+              <option>Holiday</option>
+              <option>Indo Pop</option>
+              <option>Inspirational</option>
+              <option>J-Pop</option>
+              <option>Jazz</option>
+              <option>K-Pop</option>
+              <option>Karaoke</option>
+              <option>Kayokyoku</option>
+              <option>Latin</option>
+              <option>Latin Jazz</option>
+              <option>Metal</option>
+              <option>New Age</option>
+              <option>Opera</option>
+              <option>Original Pilipino Music</option>
+              <option selected>Pop</option>
+              <option>Pop Latino</option>
+              <option>Punk</option>
+              <option>R&amp;B</option>
+              <option>Raíces</option>
+              <option>Reggae</option>
+              <option>Reggaeton y Hip-Hop</option>
+              <option>Regional Mexicano</option>
+              <option>Rock</option>
+              <option>Salsa y Tropical</option>
+              <option>Singer/Songwriter</option>
+              <option>Soul</option>
+              <option>Soundtrack</option>
+              <option>Spoken Word</option>
+              <option>Tai-Pop</option>
+              <option>Thai Pop</option>
+              <option>Trot</option>
+              <option>Vocal/Nostalgia</option>
+              <option>World</option>
             </select>
           </div>
         </div>
@@ -747,6 +844,23 @@ option, optgroup { background: #141414; color: var(--text-primary); }
   </div>
 </div>
 
+<!-- RELEASE-DATE ADVISORY POPUP (markup) -->
+<div class="rd-popup-overlay" id="rdPopupOverlay">
+  <div class="rd-popup">
+    <div class="rd-popup-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+    </div>
+    <div class="rd-popup-title">Consider a later release date</div>
+    <div class="rd-popup-body">
+      After your song is approved, our distribution partner typically takes 2–5 days to get it live on stores. For the best experience and to make sure your release lands on time, we recommend choosing a date at least 5 days from today.
+    </div>
+    <div class="rd-popup-actions">
+      <button type="button" id="rdPopupIgnore">Ignore</button>
+      <button type="button" id="rdPopupUpdate">Change Date</button>
+    </div>
+  </div>
+</div>
+
 <!-- RADIO GROUP ENGINE -->
 <script>
 (function(){
@@ -776,6 +890,47 @@ option, optgroup { background: #141414; color: var(--text-primary); }
     const el = document.getElementById(id);
     return el ? el.dataset.value : '';
   };
+})();
+</script>
+
+<!-- RELEASE-DATE ADVISORY POPUP ENGINE — fires when the chosen date is
+     less than 5 days from today. Purely informational: "Ignore" keeps
+     the date as-is, "Change Date" re-opens the native date picker. -->
+<script>
+(function(){
+  const dateInput = document.getElementById('releaseDate');
+  const overlay   = document.getElementById('rdPopupOverlay');
+  const ignoreBtn = document.getElementById('rdPopupIgnore');
+  const updateBtn = document.getElementById('rdPopupUpdate');
+  const MIN_DAYS  = 5;
+
+  function daysFromToday(dateStr) {
+    if (!dateStr) return null;
+    const chosen = new Date(dateStr + 'T00:00:00');
+    const today  = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((chosen - today) / (1000 * 60 * 60 * 24));
+  }
+
+  function openPopup()  { overlay.classList.add('show'); }
+  function closePopup() { overlay.classList.remove('show'); }
+
+  dateInput.addEventListener('change', function(){
+    const diff = daysFromToday(dateInput.value);
+    if (diff !== null && diff < MIN_DAYS) openPopup();
+  });
+
+  ignoreBtn.addEventListener('click', closePopup);
+  updateBtn.addEventListener('click', function(){
+    closePopup();
+    dateInput.focus();
+    if (typeof dateInput.showPicker === 'function') {
+      try { dateInput.showPicker(); } catch (e) { /* not supported, focus is enough */ }
+    }
+  });
+  overlay.addEventListener('mousedown', function(e){
+    if (e.target === overlay) closePopup();
+  });
 })();
 </script>
 
