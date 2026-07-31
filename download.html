@@ -98,70 +98,78 @@ h1 {
   margin-bottom: 40px;
 }
 
-/* PLAY STORE BADGE PLACEHOLDER */
+/* PLAY STORE BADGE */
 .store-badge-wrap {
-  margin-bottom: 48px;
-}
-
-.store-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 22px;
-  color: var(--text-mut);
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.store-badge svg { flex-shrink: 0; }
-
-/* APP PREVIEW IMAGES */
-.previews {
-  width: 100%;
-  margin-bottom: 48px;
-}
-
-.section-label {
-  font-family: var(--ff-head);
-  font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--text-mut);
-  margin-bottom: 20px;
-}
-
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.preview-shot {
-  aspect-ratio: 9 / 19;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  margin-bottom: 56px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  gap: 8px;
 }
 
-.preview-shot img {
+.store-badge-link {
+  display: inline-block;
+  line-height: 0;
+  filter: grayscale(1) opacity(0.55);
+  pointer-events: none;
+  transition: filter 0.2s ease;
+}
+
+.store-badge-img {
+  height: 54px;
+  width: auto;
+  display: block;
+}
+
+.store-badge-caption {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mut);
+}
+
+/* SHOWCASE IMAGES */
+.showcase {
+  width: 100%;
+  margin-bottom: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.showcase-main {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+
+.showcase-main img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.showcase-item {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.showcase-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.preview-shot.empty {
-  color: var(--text-mut);
-  font-size: 0.68rem;
-  text-align: center;
-  padding: 10px;
-  line-height: 1.4;
 }
 
 /* NOTICE */
@@ -219,28 +227,28 @@ footer a:hover { color: var(--black); }
     check back shortly.
   </p>
 
-  <!-- Replace this block with the real "Get it on Google Play" badge image
-       once the app is live, e.g.:
-       <a href="YOUR_PLAY_STORE_LINK">
-         <img src="google-play-badge.png" alt="Get it on Google Play">
-       </a> -->
+  <!-- Real official Google Play badge. Swap the href for your live
+       Play Store listing link once the app is published. -->
   <div class="store-badge-wrap">
-    <div class="store-badge">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 3l18 9-18 9V3z"/>
-      </svg>
-      Get it on Google Play — Coming Soon
-    </div>
+    <a href="#" class="store-badge-link" aria-disabled="true">
+      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+           alt="Get it on Google Play" class="store-badge-img">
+    </a>
+    <div class="store-badge-caption">Coming Soon</div>
   </div>
 
-  <!-- App preview screenshots. Replace src="" on each preview-shot
-       with your real Play Store screenshots once ready. -->
-  <div class="previews">
-    <div class="section-label">A Preview of the App</div>
-    <div class="preview-grid">
-      <div class="preview-shot empty">Screenshot 1</div>
-      <div class="preview-shot empty">Screenshot 2</div>
-      <div class="preview-shot empty">Screenshot 3</div>
+  <!-- App showcase images -->
+  <div class="showcase">
+    <div class="showcase-main">
+      <img src="https://kommodo.ai/i/LnyIei0wL8iB1ceHYfoh" alt="444Music app preview">
+    </div>
+    <div class="showcase-grid">
+      <div class="showcase-item">
+        <img src="https://kommodo.ai/i/SR2ptQlgm8KlUXREvmNz" alt="444Music login screen">
+      </div>
+      <div class="showcase-item">
+        <img src="https://kommodo.ai/i/WOnVUHBoCnQ5Bfo9C4BH" alt="444Music releases dashboard">
+      </div>
     </div>
   </div>
 
