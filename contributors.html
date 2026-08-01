@@ -3,510 +3,1129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contributor Earnings — 444Music Admin</title>
+<title>444Music — Earnings Manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --black:         #000000;
-  --black-1:       #080808;
-  --black-2:       #0d0d0d;
-  --black-3:       #111111;
-  --black-4:       #161616;
-  --black-5:       #1a1a1a;
-  --border:        rgba(255,255,255,0.06);
-  --border-light:  rgba(255,255,255,0.10);
-  --purple:        #7c5cfc;
-  --purple-light:  #9b7fff;
-  --purple-dim:    rgba(124,92,252,0.12);
-  --purple-border: rgba(124,92,252,0.28);
-  --text:          #f5f5f5;
-  --text-2:        #a0a0a0;
-  --text-3:        #606060;
-  --green:         #22c55e;
-  --amber:         #f59e0b;
-  --rose:          #ef4444;
-  --cyan:          #06b6d4;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Space Grotesk', sans-serif;
-  background: var(--black);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 28px 24px 64px;
-}
-a { text-decoration: none; color: inherit; }
-button { font-family: inherit; cursor: pointer; border: none; }
-.page-wrap { max-width: 1180px; margin: 0 auto; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* HEADER */
-.page-head { margin-bottom: 22px; }
-.page-title { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
-.page-title svg { width: 22px; height: 22px; color: var(--purple-light); }
-.page-sub { font-size: 12.5px; color: var(--text-3); margin-top: 4px; }
+  :root {
+    --bg-void:    #ffffff;
+    --bg-card:    #ffffff;
+    --bg-card2:   #fafafa;
+    --bg-input:   #f4f4f4;
+    --border:     rgba(0,0,0,0.10);
+    --border-lt:  rgba(0,0,0,0.22);
+    --accent:     #000000;
+    --accent-dim: rgba(0,0,0,0.05);
+    --accent-glow:rgba(0,0,0,0.10);
+    --green:      #17803d;
+    --green-dim:  rgba(23,128,61,0.08);
+    --red:        #d92d3f;
+    --text-pri:   #0a0a0a;
+    --text-sec:   #5c5c5c;
+    --text-dim:   #a3a3a3;
+    --radius:     14px;
+    --radius-sm:  9px;
+  }
 
-/* SUMMARY STRIP */
-.summary-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
-.sum-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
-.sum-label { font-size: 9px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
-.sum-value { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; }
-.sum-value.accent-green { color: var(--green); }
-.sum-value.accent-purple { color: var(--purple-light); }
-.sum-value.accent-amber { color: var(--amber); }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-void);
+    color: var(--text-pri);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* CONTROLS */
-.controls-bar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-.search-wrap { flex: 1; min-width: 220px; position: relative; }
-.search-wrap svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-3); pointer-events: none; }
-.search-input { width: 100%; background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px 11px 38px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s; }
-.search-input:focus { border-color: var(--purple-border); }
-.search-input::placeholder { color: var(--text-3); }
-.sort-select { background: var(--black-2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text-2); font-size: 13px; font-family: inherit; outline: none; cursor: pointer; }
-.sort-select:focus { border-color: var(--purple-border); }
-.sort-select option { background: var(--black-2); }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
 
-/* TABLE */
-.table-wrap { background: var(--black-2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-.table-head-row { display: grid; grid-template-columns: 1.6fr 1.5fr 0.7fr 1.1fr 1fr 1fr; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--black-3); }
-.th { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
-.contrib-row { display: grid; grid-template-columns: 1.6fr 1.5fr 0.7fr 1.1fr 1fr 1fr; gap: 10px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
-.contrib-row:last-child { border-bottom: none; }
-.contrib-row:hover { background: rgba(255,255,255,0.015); }
-.cr-person { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.cr-avatar { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 800; color: white; flex-shrink: 0; }
-.cr-info { min-width: 0; }
-.cr-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-role { font-size: 10.5px; color: var(--text-3); margin-top: 1px; }
-.cr-song { min-width: 0; }
-.cr-song-title { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-song-meta { font-size: 10.5px; color: var(--text-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-pct { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; }
-.cr-contact { min-width: 0; }
-.cr-contact div { font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-contact div:first-child { margin-bottom: 2px; }
-.cr-owner { font-size: 11px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-owner-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px; }
-.cr-balance-wrap { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
-.bal-display { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--green); cursor: pointer; padding: 6px 10px; border-radius: 7px; transition: background 0.15s; border: 1px solid transparent; }
-.bal-display:hover { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.20); }
-.bal-edit-row { display: flex; gap: 5px; align-items: center; }
-.bal-input { width: 78px; background: var(--black-4); border: 1px solid var(--purple-border); border-radius: 7px; padding: 6px 8px; color: var(--text); font-size: 12px; font-family: inherit; outline: none; text-align: right; }
-.bal-save, .bal-cancel { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
-.bal-save { background: var(--green); color: #000; }
-.bal-save:hover { background: #16a34a; }
-.bal-cancel { background: var(--black-4); border: 1px solid var(--border); color: var(--text-3); }
-.bal-cancel:hover { color: var(--text-2); }
-.bal-save svg, .bal-cancel svg { width: 12px; height: 12px; }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 60% -10%, rgba(0,0,0,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 0% 80%,  rgba(0,0,0,0.02) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
 
-/* EMPTY / LOADING */
-.empty-state { text-align: center; padding: 80px 20px; }
-.empty-ico { width: 56px; height: 56px; background: var(--black-3); border: 1px solid var(--border); border-radius: 14px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-.empty-ico svg { width: 24px; height: 24px; color: var(--text-3); opacity: 0.35; }
-.empty-state h3 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-2); margin-bottom: 7px; }
-.empty-state p { font-size: 13px; color: var(--text-3); max-width: 340px; margin: 0 auto; line-height: 1.6; }
-.skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.03) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; height: 12px; }
-@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-.skel-row { display: flex; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--border); align-items: center; }
-.skel-row .skeleton:nth-child(1) { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; }
-.skel-row .skeleton:nth-child(2) { width: 25%; }
-.skel-row .skeleton:nth-child(3) { width: 20%; }
-.skel-row .skeleton:nth-child(4) { width: 10%; }
+  /* ── PASSWORD GATE ── */
+  .gate {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--bg-void);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .gate-box {
+    width: 100%; max-width: 360px;
+    background: var(--bg-card); border: 1px solid var(--border-lt);
+    border-radius: 18px; padding: 34px 28px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .gate-icon {
+    width: 48px; height: 48px; margin: 0 auto 18px;
+    background: var(--accent); border: 1px solid var(--accent);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; filter: grayscale(1) brightness(3);
+  }
+  .gate-box h2 { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; letter-spacing: -0.2px; }
+  .gate-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
+  .gate-input {
+    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 14px; color: var(--text-pri);
+    font-family: 'IBM Plex Mono', monospace; font-size: 13.5px; outline: none;
+    text-align: center; letter-spacing: 1px; transition: border-color 0.15s;
+  }
+  .gate-input:focus { border-color: var(--border-lt); }
+  .gate-input::placeholder { color: var(--text-dim); letter-spacing: normal; }
+  .gate-btn {
+    width: 100%; margin-top: 10px; padding: 13px; border-radius: 10px;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 13.5px;
+    border: none; cursor: pointer; transition: opacity 0.15s;
+  }
+  .gate-btn:hover { opacity: 0.82; }
+  .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .gate-error { min-height: 16px; font-size: 12px; color: var(--red); margin-top: 12px; }
+  .gate-shake { animation: shake 0.4s; }
+  @keyframes shake {
+    10%,90% { transform: translateX(-2px); }
+    20%,80% { transform: translateX(4px); }
+    30%,50%,70% { transform: translateX(-8px); }
+    40%,60% { transform: translateX(8px); }
+  }
 
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--border-light); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.toast.show { transform: translateX(0); }
-.toast svg { width: 18px; height: 18px; flex-shrink: 0; }
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
+  /* HEADER */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
 
-@media (max-width: 900px) {
-  .summary-strip { grid-template-columns: repeat(2, 1fr); }
-  .table-head-row { display: none; }
-  .contrib-row { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
-  .cr-balance-wrap { justify-content: flex-start; }
-}
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
+  }
 
-/* LOGIN GATE */
-.login-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-.login-box { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--border-light); border-radius: 18px; padding: 32px 28px; text-align: center; }
-.login-icon { width: 52px; height: 52px; background: var(--purple-dim); border: 1px solid var(--purple-border); border-radius: 14px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; }
-.login-icon svg { width: 24px; height: 24px; color: var(--purple-light); }
-.login-box h2 { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; }
-.login-box p { font-size: 12.5px; color: var(--text-3); margin-bottom: 22px; line-height: 1.6; }
-.login-form { display: flex; flex-direction: column; gap: 10px; }
-.login-input { width: 100%; background: var(--black-4); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 13.5px; font-family: inherit; outline: none; text-align: center; transition: border-color 0.15s; }
-.login-input:focus { border-color: var(--purple-border); }
-.login-input::placeholder { color: var(--text-3); }
-.login-btn { width: 100%; padding: 12px; border-radius: 10px; background: var(--purple); color: white; font-size: 13.5px; font-weight: 700; transition: background 0.15s; }
-.login-btn:hover:not(:disabled) { background: var(--purple-light); }
-.login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.login-error { min-height: 16px; font-size: 12px; color: var(--rose); margin-top: 12px; }
+  .logo-badge {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: #fff; font-weight: 800;
+  }
+
+  .logo-text span { color: var(--text-sec); font-weight: 500; }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .refresh-btn {
+    background: var(--bg-void); border: 1px solid var(--border-lt);
+    color: var(--text-pri); font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .refresh-btn:hover { background: var(--accent); color: #fff; }
+
+  .header-tag {
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 0.8px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* MAIN */
+  .main {
+    position: relative; z-index: 1;
+    max-width: 980px; margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .page-title {
+    font-weight: 800; font-size: 32px;
+    letter-spacing: -1px; margin-bottom: 4px;
+  }
+
+  .page-title span { color: var(--text-sec); font-weight: 500; }
+
+  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; line-height: 1.7; max-width: 640px; }
+
+  /* STATS */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px;
+  }
+
+  .stat-pill {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px 18px;
+  }
+
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
+
+  .stat-value {
+    font-weight: 700; font-size: 23px; letter-spacing: -0.3px;
+  }
+
+  .stat-value.white { color: var(--text-pri); }
+  .stat-value.green { color: var(--green); }
+
+  /* CONTROLS */
+  .controls-row {
+    display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+
+  .search-wrapper { position: relative; flex: 1; min-width: 220px; }
+
+  .search-icon {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 15px; pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%; background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px 14px 44px;
+    font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-pri);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus {
+    border-color: var(--border-lt);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+  }
+
+  .group-select, .sort-select {
+    background: var(--bg-card2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0 16px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-pri);
+    outline: none; cursor: pointer; min-width: 200px;
+  }
+  .group-select:focus, .sort-select:focus { border-color: var(--border-lt); }
+  .group-select option, .sort-select option { background: #fff; color: var(--text-pri); }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+  }
+
+  .count-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; font-family: 'IBM Plex Mono', monospace; }
+  .count-label span { color: var(--text-pri); font-weight: 700; }
+
+  /* GROUP HEADINGS */
+  .group-heading {
+    display: flex; align-items: center; gap: 10px;
+    margin: 26px 0 12px; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.3px; color: var(--text-pri);
+  }
+  .group-heading:first-child { margin-top: 0; }
+  .group-heading::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .group-count {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-sec);
+    background: var(--bg-card2); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 20px;
+  }
+
+  /* CARDS */
+  .results { display: flex; flex-direction: column; gap: 10px; }
+
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px;
+    display: flex; flex-direction: column; gap: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    border-color: var(--border-lt);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+  }
+
+  .card-top { display: flex; align-items: center; gap: 16px; }
+
+  .avatar {
+    width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px;
+    color: #fff; text-transform: uppercase;
+  }
+
+  .card-info { flex: 1; min-width: 0; }
+
+  .artist-name {
+    font-weight: 700; font-size: 15px; letter-spacing: -0.1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .artist-email {
+    font-size: 11px; color: var(--text-sec); margin-top: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .artist-id {
+    font-size: 10px; color: var(--text-dim); margin-top: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* AUTO TOTAL BADGE */
+  .total-badge {
+    flex-shrink: 0; text-align: right;
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 16px;
+  }
+  .total-badge-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .total-badge-value {
+    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
+    color: var(--text-pri);
+  }
+
+  /* SECTIONS */
+  .card-section {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .section-heading {
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* OWNED SONG BLOCK */
+  .owned-song {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .owned-song-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+
+  .owned-song-title {
+    font-weight: 700; font-size: 13.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .owned-song-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    background: var(--accent); color: #fff;
+    border: 1px solid var(--accent);
+    border-radius: 5px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .collab-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 11.5px; color: var(--text-sec);
+    padding: 6px 0; border-top: 1px dashed var(--border);
+  }
+  .collab-row:first-of-type { border-top: none; padding-top: 0; }
+  .collab-name { color: var(--text-pri); font-weight: 500; }
+  .collab-pct { color: var(--text-sec); font-weight: 700; margin-left: 6px; font-family: 'IBM Plex Mono', monospace; }
+  .collab-balance { color: var(--green); font-weight: 700; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; }
+
+  .owner-share-row {
+    font-size: 11.5px; color: var(--text-sec);
+    padding-top: 4px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 10px;
+  }
+  .owner-share-row .pct { color: var(--text-pri); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .owner-share-row .bal { color: var(--green); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+
+  .payout-row { display: flex; gap: 8px; margin-top: 2px; }
+
+  .payout-input {
+    flex: 1; min-width: 0; background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 12px;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px;
+    color: var(--text-pri); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .payout-input::placeholder { color: var(--text-dim); font-size: 11px; }
+  .payout-input:focus { border-color: var(--border-lt); box-shadow: 0 0 0 2px rgba(0,0,0,0.04); }
+
+  .distribute-btn {
+    background: var(--accent); border: 1px solid var(--accent); color: #fff;
+    font-weight: 700; font-size: 11.5px;
+    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .distribute-btn:hover:not(:disabled) { opacity: 0.82; }
+  .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
+  .distribute-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* CONTRIBUTOR CREDIT ROW (read-only) */
+  .credit-row {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .credit-song {
+    font-weight: 700; font-size: 12.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .credit-owner {
+    font-size: 10.5px; color: var(--text-sec); margin-top: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .credit-right { text-align: right; flex-shrink: 0; }
+  .credit-pct { font-size: 10px; color: var(--text-sec); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .credit-balance { font-weight: 800; font-size: 14px; color: var(--green); font-family: 'IBM Plex Mono', monospace; }
+
+  .no-entries-note {
+    font-size: 11px; color: var(--text-dim); font-style: italic;
+  }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed; bottom: 28px; right: 28px; left: 28px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 9999;
+  }
+
+  .toast {
+    background: #fff; border: 1px solid var(--border-lt);
+    border-radius: var(--radius-sm); padding: 13px 18px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; min-width: 240px; max-width: 90vw;
+    color: var(--text-pri);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+    animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
+  }
+
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error   { border-left: 3px solid var(--red); }
+  .toast-icon    { font-size: 14px; }
+
+  @keyframes toastIn  { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes toastOut { to  {opacity:0;transform:translateX(24px)} }
+
+  /* EMPTY / LOADING */
+  .empty { text-align: center; padding: 72px 24px; color: var(--text-dim); }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-text { font-weight: 700; font-size: 15px; color: var(--text-sec); }
+  .empty-sub  { font-size: 12px; margin-top: 8px; line-height: 1.7; }
+
+  .loading-wrap {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 60px; color: var(--text-sec); font-size: 13px;
+  }
+
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .header { padding: 0 16px; }
+    .main { padding: 24px 14px 60px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .card-top { flex-wrap: wrap; }
+    .total-badge { width: 100%; text-align: left; }
+    .page-title { font-size: 25px; }
+    .payout-row { flex-wrap: wrap; }
+    .distribute-btn { flex: 1; }
+    .credit-row { flex-wrap: wrap; }
+    .controls-row { flex-direction: column; }
+    .group-select, .sort-select { width: 100%; }
+    .toast-container { left: 16px; right: 16px; bottom: 16px; }
+    .toast { width: 100%; max-width: none; }
+  }
+
+  @media (max-width: 400px) {
+    .stats-bar { grid-template-columns: 1fr; }
+    .card { padding: 18px 16px; }
+    .stat-value { font-size: 20px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- LOGIN GATE -->
-<div class="login-gate" id="loginGate">
-  <div class="login-box">
-    <div class="login-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    </div>
+<!-- PASSWORD GATE -->
+<div class="gate" id="gate">
+  <div class="gate-box" id="gateBox">
+    <div class="gate-icon">🔒</div>
     <h2>Admin Access</h2>
-    <p>Enter your admin email to view contributor earnings.</p>
-    <div class="login-form">
-      <input class="login-input" id="loginEmailInput" type="email" placeholder="you@444musicdistro.com" autocomplete="email">
-      <button class="login-btn" id="loginSubmitBtn">Continue</button>
-    </div>
-    <div class="login-error" id="loginError"></div>
+    <p>Enter the admin password to open the Earnings Manager.</p>
+    <input class="gate-input" id="gatePassword" type="password" placeholder="Password" autocomplete="off">
+    <button class="gate-btn" id="gateBtn">Unlock</button>
+    <div class="gate-error" id="gateError"></div>
   </div>
 </div>
 
-<div class="page-wrap" id="mainContent" style="display:none;">
-  <div class="page-head">
-    <div class="page-title">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Contributor Earnings
+<div class="toast-container" id="toasts"></div>
+
+<header class="header" id="appHeader" style="display:none;">
+  <div class="logo">
+    <div class="logo-badge">$</div>
+    <div class="logo-text">444<span>Music</span></div>
+  </div>
+  <div class="header-right">
+    <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+    <div class="header-tag">
+      <div class="dot"></div>
+      <span>Admin · Earnings</span>
     </div>
-    <div class="page-sub">Every contributor across every locked split — search, sort, and update balances.</div>
+  </div>
+</header>
+
+<main class="main" id="appMain" style="display:none;">
+  <div class="page-title">Earnings <span>Manager</span></div>
+  <div class="page-sub">Total earnings are auto-calculated from splits, plus your own submissions when a release has no split doc at all. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each contributor's locked %, crediting their share and the rest to the owner. Solo releases (no collaborators, no split doc) get the full amount credited straight to the owner — no division.</div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-label">Total Artists</div>
+      <div class="stat-value white" id="statCount">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Total Paid Out</div>
+      <div class="stat-value white" id="statTotal">—</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-label">Artists with Earnings</div>
+      <div class="stat-value green" id="statActive">—</div>
+    </div>
   </div>
 
-  <div class="summary-strip" id="summaryStrip">
-    <div class="sum-card"><div class="sum-label">Contributors</div><div class="sum-value" id="sumContribs">—</div></div>
-    <div class="sum-card"><div class="sum-label">Songs Locked</div><div class="sum-value accent-purple" id="sumSongs">—</div></div>
-    <div class="sum-card"><div class="sum-label">Total Balance Owed</div><div class="sum-value accent-green" id="sumBalance">—</div></div>
-    <div class="sum-card"><div class="sum-label">Unpaid Contributors</div><div class="sum-value accent-amber" id="sumUnpaid">—</div></div>
-  </div>
-
-  <div class="controls-bar">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search by contributor, song, or owner email...">
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <div class="search-wrapper">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="search"
+        placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
     </div>
+    <select class="group-select" id="groupSelect">
+      <option value="grouped">Group: has releases / no releases</option>
+      <option value="has">Only artists with releases</option>
+      <option value="none">Only artists with no releases at all</option>
+      <option value="flat">No grouping (all artists)</option>
+    </select>
     <select class="sort-select" id="sortSelect">
-      <option value="recent">Sort: Most recently locked</option>
-      <option value="song">Sort: Song title (A–Z)</option>
-      <option value="name">Sort: Contributor name (A–Z)</option>
-      <option value="pct">Sort: Percentage (high to low)</option>
-      <option value="balance">Sort: Balance owed (high to low)</option>
+      <option value="earnings_desc">Sort: Highest earnings first</option>
+      <option value="earnings_asc">Sort: Lowest earnings first</option>
+      <option value="name_asc">Sort: Name (A–Z)</option>
+      <option value="name_desc">Sort: Name (Z–A)</option>
     </select>
   </div>
 
-  <div class="table-wrap">
-    <div class="table-head-row">
-      <div class="th">Contributor</div>
-      <div class="th">Song</div>
-      <div class="th">Split %</div>
-      <div class="th">Contact</div>
-      <div class="th">Owner</div>
-      <div class="th" style="text-align:right;">Balance</div>
-    </div>
-    <div id="tableBody">
-      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
-      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
-      <div class="skel-row"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="count-label" id="countLabel">Loading…</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span>Loading users…</span>
     </div>
   </div>
-</div>
-
-<div class="toast" id="toast">
-  <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toastMsg"></span>
-</div>
-
-<script>
-const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
-const clr = i => PALETTE[i % PALETTE.length];
-function initials(n){ if(!n)return'?'; const p=n.trim().split(/\s+/); return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function fmtMoney(n){ return 'GHS '+ (parseFloat(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function fmtDate(iso){ if(!iso)return '—'; const d=new Date(iso); if(isNaN(d))return '—'; return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
-
-function showToast(msg,type){
-  const t=document.getElementById('toast'),ic=document.getElementById('toastIcon');
-  document.getElementById('toastMsg').textContent=msg;
-  ic.style.color=type==='error'?'var(--rose)':'var(--green)';
-  ic.innerHTML=type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>':'<polyline points="20 6 9 17 4 12"/>';
-  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
-}
-
-// Flat row shape: { splitDocId, contribIndex, name, role, email, phone, pct, emailStatus, balance,
-//                    songTitle, artistName, releaseType, genre, ownerEmail, lockedAt }
-let ALL_ROWS = [];
-
-function buildRows(splitDocs){
-  const rows=[];
-  splitDocs.forEach(({id,data})=>{
-    (data.contributors||[]).forEach((c,idx)=>{
-      rows.push({
-        splitDocId: id,
-        contribIndex: idx,
-        name: c.name||'Unnamed',
-        role: c.role||'',
-        email: c.email||'',
-        phone: c.phone||'',
-        pct: parseFloat(c.pct)||0,
-        emailStatus: c.emailStatus||'unknown',
-        balance: parseFloat(c.balance)||0,
-        songTitle: data.songTitle||'Untitled',
-        artistName: data.artistName||'',
-        releaseType: data.releaseType||'',
-        genre: data.genre||'',
-        ownerEmail: data.ownerEmail||'',
-        lockedAt: data.lockedAt||''
-      });
-    });
-  });
-  return rows;
-}
-
-function renderSummary(rows){
-  const songs=new Set(rows.map(r=>r.splitDocId));
-  const totalBalance=rows.reduce((s,r)=>s+r.balance,0);
-  const unpaid=rows.filter(r=>r.balance<=0).length;
-  document.getElementById('sumContribs').textContent=rows.length;
-  document.getElementById('sumSongs').textContent=songs.size;
-  document.getElementById('sumBalance').textContent=fmtMoney(totalBalance);
-  document.getElementById('sumUnpaid').textContent=unpaid;
-}
-
-function applyFilterSort(){
-  const q=document.getElementById('searchInput').value.trim().toLowerCase();
-  const sortBy=document.getElementById('sortSelect').value;
-  let rows=ALL_ROWS.filter(r=>{
-    if(!q) return true;
-    return r.name.toLowerCase().includes(q)
-      || r.email.toLowerCase().includes(q)
-      || r.songTitle.toLowerCase().includes(q)
-      || r.artistName.toLowerCase().includes(q)
-      || r.ownerEmail.toLowerCase().includes(q);
-  });
-  rows=[...rows];
-  if(sortBy==='song') rows.sort((a,b)=>a.songTitle.localeCompare(b.songTitle));
-  else if(sortBy==='name') rows.sort((a,b)=>a.name.localeCompare(b.name));
-  else if(sortBy==='pct') rows.sort((a,b)=>b.pct-a.pct);
-  else if(sortBy==='balance') rows.sort((a,b)=>b.balance-a.balance);
-  else rows.sort((a,b)=>new Date(b.lockedAt)-new Date(a.lockedAt));
-  renderRows(rows);
-}
-
-function renderRows(rows){
-  const body=document.getElementById('tableBody');
-  if(rows.length===0){
-    body.innerHTML=`<div class="empty-state">
-      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-      <h3>No contributors found</h3>
-      <p>Try a different search, or check back once a split has been locked.</p>
-    </div>`;
-    return;
-  }
-  body.innerHTML=rows.map((r,i)=>{
-    const meta=[r.artistName,r.releaseType,r.genre].filter(Boolean).join(' · ');
-    return `
-    <div class="contrib-row" data-doc="${esc(r.splitDocId)}" data-idx="${r.contribIndex}">
-      <div class="cr-person">
-        <div class="cr-avatar" style="background:${clr(i)}">${esc(initials(r.name))}</div>
-        <div class="cr-info">
-          <div class="cr-name">${esc(r.name)}</div>
-          <div class="cr-role">${esc(r.role)}</div>
-        </div>
-      </div>
-      <div class="cr-song">
-        <div class="cr-song-title">${esc(r.songTitle)}</div>
-        <div class="cr-song-meta">${esc(meta)} · locked ${esc(fmtDate(r.lockedAt))}</div>
-      </div>
-      <div class="cr-pct" style="color:${clr(i)}">${r.pct}%</div>
-      <div class="cr-contact">
-        <div>${esc(r.email)}</div>
-        <div>${esc(r.phone)}</div>
-      </div>
-      <div>
-        <div class="cr-owner-lbl">Release owner</div>
-        <div class="cr-owner">${esc(r.ownerEmail)}</div>
-      </div>
-      <div class="cr-balance-wrap">
-        <div class="bal-display" data-doc="${esc(r.splitDocId)}" data-idx="${r.contribIndex}" data-val="${r.balance}">${fmtMoney(r.balance)}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-document.getElementById('tableBody').addEventListener('click', e=>{
-  const disp=e.target.closest('.bal-display');
-  if(!disp) return;
-  const wrap=disp.parentElement;
-  const docId=disp.dataset.doc, idx=disp.dataset.idx, curVal=disp.dataset.val;
-  wrap.innerHTML=`
-    <div class="bal-edit-row">
-      <input class="bal-input" type="number" step="0.01" value="${curVal}">
-      <button class="bal-save" title="Save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></button>
-      <button class="bal-cancel" title="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>`;
-  const input=wrap.querySelector('.bal-input');
-  input.focus(); input.select();
-  wrap.querySelector('.bal-cancel').onclick=()=>applyFilterSort();
-  wrap.querySelector('.bal-save').onclick=()=>saveBalance(docId,parseInt(idx),parseFloat(input.value)||0);
-  input.addEventListener('keydown',ev=>{
-    if(ev.key==='Enter') saveBalance(docId,parseInt(idx),parseFloat(input.value)||0);
-    if(ev.key==='Escape') applyFilterSort();
-  });
-});
-
-async function saveBalance(docId, idx, newBalance){
-  const {doc,updateDoc,getDoc}=window._FF;
-  try{
-    const ref=doc(window._DB,'splits',docId);
-    const snap=await getDoc(ref);
-    if(!snap.exists()){showToast('Split record not found','error');return;}
-    const data=snap.data();
-    const contributors=[...(data.contributors||[])];
-    if(!contributors[idx]){showToast('Contributor not found','error');return;}
-    contributors[idx]={...contributors[idx], balance:newBalance};
-    await updateDoc(ref,{contributors});
-    // update local cache
-    ALL_ROWS=ALL_ROWS.map(r=> (r.splitDocId===docId && r.contribIndex===idx) ? {...r,balance:newBalance} : r);
-    renderSummary(ALL_ROWS);
-    applyFilterSort();
-    showToast('Balance updated','success');
-  }catch(e){
-    console.error(e);
-    showToast('Failed to save — please try again','error');
-  }
-}
-
-document.getElementById('searchInput').addEventListener('input', applyFilterSort);
-document.getElementById('sortSelect').addEventListener('change', applyFilterSort);
-
-window._DB=null; window._FF={};
-</script>
+</main>
 
 <script type="module">
-import { initializeApp }        from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, getDoc }
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const firebaseConfig = {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  doc, getDoc, updateDoc, increment, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const app = initializeApp({
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain:        "usersubmissionsportal.firebaseapp.com",
   projectId:         "usersubmissionsportal",
   storageBucket:     "usersubmissionsportal.firebasestorage.app",
   messagingSenderId: "734783502459",
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
-};
-
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-window._DB = db;
-window._FF = { doc, updateDoc, collection, getDoc };
-
-const SESSION_KEY = 'admin444_email';
-
-// ADMIN GATE: admins collection is keyed by the admin's email address
-// (e.g. admins/444musicdistro@gmail.com). Typing an email that matches a
-// document ID there is what unlocks the page — there's no separate
-// Firebase Auth login step from the user's point of view. We still sign in
-// anonymously behind the scenes so Firestore rules requiring request.auth
-// still work.
-async function checkAdminEmail(rawEmail){
-  const email = (rawEmail||'').toLowerCase().trim();
-  if(!email) return false;
-  const snap = await getDoc(doc(db, 'admins', email));
-  return snap.exists();
-}
-
-async function loadDashboard(){
-  try {
-    const snap = await getDocs(collection(db,'splits'));
-    const splitDocs = [];
-    snap.forEach(d => splitDocs.push({ id: d.id, data: d.data() }));
-    const rows = buildRowsPublic(splitDocs);
-    window.ALL_ROWS_INIT(rows);
-  } catch(e) {
-    console.error(e);
-    document.getElementById('tableBody').innerHTML = `<div class="empty-state">
-      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-      <h3>Failed to load contributors</h3>
-      <p>Please refresh the page. If this keeps happening, check your Firestore rules allow reads on the splits collection.</p>
-    </div>`;
-  }
-}
-
-function unlockDashboard(){
-  document.getElementById('loginGate').style.display = 'none';
-  document.getElementById('mainContent').style.display = 'block';
-  loadDashboard();
-}
-
-async function attemptLogin(){
-  const input = document.getElementById('loginEmailInput');
-  const btn = document.getElementById('loginSubmitBtn');
-  const errEl = document.getElementById('loginError');
-  const email = input.value.trim();
-  errEl.textContent = '';
-  if(!email || !email.includes('@')){
-    errEl.textContent = 'Enter a valid email address.';
-    return;
-  }
-  btn.disabled = true;
-  btn.textContent = 'Checking...';
-  try{
-    const ok = await checkAdminEmail(email);
-    if(ok){
-      sessionStorage.setItem(SESSION_KEY, email.toLowerCase().trim());
-      unlockDashboard();
-    } else {
-      errEl.textContent = "That email isn't on the admin list.";
-    }
-  }catch(e){
-    console.error(e);
-    errEl.textContent = 'Something went wrong — please try again.';
-  }finally{
-    btn.disabled = false;
-    btn.textContent = 'Continue';
-  }
-}
-
-document.getElementById('loginSubmitBtn').addEventListener('click', attemptLogin);
-document.getElementById('loginEmailInput').addEventListener('keydown', e=>{
-  if(e.key==='Enter') attemptLogin();
 });
 
-// Boot: sign in anonymously (for Firestore rule access), then check for a
-// remembered admin email from this session before showing the login form.
-signInAnonymously(auth).catch(e=>console.error('[Anon auth failed]', e));
-const remembered = sessionStorage.getItem(SESSION_KEY);
-if(remembered){
-  checkAdminEmail(remembered).then(ok=>{
-    if(ok) unlockDashboard();
-    else sessionStorage.removeItem(SESSION_KEY);
-  });
+const db = getFirestore(app);
+let allUsers       = [];
+let allSplits      = [];
+let allSubmissions = [];
+let financeByEmail = {};
+
+/* ── HELPERS ── */
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function resolveName(d) { return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim(); }
+function resolveEmail(d) { return (d.email || d.Email || d.userEmail || '').trim(); }
+function normEmail(e) { return (e || '').toLowerCase().trim(); }
+function initials(name, email) {
+  if (name) {
+    const p = name.trim().split(/\s+/);
+    return p.length >= 2 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
+  }
+  return email ? email.slice(0,2).toUpperCase() : '??';
+}
+function fmtMoney(n) {
+  const num = Number(n) || 0;
+  return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function buildRowsPublic(splitDocs){
-  const rows=[];
-  splitDocs.forEach(({id,data})=>{
-    (data.contributors||[]).forEach((c,idx)=>{
-      rows.push({
-        splitDocId: id, contribIndex: idx,
-        name: c.name||'Unnamed', role: c.role||'', email: c.email||'', phone: c.phone||'',
-        pct: parseFloat(c.pct)||0, emailStatus: c.emailStatus||'unknown', balance: parseFloat(c.balance)||0,
-        songTitle: data.songTitle||'Untitled', artistName: data.artistName||'',
-        releaseType: data.releaseType||'', genre: data.genre||'',
-        ownerEmail: data.ownerEmail||'', lockedAt: data.lockedAt||''
+/* Submission field resolvers — confirmed against the real submissions schema:
+   releaseTitle, email, userId, status, splitLocked. Fallbacks kept for safety
+   in case any older doc used different naming. */
+function resolveSubmissionTitle(s) {
+  return (s.releaseTitle || s.songTitle || s.title || s.trackTitle || s.trackName || s.name || '').trim() || 'Untitled';
+}
+function resolveSubmissionOwnerEmailDirect(s) {
+  return (s.email || s.userEmail || s.ownerEmail || s.artistEmail || '').trim();
+}
+function resolveSubmissionOwnerId(s) {
+  return s.userId || s.uid || s.userID || s.ownerId || '';
+}
+function resolveSubmissionOwnerEmail(s, usersById) {
+  const direct = normEmail(resolveSubmissionOwnerEmailDirect(s));
+  if (direct) return direct;
+  const uid = resolveSubmissionOwnerId(s);
+  if (uid && usersById[uid]) return normEmail(resolveEmail(usersById[uid]));
+  return '';
+}
+
+/* ── TOAST ── */
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${esc(msg)}</span>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+/* ── FINANCE MODEL ──
+   Every owned release — whether it came from a locked split doc or from a
+   submission that never got one — is normalized into the same shape:
+     { type: 'split' | 'solo', id, songTitle, others, ownerEffPct, ownerBalance }
+
+   For splits:
+     - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
+     - ownerEffPct = 100 - sum(other contributors' pct)   (absorbs any self-listed owner row automatically)
+     - ownerBalance (field on the split doc) = money already credited to the owner for that song
+     - each real collaborator's own balance field = money already credited to them for that song
+
+   For submissions with NO matching split doc (solo releases — the bug this fixes):
+     - others = [] always, ownerEffPct = 100 always — money is never divided
+     - ownerBalance comes from the submission's own `earningsBalance` field
+
+   "Has releases" (for grouping) means this user shows up in financeByEmail at all —
+   either as an owner of at least one split/solo release, or as a paid collaborator
+   on someone else's split. */
+function splitBreakdown(s) {
+  const ownerEm = normEmail(s.ownerEmail);
+  const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
+  const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
+  const ownerEffPct = Math.max(0, 100 - othersPctSum);
+  return { others, ownerEffPct };
+}
+
+function buildFinanceMap(splits) {
+  const map = {};
+  const ensure = (email) => {
+    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
+    return map[email];
+  };
+
+  splits.forEach(s => {
+    const ownerEm = normEmail(s.ownerEmail);
+    const { others, ownerEffPct } = splitBreakdown(s);
+
+    if (ownerEm) {
+      const bucket = ensure(ownerEm);
+      const ownerBal = parseFloat(s.ownerBalance) || 0;
+      bucket.owned.push({
+        type: 'split', id: s.id, songTitle: s.songTitle || 'Untitled',
+        others, ownerEffPct, ownerBalance: ownerBal
       });
+      bucket.total += ownerBal;
+    }
+
+    others.forEach(c => {
+      const em = normEmail(c.email);
+      if (!em) return;
+      const bal = parseFloat(c.balance) || 0;
+      const bucket = ensure(em);
+      bucket.credits.push({
+        splitId: s.id, songTitle: s.songTitle || 'Untitled',
+        ownerEmail: s.ownerEmail || '', pct: parseFloat(c.pct) || 0, balance: bal
+      });
+      bucket.total += bal;
     });
   });
-  return rows;
+
+  return map;
 }
-window.ALL_ROWS_INIT = (rows)=>{
-  ALL_ROWS = rows;
-  renderSummary(ALL_ROWS);
-  applyFilterSort();
+
+/* Adds submissions that have no corresponding split doc as solo owned releases.
+   Earlier versions tried to detect "has collaborators" by matching each
+   royaltySplits entry's email against the submission's own owner email —
+   but a submission can list its owner under a slightly different email in
+   royaltySplits than in its top-level `email` field, which made that entry
+   look like a stranger "collaborator" and silently hid genuinely solo
+   releases (this is what was hiding "Lighter"). The reliable signal is much
+   simpler: just count how many people are listed. One person = solo,
+   regardless of whose email it is. Two or more = a real collab release,
+   which should already be showing via a doc in the `splits` collection
+   (checked here only by title match, purely to avoid double-counting).
+   Only `status === 'Approved'` submissions are counted as earning-worthy —
+   this filters out drafts, rejected, and stray duplicate submission docs. */
+function attachSubmissionsToFinanceMap(map, submissions, usersById) {
+  const ensure = (email) => {
+    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
+    return map[email];
+  };
+
+  let unmatchedOwner = 0;
+  let missingSplitDoc = 0;
+
+  submissions.forEach(s => {
+    if ((s.status || '').toLowerCase() !== 'approved') return;
+
+    const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
+    if (!ownerEm) { unmatchedOwner++; return; }
+
+    const title = resolveSubmissionTitle(s);
+    const royaltySplits = Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
+    const isSolo = royaltySplits.length <= 1;
+
+    const bucket = ensure(ownerEm);
+    const matchingSplitEntry = bucket.owned.find(
+      e => e.type === 'split' && e.songTitle.toLowerCase().trim() === title.toLowerCase().trim()
+    );
+
+    if (!isSolo) {
+      // Multiple people listed — real collab release, belongs in the splits collection, not here.
+      if (!matchingSplitEntry) missingSplitDoc++;
+      return;
+    }
+
+    if (matchingSplitEntry) return; // already covered somehow — don't duplicate
+
+    const bal = parseFloat(s.earningsBalance) || 0;
+    bucket.owned.push({
+      type: 'solo', id: s.id, songTitle: title,
+      others: [], ownerEffPct: 100, ownerBalance: bal
+    });
+    bucket.total += bal;
+  });
+
+  if (unmatchedOwner) {
+    console.warn(`${unmatchedOwner} submission(s) could not be matched to a user (no email/userId match).`);
+  }
+  if (missingSplitDoc) {
+    console.warn(`${missingSplitDoc} submission(s) list multiple contributors but no matching split doc was found — check the splits collection.`);
+  }
+}
+
+function hasAnyRelease(email) {
+  const f = financeByEmail[normEmail(email)];
+  return !!(f && (f.owned.length || f.credits.length));
+}
+
+/* ── STATS ── */
+function updateStats(users) {
+  const total  = users.reduce((s, u) => s + (financeByEmail[normEmail(resolveEmail(u))]?.total || 0), 0);
+  const active = users.filter(u => (financeByEmail[normEmail(resolveEmail(u))]?.total || 0) > 0).length;
+  document.getElementById('statCount').textContent  = users.length;
+  document.getElementById('statTotal').textContent  = fmtMoney(total);
+  document.getElementById('statActive').textContent = active;
+}
+
+/* ── LOAD ── */
+window.loadUsers = async function () {
+  document.getElementById('results').innerHTML =
+    `<div class="loading-wrap"><div class="spinner"></div><span>Loading users…</span></div>`;
+  document.getElementById('countLabel').textContent = 'Loading…';
+
+  try {
+    const [usersSnap, splitsSnap, submissionsSnap] = await Promise.all([
+      getDocs(collection(db, 'users')),
+      getDocs(collection(db, 'splits')),
+      getDocs(collection(db, 'submissions'))
+    ]);
+
+    allUsers       = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allSplits      = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allSubmissions = submissionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const usersById = {};
+    allUsers.forEach(u => { usersById[u.id] = u; });
+
+    financeByEmail = buildFinanceMap(allSplits);
+    attachSubmissionsToFinanceMap(financeByEmail, allSubmissions, usersById);
+
+    allUsers.sort((a, b) => {
+      const ta = financeByEmail[normEmail(resolveEmail(a))]?.total || 0;
+      const tb = financeByEmail[normEmail(resolveEmail(b))]?.total || 0;
+      return tb - ta || (resolveName(a) || '').localeCompare(resolveName(b) || '');
+    });
+
+    applyFilters();
+    updateStats(allUsers);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('results').innerHTML =
+      `<div class="empty">
+        <div class="empty-icon">⚠</div>
+        <div class="empty-text">Failed to load users</div>
+        <div class="empty-sub">${esc(err.message)}</div>
+      </div>`;
+    document.getElementById('countLabel').textContent = 'Error';
+    toast('Load failed: ' + err.message, 'error');
+  }
 };
+
+/* ── OWNED / CREDITS PANELS ── */
+function buildOwnedSection(entries) {
+  if (!entries.length) return '';
+  const blocks = entries.map(entry => {
+    const { type, id, songTitle, others, ownerEffPct, ownerBalance } = entry;
+
+    const collabRows = others.map(c => `
+      <div class="collab-row">
+        <span><span class="collab-name">${esc(c.name || c.email)}</span><span class="collab-pct">${(parseFloat(c.pct)||0).toFixed(1)}%</span></span>
+        <span class="collab-balance">${fmtMoney(c.balance)}</span>
+      </div>`).join('');
+
+    const tagLabel = others.length
+      ? others.length + ' collaborator' + (others.length > 1 ? 's' : '')
+      : 'Solo release';
+
+    const inputId = `payout-${type}-${id}`;
+    const onclickCall = type === 'split'
+      ? `window.distribute('${id}', this)`
+      : `window.distributeSolo('${id}', this)`;
+
+    return `
+      <div class="owned-song">
+        <div class="owned-song-head">
+          <div class="owned-song-title">${esc(songTitle)}</div>
+          <div class="owned-song-tag">${tagLabel}</div>
+        </div>
+        ${collabRows}
+        <div class="owner-share-row">
+          <span>Your share <span class="pct">${ownerEffPct.toFixed(1)}%</span></span>
+          <span class="bal">${fmtMoney(ownerBalance)}</span>
+        </div>
+        <div class="payout-row">
+          <input type="number" class="payout-input" id="${inputId}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
+          <button class="distribute-btn" onclick="${onclickCall}">Distribute</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `<div class="card-section">
+      <div class="section-heading">Releases you own (${entries.length})</div>
+      ${blocks}
+    </div>`;
+}
+
+function buildCreditsSection(entries) {
+  if (!entries.length) return '';
+  const rows = entries.map(c => `
+    <div class="credit-row">
+      <div>
+        <div class="credit-song">${esc(c.songTitle)}</div>
+        <div class="credit-owner">Owner: ${esc(c.ownerEmail || '—')}</div>
+      </div>
+      <div class="credit-right">
+        <div class="credit-pct">${c.pct.toFixed(1)}%</div>
+        <div class="credit-balance">${fmtMoney(c.balance)}</div>
+      </div>
+    </div>`).join('');
+
+  return `<div class="card-section">
+      <div class="section-heading">Contributor credits (${entries.length})</div>
+      ${rows}
+    </div>`;
+}
+
+function buildCardHtml(u, i) {
+  const name    = resolveName(u)  || 'Unknown Artist';
+  const email   = resolveEmail(u) || '—';
+  const ini     = initials(resolveName(u), resolveEmail(u));
+  const finance = financeByEmail[normEmail(email)] || { owned: [], credits: [], total: 0 };
+
+  const ownedHtml   = buildOwnedSection(finance.owned);
+  const creditsHtml = buildCreditsSection(finance.credits);
+  const emptyNote = (!finance.owned.length && !finance.credits.length)
+    ? `<div class="card-section"><div class="no-entries-note">Not part of any locked split yet</div></div>`
+    : '';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.animationDelay = `${Math.min(i * 25, 350)}ms`;
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="avatar">${esc(ini)}</div>
+      <div class="card-info">
+        <div class="artist-name">${esc(name)}</div>
+        <div class="artist-email">${esc(email)}</div>
+        <div class="artist-id">UID: ${esc(u.id)}</div>
+      </div>
+      <div class="total-badge">
+        <div class="total-badge-label">Total earnings (auto)</div>
+        <div class="total-badge-value">${fmtMoney(finance.total)}</div>
+      </div>
+    </div>
+    ${ownedHtml}
+    ${creditsHtml}
+    ${emptyNote}
+  `;
+  return card;
+}
+
+/* ── RENDER (with grouping) ── */
+function render(data, mode) {
+  const el  = document.getElementById('results');
+  el.innerHTML = '';
+
+  if (!data.length) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">◎</div>
+        <div class="empty-text">No users found</div>
+        <div class="empty-sub">The users collection may be empty,<br>or your search has no matches.</div>
+      </div>`;
+    return;
+  }
+
+  const withReleases = data.filter(u => hasAnyRelease(resolveEmail(u)));
+  const noReleases    = data.filter(u => !hasAnyRelease(resolveEmail(u)));
+
+  let counter = 0;
+  const appendGroup = (label, list) => {
+    if (!list.length) return;
+    const heading = document.createElement('div');
+    heading.className = 'group-heading';
+    heading.innerHTML = `<span>${esc(label)}</span><span class="group-count">${list.length}</span>`;
+    el.appendChild(heading);
+    list.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
+  };
+
+  if (mode === 'has') {
+    appendGroup('Artists with releases', withReleases);
+  } else if (mode === 'none') {
+    appendGroup('Artists with no releases at all', noReleases);
+  } else if (mode === 'flat') {
+    data.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
+  } else {
+    appendGroup('Artists with releases', withReleases);
+    appendGroup('Artists with no releases at all', noReleases);
+  }
+}
+
+/* ── SORT ──
+   Independent of grouping: this decides the ORDER of cards, grouping (above)
+   decides which SECTION a card lands in. Both controls apply together. */
+function sortUsers(list, sortBy) {
+  const totalOf = u => financeByEmail[normEmail(resolveEmail(u))]?.total || 0;
+  const sorted = [...list];
+  if (sortBy === 'name_asc') {
+    sorted.sort((a, b) => (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  } else if (sortBy === 'name_desc') {
+    sorted.sort((a, b) => (resolveName(b) || '').localeCompare(resolveName(a) || ''));
+  } else if (sortBy === 'earnings_asc') {
+    sorted.sort((a, b) => totalOf(a) - totalOf(b) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  } else {
+    // earnings_desc (default)
+    sorted.sort((a, b) => totalOf(b) - totalOf(a) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  }
+  return sorted;
+}
+
+/* ── FILTER + GROUP + SORT DRIVER ── */
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const mode = document.getElementById('groupSelect').value;
+  const sortBy = document.getElementById('sortSelect').value;
+
+  const filtered = q
+    ? allUsers.filter(u => {
+        const email = normEmail(resolveEmail(u));
+        const finance = financeByEmail[email] || { owned: [], credits: [] };
+        const songMatch =
+          finance.owned.some(o => (o.songTitle || '').toLowerCase().includes(q)) ||
+          finance.credits.some(c => c.songTitle.toLowerCase().includes(q) || (c.ownerEmail || '').toLowerCase().includes(q));
+        return (resolveName(u) || '').toLowerCase().includes(q) ||
+               email.includes(q) ||
+               (u.id || '').toLowerCase().includes(q) ||
+               songMatch;
+      })
+    : allUsers;
+
+  const sorted = sortUsers(filtered, sortBy);
+
+  document.getElementById('countLabel').innerHTML =
+    `Showing <span>${sorted.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+
+  render(sorted, mode);
+  updateStats(sorted);
+}
+
+document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('groupSelect').addEventListener('change', applyFilters);
+document.getElementById('sortSelect').addEventListener('change', applyFilters);
+
+/* ── DISTRIBUTE PAYOUT (split-based release, may have collaborators) ── */
+window.distribute = async function (splitId, btn) {
+  const input = document.getElementById(`payout-split-${splitId}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const amount = parseFloat(input.value);
+  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const ref  = doc(db, 'splits', splitId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { toast('Split not found.', 'error'); return; }
+
+    const data = snap.data();
+    const ownerEm = normEmail(data.ownerEmail);
+    const contributors = Array.isArray(data.contributors) ? data.contributors : [];
+
+    const others = contributors.filter(c => normEmail(c.email) !== ownerEm);
+    const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
+    const ownerEffPct = Math.max(0, 100 - othersPctSum);
+
+    const updatedContributors = contributors.map(c => {
+      if (normEmail(c.email) === ownerEm) return c;
+      const share = amount * ((parseFloat(c.pct) || 0) / 100);
+      return { ...c, balance: (parseFloat(c.balance) || 0) + share };
+    });
+
+    const ownerShare = amount * (ownerEffPct / 100);
+
+    await updateDoc(ref, {
+      contributors: updatedContributors,
+      ownerBalance: increment(ownerShare),
+      lastPayoutAt: serverTimestamp()
+    });
+
+    toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
+
+    input.value = '';
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── DISTRIBUTE PAYOUT (solo release — a submission with no split doc at all).
+   No collaborators exist for these, so the full amount goes straight to the
+   owner. This writes directly to the submission doc's earningsBalance field
+   rather than touching the splits collection. ── */
+window.distributeSolo = async function (submissionId, btn) {
+  const input = document.getElementById(`payout-solo-${submissionId}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const amount = parseFloat(input.value);
+  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const ref = doc(db, 'submissions', submissionId);
+    await updateDoc(ref, {
+      earningsBalance: increment(amount),
+      lastPayoutAt: serverTimestamp()
+    });
+
+    toast(`Distributed ${fmtMoney(amount)} — full amount to owner (solo release, no split)`, 'success');
+
+    input.value = '';
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── PASSWORD GATE ──
+   Client-side only: keeps casual visitors out of the admin view, but the
+   password lives in this file's JS, so anyone who reads the page source can
+   find it. Pair this with Firestore security rules if this data truly needs
+   to be protected from a determined attacker. */
+const ADMIN_PASSWORD = "Music112@";
+const SESSION_KEY = 'em_admin_unlocked';
+
+function unlockApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('appHeader').style.display = 'flex';
+  document.getElementById('appMain').style.display = 'block';
+  loadUsers();
+}
+
+function attemptUnlock() {
+  const input = document.getElementById('gatePassword');
+  const errEl = document.getElementById('gateError');
+  const box   = document.getElementById('gateBox');
+  if (input.value === ADMIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    unlockApp();
+  } else {
+    errEl.textContent = 'Incorrect password.';
+    box.classList.remove('gate-shake');
+    void box.offsetWidth;
+    box.classList.add('gate-shake');
+    input.value = '';
+    input.focus();
+  }
+}
+
+document.getElementById('gateBtn').addEventListener('click', attemptUnlock);
+document.getElementById('gatePassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') attemptUnlock();
+});
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  unlockApp();
+} else {
+  document.getElementById('gatePassword').focus();
+}
+
 </script>
 </body>
 </html>
