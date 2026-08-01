@@ -499,7 +499,7 @@
 
 <main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from splits, plus your own submissions when a release has no split doc at all. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each contributor's locked %, crediting their share and the rest to the owner. Solo releases (no collaborators, no split doc) get the full amount credited straight to the owner — no division.</div>
+  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -685,17 +685,19 @@ function buildFinanceMap(splits) {
   return map;
 }
 
-/* Adds submissions that have no corresponding split doc as solo owned releases.
-   Earlier versions tried to detect "has collaborators" by matching each
-   royaltySplits entry's email against the submission's own owner email —
-   but a submission can list its owner under a slightly different email in
-   royaltySplits than in its top-level `email` field, which made that entry
-   look like a stranger "collaborator" and silently hid genuinely solo
-   releases (this is what was hiding "Lighter"). The reliable signal is much
-   simpler: just count how many people are listed. One person = solo,
-   regardless of whose email it is. Two or more = a real collab release,
-   which should already be showing via a doc in the `splits` collection
-   (checked here only by title match, purely to avoid double-counting).
+/* Adds releases that have no corresponding doc in the `splits` collection at
+   all — whether solo or multi-contributor. "Lighter" is the case that
+   exposed why this matters: it has 3 people in its own royaltySplits array
+   (with splitLocked: true and invite emails already sent), but the app never
+   actually created a splits doc for it. So the old logic — "solo goes here,
+   multi-person means look for a splits doc" — correctly found no match and
+   just hid it, which is safe but useless.
+   The fix: when no matching splits doc exists for a release (by title),
+   build the entry straight from the submission's own royaltySplits array,
+   regardless of how many people are on it. Distributing on this kind of
+   entry writes balances directly onto the submission doc's royaltySplits
+   field (see window.distributeSubmissionMulti below) — same math as the
+   real splits-based Distribute, just a different document to update.
    Only `status === 'Approved'` submissions are counted as earning-worthy —
    this filters out drafts, rejected, and stray duplicate submission docs. */
 function attachSubmissionsToFinanceMap(map, submissions, usersById) {
@@ -705,7 +707,6 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
   };
 
   let unmatchedOwner = 0;
-  let missingSplitDoc = 0;
 
   submissions.forEach(s => {
     if ((s.status || '').toLowerCase() !== 'approved') return;
@@ -714,35 +715,42 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
     if (!ownerEm) { unmatchedOwner++; return; }
 
     const title = resolveSubmissionTitle(s);
-    const royaltySplits = Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
-    const isSolo = royaltySplits.length <= 1;
-
     const bucket = ensure(ownerEm);
+
     const matchingSplitEntry = bucket.owned.find(
       e => e.type === 'split' && e.songTitle.toLowerCase().trim() === title.toLowerCase().trim()
     );
+    if (matchingSplitEntry) return; // a real splits doc already covers this release
 
-    if (!isSolo) {
-      // Multiple people listed — real collab release, belongs in the splits collection, not here.
-      if (!matchingSplitEntry) missingSplitDoc++;
-      return;
-    }
+    const royaltySplits = Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
+    const others = royaltySplits
+      .filter(r => normEmail(r.email) !== ownerEm)
+      .map(r => ({ name: r.name || r.email, email: r.email, pct: parseFloat(r.pct) || 0, balance: parseFloat(r.balance) || 0 }));
+    const othersPctSum = others.reduce((sum, c) => sum + c.pct, 0);
+    const ownerEffPct = Math.max(0, 100 - othersPctSum);
+    const ownerBal = parseFloat(s.earningsBalance) || 0;
 
-    if (matchingSplitEntry) return; // already covered somehow — don't duplicate
-
-    const bal = parseFloat(s.earningsBalance) || 0;
     bucket.owned.push({
-      type: 'solo', id: s.id, songTitle: title,
-      others: [], ownerEffPct: 100, ownerBalance: bal
+      type: others.length ? 'submission' : 'solo',
+      id: s.id, songTitle: title,
+      others, ownerEffPct, ownerBalance: ownerBal
     });
-    bucket.total += bal;
+    bucket.total += ownerBal;
+
+    others.forEach(c => {
+      const em = normEmail(c.email);
+      if (!em) return;
+      const cbucket = ensure(em);
+      cbucket.credits.push({
+        splitId: s.id, songTitle: title,
+        ownerEmail: s.email || '', pct: c.pct, balance: c.balance
+      });
+      cbucket.total += c.balance;
+    });
   });
 
   if (unmatchedOwner) {
     console.warn(`${unmatchedOwner} submission(s) could not be matched to a user (no email/userId match).`);
-  }
-  if (missingSplitDoc) {
-    console.warn(`${missingSplitDoc} submission(s) list multiple contributors but no matching split doc was found — check the splits collection.`);
   }
 }
 
@@ -823,7 +831,9 @@ function buildOwnedSection(entries) {
     const inputId = `payout-${type}-${id}`;
     const onclickCall = type === 'split'
       ? `window.distribute('${id}', this)`
-      : `window.distributeSolo('${id}', this)`;
+      : type === 'submission'
+        ? `window.distributeSubmissionMulti('${id}', this)`
+        : `window.distributeSolo('${id}', this)`;
 
     return `
       <div class="owned-song">
@@ -1032,6 +1042,62 @@ window.distribute = async function (splitId, btn) {
     await updateDoc(ref, {
       contributors: updatedContributors,
       ownerBalance: increment(ownerShare),
+      lastPayoutAt: serverTimestamp()
+    });
+
+    toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
+
+    input.value = '';
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── DISTRIBUTE PAYOUT (multi-contributor release with NO splits doc —
+   like "Lighter": splitLocked, invites sent, but the splits collection doc
+   never got created). Same math as window.distribute above, just written
+   onto the submission doc's own royaltySplits/earningsBalance fields
+   instead of a splits doc's contributors/ownerBalance fields. ── */
+window.distributeSubmissionMulti = async function (submissionId, btn) {
+  const input = document.getElementById(`payout-submission-${submissionId}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const amount = parseFloat(input.value);
+  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const ref  = doc(db, 'submissions', submissionId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
+
+    const data = snap.data();
+    const ownerEm = normEmail(data.email);
+    const royaltySplits = Array.isArray(data.royaltySplits) ? data.royaltySplits : [];
+
+    const others = royaltySplits.filter(r => normEmail(r.email) !== ownerEm);
+    const othersPctSum = others.reduce((sum, r) => sum + (parseFloat(r.pct) || 0), 0);
+    const ownerEffPct = Math.max(0, 100 - othersPctSum);
+
+    const updatedRoyaltySplits = royaltySplits.map(r => {
+      if (normEmail(r.email) === ownerEm) return r;
+      const share = amount * ((parseFloat(r.pct) || 0) / 100);
+      return { ...r, balance: (parseFloat(r.balance) || 0) + share };
+    });
+
+    const ownerShare = amount * (ownerEffPct / 100);
+
+    await updateDoc(ref, {
+      royaltySplits: updatedRoyaltySplits,
+      earningsBalance: increment(ownerShare),
       lastPayoutAt: serverTimestamp()
     });
 
