@@ -333,7 +333,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <div class="role-option-txt">
-          <div class="role-option-title">I'm a Contributor</div>
+          <div class="role-option-title">I'm a Collaborator</div>
           <div class="role-option-sub">Check the splits you've been added to</div>
         </div>
         <div class="role-option-arrow">
@@ -427,6 +427,7 @@ const ADMIN_EMAIL             = "444musicdistro@gmail.com";
 
 /* ── HELPERS ── */
 const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
+const OWNER_COLOR = '#ffffff'; // distinct fixed color for the owner's auto-share, never reused for collaborators
 const clr = i => PALETTE[i % PALETTE.length];
 function initials(n){ if(!n)return'?'; const p=n.trim().split(/\s+/); return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -441,9 +442,19 @@ function showToast(msg,type){
   t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3600);
 }
 
-function buildDonut(collabs){
-  const total=collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
+/* buildDonut now always includes the owner's implicit share (ownerPct) as
+   the first segment, using a fixed OWNER_COLOR — the owner is never part
+   of the `collabs` array itself, so backend/contributor data is untouched. */
+function buildDonut(collabs, ownerPct){
+  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
+  const total = Math.min(100, collabsTotal + (parseFloat(ownerPct)||0));
   const R=30,C=2*Math.PI*R; let off=0,segs='';
+  const op = parseFloat(ownerPct)||0;
+  if(op > 0){
+    const f=op/100, d=f*C, g=C-d;
+    segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${OWNER_COLOR}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`;
+    off+=d;
+  }
   collabs.forEach((c,i)=>{ const f=(parseFloat(c.pct)||0)/100,d=f*C,g=C-d; segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${clr(i)}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`; off+=d; });
   return {segs,total};
 }
@@ -456,6 +467,9 @@ function buildDonut(collabs){
    [A] submissions/{submissionId}  (existing — updated)
        + contributorEmails: string[]   ← new field for easy querying
        + royaltySplits, splitLocked, splitLockedAt, splitEmailResults (unchanged)
+       royaltySplits stores ONLY actual collaborators — the owner's share is
+       always derived on render as 100 - sum(royaltySplits), never written
+       as a fake collaborator entry.
 
    [B] splits/{auto-id}  ← NEW dedicated collection
        {
@@ -469,6 +483,8 @@ function buildDonut(collabs){
                                    ↑ balance starts at 0; Admin sets it in Firestore
          ]
        }
+       contributors here also NEVER includes the owner — only real
+       collaborators added via "Add Collaborator".
 
    Contributor Dashboard queries:
      db.collection('splits')
@@ -574,12 +590,25 @@ function renderCard(rel,rid,collabs,locked){
   const card=document.getElementById('sc-'+rid);
   if(!card)return;
   const stCls=(rel.status||'Pending').toLowerCase().trim().replace(/\s+/g,'-');
-  const {segs,total}=buildDonut(collabs);
-  const rem=Math.max(0,100-total);
-  const tCls=total>100?'ft-danger':total===100?'ft-ok':'ft-warn';
-  const canSubmit=Math.abs(total-100)<0.05&&collabs.length>0;
 
-  const legHtml=collabs.slice(0,3).map((c,i)=>`
+  // Owner always auto-owns whatever percentage collaborators haven't taken.
+  // The owner is NEVER stored inside `collabs` — it's purely derived here.
+  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
+  const ownerPct = Math.max(0, 100 - collabsTotal);
+  const ownerName = rel.artistName || 'Owner';
+
+  const {segs,total}=buildDonut(collabs, ownerPct);
+  const tCls = total>100.05 ? 'ft-danger' : 'ft-ok'; // always complete by design
+  const canSubmit = true; // owner + collaborators always sum to 100% by construction
+
+  const ownerLegendHtml=`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${OWNER_COLOR}"></div>
+      <span class="legend-name">${esc(ownerName)} <span style="color:var(--text-3);font-weight:500;">(Owner)</span></span>
+      <span class="legend-pct">${ownerPct.toFixed(1)}%</span>
+    </div>`;
+
+  const legHtml=ownerLegendHtml+collabs.slice(0,3).map((c,i)=>`
     <div class="legend-item">
       <div class="legend-dot" style="background:${clr(i)}"></div>
       <span class="legend-name">${esc(c.name)}</span>
@@ -630,22 +659,22 @@ function renderCard(rel,rid,collabs,locked){
       </div>
     </div>
     <div class="sc-body">
-      <div class="sec-lbl">Split Overview <span>${collabs.length} ${collabs.length===1?'person':'people'}</span></div>
+      <div class="sec-lbl">Split Overview <span>${collabs.length+1} ${collabs.length+1===1?'person':'people'}</span></div>
       <div class="split-visual">
         <div class="donut-wrap">
           <svg viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg">
             <circle class="donut-bg" cx="38" cy="38" r="30"/>
-            ${collabs.length>0?segs:''}
+            ${segs}
           </svg>
           <div class="donut-center">
             <span class="donut-pct">${Math.round(total)}%</span>
-            <span class="donut-sub">${total>=100?'done':'split'}</span>
+            <span class="donut-sub">split</span>
           </div>
         </div>
-        <div class="split-legend">${collabs.length>0?legHtml:'<span style="font-size:11px;color:var(--text-3);font-style:italic;">No splits yet</span>'}</div>
+        <div class="split-legend">${legHtml}</div>
       </div>
       <div class="sec-lbl" style="margin-top:14px;">Collaborators</div>
-      <div class="collabs-list">${collabs.length>0?rowsHtml:'<div class="no-collabs">No collaborators added yet.</div>'}</div>
+      <div class="collabs-list">${collabs.length>0?rowsHtml:'<div class="no-collabs">No collaborators added yet — you own 100% of this release.</div>'}</div>
       ${!locked?`
       <button class="add-toggle" onclick="toggleForm('${rid}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -686,8 +715,8 @@ function renderCard(rel,rid,collabs,locked){
             </div>
           </div>
           <div class="form-group" style="justify-content:flex-end;">
-            <label class="form-lbl">Remaining</label>
-            <div class="rem-pill warn" id="rp-${rid}">${rem.toFixed(1)}% left</div>
+            <label class="form-lbl">From Owner's Share</label>
+            <div class="rem-pill warn" id="rp-${rid}">${ownerPct.toFixed(1)}% available</div>
           </div>
         </div>
         <div class="form-actions">
@@ -702,8 +731,7 @@ function renderCard(rel,rid,collabs,locked){
     <div class="sc-footer">
       <div class="footer-total">
         Total: <strong class="${tCls}">${total.toFixed(1)}%</strong>
-        ${total>100?'<span class="ft-danger" style="font-size:10px"> — over limit</span>':''}
-        ${total===100?'<span class="ft-ok" style="font-size:10px"> — complete</span>':''}
+        <span class="ft-ok" style="font-size:10px"> — complete (owner + collaborators)</span>
       </div>
       ${locked
         ?`<button class="btn-view" onclick="openView('${rid}')">
@@ -714,7 +742,7 @@ function renderCard(rel,rid,collabs,locked){
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
             </svg>
-            ${canSubmit?'Submit &amp; Invite':'Needs 100%'}
+            Submit &amp; Invite
           </button>`
       }
     </div>`;
@@ -730,9 +758,9 @@ function toggleForm(rid,force){
 function onPct(rid){
   const cur=(window._SD[rid]||[]).reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
   const np=parseFloat(document.getElementById('fpc-'+rid)?.value)||0;
-  const rem=100-cur-np;
+  const rem=100-cur-np; // remaining from the owner's share after this new entry
   const el=document.getElementById('rp-'+rid); if(!el)return;
-  el.textContent=rem>=0?`${rem.toFixed(1)}% left`:`${Math.abs(rem).toFixed(1)}% over`;
+  el.textContent=rem>=0?`${rem.toFixed(1)}% available`:`${Math.abs(rem).toFixed(1)}% over owner's share`;
   el.className='rem-pill '+(rem<0?'danger':rem===0?'ok':'warn');
 }
 
@@ -748,7 +776,7 @@ async function addCollab(rid){
   if(!pct||pct<=0)       {showToast('Enter a valid percentage','error');document.getElementById('fpc-'+rid)?.focus();return;}
   const collabs=window._SD[rid]||[];
   const cur=collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  if(cur+pct>100.001){showToast(`Only ${(100-cur).toFixed(1)}% remaining`,'warn');return;}
+  if(cur+pct>100.001){showToast(`Only ${(100-cur).toFixed(1)}% remaining from the owner's share`,'warn');return;}
   if(collabs.some(c=>c.name.toLowerCase()===name.toLowerCase())){showToast('Name already exists in this split','warn');return;}
   const btn=document.getElementById('addBtn-'+rid);
   if(btn){btn.disabled=true;btn.textContent='Saving...';}
@@ -791,7 +819,7 @@ function initiateSubmit(rid){
         <div class="confirm-preview-email">${esc(c.email)}</div>
       </div>
       <span class="confirm-preview-pct" style="color:${clr(i)}">${parseFloat(c.pct)||0}%</span>
-    </div>`).join('');
+    </div>`).join('') || '<div style="font-size:12px;color:var(--text-3);font-style:italic;padding:6px 2px;">No collaborators — you own 100% of this release.</div>';
   document.getElementById('confirmOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -807,6 +835,7 @@ document.getElementById('confirmGo').onclick=async()=>{
   const collabs=window._SD[rid]||[];
   const progressStates=collabs.map(()=>'pending');
   const renderProgress=()=>{
+    if(collabs.length===0)return;
     document.getElementById('confirmPreviewList').innerHTML=collabs.map((c,i)=>`
       <div class="send-row">
         <div class="send-dot ${progressStates[i]}"></div>
@@ -821,7 +850,7 @@ document.getElementById('confirmGo').onclick=async()=>{
   btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Sending invites...';
   document.getElementById('confirmBack').style.display='none';
   const lbl=document.querySelector('.confirm-preview-label');
-  if(lbl)lbl.textContent='Sending invites — please wait...';
+  if(lbl)lbl.textContent=collabs.length?'Sending invites — please wait...':'Locking split...';
   renderProgress();
   try{
     const results=await sendAllEmails(window._RM[rid],collabs,(idx,status)=>{progressStates[idx]=status;renderProgress();});
@@ -834,7 +863,7 @@ document.getElementById('confirmGo').onclick=async()=>{
     document.body.style.overflow=''; _pRid=null;
     showToast(
       failedCount===0
-        ?`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent & stored for contributor login!`
+        ?(collabs.length?`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent & stored for contributor login!`:'Split locked — you own 100% of this release.')
         :`Split locked. ${failedCount} invite(s) may have failed — check EmailJS logs.`,
       failedCount===0?'success':'warn'
     );
@@ -853,6 +882,17 @@ function openView(rid){
   const emailResults=Array.isArray(rel.splitEmailResults)?rel.splitEmailResults:[];
   const getResult=(email)=>emailResults.find(r=>r.email===email)||{contributorStatus:'unknown'};
   const coverHtml=rel.coverURL?`<img src="${esc(rel.coverURL)}" alt="">`:`<div class="modal-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
+  const ownerPct = Math.max(0, 100 - collabsTotal);
+  const ownerRowHtml = `
+      <div class="modal-collab">
+        <div class="modal-collab-av" style="background:${OWNER_COLOR};color:#000;">${esc(initials(rel.artistName||'Owner'))}</div>
+        <div class="modal-collab-info">
+          <div class="modal-collab-name">${esc(rel.artistName||'Owner')} <span style="color:var(--text-3);font-weight:500;">(Owner)</span></div>
+          <div class="modal-collab-role">Release Owner</div>
+        </div>
+        <div class="modal-collab-pct" style="color:${OWNER_COLOR}">${ownerPct.toFixed(1)}%</div>
+      </div>`;
   const items=collabs.map((c,i)=>{
     const res=getResult(c.email);
     const chipOk=res.contributorStatus==='sent';
@@ -884,7 +924,7 @@ function openView(rid){
       <p>Invites sent to each collaborator's Gmail. A copy was sent to <strong>444musicdistro@gmail.com</strong>. Split data is stored so contributors can log in to view their percentage. This split is <strong>permanently locked.</strong></p>
     </div>
     <div class="modal-sec-lbl">Collaborators &amp; Invite Status</div>
-    <div class="modal-collabs">${items}</div>`;
+    <div class="modal-collabs">${ownerRowHtml}${items}</div>`;
   document.getElementById('viewOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -953,11 +993,11 @@ onAuthStateChanged(auth, async user => {
     snap.forEach(ds=>{
       const data=ds.data(), id=ds.id, locked=data.splitLocked===true;
       window._RM[id]={...data,_id:id};
+      // Owner is never seeded as a fake collaborator — royaltySplits holds
+      // only real collaborators. The owner's share (100 - sum) is derived
+      // automatically every time the card renders.
       window._SD[id]=Array.isArray(data.royaltySplits)?data.royaltySplits:[];
       if(locked)window._LK.add(id);
-      if(!locked&&window._SD[id].length===0&&data.artistName){
-        window._SD[id]=[{name:data.artistName.trim(),role:'Artist',email:data.email||'',phone:data.phone||'',pct:100}];
-      }
       const card=document.createElement('div');
       card.className='split-card'; card.id='sc-'+id;
       card.style.cssText='opacity:0;transform:translateY(18px);';
