@@ -499,7 +499,7 @@
 
 <main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from splits. To pay out a release, enter an amount under that song and hit Distribute — it divides the payout by each contributor's locked %, credits their share straight to their balance, and adds the rest to the owner. Solo releases (no collaborators) go 100% to the owner.</div>
+  <div class="page-sub">Total earnings are auto-calculated from splits, plus your own submissions when a release has no split doc at all. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each contributor's locked %, crediting their share and the rest to the owner. Solo releases (no collaborators, no split doc) get the full amount credited straight to the owner — no division.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -570,8 +570,9 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
-let allUsers  = [];
-let allSplits = [];
+let allUsers       = [];
+let allSplits      = [];
+let allSubmissions = [];
 let financeByEmail = {};
 
 /* ── HELPERS ── */
@@ -591,6 +592,26 @@ function fmtMoney(n) {
   return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+/* Submission field resolvers — submissions collection isn't guaranteed to use
+   the same field names as splits, so check the common variants used across
+   the app (mobile app writes songTitle/title, userId for the owner). */
+function resolveSubmissionTitle(s) {
+  return (s.songTitle || s.title || s.trackTitle || s.trackName || s.name || '').trim() || 'Untitled';
+}
+function resolveSubmissionOwnerEmailDirect(s) {
+  return (s.email || s.userEmail || s.ownerEmail || s.artistEmail || '').trim();
+}
+function resolveSubmissionOwnerId(s) {
+  return s.userId || s.uid || s.userID || s.ownerId || '';
+}
+function resolveSubmissionOwnerEmail(s, usersById) {
+  const direct = normEmail(resolveSubmissionOwnerEmailDirect(s));
+  if (direct) return direct;
+  const uid = resolveSubmissionOwnerId(s);
+  if (uid && usersById[uid]) return normEmail(resolveEmail(usersById[uid]));
+  return '';
+}
+
 /* ── TOAST ── */
 function toast(msg, type = 'success') {
   const c = document.getElementById('toasts');
@@ -602,14 +623,23 @@ function toast(msg, type = 'success') {
 }
 
 /* ── FINANCE MODEL ──
-   For every split:
+   Every owned release — whether it came from a locked split doc or from a
+   submission that never got one — is normalized into the same shape:
+     { type: 'split' | 'solo', id, songTitle, others, ownerEffPct, ownerBalance }
+
+   For splits:
      - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
      - ownerEffPct = 100 - sum(other contributors' pct)   (absorbs any self-listed owner row automatically)
      - ownerBalance (field on the split doc) = money already credited to the owner for that song
      - each real collaborator's own balance field = money already credited to them for that song
 
+   For submissions with NO matching split doc (solo releases — the bug this fixes):
+     - others = [] always, ownerEffPct = 100 always — money is never divided
+     - ownerBalance comes from the submission's own `earningsBalance` field
+
    "Has releases" (for grouping) means this user shows up in financeByEmail at all —
-   either as an owner of at least one split, or as a paid collaborator on someone else's. */
+   either as an owner of at least one split/solo release, or as a paid collaborator
+   on someone else's split. */
 function splitBreakdown(s) {
   const ownerEm = normEmail(s.ownerEmail);
   const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
@@ -632,7 +662,10 @@ function buildFinanceMap(splits) {
     if (ownerEm) {
       const bucket = ensure(ownerEm);
       const ownerBal = parseFloat(s.ownerBalance) || 0;
-      bucket.owned.push({ split: s, others, ownerEffPct, ownerBalance: ownerBal });
+      bucket.owned.push({
+        type: 'split', id: s.id, songTitle: s.songTitle || 'Untitled',
+        others, ownerEffPct, ownerBalance: ownerBal
+      });
       bucket.total += ownerBal;
     }
 
@@ -650,6 +683,43 @@ function buildFinanceMap(splits) {
   });
 
   return map;
+}
+
+/* Adds submissions that have no corresponding split doc as solo owned releases.
+   A submission is treated as "already covered" if its owner already has a split
+   entry with the same song title (locked splits are created from a submission,
+   so their titles should match). Anything left over is a real, un-split release —
+   the ones that were previously invisible on this page. */
+function attachSubmissionsToFinanceMap(map, submissions, usersById) {
+  const ensure = (email) => {
+    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
+    return map[email];
+  };
+
+  let unmatched = 0;
+  submissions.forEach(s => {
+    const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
+    if (!ownerEm) { unmatched++; return; }
+
+    const title = resolveSubmissionTitle(s);
+    const bucket = ensure(ownerEm);
+
+    const alreadyHasSplit = bucket.owned.some(
+      e => e.type === 'split' && e.songTitle.toLowerCase().trim() === title.toLowerCase().trim()
+    );
+    if (alreadyHasSplit) return;
+
+    const bal = parseFloat(s.earningsBalance) || 0;
+    bucket.owned.push({
+      type: 'solo', id: s.id, songTitle: title,
+      others: [], ownerEffPct: 100, ownerBalance: bal
+    });
+    bucket.total += bal;
+  });
+
+  if (unmatched) {
+    console.warn(`${unmatched} submission(s) could not be matched to a user (no email/userId match) — check field names.`);
+  }
 }
 
 function hasAnyRelease(email) {
@@ -673,14 +743,21 @@ window.loadUsers = async function () {
   document.getElementById('countLabel').textContent = 'Loading…';
 
   try {
-    const [usersSnap, splitsSnap] = await Promise.all([
+    const [usersSnap, splitsSnap, submissionsSnap] = await Promise.all([
       getDocs(collection(db, 'users')),
-      getDocs(collection(db, 'splits'))
+      getDocs(collection(db, 'splits')),
+      getDocs(collection(db, 'submissions'))
     ]);
 
-    allUsers  = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    allSplits = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allUsers       = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allSplits      = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allSubmissions = submissionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const usersById = {};
+    allUsers.forEach(u => { usersById[u.id] = u; });
+
     financeByEmail = buildFinanceMap(allSplits);
+    attachSubmissionsToFinanceMap(financeByEmail, allSubmissions, usersById);
 
     allUsers.sort((a, b) => {
       const ta = financeByEmail[normEmail(resolveEmail(a))]?.total || 0;
@@ -706,18 +783,29 @@ window.loadUsers = async function () {
 /* ── OWNED / CREDITS PANELS ── */
 function buildOwnedSection(entries) {
   if (!entries.length) return '';
-  const blocks = entries.map(({ split, others, ownerEffPct, ownerBalance }) => {
+  const blocks = entries.map(entry => {
+    const { type, id, songTitle, others, ownerEffPct, ownerBalance } = entry;
+
     const collabRows = others.map(c => `
       <div class="collab-row">
         <span><span class="collab-name">${esc(c.name || c.email)}</span><span class="collab-pct">${(parseFloat(c.pct)||0).toFixed(1)}%</span></span>
         <span class="collab-balance">${fmtMoney(c.balance)}</span>
       </div>`).join('');
 
+    const tagLabel = others.length
+      ? others.length + ' collaborator' + (others.length > 1 ? 's' : '')
+      : 'Solo release';
+
+    const inputId = `payout-${type}-${id}`;
+    const onclickCall = type === 'split'
+      ? `window.distribute('${id}', this)`
+      : `window.distributeSolo('${id}', this)`;
+
     return `
       <div class="owned-song">
         <div class="owned-song-head">
-          <div class="owned-song-title">${esc(split.songTitle || 'Untitled')}</div>
-          <div class="owned-song-tag">${others.length ? others.length + ' collaborator' + (others.length > 1 ? 's' : '') : 'Solo release'}</div>
+          <div class="owned-song-title">${esc(songTitle)}</div>
+          <div class="owned-song-tag">${tagLabel}</div>
         </div>
         ${collabRows}
         <div class="owner-share-row">
@@ -725,8 +813,8 @@ function buildOwnedSection(entries) {
           <span class="bal">${fmtMoney(ownerBalance)}</span>
         </div>
         <div class="payout-row">
-          <input type="number" class="payout-input" id="payout-${split.id}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
-          <button class="distribute-btn" onclick="window.distribute('${split.id}', this)">Distribute</button>
+          <input type="number" class="payout-input" id="${inputId}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
+          <button class="distribute-btn" onclick="${onclickCall}">Distribute</button>
         </div>
       </div>`;
   }).join('');
@@ -862,7 +950,7 @@ function applyFilters() {
         const email = normEmail(resolveEmail(u));
         const finance = financeByEmail[email] || { owned: [], credits: [] };
         const songMatch =
-          finance.owned.some(o => (o.split.songTitle || '').toLowerCase().includes(q)) ||
+          finance.owned.some(o => (o.songTitle || '').toLowerCase().includes(q)) ||
           finance.credits.some(c => c.songTitle.toLowerCase().includes(q) || (c.ownerEmail || '').toLowerCase().includes(q));
         return (resolveName(u) || '').toLowerCase().includes(q) ||
                email.includes(q) ||
@@ -884,9 +972,9 @@ document.getElementById('search').addEventListener('input', applyFilters);
 document.getElementById('groupSelect').addEventListener('change', applyFilters);
 document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
-/* ── DISTRIBUTE PAYOUT ── */
+/* ── DISTRIBUTE PAYOUT (split-based release, may have collaborators) ── */
 window.distribute = async function (splitId, btn) {
-  const input = document.getElementById(`payout-${splitId}`);
+  const input = document.getElementById(`payout-split-${splitId}`);
   if (!input) { toast('Input not found.', 'error'); return; }
 
   const amount = parseFloat(input.value);
@@ -924,6 +1012,41 @@ window.distribute = async function (splitId, btn) {
     });
 
     toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
+
+    input.value = '';
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── DISTRIBUTE PAYOUT (solo release — a submission with no split doc at all).
+   No collaborators exist for these, so the full amount goes straight to the
+   owner. This writes directly to the submission doc's earningsBalance field
+   rather than touching the splits collection. ── */
+window.distributeSolo = async function (submissionId, btn) {
+  const input = document.getElementById(`payout-solo-${submissionId}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const amount = parseFloat(input.value);
+  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const ref = doc(db, 'submissions', submissionId);
+    await updateDoc(ref, {
+      earningsBalance: increment(amount),
+      lastPayoutAt: serverTimestamp()
+    });
+
+    toast(`Distributed ${fmtMoney(amount)} — full amount to owner (solo release, no split)`, 'success');
 
     input.value = '';
     await loadUsers();
