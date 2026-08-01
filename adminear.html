@@ -11,21 +11,21 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg-void:    #050505;
-    --bg-card:    #0e0e0e;
-    --bg-card2:   #141414;
-    --bg-input:   #0a0a0a;
-    --border:     rgba(255,255,255,0.09);
-    --border-lt:  rgba(255,255,255,0.16);
-    --accent:     #ffffff;
-    --accent-dim: rgba(255,255,255,0.08);
-    --accent-glow:rgba(255,255,255,0.18);
-    --green:      #22c55e;
-    --green-dim:  rgba(34,197,94,0.12);
-    --red:        #ff4d6d;
-    --text-pri:   #f5f5f5;
-    --text-sec:   #9a9a9a;
-    --text-dim:   #4a4a4a;
+    --bg-void:    #ffffff;
+    --bg-card:    #ffffff;
+    --bg-card2:   #fafafa;
+    --bg-input:   #f4f4f4;
+    --border:     rgba(0,0,0,0.10);
+    --border-lt:  rgba(0,0,0,0.22);
+    --accent:     #000000;
+    --accent-dim: rgba(0,0,0,0.05);
+    --accent-glow:rgba(0,0,0,0.10);
+    --green:      #17803d;
+    --green-dim:  rgba(23,128,61,0.08);
+    --red:        #d92d3f;
+    --text-pri:   #0a0a0a;
+    --text-sec:   #5c5c5c;
+    --text-dim:   #a3a3a3;
     --radius:     14px;
     --radius-sm:  9px;
   }
@@ -43,8 +43,8 @@
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 60% -10%, rgba(255,255,255,0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 0% 80%,  rgba(255,255,255,0.03) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 60% -10%, rgba(0,0,0,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 0% 80%,  rgba(0,0,0,0.02) 0%, transparent 50%);
     pointer-events: none; z-index: 0;
   }
 
@@ -59,12 +59,13 @@
     width: 100%; max-width: 360px;
     background: var(--bg-card); border: 1px solid var(--border-lt);
     border-radius: 18px; padding: 34px 28px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
   }
   .gate-icon {
     width: 48px; height: 48px; margin: 0 auto 18px;
-    background: var(--accent-dim); border: 1px solid var(--border-lt);
+    background: var(--accent); border: 1px solid var(--accent);
     border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
+    font-size: 20px; filter: grayscale(1) brightness(3);
   }
   .gate-box h2 { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; letter-spacing: -0.2px; }
   .gate-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
@@ -78,10 +79,10 @@
   .gate-input::placeholder { color: var(--text-dim); letter-spacing: normal; }
   .gate-btn {
     width: 100%; margin-top: 10px; padding: 13px; border-radius: 10px;
-    background: var(--accent); color: #000; font-weight: 700; font-size: 13.5px;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 13.5px;
     border: none; cursor: pointer; transition: opacity 0.15s;
   }
-  .gate-btn:hover { opacity: 0.85; }
+  .gate-btn:hover { opacity: 0.82; }
   .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .gate-error { min-height: 16px; font-size: 12px; color: var(--red); margin-top: 12px; }
   .gate-shake { animation: shake 0.4s; }
@@ -95,7 +96,7 @@
   /* HEADER */
   .header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(5,5,5,0.92);
+    background: rgba(255,255,255,0.88);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 0 40px;
@@ -113,7 +114,7 @@
     background: var(--accent);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px; color: #000; font-weight: 800;
+    font-size: 15px; color: #fff; font-weight: 800;
   }
 
   .logo-text span { color: var(--text-sec); font-weight: 500; }
@@ -121,13 +122,13 @@
   .header-right { display: flex; align-items: center; gap: 12px; }
 
   .refresh-btn {
-    background: var(--bg-card); border: 1px solid var(--border);
-    color: var(--text-sec); font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    background: var(--bg-void); border: 1px solid var(--border-lt);
+    color: var(--text-pri); font-family: 'IBM Plex Mono', monospace; font-size: 11px;
     padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
+    transition: background 0.2s, color 0.2s;
     letter-spacing: 0.5px;
   }
-  .refresh-btn:hover { border-color: var(--border-lt); color: var(--text-pri); }
+  .refresh-btn:hover { background: var(--accent); color: #fff; }
 
   .header-tag {
     font-size: 11px; color: var(--text-dim);
@@ -138,7 +139,7 @@
 
   .dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); box-shadow: 0 0 8px rgba(255,255,255,0.5);
+    background: var(--accent); box-shadow: 0 0 6px rgba(0,0,0,0.4);
     animation: pulse 2s infinite;
   }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
@@ -165,7 +166,7 @@
   }
 
   .stat-pill {
-    background: var(--bg-card); border: 1px solid var(--border);
+    background: var(--bg-card2); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 16px 18px;
   }
 
@@ -191,7 +192,7 @@
   }
 
   .search-input {
-    width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+    width: 100%; background: var(--bg-card2); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 14px 16px 14px 44px;
     font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-pri);
     outline: none; transition: border-color 0.2s, box-shadow 0.2s;
@@ -199,17 +200,17 @@
   .search-input::placeholder { color: var(--text-dim); }
   .search-input:focus {
     border-color: var(--border-lt);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
   }
 
   .group-select {
-    background: var(--bg-card); border: 1px solid var(--border);
+    background: var(--bg-card2); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 0 16px;
-    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-sec);
-    outline: none; cursor: pointer; min-width: 190px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-pri);
+    outline: none; cursor: pointer; min-width: 220px;
   }
   .group-select:focus { border-color: var(--border-lt); }
-  .group-select option { background: var(--bg-card); color: var(--text-pri); }
+  .group-select option { background: #fff; color: var(--text-pri); }
 
   /* TOOLBAR */
   .toolbar {
@@ -230,8 +231,8 @@
     content: ''; flex: 1; height: 1px; background: var(--border);
   }
   .group-count {
-    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-dim);
-    background: var(--bg-card); border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-sec);
+    background: var(--bg-card2); border: 1px solid var(--border);
     padding: 2px 8px; border-radius: 20px;
   }
 
@@ -253,18 +254,18 @@
 
   .card:hover {
     border-color: var(--border-lt);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.06);
   }
 
   .card-top { display: flex; align-items: center; gap: 16px; }
 
   .avatar {
     width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
-    background: var(--accent-dim);
-    border: 1px solid var(--border-lt);
+    background: var(--accent);
+    border: 1px solid var(--accent);
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 15px;
-    color: var(--text-pri); text-transform: uppercase;
+    color: #fff; text-transform: uppercase;
   }
 
   .card-info { flex: 1; min-width: 0; }
@@ -331,8 +332,8 @@
 
   .owned-song-tag {
     font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    background: var(--accent-dim); color: var(--text-pri);
-    border: 1px solid var(--border-lt);
+    background: var(--accent); color: #fff;
+    border: 1px solid var(--accent);
     border-radius: 5px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0;
     font-family: 'IBM Plex Mono', monospace;
   }
@@ -358,23 +359,23 @@
   .payout-row { display: flex; gap: 8px; margin-top: 2px; }
 
   .payout-input {
-    flex: 1; min-width: 0; background: var(--bg-void); border: 1px solid var(--border);
+    flex: 1; min-width: 0; background: #fff; border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 10px 12px;
     font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px;
     color: var(--text-pri); outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .payout-input::placeholder { color: var(--text-dim); font-size: 11px; }
-  .payout-input:focus { border-color: var(--border-lt); box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+  .payout-input:focus { border-color: var(--border-lt); box-shadow: 0 0 0 2px rgba(0,0,0,0.04); }
 
   .distribute-btn {
-    background: var(--accent); border: none; color: #000;
+    background: var(--accent); border: 1px solid var(--accent); color: #fff;
     font-weight: 700; font-size: 11.5px;
     padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
     transition: opacity 0.2s, transform 0.15s;
     letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
   }
-  .distribute-btn:hover:not(:disabled) { opacity: 0.85; }
+  .distribute-btn:hover:not(:disabled) { opacity: 0.82; }
   .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
   .distribute-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -408,11 +409,12 @@
   }
 
   .toast {
-    background: var(--bg-card2); border: 1px solid var(--border);
+    background: #fff; border: 1px solid var(--border-lt);
     border-radius: var(--radius-sm); padding: 13px 18px;
     display: flex; align-items: center; gap: 10px;
     font-size: 12px; min-width: 240px; max-width: 90vw;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+    color: var(--text-pri);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
     animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
   }
 
@@ -523,9 +525,9 @@
         placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
     </div>
     <select class="group-select" id="groupSelect">
-      <option value="grouped">Group: Has splits / No splits</option>
-      <option value="has">Only artists with splits</option>
-      <option value="none">Only artists with no splits</option>
+      <option value="grouped">Group: has releases / no releases</option>
+      <option value="has">Only artists with releases</option>
+      <option value="none">Only artists with no releases at all</option>
       <option value="flat">No grouping (all artists)</option>
     </select>
   </div>
@@ -593,7 +595,15 @@ function toast(msg, type = 'success') {
   setTimeout(() => t.remove(), 3200);
 }
 
-/* ── FINANCE MODEL ── (unchanged logic — see distribute() below) */
+/* ── FINANCE MODEL ──
+   For every split:
+     - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
+     - ownerEffPct = 100 - sum(other contributors' pct)   (absorbs any self-listed owner row automatically)
+     - ownerBalance (field on the split doc) = money already credited to the owner for that song
+     - each real collaborator's own balance field = money already credited to them for that song
+
+   "Has releases" (for grouping) means this user shows up in financeByEmail at all —
+   either as an owner of at least one split, or as a paid collaborator on someone else's. */
 function splitBreakdown(s) {
   const ownerEm = normEmail(s.ownerEmail);
   const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
@@ -636,7 +646,7 @@ function buildFinanceMap(splits) {
   return map;
 }
 
-function hasAnySplit(email) {
+function hasAnyRelease(email) {
   const f = financeByEmail[normEmail(email)];
   return !!(f && (f.owned.length || f.credits.length));
 }
@@ -791,8 +801,8 @@ function render(data, mode) {
     return;
   }
 
-  const withSplits = data.filter(u => hasAnySplit(resolveEmail(u)));
-  const noSplits   = data.filter(u => !hasAnySplit(resolveEmail(u)));
+  const withReleases = data.filter(u => hasAnyRelease(resolveEmail(u)));
+  const noReleases    = data.filter(u => !hasAnyRelease(resolveEmail(u)));
 
   let counter = 0;
   const appendGroup = (label, list) => {
@@ -805,14 +815,14 @@ function render(data, mode) {
   };
 
   if (mode === 'has') {
-    appendGroup('Artists with splits', withSplits);
+    appendGroup('Artists with releases', withReleases);
   } else if (mode === 'none') {
-    appendGroup('Artists with no splits yet', noSplits);
+    appendGroup('Artists with no releases at all', noReleases);
   } else if (mode === 'flat') {
     data.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
   } else {
-    appendGroup('Artists with splits', withSplits);
-    appendGroup('Artists with no splits yet', noSplits);
+    appendGroup('Artists with releases', withReleases);
+    appendGroup('Artists with no releases at all', noReleases);
   }
 }
 
