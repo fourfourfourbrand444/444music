@@ -686,14 +686,16 @@ function buildFinanceMap(splits) {
 }
 
 /* Adds submissions that have no corresponding split doc as solo owned releases.
-   `splitLocked` turned out to be set true on every approved submission
-   regardless of whether it has collaborators — it means "royalty config is
-   finalized," not "a doc exists in the splits collection." So the real
-   signal is the submission's own `royaltySplits` array: if it contains
-   anyone besides the owner, this release has collaborators and should
-   already be showing via a real splits doc (checked by title match, purely
-   to avoid double-counting). If it's just the owner, it's a genuine solo
-   release with no split doc at all — that's the one this page was missing.
+   Earlier versions tried to detect "has collaborators" by matching each
+   royaltySplits entry's email against the submission's own owner email —
+   but a submission can list its owner under a slightly different email in
+   royaltySplits than in its top-level `email` field, which made that entry
+   look like a stranger "collaborator" and silently hid genuinely solo
+   releases (this is what was hiding "Lighter"). The reliable signal is much
+   simpler: just count how many people are listed. One person = solo,
+   regardless of whose email it is. Two or more = a real collab release,
+   which should already be showing via a doc in the `splits` collection
+   (checked here only by title match, purely to avoid double-counting).
    Only `status === 'Approved'` submissions are counted as earning-worthy —
    this filters out drafts, rejected, and stray duplicate submission docs. */
 function attachSubmissionsToFinanceMap(map, submissions, usersById) {
@@ -713,15 +715,15 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
 
     const title = resolveSubmissionTitle(s);
     const royaltySplits = Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
-    const otherContributors = royaltySplits.filter(r => normEmail(r.email) !== ownerEm);
+    const isSolo = royaltySplits.length <= 1;
 
     const bucket = ensure(ownerEm);
     const matchingSplitEntry = bucket.owned.find(
       e => e.type === 'split' && e.songTitle.toLowerCase().trim() === title.toLowerCase().trim()
     );
 
-    if (otherContributors.length > 0) {
-      // Has real collaborators — this belongs to the splits collection, not here.
+    if (!isSolo) {
+      // Multiple people listed — real collab release, belongs in the splits collection, not here.
       if (!matchingSplitEntry) missingSplitDoc++;
       return;
     }
@@ -740,7 +742,7 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
     console.warn(`${unmatchedOwner} submission(s) could not be matched to a user (no email/userId match).`);
   }
   if (missingSplitDoc) {
-    console.warn(`${missingSplitDoc} submission(s) have collaborators listed but no matching split doc was found — check the splits collection.`);
+    console.warn(`${missingSplitDoc} submission(s) list multiple contributors but no matching split doc was found — check the splits collection.`);
   }
 }
 
