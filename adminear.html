@@ -592,11 +592,11 @@ function fmtMoney(n) {
   return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-/* Submission field resolvers — submissions collection isn't guaranteed to use
-   the same field names as splits, so check the common variants used across
-   the app (mobile app writes songTitle/title, userId for the owner). */
+/* Submission field resolvers — confirmed against the real submissions schema:
+   releaseTitle, email, userId, status, splitLocked. Fallbacks kept for safety
+   in case any older doc used different naming. */
 function resolveSubmissionTitle(s) {
-  return (s.songTitle || s.title || s.trackTitle || s.trackName || s.name || '').trim() || 'Untitled';
+  return (s.releaseTitle || s.songTitle || s.title || s.trackTitle || s.trackName || s.name || '').trim() || 'Untitled';
 }
 function resolveSubmissionOwnerEmailDirect(s) {
   return (s.email || s.userEmail || s.ownerEmail || s.artistEmail || '').trim();
@@ -686,10 +686,14 @@ function buildFinanceMap(splits) {
 }
 
 /* Adds submissions that have no corresponding split doc as solo owned releases.
-   A submission is treated as "already covered" if its owner already has a split
-   entry with the same song title (locked splits are created from a submission,
-   so their titles should match). Anything left over is a real, un-split release —
-   the ones that were previously invisible on this page. */
+   A submission is treated as "already covered" primarily via its own
+   `splitLocked` flag — set to true the moment a splits doc is created for it,
+   so this is a direct, reliable signal rather than a guess. Title-matching
+   against existing split entries is kept only as a fallback for any older doc
+   that predates the splitLocked field.
+   Only `status === 'Approved'` submissions are counted as earning-worthy solo
+   releases — this also filters out drafts, rejected, and stray duplicate
+   submission docs that shouldn't show up as owed money. */
 function attachSubmissionsToFinanceMap(map, submissions, usersById) {
   const ensure = (email) => {
     if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
@@ -698,6 +702,9 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
 
   let unmatched = 0;
   submissions.forEach(s => {
+    if ((s.status || '').toLowerCase() !== 'approved') return;
+    if (s.splitLocked === true) return; // already represented via a splits doc
+
     const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
     if (!ownerEm) { unmatched++; return; }
 
