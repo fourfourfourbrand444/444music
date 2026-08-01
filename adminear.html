@@ -576,6 +576,7 @@ let allSplits      = [];
 let allSubmissions = [];
 let financeByEmail = {};
 let emailToUid     = {}; // normalized email -> users/{uid} doc id, rebuilt on every loadUsers()
+let validUserIds   = new Set(); // set of real users/{uid} doc IDs, rebuilt on every loadUsers()
 
 /* ── HELPERS ── */
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -612,6 +613,25 @@ function resolveSubmissionOwnerEmail(s, usersById) {
   const uid = resolveSubmissionOwnerId(s);
   if (uid && usersById[uid]) return normEmail(resolveEmail(usersById[uid]));
   return '';
+}
+
+/* ── OWNER/CONTRIBUTOR UID RESOLUTION ──
+   FIX (previously the root cause of owner earnings never syncing):
+   Submission docs carry their own userId/uid field, but for some accounts
+   that value is stale — left over from a re-signup, an account rebuild, or
+   an older ID scheme — and no longer matches any real users/{uid} doc. The
+   old code trusted that stored field FIRST and only fell back to the email
+   map if it was empty, so a stale-but-present ID silently won and the write
+   failed with "No document to update" (swallowed by bumpUserEarnings's
+   catch, so nothing visibly broke — the owner's balance just never moved).
+
+   Fix: only trust a stored ID if it actually exists in the current users
+   collection (validUserIds, rebuilt fresh every loadUsers()). Otherwise
+   fall back to the reliable email → uid map. Email match wins whenever the
+   stored ID doesn't check out. */
+function resolveOwnerUid(storedId, email) {
+  if (storedId && validUserIds.has(storedId)) return storedId;
+  return emailToUid[normEmail(email)] || '';
 }
 
 /* ── TOAST ── */
@@ -826,8 +846,10 @@ window.loadUsers = async function () {
 
     const usersById = {};
     emailToUid = {};
+    validUserIds = new Set();
     allUsers.forEach(u => {
       usersById[u.id] = u;
+      validUserIds.add(u.id);
       const em = normEmail(resolveEmail(u));
       if (em) emailToUid[em] = u.id;
     });
@@ -896,6 +918,7 @@ function buildOwnedSection(entries) {
           <span>Your share <span class="pct">${ownerEffPct.toFixed(1)}%</span></span>
           <span class="bal">${fmtMoney(ownerBalance)}</span>
         </div>
+        ${orphanWarning}
         <div class="payout-row">
           <input type="number" class="payout-input" id="${inputId}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
           <button class="distribute-btn" onclick="${onclickCall}">Distribute</button>
@@ -1097,11 +1120,13 @@ window.distribute = async function (splitId, btn) {
 
     // Sync users/{uid}.earnings for everyone who got paid in this split —
     // this is what makes ear.html and the Flutter app pick it up.
-    const ownerUid = emailToUid[ownerEm];
+    // FIX: resolveOwnerUid validates against real user docs before trusting
+    // any stored id, falling back to the email map — see its definition above.
+    const ownerUid = resolveOwnerUid(emailToUid[ownerEm], ownerEm);
     await bumpUserEarnings(ownerUid, ownerShare);
     for (const c of others) {
       const cShare = amount * ((parseFloat(c.pct) || 0) / 100);
-      const cUid = emailToUid[normEmail(c.email)];
+      const cUid = resolveOwnerUid(emailToUid[normEmail(c.email)], c.email);
       await bumpUserEarnings(cUid, cShare);
     }
 
@@ -1161,14 +1186,16 @@ window.distributeSubmissionMulti = async function (submissionId, btn) {
       lastPayoutAt: serverTimestamp()
     });
 
-    // Sync users/{uid}.earnings for everyone who got paid — prefer the
-    // submission's own userId for the owner (more reliable than email
-    // lookup), fall back to the email map if it's missing.
-    const ownerUid = resolveSubmissionOwnerId(data) || emailToUid[ownerEm];
+    // Sync users/{uid}.earnings for everyone who got paid.
+    // FIX: previously this trusted resolveSubmissionOwnerId(data) FIRST even
+    // when it was a stale id pointing at no real user doc. Now it's only
+    // used if it actually exists in the current users collection — otherwise
+    // the reliable email → uid map wins. See resolveOwnerUid above.
+    const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), ownerEm);
     await bumpUserEarnings(ownerUid, ownerShare);
     for (const r of others) {
       const rShare = amount * ((parseFloat(r.pct) || 0) / 100);
-      const rUid = emailToUid[normEmail(r.email)];
+      const rUid = resolveOwnerUid(emailToUid[normEmail(r.email)], r.email);
       await bumpUserEarnings(rUid, rShare);
     }
 
@@ -1213,8 +1240,9 @@ window.distributeSolo = async function (submissionId, btn) {
     });
 
     // Sync users/{uid}.earnings — solo means the whole amount goes to the
-    // owner. Prefer the submission's own userId, fall back to email lookup.
-    const ownerUid = resolveSubmissionOwnerId(data) || emailToUid[normEmail(data.email)];
+    // owner. FIX: same as above — only trust the submission's own stored id
+    // if it resolves to a real user doc, otherwise fall back to email match.
+    const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), data.email);
     await bumpUserEarnings(ownerUid, amount);
 
     toast(`Distributed ${fmtMoney(amount)} — full amount to owner (solo release, no split)`, 'success');
@@ -1239,7 +1267,9 @@ window.distributeSolo = async function (submissionId, btn) {
    This button just writes that same computed total straight into
    users/{uid}.earnings for every artist. It's a SET, not an increment, so
    running it twice (or after new distributions) never double-counts —
-   it just re-syncs the field to match the true total shown on this page. */
+   it just re-syncs the field to match the true total shown on this page.
+   Uses emailToUid directly (not resolveOwnerUid) since this is purely an
+   email-keyed backfill with no stored submission id involved. */
 window.runBackfill = async function () {
   if (!Object.keys(financeByEmail).length) {
     toast('Load users first.', 'error');
