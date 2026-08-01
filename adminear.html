@@ -203,14 +203,14 @@
     box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
   }
 
-  .group-select {
+  .group-select, .sort-select {
     background: var(--bg-card2); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 0 16px;
     font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-pri);
-    outline: none; cursor: pointer; min-width: 220px;
+    outline: none; cursor: pointer; min-width: 200px;
   }
-  .group-select:focus { border-color: var(--border-lt); }
-  .group-select option { background: #fff; color: var(--text-pri); }
+  .group-select:focus, .sort-select:focus { border-color: var(--border-lt); }
+  .group-select option, .sort-select option { background: #fff; color: var(--text-pri); }
 
   /* TOOLBAR */
   .toolbar {
@@ -455,7 +455,7 @@
     .distribute-btn { flex: 1; }
     .credit-row { flex-wrap: wrap; }
     .controls-row { flex-direction: column; }
-    .group-select { width: 100%; }
+    .group-select, .sort-select { width: 100%; }
     .toast-container { left: 16px; right: 16px; bottom: 16px; }
     .toast { width: 100%; max-width: none; }
   }
@@ -529,6 +529,12 @@
       <option value="has">Only artists with releases</option>
       <option value="none">Only artists with no releases at all</option>
       <option value="flat">No grouping (all artists)</option>
+    </select>
+    <select class="sort-select" id="sortSelect">
+      <option value="earnings_desc">Sort: Highest earnings first</option>
+      <option value="earnings_asc">Sort: Lowest earnings first</option>
+      <option value="name_asc">Sort: Name (A–Z)</option>
+      <option value="name_desc">Sort: Name (Z–A)</option>
     </select>
   </div>
 
@@ -826,10 +832,30 @@ function render(data, mode) {
   }
 }
 
-/* ── FILTER + GROUP DRIVER ── */
+/* ── SORT ──
+   Independent of grouping: this decides the ORDER of cards, grouping (above)
+   decides which SECTION a card lands in. Both controls apply together. */
+function sortUsers(list, sortBy) {
+  const totalOf = u => financeByEmail[normEmail(resolveEmail(u))]?.total || 0;
+  const sorted = [...list];
+  if (sortBy === 'name_asc') {
+    sorted.sort((a, b) => (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  } else if (sortBy === 'name_desc') {
+    sorted.sort((a, b) => (resolveName(b) || '').localeCompare(resolveName(a) || ''));
+  } else if (sortBy === 'earnings_asc') {
+    sorted.sort((a, b) => totalOf(a) - totalOf(b) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  } else {
+    // earnings_desc (default)
+    sorted.sort((a, b) => totalOf(b) - totalOf(a) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
+  }
+  return sorted;
+}
+
+/* ── FILTER + GROUP + SORT DRIVER ── */
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase().trim();
   const mode = document.getElementById('groupSelect').value;
+  const sortBy = document.getElementById('sortSelect').value;
 
   const filtered = q
     ? allUsers.filter(u => {
@@ -845,15 +871,18 @@ function applyFilters() {
       })
     : allUsers;
 
-  document.getElementById('countLabel').innerHTML =
-    `Showing <span>${filtered.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+  const sorted = sortUsers(filtered, sortBy);
 
-  render(filtered, mode);
-  updateStats(filtered);
+  document.getElementById('countLabel').innerHTML =
+    `Showing <span>${sorted.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+
+  render(sorted, mode);
+  updateStats(sorted);
 }
 
 document.getElementById('search').addEventListener('input', applyFilters);
 document.getElementById('groupSelect').addEventListener('change', applyFilters);
+document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
 /* ── DISTRIBUTE PAYOUT ── */
 window.distribute = async function (splitId, btn) {
