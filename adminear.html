@@ -499,7 +499,7 @@
 
 <main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full.</div>
+  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -574,6 +574,7 @@ let allUsers       = [];
 let allSplits      = [];
 let allSubmissions = [];
 let financeByEmail = {};
+let emailToUid     = {}; // normalized email -> users/{uid} doc id, rebuilt on every loadUsers()
 
 /* ── HELPERS ── */
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -620,6 +621,32 @@ function toast(msg, type = 'success') {
   t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${esc(msg)}</span>`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3200);
+}
+
+/* ── users/{uid}.earnings SYNC ──
+   This is the piece that used to be missing. ear.html (the website earnings
+   page) and the Flutter app both read a single number from
+   users/{uid}.earnings — but nothing ever wrote to that field, since all
+   three Distribute paths below only ever touched splits/contributors or
+   submissions/royaltySplits+earningsBalance. So the admin tool's math was
+   always correct, it just never reached the field the other two surfaces
+   actually display.
+   Fix: every successful distribute now ALSO increments users/{uid}.earnings
+   for every person who got paid in that distribution (owner + any real
+   collaborators), by uid where we have one. This means ear.html and the
+   Flutter app need NO changes — they keep reading the same field, it just
+   finally gets written to. */
+async function bumpUserEarnings(uid, amount) {
+  if (!uid) return;
+  const amt = parseFloat(amount) || 0;
+  if (!amt) return;
+  try {
+    await updateDoc(doc(db, 'users', uid), { earnings: increment(amt) });
+  } catch (err) {
+    // Don't let a missing/mismatched user doc block the actual payout —
+    // the splits/submissions write already succeeded by the time this runs.
+    console.warn(`Could not sync users/${uid}.earnings (+${amt}):`, err.message);
+  }
 }
 
 /* ── FINANCE MODEL ──
@@ -797,7 +824,12 @@ window.loadUsers = async function () {
     allSubmissions = submissionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const usersById = {};
-    allUsers.forEach(u => { usersById[u.id] = u; });
+    emailToUid = {};
+    allUsers.forEach(u => {
+      usersById[u.id] = u;
+      const em = normEmail(resolveEmail(u));
+      if (em) emailToUid[em] = u.id;
+    });
 
     financeByEmail = buildFinanceMap(allSplits);
     attachSubmissionsToFinanceMap(financeByEmail, allSubmissions, usersById);
@@ -1062,6 +1094,16 @@ window.distribute = async function (splitId, btn) {
       lastPayoutAt: serverTimestamp()
     });
 
+    // Sync users/{uid}.earnings for everyone who got paid in this split —
+    // this is what makes ear.html and the Flutter app pick it up.
+    const ownerUid = emailToUid[ownerEm];
+    await bumpUserEarnings(ownerUid, ownerShare);
+    for (const c of others) {
+      const cShare = amount * ((parseFloat(c.pct) || 0) / 100);
+      const cUid = emailToUid[normEmail(c.email)];
+      await bumpUserEarnings(cUid, cShare);
+    }
+
     toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
 
     input.value = '';
@@ -1118,6 +1160,17 @@ window.distributeSubmissionMulti = async function (submissionId, btn) {
       lastPayoutAt: serverTimestamp()
     });
 
+    // Sync users/{uid}.earnings for everyone who got paid — prefer the
+    // submission's own userId for the owner (more reliable than email
+    // lookup), fall back to the email map if it's missing.
+    const ownerUid = resolveSubmissionOwnerId(data) || emailToUid[ownerEm];
+    await bumpUserEarnings(ownerUid, ownerShare);
+    for (const r of others) {
+      const rShare = amount * ((parseFloat(r.pct) || 0) / 100);
+      const rUid = emailToUid[normEmail(r.email)];
+      await bumpUserEarnings(rUid, rShare);
+    }
+
     toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
 
     input.value = '';
@@ -1148,10 +1201,20 @@ window.distributeSolo = async function (submissionId, btn) {
 
   try {
     const ref = doc(db, 'submissions', submissionId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
+
+    const data = snap.data();
+
     await updateDoc(ref, {
       earningsBalance: increment(amount),
       lastPayoutAt: serverTimestamp()
     });
+
+    // Sync users/{uid}.earnings — solo means the whole amount goes to the
+    // owner. Prefer the submission's own userId, fall back to email lookup.
+    const ownerUid = resolveSubmissionOwnerId(data) || emailToUid[normEmail(data.email)];
+    await bumpUserEarnings(ownerUid, amount);
 
     toast(`Distributed ${fmtMoney(amount)} — full amount to owner (solo release, no split)`, 'success');
 
