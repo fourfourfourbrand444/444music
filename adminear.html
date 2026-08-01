@@ -379,6 +379,21 @@
   .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
   .distribute-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  .total-edit-btn {
+    background: #fff; border: 1px solid var(--border-lt); color: var(--text-pri);
+    font-weight: 700; font-size: 11.5px;
+    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, background 0.2s, color 0.2s;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .total-edit-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+  .total-edit-btn:active:not(:disabled) { transform: scale(0.97); }
+  .total-edit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .total-edit-note {
+    font-size: 10.5px; color: var(--text-dim); line-height: 1.5;
+  }
+
   /* CONTRIBUTOR CREDIT ROW (read-only) */
   .credit-row {
     background: var(--bg-input); border: 1px solid var(--border);
@@ -453,6 +468,7 @@
     .page-title { font-size: 25px; }
     .payout-row { flex-wrap: wrap; }
     .distribute-btn { flex: 1; }
+    .total-edit-btn { flex: 1; }
     .credit-row { flex-wrap: wrap; }
     .controls-row { flex-direction: column; }
     .group-select, .sort-select { width: 100%; }
@@ -500,7 +516,7 @@
 
 <main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically. Every card also has a <strong style="color:var(--text-pri)">Manual earnings override</strong> — always available, no release or split required — that directly sets the live earnings field to any value, up or down, for correcting mistakes or paying artists with nothing on file yet.</div>
+  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically. Each release also has an <strong style="color:var(--text-pri)">Edit Total</strong> control — type the correct combined total for that song and it re-splits everyone's balance by their locked %, syncing only the difference to each person's live earnings. Every card also has a <strong style="color:var(--text-pri)">Manual earnings override</strong> — always available, no release or split required — that directly sets the live earnings field to any value, up or down, for correcting mistakes or paying artists with nothing on file yet. Releases whose submission was deleted from the Submissions Portal are automatically hidden here.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -670,6 +686,29 @@ async function bumpUserEarnings(uid, amount) {
   }
 }
 
+/* ── RELEASE EXISTENCE KEY ──
+   Used to detect "orphaned" splits/submission-derived entries: a split doc
+   (or a submission's own royaltySplits) whose matching submission no longer
+   exists in the `submissions` collection at all — i.e. it was deleted from
+   the Submissions Portal (adminpage.html). Deleting a submission there never
+   touches the separate `splits` collection doc, so without this check a
+   deleted release would keep showing up here forever.
+   Keyed by owner email + release title (case-insensitive), since that's the
+   only link between a splits doc and its originating submission. */
+function releaseKey(email, title) {
+  return normEmail(email) + '::' + (title || '').toLowerCase().trim();
+}
+
+function buildExistingReleaseKeys(submissions, usersById) {
+  const set = new Set();
+  submissions.forEach(s => {
+    const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
+    const title = resolveSubmissionTitle(s);
+    if (ownerEm) set.add(releaseKey(ownerEm, title));
+  });
+  return set;
+}
+
 /* ── FINANCE MODEL ──
    Every owned release — whether it came from a locked split doc or from a
    submission that never got one — is normalized into the same shape:
@@ -696,15 +735,30 @@ function splitBreakdown(s) {
   return { others, ownerEffPct };
 }
 
-function buildFinanceMap(splits) {
+function buildFinanceMap(splits, existingKeys) {
   const map = {};
   const ensure = (email) => {
     if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
     return map[email];
   };
 
+  let orphanCount = 0;
+
   splits.forEach(s => {
     const ownerEm = normEmail(s.ownerEmail);
+
+    // FIX (deleted-song bug): if this split's matching submission was
+    // deleted from the Submissions Portal, the split doc is left behind as
+    // an orphan — skip it entirely instead of letting it show as a live
+    // release. existingKeys is rebuilt fresh from the current submissions
+    // collection on every loadUsers(), so this always reflects the latest
+    // deletions.
+    if (existingKeys && !existingKeys.has(releaseKey(ownerEm, s.songTitle))) {
+      orphanCount++;
+      console.warn(`Ignoring orphaned split "${s.songTitle}" (splits/${s.id}) — no matching submission exists anymore (likely deleted via the Submissions Portal).`);
+      return;
+    }
+
     const { others, ownerEffPct } = splitBreakdown(s);
 
     if (ownerEm) {
@@ -730,6 +784,10 @@ function buildFinanceMap(splits) {
     });
   });
 
+  if (orphanCount) {
+    console.warn(`${orphanCount} orphaned split doc(s) hidden from Earnings Manager (deleted release cleanup — safe to remove those docs from the splits collection whenever convenient).`);
+  }
+
   return map;
 }
 
@@ -747,7 +805,10 @@ function buildFinanceMap(splits) {
    field (see window.distributeSubmissionMulti below) — same math as the
    real splits-based Distribute, just a different document to update.
    Only `status === 'Approved'` submissions are counted as earning-worthy —
-   this filters out drafts, rejected, and stray duplicate submission docs. */
+   this filters out drafts, rejected, and stray duplicate submission docs.
+   Note: entries built here always come straight from a currently-existing
+   submission doc, so there is no orphan case to filter — the submission
+   itself IS the source of truth for these. */
 function attachSubmissionsToFinanceMap(map, submissions, usersById) {
   const ensure = (email) => {
     if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
@@ -755,7 +816,6 @@ function attachSubmissionsToFinanceMap(map, submissions, usersById) {
   };
 
   let unmatchedOwner = 0;
-  const matchedSplitIds = new Set();
 
   submissions.forEach(s => {
     if ((s.status || '').toLowerCase() !== 'approved') return;
@@ -855,7 +915,13 @@ window.loadUsers = async function () {
       if (em) emailToUid[em] = u.id;
     });
 
-    financeByEmail = buildFinanceMap(allSplits);
+    // FIX (deleted-song bug): compute which releases still have a real
+    // submission doc BEFORE building the finance map from splits, so
+    // orphaned split docs (submission deleted, split left behind) never
+    // make it into the cards at all.
+    const existingKeys = buildExistingReleaseKeys(allSubmissions, usersById);
+
+    financeByEmail = buildFinanceMap(allSplits, existingKeys);
     attachSubmissionsToFinanceMap(financeByEmail, allSubmissions, usersById);
 
     allUsers.sort((a, b) => {
@@ -908,6 +974,15 @@ function buildOwnedSection(entries) {
         ? `window.distributeSubmissionMulti('${id}', this)`
         : `window.distributeSolo('${id}', this)`;
 
+    // Combined total currently sitting on this release — owner's share plus
+    // every real collaborator's balance. Editing this and hitting "Update
+    // Total" re-splits the whole thing by each person's locked % (same math
+    // as Distribute), then syncs only the DIFFERENCE to each person's live
+    // users/{uid}.earnings — not the full new total — so it works correctly
+    // whether you're raising, lowering, or correcting a mistaken amount.
+    const currentTotal = (parseFloat(ownerBalance) || 0) + others.reduce((sum, c) => sum + (parseFloat(c.balance) || 0), 0);
+    const totalInputId = `total-${type}-${id}`;
+
     return `
       <div class="owned-song">
         <div class="owned-song-head">
@@ -923,6 +998,11 @@ function buildOwnedSection(entries) {
         <div class="payout-row">
           <input type="number" class="payout-input" id="${inputId}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
           <button class="distribute-btn" onclick="${onclickCall}">Distribute</button>
+        </div>
+        <div class="total-edit-note">Edit total for this release — redistributes to owner + collaborators by their locked %</div>
+        <div class="payout-row">
+          <input type="number" class="payout-input" id="${totalInputId}" placeholder="Correct combined total (GHS)" min="0" step="0.01" value="${currentTotal.toFixed(2)}">
+          <button class="total-edit-btn" onclick="window.setReleaseTotal('${type}','${id}', this)">Update Total</button>
         </div>
       </div>`;
   }).join('');
@@ -1281,6 +1361,133 @@ window.distributeSolo = async function (submissionId, btn) {
   } catch (err) {
     console.error(err);
     toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── EDIT RELEASE TOTAL (redistributes by locked %, syncs only the delta) ──
+   Distribute always ADDS an amount, split proportionally. This does
+   something different: the admin types the CORRECT combined total for a
+   release (owner share + every collaborator's share, added together), and
+   this recomputes each person's individual balance from that total using
+   their locked %, exactly like Distribute's math would if the whole history
+   of payouts for that release had been that one number.
+   Every person's users/{uid}.earnings is then adjusted by the DIFFERENCE
+   between their new and old balance (not the new total, not a blind add) —
+   so correcting one release's total never double-counts or wipes out
+   earnings from someone's other releases. */
+window.setReleaseTotal = async function (type, id, btn) {
+  const input = document.getElementById(`total-${type}-${id}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const newTotal = parseFloat(input.value);
+  if (isNaN(newTotal) || newTotal < 0) { toast('Enter a valid non-negative total.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    if (type === 'split') {
+      const ref = doc(db, 'splits', id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) { toast('Split not found.', 'error'); return; }
+
+      const data = snap.data();
+      const ownerEm = normEmail(data.ownerEmail);
+      const contributors = Array.isArray(data.contributors) ? data.contributors : [];
+      const others = contributors.filter(c => normEmail(c.email) !== ownerEm);
+      const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
+      const ownerEffPct = Math.max(0, 100 - othersPctSum);
+
+      const newOwnerBal = newTotal * (ownerEffPct / 100);
+      const ownerDelta = newOwnerBal - (parseFloat(data.ownerBalance) || 0);
+
+      const deltas = [];
+      const updatedContributors = contributors.map(c => {
+        if (normEmail(c.email) === ownerEm) return c;
+        const pct = parseFloat(c.pct) || 0;
+        const newBal = newTotal * (pct / 100);
+        deltas.push({ email: c.email, delta: newBal - (parseFloat(c.balance) || 0) });
+        return { ...c, balance: newBal };
+      });
+
+      await updateDoc(ref, {
+        contributors: updatedContributors,
+        ownerBalance: newOwnerBal,
+        lastPayoutAt: serverTimestamp()
+      });
+
+      const ownerUid = resolveOwnerUid(emailToUid[ownerEm], ownerEm);
+      await bumpUserEarnings(ownerUid, ownerDelta);
+      for (const d of deltas) {
+        const uid = resolveOwnerUid(emailToUid[normEmail(d.email)], d.email);
+        await bumpUserEarnings(uid, d.delta);
+      }
+
+    } else if (type === 'submission') {
+      const ref = doc(db, 'submissions', id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
+
+      const data = snap.data();
+      const ownerEm = normEmail(data.email);
+      const royaltySplits = Array.isArray(data.royaltySplits) ? data.royaltySplits : [];
+      const others = royaltySplits.filter(r => normEmail(r.email) !== ownerEm);
+      const othersPctSum = others.reduce((sum, r) => sum + (parseFloat(r.pct) || 0), 0);
+      const ownerEffPct = Math.max(0, 100 - othersPctSum);
+
+      const newOwnerBal = newTotal * (ownerEffPct / 100);
+      const ownerDelta = newOwnerBal - (parseFloat(data.earningsBalance) || 0);
+
+      const deltas = [];
+      const updatedRoyaltySplits = royaltySplits.map(r => {
+        if (normEmail(r.email) === ownerEm) return r;
+        const pct = parseFloat(r.pct) || 0;
+        const newBal = newTotal * (pct / 100);
+        deltas.push({ email: r.email, delta: newBal - (parseFloat(r.balance) || 0) });
+        return { ...r, balance: newBal };
+      });
+
+      await updateDoc(ref, {
+        royaltySplits: updatedRoyaltySplits,
+        earningsBalance: newOwnerBal,
+        lastPayoutAt: serverTimestamp()
+      });
+
+      const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), ownerEm);
+      await bumpUserEarnings(ownerUid, ownerDelta);
+      for (const d of deltas) {
+        const uid = resolveOwnerUid(emailToUid[normEmail(d.email)], d.email);
+        await bumpUserEarnings(uid, d.delta);
+      }
+
+    } else {
+      // 'solo' — a submission with no collaborators at all; the whole total
+      // belongs to the owner.
+      const ref = doc(db, 'submissions', id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
+
+      const data = snap.data();
+      const delta = newTotal - (parseFloat(data.earningsBalance) || 0);
+
+      await updateDoc(ref, {
+        earningsBalance: newTotal,
+        lastPayoutAt: serverTimestamp()
+      });
+
+      const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), data.email);
+      await bumpUserEarnings(ownerUid, delta);
+    }
+
+    toast(`Total set to ${fmtMoney(newTotal)} — redistributed by locked %`, 'success');
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Update failed: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
