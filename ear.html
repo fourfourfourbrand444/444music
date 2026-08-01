@@ -18,7 +18,6 @@
       --border: rgba(255,255,255,0.06);
       --border-h: rgba(255,255,255,0.14);
 
-      /* monochrome accent scale — replaces all prior color hues */
       --mono: #ffffff;
       --mono-dim: rgba(255,255,255,0.09);
       --mono-glow: rgba(255,255,255,0.22);
@@ -45,16 +44,11 @@
       overflow-x: hidden;
     }
 
-    /* ── NOISE OVERLAY ── */
     body::after {
       content: ''; position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       opacity: 0.02; pointer-events: none; z-index: 9999;
     }
-
-    /* ══════════════════════════════════════
-       KEYFRAME ANIMATIONS
-    ══════════════════════════════════════ */
 
     @keyframes logo-pulse {
       0%, 100% { box-shadow: 0 0 16px rgba(255,255,255,0.25); }
@@ -125,7 +119,6 @@
       to   { opacity: 1; transform: translateY(0) scaleY(1); transform-origin: top; }
     }
 
-    /* ── SCROLL PROGRESS ── */
     .pbar {
       position: fixed; top: 0; left: 0; height: 2px; width: 0;
       z-index: 1002;
@@ -134,9 +127,6 @@
       transition: width 0.1s linear;
     }
 
-    /* ══════════════════════════════════════
-       TOPBAR
-    ══════════════════════════════════════ */
     .topbar {
       position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
@@ -183,7 +173,6 @@
     }
     .tb-avatar:hover { border-color: var(--white); color: var(--white); }
 
-    /* ── BURGER ── */
     .tb-burger {
       display: none; flex-direction: column; gap: 5px;
       cursor: pointer; padding: 8px; border-radius: 9px;
@@ -198,7 +187,6 @@
     .tb-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .tb-burger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-    /* ── MOBILE DRAWER ── */
     .mobile-drawer {
       display: none;
       position: fixed; top: 62px; left: 0; right: 0;
@@ -221,9 +209,6 @@
     .mobile-drawer a.active i { color: var(--bright); }
     .drawer-divider { height: 1px; background: var(--border); margin: 6px 0; }
 
-    /* ══════════════════════════════════════
-       HERO STRIP
-    ══════════════════════════════════════ */
     .hero-strip {
       padding: 44px 32px 32px;
       border-bottom: 1px solid var(--border);
@@ -271,9 +256,6 @@
     .hq-icon.p { background: var(--mid-dim); color: var(--mid); }
     .hq-icon.c { background: var(--soft-dim); color: var(--soft); }
 
-    /* ══════════════════════════════════════
-       MAIN GRID
-    ══════════════════════════════════════ */
     .main {
       max-width: 1060px; margin: 0 auto;
       padding: 28px 24px 0;
@@ -282,9 +264,6 @@
     .left-col { display: flex; flex-direction: column; gap: 20px; }
     .sidebar  { display: flex; flex-direction: column; gap: 20px; }
 
-    /* ══════════════════════════════════════
-       CARD BASE
-    ══════════════════════════════════════ */
     .card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 24px;
@@ -303,9 +282,6 @@
     }
     .card-title i { color: var(--bright); animation: icon-float 3.5s ease-in-out infinite; }
 
-    /* ══════════════════════════════════════
-       BALANCE CARD
-    ══════════════════════════════════════ */
     .balance-card {
       position: relative; overflow: hidden;
       animation: balance-glow 4s ease-in-out infinite;
@@ -396,7 +372,6 @@
     }
     .info-note i { color: var(--bright); flex-shrink: 0; margin-top: 2px; font-size: 13px; }
 
-    /* ── CHART ── */
     .chart-bars {
       display: flex; align-items: flex-end; gap: 6px;
       height: 110px; margin-bottom: 10px;
@@ -422,7 +397,6 @@
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted2); }
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-    /* ── ACTIVITY ── */
     .act-list { display: flex; flex-direction: column; gap: 1px; }
     .act-row {
       display: flex; align-items: center; gap: 13px;
@@ -452,7 +426,6 @@
     .ab-pending { background: var(--soft-dim); color: var(--soft); }
     .ab-done    { background: var(--bright-dim); color: var(--bright); }
 
-    /* ── PLATFORMS ── */
     .platform-list { display: flex; flex-direction: column; gap: 13px; }
     .plat-row { display: flex; align-items: center; gap: 11px; }
     .plat-icon {
@@ -475,7 +448,6 @@
     .pf-tidal   { background: linear-gradient(90deg,var(--mid),#e8e8e8); }
     .plat-pct { font-size: 12px; color: var(--muted2); white-space: nowrap; }
 
-    /* ── TIPS ── */
     .tip-list { display: flex; flex-direction: column; gap: 10px; }
     .tip-item {
       display: flex; align-items: flex-start; gap: 12px;
@@ -494,7 +466,6 @@
     .tip-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
     .tip-text span { font-size: 12px; color: var(--muted2); line-height: 1.55; }
 
-    /* ── PAYOUT ── */
     .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .pay-method {
       display: flex; align-items: center; gap: 10px;
@@ -509,7 +480,6 @@
     .pay-method-info strong { display: block; font-size: 13px; font-weight: 600; color: var(--white); }
     .pay-method-info small  { font-size: 11px; color: var(--muted2); }
 
-    /* ── POPUP ── */
     .popup-overlay {
       position: fixed; inset: 0; z-index: 5000;
       background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
@@ -550,18 +520,11 @@
     }
     .popup-btn:hover { background: #d6d6d6; transform: translateY(-1px); box-shadow: 0 4px 24px rgba(255,255,255,0.35); }
 
-    /* ══════════════════════════════════════
-       RESPONSIVE — TABLET  ≤ 860px
-    ══════════════════════════════════════ */
     @media (max-width: 860px) {
       .main { grid-template-columns: 1fr; }
     }
 
-    /* ══════════════════════════════════════
-       RESPONSIVE — MOBILE  ≤ 640px
-    ══════════════════════════════════════ */
     @media (max-width: 640px) {
-      /* Topbar */
       .topbar { padding: 0 16px; height: 56px; }
       .tb-links { display: none; }
       .tb-burger { display: flex; }
@@ -569,7 +532,6 @@
       .tb-status .status-text { display: none; }
       .mobile-drawer { top: 56px; }
 
-      /* Hero */
       .hero-strip { padding: 26px 16px 22px; flex-direction: column; align-items: flex-start; gap: 18px; }
       .hero-strip h1 { font-size: clamp(22px, 7vw, 30px); }
       .hero-strip p  { font-size: 13.5px; }
@@ -578,14 +540,11 @@
       .hq-pill strong { font-size: 17px; }
       .hq-icon { width: 28px; height: 28px; font-size: 12px; }
 
-      /* Main */
       .main { padding: 14px 14px 0; gap: 14px; }
 
-      /* Cards */
       .card { padding: 18px 15px; border-radius: 16px; }
       .card-title { font-size: 11px; margin-bottom: 16px; }
 
-      /* Balance */
       .bal-main { padding: 15px; gap: 12px; margin-bottom: 12px; }
       .bal-icon { width: 44px; height: 44px; font-size: 17px; border-radius: 11px; }
       .bal-value { font-size: clamp(24px, 8vw, 32px); }
@@ -596,38 +555,29 @@
       .bal-badge-info small  { font-size: 10px; }
       .bal-badge-info strong { font-size: 13px; }
 
-      /* Threshold */
       .threshold-bar { padding: 12px 13px; margin-bottom: 12px; }
       .thresh-top { font-size: 11.5px; }
 
-      /* Buttons — stack full width */
       .action-row { flex-direction: column; gap: 8px; margin-bottom: 12px; }
       .btn { width: 100%; justify-content: center; padding: 12px 14px; font-size: 13px; }
 
-      /* Chart */
       .chart-bars { height: 80px; gap: 4px; }
       .bar-lbl { font-size: 10px; margin-top: 5px; }
 
-      /* Activity */
       .act-row { padding: 10px 10px; gap: 10px; }
       .act-info strong { font-size: 13px; }
       .act-info small { font-size: 11px; }
 
-      /* Payout */
       .pay-grid { gap: 8px; }
       .pay-method { padding: 11px 11px; gap: 8px; }
       .pay-method-info strong { font-size: 12px; }
       .pay-method-info small  { font-size: 10.5px; }
 
-      /* Popup */
       .popup-box { padding: 26px 18px; border-radius: 18px; }
       .popup-box h2 { font-size: 16px; }
       .popup-box p  { font-size: 13px; }
     }
 
-    /* ══════════════════════════════════════
-       RESPONSIVE — TINY  ≤ 380px
-    ══════════════════════════════════════ */
     @media (max-width: 380px) {
       .hq-pill { min-width: calc(50% - 4px); }
       .bal-badge { min-width: calc(50% - 4px); }
@@ -936,10 +886,19 @@
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'login.html'; return; }
+
+    // ── TEMP DEBUG: remove these two console.log lines once the bug is fixed ──
+    console.log('[EARNINGS DEBUG] Logged in as UID:', user.uid, '| email:', user.email);
+
     try {
       const snap = await getDoc(doc(db, 'users', user.uid));
+      console.log('[EARNINGS DEBUG] Doc exists:', snap.exists(), '| Doc data:', snap.exists() ? snap.data() : null);
       updateBalance(snap.exists() ? Number(snap.data().earnings) || 0 : 0);
-    } catch { updateBalance(0); }
+    } catch (err) {
+      console.error('[EARNINGS DEBUG] Firestore read failed:', err.code, err.message, err);
+      updateBalance(0);
+    }
+    // ── END TEMP DEBUG ──
   });
 
   // Withdraw guard
