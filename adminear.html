@@ -4,50 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>444Music — Earnings Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg-void:    #080a0f;
-    --bg-card:    #111520;
-    --bg-card2:   #161b28;
-    --bg-input:   #0c101a;
-    --border:     rgba(255,255,255,0.06);
-    --accent:     #f59e0b;
-    --accent-dim: rgba(245,158,11,0.15);
-    --accent-glow:rgba(245,158,11,0.3);
-    --green:      #10b981;
-    --green-dim:  rgba(16,185,129,0.12);
-    --cyan:       #38bdf8;
-    --red:        #ff2e63;
-    --text-pri:   #f0f2f8;
-    --text-sec:   #8892a4;
-    --text-dim:   #404b5e;
+    --bg-void:    #050505;
+    --bg-card:    #0e0e0e;
+    --bg-card2:   #141414;
+    --bg-input:   #0a0a0a;
+    --border:     rgba(255,255,255,0.09);
+    --border-lt:  rgba(255,255,255,0.16);
+    --accent:     #ffffff;
+    --accent-dim: rgba(255,255,255,0.08);
+    --accent-glow:rgba(255,255,255,0.18);
+    --green:      #22c55e;
+    --green-dim:  rgba(34,197,94,0.12);
+    --red:        #ff4d6d;
+    --text-pri:   #f5f5f5;
+    --text-sec:   #9a9a9a;
+    --text-dim:   #4a4a4a;
     --radius:     14px;
     --radius-sm:  9px;
   }
 
   body {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Inter', sans-serif;
     background: var(--bg-void);
     color: var(--text-pri);
     min-height: 100vh;
     overflow-x: hidden;
   }
 
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 60% -10%, rgba(245,158,11,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 0% 80%,  rgba(16,185,129,0.05) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 60% -10%, rgba(255,255,255,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 0% 80%,  rgba(255,255,255,0.03) 0%, transparent 50%);
     pointer-events: none; z-index: 0;
+  }
+
+  /* ── PASSWORD GATE ── */
+  .gate {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--bg-void);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .gate-box {
+    width: 100%; max-width: 360px;
+    background: var(--bg-card); border: 1px solid var(--border-lt);
+    border-radius: 18px; padding: 34px 28px; text-align: center;
+  }
+  .gate-icon {
+    width: 48px; height: 48px; margin: 0 auto 18px;
+    background: var(--accent-dim); border: 1px solid var(--border-lt);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .gate-box h2 { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; letter-spacing: -0.2px; }
+  .gate-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
+  .gate-input {
+    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 14px; color: var(--text-pri);
+    font-family: 'IBM Plex Mono', monospace; font-size: 13.5px; outline: none;
+    text-align: center; letter-spacing: 1px; transition: border-color 0.15s;
+  }
+  .gate-input:focus { border-color: var(--border-lt); }
+  .gate-input::placeholder { color: var(--text-dim); letter-spacing: normal; }
+  .gate-btn {
+    width: 100%; margin-top: 10px; padding: 13px; border-radius: 10px;
+    background: var(--accent); color: #000; font-weight: 700; font-size: 13.5px;
+    border: none; cursor: pointer; transition: opacity 0.15s;
+  }
+  .gate-btn:hover { opacity: 0.85; }
+  .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .gate-error { min-height: 16px; font-size: 12px; color: var(--red); margin-top: 12px; }
+  .gate-shake { animation: shake 0.4s; }
+  @keyframes shake {
+    10%,90% { transform: translateX(-2px); }
+    20%,80% { transform: translateX(4px); }
+    30%,50%,70% { transform: translateX(-8px); }
+    40%,60% { transform: translateX(8px); }
   }
 
   /* HEADER */
   .header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(8,10,15,0.92);
+    background: rgba(5,5,5,0.92);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 0 40px;
@@ -57,7 +105,7 @@
 
   .logo {
     display: flex; align-items: center; gap: 12px;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
   }
 
   .logo-badge {
@@ -65,35 +113,35 @@
     background: var(--accent);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    box-shadow: 0 0 16px var(--accent-glow);
+    font-size: 15px; color: #000; font-weight: 800;
   }
 
-  .logo-text span { color: var(--accent); }
+  .logo-text span { color: var(--text-sec); font-weight: 500; }
 
   .header-right { display: flex; align-items: center; gap: 12px; }
 
   .refresh-btn {
     background: var(--bg-card); border: 1px solid var(--border);
-    color: var(--text-sec); font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--text-sec); font-family: 'IBM Plex Mono', monospace; font-size: 11px;
     padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
-    text-transform: uppercase; letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
-  .refresh-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text-pri); }
+  .refresh-btn:hover { border-color: var(--border-lt); color: var(--text-pri); }
 
   .header-tag {
     font-size: 11px; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 1.2px;
+    letter-spacing: 0.8px;
     display: flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); box-shadow: 0 0 8px var(--accent);
+    background: var(--accent); box-shadow: 0 0 8px rgba(255,255,255,0.5);
     animation: pulse 2s infinite;
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   /* MAIN */
   .main {
@@ -103,13 +151,13 @@
   }
 
   .page-title {
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 34px;
+    font-weight: 800; font-size: 32px;
     letter-spacing: -1px; margin-bottom: 4px;
   }
 
-  .page-title span { color: var(--accent); }
+  .page-title span { color: var(--text-sec); font-weight: 500; }
 
-  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; line-height: 1.7; }
+  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; line-height: 1.7; max-width: 640px; }
 
   /* STATS */
   .stats-bar {
@@ -121,18 +169,21 @@
     border-radius: var(--radius-sm); padding: 16px 18px;
   }
 
-  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 6px; }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
 
   .stat-value {
-    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700;
+    font-weight: 700; font-size: 23px; letter-spacing: -0.3px;
   }
 
-  .stat-value.gold  { color: var(--accent); }
-  .stat-value.green { color: var(--green); }
   .stat-value.white { color: var(--text-pri); }
+  .stat-value.green { color: var(--green); }
 
-  /* SEARCH */
-  .search-wrapper { position: relative; margin-bottom: 20px; }
+  /* CONTROLS */
+  .controls-row {
+    display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+
+  .search-wrapper { position: relative; flex: 1; min-width: 220px; }
 
   .search-icon {
     position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
@@ -142,22 +193,47 @@
   .search-input {
     width: 100%; background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 14px 16px 14px 44px;
-    font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-pri);
+    font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-pri);
     outline: none; transition: border-color 0.2s, box-shadow 0.2s;
   }
   .search-input::placeholder { color: var(--text-dim); }
   .search-input:focus {
-    border-color: var(--accent-glow);
-    box-shadow: 0 0 0 3px rgba(245,158,11,0.07);
+    border-color: var(--border-lt);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
   }
+
+  .group-select {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0 16px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-sec);
+    outline: none; cursor: pointer; min-width: 190px;
+  }
+  .group-select:focus { border-color: var(--border-lt); }
+  .group-select option { background: var(--bg-card); color: var(--text-pri); }
 
   /* TOOLBAR */
   .toolbar {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
   }
 
-  .count-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-  .count-label span { color: var(--accent); font-weight: 700; }
+  .count-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; font-family: 'IBM Plex Mono', monospace; }
+  .count-label span { color: var(--text-pri); font-weight: 700; }
+
+  /* GROUP HEADINGS */
+  .group-heading {
+    display: flex; align-items: center; gap: 10px;
+    margin: 26px 0 12px; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.3px; color: var(--text-pri);
+  }
+  .group-heading:first-child { margin-top: 0; }
+  .group-heading::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .group-count {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-dim);
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 20px;
+  }
 
   /* CARDS */
   .results { display: flex; flex-direction: column; gap: 10px; }
@@ -166,7 +242,7 @@
     background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 22px 24px;
     display: flex; flex-direction: column; gap: 18px;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     animation: fadeUp 0.3s ease both;
   }
 
@@ -176,35 +252,37 @@
   }
 
   .card:hover {
-    border-color: rgba(245,158,11,0.15);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    border-color: var(--border-lt);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   }
 
   .card-top { display: flex; align-items: center; gap: 16px; }
 
   .avatar {
     width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(16,185,129,0.15));
-    border: 1px solid rgba(245,158,11,0.2);
+    background: var(--accent-dim);
+    border: 1px solid var(--border-lt);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px;
-    color: var(--accent); text-transform: uppercase;
+    font-weight: 800; font-size: 15px;
+    color: var(--text-pri); text-transform: uppercase;
   }
 
   .card-info { flex: 1; min-width: 0; }
 
   .artist-name {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+    font-weight: 700; font-size: 15px; letter-spacing: -0.1px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .artist-email {
     font-size: 11px; color: var(--text-sec); margin-top: 2px;
+    font-family: 'IBM Plex Mono', monospace;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .artist-id {
     font-size: 10px; color: var(--text-dim); margin-top: 3px;
+    font-family: 'IBM Plex Mono', monospace;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
@@ -216,11 +294,11 @@
   }
   .total-badge-label {
     font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
-    color: var(--text-dim); margin-bottom: 4px;
+    color: var(--text-dim); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace;
   }
   .total-badge-value {
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
-    color: var(--accent);
+    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
+    color: var(--text-pri);
   }
 
   /* SECTIONS */
@@ -232,8 +310,7 @@
 
   .section-heading {
     font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--text-dim);
-    display: flex; align-items: center; gap: 6px;
+    color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;
   }
 
   /* OWNED SONG BLOCK */
@@ -248,19 +325,16 @@
   }
 
   .owned-song-title {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13.5px;
+    font-weight: 700; font-size: 13.5px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   .owned-song-tag {
     font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    background: var(--green-dim); color: var(--green);
-    border: 1px solid rgba(16,185,129,0.25);
+    background: var(--accent-dim); color: var(--text-pri);
+    border: 1px solid var(--border-lt);
     border-radius: 5px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0;
-  }
-  .owned-song-tag.solo {
-    background: var(--accent-dim); color: var(--accent);
-    border-color: rgba(245,158,11,0.25);
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .collab-row {
@@ -270,39 +344,39 @@
   }
   .collab-row:first-of-type { border-top: none; padding-top: 0; }
   .collab-name { color: var(--text-pri); font-weight: 500; }
-  .collab-pct { color: var(--cyan); font-weight: 700; margin-left: 6px; }
-  .collab-balance { color: var(--green); font-weight: 700; white-space: nowrap; }
+  .collab-pct { color: var(--text-sec); font-weight: 700; margin-left: 6px; font-family: 'IBM Plex Mono', monospace; }
+  .collab-balance { color: var(--green); font-weight: 700; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; }
 
   .owner-share-row {
     font-size: 11.5px; color: var(--text-sec);
     padding-top: 4px; border-top: 1px solid var(--border);
     display: flex; justify-content: space-between; gap: 10px;
   }
-  .owner-share-row .pct { color: var(--accent); font-weight: 700; }
-  .owner-share-row .bal { color: var(--accent); font-weight: 700; }
+  .owner-share-row .pct { color: var(--text-pri); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .owner-share-row .bal { color: var(--green); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
 
   .payout-row { display: flex; gap: 8px; margin-top: 2px; }
 
   .payout-input {
-    flex: 1; background: var(--bg-void); border: 1px solid var(--border);
+    flex: 1; min-width: 0; background: var(--bg-void); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 10px 12px;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px;
     color: var(--text-pri); outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .payout-input::placeholder { color: var(--text-dim); font-family: 'DM Mono', monospace; font-weight: 400; font-size: 11px; }
-  .payout-input:focus { border-color: var(--accent-glow); box-shadow: 0 0 0 2px rgba(245,158,11,0.08); }
+  .payout-input::placeholder { color: var(--text-dim); font-size: 11px; }
+  .payout-input:focus { border-color: var(--border-lt); box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
 
   .distribute-btn {
-    background: var(--accent); border: none; color: #080a0f;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11.5px;
+    background: var(--accent); border: none; color: #000;
+    font-weight: 700; font-size: 11.5px;
     padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
   }
-  .distribute-btn:hover:not(:disabled) { opacity: 0.88; transform: scale(1.03); box-shadow: 0 4px 16px var(--accent-glow); }
+  .distribute-btn:hover:not(:disabled) { opacity: 0.85; }
   .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
-  .distribute-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .distribute-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* CONTRIBUTOR CREDIT ROW (read-only) */
   .credit-row {
@@ -311,16 +385,17 @@
     display: flex; align-items: center; justify-content: space-between; gap: 14px;
   }
   .credit-song {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12.5px;
+    font-weight: 700; font-size: 12.5px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .credit-owner {
     font-size: 10.5px; color: var(--text-sec); margin-top: 2px;
+    font-family: 'IBM Plex Mono', monospace;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .credit-right { text-align: right; flex-shrink: 0; }
-  .credit-pct { font-size: 10px; color: var(--cyan); font-weight: 700; }
-  .credit-balance { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: var(--green); }
+  .credit-pct { font-size: 10px; color: var(--text-sec); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+  .credit-balance { font-weight: 800; font-size: 14px; color: var(--green); font-family: 'IBM Plex Mono', monospace; }
 
   .no-entries-note {
     font-size: 11px; color: var(--text-dim); font-style: italic;
@@ -328,16 +403,16 @@
 
   /* TOAST */
   .toast-container {
-    position: fixed; bottom: 28px; right: 28px;
-    display: flex; flex-direction: column; gap: 8px; z-index: 9999;
+    position: fixed; bottom: 28px; right: 28px; left: 28px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 9999;
   }
 
   .toast {
     background: var(--bg-card2); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 13px 18px;
     display: flex; align-items: center; gap: 10px;
-    font-size: 12px; min-width: 240px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    font-size: 12px; min-width: 240px; max-width: 90vw;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.6);
     animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
   }
 
@@ -350,8 +425,8 @@
 
   /* EMPTY / LOADING */
   .empty { text-align: center; padding: 72px 24px; color: var(--text-dim); }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .empty-text { font-family: 'Syne', sans-serif; font-size: 15px; }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-text { font-weight: 700; font-size: 15px; color: var(--text-sec); }
   .empty-sub  { font-size: 12px; margin-top: 8px; line-height: 1.7; }
 
   .loading-wrap {
@@ -373,15 +448,40 @@
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
     .card-top { flex-wrap: wrap; }
     .total-badge { width: 100%; text-align: left; }
-    .page-title { font-size: 26px; }
+    .page-title { font-size: 25px; }
     .payout-row { flex-wrap: wrap; }
+    .distribute-btn { flex: 1; }
     .credit-row { flex-wrap: wrap; }
+    .controls-row { flex-direction: column; }
+    .group-select { width: 100%; }
+    .toast-container { left: 16px; right: 16px; bottom: 16px; }
+    .toast { width: 100%; max-width: none; }
+  }
+
+  @media (max-width: 400px) {
+    .stats-bar { grid-template-columns: 1fr; }
+    .card { padding: 18px 16px; }
+    .stat-value { font-size: 20px; }
   }
 </style>
 </head>
 <body>
 
-<header class="header">
+<!-- PASSWORD GATE -->
+<div class="gate" id="gate">
+  <div class="gate-box" id="gateBox">
+    <div class="gate-icon">🔒</div>
+    <h2>Admin Access</h2>
+    <p>Enter the admin password to open the Earnings Manager.</p>
+    <input class="gate-input" id="gatePassword" type="password" placeholder="Password" autocomplete="off">
+    <button class="gate-btn" id="gateBtn">Unlock</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<header class="header" id="appHeader" style="display:none;">
   <div class="logo">
     <div class="logo-badge">$</div>
     <div class="logo-text">444<span>Music</span></div>
@@ -395,11 +495,9 @@
   </div>
 </header>
 
-<div class="toast-container" id="toasts"></div>
-
-<main class="main">
+<main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are now auto-calculated from splits. To pay out a release, enter an amount under that song and hit Distribute — it divides the payout by each contributor's locked %, credits their share straight to their balance, and adds the rest to the owner. Solo releases (no collaborators) go 100% to the owner.</div>
+  <div class="page-sub">Total earnings are auto-calculated from splits. To pay out a release, enter an amount under that song and hit Distribute — it divides the payout by each contributor's locked %, credits their share straight to their balance, and adds the rest to the owner. Solo releases (no collaborators) go 100% to the owner.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -409,7 +507,7 @@
     </div>
     <div class="stat-pill">
       <div class="stat-label">Total Paid Out</div>
-      <div class="stat-value gold" id="statTotal">—</div>
+      <div class="stat-value white" id="statTotal">—</div>
     </div>
     <div class="stat-pill">
       <div class="stat-label">Artists with Earnings</div>
@@ -417,11 +515,19 @@
     </div>
   </div>
 
-  <!-- SEARCH -->
-  <div class="search-wrapper">
-    <span class="search-icon">⌕</span>
-    <input type="text" class="search-input" id="search"
-      placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <div class="search-wrapper">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="search"
+        placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
+    </div>
+    <select class="group-select" id="groupSelect">
+      <option value="grouped">Group: Has splits / No splits</option>
+      <option value="has">Only artists with splits</option>
+      <option value="none">Only artists with no splits</option>
+      <option value="flat">No grouping (all artists)</option>
+    </select>
   </div>
 
   <!-- TOOLBAR -->
@@ -456,23 +562,15 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
-let allUsers  = [];   // [{id, ...userDoc}]
-let allSplits = [];   // [{id, songTitle, artistName, ownerEmail, ownerBalance, contributors:[...]}]
-let financeByEmail = {}; // lowercased email -> { owned:[...], credits:[...], total }
+let allUsers  = [];
+let allSplits = [];
+let financeByEmail = {};
 
 /* ── HELPERS ── */
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function resolveName(d) {
-  return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim();
-}
-
-function resolveEmail(d) {
-  return (d.email || d.Email || d.userEmail || '').trim();
-}
-
+function resolveName(d) { return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim(); }
+function resolveEmail(d) { return (d.email || d.Email || d.userEmail || '').trim(); }
 function normEmail(e) { return (e || '').toLowerCase().trim(); }
-
 function initials(name, email) {
   if (name) {
     const p = name.trim().split(/\s+/);
@@ -480,7 +578,6 @@ function initials(name, email) {
   }
   return email ? email.slice(0,2).toUpperCase() : '??';
 }
-
 function fmtMoney(n) {
   const num = Number(n) || 0;
   return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -496,16 +593,7 @@ function toast(msg, type = 'success') {
   setTimeout(() => t.remove(), 3200);
 }
 
-/* ── FINANCE MODEL ──
-   For every split:
-     - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
-     - ownerEffPct = 100 - sum(other contributors' pct)   (this absorbs any self-listed owner row automatically)
-     - ownerBalance (new field on the split doc) = money already credited to the owner for that song
-     - each real collaborator's own balance field = money already credited to them for that song
-
-   Per-user totals (keyed by lowercased email):
-     total = sum(ownerBalance across songs they own) + sum(balance across OTHER people's songs where they're a real collaborator)
-*/
+/* ── FINANCE MODEL ── (unchanged logic — see distribute() below) */
 function splitBreakdown(s) {
   const ownerEm = normEmail(s.ownerEmail);
   const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
@@ -548,6 +636,11 @@ function buildFinanceMap(splits) {
   return map;
 }
 
+function hasAnySplit(email) {
+  const f = financeByEmail[normEmail(email)];
+  return !!(f && (f.owned.length || f.credits.length));
+}
+
 /* ── STATS ── */
 function updateStats(users) {
   const total  = users.reduce((s, u) => s + (financeByEmail[normEmail(resolveEmail(u))]?.total || 0), 0);
@@ -573,14 +666,13 @@ window.loadUsers = async function () {
     allSplits = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     financeByEmail = buildFinanceMap(allSplits);
 
-    // Sort: highest auto-total first, then alphabetically
     allUsers.sort((a, b) => {
       const ta = financeByEmail[normEmail(resolveEmail(a))]?.total || 0;
       const tb = financeByEmail[normEmail(resolveEmail(b))]?.total || 0;
       return tb - ta || (resolveName(a) || '').localeCompare(resolveName(b) || '');
     });
 
-    render(allUsers);
+    applyFilters();
     updateStats(allUsers);
   } catch (err) {
     console.error(err);
@@ -595,9 +687,7 @@ window.loadUsers = async function () {
   }
 };
 
-loadUsers();
-
-/* ── OWNED SONGS PANEL ── */
+/* ── OWNED / CREDITS PANELS ── */
 function buildOwnedSection(entries) {
   if (!entries.length) return '';
   const blocks = entries.map(({ split, others, ownerEffPct, ownerBalance }) => {
@@ -611,7 +701,7 @@ function buildOwnedSection(entries) {
       <div class="owned-song">
         <div class="owned-song-head">
           <div class="owned-song-title">${esc(split.songTitle || 'Untitled')}</div>
-          <div class="owned-song-tag ${others.length ? '' : 'solo'}">${others.length ? others.length + ' collaborator' + (others.length > 1 ? 's' : '') : 'Solo release'}</div>
+          <div class="owned-song-tag">${others.length ? others.length + ' collaborator' + (others.length > 1 ? 's' : '') : 'Solo release'}</div>
         </div>
         ${collabRows}
         <div class="owner-share-row">
@@ -631,7 +721,6 @@ function buildOwnedSection(entries) {
     </div>`;
 }
 
-/* ── CONTRIBUTOR CREDITS PANEL (read-only) ── */
 function buildCreditsSection(entries) {
   if (!entries.length) return '';
   const rows = entries.map(c => `
@@ -652,12 +741,45 @@ function buildCreditsSection(entries) {
     </div>`;
 }
 
-/* ── RENDER ── */
-function render(data) {
-  const el  = document.getElementById('results');
-  const lbl = document.getElementById('countLabel');
+function buildCardHtml(u, i) {
+  const name    = resolveName(u)  || 'Unknown Artist';
+  const email   = resolveEmail(u) || '—';
+  const ini     = initials(resolveName(u), resolveEmail(u));
+  const finance = financeByEmail[normEmail(email)] || { owned: [], credits: [], total: 0 };
 
-  lbl.innerHTML = `Showing <span>${data.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+  const ownedHtml   = buildOwnedSection(finance.owned);
+  const creditsHtml = buildCreditsSection(finance.credits);
+  const emptyNote = (!finance.owned.length && !finance.credits.length)
+    ? `<div class="card-section"><div class="no-entries-note">Not part of any locked split yet</div></div>`
+    : '';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.animationDelay = `${Math.min(i * 25, 350)}ms`;
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="avatar">${esc(ini)}</div>
+      <div class="card-info">
+        <div class="artist-name">${esc(name)}</div>
+        <div class="artist-email">${esc(email)}</div>
+        <div class="artist-id">UID: ${esc(u.id)}</div>
+      </div>
+      <div class="total-badge">
+        <div class="total-badge-label">Total earnings (auto)</div>
+        <div class="total-badge-value">${fmtMoney(finance.total)}</div>
+      </div>
+    </div>
+    ${ownedHtml}
+    ${creditsHtml}
+    ${emptyNote}
+  `;
+  return card;
+}
+
+/* ── RENDER (with grouping) ── */
+function render(data, mode) {
+  const el  = document.getElementById('results');
+  el.innerHTML = '';
 
   if (!data.length) {
     el.innerHTML = `
@@ -669,53 +791,36 @@ function render(data) {
     return;
   }
 
-  el.innerHTML = '';
+  const withSplits = data.filter(u => hasAnySplit(resolveEmail(u)));
+  const noSplits   = data.filter(u => !hasAnySplit(resolveEmail(u)));
 
-  data.forEach((u, i) => {
-    const name    = resolveName(u)  || 'Unknown Artist';
-    const email   = resolveEmail(u) || '—';
-    const ini     = initials(resolveName(u), resolveEmail(u));
-    const finance = financeByEmail[normEmail(email)] || { owned: [], credits: [], total: 0 };
+  let counter = 0;
+  const appendGroup = (label, list) => {
+    if (!list.length) return;
+    const heading = document.createElement('div');
+    heading.className = 'group-heading';
+    heading.innerHTML = `<span>${esc(label)}</span><span class="group-count">${list.length}</span>`;
+    el.appendChild(heading);
+    list.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
+  };
 
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
-
-    const ownedHtml  = buildOwnedSection(finance.owned);
-    const creditsHtml = buildCreditsSection(finance.credits);
-    const emptyNote = (!finance.owned.length && !finance.credits.length)
-      ? `<div class="card-section"><div class="no-entries-note">Not part of any locked split yet</div></div>`
-      : '';
-
-    card.innerHTML = `
-      <div class="card-top">
-        <div class="avatar">${esc(ini)}</div>
-
-        <div class="card-info">
-          <div class="artist-name">${esc(name)}</div>
-          <div class="artist-email">${esc(email)}</div>
-          <div class="artist-id">UID: ${esc(u.id)}</div>
-        </div>
-
-        <div class="total-badge">
-          <div class="total-badge-label">Total earnings (auto)</div>
-          <div class="total-badge-value">${fmtMoney(finance.total)}</div>
-        </div>
-      </div>
-
-      ${ownedHtml}
-      ${creditsHtml}
-      ${emptyNote}
-    `;
-
-    el.appendChild(card);
-  });
+  if (mode === 'has') {
+    appendGroup('Artists with splits', withSplits);
+  } else if (mode === 'none') {
+    appendGroup('Artists with no splits yet', noSplits);
+  } else if (mode === 'flat') {
+    data.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
+  } else {
+    appendGroup('Artists with splits', withSplits);
+    appendGroup('Artists with no splits yet', noSplits);
+  }
 }
 
-/* ── SEARCH ──
-   Matches on name, email, UID, plus each user's owned/credit song titles and owner emails. */
-document.getElementById('search').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase().trim();
+/* ── FILTER + GROUP DRIVER ── */
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const mode = document.getElementById('groupSelect').value;
+
   const filtered = q
     ? allUsers.filter(u => {
         const email = normEmail(resolveEmail(u));
@@ -729,14 +834,18 @@ document.getElementById('search').addEventListener('input', e => {
                songMatch;
       })
     : allUsers;
-  render(filtered);
-  updateStats(filtered);
-});
 
-/* ── DISTRIBUTE PAYOUT ──
-   Splits `amount` across a song's real collaborators by their locked %, credits each
-   collaborator's balance directly, and adds the owner's remaining share to ownerBalance.
-   A solo release (no real collaborators) sends 100% to the owner. */
+  document.getElementById('countLabel').innerHTML =
+    `Showing <span>${filtered.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
+
+  render(filtered, mode);
+  updateStats(filtered);
+}
+
+document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('groupSelect').addEventListener('change', applyFilters);
+
+/* ── DISTRIBUTE PAYOUT ── */
 window.distribute = async function (splitId, btn) {
   const input = document.getElementById(`payout-${splitId}`);
   if (!input) { toast('Input not found.', 'error'); return; }
@@ -762,7 +871,7 @@ window.distribute = async function (splitId, btn) {
     const ownerEffPct = Math.max(0, 100 - othersPctSum);
 
     const updatedContributors = contributors.map(c => {
-      if (normEmail(c.email) === ownerEm) return c; // owner's own listed row, untouched
+      if (normEmail(c.email) === ownerEm) return c;
       const share = amount * ((parseFloat(c.pct) || 0) / 100);
       return { ...c, balance: (parseFloat(c.balance) || 0) + share };
     });
@@ -787,6 +896,49 @@ window.distribute = async function (splitId, btn) {
     btn.textContent = originalText;
   }
 };
+
+/* ── PASSWORD GATE ──
+   Client-side only: keeps casual visitors out of the admin view, but the
+   password lives in this file's JS, so anyone who reads the page source can
+   find it. Pair this with Firestore security rules if this data truly needs
+   to be protected from a determined attacker. */
+const ADMIN_PASSWORD = "Music112@";
+const SESSION_KEY = 'em_admin_unlocked';
+
+function unlockApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('appHeader').style.display = 'flex';
+  document.getElementById('appMain').style.display = 'block';
+  loadUsers();
+}
+
+function attemptUnlock() {
+  const input = document.getElementById('gatePassword');
+  const errEl = document.getElementById('gateError');
+  const box   = document.getElementById('gateBox');
+  if (input.value === ADMIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    unlockApp();
+  } else {
+    errEl.textContent = 'Incorrect password.';
+    box.classList.remove('gate-shake');
+    void box.offsetWidth;
+    box.classList.add('gate-shake');
+    input.value = '';
+    input.focus();
+  }
+}
+
+document.getElementById('gateBtn').addEventListener('click', attemptUnlock);
+document.getElementById('gatePassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') attemptUnlock();
+});
+
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  unlockApp();
+} else {
+  document.getElementById('gatePassword').focus();
+}
 
 </script>
 </body>
