@@ -500,7 +500,7 @@
 
 <main class="main" id="appMain" style="display:none;">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically.</div>
+  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically. Every card also has a <strong style="color:var(--text-pri)">Manual earnings override</strong> — always available, no release or split required — that directly sets the live earnings field to any value, up or down, for correcting mistakes or paying artists with nothing on file yet.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -980,11 +980,39 @@ function buildCardHtml(u, i) {
         <div class="total-badge-value">${fmtMoney(finance.total)}</div>
       </div>
     </div>
+    ${buildManualOverrideSection(u)}
     ${ownedHtml}
     ${creditsHtml}
     ${emptyNote}
   `;
   return card;
+}
+
+/* ── MANUAL EARNINGS OVERRIDE ──
+   Always shown, regardless of whether this artist owns any releases or is
+   credited on any split. Distribute only ever ADDS money and only works for
+   releases that already exist as a split/submission — there was no way to
+   correct a mistaken amount, zero someone out, or pay an artist who has no
+   release/split on file at all. This writes users/{uid}.earnings directly
+   with a plain overwrite (not increment), so it works in every case and can
+   move the number in either direction. */
+function buildManualOverrideSection(u) {
+  const liveVal = (parseFloat(u.earnings) || 0);
+  return `
+    <div class="card-section">
+      <div class="section-heading">Manual earnings override</div>
+      <div class="owned-song">
+        <div class="owned-song-head">
+          <div class="owned-song-title">Live users/${esc(u.id)}.earnings field</div>
+          <div class="owned-song-tag" style="background:var(--green);border-color:var(--green);">${fmtMoney(liveVal)}</div>
+        </div>
+        <div class="payout-row">
+          <input type="number" class="payout-input" id="manual-earn-${u.id}"
+            placeholder="Set earnings to (GHS)" min="0" step="0.01" value="${liveVal.toFixed(2)}">
+          <button class="distribute-btn" onclick="window.setUserEarnings('${u.id}', this)">Set Earnings</button>
+        </div>
+      </div>
+    </div>`;
 }
 
 /* ── RENDER (with grouping) ── */
@@ -1252,6 +1280,34 @@ window.distributeSolo = async function (submissionId, btn) {
   } catch (err) {
     console.error(err);
     toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
+
+/* ── MANUAL SET (overwrite, not increment) ──
+   Works for ANY user regardless of whether they own a release, are credited
+   on a split, or have any submissions at all. Lets you correct a mistaken
+   Distribute, zero someone out, or pay an artist with no release on file. */
+window.setUserEarnings = async function (uid, btn) {
+  const input = document.getElementById(`manual-earn-${uid}`);
+  if (!input) { toast('Input not found.', 'error'); return; }
+
+  const val = parseFloat(input.value);
+  if (isNaN(val) || val < 0) { toast('Enter a valid non-negative amount.', 'error'); return; }
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    await updateDoc(doc(db, 'users', uid), { earnings: val, updatedAt: serverTimestamp() });
+    toast(`Earnings set to ${fmtMoney(val)}`, 'success');
+    await loadUsers();
+  } catch (err) {
+    console.error(err);
+    toast('Failed to set earnings: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
