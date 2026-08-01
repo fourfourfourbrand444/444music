@@ -18,6 +18,8 @@
     --accent-dim: rgba(245,158,11,0.15);
     --accent-glow:rgba(245,158,11,0.3);
     --green:      #10b981;
+    --green-dim:  rgba(16,185,129,0.12);
+    --cyan:       #38bdf8;
     --red:        #ff2e63;
     --text-pri:   #f0f2f8;
     --text-sec:   #8892a4;
@@ -96,7 +98,7 @@
   /* MAIN */
   .main {
     position: relative; z-index: 1;
-    max-width: 960px; margin: 0 auto;
+    max-width: 980px; margin: 0 auto;
     padding: 40px 24px 80px;
   }
 
@@ -163,7 +165,7 @@
   .card {
     background: var(--bg-card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 22px 24px;
-    display: flex; flex-direction: column; gap: 16px;
+    display: flex; flex-direction: column; gap: 18px;
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     animation: fadeUp 0.3s ease both;
   }
@@ -175,7 +177,6 @@
 
   .card:hover {
     border-color: rgba(245,158,11,0.15);
-    transform: translateY(-1px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.35);
   }
 
@@ -207,101 +208,121 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* EARNINGS CONTROL */
-  .earnings-control {
-    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-  }
-
-  .currency-tag {
-    font-size: 11px; color: var(--text-dim); text-transform: uppercase;
-    letter-spacing: 1px; white-space: nowrap;
-  }
-
-  .earnings-wrap { position: relative; }
-
-  .currency-symbol {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
-    color: var(--accent); pointer-events: none;
-  }
-
-  .earnings-input {
+  /* AUTO TOTAL BADGE */
+  .total-badge {
+    flex-shrink: 0; text-align: right;
     background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 11px 12px 11px 28px;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px;
-    color: var(--text-pri); outline: none; width: 140px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    text-align: right;
+    border-radius: var(--radius-sm); padding: 10px 16px;
+  }
+  .total-badge-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 4px;
+  }
+  .total-badge-value {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+    color: var(--accent);
   }
 
-  .earnings-input:focus {
-    border-color: var(--accent-glow);
-    box-shadow: 0 0 0 2px rgba(245,158,11,0.08);
-  }
-
-  .save-btn {
-    background: var(--accent); border: none; color: #080a0f;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px;
-    padding: 11px 18px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
-  }
-
-  .save-btn:hover { opacity: 0.88; transform: scale(1.03); box-shadow: 0 4px 16px var(--accent-glow); }
-  .save-btn:active { transform: scale(0.97); }
-  .save-btn.saving { background: var(--text-dim); color: var(--bg-void); pointer-events: none; }
-  .save-btn.saved  { background: var(--green);   color: white;          pointer-events: none; }
-
-  /* SPLITS CONTEXT PANEL */
-  .card-splits {
+  /* SECTIONS */
+  .card-section {
     border-top: 1px solid var(--border);
-    padding-top: 14px;
-    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 16px;
+    display: flex; flex-direction: column; gap: 10px;
   }
 
-  .splits-heading {
+  .section-heading {
     font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--text-dim); margin-bottom: 2px;
+    color: var(--text-dim);
+    display: flex; align-items: center; gap: 6px;
   }
 
-  .split-chip {
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  /* OWNED SONG BLOCK */
+  .owned-song {
     background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 10px 14px;
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
   }
 
-  .split-chip-song {
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
-    color: var(--text-pri); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    display: flex; align-items: center; gap: 7px;
+  .owned-song-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
 
-  .owner-tag {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    background: var(--accent-dim); color: var(--accent);
-    border: 1px solid rgba(245,158,11,0.25);
-    border-radius: 5px; padding: 2px 6px;
-  }
-
-  .split-chip-owner {
-    font-size: 10.5px; color: var(--text-sec); margin-top: 3px;
+  .owned-song-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13.5px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  .split-chip-pcts { display: flex; gap: 18px; flex-shrink: 0; }
-
-  .split-pct-block { text-align: right; }
-
-  .split-pct-label {
-    font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.6px;
-    color: var(--text-dim); display: block; margin-bottom: 2px;
+  .owned-song-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    background: var(--green-dim); color: var(--green);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 5px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0;
+  }
+  .owned-song-tag.solo {
+    background: var(--accent-dim); color: var(--accent);
+    border-color: rgba(245,158,11,0.25);
   }
 
-  .split-pct-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; }
-  .split-pct-value.owner { color: var(--text-sec); }
-  .split-pct-value.mine  { color: var(--accent); }
+  .collab-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 11.5px; color: var(--text-sec);
+    padding: 6px 0; border-top: 1px dashed var(--border);
+  }
+  .collab-row:first-of-type { border-top: none; padding-top: 0; }
+  .collab-name { color: var(--text-pri); font-weight: 500; }
+  .collab-pct { color: var(--cyan); font-weight: 700; margin-left: 6px; }
+  .collab-balance { color: var(--green); font-weight: 700; white-space: nowrap; }
 
-  .no-splits-note {
+  .owner-share-row {
+    font-size: 11.5px; color: var(--text-sec);
+    padding-top: 4px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 10px;
+  }
+  .owner-share-row .pct { color: var(--accent); font-weight: 700; }
+  .owner-share-row .bal { color: var(--accent); font-weight: 700; }
+
+  .payout-row { display: flex; gap: 8px; margin-top: 2px; }
+
+  .payout-input {
+    flex: 1; background: var(--bg-void); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 12px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+    color: var(--text-pri); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .payout-input::placeholder { color: var(--text-dim); font-family: 'DM Mono', monospace; font-weight: 400; font-size: 11px; }
+  .payout-input:focus { border-color: var(--accent-glow); box-shadow: 0 0 0 2px rgba(245,158,11,0.08); }
+
+  .distribute-btn {
+    background: var(--accent); border: none; color: #080a0f;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11.5px;
+    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
+  }
+  .distribute-btn:hover:not(:disabled) { opacity: 0.88; transform: scale(1.03); box-shadow: 0 4px 16px var(--accent-glow); }
+  .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
+  .distribute-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* CONTRIBUTOR CREDIT ROW (read-only) */
+  .credit-row {
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .credit-song {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .credit-owner {
+    font-size: 10.5px; color: var(--text-sec); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .credit-right { text-align: right; flex-shrink: 0; }
+  .credit-pct { font-size: 10px; color: var(--cyan); font-weight: 700; }
+  .credit-balance { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: var(--green); }
+
+  .no-entries-note {
     font-size: 11px; color: var(--text-dim); font-style: italic;
   }
 
@@ -351,10 +372,10 @@
     .main { padding: 24px 14px 60px; }
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
     .card-top { flex-wrap: wrap; }
-    .earnings-control { width: 100%; justify-content: flex-end; }
-    .earnings-input { width: 110px; }
+    .total-badge { width: 100%; text-align: left; }
     .page-title { font-size: 26px; }
-    .split-chip { flex-wrap: wrap; }
+    .payout-row { flex-wrap: wrap; }
+    .credit-row { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -378,7 +399,7 @@
 
 <main class="main">
   <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Edit each artist's earnings — writes directly to <code>users/{uid}.earnings</code>. Each card also shows every locked split this person belongs to, with the release owner's % alongside theirs, so you can cross-check before saving a figure.</div>
+  <div class="page-sub">Total earnings are now auto-calculated from splits. To pay out a release, enter an amount under that song and hit Distribute — it divides the payout by each contributor's locked %, credits their share straight to their balance, and adds the rest to the owner. Solo releases (no collaborators) go 100% to the owner.</div>
 
   <!-- STATS -->
   <div class="stats-bar">
@@ -422,7 +443,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
   getFirestore, collection, getDocs,
-  doc, updateDoc, serverTimestamp
+  doc, getDoc, updateDoc, increment, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const app = initializeApp({
@@ -435,8 +456,9 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
-let allUsers = [];
-let splitsMap = {}; // lowercased email -> array of split context entries
+let allUsers  = [];   // [{id, ...userDoc}]
+let allSplits = [];   // [{id, songTitle, artistName, ownerEmail, ownerBalance, contributors:[...]}]
+let financeByEmail = {}; // lowercased email -> { owned:[...], credits:[...], total }
 
 /* ── HELPERS ── */
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -449,6 +471,8 @@ function resolveEmail(d) {
   return (d.email || d.Email || d.userEmail || '').trim();
 }
 
+function normEmail(e) { return (e || '').toLowerCase().trim(); }
+
 function initials(name, email) {
   if (name) {
     const p = name.trim().split(/\s+/);
@@ -459,7 +483,7 @@ function initials(name, email) {
 
 function fmtMoney(n) {
   const num = Number(n) || 0;
-  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 /* ── TOAST ── */
@@ -472,70 +496,65 @@ function toast(msg, type = 'success') {
   setTimeout(() => t.remove(), 3200);
 }
 
-/* ── STATS ── */
-function updateStats(data) {
-  const total  = data.reduce((s, u) => s + (Number(u.earnings) || 0), 0);
-  const active = data.filter(u => (Number(u.earnings) || 0) > 0).length;
-  document.getElementById('statCount').textContent  = data.length;
-  document.getElementById('statTotal').textContent  = fmtMoney(total);
-  document.getElementById('statActive').textContent = active;
+/* ── FINANCE MODEL ──
+   For every split:
+     - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
+     - ownerEffPct = 100 - sum(other contributors' pct)   (this absorbs any self-listed owner row automatically)
+     - ownerBalance (new field on the split doc) = money already credited to the owner for that song
+     - each real collaborator's own balance field = money already credited to them for that song
+
+   Per-user totals (keyed by lowercased email):
+     total = sum(ownerBalance across songs they own) + sum(balance across OTHER people's songs where they're a real collaborator)
+*/
+function splitBreakdown(s) {
+  const ownerEm = normEmail(s.ownerEmail);
+  const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
+  const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
+  const ownerEffPct = Math.max(0, 100 - othersPctSum);
+  return { others, ownerEffPct };
 }
 
-/* ── SPLITS MAP ──
-   Builds: lowercased email -> [{ songTitle, artistName, ownerEmail, ownerPct, myPct, isOwner }]
-
-   IMPORTANT — ownerPct derivation:
-   The owner of a release is NEVER stored as an entry inside a split's
-   `contributors` array (the splits page keeps the owner purely implicit,
-   auto-owning whatever % collaborators haven't taken). So instead of
-   searching for the owner's email inside `contributors` (which will now
-   always come up empty), we derive their share the same way the splits
-   page does: ownerPct = 100 - sum(all contributors' pct). */
-async function loadSplitsMap() {
-  const snap = await getDocs(collection(db, 'splits'));
+function buildFinanceMap(splits) {
   const map = {};
-  snap.forEach(ds => {
-    const data = ds.data();
-    const contributors = Array.isArray(data.contributors) ? data.contributors : [];
-    const ownerEmail = (data.ownerEmail || '').toLowerCase().trim();
-    const contributorsTotal = contributors.reduce((s, c) => s + (parseFloat(c.pct) || 0), 0);
-    const ownerPct = Math.max(0, 100 - contributorsTotal);
+  const ensure = (email) => {
+    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
+    return map[email];
+  };
 
-    contributors.forEach(c => {
-      const em = (c.email || '').toLowerCase().trim();
-      if (!em) return;
-      if (!map[em]) map[em] = [];
-      map[em].push({
-        splitId:    ds.id,
-        songTitle:  data.songTitle  || 'Untitled',
-        artistName: data.artistName || '',
-        ownerEmail: data.ownerEmail || '',
-        ownerPct,
-        myPct:      parseFloat(c.pct) || 0,
-        isOwner:    em === ownerEmail
-      });
-    });
+  splits.forEach(s => {
+    const ownerEm = normEmail(s.ownerEmail);
+    const { others, ownerEffPct } = splitBreakdown(s);
 
-    // The owner themselves is no longer necessarily present in `contributors`,
-    // so make sure their own card still shows this split — add an entry for
-    // the owner directly (isOwner: true, myPct = their derived ownerPct).
-    if (ownerEmail) {
-      if (!map[ownerEmail]) map[ownerEmail] = [];
-      const alreadyListed = map[ownerEmail].some(e => e.splitId === ds.id);
-      if (!alreadyListed) {
-        map[ownerEmail].push({
-          splitId:    ds.id,
-          songTitle:  data.songTitle  || 'Untitled',
-          artistName: data.artistName || '',
-          ownerEmail: data.ownerEmail || '',
-          ownerPct,
-          myPct:      ownerPct,
-          isOwner:    true
-        });
-      }
+    if (ownerEm) {
+      const bucket = ensure(ownerEm);
+      const ownerBal = parseFloat(s.ownerBalance) || 0;
+      bucket.owned.push({ split: s, others, ownerEffPct, ownerBalance: ownerBal });
+      bucket.total += ownerBal;
     }
+
+    others.forEach(c => {
+      const em = normEmail(c.email);
+      if (!em) return;
+      const bal = parseFloat(c.balance) || 0;
+      const bucket = ensure(em);
+      bucket.credits.push({
+        splitId: s.id, songTitle: s.songTitle || 'Untitled',
+        ownerEmail: s.ownerEmail || '', pct: parseFloat(c.pct) || 0, balance: bal
+      });
+      bucket.total += bal;
+    });
   });
+
   return map;
+}
+
+/* ── STATS ── */
+function updateStats(users) {
+  const total  = users.reduce((s, u) => s + (financeByEmail[normEmail(resolveEmail(u))]?.total || 0), 0);
+  const active = users.filter(u => (financeByEmail[normEmail(resolveEmail(u))]?.total || 0) > 0).length;
+  document.getElementById('statCount').textContent  = users.length;
+  document.getElementById('statTotal').textContent  = fmtMoney(total);
+  document.getElementById('statActive').textContent = active;
 }
 
 /* ── LOAD ── */
@@ -545,18 +564,20 @@ window.loadUsers = async function () {
   document.getElementById('countLabel').textContent = 'Loading…';
 
   try {
-    const [usersSnap, sMap] = await Promise.all([
+    const [usersSnap, splitsSnap] = await Promise.all([
       getDocs(collection(db, 'users')),
-      loadSplitsMap()
+      getDocs(collection(db, 'splits'))
     ]);
 
     allUsers  = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    splitsMap = sMap;
+    allSplits = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    financeByEmail = buildFinanceMap(allSplits);
 
-    // Sort: highest earnings first, then alphabetically
+    // Sort: highest auto-total first, then alphabetically
     allUsers.sort((a, b) => {
-      const diff = (Number(b.earnings) || 0) - (Number(a.earnings) || 0);
-      return diff !== 0 ? diff : (resolveName(a) || '').localeCompare(resolveName(b) || '');
+      const ta = financeByEmail[normEmail(resolveEmail(a))]?.total || 0;
+      const tb = financeByEmail[normEmail(resolveEmail(b))]?.total || 0;
+      return tb - ta || (resolveName(a) || '').localeCompare(resolveName(b) || '');
     });
 
     render(allUsers);
@@ -576,42 +597,58 @@ window.loadUsers = async function () {
 
 loadUsers();
 
-/* ── SPLITS PANEL HTML ── */
-function buildSplitsPanel(email) {
-  const norm = (email || '').toLowerCase().trim();
-  const entries = norm ? (splitsMap[norm] || []) : [];
+/* ── OWNED SONGS PANEL ── */
+function buildOwnedSection(entries) {
+  if (!entries.length) return '';
+  const blocks = entries.map(({ split, others, ownerEffPct, ownerBalance }) => {
+    const collabRows = others.map(c => `
+      <div class="collab-row">
+        <span><span class="collab-name">${esc(c.name || c.email)}</span><span class="collab-pct">${(parseFloat(c.pct)||0).toFixed(1)}%</span></span>
+        <span class="collab-balance">${fmtMoney(c.balance)}</span>
+      </div>`).join('');
 
-  if (!entries.length) {
-    return `<div class="card-splits"><div class="no-splits-note">Not part of any locked split yet</div></div>`;
-  }
-
-  const chips = entries.map(s => {
-    const ownerPctDisplay = s.ownerPct !== null ? s.ownerPct.toFixed(1) + '%' : '—';
     return `
-      <div class="split-chip">
-        <div>
-          <div class="split-chip-song">
-            ${esc(s.songTitle)}
-            ${s.isOwner ? '<span class="owner-tag">Owner</span>' : ''}
-          </div>
-          <div class="split-chip-owner">Owner: ${esc(s.ownerEmail || '—')}</div>
+      <div class="owned-song">
+        <div class="owned-song-head">
+          <div class="owned-song-title">${esc(split.songTitle || 'Untitled')}</div>
+          <div class="owned-song-tag ${others.length ? '' : 'solo'}">${others.length ? others.length + ' collaborator' + (others.length > 1 ? 's' : '') : 'Solo release'}</div>
         </div>
-        <div class="split-chip-pcts">
-          <div class="split-pct-block">
-            <span class="split-pct-label">Owner %</span>
-            <span class="split-pct-value owner">${ownerPctDisplay}</span>
-          </div>
-          <div class="split-pct-block">
-            <span class="split-pct-label">This user</span>
-            <span class="split-pct-value mine">${s.myPct.toFixed ? s.myPct.toFixed(1) : s.myPct}%</span>
-          </div>
+        ${collabRows}
+        <div class="owner-share-row">
+          <span>Your share <span class="pct">${ownerEffPct.toFixed(1)}%</span></span>
+          <span class="bal">${fmtMoney(ownerBalance)}</span>
+        </div>
+        <div class="payout-row">
+          <input type="number" class="payout-input" id="payout-${split.id}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
+          <button class="distribute-btn" onclick="window.distribute('${split.id}', this)">Distribute</button>
         </div>
       </div>`;
   }).join('');
 
-  return `<div class="card-splits">
-      <div class="splits-heading">Splits (${entries.length})</div>
-      ${chips}
+  return `<div class="card-section">
+      <div class="section-heading">Releases you own (${entries.length})</div>
+      ${blocks}
+    </div>`;
+}
+
+/* ── CONTRIBUTOR CREDITS PANEL (read-only) ── */
+function buildCreditsSection(entries) {
+  if (!entries.length) return '';
+  const rows = entries.map(c => `
+    <div class="credit-row">
+      <div>
+        <div class="credit-song">${esc(c.songTitle)}</div>
+        <div class="credit-owner">Owner: ${esc(c.ownerEmail || '—')}</div>
+      </div>
+      <div class="credit-right">
+        <div class="credit-pct">${c.pct.toFixed(1)}%</div>
+        <div class="credit-balance">${fmtMoney(c.balance)}</div>
+      </div>
+    </div>`).join('');
+
+  return `<div class="card-section">
+      <div class="section-heading">Contributor credits (${entries.length})</div>
+      ${rows}
     </div>`;
 }
 
@@ -635,14 +672,20 @@ function render(data) {
   el.innerHTML = '';
 
   data.forEach((u, i) => {
-    const name  = resolveName(u)  || 'Unknown Artist';
-    const email = resolveEmail(u) || '—';
-    const ini   = initials(resolveName(u), resolveEmail(u));
-    const earn  = Number(u.earnings) || 0;
+    const name    = resolveName(u)  || 'Unknown Artist';
+    const email   = resolveEmail(u) || '—';
+    const ini     = initials(resolveName(u), resolveEmail(u));
+    const finance = financeByEmail[normEmail(email)] || { owned: [], credits: [], total: 0 };
 
     const card = document.createElement('div');
     card.className = 'card';
     card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
+
+    const ownedHtml  = buildOwnedSection(finance.owned);
+    const creditsHtml = buildCreditsSection(finance.credits);
+    const emptyNote = (!finance.owned.length && !finance.credits.length)
+      ? `<div class="card-section"><div class="no-entries-note">Not part of any locked split yet</div></div>`
+      : '';
 
     card.innerHTML = `
       <div class="card-top">
@@ -654,26 +697,15 @@ function render(data) {
           <div class="artist-id">UID: ${esc(u.id)}</div>
         </div>
 
-        <div class="earnings-control">
-          <div class="currency-tag">GHS</div>
-          <div class="earnings-wrap">
-            <span class="currency-symbol">₵</span>
-            <input
-              class="earnings-input"
-              id="earn-${u.id}"
-              type="number"
-              min="0"
-              step="0.01"
-              value="${earn.toFixed(2)}"
-            >
-          </div>
-          <button class="save-btn" onclick="window.saveEarnings('${u.id}', this)">
-            Save
-          </button>
+        <div class="total-badge">
+          <div class="total-badge-label">Total earnings (auto)</div>
+          <div class="total-badge-value">${fmtMoney(finance.total)}</div>
         </div>
       </div>
 
-      ${buildSplitsPanel(email)}
+      ${ownedHtml}
+      ${creditsHtml}
+      ${emptyNote}
     `;
 
     el.appendChild(card);
@@ -681,66 +713,78 @@ function render(data) {
 }
 
 /* ── SEARCH ──
-   Matches on name, email, UID, plus each user's split song titles and owner
-   emails, so typing a song or owner name surfaces the right contributors. */
+   Matches on name, email, UID, plus each user's owned/credit song titles and owner emails. */
 document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const filtered = q
     ? allUsers.filter(u => {
-        const email = (resolveEmail(u) || '').toLowerCase();
-        const entries = splitsMap[email.trim()] || [];
-        const splitsMatch = entries.some(s =>
-          s.songTitle.toLowerCase().includes(q) ||
-          (s.ownerEmail || '').toLowerCase().includes(q)
-        );
-        return (resolveName(u)  || '').toLowerCase().includes(q) ||
+        const email = normEmail(resolveEmail(u));
+        const finance = financeByEmail[email] || { owned: [], credits: [] };
+        const songMatch =
+          finance.owned.some(o => (o.split.songTitle || '').toLowerCase().includes(q)) ||
+          finance.credits.some(c => c.songTitle.toLowerCase().includes(q) || (c.ownerEmail || '').toLowerCase().includes(q));
+        return (resolveName(u) || '').toLowerCase().includes(q) ||
                email.includes(q) ||
                (u.id || '').toLowerCase().includes(q) ||
-               splitsMatch;
+               songMatch;
       })
     : allUsers;
   render(filtered);
   updateStats(filtered);
 });
 
-/* ── SAVE ── */
-window.saveEarnings = async function (uid, btn) {
-  const input = document.getElementById(`earn-${uid}`);
+/* ── DISTRIBUTE PAYOUT ──
+   Splits `amount` across a song's real collaborators by their locked %, credits each
+   collaborator's balance directly, and adds the owner's remaining share to ownerBalance.
+   A solo release (no real collaborators) sends 100% to the owner. */
+window.distribute = async function (splitId, btn) {
+  const input = document.getElementById(`payout-${splitId}`);
   if (!input) { toast('Input not found.', 'error'); return; }
 
-  const newEarnings = parseFloat(input.value) || 0;
+  const amount = parseFloat(input.value);
+  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
 
+  const originalText = btn.textContent;
+  btn.disabled = true;
   btn.textContent = '…';
-  btn.classList.add('saving');
 
   try {
-    await updateDoc(doc(db, 'users', uid), {
-      earnings:  newEarnings,
-      updatedAt: serverTimestamp(),
+    const ref  = doc(db, 'splits', splitId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) { toast('Split not found.', 'error'); return; }
+
+    const data = snap.data();
+    const ownerEm = normEmail(data.ownerEmail);
+    const contributors = Array.isArray(data.contributors) ? data.contributors : [];
+
+    const others = contributors.filter(c => normEmail(c.email) !== ownerEm);
+    const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
+    const ownerEffPct = Math.max(0, 100 - othersPctSum);
+
+    const updatedContributors = contributors.map(c => {
+      if (normEmail(c.email) === ownerEm) return c; // owner's own listed row, untouched
+      const share = amount * ((parseFloat(c.pct) || 0) / 100);
+      return { ...c, balance: (parseFloat(c.balance) || 0) + share };
     });
 
-    // Update local cache
-    const idx = allUsers.findIndex(u => u.id === uid);
-    if (idx !== -1) allUsers[idx].earnings = newEarnings;
+    const ownerShare = amount * (ownerEffPct / 100);
 
-    btn.textContent = '✓';
-    btn.classList.remove('saving');
-    btn.classList.add('saved');
-    updateStats(allUsers);
+    await updateDoc(ref, {
+      contributors: updatedContributors,
+      ownerBalance: increment(ownerShare),
+      lastPayoutAt: serverTimestamp()
+    });
 
-    const name = resolveName(allUsers.find(u => u.id === uid) || {}) || uid;
-    toast(`${name} → ₵${newEarnings.toFixed(2)}`, 'success');
+    toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
 
-    setTimeout(() => {
-      btn.textContent = 'Save';
-      btn.classList.remove('saved');
-    }, 2200);
-
+    input.value = '';
+    await loadUsers();
   } catch (err) {
     console.error(err);
-    btn.textContent = 'Save';
-    btn.classList.remove('saving');
-    toast('Save failed: ' + err.message, 'error');
+    toast('Distribution failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
   }
 };
 
