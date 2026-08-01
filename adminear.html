@@ -489,6 +489,7 @@
     <div class="logo-text">444<span>Music</span></div>
   </div>
   <div class="header-right">
+    <button class="refresh-btn" onclick="runBackfill()">⇪ Sync Earnings</button>
     <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
     <div class="header-tag">
       <div class="dot"></div>
@@ -1227,6 +1228,44 @@ window.distributeSolo = async function (submissionId, btn) {
     btn.disabled = false;
     btn.textContent = originalText;
   }
+};
+
+/* ── ONE-TIME BACKFILL ──
+   Every distribute action going forward now writes to users/{uid}.earnings
+   (see bumpUserEarnings above), but anything paid out BEFORE that fix only
+   lives in splits.ownerBalance / contributors[].balance / submissions
+   .earningsBalance / royaltySplits[].balance — financeByEmail already sums
+   all of that correctly for the cards on this page.
+   This button just writes that same computed total straight into
+   users/{uid}.earnings for every artist. It's a SET, not an increment, so
+   running it twice (or after new distributions) never double-counts —
+   it just re-syncs the field to match the true total shown on this page. */
+window.runBackfill = async function () {
+  if (!Object.keys(financeByEmail).length) {
+    toast('Load users first.', 'error');
+    return;
+  }
+  const confirmed = window.confirm(
+    'This will set users/{uid}.earnings to match each artist\'s total shown on this page (a full overwrite of that field, not an add-on). Continue?'
+  );
+  if (!confirmed) return;
+
+  let updated = 0, skipped = 0, failed = 0;
+
+  for (const email of Object.keys(financeByEmail)) {
+    const uid = emailToUid[email];
+    if (!uid) { skipped++; continue; }
+    const total = financeByEmail[email].total || 0;
+    try {
+      await updateDoc(doc(db, 'users', uid), { earnings: total });
+      updated++;
+    } catch (err) {
+      console.warn(`Backfill failed for ${email} (uid ${uid}):`, err.message);
+      failed++;
+    }
+  }
+
+  toast(`Synced ${updated} artist${updated !== 1 ? 's' : ''}${skipped ? `, ${skipped} skipped (no matching uid)` : ''}${failed ? `, ${failed} failed` : ''}`, failed ? 'error' : 'success');
 };
 
 /* ── PASSWORD GATE ──
