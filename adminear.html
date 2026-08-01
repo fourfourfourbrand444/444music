@@ -483,9 +483,14 @@ function updateStats(data) {
 
 /* ── SPLITS MAP ──
    Builds: lowercased email -> [{ songTitle, artistName, ownerEmail, ownerPct, myPct, isOwner }]
-   ownerPct is the owner's OWN percentage inside that split's contributors array
-   (found by matching contributor.email === split.ownerEmail); null if the
-   owner didn't list themselves as a contributor on that split. */
+
+   IMPORTANT — ownerPct derivation:
+   The owner of a release is NEVER stored as an entry inside a split's
+   `contributors` array (the splits page keeps the owner purely implicit,
+   auto-owning whatever % collaborators haven't taken). So instead of
+   searching for the owner's email inside `contributors` (which will now
+   always come up empty), we derive their share the same way the splits
+   page does: ownerPct = 100 - sum(all contributors' pct). */
 async function loadSplitsMap() {
   const snap = await getDocs(collection(db, 'splits'));
   const map = {};
@@ -493,8 +498,8 @@ async function loadSplitsMap() {
     const data = ds.data();
     const contributors = Array.isArray(data.contributors) ? data.contributors : [];
     const ownerEmail = (data.ownerEmail || '').toLowerCase().trim();
-    const ownerEntry = contributors.find(c => (c.email || '').toLowerCase().trim() === ownerEmail);
-    const ownerPct = ownerEntry ? (parseFloat(ownerEntry.pct) || 0) : null;
+    const contributorsTotal = contributors.reduce((s, c) => s + (parseFloat(c.pct) || 0), 0);
+    const ownerPct = Math.max(0, 100 - contributorsTotal);
 
     contributors.forEach(c => {
       const em = (c.email || '').toLowerCase().trim();
@@ -510,6 +515,25 @@ async function loadSplitsMap() {
         isOwner:    em === ownerEmail
       });
     });
+
+    // The owner themselves is no longer necessarily present in `contributors`,
+    // so make sure their own card still shows this split — add an entry for
+    // the owner directly (isOwner: true, myPct = their derived ownerPct).
+    if (ownerEmail) {
+      if (!map[ownerEmail]) map[ownerEmail] = [];
+      const alreadyListed = map[ownerEmail].some(e => e.splitId === ds.id);
+      if (!alreadyListed) {
+        map[ownerEmail].push({
+          splitId:    ds.id,
+          songTitle:  data.songTitle  || 'Untitled',
+          artistName: data.artistName || '',
+          ownerEmail: data.ownerEmail || '',
+          ownerPct,
+          myPct:      ownerPct,
+          isOwner:    true
+        });
+      }
+    }
   });
   return map;
 }
@@ -562,7 +586,7 @@ function buildSplitsPanel(email) {
   }
 
   const chips = entries.map(s => {
-    const ownerPctDisplay = s.ownerPct !== null ? s.ownerPct + '%' : '—';
+    const ownerPctDisplay = s.ownerPct !== null ? s.ownerPct.toFixed(1) + '%' : '—';
     return `
       <div class="split-chip">
         <div>
@@ -579,7 +603,7 @@ function buildSplitsPanel(email) {
           </div>
           <div class="split-pct-block">
             <span class="split-pct-label">This user</span>
-            <span class="split-pct-value mine">${s.myPct}%</span>
+            <span class="split-pct-value mine">${s.myPct.toFixed ? s.myPct.toFixed(1) : s.myPct}%</span>
           </div>
         </div>
       </div>`;
