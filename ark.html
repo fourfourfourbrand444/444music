@@ -617,7 +617,6 @@ body.nav-open { overflow: hidden; }
   letter-spacing: -2px;
   color: #1a1a2e;
   text-align: left;
-  margin-bottom: 90px;
 }
 .white-hero-title span { display: block; }
 .white-hero-btns {
@@ -644,12 +643,50 @@ body.nav-open { overflow: hidden; }
 .white-btn-outline.signup { padding-left: 40px; padding-right: 40px; }
 .white-btn-outline:hover { background: #1a1a2e; color: #ffffff; }
 
+/* =========================================
+   HERO TITLE SLIDESHOW — cycles through random
+   text lines and a store-icon slide, unattended.
+   ========================================= */
+.hero-title-slot {
+  position: relative;
+  min-height: 38vh;
+  margin-bottom: 90px;
+}
+.hero-title-slide {
+  position: absolute;
+  inset: auto auto 0 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hero-title-slide.exiting { animation: heroSlideOut 0.45s cubic-bezier(0.22,1,0.36,1) forwards; }
+.hero-title-slot .white-hero-title { margin-bottom: 0; }
+.hero-line { display: block; animation: wordReveal 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes heroSlideOut { to { opacity: 0; transform: translateY(-22px); } }
+
+.hero-icons-slide { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(18px, 3.6vw, 40px); margin-bottom: 22px; }
+.hero-icon-item { font-size: clamp(40px, 8vw, 88px); color: #1a1a2e; line-height: 1; display: inline-block; }
+@keyframes heroIconIn { from { opacity: 0; transform: translateY(28px) scale(0.82); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes iconFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+.hero-icons-caption {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 3px; text-transform: uppercase; color: #5c5c62;
+}
+
+@media (max-width: 768px) {
+  .hero-title-slot { min-height: 30vh; margin-bottom: 68px; }
+  .hero-icon-item { font-size: clamp(32px, 12vw, 58px); }
+  .hero-icons-slide { gap: 20px; margin-bottom: 16px; }
+  .hero-icons-caption { font-size: 11px; letter-spacing: 2px; }
+}
+
 @media (max-width: 768px) {
   .white-header { padding: 26px 6% 0; }
   .white-hamburger span { width: 28px; height: 2.5px; }
   .white-logo-img { height: 34px; }
   .white-hero { padding: 14vh 6% 60px; }
-  .white-hero-title { font-size: clamp(48px, 16vw, 72px); letter-spacing: -1.5px; margin-bottom: 68px; }
+  .white-hero-title { font-size: clamp(48px, 16vw, 72px); letter-spacing: -1.5px; }
   .white-btn-outline.login { padding-left: 46px; padding-right: 46px; }
   .white-btn-outline.signup { padding-left: 30px; padding-right: 30px; }
   .white-btn-outline { font-size: 16px; padding-top: 15px; padding-bottom: 15px; }
@@ -836,7 +873,7 @@ body.nav-open { overflow: hidden; }
 
 <!-- ===== HERO ===== -->
 <section class="white-hero">
-  <h1 class="white-hero-title"><span>We</span><span>amplify</span><span>creative</span><span>music</span><span>brands</span></h1>
+  <div class="hero-title-slot" id="heroTitleSlides"></div>
   <div class="white-hero-btns">
     <a href="login.html" class="white-btn-outline login">LOGIN</a>
     <a href="login.html" class="white-btn-outline signup">SIGN UP</a>
@@ -1339,6 +1376,120 @@ function startReleaseSlideshow(covers) {
   resetReleaseTimer();
 }
 window.__startReleaseSlideshow = startReleaseSlideshow;
+
+/* ── HERO TITLE SLIDESHOW ──────────────────────────────────────
+   Cycles the big hero headline between several short text slides
+   and one "store icon" slide (Spotify / Apple Music / YouTube /
+   Amazon / TikTok / Deezer, all black on the white hero). Order is
+   reshuffled every pass, and the very first slide shown on load is
+   randomized too — so reloading the page won't always land on the
+   same line. Text slides fade+slide in line-by-line; the icon
+   slide fades each icon in with a staggered float animation. */
+(function heroTitleSlideshow() {
+  const container = document.getElementById('heroTitleSlides');
+  if (!container) return;
+
+  const SLIDES = [
+    { type: 'text', lines: ['We', 'amplify', 'creative', 'music', 'brands'] },
+    { type: 'text', lines: ['Upload once.', 'Reach every', 'platform.'] },
+    { type: 'text', lines: ['Your music.', 'Your money.', 'Your terms.'] },
+    { type: 'text', lines: ['Keep 100%', 'of your', 'royalties.'] },
+    { type: 'text', lines: ['From Accra', 'to the world.'] },
+    { type: 'text', lines: ['Distribution', 'without limits.'] },
+    { type: 'text', lines: ['Built for', 'independent', 'artists.'] },
+    { type: 'text', lines: ['Global reach.', 'Zero cuts.'] },
+    {
+      type: 'icons',
+      caption: 'Live on 100+ stores',
+      icons: [
+        'fa-brands fa-spotify',
+        'fa-brands fa-apple',
+        'fa-brands fa-youtube',
+        'fa-brands fa-amazon',
+        'fa-brands fa-tiktok',
+        'fa-solid fa-circle-play'
+      ]
+    }
+  ];
+
+  function shuffle(list) {
+    const arr = list.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  let order = shuffle(SLIDES.map((_, i) => i));
+  let pos = 0;
+
+  function buildSlideEl(slide) {
+    if (slide.type === 'icons') {
+      const wrap = document.createElement('div');
+      wrap.className = 'hero-title-slide entering';
+
+      const row = document.createElement('div');
+      row.className = 'hero-icons-slide';
+      slide.icons.forEach((iconClass, i) => {
+        const el = document.createElement('i');
+        el.className = iconClass + ' hero-icon-item';
+        el.style.animation =
+          `heroIconIn 0.6s cubic-bezier(0.22,1,0.36,1) ${i * 0.08}s backwards, ` +
+          `iconFloat 3s ease-in-out ${0.6 + i * 0.15}s infinite`;
+        row.appendChild(el);
+      });
+      wrap.appendChild(row);
+
+      const caption = document.createElement('div');
+      caption.className = 'hero-icons-caption';
+      caption.textContent = slide.caption;
+      wrap.appendChild(caption);
+
+      return wrap;
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'hero-title-slide entering';
+    const h1 = document.createElement('h1');
+    h1.className = 'white-hero-title';
+    slide.lines.forEach((line, i) => {
+      const span = document.createElement('span');
+      span.className = 'hero-line';
+      span.textContent = line;
+      span.style.animationDelay = (0.05 + i * 0.09) + 's';
+      h1.appendChild(span);
+    });
+    wrap.appendChild(h1);
+    return wrap;
+  }
+
+  function showNext() {
+    const current = container.firstElementChild;
+    const nextSlide = SLIDES[order[pos]];
+    const nextEl = buildSlideEl(nextSlide);
+
+    if (current) {
+      current.classList.add('exiting');
+      current.classList.remove('entering');
+      setTimeout(() => {
+        current.remove();
+        container.appendChild(nextEl);
+      }, 460);
+    } else {
+      container.appendChild(nextEl);
+    }
+
+    pos++;
+    if (pos >= order.length) {
+      pos = 0;
+      order = shuffle(SLIDES.map((_, i) => i));
+    }
+  }
+
+  showNext();
+  setInterval(showNext, 4200);
+})();
 
 /* ── FULL-SCREEN NAV OVERLAY ── */
 const menuBtn      = document.getElementById('menuBtn');
