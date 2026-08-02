@@ -236,45 +236,6 @@ body.nav-open { overflow: hidden; }
 .slide-caption-text span { display: block; font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
 /* =========================================
-   HERO — HORIZONTAL ALBUM COVER MARQUEE
-   ========================================= */
-.hero-marquee { justify-content: flex-start; align-items: flex-start; background: #050505; padding: 0; min-height: 100vh; }
-.hero-marquee-bg {
-  position: absolute; top: -12%; left: -8%; right: -8%; bottom: -12%; z-index: 0;
-  display: flex; flex-direction: column; gap: 12px;
-  transform: rotate(-4deg);
-  pointer-events: none;
-}
-.marquee-row { flex: 1 1 0; display: flex; align-items: stretch; gap: 12px; width: max-content; will-change: transform; min-height: 0; }
-.marquee-row.row-left  { animation: marqueeLeft 46s linear infinite; }
-.marquee-row.row-right { animation: marqueeRight 52s linear infinite; }
-@keyframes marqueeLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
-@keyframes marqueeRight { from { transform: translateX(-50%); } to { transform: translateX(0);    } }
-.cover-tile {
-  height: 100%; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; flex-shrink: 0;
-  background: var(--surface2); border: 1px solid rgba(255,255,255,0.08);
-}
-.cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 28px; }
-.hero-marquee-overlay {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.6) 32%, rgba(5,5,5,0.72) 52%, rgba(5,5,5,0.58) 72%, rgba(5,5,5,0.4) 100%);
-}
-.hero-marquee-content {
-  position: relative; z-index: 10; text-align: center; max-width: 760px;
-  padding: 130px 24px 0; margin: 0 auto;
-}
-.hero-marquee-content .hero-title { text-align: center !important; margin-bottom: 20px; text-shadow: 0 4px 30px rgba(0,0,0,0.85); }
-.hero-marquee-content .hero-sub { text-align: center !important; margin: 0 auto 36px; text-shadow: 0 2px 16px rgba(0,0,0,0.85); }
-.hero-btns-center { justify-content: center !important; margin-bottom: 0 !important; }
-
-@media (max-width: 768px) {
-  .hero-marquee-bg { top: -16%; left: -12%; right: -12%; bottom: -16%; transform: rotate(-5deg); gap: 9px; }
-  .marquee-row { gap: 9px; }
-  .hero-marquee-content { padding: 100px 20px 0; }
-}
-
-/* =========================================
    HERO CARD
    ========================================= */
 .hero-card {
@@ -537,6 +498,82 @@ body.nav-open { overflow: hidden; }
 .testi-header-pad { padding: 0 5%; }
 
 /* =========================================
+   HERO — HORIZONTAL ALBUM COVER MARQUEE (rebuilt)
+   ========================================= */
+.hero-marquee {
+  justify-content: flex-end;
+  align-items: center;
+  background: #050505;
+  padding: 0;
+  min-height: 100vh;
+}
+.hero-marquee-bg {
+  position: absolute; inset: -3% -3%; z-index: 0;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.marquee-row { flex: 1 1 0; display: flex; align-items: stretch; gap: 10px; width: max-content; will-change: transform; min-height: 0; }
+.marquee-row.row-left  { animation: marqueeLeft 50s linear infinite; }
+.marquee-row.row-right { animation: marqueeRight 56s linear infinite; }
+@keyframes marqueeLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
+@keyframes marqueeRight { from { transform: translateX(-50%); } to { transform: translateX(0);    } }
+.cover-tile {
+  height: 100%; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid rgba(255,255,255,0.08);
+}
+.cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 28px; }
+
+/* Gradient: transparent up top so covers read clearly, darkening toward the
+   text block, fading to solid --bg at the very bottom so the hero blends
+   seamlessly into the ticker below. No purple — pure black tint. */
+.hero-marquee-overlay {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(5,5,5,0.05) 0%,
+    rgba(5,5,5,0.10) 28%,
+    rgba(5,5,5,0.38) 48%,
+    rgba(5,5,5,0.72) 66%,
+    rgba(5,5,5,0.90) 82%,
+    var(--bg) 100%);
+}
+.hero-marquee-content {
+  position: relative; z-index: 10; text-align: center; max-width: 640px;
+  padding: 0 24px 64px; margin: 0 auto;
+}
+.hero-marquee-content .hero-title {
+  text-align: center !important; margin-bottom: 16px;
+  font-size: clamp(38px, 6.2vw, 68px);
+  letter-spacing: -2px;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.9);
+}
+.hero-marquee-content .hero-sub {
+  text-align: center !important; margin: 0 auto 28px;
+  font-size: 15px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.9);
+}
+.hero-marquee-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--white); color: #080808;
+  padding: 12px 30px; border-radius: 100px;
+  font-size: 14.5px; font-weight: 700; text-decoration: none;
+  letter-spacing: -0.1px;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.hero-marquee-cta:hover { background: #d8d8d8; transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .hero-marquee { min-height: 100vh; }
+  .hero-marquee-bg { gap: 8px; }
+  .marquee-row { gap: 8px; }
+  .hero-marquee-content { padding: 0 20px 48px; max-width: 100%; }
+  .hero-marquee-content .hero-title { font-size: clamp(32px, 9vw, 46px); letter-spacing: -1.2px; }
+  .hero-marquee-content .hero-sub { font-size: 13.5px; padding: 0 8px; }
+  .hero-marquee-cta { padding: 11px 26px; font-size: 13.5px; }
+}
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
@@ -622,7 +659,6 @@ body.nav-open { overflow: hidden; }
     <img src="logo.png" alt="444Music" class="nav-logo-img"
       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
     <div class="nav-logo-fallback" style="display:none;">4</div>
-    444Music
   </a>
   <div class="nav-right">
     <a href="login.html" class="nav-login">Log In</a>
@@ -662,8 +698,6 @@ body.nav-open { overflow: hidden; }
     <div class="marquee-row row-left"  id="marqueeRow1"></div>
     <div class="marquee-row row-right" id="marqueeRow2"></div>
     <div class="marquee-row row-left"  id="marqueeRow3"></div>
-    <div class="marquee-row row-right" id="marqueeRow4"></div>
-    <div class="marquee-row row-left"  id="marqueeRow5"></div>
   </div>
 
   <div class="hero-marquee-overlay" aria-hidden="true"></div>
@@ -676,9 +710,7 @@ body.nav-open { overflow: hidden; }
     <p class="hero-sub">
       Grow, manage and monetize your music catalog with software-enabled solutions.
     </p>
-    <div class="hero-btns hero-btns-center">
-      <a href="login.html" class="btn-primary">Get Started</a>
-    </div>
+    <a href="login.html" class="hero-marquee-cta">Get Started</a>
   </div>
 </section>
 
@@ -1070,8 +1102,8 @@ loadFeatured();
    Firestore "submissions" data (same source as Latest Releases below), so
    every tile is a real 444Music release, not stock or third-party artwork.
    Falls back to plain monochrome placeholder tiles until enough covers exist. */
-const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3', 'marqueeRow4', 'marqueeRow5'];
-const TILES_PER_ROW = 12;
+const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3'];
+const TILES_PER_ROW = 10;
 
 function shuffleArr(arr) {
   const a = arr.slice();
