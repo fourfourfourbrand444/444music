@@ -585,6 +585,70 @@ body.nav-open { overflow: hidden; }
 }
 
 /* =========================================
+   WHITE HEADER + HERO — matches supplied design reference
+   ========================================= */
+.white-hero-wrap { background: #ffffff; color: #0a0a0a; position: relative; overflow: hidden; }
+
+.white-header {
+  position: relative; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 34px 6% 0;
+}
+.white-hamburger {
+  display: flex; flex-direction: column; gap: 7px;
+  background: none; border: none; cursor: pointer; padding: 6px 4px;
+}
+.white-hamburger span { display: block; width: 34px; height: 3px; background: #17171f; border-radius: 2px; transition: transform 0.2s, opacity 0.2s; }
+.white-logo-link { display: flex; align-items: center; text-decoration: none; }
+.white-logo-img { height: 46px; width: auto; display: block; }
+
+.white-hero {
+  position: relative; z-index: 10;
+  padding: 64px 6% 90px;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.white-hero-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: clamp(46px, 9vw, 104px);
+  line-height: 0.94;
+  letter-spacing: -3px;
+  color: #17171f;
+  text-align: left;
+  margin-bottom: 56px;
+}
+.white-hero-btns {
+  display: flex; flex-direction: column;
+  gap: 14px;
+  max-width: 340px;
+}
+.white-btn-outline {
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid #17171f;
+  border-radius: 4px;
+  padding: 18px 24px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #17171f;
+  text-decoration: none;
+  background: transparent;
+  transition: background 0.2s, color 0.2s;
+}
+.white-btn-outline:hover { background: #17171f; color: #ffffff; }
+
+@media (max-width: 768px) {
+  .white-header { padding: 26px 6% 0; }
+  .white-hamburger span { width: 28px; height: 2.5px; }
+  .white-logo-img { height: 34px; }
+  .white-hero { padding: 44px 6% 60px; }
+  .white-hero-title { font-size: clamp(38px, 12vw, 60px); letter-spacing: -2px; margin-bottom: 40px; }
+  .white-btn-outline { font-size: 17px; padding: 15px 20px; }
+}
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
@@ -664,20 +728,15 @@ body.nav-open { overflow: hidden; }
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
-<header class="navbar">
-  <a href="#" class="nav-logo">
-    <img src="logo.png" alt="444Music" class="nav-logo-img"
-      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-    <div class="nav-logo-fallback" style="display:none;">4</div>
+<!-- ===== WHITE HEADER ===== -->
+<div class="white-hero-wrap">
+<header class="white-header">
+  <button type="button" class="white-hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span>
+  </button>
+  <a href="#" class="white-logo-link">
+    <img src="https://www.444musicdistro.com/black.png" alt="444Music" class="white-logo-img">
   </a>
-  <div class="nav-right">
-    <a href="login.html" class="nav-login">Log In</a>
-    <a href="login.html" class="nav-cta">Get Started</a>
-    <button type="button" class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
 </header>
 
 <!-- ===== FULL-SCREEN NAV OVERLAY ===== -->
@@ -702,32 +761,14 @@ body.nav-open { overflow: hidden; }
 </div>
 
 <!-- ===== HERO ===== -->
-<section class="hero hero-marquee">
-
-  <!-- Horizontally-scrolling rows of real release cover art (populated from Firestore below) -->
-  <div class="hero-marquee-bg" id="heroMarqueeBg" aria-hidden="true">
-    <div class="marquee-row row-left"  id="marqueeRow1"></div>
-    <div class="marquee-row row-right" id="marqueeRow2"></div>
-    <div class="marquee-row row-left"  id="marqueeRow3"></div>
-    <div class="marquee-row row-right" id="marqueeRow4"></div>
-    <div class="marquee-row row-left"  id="marqueeRow5"></div>
-  </div>
-
-  <div class="hero-marquee-overlay" aria-hidden="true"></div>
-
-  <div class="hero-marquee-content">
-    <h1 class="hero-title display">
-      <span class="line1">Be heard.</span>
-      <span class="accent">Everywhere.</span>
-    </h1>
-    <div class="hero-marquee-bottom-group">
-      <p class="hero-sub">
-        Grow, manage and monetize your music catalog with software-enabled solutions.
-      </p>
-      <a href="login.html" class="hero-marquee-cta">Get Started</a>
-    </div>
+<section class="white-hero">
+  <h1 class="white-hero-title">We amplify<br>creative<br>music brands</h1>
+  <div class="white-hero-btns">
+    <a href="login.html" class="white-btn-outline">LOGIN</a>
+    <a href="login.html" class="white-btn-outline">SIGN UP</a>
   </div>
 </section>
+</div><!-- /.white-hero-wrap -->
 
 <!-- ===== TICKER ===== -->
 <div class="ticker">
