@@ -509,41 +509,34 @@ body.nav-open { overflow: hidden; }
 }
 .hero-marquee-bg {
   position: absolute; inset: -3% -3%; z-index: 0;
-  display: flex; flex-direction: row; gap: 8px;
+  display: flex; flex-direction: row; gap: 12px;
   pointer-events: none;
 }
 .marquee-col {
-  flex: 1 1 0; display: flex; flex-direction: column; gap: 8px;
+  flex: 1 1 0; display: flex; flex-direction: column; gap: 12px;
   will-change: transform; min-width: 0;
 }
-.marquee-col:nth-child(even) { margin-top: 9vh; }
-.marquee-col.col-down { animation: marqueeDown 42s linear infinite; }
-.marquee-col.col-up   { animation: marqueeUp   48s linear infinite; }
+.marquee-col:nth-child(even) { margin-top: 11vh; }
+.marquee-col { animation: marqueeDown 46s linear infinite; }
+.marquee-col:nth-child(2) { animation-duration: 52s; }
+.marquee-col:nth-child(4) { animation-duration: 39s; }
 @keyframes marqueeDown { from { transform: translateY(-50%); } to { transform: translateY(0); } }
-@keyframes marqueeUp   { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
 .cover-tile {
-  width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; flex-shrink: 0;
+  width: 100%; aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; flex-shrink: 0;
   background: var(--surface2); border: 1px solid rgba(255,255,255,0.08);
 }
 .cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 20px; }
+.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 22px; }
 
-/* Gradient: solid dark at very top/bottom, thin visible band through the
-   middle so covers only peek through where the text/CTA are not. */
+/* Gradient: light touch overall (covers stay clearly visible, like TooLost),
+   with a focused dark pool behind the text/CTA only — not a wall-to-wall
+   darkening of the whole hero. */
 .hero-marquee-overlay {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg,
-    var(--bg) 0%,
-    rgba(5,5,5,0.97) 10%,
-    rgba(5,5,5,0.75) 22%,
-    rgba(5,5,5,0.25) 34%,
-    rgba(5,5,5,0.08) 46%,
-    rgba(5,5,5,0.08) 56%,
-    rgba(5,5,5,0.25) 66%,
-    rgba(5,5,5,0.75) 78%,
-    rgba(5,5,5,0.97) 90%,
-    var(--bg) 100%);
+  background:
+    radial-gradient(ellipse 900px 460px at center 30%, rgba(5,5,5,1) 0%, rgba(5,5,5,1) 40%, rgba(5,5,5,0.7) 60%, transparent 82%),
+    radial-gradient(ellipse 620px 300px at center 90%, rgba(5,5,5,1) 0%, rgba(5,5,5,1) 40%, rgba(5,5,5,0.65) 60%, transparent 82%);
 }
 .hero-marquee-content {
   position: absolute; inset: 0; z-index: 10;
@@ -578,9 +571,9 @@ body.nav-open { overflow: hidden; }
 
 @media (max-width: 768px) {
   .hero.hero-marquee { min-height: 100vh !important; padding: 0 !important; }
-  .hero-marquee-bg { gap: 6px; }
-  .marquee-col { gap: 6px; }
-  .hero-marquee-bg .marquee-col:nth-child(n+5) { display: none; }
+  .hero-marquee-bg { gap: 10px; }
+  .marquee-col { gap: 10px; }
+  .hero-marquee-bg .marquee-col:nth-child(4) { display: none; }
   .hero-marquee-content { padding: 92px 20px 40px; max-width: 100%; }
   .hero-marquee-content .hero-title { font-size: clamp(32px, 9vw, 46px); letter-spacing: -1.2px; }
   .hero-marquee-content .hero-sub { font-size: 13.5px; padding: 0 8px; }
@@ -709,13 +702,10 @@ body.nav-open { overflow: hidden; }
 
   <!-- Vertically-scrolling columns of real release cover art (populated from Firestore below) -->
   <div class="hero-marquee-bg" id="heroMarqueeBg" aria-hidden="true">
-    <div class="marquee-col col-down" id="marqueeCol1"></div>
-    <div class="marquee-col col-up"   id="marqueeCol2"></div>
-    <div class="marquee-col col-down" id="marqueeCol3"></div>
-    <div class="marquee-col col-up"   id="marqueeCol4"></div>
-    <div class="marquee-col col-down" id="marqueeCol5"></div>
-    <div class="marquee-col col-up"   id="marqueeCol6"></div>
-    <div class="marquee-col col-down" id="marqueeCol7"></div>
+    <div class="marquee-col" id="marqueeCol1"></div>
+    <div class="marquee-col" id="marqueeCol2"></div>
+    <div class="marquee-col" id="marqueeCol3"></div>
+    <div class="marquee-col" id="marqueeCol4"></div>
   </div>
 
   <div class="hero-marquee-overlay" aria-hidden="true"></div>
@@ -1122,8 +1112,8 @@ loadFeatured();
    Firestore "submissions" data (same source as Latest Releases below), so
    every tile is a real 444Music release, not stock or third-party artwork.
    Falls back to plain monochrome placeholder tiles until enough covers exist. */
-const MARQUEE_COL_IDS = ['marqueeCol1','marqueeCol2','marqueeCol3','marqueeCol4','marqueeCol5','marqueeCol6','marqueeCol7'];
-const TILES_PER_COL = 12;
+const MARQUEE_COL_IDS = ['marqueeCol1','marqueeCol2','marqueeCol3','marqueeCol4'];
+const TILES_PER_COL = 8;
 
 function shuffleArr(arr) {
   const a = arr.slice();
@@ -1246,4 +1236,4 @@ const statObs = new IntersectionObserver(entries => {
 document.querySelectorAll('.stats-grid').forEach(g => statObs.observe(g));
 </script>
 </body>
-   </html>
+       </html>
