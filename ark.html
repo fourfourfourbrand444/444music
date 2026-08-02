@@ -238,40 +238,40 @@ body.nav-open { overflow: hidden; }
 /* =========================================
    HERO — HORIZONTAL ALBUM COVER MARQUEE
    ========================================= */
-.hero-marquee { justify-content: flex-start; align-items: flex-start; background: #000; padding: 0; min-height: 100vh; }
+.hero-marquee { justify-content: flex-start; align-items: flex-start; background: #050505; padding: 0; min-height: 100vh; }
 .hero-marquee-bg {
-  position: absolute; inset: 0; z-index: 0;
-  display: flex; flex-direction: column; justify-content: center; gap: 14px;
-  transform: scale(1.06);
+  position: absolute; top: -12%; left: -8%; right: -8%; bottom: -12%; z-index: 0;
+  display: flex; flex-direction: column; gap: 12px;
+  transform: rotate(-4deg);
   pointer-events: none;
 }
-.marquee-row { display: flex; gap: 14px; width: max-content; flex-shrink: 0; will-change: transform; }
+.marquee-row { flex: 1 1 0; display: flex; align-items: stretch; gap: 12px; width: max-content; will-change: transform; min-height: 0; }
 .marquee-row.row-left  { animation: marqueeLeft 46s linear infinite; }
 .marquee-row.row-right { animation: marqueeRight 52s linear infinite; }
 @keyframes marqueeLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
 @keyframes marqueeRight { from { transform: translateX(-50%); } to { transform: translateX(0);    } }
 .cover-tile {
-  width: 170px; height: 170px; border-radius: 14px; overflow: hidden; flex-shrink: 0;
+  height: 100%; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; flex-shrink: 0;
   background: var(--surface2); border: 1px solid rgba(255,255,255,0.08);
 }
 .cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 30px; }
+.cover-tile.placeholder { display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 28px; }
 .hero-marquee-overlay {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.25) 22%, rgba(5,5,5,0.35) 55%, rgba(5,5,5,0.8) 82%, rgba(5,5,5,0.95) 100%);
+  background: linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.6) 32%, rgba(5,5,5,0.72) 52%, rgba(5,5,5,0.58) 72%, rgba(5,5,5,0.4) 100%);
 }
 .hero-marquee-content {
   position: relative; z-index: 10; text-align: center; max-width: 760px;
-  padding: 150px 24px 0; margin: 0 auto;
+  padding: 130px 24px 0; margin: 0 auto;
 }
-.hero-marquee-content .hero-title { text-align: center !important; margin-bottom: 20px; text-shadow: 0 4px 30px rgba(0,0,0,0.8); }
-.hero-marquee-content .hero-sub { text-align: center !important; margin: 0 auto 36px; text-shadow: 0 2px 16px rgba(0,0,0,0.8); }
+.hero-marquee-content .hero-title { text-align: center !important; margin-bottom: 20px; text-shadow: 0 4px 30px rgba(0,0,0,0.85); }
+.hero-marquee-content .hero-sub { text-align: center !important; margin: 0 auto 36px; text-shadow: 0 2px 16px rgba(0,0,0,0.85); }
 .hero-btns-center { justify-content: center !important; margin-bottom: 0 !important; }
 
 @media (max-width: 768px) {
-  .cover-tile { width: 100px; height: 100px; border-radius: 11px; }
+  .hero-marquee-bg { top: -16%; left: -12%; right: -12%; bottom: -16%; transform: rotate(-5deg); gap: 9px; }
   .marquee-row { gap: 9px; }
-  .hero-marquee-content { padding: 110px 20px 0; }
+  .hero-marquee-content { padding: 100px 20px 0; }
 }
 
 /* =========================================
@@ -662,6 +662,8 @@ body.nav-open { overflow: hidden; }
     <div class="marquee-row row-left"  id="marqueeRow1"></div>
     <div class="marquee-row row-right" id="marqueeRow2"></div>
     <div class="marquee-row row-left"  id="marqueeRow3"></div>
+    <div class="marquee-row row-right" id="marqueeRow4"></div>
+    <div class="marquee-row row-left"  id="marqueeRow5"></div>
   </div>
 
   <div class="hero-marquee-overlay" aria-hidden="true"></div>
@@ -1068,8 +1070,8 @@ loadFeatured();
    Firestore "submissions" data (same source as Latest Releases below), so
    every tile is a real 444Music release, not stock or third-party artwork.
    Falls back to plain monochrome placeholder tiles until enough covers exist. */
-const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3'];
-const TILES_PER_ROW = 10;
+const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3', 'marqueeRow4', 'marqueeRow5'];
+const TILES_PER_ROW = 12;
 
 function shuffleArr(arr) {
   const a = arr.slice();
