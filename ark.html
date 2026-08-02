@@ -14,19 +14,19 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg:        #070707;
-  --bg2:       #0d0d0d;
-  --surface:   #111111;
-  --surface2:  #161616;
-  --surface3:  #1c1c1c;
-  --border:    rgba(255,255,255,0.09);
-  --border2:   rgba(255,255,255,0.055);
-  --line:      rgba(255,255,255,0.16);
+  --bg:        #020202;
+  --bg2:       #060606;
+  --surface:   #0a0a0a;
+  --surface2:  #0e0e0e;
+  --surface3:  #131313;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.05);
+  --line:      rgba(255,255,255,0.14);
   --white:     #f5f5f5;
-  --dim:       rgba(255,255,255,0.09);
+  --dim:       rgba(255,255,255,0.08);
   --text:      #f2f2f2;
-  --text2:     #9a9a9a;
-  --text3:     #4d4d4d;
+  --text2:     #8f8f8f;
+  --text3:     #454545;
   --radius:    12px;
   --radius2:   16px;
   --radius3:   20px;
@@ -656,6 +656,73 @@ body.nav-open { overflow: hidden; }
 }
 
 /* =========================================
+   LIGHT SECTION — white blocks that blend into the black page
+   ========================================= */
+.light-section { background: #ffffff; }
+.light-section .label-tag { color: #6b6b6b; }
+.light-section .label-tag::before { background: #6b6b6b; }
+.light-section .section-h { color: #0a0a0a; }
+.light-section .section-p { color: #545454; }
+
+/* stats + platforms */
+.light-section .stats-grid,
+.light-section .platform-grid { background: rgba(0,0,0,0.09); border-color: rgba(0,0,0,0.09); }
+.light-section .stat-item,
+.light-section .platform-item { background: #ffffff; }
+.light-section .stat-item:hover,
+.light-section .platform-item:hover { background: #f3f3f3; }
+.light-section .stat-num { color: #0a0a0a; }
+.light-section .stat-label { color: #5c5c5c; }
+.light-section .platform-item { color: #5c5c5c; }
+.light-section .platform-item i { color: #5c5c5c; }
+.light-section .platform-item:hover,
+.light-section .platform-item:hover i { color: #0a0a0a; }
+
+/* testimonials */
+.light-section .testi-card { background: #f7f7f7; border: 1px solid rgba(0,0,0,0.08); }
+.light-section .testi-card:hover { border-color: rgba(0,0,0,0.2); }
+.light-section .testi-stars { color: #0a0a0a; }
+.light-section .testi-quote { color: #4a4a4a; }
+.light-section .testi-av { background: #ececec; border: 1px solid rgba(0,0,0,0.1); color: #0a0a0a; }
+.light-section .testi-name { color: #0a0a0a; }
+.light-section .testi-role { color: #6b6b6b; }
+
+/* FAQ */
+.light-section .faq-filters button { border-color: rgba(0,0,0,0.15); color: #555555; }
+.light-section .faq-filters button:hover,
+.light-section .faq-filters button.active { background: #0a0a0a; color: #ffffff; border-color: #0a0a0a; }
+.light-section .faq-item { background: #f7f7f7; border: 1px solid rgba(0,0,0,0.08); }
+.light-section .faq-item:hover { border-color: rgba(0,0,0,0.2); }
+.light-section .faq-item.open { border-color: rgba(0,0,0,0.35); }
+.light-section .faq-q { color: #0a0a0a; }
+.light-section .faq-icon { background: #ececec; color: #444; }
+.light-section .faq-item.open .faq-icon { background: #0a0a0a; color: #ffffff; }
+.light-section .faq-answer p { color: #4a4a4a; }
+
+/* =========================================
+   RELEASE SLIDESHOW — one cover at a time, auto-advancing
+   ========================================= */
+.release-slideshow-wrap { display: flex; flex-direction: column; align-items: center; margin-top: 40px; }
+.release-slideshow {
+  width: 100%; max-width: 320px;
+  background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius2);
+  overflow: hidden;
+}
+.release-slide-img-wrap { width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--surface2); }
+.release-slide-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1); transition: opacity 0.4s ease; }
+.release-slide-body { padding: 16px 18px; }
+.release-slide-body h4 { font-size: 14.5px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.release-slide-body p { font-size: 12.5px; color: var(--text2); }
+.release-slide-dots { display: flex; gap: 6px; margin-top: 18px; }
+.release-slide-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: width 0.3s, background 0.3s; }
+.release-slide-dot.active { width: 20px; border-radius: 4px; background: var(--white); }
+.light-section .release-slideshow { background: #f7f7f7; border-color: rgba(0,0,0,0.08); }
+.light-section .release-slide-body h4 { color: #0a0a0a; }
+.light-section .release-slide-body p { color: #6b6b6b; }
+.light-section .release-slide-dot { background: rgba(0,0,0,0.15); }
+.light-section .release-slide-dot.active { background: #0a0a0a; }
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
@@ -808,7 +875,7 @@ body.nav-open { overflow: hidden; }
 </div>
 
 <!-- ===== STATS ===== -->
-<div class="section reveal">
+<div class="section reveal light-section">
   <div class="stats-grid">
     <div class="stat-item"><div class="stat-num">7K+</div><div class="stat-label">Artists Using 444Music</div></div>
     <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Releases Distributed</div></div>
@@ -832,7 +899,7 @@ body.nav-open { overflow: hidden; }
 </div>
 
 <!-- ===== PLATFORMS ===== -->
-<div class="section reveal">
+<div class="section reveal light-section">
   <div style="max-width:1200px;margin:auto;">
     <div class="label-tag centered" style="justify-content:center;">Distribution Network</div>
     <h2 class="section-h centered display">Distribute to all major platforms</h2>
@@ -963,7 +1030,7 @@ body.nav-open { overflow: hidden; }
 </div>
 
 <!-- ===== TESTIMONIALS ===== -->
-<div class="section-full reveal" style="padding-top:80px;padding-bottom:80px;">
+<div class="section-full reveal light-section" style="padding-top:80px;padding-bottom:80px;">
   <div style="max-width:1200px;margin:0 auto 40px;" class="testi-header-pad">
     <div class="label-tag centered" style="justify-content:center;">Artist Stories</div>
     <h2 class="section-h centered display">Artists love 444Music</h2>
@@ -1024,13 +1091,22 @@ body.nav-open { overflow: hidden; }
   <div class="label-tag">Latest</div>
   <h2 class="section-h display">Latest Releases</h2>
   <p class="section-p">Fresh music distributed through 444Music. Every day, new artists go global.</p>
-  <div id="featuredGrid" class="release-grid">
-    <div class="release-card" style="position:relative;"><div class="release-placeholder"><i class="fa-solid fa-music"></i></div><div class="release-body"><h4>Loading...</h4><p>Artist</p></div></div>
+  <div class="release-slideshow-wrap">
+    <div class="release-slideshow">
+      <div class="release-slide-img-wrap">
+        <img id="slideImg" src="" alt="Release cover" style="opacity:0;">
+      </div>
+      <div class="release-slide-body">
+        <h4 id="slideTitle">Loading...</h4>
+        <p id="slideArtist">Artist</p>
+      </div>
+    </div>
+    <div class="release-slide-dots" id="slideDots"></div>
   </div>
 </div>
 
 <!-- ===== FAQ ===== -->
-<div class="section-full reveal" style="padding:80px 5%;">
+<div class="section-full reveal light-section" style="padding:80px 5%;">
   <div class="faq-wrap">
     <div class="label-tag centered" style="justify-content:center;">FAQ</div>
     <h2 class="section-h centered display">Frequently Asked Questions</h2>
@@ -1131,30 +1207,19 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const grid = document.getElementById("featuredGrid");
 async function loadFeatured() {
   const covers = [];
   try {
     const snapshot = await getDocs(collection(db, "submissions"));
-    grid.innerHTML = '';
-    let count = 0;
     snapshot.forEach(doc => {
       const data = doc.data();
       if (!data.coverURL) return;
-      count++;
-      covers.push({ coverURL: data.coverURL, title: data.title || "Release" });
-      const card = document.createElement("div");
-      card.className = "release-card";
-      card.style.position = "relative";
-      card.innerHTML = `<img src="${data.coverURL}" alt="${data.title || 'Release'}" loading="lazy"><div class="release-new">New</div><div class="release-body"><h4>${data.title || "New Release"}</h4><p>${data.artist || "Artist"}</p></div>`;
-      grid.appendChild(card);
+      covers.push({ coverURL: data.coverURL, title: data.title || "New Release", artist: data.artist || "Artist" });
     });
-    if (count === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:48px 0;"><i class="fa-solid fa-music" style="font-size:26px;margin-bottom:12px;display:block;opacity:0.25;"></i>No releases yet. Be the first to upload.</div>`;
-    }
-  } catch(err) { grid.innerHTML = ''; console.log("Firebase:", err); }
+  } catch(err) { console.log("Firebase:", err); }
   window.__heroCovers = covers;
   if (typeof window.__populateHeroMarquee === 'function') window.__populateHeroMarquee(covers);
+  if (typeof window.__startReleaseSlideshow === 'function') window.__startReleaseSlideshow(covers);
 }
 loadFeatured();
 </script>
@@ -1210,6 +1275,70 @@ function populateHeroMarquee(covers) {
 window.__populateHeroMarquee = populateHeroMarquee;
 // Render placeholders immediately so the hero never appears empty while Firestore loads
 populateHeroMarquee([]);
+
+/* ── RELEASE SLIDESHOW — one cover at a time, auto-advancing ── */
+let releaseCovers = [];
+let releaseIdx = 0;
+let releaseTimer = null;
+
+function renderReleaseSlide(item) {
+  const img = document.getElementById('slideImg');
+  const title = document.getElementById('slideTitle');
+  const artist = document.getElementById('slideArtist');
+  if (!img || !item) return;
+  img.style.opacity = 0;
+  setTimeout(() => {
+    img.src = item.coverURL;
+    img.alt = item.title;
+    title.textContent = item.title;
+    artist.textContent = item.artist;
+    img.style.opacity = 1;
+  }, 250);
+  document.querySelectorAll('.release-slide-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === releaseIdx);
+  });
+}
+
+function buildReleaseDots(count) {
+  const dotsWrap = document.getElementById('slideDots');
+  if (!dotsWrap) return;
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'release-slide-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => {
+      releaseIdx = i;
+      renderReleaseSlide(releaseCovers[releaseIdx]);
+      resetReleaseTimer();
+    });
+    dotsWrap.appendChild(dot);
+  }
+}
+
+function resetReleaseTimer() {
+  if (releaseTimer) clearInterval(releaseTimer);
+  if (releaseCovers.length < 2) return;
+  releaseTimer = setInterval(() => {
+    releaseIdx = (releaseIdx + 1) % releaseCovers.length;
+    renderReleaseSlide(releaseCovers[releaseIdx]);
+  }, 3200);
+}
+
+function startReleaseSlideshow(covers) {
+  releaseCovers = covers && covers.length ? covers : [];
+  releaseIdx = 0;
+  if (!releaseCovers.length) {
+    const title = document.getElementById('slideTitle');
+    const artist = document.getElementById('slideArtist');
+    if (title) title.textContent = 'No releases yet';
+    if (artist) artist.textContent = 'Be the first to upload';
+    return;
+  }
+  buildReleaseDots(releaseCovers.length);
+  renderReleaseSlide(releaseCovers[0]);
+  resetReleaseTimer();
+}
+window.__startReleaseSlideshow = startReleaseSlideshow;
 
 /* ── FULL-SCREEN NAV OVERLAY ── */
 const menuBtn      = document.getElementById('menuBtn');
