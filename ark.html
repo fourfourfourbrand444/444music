@@ -513,6 +513,7 @@ body.nav-open { overflow: hidden; }
   pointer-events: none;
 }
 .marquee-row { flex: 1 1 0; display: flex; align-items: stretch; gap: 10px; width: max-content; will-change: transform; min-height: 0; }
+.marquee-row:nth-child(even) { margin-left: 9vh; }
 .marquee-row.row-left  { animation: marqueeLeft 50s linear infinite; }
 .marquee-row.row-right { animation: marqueeRight 56s linear infinite; }
 @keyframes marqueeLeft  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
@@ -530,16 +531,16 @@ body.nav-open { overflow: hidden; }
 .hero-marquee-overlay {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background:
-    radial-gradient(ellipse 620px 300px at center 14%, rgba(5,5,5,0.62) 0%, rgba(5,5,5,0.28) 55%, transparent 78%),
-    radial-gradient(ellipse 520px 220px at center 88%, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.28) 55%, transparent 78%),
+    radial-gradient(ellipse 620px 320px at center 8%, rgba(5,5,5,0.8) 0%, rgba(5,5,5,0.4) 55%, transparent 78%),
+    radial-gradient(ellipse 560px 300px at center 92%, rgba(5,5,5,0.82) 0%, rgba(5,5,5,0.4) 55%, transparent 78%),
     linear-gradient(180deg,
-      rgba(5,5,5,0.55) 0%,
-      rgba(5,5,5,0.22) 16%,
-      rgba(5,5,5,0.10) 30%,
-      rgba(5,5,5,0.08) 55%,
-      rgba(5,5,5,0.20) 70%,
-      rgba(5,5,5,0.55) 84%,
-      rgba(5,5,5,0.85) 94%,
+      rgba(5,5,5,0.78) 0%,
+      rgba(5,5,5,0.42) 18%,
+      rgba(5,5,5,0.10) 32%,
+      rgba(5,5,5,0.05) 58%,
+      rgba(5,5,5,0.14) 70%,
+      rgba(5,5,5,0.52) 82%,
+      rgba(5,5,5,0.85) 93%,
       var(--bg) 100%);
 }
 .hero-marquee-content {
@@ -553,8 +554,12 @@ body.nav-open { overflow: hidden; }
   letter-spacing: -2px;
   text-shadow: 0 4px 30px rgba(0,0,0,0.9);
 }
+.hero-marquee-bottom-group {
+  margin-top: auto;
+  display: flex; flex-direction: column; align-items: center;
+}
 .hero-marquee-content .hero-sub {
-  text-align: center !important; margin: 0 auto 0;
+  text-align: center !important; margin: 0 auto 20px;
   font-size: 15px;
   text-shadow: 0 2px 16px rgba(0,0,0,0.9);
 }
@@ -566,7 +571,6 @@ body.nav-open { overflow: hidden; }
   letter-spacing: -0.1px;
   transition: background 0.2s, transform 0.15s;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  margin-top: auto;
 }
 .hero-marquee-cta:hover { background: #d8d8d8; transform: translateY(-2px); }
 
@@ -716,10 +720,12 @@ body.nav-open { overflow: hidden; }
       <span class="line1">Be heard.</span>
       <span class="accent">Everywhere.</span>
     </h1>
-    <p class="hero-sub">
-      Grow, manage and monetize your music catalog with software-enabled solutions.
-    </p>
-    <a href="login.html" class="hero-marquee-cta">Get Started</a>
+    <div class="hero-marquee-bottom-group">
+      <p class="hero-sub">
+        Grow, manage and monetize your music catalog with software-enabled solutions.
+      </p>
+      <a href="login.html" class="hero-marquee-cta">Get Started</a>
+    </div>
   </div>
 </section>
 
