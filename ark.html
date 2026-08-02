@@ -530,29 +530,31 @@ body.nav-open { overflow: hidden; }
 .hero-marquee-overlay {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background:
-    radial-gradient(ellipse 640px 420px at center 76%, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.3) 55%, transparent 78%),
+    radial-gradient(ellipse 620px 300px at center 14%, rgba(5,5,5,0.62) 0%, rgba(5,5,5,0.28) 55%, transparent 78%),
+    radial-gradient(ellipse 520px 220px at center 88%, rgba(5,5,5,0.6) 0%, rgba(5,5,5,0.28) 55%, transparent 78%),
     linear-gradient(180deg,
-      rgba(5,5,5,0.45) 0%,
-      rgba(5,5,5,0.20) 14%,
-      rgba(5,5,5,0.22) 26%,
-      rgba(5,5,5,0.50) 40%,
-      rgba(5,5,5,0.78) 54%,
-      rgba(5,5,5,0.90) 70%,
-      rgba(5,5,5,0.95) 84%,
+      rgba(5,5,5,0.55) 0%,
+      rgba(5,5,5,0.22) 16%,
+      rgba(5,5,5,0.10) 30%,
+      rgba(5,5,5,0.08) 55%,
+      rgba(5,5,5,0.20) 70%,
+      rgba(5,5,5,0.55) 84%,
+      rgba(5,5,5,0.85) 94%,
       var(--bg) 100%);
 }
 .hero-marquee-content {
-  position: relative; z-index: 10; text-align: center; max-width: 640px;
-  padding: 0 24px 64px; margin: 0 auto;
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 108px 24px 48px; max-width: 640px; margin: 0 auto;
 }
 .hero-marquee-content .hero-title {
   text-align: center !important; margin-bottom: 16px;
-  font-size: clamp(38px, 6.2vw, 68px);
+  font-size: clamp(34px, 5.6vw, 60px);
   letter-spacing: -2px;
   text-shadow: 0 4px 30px rgba(0,0,0,0.9);
 }
 .hero-marquee-content .hero-sub {
-  text-align: center !important; margin: 0 auto 28px;
+  text-align: center !important; margin: 0 auto 0;
   font-size: 15px;
   text-shadow: 0 2px 16px rgba(0,0,0,0.9);
 }
@@ -564,6 +566,7 @@ body.nav-open { overflow: hidden; }
   letter-spacing: -0.1px;
   transition: background 0.2s, transform 0.15s;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  margin-top: auto;
 }
 .hero-marquee-cta:hover { background: #d8d8d8; transform: translateY(-2px); }
 
@@ -571,7 +574,7 @@ body.nav-open { overflow: hidden; }
   .hero.hero-marquee { min-height: 100vh !important; padding: 0 !important; }
   .hero-marquee-bg { gap: 8px; }
   .marquee-row { gap: 8px; }
-  .hero-marquee-content { padding: 0 20px 48px; max-width: 100%; }
+  .hero-marquee-content { padding: 92px 20px 40px; max-width: 100%; }
   .hero-marquee-content .hero-title { font-size: clamp(32px, 9vw, 46px); letter-spacing: -1.2px; }
   .hero-marquee-content .hero-sub { font-size: 13.5px; padding: 0 8px; }
   .hero-marquee-cta { padding: 11px 26px; font-size: 13.5px; }
@@ -702,6 +705,8 @@ body.nav-open { overflow: hidden; }
     <div class="marquee-row row-left"  id="marqueeRow1"></div>
     <div class="marquee-row row-right" id="marqueeRow2"></div>
     <div class="marquee-row row-left"  id="marqueeRow3"></div>
+    <div class="marquee-row row-right" id="marqueeRow4"></div>
+    <div class="marquee-row row-left"  id="marqueeRow5"></div>
   </div>
 
   <div class="hero-marquee-overlay" aria-hidden="true"></div>
@@ -1106,7 +1111,7 @@ loadFeatured();
    Firestore "submissions" data (same source as Latest Releases below), so
    every tile is a real 444Music release, not stock or third-party artwork.
    Falls back to plain monochrome placeholder tiles until enough covers exist. */
-const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3'];
+const MARQUEE_ROW_IDS = ['marqueeRow1', 'marqueeRow2', 'marqueeRow3', 'marqueeRow4', 'marqueeRow5'];
 const TILES_PER_ROW = 10;
 
 function shuffleArr(arr) {
