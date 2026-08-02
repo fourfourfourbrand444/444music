@@ -56,34 +56,34 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .sidebar {
   position: fixed; top: 0; left: 0;
   width: var(--sidebar-w); height: 100vh;
-  background: var(--black-1); border-right: 1px solid var(--white-10);
+  background: #ffffff; border-right: 1px solid rgba(0,0,0,0.10);
   display: flex; flex-direction: column; z-index: 200;
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
   overflow-y: auto;
 }
-.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; border-bottom: 1px solid var(--white-10); }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; border-bottom: 1px solid rgba(0,0,0,0.10); }
 .sidebar-logo img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
-.sidebar-logo-fallback { width: 32px; height: 32px; background: var(--white); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sidebar-logo-fallback svg { width: 18px; height: 18px; color: var(--black); }
-.sidebar-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--white); }
+.sidebar-logo-fallback { width: 32px; height: 32px; background: #000000; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sidebar-logo-fallback svg { width: 18px; height: 18px; color: #ffffff; }
+.sidebar-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; color: #000000; }
 .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
-.nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); padding: 12px 8px 6px; }
+.nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(0,0,0,0.35); padding: 12px 8px 6px; }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px; border-radius: 10px;
-  color: var(--grey); font-size: 14px; font-weight: 600;
+  color: rgba(0,0,0,0.55); font-size: 14px; font-weight: 600;
   transition: all 0.15s; cursor: pointer; position: relative;
 }
-.nav-item:hover { background: var(--black-4); color: var(--white-90); }
-.nav-item.active { background: var(--white-10); color: var(--white); border: 1px solid var(--white-10); }
+.nav-item:hover { background: rgba(0,0,0,0.05); color: #000000; }
+.nav-item.active { background: rgba(0,0,0,0.08); color: #000000; border: 1px solid rgba(0,0,0,0.12); }
 .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
 .nav-item.active svg { opacity: 1; }
-.sidebar-footer { padding: 16px 12px; border-top: 1px solid var(--white-10); }
-.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--black-3); border: 1px solid var(--white-10); }
-.user-avatar { width: 32px; height: 32px; border-radius: 8px; background: var(--white-20); border: 1px solid var(--white-20); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--white); flex-shrink: 0; }
+.sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(0,0,0,0.10); }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.10); }
+.user-avatar { width: 32px; height: 32px; border-radius: 8px; background: #000000; border: 1px solid rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: #ffffff; flex-shrink: 0; }
 .user-info { min-width: 0; }
-.user-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role { font-size: 11px; color: var(--grey-dark); }
+.user-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #000000; }
+.user-role { font-size: 11px; color: rgba(0,0,0,0.45); }
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 190; }
 
 /* ===== MAIN ===== */
@@ -213,6 +213,81 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════
+   APPLE-STYLE "APPROVED RELEASE" SHOWCASE SCREEN
+   Full-screen, warm grey-white background, black text.
+   Shown first (approved releases only) when a card is
+   opened, before the existing metadata modal.
+═══════════════════════════════════════════════ */
+.apple-tpl-overlay {
+  position: fixed; inset: 0; z-index: 7000;
+  background: #F2F1ED;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.apple-tpl-overlay.open { opacity: 1; pointer-events: all; }
+.apple-tpl-close {
+  position: absolute; top: 22px; right: 22px; z-index: 3;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.10);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(0,0,0,0.55); cursor: pointer; transition: all 0.15s;
+}
+.apple-tpl-close:hover { background: rgba(0,0,0,0.10); color: #000; }
+.apple-tpl-close svg { width: 14px; height: 14px; }
+.apple-tpl-inner {
+  width: 100%; max-width: 420px; padding: 40px 32px 56px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.apple-tpl-eyebrow {
+  font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
+  color: rgba(0,0,0,0.38); margin-bottom: 14px;
+  opacity: 0; transform: translateY(10px);
+}
+.apple-tpl-title {
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2rem; line-height: 1.15;
+  color: #000; letter-spacing: -0.5px; margin-bottom: 6px; max-width: 340px;
+  opacity: 0; transform: translateY(14px);
+}
+.apple-tpl-subtitle {
+  font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.5); margin-bottom: 26px;
+  opacity: 0; transform: translateY(12px);
+}
+.apple-tpl-distrib {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 18px 9px 14px; border-radius: 99px;
+  background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08);
+  margin-bottom: 40px;
+  opacity: 0; transform: translateY(12px);
+}
+.apple-tpl-distrib img { height: 20px; width: auto; display: block; }
+.apple-tpl-distrib span { font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.65); letter-spacing: 0.1px; }
+.apple-tpl-artwork-wrap {
+  width: 260px; height: 260px; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 22px 44px rgba(0,0,0,0.16), 0 6px 14px rgba(0,0,0,0.08);
+  background: #e3e2dd;
+  opacity: 0; transform: translateY(18px) scale(0.97);
+}
+.apple-tpl-artwork-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.apple-tpl-hint {
+  margin-top: 30px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+  color: rgba(0,0,0,0.32);
+  opacity: 0;
+}
+.apple-tpl-overlay.animate .apple-tpl-eyebrow    { animation: appleFadeUp 0.6s cubic-bezier(0.22,1,0.36,1) 0.15s forwards; }
+.apple-tpl-overlay.animate .apple-tpl-title      { animation: appleFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.30s forwards; }
+.apple-tpl-overlay.animate .apple-tpl-subtitle   { animation: appleFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards; }
+.apple-tpl-overlay.animate .apple-tpl-distrib    { animation: appleFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.60s forwards; }
+.apple-tpl-overlay.animate .apple-tpl-artwork-wrap { animation: appleArtworkIn 0.85s cubic-bezier(0.22,1,0.36,1) 0.75s forwards; }
+.apple-tpl-overlay.animate .apple-tpl-hint       { animation: appleFadeUp 0.6s ease 1.35s forwards; }
+@keyframes appleFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes appleArtworkIn { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 480px) {
+  .apple-tpl-title { font-size: 1.6rem; }
+  .apple-tpl-artwork-wrap { width: 220px; height: 220px; }
+}
 
 /* ═══════════════════════════════════════════════
    META VIEW MODAL — matches app bottom-sheet style
@@ -465,6 +540,26 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <span id="toastMsg">Cover art updated!</span>
 </div>
 
+<!-- APPLE-STYLE APPROVED RELEASE SHOWCASE — shown first, approved releases only -->
+<div class="apple-tpl-overlay" id="appleTplOverlay" role="dialog" aria-modal="true">
+  <button type="button" class="apple-tpl-close" id="appleTplClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="apple-tpl-inner">
+    <div class="apple-tpl-eyebrow" id="appleTplType">Single</div>
+    <div class="apple-tpl-title" id="appleTplTitle">Title</div>
+    <div class="apple-tpl-subtitle" id="appleTplArtist">Artist</div>
+    <div class="apple-tpl-distrib">
+      <img src="https://www.444musicdistro.com/black.png" alt="444Music">
+      <span>Distributed by 444Music</span>
+    </div>
+    <div class="apple-tpl-artwork-wrap">
+      <img id="appleTplArtwork" src="" alt="Cover art">
+    </div>
+    <div class="apple-tpl-hint">TAP ANYWHERE TO VIEW DETAILS</div>
+  </div>
+</div>
+
 <div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true">
   <div class="meta-modal" id="metaModal">
     <div class="meta-modal-header">
@@ -594,6 +689,52 @@ function priceForReleaseType(releaseType) {
 
 function escHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
+
+/* ═══════════════════════════════════════════════════════
+   APPLE-STYLE SHOWCASE — approved releases only. Opens first
+   when the row is clicked; tapping anywhere hands off to the
+   existing meta modal underneath.
+═══════════════════════════════════════════════════════ */
+const appleTplOverlay = document.getElementById('appleTplOverlay');
+const appleTplClose   = document.getElementById('appleTplClose');
+let _appleTplPendingId = null;
+
+function openAppleTemplate(releaseId) {
+  const data = window._releaseMeta[releaseId];
+  if (!data) return;
+  _appleTplPendingId = releaseId;
+
+  document.getElementById('appleTplType').textContent   = data.releaseType || 'Single';
+  document.getElementById('appleTplTitle').textContent  = data.releaseTitle || 'Untitled Release';
+  const artistLine = (data.artistName || 'Unknown Artist') + (data.featuring && data.featuring.trim() ? ` ft. ${data.featuring}` : '');
+  document.getElementById('appleTplArtist').textContent = artistLine;
+  document.getElementById('appleTplArtwork').src        = data.coverURL || '';
+
+  appleTplOverlay.classList.remove('animate');
+  // force reflow so the entrance animation replays every time it opens
+  void appleTplOverlay.offsetWidth;
+  appleTplOverlay.classList.add('open', 'animate');
+  document.body.style.overflow = 'hidden';
+}
+function closeAppleTemplateAndProceed() {
+  appleTplOverlay.classList.remove('open', 'animate');
+  const id = _appleTplPendingId;
+  _appleTplPendingId = null;
+  if (id) openMetaModal(id);
+}
+function closeAppleTemplateOnly() {
+  appleTplOverlay.classList.remove('open', 'animate');
+  _appleTplPendingId = null;
+  document.body.style.overflow = '';
+}
+appleTplOverlay.addEventListener('click', function(e) {
+  if (e.target === appleTplClose || appleTplClose.contains(e.target)) return;
+  closeAppleTemplateAndProceed();
+});
+appleTplClose.addEventListener('click', function(e) {
+  e.stopPropagation();
+  closeAppleTemplateOnly();
+});
 
 /* === META MODAL === */
 window._releaseMeta = {};
@@ -730,15 +871,21 @@ function renderCoverEditControl(releaseId) {
 function closeMetaModal() { document.getElementById('metaOverlay').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
 document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeMetaModal(); } });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeMetaModal(); closeAppleTemplateOnly(); } });
 
 /* Clicking anywhere on a row opens the modal (the row itself has no
-   other interactive controls left on it — editing happens once open). */
+   other interactive controls left on it — editing happens once open).
+   Approved releases see the Apple-style showcase screen first. */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const row = e.target.closest('.release-row');
   if (!row) return;
   const releaseId = row.dataset.releaseId;
-  if (releaseId) openMetaModal(releaseId);
+  if (!releaseId) return;
+  if (row.dataset.status === 'approved') {
+    openAppleTemplate(releaseId);
+  } else {
+    openMetaModal(releaseId);
+  }
 });
 
 /* ═══════════════════════════════════════════════════════
