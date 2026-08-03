@@ -210,8 +210,8 @@ body{
     <div class="popup-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <h2>Message Sent</h2>
-    <p>Thanks for reaching out. We'll review your message and get back to you within <strong>48 hours</strong>, via the email you sent it with.</p>
+    <h2>Almost There</h2>
+    <p>Your email app should now be open with your message ready to go — just hit <strong>send</strong> there to reach us. We'll get back to you within <strong>48 hours</strong>, via the email you sent it with.</p>
     <button class="popup-btn" id="popupCloseBtn">Got it</button>
   </div>
 </div>
@@ -232,21 +232,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* ─────────────────────────────────────────────
-   WEB3FORMS SETUP — do this once, takes ~2 minutes:
-
-   1. Go to web3forms.com
-   2. Enter 444musicdistro@gmail.com and click
-      "Create Access Key" — no account, no password.
-   3. Check that inbox for a confirmation email and
-      click the link to verify you own it.
-   4. Copy the Access Key it gives you and paste it
-      below. Every message this key sends goes to
-      444musicdistro@gmail.com — that's fixed to the
-      email you verified, the page can't change it.
-───────────────────────────────────────────── */
-const WEB3FORMS_ACCESS_KEY = "YOUR_ACCESS_KEY";
-const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const SUPPORT_EMAIL = "444musicdistro@gmail.com";
 
 const form       = document.getElementById('supportForm');
 const emailInput = document.getElementById('emailInput');
@@ -263,7 +249,7 @@ function closePopup(){ popup.classList.remove('open'); document.body.style.overf
 document.getElementById('popupCloseBtn').onclick = closePopup;
 popup.addEventListener('click', e => { if (e.target === popup) closePopup(); });
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const email = emailInput.value.trim();
@@ -275,9 +261,6 @@ form.addEventListener('submit', async (e) => {
   if (!isValidEmail(email) || message.length === 0) valid = false;
   if (!valid) return;
 
-  sendBtn.disabled = true;
-  sendBtn.classList.add('loading');
-
   // Log to Firestore for our own records (silent, non-blocking).
   addDoc(collection(db, 'supportMessages'), {
     email,
@@ -286,32 +269,16 @@ form.addEventListener('submit', async (e) => {
     status: 'new'
   }).catch(err => console.error('Firestore log failed:', err));
 
-  try {
-    const res = await fetch(WEB3FORMS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        access_key: WEB3FORMS_ACCESS_KEY,
-        subject: 'New Support Message — 444Music',
-        from_name: email,
-        email: email,
-        replyto: email,
-        message: message
-      })
-    });
+  // Hand off to the visitor's own email app, pre-filled and addressed
+  // to us — no backend, no third-party account, works immediately.
+  const subject = encodeURIComponent('Support Request — 444Music');
+  const body = encodeURIComponent(
+    `${message}\n\n—\nFrom: ${email}`
+  );
+  window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
 
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message || 'Web3Forms send failed');
-
-    form.reset();
-    openPopup();
-  } catch (err) {
-    console.error('Support message send failed:', err);
-    alert("Something went wrong sending your message. Please try again or email us directly at 444musicdistro@gmail.com.");
-  } finally {
-    sendBtn.disabled = false;
-    sendBtn.classList.remove('loading');
-  }
+  form.reset();
+  openPopup();
 });
 
 [emailInput, msgInput].forEach(el => {
