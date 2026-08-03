@@ -210,8 +210,8 @@ body{
     <div class="popup-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <h2>Message Sent</h2>
-    <p>Thanks for reaching out. We'll review your message and get back to you within <strong>48 hours</strong>, via the email you sent it with.</p>
+    <h2>Almost There</h2>
+    <p>Your email app should now be open with your message ready to go — just hit <strong>send</strong> there to reach us. We'll get back to you within <strong>48 hours</strong>, via the email you sent it with.</p>
     <button class="popup-btn" id="popupCloseBtn">Got it</button>
   </div>
 </div>
@@ -232,13 +232,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-/* ─────────────────────────────────────────────
-   REPLACE THIS with your own Formspree form ID.
-   Create a form at https://formspree.io pointed at
-   444musicdistro@gmail.com, then paste its ID below.
-   e.g. "https://formspree.io/f/abcdwxyz"
-───────────────────────────────────────────── */
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+const SUPPORT_EMAIL = "444musicdistro@gmail.com";
 
 const form       = document.getElementById('supportForm');
 const emailInput = document.getElementById('emailInput');
@@ -255,7 +249,7 @@ function closePopup(){ popup.classList.remove('open'); document.body.style.overf
 document.getElementById('popupCloseBtn').onclick = closePopup;
 popup.addEventListener('click', e => { if (e.target === popup) closePopup(); });
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const email = emailInput.value.trim();
@@ -267,11 +261,7 @@ form.addEventListener('submit', async (e) => {
   if (!isValidEmail(email) || message.length === 0) valid = false;
   if (!valid) return;
 
-  sendBtn.disabled = true;
-  sendBtn.classList.add('loading');
-
-  // Log to Firestore for our own records (non-blocking — email delivery
-  // via Formspree below is what actually reaches the inbox).
+  // Log to Firestore for our own records (silent, non-blocking).
   addDoc(collection(db, 'supportMessages'), {
     email,
     message,
@@ -279,29 +269,16 @@ form.addEventListener('submit', async (e) => {
     status: 'new'
   }).catch(err => console.error('Firestore log failed:', err));
 
-  try {
-    const res = await fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        message,
-        _replyto: email,
-        _subject: 'New Support Message — 444Music'
-      })
-    });
+  // Hand off to the visitor's own email app, pre-filled and addressed
+  // to us — no backend, no third-party account, works immediately.
+  const subject = encodeURIComponent('Support Request — 444Music');
+  const body = encodeURIComponent(
+    `${message}\n\n—\nFrom: ${email}`
+  );
+  window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
 
-    if (!res.ok) throw new Error('Formspree request failed');
-
-    form.reset();
-    openPopup();
-  } catch (err) {
-    console.error('Support message send failed:', err);
-    alert("Something went wrong sending your message. Please try again or email us directly at 444musicdistro@gmail.com.");
-  } finally {
-    sendBtn.disabled = false;
-    sendBtn.classList.remove('loading');
-  }
+  form.reset();
+  openPopup();
 });
 
 [emailInput, msgInput].forEach(el => {
