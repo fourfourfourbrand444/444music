@@ -113,11 +113,29 @@ body{
 /* ===== CONTAINER ===== */
 .container{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:44px 24px 88px;}
 
-.page-header{margin-bottom:36px;animation:slideDown 0.5s var(--ease) both;}
+.page-header{margin-bottom:22px;animation:slideDown 0.5s var(--ease) both;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
 .header-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:var(--pill);padding:5px 14px;margin-bottom:14px;}
 .page-header h1{font-family:var(--font-head);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;letter-spacing:-1px;color:#fff;line-height:1.1;margin-bottom:8px;}
 .page-header p{font-size:0.88rem;color:var(--text-2);font-weight:400;}
+
+/* ===== CURRENCY SELECTOR ===== */
+.currency-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:28px;animation:slideDown 0.5s var(--ease) 0.05s both;}
+.currency-label{font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);}
+.currency-pill{
+  position:relative;display:flex;align-items:center;
+  background:var(--blk-2);border:1px solid var(--blk-border-h);border-radius:var(--pill);
+  padding:5px 12px 5px 14px;transition:border-color var(--t);
+}
+.currency-pill:hover{border-color:rgba(255,255,255,0.3);}
+.currency-pill select{
+  appearance:none;-webkit-appearance:none;background:transparent;border:none;outline:none;
+  color:#fff;font-family:var(--font-body);font-size:0.82rem;font-weight:700;
+  padding-right:20px;cursor:pointer;max-width:230px;
+}
+.currency-pill select option{background:#111;color:#fff;}
+.currency-pill i{position:absolute;right:11px;pointer-events:none;color:var(--text-2);font-size:0.65rem;}
+.currency-note{width:100%;font-size:0.72rem;color:#5c5c5c;font-weight:500;margin-top:2px;}
 
 /* ===== CARDS — black variant ===== */
 .card-blk{
@@ -156,7 +174,7 @@ body{
 .stat-card.hero .stat-icon{background:rgba(255,255,255,0.1);color:#fff;}
 .stat-card.plain .stat-icon{background:rgba(0,0,0,0.06);color:var(--ink-1);}
 
-.stat-card h2{font-family:var(--font-head);font-size:2.05rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:6px;}
+.stat-card h2{font-family:var(--font-head);font-size:2.05rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:6px;word-break:break-all;}
 .stat-card.hero h2{color:#fff;}
 .stat-card.hero h2 .cur{font-size:0.5em;color:var(--text-2);font-weight:600;margin-left:4px;}
 .stat-card.plain h2{font-size:1.6rem;color:var(--ink-1);}
@@ -204,7 +222,7 @@ body{
 .popup-icon{width:52px;height:52px;border-radius:14px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;color:var(--ink-1);font-size:22px;margin:0 auto 16px;}
 .popup-box h2{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:8px;}
 .popup-box p{font-size:0.85rem;color:var(--ink-2);line-height:1.6;margin-bottom:8px;}
-.popup-threshold{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,0.04);border-radius:10px;padding:12px;margin:14px 0;font-size:0.85rem;color:var(--ink-2);}
+.popup-threshold{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,0.04);border-radius:10px;padding:12px;margin:14px 0;font-size:0.85rem;color:var(--ink-2);flex-wrap:wrap;}
 .popup-threshold strong{font-family:var(--font-head);font-size:1.05rem;color:var(--ink-1);}
 .popup-btn{width:100%;padding:13px;border:none;border-radius:11px;background:#000;color:#fff;font-family:var(--font-body);font-size:0.9rem;font-weight:700;cursor:pointer;transition:transform var(--t);margin-top:4px;}
 .popup-btn:hover{transform:translateY(-1px);}
@@ -271,21 +289,31 @@ body{
     <p>Your balance across every platform, all in one place.</p>
   </div>
 
+  <!-- CURRENCY SELECTOR — display only. Balance is always tracked & withdrawn in USD. -->
+  <div class="currency-row">
+    <span class="currency-label">View earnings in</span>
+    <div class="currency-pill">
+      <select id="currencySelect"></select>
+      <i class="fa-solid fa-chevron-down"></i>
+    </div>
+    <div class="currency-note" id="currencyNote">Your real balance, shown in USD.</div>
+  </div>
+
   <!-- STATS: hero balance + two plain white cards -->
   <section class="stats">
     <div class="stat-card hero">
       <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
-      <h2>$<span id="balanceValue">0.00</span><span class="cur">USD</span></h2>
+      <h2 id="balanceValue">$0.00<span class="cur" id="balanceCur">USD</span></h2>
       <p>Available Balance</p>
     </div>
     <div class="stat-card plain">
       <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
-      <h2>$<span id="clearedValue">0.00</span></h2>
+      <h2 id="clearedValue">$0.00</h2>
       <p>Cleared</p>
     </div>
     <div class="stat-card plain">
       <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-      <h2>$<span id="pendingValue">0.00</span></h2>
+      <h2 id="pendingValue">$0.00</h2>
       <p>Pending</p>
     </div>
   </section>
@@ -294,7 +322,7 @@ body{
   <section class="card-wht withdraw-card">
     <div class="withdraw-left">
       <div class="card-title"><i class="fa-solid fa-arrow-up-from-bracket"></i> Ready to withdraw</div>
-      <p>Minimum withdrawal is $50.00. Balances update once platform reports come in, usually 45–60 days after month end.</p>
+      <p id="withdrawCopy">Minimum withdrawal is $50.00. Balances update once platform reports come in, usually 45–60 days after month end.</p>
       <div class="thresh-track"><div class="thresh-fill" id="threshFill"></div></div>
       <div class="thresh-label"><span>Progress to payout</span><strong id="threshText">$0 / $50</strong></div>
     </div>
@@ -345,7 +373,7 @@ body{
     <p>Your balance is below the minimum withdrawal threshold.</p>
     <div class="popup-threshold">
       <i class="fa-solid fa-circle-dollar-to-slot"></i>
-      Your balance must reach <strong>$50.00</strong> to withdraw
+      Your balance must reach <strong id="popupThreshold">$50.00</strong> to withdraw
     </div>
     <button id="closePopup" class="popup-btn">Got it</button>
   </div>
@@ -370,8 +398,79 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 const MIN_WITHDRAWAL = 50;
-let userBalance = 0;
+let userBalance = 0;   // always real USD — used for eligibility checks
+let rawCleared  = 0;
+let rawPending  = 0;
 let currentUid  = null;
+
+/* ── CURRENCY DISPLAY — display only, mirrors earnings_screen.dart ──
+   Rates are USD → target currency. Keep this table in sync with the
+   Flutter app's _currencyRates in earnings_screen.dart if you refresh
+   the numbers — both surfaces should always show the same conversion. */
+const CURRENCY_RATES = {
+  USD: { symbol: '$',    rate: 1,       label: '🇺🇸 United States — USD' },
+  GHS: { symbol: 'GHC',  rate: 11.454,  label: '🇬🇭 Ghana — GHS' },
+  NGN: { symbol: '₦',    rate: 1500.5,  label: '🇳🇬 Nigeria — NGN' },
+  EUR: { symbol: '€',    rate: 0.9198,  label: '🇪🇺 Europe — EUR' },
+  GBP: { symbol: '£',    rate: 0.7903,  label: '🇬🇧 United Kingdom — GBP' },
+  ZAR: { symbol: 'R',    rate: 18.50,   label: '🇿🇦 South Africa — ZAR' },
+  KES: { symbol: 'KSh',  rate: 128.98,  label: '🇰🇪 Kenya — KES' },
+  CAD: { symbol: 'CA$',  rate: 1.360,   label: '🇨🇦 Canada — CAD' },
+  XOF: { symbol: 'CFA',  rate: 602.5,   label: '🌍 West Africa (CFA) — XOF' },
+};
+
+let selectedCurrency = 'USD';
+
+const currencySelect = document.getElementById('currencySelect');
+const currencyNote   = document.getElementById('currencyNote');
+
+// Populate the dropdown
+Object.entries(CURRENCY_RATES).forEach(([code, info]) => {
+  const opt = document.createElement('option');
+  opt.value = code;
+  opt.textContent = info.label;
+  currencySelect.appendChild(opt);
+});
+currencySelect.value = selectedCurrency;
+
+function formatSelected(usdValue, decimals) {
+  const info = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
+  const converted = usdValue * info.rate;
+  const d = decimals !== undefined ? decimals : (selectedCurrency === 'XOF' ? 0 : 2);
+  return `${info.symbol}${converted.toFixed(d)}`;
+}
+
+function renderAllAmounts() {
+  // Available balance (hero card)
+  document.getElementById('balanceValue').innerHTML =
+    `${formatSelected(userBalance)}<span class="cur" id="balanceCur">${selectedCurrency}</span>`;
+
+  // Cleared / Pending
+  document.getElementById('clearedValue').textContent = formatSelected(rawCleared);
+  document.getElementById('pendingValue').textContent = formatSelected(rawPending);
+
+  // Withdraw card copy + progress
+  document.getElementById('withdrawCopy').textContent =
+    `Minimum withdrawal is ${formatSelected(MIN_WITHDRAWAL)}. Balances update once platform reports come in, usually 45–60 days after month end.`;
+
+  const pct = Math.min((userBalance / MIN_WITHDRAWAL) * 100, 100);
+  document.getElementById('threshFill').style.width = pct + '%';
+  document.getElementById('threshText').textContent =
+    `${formatSelected(userBalance, 0)} / ${formatSelected(MIN_WITHDRAWAL, 0)}`;
+
+  // Popup threshold text (in case it's already open)
+  document.getElementById('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
+
+  // Note under the dropdown
+  currencyNote.textContent = selectedCurrency === 'USD'
+    ? 'Your real balance, shown in USD.'
+    : `Approximate ${selectedCurrency} preview — your real balance is always tracked in USD.`;
+}
+
+currencySelect.addEventListener('change', (e) => {
+  selectedCurrency = e.target.value;
+  renderAllAmounts();
+});
 
 /* ── PROFILE AVATAR (nav badge) ── */
 const profileAvatar = document.getElementById("profileAvatar");
@@ -410,14 +509,6 @@ avatarInput.addEventListener("change", async (e) => {
 });
 
 /* ── BALANCE + PLATFORM DATA ── */
-function updateBalance(amount) {
-  userBalance = amount;
-  document.getElementById('balanceValue').textContent = amount.toFixed(2);
-  const pct = Math.min((amount / MIN_WITHDRAWAL) * 100, 100);
-  document.getElementById('threshFill').style.width = pct + '%';
-  document.getElementById('threshText').textContent = `$${amount.toFixed(0)} / $${MIN_WITHDRAWAL}`;
-}
-
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = 'login.html'; return; }
   currentUid = user.uid;
@@ -428,13 +519,11 @@ onAuthStateChanged(auth, async (user) => {
 
     renderAvatar(data.photoURL || null);
 
-    const earnings = Number(data.earnings) || 0;
-    const cleared  = Number(data.clearedEarnings) || 0;
-    const pending  = Number(data.pendingEarnings) || 0;
+    userBalance = Number(data.earnings) || 0;
+    rawCleared  = Number(data.clearedEarnings) || 0;
+    rawPending  = Number(data.pendingEarnings) || 0;
 
-    updateBalance(earnings);
-    document.getElementById('clearedValue').textContent = cleared.toFixed(2);
-    document.getElementById('pendingValue').textContent  = pending.toFixed(2);
+    renderAllAmounts();
 
     const sp = Number(data.spotifyEarnings) || 0;
     const ap = Number(data.appleEarnings)   || 0;
@@ -453,17 +542,19 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('amazonPct').textContent  = pct(az) + '%';
   } catch (err) {
     console.error('Earnings read failed:', err);
-    updateBalance(0);
+    userBalance = 0; rawCleared = 0; rawPending = 0;
+    renderAllAmounts();
   }
 });
 
-/* ── WITHDRAW GUARD ── */
+/* ── WITHDRAW GUARD — eligibility ALWAYS checked in real USD, never the display currency ── */
 const withdrawBtn = document.getElementById('withdrawBtn');
 const popup       = document.getElementById('withdrawPopup');
 const closeBtn    = document.getElementById('closePopup');
 
 withdrawBtn.addEventListener('click', () => {
   if (userBalance < MIN_WITHDRAWAL) {
+    document.getElementById('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
     popup.classList.add('active');
   } else {
     window.location.href = 'withdrawal.html';
@@ -487,6 +578,9 @@ document.addEventListener('click', (e) => {
   if (!drawer.contains(e.target) && !burger.contains(e.target)) toggleDrawer(false);
 });
 window.addEventListener('resize', () => { if (window.innerWidth > 640) toggleDrawer(false); });
+
+// Initial render before Firestore responds, so the dropdown/labels aren't blank
+renderAllAmounts();
 </script>
 </body>
 </html>
