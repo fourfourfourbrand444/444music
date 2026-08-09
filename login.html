@@ -680,15 +680,25 @@
     }
   });
 
-  /* FORGOT */
+/* FORGOT */
   $('forgotPass').addEventListener('click', async e => {
     e.preventDefault();
     const email = $('loginEmail').value.trim();
     if (!email) { shake('loginFieldEmail'); showMsg('loginMsg','Enter your email first.','warn'); return; }
     try {
-      await sendPasswordResetEmail(auth, email);
-      showMsg('loginMsg','Reset link sent — check your inbox.','success');
-    } catch(err) { showMsg('loginMsg', err.message, 'error'); }
+      const res = await fetch('https://four44music-broadcast-backend.onrender.com/api/verification/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        showMsg('loginMsg','Reset link sent — check your inbox.','success');
+      } else {
+        showMsg('loginMsg','Error sending reset. Try again.','error');
+      }
+    } catch(err) {
+      showMsg('loginMsg','Network error. Try again.','error');
+    }
   });
 
   /* SIGN UP — success message now points to verifying, not "account is live" */
