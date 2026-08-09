@@ -568,7 +568,13 @@
     window.location.href = 'home.html';
   }
 
-  /* LOGIN — now gated on emailVerified before granting access */
+  /* LOGIN — now gated on emailVerified before granting access.
+     FIXED — previously, an existing-but-unverified user was redirected to
+     verify-code.html WITHOUT a code ever being sent, because only
+     doSignup() called the send-code endpoint. New signups worked fine;
+     pre-existing unverified accounts (created before this system existed)
+     never had a code generated, so login silently dead-ended them. Now
+     this branch fires the same send-code request before redirecting. */
   window.doLogin = async () => {
     clearMsg('loginMsg');
     const email = $('loginEmail').value.trim();
@@ -587,10 +593,19 @@
 
       if (!isVerified) {
         setLoad('loginBtn', false);
+        const name = userSnap.exists() ? (userSnap.data().name || '') : '';
         showMsg('loginMsg', 'Please verify your email to continue.', 'warn');
+
+        // FIX: actually send the verification code — this was missing here.
+        fetch('https://four44music-broadcast-backend.onrender.com/api/verification/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid, email, name })
+        }).catch(() => {});
+
         sessionStorage.setItem('pendingVerifyUid', uid);
         sessionStorage.setItem('pendingVerifyEmail', email);
-        sessionStorage.setItem('pendingVerifyName', userSnap.exists() ? (userSnap.data().name || '') : '');
+        sessionStorage.setItem('pendingVerifyName', name);
         setTimeout(() => window.location.href = 'verify-code.html', 900);
         return;
       }
@@ -680,7 +695,7 @@
     }
   });
 
-/* FORGOT */
+  /* FORGOT */
   $('forgotPass').addEventListener('click', async e => {
     e.preventDefault();
     const email = $('loginEmail').value.trim();
@@ -826,6 +841,5 @@
     else       { h.textContent='✗ Passwords don\'t match'; h.className='match-hint err'; }
   }
 </script>
-
 </body>
 </html>
