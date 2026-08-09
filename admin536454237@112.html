@@ -1093,6 +1093,48 @@ const PAYMENT_AMOUNT = 30; // GHS — legacy flat amount used only by this
                             // Paystack payments carry their own amount and
                             // never touch this constant.
 
+/* ─── BACKEND (REJECTION EMAIL) CONFIG ───────────────────────────────
+   Used only to fire the dark-themed "Release Needs Attention" email
+   via POST /api/submissions/notify-rejection on the broadcast backend.
+   Approval emails still go through EmailJS above — unrelated.
+   ─────────────────────────────────────────────────────────────────── */
+const BACKEND_URL = "https://four44music-broadcast-backend.onrender.com";
+const APP_SECRET = "e993b17f0762667e27d5298839dacff4a7409b74e11e9ecaf0bb2bb647120a8"; // must match APP_SECRET in Render env vars
+
+async function sendRejectionEmail({ email, artistName, songTitle, reason }) {
+  if (!email) {
+    toast("⚠️", "No email on file — skipped rejection notice");
+    return false;
+  }
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/submissions/notify-rejection`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-app-secret': APP_SECRET
+      },
+      body: JSON.stringify({
+        email,
+        artist_name: artistName,
+        release_title: songTitle,
+        rejection_reason: reason
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast("📧", `Rejection notice sent to ${email}`);
+      return true;
+    } else {
+      toast("❌", "Rejection email failed to send");
+      return false;
+    }
+  } catch (err) {
+    console.error('Rejection email error:', err);
+    toast("❌", "Rejection email failed: " + err.message);
+    return false;
+  }
+}
+
 /* ─── PAYMENT SYNC HELPER ────────────────────────────────────────────
    Two systems can mark a submission "paid":
      1. The Paystack flow in the app — writes a string field `paid`
@@ -1654,6 +1696,7 @@ function display(data) {
         });
         if (ok) {
           toast('✗', `Rejected — reason saved`);
+          await sendRejectionEmail({ email, artistName, songTitle, reason: result.reason });
           setTimeout(() => startListener(), 800);
         } else {
           this.disabled = false;
@@ -2141,6 +2184,9 @@ bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('Approved'));
 // Bulk reject also collects a single shared reason applied to every
 // selected submission — simplest option for a batch of similar issues
 // (e.g. a rule change that invalidates several pending releases at once).
+// Also fires the rejection email to each selected artist, pulling their
+// email/name/title straight from the in-memory `submissions` array —
+// no extra Firestore reads needed since it's already loaded.
 bulkRejectBtn.addEventListener('click', async () => {
   const ids = Array.from(selectedIds);
   if (ids.length === 0) return;
@@ -2153,6 +2199,15 @@ bulkRejectBtn.addEventListener('click', async () => {
   toast('⏳', `Rejecting ${ids.length} submissions…`);
   for (const id of ids) {
     await safeUpdate(id, { status: 'Rejected', rejectionReason: result.reason, rejectionCategory: result.category });
+    const sub = submissions.find(s => s.id === id);
+    if (sub) {
+      await sendRejectionEmail({
+        email: sub.email,
+        artistName: sub.artistName || 'Artist',
+        songTitle: sub.releaseTitle || sub.songTitle || sub.title || 'your release',
+        reason: result.reason
+      });
+    }
   }
   toast('✗', `${ids.length} submissions rejected`);
   selectedIds.clear();
