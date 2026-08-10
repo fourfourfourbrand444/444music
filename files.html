@@ -13,6 +13,19 @@
    Fonts:  Bebas Neue  → headings / labels  (GoogleFonts.bebasNeue)
            Nunito      → body text          (GoogleFonts.nunito)
    Palette pulled directly from the Flutter constants.
+
+   CHANGE LOG (this rebuild):
+   - Per-track "Artist Name" + "Featuring" text inputs REMOVED.
+   - Replaced with a "Track Artists" chip list per track. Each artist
+     is added via a popup: Name, Type (Main / Featured / Secondary),
+     optional Spotify profile URL, optional Apple Music profile URL
+     (icons shown, dim if no link attached).
+   - Track model: artists: [{name, type, spotifyUrl, appleUrl}]
+     (previously: artistName string + featuring string).
+   - At least one artist per track required, and at least one must
+     be tagged "main".
+   - audioFiles handed off to release-info.html now carries the full
+     artists array per track instead of flat artist/featuring strings.
    ════════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
@@ -193,6 +206,37 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
 .ferr{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--red)}
 .ferr svg{width:11px;height:11px;flex-shrink:0}
 
+/* ── ARTIST CHIPS + ADD-ARTIST BUTTON ────────────────────────── */
+.artist-chip{
+  display:flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--white10);
+  border-radius:10px;padding:9px 10px;margin-bottom:6px;
+}
+.artist-chip .achip-type{
+  font-family:var(--font-body);font-size:9px;font-weight:800;letter-spacing:.5px;padding:3px 7px;border-radius:6px;
+  background:var(--white06);color:var(--grey);text-transform:uppercase;flex-shrink:0;
+}
+.artist-chip.type-main .achip-type{background:var(--greenDim);border:1px solid var(--greenBorder);color:var(--green)}
+.artist-chip .achip-name{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.artist-chip .achip-links{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.artist-chip .achip-links img{width:13px;height:13px;opacity:0.28;display:block}
+.artist-chip .achip-links img.linked{opacity:1}
+.artist-chip .achip-edit,
+.artist-chip .achip-remove{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.artist-chip .achip-edit{background:var(--white06);border:1px solid var(--white10);color:var(--grey)}
+.artist-chip .achip-edit svg{width:11px;height:11px}
+.artist-chip .achip-remove{background:var(--redDim);border:1px solid var(--redBorder);color:var(--red)}
+.artist-chip .achip-remove svg{width:10px;height:10px}
+.add-artist-btn{
+  width:100%;padding:11px;border-radius:10px;border:1px dashed var(--white20);background:transparent;
+  color:var(--grey);font-family:var(--font-head);font-size:12px;letter-spacing:1.2px;cursor:pointer;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.add-artist-btn svg{width:12px;height:12px}
+.add-artist-btn:active{background:var(--white06)}
+
 .mp3-zone-wrap{margin-top:14px}
 .mp3-zone-head{display:flex;align-items:center;margin-bottom:6px}
 .mp3-badge{
@@ -291,6 +335,29 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
 
 .bottom-pad{height:40px}
 input[type="file"]{display:none}
+
+/* ── ADD-ARTIST POPUP ────────────────────────────────────────── */
+.artist-overlay{
+  display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.82);
+  backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;
+}
+.artist-overlay.open{display:flex}
+.artist-dialog{
+  background:#0f0f14;border:1px solid var(--white20);border-radius:18px;padding:26px 22px;max-width:400px;width:100%;
+}
+.artist-dialog-title{font-family:var(--font-head);font-size:18px;letter-spacing:1px;margin-bottom:16px}
+.artist-type-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.artist-type-pill{padding:8px 14px;border-radius:999px;border:1px solid var(--white20);background:transparent;color:var(--grey);font-family:var(--font-body);font-size:12px;font-weight:700;cursor:pointer}
+.artist-type-pill.selected{background:var(--white);border-color:var(--white);color:var(--black)}
+.artist-url-row{display:flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--white10);border-radius:10px;padding:0 12px}
+.artist-url-row img{width:14px;height:14px;flex-shrink:0}
+.artist-url-row input{background:none!important;border:none!important;padding:11px 0!important;flex:1;color:var(--white);font-family:var(--font-body);font-size:13px;outline:none;width:auto}
+.artist-dialog-actions{display:flex;gap:10px;margin-top:6px}
+.artist-dialog-actions button{
+  flex:1;padding:13px;border-radius:999px;cursor:pointer;font-family:var(--font-head);font-size:13px;letter-spacing:1px;
+}
+#artistSaveBtn{border:none;background:var(--white);color:var(--black)}
+#artistCancelBtn{border:1px solid var(--white20);background:transparent;color:var(--grey)}
 </style>
 </head>
 <body>
@@ -383,20 +450,57 @@ input[type="file"]{display:none}
   </div>
 </div>
 
+<!-- ADD-ARTIST POPUP -->
+<div class="artist-overlay" id="artistOverlay">
+  <div class="artist-dialog">
+    <div class="artist-dialog-title" id="artistDialogTitle">ADD TRACK ARTIST</div>
+
+    <div class="field" style="margin-bottom:14px;">
+      <label class="field-label">Artist Name<div class="req-dot"></div></label>
+      <input type="text" id="artistNameInput" placeholder="e.g. Wizkid">
+    </div>
+
+    <div class="field" style="margin-bottom:14px;">
+      <label class="field-label">Artist Type</label>
+      <div class="artist-type-group" id="artistTypeGroup" data-value="main">
+        <button type="button" class="artist-type-pill" data-value="main">Main</button>
+        <button type="button" class="artist-type-pill" data-value="featured">Featured</button>
+        <button type="button" class="artist-type-pill" data-value="secondary">Secondary</button>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:12px;">
+      <label class="field-label">Spotify Profile URL</label>
+      <div class="artist-url-row">
+        <img src="https://cdn.simpleicons.org/spotify/1DB954" alt="">
+        <input type="url" id="artistSpotifyInput" placeholder="Leave blank if none">
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:20px;">
+      <label class="field-label">Apple Music Profile URL</label>
+      <div class="artist-url-row">
+        <img src="https://cdn.simpleicons.org/applemusic/FC3C44" alt="">
+        <input type="url" id="artistAppleInput" placeholder="Leave blank if none">
+      </div>
+    </div>
+
+    <div class="artist-dialog-actions">
+      <button type="button" id="artistSaveBtn">SAVE ARTIST</button>
+      <button type="button" id="artistCancelBtn">CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════════════════════════════════════════════════════════
-     LOGIC — mirrors upload_screen.dart exactly:
+     LOGIC — mirrors upload_screen.dart, with the artist model reworked:
      - Same Firebase project (auth guard only, no Firestore writes here)
      - Same Cloudinary cloud/preset/folders the app posts to
        (dlbgqtvqg / glmamp2y, folder=covers | tracks)
-     - Track model: artistName, releaseTitle, featuring (optional),
-       mp3File, progress, status, errorMsg, errors, fileUrl
-     - On success, hands off exactly what the app passes as Navigator
-       arguments to /release-info: paymentReference, coverUrl, audioFiles
-       (as ?ref=&cover=&audio= query params, since this is a web page)
-     - audioFiles now also carries `featuring` per track (previously
-       only title/artist/url made it through), so the details entered
-       here are no longer lost — release-info.html reads and prefills
-       from them, and the admin notification email displays them too.
+     - Track model: artists: [{name, type, spotifyUrl, appleUrl}],
+       releaseTitle, mp3File, progress, status, errorMsg, errors, fileUrl
+     - On success, hands off to /release-info as ?ref=&cover=&audio=
+       where audio[] items are now {title, artists, url}
      ════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -449,7 +553,7 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // ── STATE ────────────────────────────────────────────────────────
 let _id = 0;
 const mkTrack = () => ({
-  id: `t${++_id}`, artistName:'', releaseTitle:'', featuring:'',
+  id: `t${++_id}`, releaseTitle:'', artists:[],
   mp3File:null, mp3FileName:null, progress:0, status:'idle',
   errorMsg:'', errors:{}, fileUrl:null,
 });
@@ -495,6 +599,59 @@ coverInput.addEventListener('change', e => {
   reader.readAsDataURL(f);
 });
 
+// ── ADD-ARTIST POPUP ENGINE ──────────────────────────────────────
+const artistOverlay      = document.getElementById('artistOverlay');
+const artistDialogTitle  = document.getElementById('artistDialogTitle');
+const artistNameInput    = document.getElementById('artistNameInput');
+const artistTypeGroup    = document.getElementById('artistTypeGroup');
+const artistSpotifyInput = document.getElementById('artistSpotifyInput');
+const artistAppleInput   = document.getElementById('artistAppleInput');
+const artistSaveBtn      = document.getElementById('artistSaveBtn');
+const artistCancelBtn    = document.getElementById('artistCancelBtn');
+
+artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(x => x.classList.remove('selected'));
+    p.classList.add('selected');
+    artistTypeGroup.dataset.value = p.dataset.value;
+  });
+});
+
+function promptForArtist(existing) {
+  return new Promise(resolve => {
+    artistDialogTitle.textContent = existing ? 'EDIT TRACK ARTIST' : 'ADD TRACK ARTIST';
+    artistNameInput.value = existing?.name || '';
+    artistSpotifyInput.value = existing?.spotifyUrl || '';
+    artistAppleInput.value = existing?.appleUrl || '';
+    const type = existing?.type || 'main';
+    artistTypeGroup.dataset.value = type;
+    artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => p.classList.toggle('selected', p.dataset.value === type));
+    artistNameInput.style.borderColor = '';
+    artistOverlay.classList.add('open');
+    setTimeout(() => artistNameInput.focus(), 50);
+
+    function cleanup(result) {
+      artistOverlay.classList.remove('open');
+      artistSaveBtn.removeEventListener('click', onSave);
+      artistCancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    }
+    function onSave() {
+      const name = artistNameInput.value.trim();
+      if (!name) { artistNameInput.style.borderColor = '#EF4444'; return; }
+      cleanup({
+        name,
+        type: artistTypeGroup.dataset.value,
+        spotifyUrl: artistSpotifyInput.value.trim(),
+        appleUrl: artistAppleInput.value.trim()
+      });
+    }
+    function onCancel() { cleanup(null); }
+    artistSaveBtn.addEventListener('click', onSave);
+    artistCancelBtn.addEventListener('click', onCancel);
+  });
+}
+
 // ── TRACKS ───────────────────────────────────────────────────────
 function completedCount(){ return tracks.filter(t => t.status === 'success').length; }
 
@@ -510,14 +667,20 @@ function renderTracks() {
   updateSubmitLabel();
 }
 
+function typeLabel(type) {
+  return type === 'main' ? 'Main' : type === 'featured' ? 'Featured' : 'Secondary';
+}
+
 function buildTrackRow(t, i) {
   const isExpanded  = expanded.has(t.id);
   const isDone      = t.status === 'success';
   const isUploading = t.status === 'uploading';
   const hasErr      = Object.values(t.errors).some(Boolean) || !!t.errorMsg;
+  const locked      = uploading || isDone;
 
-  const displayName = t.releaseTitle.trim() || t.artistName.trim() || `Track ${i + 1}`;
-  const hasName     = !!(t.releaseTitle.trim() || t.artistName.trim());
+  const mainArtist  = t.artists.find(a => a.type === 'main');
+  const displayName = t.releaseTitle.trim() || (mainArtist ? mainArtist.name : '') || `Track ${i + 1}`;
+  const hasName     = !!(t.releaseTitle.trim() || mainArtist);
 
   const row = document.createElement('div');
   row.className = 'track-row' + (isExpanded ? ' expanded' : '') + (isDone ? ' done' : '') + (hasErr ? ' has-err' : '');
@@ -530,6 +693,18 @@ function buildTrackRow(t, i) {
     ? escHtml(t.mp3FileName)
     : isUploading ? `Uploading ${Math.round(t.progress)}%…` : 'Tap to add details';
 
+  const chipsHtml = t.artists.map((a, ai) => `
+    <div class="artist-chip type-${a.type}">
+      <span class="achip-type">${typeLabel(a.type)}</span>
+      <span class="achip-name">${escHtml(a.name)}</span>
+      <span class="achip-links">
+        <img src="https://cdn.simpleicons.org/spotify/1DB954" class="${a.spotifyUrl ? 'linked' : ''}" alt="">
+        <img src="https://cdn.simpleicons.org/applemusic/FC3C44" class="${a.appleUrl ? 'linked' : ''}" alt="">
+      </span>
+      ${!locked ? `<div class="achip-edit" data-editartist="${t.id}:${ai}" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>` : ''}
+      ${!locked ? `<div class="achip-remove" data-removeartist="${t.id}:${ai}" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>` : ''}
+    </div>`).join('');
+
   row.innerHTML = `
     <div class="track-head" data-toggle="${t.id}">
       <div class="track-num ${isDone ? 'done' : (hasErr ? 'has-err' : '')}">${numInner}</div>
@@ -537,7 +712,7 @@ function buildTrackRow(t, i) {
         <div class="track-name ${hasName ? 'filled' : ''}">${escHtml(displayName)}</div>
         <div class="track-sub ${isUploading ? 'uploading' : ''}">${subText}</div>
       </div>
-      ${tracks.length > 1 && !uploading && !isDone ? `<button type="button" class="track-remove" data-remove="${t.id}" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
+      ${tracks.length > 1 && !locked ? `<button type="button" class="track-remove" data-remove="${t.id}" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>` : ''}
       <div class="status-dot ${isDone ? 'done' : (hasErr ? 'err' : (isUploading ? 'uploading' : ''))}"></div>
       <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
@@ -550,22 +725,17 @@ function buildTrackRow(t, i) {
 
     ${isExpanded ? `
     <div class="track-body">
-      <div class="grid2">
-        <div class="field ${t.errors.artistName ? 'has-err' : ''}">
-          <label class="field-label">Artist Name<div class="req-dot"></div></label>
-          <input type="text" placeholder="e.g. Burna Boy" data-field="artistName" data-id="${t.id}" value="${escHtml(t.artistName)}" ${uploading || isDone ? 'disabled' : ''}>
-          ${t.errors.artistName ? `<div class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.artistName}</div>` : ''}
-        </div>
-        <div class="field ${t.errors.releaseTitle ? 'has-err' : ''}">
-          <label class="field-label">Track Title<div class="req-dot"></div></label>
-          <input type="text" placeholder="e.g. Abundance" data-field="releaseTitle" data-id="${t.id}" value="${escHtml(t.releaseTitle)}" ${uploading || isDone ? 'disabled' : ''}>
-          ${t.errors.releaseTitle ? `<div class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.releaseTitle}</div>` : ''}
-        </div>
+      <div class="field ${t.errors.releaseTitle ? 'has-err' : ''}">
+        <label class="field-label">Track Title<div class="req-dot"></div></label>
+        <input type="text" placeholder="e.g. Abundance" data-field="releaseTitle" data-id="${t.id}" value="${escHtml(t.releaseTitle)}" ${locked ? 'disabled' : ''}>
+        ${t.errors.releaseTitle ? `<div class="ferr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.releaseTitle}</div>` : ''}
       </div>
 
       <div class="field" style="margin-top:14px">
-        <label class="field-label">Featuring</label>
-        <input type="text" placeholder="Leave blank if none" data-field="featuring" data-id="${t.id}" value="${escHtml(t.featuring)}" ${uploading || isDone ? 'disabled' : ''}>
+        <label class="field-label">Track Artists<div class="req-dot"></div></label>
+        <div id="artistChips-${t.id}">${chipsHtml}</div>
+        ${!locked ? `<button type="button" class="add-artist-btn" data-addartist="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>ADD ARTIST</button>` : ''}
+        ${t.errors.artists ? `<div class="ferr" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.artists}</div>` : ''}
       </div>
 
       <div class="mp3-zone-wrap">
@@ -608,7 +778,7 @@ function buildTrackRow(t, i) {
 
   row.querySelectorAll('[data-toggle]').forEach(el => {
     el.addEventListener('click', ev => {
-      if (ev.target.closest('[data-remove]') || ev.target.closest('input')) return;
+      if (ev.target.closest('[data-remove]') || ev.target.closest('input') || ev.target.closest('[data-addartist]') || ev.target.closest('[data-editartist]') || ev.target.closest('[data-removeartist]')) return;
       const id = el.dataset.toggle;
       if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
       renderTracks();
@@ -619,6 +789,35 @@ function buildTrackRow(t, i) {
     inp.addEventListener('input', e => {
       const track = tracks.find(x => x.id === e.target.dataset.id);
       if (track) track[e.target.dataset.field] = e.target.value;
+    });
+  });
+
+  const addArtistBtn = row.querySelector('[data-addartist]');
+  if (addArtistBtn) {
+    addArtistBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const result = await promptForArtist(null);
+      if (result) {
+        delete t.errors.artists;
+        t.artists.push(result);
+        renderTracks();
+      }
+    });
+  }
+  row.querySelectorAll('[data-editartist]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const [, idx] = btn.dataset.editartist.split(':');
+      const result = await promptForArtist(t.artists[Number(idx)]);
+      if (result) { t.artists[Number(idx)] = result; renderTracks(); }
+    });
+  });
+  row.querySelectorAll('[data-removeartist]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const [, idx] = btn.dataset.removeartist.split(':');
+      t.artists.splice(Number(idx), 1);
+      renderTracks();
     });
   });
 
@@ -679,9 +878,10 @@ function validateAll() {
   }
   tracks.forEach(t => {
     t.errors = {};
-    if (!t.artistName.trim())   { t.errors.artistName   = 'Required'; valid = false; }
-    if (!t.releaseTitle.trim()) { t.errors.releaseTitle = 'Required'; valid = false; }
-    if (!t.mp3File)             { t.errors.mp3           = 'Please select an MP3 file.'; valid = false; }
+    if (!t.releaseTitle.trim())          { t.errors.releaseTitle = 'Required'; valid = false; }
+    if (!t.artists.length)               { t.errors.artists = 'Add at least one artist.'; valid = false; }
+    else if (!t.artists.some(a => a.type === 'main')) { t.errors.artists = 'At least one artist must be tagged Main.'; valid = false; }
+    if (!t.mp3File)                      { t.errors.mp3 = 'Please select an MP3 file.'; valid = false; }
     if (Object.keys(t.errors).length) expanded.add(t.id);
   });
   renderTracks();
@@ -739,17 +939,16 @@ submitBtn.addEventListener('click', async () => {
     if (!anyError) {
       allDone = true;
       successBanner.style.display = 'flex';
-      // Now includes `featuring` per track, alongside title/artist/url —
-      // previously this only carried title/artist/url, so the featuring
-      // artist typed here on the Files page silently vanished and had
-      // to be re-typed on the next screen.
+      // Each track now carries its FULL artists array (name, type,
+      // spotifyUrl, appleUrl) — this is the new shape release-info.html
+      // reads to auto-sync the Main Artist + Featured/Secondary pills
+      // without the user retyping anything.
       const audioFiles = tracks
         .filter(t => t.fileUrl)
         .map(t => ({
-          title:     t.releaseTitle.trim(),
-          artist:    t.artistName.trim(),
-          featuring: t.featuring.trim(),
-          url:       t.fileUrl
+          title: t.releaseTitle.trim(),
+          artists: t.artists.map(a => ({ name: a.name, type: a.type, spotifyUrl: a.spotifyUrl, appleUrl: a.appleUrl })),
+          url: t.fileUrl
         }));
       const existing = new URLSearchParams(window.location.search);
       const ref = existing.get('ref');
