@@ -9,6 +9,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+/* ════════════════════════════════════════════════════════════════
+   444Music — Release Info page
+
+   CHANGE LOG (this rebuild):
+   - Main Artist search box + dropdown REMOVED.
+   - "Featuring another artist?" toggle + Featured Artist search box
+     REMOVED entirely.
+   - Replaced with a READ-ONLY summary: a Main Artist pill row, and a
+     per-track card list showing every artist on that track tagged
+     Main / Featured / Secondary, with Spotify/Apple icons — sourced
+     straight from what was entered on the Upload Files step.
+   - Nothing on this page can be added, edited, or removed. If an
+     artist, type, or link is wrong, the user must go back to Upload
+     Files to fix it — this page only displays what was synced over.
+   - This keeps Album releases (Track 1 featuring X, Track 2 featuring
+     Y) unambiguous: each track's card only ever shows that track's
+     own artists, never merged with another track's.
+   ════════════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -157,8 +175,8 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .radio-pill.selected { background: var(--text-primary); border-color: var(--text-primary); color: var(--bg-base); }
 .radio-pill.selected::before { border-color: var(--bg-base); background: var(--bg-base); box-shadow: inset 0 0 0 3px var(--text-primary); }
 
-#previousReleaseDateWrap, #featuredArtistsWrap { display: none; }
-#previousReleaseDateWrap.visible, #featuredArtistsWrap.visible { display: block; animation: rowIn 0.2s ease both; }
+#previousReleaseDateWrap { display: none; }
+#previousReleaseDateWrap.visible { display: block; animation: rowIn 0.2s ease both; }
 
 .agreement-box {
   display: flex; align-items: flex-start; gap: 12px;
@@ -184,25 +202,22 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 }
 .agreement-text p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
 
-.artist-field { position: relative; }
+/* ── Read-only Main Artist pill row ─────────────────────────────── */
 .artist-pill-box {
   background: var(--bg-input); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 8px 12px;
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-  cursor: text; min-height: 50px;
-  transition: border-color var(--t), box-shadow var(--t), background var(--t);
+  min-height: 50px;
 }
-.artist-pill-box:focus-within {
-  border-color: var(--border-focus); background: var(--bg-input-focus);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
-}
+.artist-pill-box.readonly { cursor: default; }
 .artist-pill {
   display: inline-flex; align-items: center; gap: 7px;
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 999px; padding: 4px 10px 4px 6px;
+  border-radius: 999px; padding: 4px 12px 4px 6px;
   font-size: 0.82rem; color: var(--text-primary);
   animation: pillPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
 }
+.artist-pill.readonly-pill { cursor: default; }
 .pill-avatar {
   width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.12);
   display: flex; align-items: center; justify-content: center;
@@ -210,123 +225,56 @@ option, optgroup { background: #141414; color: var(--text-primary); }
   overflow: hidden; flex-shrink: 0;
 }
 .pill-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-.pill-remove {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(255,255,255,0.1); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); padding: 0; transition: background var(--t), transform var(--t);
-}
-.pill-remove:hover { background: rgba(255,255,255,0.22); transform: scale(1.15); color: var(--text-primary); }
-.pill-remove svg { width: 8px; height: 8px; }
-.artist-search-input {
-  background: none !important; border: none !important; box-shadow: none !important; outline: none !important;
-  padding: 4px 6px !important; flex: 1; min-width: 140px;
-  font-size: 0.88rem !important; color: var(--text-primary);
-}
-.artist-search-input::placeholder { color: var(--text-muted); font-size: 0.84rem; }
 
-.artist-dropdown {
-  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-  z-index: 9000; background: #141414;
-  border: 1px solid var(--border-accent); border-radius: var(--radius-md);
-  overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4);
-  display: none; max-height: 340px; overflow-y: auto;
+/* ── Per-track read-only artist summary cards ───────────────────── */
+.track-artists-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px; margin-bottom: 10px;
 }
-.artist-dropdown.open { display: block; animation: dropIn 0.18s cubic-bezier(0.22,1,0.36,1) both; }
-.dropdown-sect-title {
-  padding: 10px 16px 6px;
-  font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+.track-artists-card:last-child { margin-bottom: 0; }
+.track-artists-card-title {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary);
+  margin-bottom: 10px;
 }
-.artist-option {
-  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
-  cursor: pointer; transition: background var(--t);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+.track-artists-card-title .trk-count {
+  font-family: var(--font-body); font-size: 0.68rem; font-weight: 600;
+  color: var(--text-muted); text-transform: none; letter-spacing: 0;
 }
-.artist-option:last-child { border-bottom: none; }
-.artist-option:hover, .artist-option.focused { background: rgba(255,255,255,0.05); }
-.opt-avatar {
-  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  overflow: hidden; background: rgba(255,255,255,0.08);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);
+.trk-artist-chip {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 10px; margin-bottom: 6px;
 }
-.opt-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.opt-info { flex: 1; min-width: 0; }
-.opt-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.opt-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
-.opt-badge {
-  font-family: var(--font-display); font-size: 0.58rem; font-weight: 700;
+.trk-artist-chip:last-child { margin-bottom: 0; }
+.trk-artist-type {
+  font-family: var(--font-display); font-size: 0.56rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 999px; flex-shrink: 0;
   background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--border);
 }
-.dropdown-loading {
-  padding: 20px 16px; text-align: center; font-size: 0.83rem; color: var(--text-muted); font-style: italic;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-}
-.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.7s linear infinite; }
-.artist-dropdown::-webkit-scrollbar { width: 4px; }
-.artist-dropdown::-webkit-scrollbar-track { background: transparent; }
-.artist-dropdown::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+.trk-artist-chip.type-main .trk-artist-type { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.28); color: var(--success); }
+.trk-artist-name { flex: 1; min-width: 0; font-size: 0.86rem; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trk-artist-links { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.trk-artist-links img { width: 13px; height: 13px; opacity: 0.25; display: block; }
+.trk-artist-links img.linked { opacity: 1; }
 
-.feat-card {
-  background: var(--bg-surface); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 12px; margin-bottom: 10px;
-  animation: rowIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+.no-sync-banner {
+  display: none; align-items: flex-start; gap: 8px; padding: 12px 14px;
+  border-radius: var(--radius-sm); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
+  margin-top: 12px;
 }
-.feat-card-top { display: flex; align-items: center; gap: 10px; }
-.feat-avatar {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
-  background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
-}
-.feat-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.feat-name { flex: 1; min-width: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.feat-remove {
-  width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
-  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--danger); transition: all var(--t);
-}
-.feat-remove:hover { background: rgba(239,68,68,0.18); transform: scale(1.06); }
-.feat-remove svg { width: 11px; height: 11px; }
-.feat-role-wrap { margin-top: 10px; position: relative; }
-.feat-role-wrap select {
-  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
-  outline: none; appearance: none; cursor: pointer;
-}
-.feat-role-wrap::after {
-  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
-  border-top: 4px solid var(--text-secondary); pointer-events: none;
-}
-.feat-track-wrap { margin-top: 10px; position: relative; }
-.feat-track-wrap select {
-  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.84rem; padding: 9px 30px 9px 12px;
-  outline: none; appearance: none; cursor: pointer;
-}
-.feat-track-wrap::after {
-  content: ''; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent;
-  border-top: 4px solid var(--text-secondary); pointer-events: none;
-}
-.feat-url-wrap {
-  margin-top: 10px; display: flex; align-items: center; gap: 8px;
-  background: var(--bg-input); border: 1px solid var(--border);
-  border-radius: var(--radius-xs); padding: 0 10px;
-}
-.feat-url-wrap input {
-  flex: 1; background: none; border: none; outline: none; box-shadow: none;
-  color: var(--text-primary); font-size: 0.82rem; padding: 9px 0;
-}
-.feat-url-wrap input::placeholder { color: var(--text-muted); }
-.feat-url-wrap img { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.8; }
+.no-sync-banner.show { display: flex; }
+.no-sync-banner svg { width: 16px; height: 16px; color: var(--danger); flex-shrink: 0; margin-top: 1px; }
+.no-sync-banner span { font-size: 0.8rem; font-weight: 600; color: var(--danger); line-height: 1.5; }
+
+.sync-note { display: none; align-items: flex-start; gap: 8px; margin-top: 12px; }
+.sync-note.show { display: flex; }
+.sync-note svg { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
+.sync-note span { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+.sync-note a { color: var(--text-secondary); text-decoration: underline; cursor: pointer; }
+.sync-note a:hover { color: var(--text-primary); }
 
 .credits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .credits-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
@@ -412,7 +360,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 #statusMsg.error { color: var(--danger); }
 #statusMsg.success { color: var(--success); }
 
-/* Payment badge — shown at the top when a verified payment reference is present */
 .payment-badge {
   display: none; align-items: center; gap: 8px;
   background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);
@@ -422,7 +369,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .payment-badge.show { display: flex; }
 .payment-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-/* Prefill notice — shown when details were carried over from the Files page */
 .prefill-badge {
   display: none; align-items: center; gap: 8px;
   background: rgba(255,255,255,0.05); border: 1px solid var(--border-accent);
@@ -432,9 +378,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .prefill-badge.show { display: flex; }
 .prefill-badge svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--text-primary); }
 
-/* Release-date advisory popup — shown when the chosen release date is
-   less than 5 days out, since the distribution backend can take 2–5
-   days after approval to land the release on stores. */
 .rd-popup-overlay {
   position: fixed; inset: 0; z-index: 10000;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
@@ -476,7 +419,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 @keyframes rdFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rdPopIn   { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
 
-@keyframes dropIn    { from { opacity:0; transform:translateY(-6px) scaleY(0.96); transform-origin:top; } to { opacity:1; transform:none; } }
 @keyframes pillPop   { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
 @keyframes rowIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
 @keyframes spin      { to { transform:rotate(360deg); } }
@@ -531,47 +473,37 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 
     <div class="prefill-badge" id="prefillBadge">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-      Artist, title, and per-track featuring carried over from your upload — check they're correct below
+      Artist, title, and per-track featuring synced from your upload — locked here
     </div>
 
     <form id="releaseForm">
 
-      <!-- ARTIST -->
-      <div class="section-label-row">Artist</div>
+      <!-- ARTIST & FEATURING — read-only, synced from Upload Files.
+           No search, no add/edit/remove on this page. -->
+      <div class="section-label-row">Artist &amp; Featuring</div>
 
-      <div class="field artist-field" id="artistFieldWrap">
+      <div class="field" id="mainArtistWrap">
         <label>
           Main Artist
           <div class="required-dot" title="Required"></div>
         </label>
-        <div class="artist-pill-box" id="artistPillBox">
-          <input type="text" id="artistSearchInput" class="artist-search-input"
-            placeholder="Search artist on Apple Music…"
-            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        </div>
+        <div class="artist-pill-box readonly" id="mainArtistPillBox"></div>
         <input type="hidden" id="artistName" name="artistName">
-        <div class="artist-dropdown" id="artistDropdown"></div>
       </div>
 
-      <div class="field stack-gap">
-        <label>Featuring another artist?</label>
-        <div class="radio-group" id="hasFeaturedGroup" data-value="No">
-          <button type="button" class="radio-pill selected" data-value="No">No</button>
-          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
-        </div>
+      <div class="field stack-gap" id="trackArtistsSummaryWrap">
+        <label>Per-Track Artists</label>
+        <div id="trackArtistsSummaryList"></div>
       </div>
 
-      <div class="field stack-gap" id="featuredArtistsWrap">
-        <label>Search Artist</label>
-        <div class="artist-field" id="featArtistFieldWrap">
-          <div class="artist-pill-box" style="min-height:auto;">
-            <input type="text" id="featArtistSearchInput" class="artist-search-input"
-              placeholder="Search artist on Apple Music…"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-          </div>
-          <div class="artist-dropdown" id="featArtistDropdown"></div>
-        </div>
-        <div id="featuredArtistsList" style="margin-top:12px;"></div>
+      <div class="no-sync-banner" id="noSyncBanner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>No artist details found from the Upload Files step. Please go back and add at least one artist tagged Main before continuing.</span>
+      </div>
+
+      <div class="sync-note" id="syncNote">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>Artist names, types, and links come from the Upload Files step. To change any of it, <a id="backToUploadLink">go back to Upload Files</a>.</span>
       </div>
 
       <!-- RELEASE DETAILS -->
@@ -865,7 +797,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 <script>
 (function(){
   const prevDateWrap = document.getElementById('previousReleaseDateWrap');
-  const featWrap     = document.getElementById('featuredArtistsWrap');
 
   document.querySelectorAll('.radio-group').forEach(function(group){
     group.addEventListener('click', function(e){
@@ -880,9 +811,6 @@ option, optgroup { background: #141414; color: var(--text-primary); }
         prevDateWrap.classList.toggle('visible', isYes);
         if (!isYes) document.getElementById('previousReleaseDate').value = '';
       }
-      if (group.id === 'hasFeaturedGroup') {
-        featWrap.classList.toggle('visible', btn.dataset.value === 'Yes');
-      }
     });
   });
 
@@ -893,9 +821,7 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 })();
 </script>
 
-<!-- RELEASE-DATE ADVISORY POPUP ENGINE — fires when the chosen date is
-     less than 5 days from today. Purely informational: "Ignore" keeps
-     the date as-is, "Change Date" re-opens the native date picker. -->
+<!-- RELEASE-DATE ADVISORY POPUP ENGINE -->
 <script>
 (function(){
   const dateInput = document.getElementById('releaseDate');
@@ -1043,312 +969,131 @@ window.collectCredits = function() {
 };
 </script>
 
-<!-- SHARED APPLE MUSIC SEARCH (used by both Main and Featured artist boxes,
-     mirroring the app's _searchArtistsRemote) -->
-<script>
-async function searchAppleMusicArtists(query, signal) {
-  const itunesUrl = 'https://itunes.apple.com/search?term=' +
-    encodeURIComponent(query) + '&entity=musicArtist&limit=8&media=music';
-  const proxies = [
-    'https://corsproxy.io/?' + encodeURIComponent(itunesUrl),
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(itunesUrl)
-  ];
-  for (const proxyUrl of proxies) {
-    try {
-      const res = await Promise.race([
-        fetch(proxyUrl, { signal }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 6000))
-      ]);
-      if (!res.ok) continue;
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { continue; }
-      if (data && data.contents) { try { data = JSON.parse(data.contents); } catch { continue; } }
-      if (!data || !data.results || !data.results.length) continue;
-      return data.results.filter(r => r.artistName).map(r => ({
-        name:  r.artistName,
-        genre: r.primaryGenreName || '',
-        img:   (r.artworkUrl100 || '').replace('100x100bb', '300x300bb')
-      }));
-    } catch (e) { /* try next proxy */ }
-  }
-  return [];
-}
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-</script>
-
-<!-- MAIN ARTIST SEARCH ENGINE (multi-select pills) -->
+<!-- ARTIST SUMMARY ENGINE — read-only display of the artists synced in
+     from the Upload Files step. No search, no add/edit/remove here on
+     purpose: if anything about an artist is wrong, the fix happens on
+     the Upload Files step, not here, so the two pages never disagree
+     about who's tagged what. This is also what keeps an Album's
+     Track 1 featuring vs. Track 2 featuring from ever bleeding
+     together — each track only ever renders its own artists array. -->
 <script>
 (function(){
-  const selectedArtists = [];
-  const searchInput = document.getElementById('artistSearchInput');
-  const pillBox      = document.getElementById('artistPillBox');
-  const dropdown     = document.getElementById('artistDropdown');
-  const hiddenInput  = document.getElementById('artistName');
-  let searchTimer = null, lastQuery = '', focused = -1, dropdownItems = [], activeCtrl = null;
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  window.escHtml = window.escHtml || escHtml;
 
-  async function runSearch(query) {
-    showLoading();
-    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
-    activeCtrl = new AbortController();
-    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
-    renderResults(query, results);
+  const TYPE_LABEL = { main: 'Main', featured: 'Featured', secondary: 'Secondary' };
+
+  const mainArtistPillBox       = document.getElementById('mainArtistPillBox');
+  const trackArtistsSummaryList = document.getElementById('trackArtistsSummaryList');
+  const noSyncBanner            = document.getElementById('noSyncBanner');
+  const syncNote                = document.getElementById('syncNote');
+  const backToUploadLink        = document.getElementById('backToUploadLink');
+  const hiddenArtistName        = document.getElementById('artistName');
+
+  if (backToUploadLink) {
+    backToUploadLink.addEventListener('click', () => history.back());
   }
 
-  searchInput.addEventListener('input', function() {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
-    clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => runSearch(q), 400);
-  });
-  searchInput.addEventListener('keydown', handleKeyNav);
-  searchInput.addEventListener('focus', function() {
-    const q = searchInput.value.trim();
-    if (q.length >= 2 && lastQuery !== q) runSearch(q);
-    else if (q.length >= 2 && dropdown.innerHTML) openDropdown();
-  });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#artistFieldWrap')) closeDropdown();
-  });
-
-  function showLoading() {
-    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
-    openDropdown();
+  function linkIcon(url, brand, color) {
+    const cls = url ? 'linked' : '';
+    return `<img src="https://cdn.simpleicons.org/${brand}/${color}" class="${cls}" alt="">`;
   }
 
-  function renderResults(query, artists) {
-    dropdownItems = [];
-    let html = '';
-    if (artists.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      artists.forEach((a, i) => {
-        dropdownItems.push({ name: a.name, imageUrl: a.img || '', genre: a.genre || '', isNew: false });
-        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
-        const av = a.img
-          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
-          : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
-      });
+  function buildTrackCard(track, idx) {
+    const artists = Array.isArray(track.artists) ? track.artists : [];
+    const chips = artists.map(a => `
+      <div class="trk-artist-chip type-${a.type}">
+        <span class="trk-artist-type">${TYPE_LABEL[a.type] || a.type}</span>
+        <span class="trk-artist-name">${escHtml(a.name)}</span>
+        <span class="trk-artist-links">
+          ${linkIcon(a.spotifyUrl, 'spotify', '1DB954')}
+          ${linkIcon(a.appleUrl, 'applemusic', 'FC3C44')}
+        </span>
+      </div>`).join('');
+    return `
+      <div class="track-artists-card">
+        <div class="track-artists-card-title">
+          Track ${idx + 1}${track.title ? ' — ' + escHtml(track.title) : ''}
+          <span class="trk-count">${artists.length} artist${artists.length === 1 ? '' : 's'}</span>
+        </div>
+        ${chips || '<div style="font-size:0.8rem;color:var(--text-muted);">No artists on this track.</div>'}
+      </div>`;
+  }
+
+  // Renders the read-only summary and sets the hidden #artistName
+  // field (used by validation and the Firestore save).
+  window.renderArtistSummary = function(audioFiles) {
+    trackArtistsSummaryList.innerHTML = '';
+    mainArtistPillBox.innerHTML = '';
+
+    if (!audioFiles || !audioFiles.length) {
+      noSyncBanner.classList.add('show');
+      syncNote.classList.remove('show');
+      hiddenArtistName.value = '';
+      return '';
     }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '', isNew: true });
-    html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
-    dropdown.innerHTML = html;
-    openDropdown(); focused = -1;
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+
+    noSyncBanner.classList.remove('show');
+    syncNote.classList.add('show');
+
+    // Main artist(s) — union of every artist tagged "main" across all
+    // tracks, deduped by name. Almost always a single name for a
+    // normal release, but handled generally in case tracks differ.
+    const mainNames = [];
+    audioFiles.forEach(t => {
+      (t.artists || []).forEach(a => {
+        if (a.type === 'main' && a.name && !mainNames.some(n => n.toLowerCase() === a.name.toLowerCase())) {
+          mainNames.push(a.name);
+        }
+      });
     });
-  }
 
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    addArtist(item.name, item.imageUrl);
-    closeDropdown(); searchInput.value = ''; lastQuery = '';
-  }
-
-  function addArtist(name, imageUrl) {
-    if (selectedArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    selectedArtists.push({ name, imageUrl });
-    syncHiddenInput(); renderPills();
-  }
-  function removeArtist(idx) { selectedArtists.splice(idx, 1); syncHiddenInput(); renderPills(); }
-
-  function renderPills() {
-    pillBox.querySelectorAll('.artist-pill').forEach(p => p.remove());
-    selectedArtists.forEach((artist, i) => {
+    mainNames.forEach(name => {
       const pill = document.createElement('div');
-      pill.className = 'artist-pill';
-      const av = artist.imageUrl
-        ? `<span class="pill-avatar"><img src="${artist.imageUrl}" alt="" onerror="this.style.display='none'"></span>`
-        : `<span class="pill-avatar">${escHtml(artist.name.charAt(0).toUpperCase())}</span>`;
-      pill.innerHTML = `${av}<span>${escHtml(artist.name)}</span><button type="button" class="pill-remove" aria-label="Remove ${escHtml(artist.name)}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-      pill.querySelector('.pill-remove').addEventListener('click', () => removeArtist(i));
-      pillBox.insertBefore(pill, searchInput);
+      pill.className = 'artist-pill readonly-pill';
+      pill.innerHTML = `<span class="pill-avatar">${escHtml(name.charAt(0).toUpperCase())}</span><span>${escHtml(name)}</span>`;
+      mainArtistPillBox.appendChild(pill);
     });
-    searchInput.placeholder = selectedArtists.length > 0 ? 'Add another artist…' : 'Search artist on Apple Music…';
-  }
-
-  function syncHiddenInput() { hiddenInput.value = selectedArtists.map(a => a.name).join(', '); }
-
-  function handleKeyNav(e) {
-    const items = dropdown.querySelectorAll('.artist-option');
-    if (!dropdown.classList.contains('open') || items.length === 0) return;
-    if      (e.key === 'ArrowDown') { e.preventDefault(); focused = Math.min(focused + 1, items.length - 1); highlight(items); }
-    else if (e.key === 'ArrowUp')   { e.preventDefault(); focused = Math.max(focused - 1, 0); highlight(items); }
-    else if (e.key === 'Enter')     { e.preventDefault(); if (focused >= 0) selectItem(focused); }
-    else if (e.key === 'Escape')    { closeDropdown(); }
-  }
-  function highlight(items) {
-    items.forEach((el, i) => el.classList.toggle('focused', i === focused));
-    if (focused >= 0) items[focused].scrollIntoView({ block: 'nearest' });
-  }
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); focused = -1; }
-
-  // Exposed so the Firebase module script below can prefill the Main
-  // Artist pill using the artist name typed on the Files/Upload page —
-  // without this, that name was collected there but never carried
-  // forward, forcing the user to retype it here.
-  window.prefillMainArtist = function(name) {
-    if (name && name.trim()) addArtist(name.trim(), '');
-  };
-})();
-</script>
-
-<!-- FEATURED / SECONDARY ARTIST SEARCH ENGINE (mirrors the app's mirrored search) -->
-<script>
-(function(){
-  const featuredArtists = []; // {name, imageUrl, role, url, track}
-  const searchInput = document.getElementById('featArtistSearchInput');
-  const dropdown     = document.getElementById('featArtistDropdown');
-  const listEl       = document.getElementById('featuredArtistsList');
-  let searchTimer = null, lastQuery = '', dropdownItems = [], activeCtrl = null;
-
-  window.formatFeaturedArtistsForEmail = function() {
-    if (featuredArtists.length === 0) return 'None';
-    return featuredArtists.map(e => {
-      let line = `${e.name} (${e.role})`;
-      if (e.url && e.url.trim()) line += ` — ${e.url.trim()}`;
-      return line;
-    }).join('\n');
-  };
-  window.collectFeaturedArtists = function() {
-    return featuredArtists.map(e => ({ name: e.name, role: e.role, url: (e.url || '').trim() }));
-  };
-
-  async function runSearch(query) {
-    dropdown.innerHTML = '<div class="dropdown-loading"><div class="spin"></div> Searching…</div>';
-    openDropdown();
-    if (activeCtrl) { try { activeCtrl.abort(); } catch(e){} }
-    activeCtrl = new AbortController();
-    const results = await searchAppleMusicArtists(query, activeCtrl.signal);
-    renderResults(query, results);
-  }
-
-  searchInput.addEventListener('input', function() {
-    const q = searchInput.value.trim();
-    if (q === lastQuery) return;
-    lastQuery = q;
-    clearTimeout(searchTimer);
-    if (q.length < 2) { closeDropdown(); return; }
-    searchTimer = setTimeout(() => runSearch(q), 400);
-  });
-  document.addEventListener('mousedown', function(e) {
-    if (!e.target.closest('#featArtistFieldWrap')) closeDropdown();
-  });
-
-  function renderResults(query, artists) {
-    dropdownItems = [];
-    let html = '';
-    if (artists.length > 0) {
-      html += '<div class="dropdown-sect-title">Found on Apple Music</div>';
-      artists.forEach((a, i) => {
-        dropdownItems.push({ name: a.name, imageUrl: a.img || '' });
-        const initial = escHtml((a.name || '?').charAt(0).toUpperCase());
-        const av = a.img
-          ? `<div class="opt-avatar"><img src="${a.img}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
-          : `<div class="opt-avatar">${initial}</div>`;
-        html += `<div class="artist-option" data-index="${i}">${av}<div class="opt-info"><div class="opt-name">${escHtml(a.name)}</div>${a.genre ? `<div class="opt-meta">${escHtml(a.genre)}</div>` : ''}</div><span class="opt-badge">Apple Music</span></div>`;
-      });
+    if (!mainNames.length) {
+      mainArtistPillBox.innerHTML = `<span style="font-size:0.82rem;color:var(--danger);padding:6px 2px;">No artist tagged "Main" was found — go back to Upload Files and tag one.</span>`;
     }
-    const newIdx = dropdownItems.length;
-    dropdownItems.push({ name: query, imageUrl: '' });
-    html += '<div class="dropdown-sect-title">Not listed?</div>';
-    html += `<div class="artist-option" data-index="${newIdx}"><div class="opt-avatar" style="font-size:1.2rem;">+</div><div class="opt-info"><div class="opt-name">Add "${escHtml(query)}" as new artist</div><div class="opt-meta">Type your name exactly as it appears on stores</div></div><span class="opt-badge">New</span></div>`;
-    dropdown.innerHTML = html;
-    openDropdown();
-    dropdown.querySelectorAll('.artist-option').forEach(el => {
-      el.addEventListener('mousedown', function(e){ e.preventDefault(); selectItem(parseInt(el.dataset.index)); });
+
+    // Per-track breakdown.
+    audioFiles.forEach((t, i) => {
+      trackArtistsSummaryList.insertAdjacentHTML('beforeend', buildTrackCard(t, i));
     });
-  }
 
-  function selectItem(idx) {
-    const item = dropdownItems[idx];
-    if (!item) return;
-    addFeaturedArtist(item.name, item.imageUrl);
-    closeDropdown(); searchInput.value = ''; lastQuery = '';
-  }
+    hiddenArtistName.value = mainNames.join(', ');
+    return hiddenArtistName.value;
+  };
 
-  function addFeaturedArtist(name, imageUrl, track) {
-    if (featuredArtists.find(a => a.name.toLowerCase() === name.toLowerCase())) return;
-    // If there's only one track on this release, there's no ambiguity —
-    // tag it automatically. Otherwise leave it unassigned until the
-    // admin picks a track below (or it arrives pre-tagged from the
-    // Files/Upload page, see prefillFeaturedArtist).
-    const knownTracks = window.__uploadedAudioFiles || [];
-    const resolvedTrack = (track && track.trim())
-      ? track.trim()
-      : (knownTracks.length === 1 ? (knownTracks[0].title || '') : '');
-    featuredArtists.push({ name, imageUrl: imageUrl || '', role: 'Featuring Artist', url: '', track: resolvedTrack });
-    renderList();
-  }
-  function removeFeaturedArtist(idx) { featuredArtists.splice(idx, 1); renderList(); }
+  // Structured payload for the admin email / backend — one entry per
+  // track, each with its full tagged artist list (name, type, links).
+  window.getEmailArtistsPayload = function(audioFiles) {
+    return (audioFiles || []).map(t => ({
+      track: t.title || '',
+      artists: (t.artists || []).map(a => ({
+        name: a.name || '',
+        type: a.type || 'featured',
+        spotifyUrl: a.spotifyUrl || '',
+        appleUrl: a.appleUrl || ''
+      }))
+    }));
+  };
 
-  function renderList() {
-    listEl.innerHTML = '';
-    const knownTracks = window.__uploadedAudioFiles || [];
-    const showTrackPicker = knownTracks.length > 1;
-    featuredArtists.forEach((entry, i) => {
-      const card = document.createElement('div');
-      card.className = 'feat-card';
-      const av = entry.imageUrl
-        ? `<div class="feat-avatar"><img src="${entry.imageUrl}" alt="" onerror="this.style.display='none'"></div>`
-        : `<div class="feat-avatar">${escHtml((entry.name||'?').charAt(0).toUpperCase())}</div>`;
-      const trackOptions = knownTracks.map(t => {
-        const label = t.title || 'Untitled track';
-        return `<option value="${escHtml(label)}" ${entry.track === label ? 'selected' : ''}>${escHtml(label)}</option>`;
-      }).join('');
-      card.innerHTML = `
-        <div class="feat-card-top">
-          ${av}
-          <div class="feat-name">${escHtml(entry.name)}</div>
-          <button type="button" class="feat-remove" aria-label="Remove ${escHtml(entry.name)}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        ${showTrackPicker ? `
-        <div class="feat-track-wrap">
-          <select>
-            <option value="" ${!entry.track ? 'selected' : ''}>Which track is this featured on?</option>
-            ${trackOptions}
-          </select>
-        </div>` : ''}
-        <div class="feat-role-wrap">
-          <select>
-            <option value="Featuring Artist" ${entry.role === 'Featuring Artist' ? 'selected' : ''}>Featuring Artist</option>
-            <option value="Secondary Artist" ${entry.role === 'Secondary Artist' ? 'selected' : ''}>Secondary Artist</option>
-          </select>
-        </div>
-        <div class="feat-url-wrap">
-          <img src="https://cdn.simpleicons.org/spotify/1DB954" alt="" width="14" height="14" onerror="this.style.display='none'">
-          <img src="https://cdn.simpleicons.org/applemusic/fc3c44" alt="" width="14" height="14" onerror="this.style.display='none'">
-          <input type="text" placeholder="Paste Spotify or Apple Music link (optional)" value="${escHtml(entry.url || '')}">
-        </div>`;
-      card.querySelector('.feat-remove').addEventListener('click', () => removeFeaturedArtist(i));
-      if (showTrackPicker) {
-        card.querySelector('.feat-track-wrap select').addEventListener('change', (e) => { entry.track = e.target.value; });
-      }
-      card.querySelector('.feat-role-wrap select').addEventListener('change', (e) => { entry.role = e.target.value; });
-      card.querySelector('.feat-url-wrap input').addEventListener('input', (e) => { entry.url = e.target.value; });
-      listEl.appendChild(card);
+  // Plain-text fallback for the "Featuring" line in the admin email —
+  // grouped by track so nothing gets merged across tracks.
+  window.formatFeaturingForEmail = function(audioFiles) {
+    const lines = [];
+    (audioFiles || []).forEach((t, i) => {
+      const others = (t.artists || []).filter(a => a.type !== 'main');
+      if (!others.length) return;
+      const names = others.map(a => `${a.name} (${TYPE_LABEL[a.type] || a.type})`).join(', ');
+      lines.push(`Track ${i + 1}${t.title ? ' — ' + t.title : ''}: ${names}`);
     });
-  }
-
-  function openDropdown()  { dropdown.classList.add('open'); }
-  function closeDropdown() { dropdown.classList.remove('open'); }
-
-  // Exposed so the Firebase module script below can prefill the
-  // Featuring Artist list using the "featuring" text typed per-track
-  // on the Files/Upload page, now carrying which track it belongs to
-  // so pills are never merged across tracks.
-  window.prefillFeaturedArtist = function(name, track) {
-    if (name && name.trim()) addFeaturedArtist(name.trim(), '', track || '');
+    return lines.length ? lines.join('\n') : 'None';
   };
 })();
 </script>
@@ -1378,13 +1123,14 @@ const NOTIFY_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb6
 let currentUser       = null;
 let paymentReference  = null;
 let paymentVerified    = false;
-let coverUrl           = '';
-let audioFiles         = [];
+let coverUrl            = '';
+let audioFiles          = [];
 
-// ── read what pricing/upload passed us via URL query params ──
-// (?ref=<paymentReference>&cover=<url>&audio=<json>) — the web
-// equivalent of the app's Navigator route arguments map. `audio` now
-// also carries `featuring` per track (see prefillFromUpload below).
+// ── read what upload/pricing passed us via URL query params ──
+// (?ref=<paymentReference>&cover=<url>&audio=<json>). `audio` items
+// now carry the FULL per-track artists array — {name, type,
+// spotifyUrl, appleUrl} — straight from the Upload Files step,
+// instead of the old flat artist/featuring strings.
 (function readIncomingParams() {
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -1398,10 +1144,14 @@ let audioFiles         = [];
       if (Array.isArray(parsed)) {
         audioFiles = parsed
           .map(m => ({
-            title:     m.title     || '',
-            artist:    m.artist    || '',
-            featuring: m.featuring || '',
-            url:       m.url       || ''
+            title:   m.title || '',
+            artists: Array.isArray(m.artists) ? m.artists.map(a => ({
+              name:       a.name || '',
+              type:       a.type || 'featured',
+              spotifyUrl: a.spotifyUrl || '',
+              appleUrl:   a.appleUrl || ''
+            })) : [],
+            url:     m.url || ''
           }))
           .filter(m => m.url);
       }
@@ -1409,67 +1159,25 @@ let audioFiles         = [];
   }
 })();
 
-// Expose the per-track upload data globally so the Featured Artist
-// engine (defined earlier on this page) can offer a "which track is
-// this featured on?" picker and correctly tag each featured artist to
-// its own track, instead of every featured artist being lumped into
-// one release-wide bucket with no track association.
-window.__uploadedAudioFiles = audioFiles;
-
-// ── Prefill Main Artist / Featuring / Release Title from what was
-// entered on the Files page, so those details are never silently
-// dropped and the artist doesn't have to retype them here. ──
-function prefillFromUpload() {
-  if (!audioFiles.length) return;
-
-  const firstTrack = audioFiles[0];
-  let didPrefill = false;
-
-  // Main artist — taken from the first track (tracks on one release
-  // are almost always credited to the same main artist).
-  if (firstTrack.artist && window.prefillMainArtist) {
-    window.prefillMainArtist(firstTrack.artist);
-    didPrefill = true;
-  }
+// ── Render the read-only artist summary and prefill the release
+// title (single-track releases only), so nothing typed on the Upload
+// Files step has to be retyped here. ──
+function applyUploadSync() {
+  window.renderArtistSummary(audioFiles);
 
   // Release title — only safe to prefill for a single track, since
   // for an EP/Album the overall release title is usually different
   // from any one track's title.
-  if (audioFiles.length === 1 && firstTrack.title) {
+  if (audioFiles.length === 1 && audioFiles[0].title) {
     const titleInput = document.getElementById('releaseTitle');
-    if (titleInput && !titleInput.value) {
-      titleInput.value = firstTrack.title;
-      didPrefill = true;
-    }
+    if (titleInput && !titleInput.value) titleInput.value = audioFiles[0].title;
   }
 
-  // Featuring artist(s) — pulled per TRACK, not merged across tracks,
-  // so each featured artist stays tied to the exact track it was typed
-  // against on the Files page. A track with "Wizkid, Tems" in its
-  // Featuring box becomes two pills, both correctly tagged to that
-  // same track — they never bleed into another track's featured list.
-  let anyFeaturing = false;
-  audioFiles.forEach(f => {
-    const namesForTrack = (f.featuring || '').trim()
-      ? f.featuring.split(',').map(s => s.trim()).filter(Boolean)
-      : [];
-    namesForTrack.forEach(name => {
-      if (window.prefillFeaturedArtist) window.prefillFeaturedArtist(name, f.title);
-      anyFeaturing = true;
-    });
-  });
-
-  if (anyFeaturing) {
-    const yesBtn = document.querySelector('#hasFeaturedGroup .radio-pill[data-value="Yes"]');
-    if (yesBtn) yesBtn.click();
-    didPrefill = true;
-  }
-
-  if (didPrefill) {
+  if (audioFiles.length) {
     document.getElementById('prefillBadge').classList.add('show');
   }
 }
-prefillFromUpload();
+applyUploadSync();
 
 async function verifyPayment(reference) {
   try {
@@ -1493,18 +1201,18 @@ const SUBMIT_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 const SPIN_SVG   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" style="animation:spin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 const CHECK_SVG  = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M20 6 9 17l-5-5"/></svg>`;
 
-// Mirrors the app's _sendEmails param list exactly, including the
-// payment_status / cover_url / audio_files fields and 'publishers': 'N/A'
-// (the app has no publishing panel). audio_files now also carries
-// artist/featuring per track, since those are collected upstream.
-// NOTE: this is a best-effort side-effect (see submit handler below) —
-// it must NEVER be allowed to make the app think the release wasn't saved.
+// Mirrors the app's _sendEmails param list, including payment_status /
+// cover_url / audio_files. `featuring` is now a per-track breakdown
+// (Track 1 — Title: Name (Featured), ...) instead of one merged list,
+// and audio_files carries each track's full tagged artists array so
+// the backend template can render the same per-track breakdown with
+// clickable Spotify/Apple icons.
 async function sendEmails(data) {
   const fmt = window.formatCreditsForEmail;
   const params = {
     email:          data.email,
     artist_name:    data.artistName,
-    featuring:      window.formatFeaturedArtistsForEmail(),
+    featuring:      window.formatFeaturingForEmail(data.audioFiles),
     release_title:  data.releaseTitle,
     release_type:   data.releaseType,
     genre:          data.genre,
@@ -1521,7 +1229,7 @@ async function sendEmails(data) {
     version:                data.version,
     previously_released:    data.previouslyReleased,
     previous_release_date:  data.previousReleaseDate || 'N/A',
-    vocal_type:             data.vocalType,
+    vocal_type:              data.vocalType,
     ownership_confirmed:    data.ownershipConfirmed
       ? 'Yes — confirmed original work'
       : 'Not confirmed',
@@ -1537,8 +1245,6 @@ async function sendEmails(data) {
     audio_files:    data.audioFiles || []
   };
 
-  // keepalive: true lets this request keep running even though we
-  // navigate away right after the Firestore save succeeds.
   const res = await fetch(NOTIFY_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-app-secret": NOTIFY_SECRET },
@@ -1552,12 +1258,6 @@ async function sendEmails(data) {
 }
 
 // ── DUPLICATE-SUBMISSION GUARD (works for paid AND free releases) ──
-// A refresh right after a successful save resets hasSubmittedSuccessfully,
-// so relying on that flag (or on paymentReference, which free releases
-// don't even have) isn't enough. Instead, before writing, check whether
-// this user already has a submission with the same title + artist created
-// in the last few minutes. If so, treat it as the same release rather
-// than creating a second document.
 const DUPLICATE_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
 async function findRecentDuplicate(data) {
@@ -1574,7 +1274,6 @@ async function findRecentDuplicate(data) {
         typeof existing.createdAt === 'number' &&
         existing.createdAt >= cutoff
       ) {
-        // keep the most recent match if there happens to be more than one
         if (!match || existing.createdAt > match.createdAt) {
           match = { id: docSnap.id, ...existing };
         }
@@ -1582,8 +1281,6 @@ async function findRecentDuplicate(data) {
     });
     return match;
   } catch (e) {
-    // Never let a failed duplicate-check block a genuine submission —
-    // log it and fall through to the normal save path.
     console.error('[Duplicate check] ERROR (non-fatal, proceeding with save):', e);
     return null;
   }
@@ -1593,9 +1290,6 @@ const form      = document.getElementById("releaseForm");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 let isSubmitting = false;
-// Once a release has been saved for this form load, the form is retired —
-// there is no scenario in which clicking Submit again should be allowed
-// to create a second Firestore document.
 let hasSubmittedSuccessfully = false;
 
 function resetBtn() {
@@ -1611,11 +1305,12 @@ function toIsoOrEmpty(dateInputValue) {
   try { return new Date(dateInputValue).toISOString(); } catch (e) { return dateInputValue; }
 }
 
-// ── VALIDATION — mirrors the app's _validate() exactly: order,
-// messages, and producer (not writer) as the required credit. ──
+// ── VALIDATION — same order/messages as before, except the artist
+// check now confirms a Main artist was actually synced in, since
+// there's no way to type one on this page anymore. ──
 function validate() {
   const artistName = document.getElementById("artistName").value.trim();
-  if (!artistName) return { msg: 'Please add at least one artist.', scrollTo: 'artistPillBox' };
+  if (!artistName) return { msg: 'No Main artist was found from your upload. Please go back to Upload Files and tag at least one artist as Main.', scrollTo: 'mainArtistWrap' };
 
   const releaseTitle = document.getElementById("releaseTitle").value.trim();
   if (!releaseTitle) return { msg: 'Release title is required.', scrollTo: 'releaseTitle' };
@@ -1648,9 +1343,6 @@ function validate() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  // Hard guard: if we've already saved this release once, do not allow
-  // a second Firestore write no matter how many times this fires
-  // (double-click, Enter key repeat, etc).
   if (isSubmitting || hasSubmittedSuccessfully || !currentUser) return;
 
   const error = validate();
@@ -1671,26 +1363,11 @@ form.addEventListener("submit", async e => {
   const previousReleaseDate = document.getElementById('previousReleaseDate').value;
   const creditsData = window.collectCredits();
 
-  // Merge each featured artist's track-tag into that specific track's
-  // own `featuring` value, so the admin email's Audio Files section can
-  // show — per track — exactly which artist is the main artist and
-  // which artist is featured, instead of every featured artist across
-  // every track being combined into one undifferentiated bucket.
-  // The existing merged/flat "Featuring" row under Release Details
-  // (built from taggedFeaturedArtists below) is left completely as-is —
-  // this only ADDS the per-track breakdown alongside it.
-  const taggedFeaturedArtists = window.collectFeaturedArtists();
-  const audioFilesWithFeaturing = audioFiles.map(f => {
-    const namesForThisTrack = taggedFeaturedArtists
-      .filter(fe => fe.track && fe.track === f.title)
-      .map(fe => fe.name);
-    const existingNames = (f.featuring || '').split(',').map(s => s.trim()).filter(Boolean);
-    const combinedNames = [...new Set([...existingNames, ...namesForThisTrack])];
-    return { ...f, featuring: combinedNames.join(', ') };
-  });
+  // Every track already carries its own tagged artists array (Main /
+  // Featured / Secondary + Spotify/Apple links) straight from the
+  // Upload Files step — nothing to merge or re-tag here.
+  const emailArtistsPayload = window.getEmailArtistsPayload(audioFiles);
 
-  // Mirrors the app's submission data map field-for-field, including
-  // the payment / cover / audio fields and Review-vs-Pending status.
   const data = {
     artistName:    document.getElementById("artistName").value.trim(),
     releaseTitle:  document.getElementById("releaseTitle").value.trim(),
@@ -1714,35 +1391,23 @@ form.addEventListener("submit", async e => {
     vocalType:             window.getRadioValue('vocalTypeGroup'),
     ownershipConfirmed:    window.ownershipConfirmed,
     credits:               creditsData,
-    featuredArtists:       taggedFeaturedArtists,
+    featuredArtists:       emailArtistsPayload,
     paid:             paymentVerified ? 'Paid' : 'Unpaid',
     paymentReference: paymentReference || '',
     coverURL:         coverUrl || '',
-    // officialCoverURL mirrors coverURL only at this initial-submission
-    // moment. It's the field admin/payment emails read from — the
-    // dashboard's "Change Cover" quick-edit only ever writes to coverURL,
-    // so it can never affect this value once set here.
     officialCoverURL: coverUrl || '',
-    audioFiles:       audioFilesWithFeaturing,
+    audioFiles:       audioFiles,
     userId:    currentUser.uid,
     createdAt: Date.now(),
     status:    paymentVerified ? 'Review' : 'Pending'
   };
 
-  // ── STEP 0 (critical, runs for BOTH paid and free releases): check
-  // whether this exact release (same user, same title, same artist) was
-  // already saved in the last few minutes. This is what actually catches
-  // the "refresh right after success, then resubmit" case — it does not
-  // depend on paymentReference existing, so it protects free/Pending
-  // releases too, not just paid ones.
   const duplicate = await findRecentDuplicate(data);
   if (duplicate) {
     hasSubmittedSuccessfully = true;
     submitBtn.innerHTML = `${CHECK_SVG} Already Saved`;
     showSuccess('This release was already submitted — redirecting…');
 
-    // Still worth a best-effort retry of the payment claim here, in case
-    // the original attempt's claim update silently failed.
     if (paymentVerified && paymentReference) {
       updateDoc(doc(db, 'pendingPayments', paymentReference), { claimed: true })
         .catch(err => console.error('[Payment claim] ERROR (non-fatal):', err));
@@ -1754,8 +1419,6 @@ form.addEventListener("submit", async e => {
 
   submitBtn.innerHTML = `${SPIN_SVG} Submitting…`;
 
-  // ── STEP 1 (critical): save the release. This is the ONLY step
-  // whose failure should show an error and let the user try again.
   let docRef;
   try {
     docRef = await addDoc(collection(db, "submissions"), data);
@@ -1766,15 +1429,10 @@ form.addEventListener("submit", async e => {
     return;
   }
 
-  // The release is now safely saved. Lock the form permanently so no
-  // retry — accidental or intentional — can ever create a duplicate.
   hasSubmittedSuccessfully = true;
   submitBtn.innerHTML = `${CHECK_SVG} Saved`;
   showSuccess('Release saved. Redirecting…');
 
-  // ── STEP 2 (best-effort, non-blocking): notify email + claim payment.
-  // Neither of these can fail the submission from the user's point of
-  // view — they just log quietly if something goes wrong on the backend.
   sendEmails(data).catch(err => {
     console.error("Notify email failed (release was still saved):", err);
   });
@@ -1784,8 +1442,6 @@ form.addEventListener("submit", async e => {
       .catch(err => console.error('[Payment claim] ERROR (non-fatal):', err));
   }
 
-  // ── STEP 3: move on. A short delay lets the "Saved" state register
-  // visually before navigating away.
   setTimeout(() => { window.location.href = "select.html"; }, 450);
 });
 </script>
