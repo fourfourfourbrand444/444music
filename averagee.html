@@ -259,6 +259,7 @@ option, optgroup { background: #141414; color: var(--text-primary); }
 .trk-artist-links { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .trk-artist-links img { width: 13px; height: 13px; opacity: 0.25; display: block; }
 .trk-artist-links img.linked { opacity: 1; }
+.trk-artist-links a { display: flex; text-decoration: none; cursor: pointer; }
 
 .no-sync-banner {
   display: none; align-items: flex-start; gap: 8px; padding: 12px 14px;
@@ -996,9 +997,11 @@ window.collectCredits = function() {
     backToUploadLink.addEventListener('click', () => history.back());
   }
 
-  function linkIcon(url, brand, color) {
-    const cls = url ? 'linked' : '';
-    return `<img src="https://cdn.simpleicons.org/${brand}/${color}" class="${cls}" alt="">`;
+  function linkIcon(url, brand, color, label) {
+    if (url) {
+      return `<a href="${escHtml(url)}" target="_blank" rel="noopener" title="Open ${label} profile"><img src="https://cdn.simpleicons.org/${brand}/${color}" class="linked" alt=""></a>`;
+    }
+    return `<img src="https://cdn.simpleicons.org/${brand}/${color}" alt="">`;
   }
 
   function buildTrackCard(track, idx) {
@@ -1008,8 +1011,8 @@ window.collectCredits = function() {
         <span class="trk-artist-type">${TYPE_LABEL[a.type] || a.type}</span>
         <span class="trk-artist-name">${escHtml(a.name)}</span>
         <span class="trk-artist-links">
-          ${linkIcon(a.spotifyUrl, 'spotify', '1DB954')}
-          ${linkIcon(a.appleUrl, 'applemusic', 'FC3C44')}
+          ${linkIcon(a.spotifyUrl, 'spotify', '1DB954', 'Spotify')}
+          ${linkIcon(a.appleUrl, 'applemusic', 'FC3C44', 'Apple Music')}
         </span>
       </div>`).join('');
     return `
