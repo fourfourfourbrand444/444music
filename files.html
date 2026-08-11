@@ -81,13 +81,6 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
   font-family:var(--font-head);font-size:20px;font-weight:400;letter-spacing:1.5px;
   margin-left:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.secure-badge{
-  margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;
-  background:var(--white06);border:1px solid var(--white10);border-radius:99px;padding:5px 10px;
-  font-size:10px;font-weight:600;color:var(--grey);
-}
-.secure-badge svg{width:10px;height:10px}
-
 .step-track{display:flex;align-items:center;padding:14px 22px;gap:0;overflow-x:auto}
 .step-item{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-size:15px;font-weight:400;letter-spacing:1px;color:var(--greyDark);flex-shrink:0}
 .step-item.active{color:var(--white)}
@@ -143,6 +136,19 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
 .tracklist-head{margin-bottom:14px}
 .tracklist-title{font-family:var(--font-head);font-size:18px;font-weight:400;letter-spacing:2px;color:var(--greyDark)}
 .tracklist-count{font-size:12px;font-weight:600;color:var(--grey);margin-top:2px}
+
+/* ── COVER ART COMPLIANCE WARNING ───────────────────────────── */
+.cover-warning{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:14px 16px;border-radius:12px;
+  background:var(--amberDim);border:1px solid var(--amberBorder);
+  margin-bottom:24px;
+}
+.cover-warning-icon{width:16px;height:16px;color:var(--amber);flex-shrink:0;margin-top:1px}
+.cover-warning-title{font-family:var(--font-head);font-size:13px;letter-spacing:1.2px;color:var(--amber);margin-bottom:6px}
+.cover-warning ul{margin:0;padding-left:16px}
+.cover-warning li{font-size:11.5px;font-weight:500;color:var(--white70);line-height:1.6;margin-bottom:3px}
+.cover-warning li:last-child{margin-bottom:0}
 
 /* ── TRACK ROW (collapsible, matches _buildTrackRow) ────────── */
 .track-row{
@@ -225,6 +231,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
 .artist-chip .achip-links{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .artist-chip .achip-links img{width:13px;height:13px;opacity:0.28;display:block}
 .artist-chip .achip-links img.linked{opacity:1}
+.artist-chip .achip-links a{display:flex;text-decoration:none;cursor:pointer}
 .artist-chip .achip-edit,
 .artist-chip .achip-remove{
   width:24px;height:24px;border-radius:7px;flex-shrink:0;cursor:pointer;
@@ -379,10 +386,6 @@ input[type="file"]{display:none}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       </button>
       <span class="top-bar-title">UPLOAD RELEASE</span>
-      <div class="secure-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Secure
-      </div>
     </div>
   </header>
 
@@ -414,6 +417,18 @@ input[type="file"]{display:none}
   </div>
 
   <div class="content">
+    <div class="cover-warning">
+      <svg class="cover-warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <div class="cover-warning-title">COVER ART REQUIREMENTS</div>
+        <ul>
+          <li>The artist name and release title on your cover art must exactly match what you enter as your metadata below.</li>
+          <li>No third-party logos — streaming platform logos (Spotify, Apple Music, YouTube, etc.), social media handles, or website URLs.</li>
+          <li>Artwork that doesn't match your metadata, or includes any of the above, will be rejected during review.</li>
+        </ul>
+      </div>
+    </div>
+
     <div class="tracklist-head">
       <div class="tracklist-title">TRACKLIST</div>
       <div class="tracklist-count" id="trackCount">0/1 ready</div>
@@ -734,8 +749,8 @@ function buildTrackRow(t, i) {
       <span class="achip-type">${typeLabel(a.type)}</span>
       <span class="achip-name">${escHtml(a.name)}</span>
       <span class="achip-links">
-        <img src="https://cdn.simpleicons.org/spotify/1DB954" class="${a.spotifyUrl ? 'linked' : ''}" alt="">
-        <img src="https://cdn.simpleicons.org/applemusic/FC3C44" class="${a.appleUrl ? 'linked' : ''}" alt="">
+        ${a.spotifyUrl ? `<a href="${escHtml(a.spotifyUrl)}" target="_blank" rel="noopener" title="Open Spotify profile" onclick="event.stopPropagation()"><img src="https://cdn.simpleicons.org/spotify/1DB954" class="linked" alt=""></a>` : `<img src="https://cdn.simpleicons.org/spotify/1DB954" alt="">`}
+        ${a.appleUrl ? `<a href="${escHtml(a.appleUrl)}" target="_blank" rel="noopener" title="Open Apple Music profile" onclick="event.stopPropagation()"><img src="https://cdn.simpleicons.org/applemusic/FC3C44" class="linked" alt=""></a>` : `<img src="https://cdn.simpleicons.org/applemusic/FC3C44" alt="">`}
       </span>
       ${!locked ? `<div class="achip-edit" data-editartist="${t.id}:${ai}" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>` : ''}
       ${!locked ? `<div class="achip-remove" data-removeartist="${t.id}:${ai}" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>` : ''}
