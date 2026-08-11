@@ -10,22 +10,22 @@
 <style>
 /* ════════════════════════════════════════════════════════════════
    444Music — mirrors upload_screen.dart 1:1
-   Fonts:  Bebas Neue  → headings / labels  (GoogleFonts.bebasNeue)
-           Nunito      → body text          (GoogleFonts.nunito)
-   Palette pulled directly from the Flutter constants.
 
    CHANGE LOG (this rebuild):
    - Per-track "Artist Name" + "Featuring" text inputs REMOVED.
    - Replaced with a "Track Artists" chip list per track. Each artist
      is added via a popup: Name, Type (Main / Featured / Secondary),
-     optional Spotify profile URL, optional Apple Music profile URL
-     (icons shown, dim if no link attached).
-   - Track model: artists: [{name, type, spotifyUrl, appleUrl}]
-     (previously: artistName string + featuring string).
-   - At least one artist per track required, and at least one must
-     be tagged "main".
-   - audioFiles handed off to release-info.html now carries the full
-     artists array per track instead of flat artist/featuring strings.
+     optional Spotify profile URL, optional Apple Music profile URL.
+   - Track model: artists: [{name, type, spotifyUrl, appleUrl}].
+   - NEW: "Main" artist type is only offered on TRACK 1. Every other
+     track can only tag artists Featured or Secondary. This is what
+     keeps an EP/Album from ever ending up with more than one Main
+     artist (or near-duplicate typo'd Main artists) once the tracks
+     reach Release Info / the admin dashboard — there is structurally
+     only ever one place a Main artist can come from.
+   - If track order ever shifts (e.g. Track 1 gets removed), any
+     artist still tagged Main on a track that is no longer first is
+     silently downgraded to Featured on the next render.
    ════════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
@@ -207,6 +207,11 @@ body{font-family:var(--font-body);background:var(--black);color:var(--white);min
 .ferr svg{width:11px;height:11px;flex-shrink:0}
 
 /* ── ARTIST CHIPS + ADD-ARTIST BUTTON ────────────────────────── */
+.track-artist-hint{
+  font-size:10px;font-weight:600;color:var(--greyDark);margin-bottom:8px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:5px;
+}
+.track-artist-hint svg{width:11px;height:11px;flex-shrink:0;margin-top:1px;color:var(--greyDark)}
 .artist-chip{
   display:flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--white10);
   border-radius:10px;padding:9px 10px;margin-bottom:6px;
@@ -349,6 +354,10 @@ input[type="file"]{display:none}
 .artist-type-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
 .artist-type-pill{padding:8px 14px;border-radius:999px;border:1px solid var(--white20);background:transparent;color:var(--grey);font-family:var(--font-body);font-size:12px;font-weight:700;cursor:pointer}
 .artist-type-pill.selected{background:var(--white);border-color:var(--white);color:var(--black)}
+.artist-type-hint{
+  display:none;font-size:10px;font-weight:600;color:var(--greyDark);margin-top:8px;line-height:1.5;
+}
+.artist-type-hint.show{display:block}
 .artist-url-row{display:flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--white10);border-radius:10px;padding:0 12px}
 .artist-url-row img{width:14px;height:14px;flex-shrink:0}
 .artist-url-row input{background:none!important;border:none!important;padding:11px 0!important;flex:1;color:var(--white);font-family:var(--font-body);font-size:13px;outline:none;width:auto}
@@ -467,6 +476,7 @@ input[type="file"]{display:none}
         <button type="button" class="artist-type-pill" data-value="featured">Featured</button>
         <button type="button" class="artist-type-pill" data-value="secondary">Secondary</button>
       </div>
+      <div class="artist-type-hint" id="artistTypeHint">Main artist is set on Track 1 — this track can only have Featured or Secondary artists.</div>
     </div>
 
     <div class="field" style="margin-bottom:12px;">
@@ -493,14 +503,7 @@ input[type="file"]{display:none}
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════
-     LOGIC — mirrors upload_screen.dart, with the artist model reworked:
-     - Same Firebase project (auth guard only, no Firestore writes here)
-     - Same Cloudinary cloud/preset/folders the app posts to
-       (dlbgqtvqg / glmamp2y, folder=covers | tracks)
-     - Track model: artists: [{name, type, spotifyUrl, appleUrl}],
-       releaseTitle, mp3File, progress, status, errorMsg, errors, fileUrl
-     - On success, hands off to /release-info as ?ref=&cover=&audio=
-       where audio[] items are now {title, artists, url}
+     LOGIC — mirrors upload_screen.dart, with the artist model reworked.
      ════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -604,26 +607,43 @@ const artistOverlay      = document.getElementById('artistOverlay');
 const artistDialogTitle  = document.getElementById('artistDialogTitle');
 const artistNameInput    = document.getElementById('artistNameInput');
 const artistTypeGroup    = document.getElementById('artistTypeGroup');
+const artistTypeHint     = document.getElementById('artistTypeHint');
 const artistSpotifyInput = document.getElementById('artistSpotifyInput');
 const artistAppleInput   = document.getElementById('artistAppleInput');
 const artistSaveBtn      = document.getElementById('artistSaveBtn');
 const artistCancelBtn    = document.getElementById('artistCancelBtn');
+const artistMainPillBtn  = artistTypeGroup.querySelector('[data-value="main"]');
 
 artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => {
   p.addEventListener('click', () => {
+    if (p.style.display === 'none') return; // Main pill hidden on non-first tracks
     artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(x => x.classList.remove('selected'));
     p.classList.add('selected');
     artistTypeGroup.dataset.value = p.dataset.value;
   });
 });
 
-function promptForArtist(existing) {
+// isFirstTrack: only Track 1 may tag an artist as "Main". Every other
+// track only offers Featured / Secondary — this is what makes it
+// structurally impossible for a release to end up with more than one
+// Main artist (or two differently-spelled versions of the same one).
+// trackHasMain: whether THIS track already has a Main-tagged artist,
+// used only to pick a sensible default for a brand-new entry.
+function promptForArtist(existing, isFirstTrack, trackHasMain) {
   return new Promise(resolve => {
     artistDialogTitle.textContent = existing ? 'EDIT TRACK ARTIST' : 'ADD TRACK ARTIST';
     artistNameInput.value = existing?.name || '';
     artistSpotifyInput.value = existing?.spotifyUrl || '';
     artistAppleInput.value = existing?.appleUrl || '';
-    const type = existing?.type || 'main';
+
+    artistMainPillBtn.style.display = isFirstTrack ? '' : 'none';
+    artistTypeHint.classList.toggle('show', !isFirstTrack);
+
+    let type = existing?.type;
+    if (!type) {
+      type = (isFirstTrack && !trackHasMain) ? 'main' : 'featured';
+    }
+    if (!isFirstTrack && type === 'main') type = 'featured'; // safety net
     artistTypeGroup.dataset.value = type;
     artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => p.classList.toggle('selected', p.dataset.value === type));
     artistNameInput.style.borderColor = '';
@@ -639,9 +659,11 @@ function promptForArtist(existing) {
     function onSave() {
       const name = artistNameInput.value.trim();
       if (!name) { artistNameInput.style.borderColor = '#EF4444'; return; }
+      let chosenType = artistTypeGroup.dataset.value;
+      if (!isFirstTrack && chosenType === 'main') chosenType = 'featured'; // hard safety net
       cleanup({
         name,
-        type: artistTypeGroup.dataset.value,
+        type: chosenType,
         spotifyUrl: artistSpotifyInput.value.trim(),
         appleUrl: artistAppleInput.value.trim()
       });
@@ -660,7 +682,20 @@ function updateSubmitLabel(){
   submitLabel.textContent = `SUBMIT ${tracks.length} TRACK${tracks.length > 1 ? 'S' : ''} TO 444MUSIC`;
 }
 
+// Only tracks[0] may hold a Main-tagged artist. If track order shifts
+// (Track 1 removed, a later track becomes index 0, etc.), any artist
+// left tagged "main" on a track that is no longer first is downgraded
+// to "featured" here — before every render — so a stray Main tag can
+// never survive a reorder and reach Release Info / the admin email.
+function normalizeArtistTypes() {
+  tracks.forEach((t, i) => {
+    if (i === 0) return;
+    t.artists.forEach(a => { if (a.type === 'main') a.type = 'featured'; });
+  });
+}
+
 function renderTracks() {
+  normalizeArtistTypes();
   tracksContainer.innerHTML = '';
   tracks.forEach((t, i) => tracksContainer.appendChild(buildTrackRow(t, i)));
   trackCount.textContent = `${completedCount()}/${tracks.length} ready`;
@@ -672,6 +707,7 @@ function typeLabel(type) {
 }
 
 function buildTrackRow(t, i) {
+  const isFirstTrack = i === 0;
   const isExpanded  = expanded.has(t.id);
   const isDone      = t.status === 'success';
   const isUploading = t.status === 'uploading';
@@ -733,6 +769,11 @@ function buildTrackRow(t, i) {
 
       <div class="field" style="margin-top:14px">
         <label class="field-label">Track Artists<div class="req-dot"></div></label>
+        ${!isFirstTrack ? `
+        <div class="track-artist-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Main artist is set on Track 1. Add Featured or Secondary artists here.
+        </div>` : ''}
         <div id="artistChips-${t.id}">${chipsHtml}</div>
         ${!locked ? `<button type="button" class="add-artist-btn" data-addartist="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>ADD ARTIST</button>` : ''}
         ${t.errors.artists ? `<div class="ferr" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${t.errors.artists}</div>` : ''}
@@ -796,7 +837,8 @@ function buildTrackRow(t, i) {
   if (addArtistBtn) {
     addArtistBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const result = await promptForArtist(null);
+      const trackHasMain = t.artists.some(a => a.type === 'main');
+      const result = await promptForArtist(null, isFirstTrack, trackHasMain);
       if (result) {
         delete t.errors.artists;
         t.artists.push(result);
@@ -808,7 +850,8 @@ function buildTrackRow(t, i) {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const [, idx] = btn.dataset.editartist.split(':');
-      const result = await promptForArtist(t.artists[Number(idx)]);
+      const trackHasMain = t.artists.some(a => a.type === 'main');
+      const result = await promptForArtist(t.artists[Number(idx)], isFirstTrack, trackHasMain);
       if (result) { t.artists[Number(idx)] = result; renderTracks(); }
     });
   });
@@ -876,11 +919,14 @@ function validateAll() {
     coverErr.style.display = 'block';
     valid = false;
   }
-  tracks.forEach(t => {
+  tracks.forEach((t, i) => {
     t.errors = {};
     if (!t.releaseTitle.trim())          { t.errors.releaseTitle = 'Required'; valid = false; }
     if (!t.artists.length)               { t.errors.artists = 'Add at least one artist.'; valid = false; }
-    else if (!t.artists.some(a => a.type === 'main')) { t.errors.artists = 'At least one artist must be tagged Main.'; valid = false; }
+    else if (i === 0 && !t.artists.some(a => a.type === 'main')) {
+      t.errors.artists = 'Track 1 must have one artist tagged Main.';
+      valid = false;
+    }
     if (!t.mp3File)                      { t.errors.mp3 = 'Please select an MP3 file.'; valid = false; }
     if (Object.keys(t.errors).length) expanded.add(t.id);
   });
@@ -940,9 +986,11 @@ submitBtn.addEventListener('click', async () => {
       allDone = true;
       successBanner.style.display = 'flex';
       // Each track now carries its FULL artists array (name, type,
-      // spotifyUrl, appleUrl) — this is the new shape release-info.html
-      // reads to auto-sync the Main Artist + Featured/Secondary pills
-      // without the user retyping anything.
+      // spotifyUrl, appleUrl) — this is the shape release-info.html
+      // reads to auto-sync the Main Artist + per-track Featured /
+      // Secondary summary without the user retyping anything, and
+      // there can only ever be one Main artist in this array set
+      // since only tracks[0] was ever allowed to tag one.
       const audioFiles = tracks
         .filter(t => t.fileUrl)
         .map(t => ({
