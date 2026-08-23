@@ -77,10 +77,6 @@ function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* Gathers every needs_review item across all submissions — both the
-   legacy single-track field (youtubeMatchStatus/youtubeMatchCandidates)
-   and the new per-track map (youtubeTrackMatches), so nothing flagged
-   by either code path goes unseen here. */
 async function loadFlaggedItems() {
   const snap = await getDocs(collection(db, "submissions"));
   const items = [];
@@ -89,18 +85,16 @@ async function loadFlaggedItems() {
     const data = docSnap.data();
     const artistName = data.artistName || 'Unknown Artist';
 
-    // Legacy single-track
     if (data.youtubeMatchStatus === 'needs_review' && Array.isArray(data.youtubeMatchCandidates)) {
       items.push({
         docId: docSnap.id,
-        trackKey: null, // null = legacy field, not per-track map
+        trackKey: null,
         artistName,
         trackTitle: data.releaseTitle || data.songTitle || data.title || 'Untitled',
         candidates: data.youtubeMatchCandidates
       });
     }
 
-    // New per-track map
     if (data.youtubeTrackMatches) {
       Object.entries(data.youtubeTrackMatches).forEach(([key, match]) => {
         if (match && match.status === 'needs_review' && Array.isArray(match.candidates)) {
@@ -125,11 +119,9 @@ async function acceptMatch(item, videoId) {
     await updateDoc(ref, {
       youtubeVideoId: videoId,
       youtubeMatchStatus: 'matched',
-      youtubeMatchScore: null // was manually chosen, not auto-scored
+      youtubeMatchScore: null
     });
   } else {
-    // Need the full current map to update just one key without
-    // clobbering other tracks' matches.
     const snap = await getDocs(collection(db, "submissions"));
     let currentMatches = {};
     snap.forEach((d) => { if (d.id === item.docId) currentMatches = d.data().youtubeTrackMatches || {}; });
