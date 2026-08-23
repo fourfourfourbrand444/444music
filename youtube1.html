@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Match Review • 444Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#06060d;--surface:#0c0c18;--card:#0f0f1e;--input-bg:#13132a;
+  --border:rgba(120,100,255,0.12);--border-md:rgba(120,100,255,0.22);
+  --purple:#a278f5;--purple-soft:#c4a8ff;--purple-dim:rgba(162,120,245,0.12);
+  --green:#34d399;--red:#f87171;--text:#eeedf5;--text-sec:#7b7a8e;--text-mut:#3d3d58;
+  --radius:12px;--trans:0.2s ease;--ff-head:'Syne',sans-serif;--ff-body:'DM Sans',sans-serif;
+}
+body{font-family:var(--ff-body);background:var(--void);color:var(--text);min-height:100vh;padding:32px 20px 80px;}
+.page{max-width:900px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-sec);text-decoration:none;font-family:var(--ff-head);font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;}
+.back-link:hover{color:var(--purple-soft);}
+h1{font-family:var(--ff-head);font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.sub{color:var(--text-sec);font-size:0.86rem;margin-bottom:28px;line-height:1.5;}
+.count-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-dim);border:1px solid var(--border-md);border-radius:999px;padding:5px 14px;font-family:var(--ff-head);font-size:0.75rem;font-weight:700;color:var(--purple-soft);margin-bottom:24px;}
+.loading{text-align:center;padding:60px 20px;color:var(--text-mut);}
+.empty{text-align:center;padding:60px 20px;color:var(--text-mut);}
+.empty .big{font-size:2.5rem;margin-bottom:12px;}
+.item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;}
+.item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
+.item-title{font-family:var(--ff-head);font-size:1rem;font-weight:700;}
+.item-meta{font-size:0.78rem;color:var(--text-sec);margin-bottom:16px;}
+.track-tag{display:inline-block;background:var(--purple-dim);color:var(--purple-soft);font-size:0.68rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;margin-bottom:14px;}
+.candidates{display:flex;flex-direction:column;gap:10px;}
+.candidate{display:flex;align-items:center;gap:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+.candidate-info{flex:1;min-width:0;}
+.candidate-title{font-size:0.84rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.candidate-channel{font-size:0.74rem;color:var(--text-sec);}
+.candidate-score{font-family:var(--ff-head);font-size:0.72rem;font-weight:700;color:var(--text-mut);white-space:nowrap;}
+.use-btn{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);color:var(--green);font-family:var(--ff-head);font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:8px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all var(--trans);}
+.use-btn:hover{background:rgba(52,211,153,0.2);}
+.use-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.skip-row{margin-top:14px;text-align:right;}
+.skip-btn{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.18);color:var(--red);font-family:var(--ff-head);font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all var(--trans);}
+.skip-btn:hover{background:rgba(248,113,113,0.15);}
+.watch-link{color:var(--purple-soft);text-decoration:none;font-size:0.74rem;}
+.watch-link:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back-link" href="adminpage.html">← Back to Submissions</a>
+  <h1>YouTube Match Review</h1>
+  <p class="sub">Tracks the automated matcher couldn't confidently match on its own. Pick the correct video below, or mark it as not on YouTube.</p>
+  <div class="count-badge" id="countBadge">Loading…</div>
+  <div id="results"><div class="loading">Loading flagged tracks…</div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const resultsEl = document.getElementById('results');
+const countBadge = document.getElementById('countBadge');
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* Gathers every needs_review item across all submissions — both the
+   legacy single-track field (youtubeMatchStatus/youtubeMatchCandidates)
+   and the new per-track map (youtubeTrackMatches), so nothing flagged
+   by either code path goes unseen here. */
+async function loadFlaggedItems() {
+  const snap = await getDocs(collection(db, "submissions"));
+  const items = [];
+
+  snap.forEach((docSnap) => {
+    const data = docSnap.data();
+    const artistName = data.artistName || 'Unknown Artist';
+
+    // Legacy single-track
+    if (data.youtubeMatchStatus === 'needs_review' && Array.isArray(data.youtubeMatchCandidates)) {
+      items.push({
+        docId: docSnap.id,
+        trackKey: null, // null = legacy field, not per-track map
+        artistName,
+        trackTitle: data.releaseTitle || data.songTitle || data.title || 'Untitled',
+        candidates: data.youtubeMatchCandidates
+      });
+    }
+
+    // New per-track map
+    if (data.youtubeTrackMatches) {
+      Object.entries(data.youtubeTrackMatches).forEach(([key, match]) => {
+        if (match && match.status === 'needs_review' && Array.isArray(match.candidates)) {
+          items.push({
+            docId: docSnap.id,
+            trackKey: key,
+            artistName,
+            trackTitle: match.title || `Track ${Number(key) + 1}`,
+            candidates: match.candidates
+          });
+        }
+      });
+    }
+  });
+
+  return items;
+}
+
+async function acceptMatch(item, videoId) {
+  const ref = doc(db, "submissions", item.docId);
+  if (item.trackKey === null) {
+    await updateDoc(ref, {
+      youtubeVideoId: videoId,
+      youtubeMatchStatus: 'matched',
+      youtubeMatchScore: null // was manually chosen, not auto-scored
+    });
+  } else {
+    // Need the full current map to update just one key without
+    // clobbering other tracks' matches.
+    const snap = await getDocs(collection(db, "submissions"));
+    let currentMatches = {};
+    snap.forEach((d) => { if (d.id === item.docId) currentMatches = d.data().youtubeTrackMatches || {}; });
+    currentMatches[item.trackKey] = {
+      videoId,
+      status: 'matched',
+      title: item.trackTitle,
+      matchedAt: new Date().toISOString()
+    };
+    await updateDoc(ref, { youtubeTrackMatches: currentMatches });
+  }
+}
+
+async function skipMatch(item) {
+  const ref = doc(db, "submissions", item.docId);
+  if (item.trackKey === null) {
+    await updateDoc(ref, { youtubeMatchStatus: 'no_match_found' });
+  } else {
+    const snap = await getDocs(collection(db, "submissions"));
+    let currentMatches = {};
+    snap.forEach((d) => { if (d.id === item.docId) currentMatches = d.data().youtubeTrackMatches || {}; });
+    currentMatches[item.trackKey] = { ...currentMatches[item.trackKey], status: 'no_match_found' };
+    await updateDoc(ref, { youtubeTrackMatches: currentMatches });
+  }
+}
+
+function render(items) {
+  countBadge.textContent = `${items.length} track${items.length === 1 ? '' : 's'} need${items.length === 1 ? 's' : ''} review`;
+
+  if (items.length === 0) {
+    resultsEl.innerHTML = `<div class="empty"><div class="big">✓</div>All caught up — nothing needs review right now.</div>`;
+    return;
+  }
+
+  resultsEl.innerHTML = '';
+  items.forEach((item) => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `
+      <div class="item-head">
+        <span class="item-title">${escHtml(item.artistName)}</span>
+      </div>
+      <div class="item-meta">${item.trackKey !== null ? 'Track from a multi-track release' : 'Single release'}</div>
+      <span class="track-tag">${escHtml(item.trackTitle)}</span>
+      <div class="candidates">
+        ${item.candidates.map((c, i) => `
+          <div class="candidate">
+            <div class="candidate-info">
+              <div class="candidate-title">${escHtml(c.title)}</div>
+              <div class="candidate-channel">${escHtml(c.channelTitle)} · <a class="watch-link" href="https://www.youtube.com/watch?v=${escHtml(c.videoId)}" target="_blank" rel="noopener">Watch ↗</a></div>
+            </div>
+            <span class="candidate-score">${Math.round((c.score || 0) * 100)}%</span>
+            <button class="use-btn" data-video-id="${escHtml(c.videoId)}">Use This</button>
+          </div>
+        `).join('')}
+      </div>
+      <div class="skip-row">
+        <button class="skip-btn">Not on YouTube — Skip</button>
+      </div>
+    `;
+
+    el.querySelectorAll('.use-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = true);
+        btn.textContent = 'Saving…';
+        try {
+          await acceptMatch(item, btn.dataset.videoId);
+          el.remove();
+          const remaining = document.querySelectorAll('.item').length;
+          countBadge.textContent = `${remaining} track${remaining === 1 ? '' : 's'} need${remaining === 1 ? 's' : ''} review`;
+          if (remaining === 0) resultsEl.innerHTML = `<div class="empty"><div class="big">✓</div>All caught up — nothing needs review right now.</div>`;
+        } catch (err) {
+          alert('Failed to save: ' + err.message);
+          el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = false);
+          btn.textContent = 'Use This';
+        }
+      });
+    });
+
+    el.querySelector('.skip-btn').addEventListener('click', async () => {
+      el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = true);
+      try {
+        await skipMatch(item);
+        el.remove();
+        const remaining = document.querySelectorAll('.item').length;
+        countBadge.textContent = `${remaining} track${remaining === 1 ? '' : 's'} need${remaining === 1 ? 's' : ''} review`;
+        if (remaining === 0) resultsEl.innerHTML = `<div class="empty"><div class="big">✓</div>All caught up — nothing needs review right now.</div>`;
+      } catch (err) {
+        alert('Failed to save: ' + err.message);
+        el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = false);
+      }
+    });
+
+    resultsEl.appendChild(el);
+  });
+}
+
+loadFlaggedItems().then(render).catch((err) => {
+  resultsEl.innerHTML = `<div class="empty">Failed to load: ${escHtml(err.message)}</div>`;
+});
+</script>
+</body>
+</html>
