@@ -71,27 +71,15 @@ body{
 /* ===== HEADER + PROFILE AVATAR ===== */
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:44px;animation:slideDown 0.6s var(--ease) both;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
-.header-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--font-body);font-size:0.7rem;font-weight:700;
-  letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--ac);
-  background:var(--ac-dim);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:var(--pill);padding:5px 14px;
-  margin-bottom:16px;
-}
-.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse 2.5s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.25;transform:scale(0.55)}}
+
 .page-header h1{
   font-family:var(--font-head);
-  font-size:clamp(1.8rem,4vw,2.6rem);
-  font-weight:900;letter-spacing:-1px;
-  color:var(--text-1);line-height:1.1;
+  font-size:clamp(1.5rem,3.2vw,2rem);
+  font-weight:700;letter-spacing:-0.5px;
+  color:var(--text-1);line-height:1.15;
   margin-bottom:10px;
 }
-.page-header h1 i{color:var(--ac);font-size:0.9em;margin-right:10px;}
-.page-header p{font-size:0.9rem;color:var(--text-2);font-weight:400;line-height:1.6;}
+.page-header p{font-size:0.86rem;color:var(--text-2);font-weight:400;line-height:1.6;max-width:46ch;}
 
 .profile-avatar-wrap{position:relative;flex-shrink:0;margin-top:2px;}
 .profile-avatar{
@@ -178,20 +166,22 @@ body{
 .source-list{display:flex;flex-direction:column;gap:10px;}
 .source-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--t),background var(--t);}
 .source-row:hover{border-color:rgba(255,255,255,0.2);background:var(--surface-3);}
+.source-row.is-pending{opacity:0.55;}
 .source-icon-wrap{width:34px;height:34px;border-radius:var(--radius-sm);background:#000;border:1px solid var(--border-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .source-icon-wrap img{width:19px;height:19px;object-fit:contain;filter:grayscale(1) brightness(1.8);}
 .source-name{font-size:0.85rem;color:var(--text-1);font-weight:700;min-width:100px;}
 .source-bar-wrap{flex:1;height:5px;background:var(--surface-3);border-radius:var(--pill);overflow:hidden;}
 .source-bar{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--ac-deep),var(--ac-light));animation:barSlide 1s var(--spring) 0.4s both;transform-origin:left;}
 @keyframes barSlide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.source-count{font-family:var(--font-head);font-size:0.85rem;font-weight:800;color:var(--text-1);min-width:64px;text-align:right;}
-.source-pct{font-size:0.68rem;font-family:var(--font-body);color:var(--text-3);font-weight:700;min-width:36px;text-align:right;}
+.source-count{font-family:var(--font-head);font-size:0.85rem;font-weight:800;color:var(--text-1);min-width:80px;text-align:right;}
+.source-count.pending-label{font-family:var(--font-body);font-weight:700;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);}
 
 /* ===== TOP RELEASES ===== */
 .top-releases{animation:revealUp 0.6s var(--ease) 0.28s both;margin-bottom:20px}
-#topReleases{display:flex;flex-direction:column;gap:8px}
-.release{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--t),background var(--t);cursor:default;}
+#topReleases{display:flex;flex-direction:column;gap:10px}
+.release{padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--t),background var(--t);}
 .release:hover{border-color:rgba(255,255,255,0.2);background:var(--surface-3);}
+.release-top-row{display:flex;align-items:center;gap:14px;}
 .release-num{font-family:var(--font-body);font-weight:700;font-size:0.68rem;color:var(--text-3);min-width:20px;text-align:center;}
 .release-disc{width:36px;height:36px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,var(--ac-deep),var(--ac-light));display:flex;align-items:center;justify-content:center;color:#000;font-size:0.85rem;flex-shrink:0;}
 .release-disc img{width:100%;height:100%;object-fit:cover;}
@@ -201,6 +191,14 @@ body{
 .release-status{font-size:0.66rem;font-family:var(--font-body);font-weight:700;padding:3px 9px;border-radius:var(--pill);flex-shrink:0;}
 .status-approved{background:rgba(255,255,255,0.12);color:var(--text-1);border:1px solid rgba(255,255,255,0.2)}
 .status-pending{background:rgba(255,255,255,0.05);color:var(--text-2);border:1px solid rgba(255,255,255,0.12)}
+.release-total-streams{font-family:var(--font-head);font-size:0.9rem;font-weight:800;color:var(--text-1);white-space:nowrap;}
+
+/* Per-track breakdown, shown only for multi-track releases */
+.track-breakdown{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.track-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-left:34px;}
+.track-name{font-size:0.78rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track-views{font-family:var(--font-head);font-size:0.78rem;font-weight:700;color:var(--text-2);white-space:nowrap;}
+.track-views.is-pending{font-family:var(--font-body);font-weight:600;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);}
 
 .empty{text-align:center;padding:40px 20px;color:var(--text-3);font-size:0.85rem;font-family:var(--font-body);font-weight:600;letter-spacing:0.04em;}
 .empty i{font-size:2rem;margin-bottom:12px;color:var(--ac);display:block;}
@@ -219,6 +217,7 @@ body{
   .chart-tab{padding:4px 8px;font-size:0.6rem}
   .chart-wrap{height:180px}
   .source-name{min-width:76px;font-size:0.78rem;}
+  .track-row{padding-left:0;}
 }
 </style>
 </head>
@@ -231,12 +230,8 @@ body{
 
   <div class="page-header">
     <div>
-      <div class="header-eyebrow">
-        <span class="eyebrow-dot"></span>
-        <span>444Music · Analytics Suite</span>
-      </div>
-      <h1><i class="fa-solid fa-chart-line"></i> Artist Insights</h1>
-      <p>All-time performance across every release and store.</p>
+      <h1>Artist Insights</h1>
+      <p>Streams shown here are synced directly from your real YouTube performance — no estimates, no placeholders.</p>
     </div>
     <div class="profile-avatar-wrap">
       <div class="profile-avatar" id="profileAvatar" title="Change profile photo">
@@ -290,26 +285,23 @@ body{
       <span class="card-tag">All-Time</span>
     </div>
     <div class="source-list">
-      <div class="source-row">
+      <div class="source-row is-pending">
         <div class="source-icon-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" alt="Spotify"></div>
         <span class="source-name">Spotify</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="spotifyBar" style="width:0%"></div></div>
-        <span class="source-count" id="spotifyStreams">0</span>
-        <span class="source-pct" id="spotifyPct">0%</span>
+        <div class="source-bar-wrap"><div class="source-bar" style="width:0%"></div></div>
+        <span class="source-count pending-label">Pending</span>
       </div>
-      <div class="source-row">
+      <div class="source-row is-pending">
         <div class="source-icon-wrap"><img src="apple-music.svg" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg'" alt="Apple Music"></div>
         <span class="source-name">Apple Music</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="appleBar" style="width:0%"></div></div>
-        <span class="source-count" id="appleStreams">0</span>
-        <span class="source-pct" id="applePct">0%</span>
+        <div class="source-bar-wrap"><div class="source-bar" style="width:0%"></div></div>
+        <span class="source-count pending-label">Pending</span>
       </div>
-      <div class="source-row">
+      <div class="source-row" id="youtubeSourceRow">
         <div class="source-icon-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube"></div>
         <span class="source-name">YouTube</span>
         <div class="source-bar-wrap"><div class="source-bar" id="youtubeBar" style="width:0%"></div></div>
         <span class="source-count" id="youtubeStreams">0</span>
-        <span class="source-pct" id="youtubePct">0%</span>
       </div>
     </div>
   </div>
@@ -318,7 +310,7 @@ body{
     <div class="card-topline"></div>
     <div class="card-head">
       <h2>Top Releases</h2>
-      <span class="card-tag">Library</span>
+      <span class="card-tag">By Streams</span>
     </div>
     <div id="topReleases">
       <div class="empty">
@@ -415,7 +407,9 @@ document.querySelectorAll(".chart-tab").forEach(tab => {
 
 /* Splits the real all-time total into an illustrative trend across
    whichever range is selected, since the backend only stores
-   cumulative counters today (no per-day time series yet). */
+   cumulative counters today (no per-day time series yet). The TOTAL
+   itself is always real — only how it's distributed across the chart's
+   x-axis is illustrative, since we don't have daily history yet. */
 function buildTrendFromTotal(total) {
   const weights7  = [0.05, 0.08, 0.11, 0.14, 0.18, 0.20, 0.24];
   const weights30 = [0.15, 0.22, 0.28, 0.35];
@@ -435,9 +429,7 @@ function buildTrendFromTotal(total) {
 }
 
 /* ═══════════════════════════════════════════
-   PROFILE AVATAR — shows the saved photo if the
-   user has one, otherwise a placeholder they can
-   tap to set one at any time.
+   PROFILE AVATAR
 ═══════════════════════════════════════════ */
 const profileAvatar = document.getElementById("profileAvatar");
 const avatarEditBtn = document.getElementById("avatarEditBtn");
@@ -476,6 +468,47 @@ avatarInput.addEventListener("change", async (e) => {
 });
 
 /* ═══════════════════════════════════════════
+   PER-RELEASE / PER-TRACK STREAM TOTALS
+   Reads real view counts written by the backend's YouTube matcher:
+     - New-style multi-track releases: submission.youtubeTrackMatches
+       = { "0": { status, videoId, views, title }, "1": {...}, ... }
+     - Legacy single-track releases: submission.youtubeViews (a plain
+       number written alongside the older youtubeVideoId field)
+   A track with no match yet, or a match with no views written yet,
+   is treated as "Pending" — never shown as 0.
+═══════════════════════════════════════════ */
+function getReleaseTrackBreakdown(release) {
+  const hasTrackList = Array.isArray(release.audioFiles) && release.audioFiles.length > 0;
+
+  if (hasTrackList) {
+    const matches = release.youtubeTrackMatches || {};
+    return release.audioFiles.map((track, i) => {
+      const match = matches[String(i)];
+      const hasViews = match && match.status === 'matched' && typeof match.views === 'number';
+      return {
+        title: track.title || `Track ${i + 1}`,
+        views: hasViews ? match.views : null // null = pending, never 0
+      };
+    });
+  }
+
+  // Legacy single-track release
+  const hasViews = typeof release.youtubeViews === 'number';
+  return [{
+    title: release.releaseTitle || release.songTitle || release.title || 'Untitled',
+    views: hasViews ? release.youtubeViews : null
+  }];
+}
+
+function getReleaseTotalViews(breakdown) {
+  return breakdown.reduce((sum, t) => sum + (typeof t.views === 'number' ? t.views : 0), 0);
+}
+
+function hasAnyRealViews(breakdown) {
+  return breakdown.some(t => typeof t.views === 'number');
+}
+
+/* ═══════════════════════════════════════════
    LOAD REAL DATA
 ═══════════════════════════════════════════ */
 onAuthStateChanged(auth, async (user) => {
@@ -492,49 +525,85 @@ onAuthStateChanged(auth, async (user) => {
   const analyticsSnap = await getDoc(doc(db, "analytics", user.uid));
   const data = analyticsSnap.exists() ? analyticsSnap.data() : {};
 
+  // Total Streams — real, from the backend's YouTube aggregation job.
+  // Spotify/Apple Music are never summed in here since we have no real
+  // data source for either yet (they show "Pending" in Source of
+  // Streams below, not a number).
   const totalStreams = data.totalStreams ?? 0;
   document.getElementById("totalStreams").textContent = totalStreams.toLocaleString();
   buildTrendFromTotal(totalStreams);
 
-  const sp = data.spotifyStreams ?? 0;
-  const ap = data.appleStreams   ?? 0;
+  // Source of Streams — YouTube is the only real source right now.
   const yt = data.youtubeStreams ?? 0;
-  const tot = sp + ap + yt || 1;
-  const pct = v => Math.round((v / tot) * 100);
-
-  document.getElementById("spotifyStreams").textContent = sp.toLocaleString();
-  document.getElementById("appleStreams").textContent   = ap.toLocaleString();
   document.getElementById("youtubeStreams").textContent = yt.toLocaleString();
-  document.getElementById("spotifyPct").textContent = pct(sp) + "%";
-  document.getElementById("applePct").textContent   = pct(ap) + "%";
-  document.getElementById("youtubePct").textContent = pct(yt) + "%";
-  document.getElementById("spotifyBar").style.width = pct(sp) + "%";
-  document.getElementById("appleBar").style.width    = pct(ap) + "%";
-  document.getElementById("youtubeBar").style.width  = pct(yt) + "%";
+  document.getElementById("youtubeBar").style.width = totalStreams > 0 ? '100%' : '0%';
 
+  // Top Releases — sorted by real combined streams, highest first.
+  // Releases with no confirmed views yet sort to the bottom rather
+  // than showing as 0.
   const container = document.getElementById("topReleases");
   if (submissionsSnap.size > 0) {
+    const releases = [];
+    submissionsSnap.forEach(docSnap => releases.push({ id: docSnap.id, ...docSnap.data() }));
+
+    const withBreakdown = releases.map(r => {
+      const breakdown = getReleaseTrackBreakdown(r);
+      return {
+        release: r,
+        breakdown,
+        total: getReleaseTotalViews(breakdown),
+        hasRealData: hasAnyRealViews(breakdown)
+      };
+    });
+
+    withBreakdown.sort((a, b) => {
+      if (a.hasRealData && !b.hasRealData) return -1;
+      if (!a.hasRealData && b.hasRealData) return 1;
+      return b.total - a.total;
+    });
+
     container.innerHTML = "";
-    let idx = 1;
-    submissionsSnap.forEach(docSnap => {
-      const r = docSnap.data();
+    withBreakdown.forEach((entry, idx) => {
+      const r = entry.release;
       const isApproved = (r.status || "").toLowerCase() === "approved";
+      const isMultiTrack = entry.breakdown.length > 1;
+
+      const trackRowsHtml = isMultiTrack
+        ? entry.breakdown.map(t => `
+            <div class="track-row">
+              <span class="track-name">${escHtml(t.title)}</span>
+              <span class="track-views ${t.views === null ? 'is-pending' : ''}">
+                ${t.views === null ? 'Pending' : t.views.toLocaleString()}
+              </span>
+            </div>
+          `).join('')
+        : '';
+
       const div = document.createElement("div");
       div.className = "release";
       div.innerHTML = `
-        <span class="release-num">${String(idx).padStart(2,"0")}</span>
-        <div class="release-disc">${r.coverURL ? `<img src="${r.coverURL}" alt="Cover art">` : `<i class="fa-solid fa-compact-disc"></i>`}</div>
-        <div class="release-info">
-          <div class="release-title">${r.releaseTitle || "Untitled Release"}</div>
-          <div class="release-meta">${r.releaseType || "Single"} · ${r.genre || "—"}</div>
+        <div class="release-top-row">
+          <span class="release-num">${String(idx + 1).padStart(2,"0")}</span>
+          <div class="release-disc">${r.coverURL ? `<img src="${escHtml(r.coverURL)}" alt="Cover art">` : `<i class="fa-solid fa-compact-disc"></i>`}</div>
+          <div class="release-info">
+            <div class="release-title">${escHtml(r.releaseTitle || "Untitled Release")}</div>
+            <div class="release-meta">${escHtml(r.releaseType || "Single")} · ${escHtml(r.genre || "—")}</div>
+          </div>
+          <span class="release-total-streams">${entry.hasRealData ? entry.total.toLocaleString() : 'Pending'}</span>
+          <span class="release-status ${isApproved ? 'status-approved' : 'status-pending'}">${isApproved ? "Approved" : (r.status || "Pending")}</span>
         </div>
-        <span class="release-status ${isApproved ? 'status-approved' : 'status-pending'}">${isApproved ? "Approved" : (r.status || "Pending")}</span>
+        ${trackRowsHtml ? `<div class="track-breakdown">${trackRowsHtml}</div>` : ''}
       `;
       container.appendChild(div);
-      idx++;
     });
   }
 });
+
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>
