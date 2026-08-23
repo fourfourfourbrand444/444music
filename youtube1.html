@@ -12,19 +12,33 @@
   --void:#06060d;--surface:#0c0c18;--card:#0f0f1e;--input-bg:#13132a;
   --border:rgba(120,100,255,0.12);--border-md:rgba(120,100,255,0.22);
   --purple:#a278f5;--purple-soft:#c4a8ff;--purple-dim:rgba(162,120,245,0.12);
-  --green:#34d399;--red:#f87171;--text:#eeedf5;--text-sec:#7b7a8e;--text-mut:#3d3d58;
+  --green:#34d399;--yellow:#fbbf24;--orange:#fb923c;--red:#f87171;--text:#eeedf5;--text-sec:#7b7a8e;--text-mut:#3d3d58;
   --radius:12px;--trans:0.2s ease;--ff-head:'Syne',sans-serif;--ff-body:'DM Sans',sans-serif;
 }
 body{font-family:var(--ff-body);background:var(--void);color:var(--text);min-height:100vh;padding:32px 20px 80px;}
 .page{max-width:900px;margin:0 auto;}
 .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-sec);text-decoration:none;font-family:var(--ff-head);font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;}
 .back-link:hover{color:var(--purple-soft);}
+.head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 h1{font-family:var(--ff-head);font-size:1.6rem;font-weight:800;margin-bottom:6px;}
-.sub{color:var(--text-sec);font-size:0.86rem;margin-bottom:28px;line-height:1.5;}
-.count-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-dim);border:1px solid var(--border-md);border-radius:999px;padding:5px 14px;font-family:var(--ff-head);font-size:0.75rem;font-weight:700;color:var(--purple-soft);margin-bottom:24px;}
+.sub{color:var(--text-sec);font-size:0.86rem;margin-bottom:0;line-height:1.5;max-width:560px;}
+.conn-indicator{display:flex;align-items:center;gap:7px;font-size:0.72rem;color:var(--text-sec);font-family:var(--ff-head);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;flex-shrink:0;padding-top:4px;}
+.conn-dot{width:8px;height:8px;border-radius:50%;transition:background 0.4s, box-shadow 0.4s;}
+.conn-dot.connecting{background:var(--yellow);box-shadow:0 0 8px rgba(251,191,36,0.5);animation:pulse 1.2s ease-in-out infinite;}
+.conn-dot.live{background:var(--green);box-shadow:0 0 8px rgba(52,211,153,0.5);animation:pulse 2.5s ease-in-out infinite;}
+.conn-dot.offline{background:var(--red);box-shadow:0 0 8px rgba(248,113,113,0.4);}
+.conn-dot.retrying{background:var(--orange);box-shadow:0 0 8px rgba(251,146,60,0.5);animation:pulse 0.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:0.6;}50%{opacity:1;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+.offline-banner{display:none;align-items:center;gap:10px;background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);border-radius:10px;padding:12px 16px;margin:20px 0;font-size:0.82rem;color:var(--orange);}
+.offline-banner.visible{display:flex;}
+.count-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-dim);border:1px solid var(--border-md);border-radius:999px;padding:5px 14px;font-family:var(--ff-head);font-size:0.75rem;font-weight:700;color:var(--purple-soft);margin:20px 0 24px;}
 .loading{text-align:center;padding:60px 20px;color:var(--text-mut);}
+.loader{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin 0.85s linear infinite;margin:0 auto 14px;}
 .empty{text-align:center;padding:60px 20px;color:var(--text-mut);}
 .empty .big{font-size:2.5rem;margin-bottom:12px;}
+.retry-btn{background:var(--purple-dim);border:1px solid var(--border-md);border-radius:8px;color:var(--purple-soft);font-family:var(--ff-head);font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:all var(--trans);margin-top:12px;}
+.retry-btn:hover{background:rgba(162,120,245,0.2);}
 .item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;}
 .item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
 .item-title{font-family:var(--ff-head);font-size:1rem;font-weight:700;}
@@ -49,15 +63,37 @@ h1{font-family:var(--ff-head);font-size:1.6rem;font-weight:800;margin-bottom:6px
 <body>
 <div class="page">
   <a class="back-link" href="adminpage.html">← Back to Submissions</a>
-  <h1>YouTube Match Review</h1>
-  <p class="sub">Tracks the automated matcher couldn't confidently match on its own. Pick the correct video below, or mark it as not on YouTube.</p>
+  <div class="head-row">
+    <div>
+      <h1>YouTube Match Review</h1>
+      <p class="sub">Tracks the automated matcher couldn't confidently match on its own. Pick the correct video below, or mark it as not on YouTube.</p>
+    </div>
+    <div class="conn-indicator">
+      <div class="conn-dot connecting" id="connDot"></div>
+      <span id="connLabel">Connecting…</span>
+    </div>
+  </div>
+
+  <div class="offline-banner" id="offlineBanner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+    Couldn't reach the database — showing cached data if any. Retrying automatically…
+  </div>
+
   <div class="count-badge" id="countBadge">Loading…</div>
-  <div id="results"><div class="loading">Loading flagged tracks…</div></div>
+  <div id="results"><div class="loading"><div class="loader"></div>Loading flagged tracks…</div></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  updateDoc,
+  onSnapshot,
+  enableIndexedDbPersistence,
+  CACHE_SIZE_UNLIMITED
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -70,24 +106,54 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+try {
+  await enableIndexedDbPersistence(db, { cacheSizeBytes: CACHE_SIZE_UNLIMITED });
+} catch (err) {
+  if (err.code === 'failed-precondition') console.warn('Persistence: multiple tabs open');
+  else if (err.code === 'unimplemented') console.warn('Persistence not supported');
+}
+
 const resultsEl = document.getElementById('results');
 const countBadge = document.getElementById('countBadge');
+const connDot = document.getElementById('connDot');
+const connLabel = document.getElementById('connLabel');
+const offlineBanner = document.getElementById('offlineBanner');
 
 function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-async function loadFlaggedItems() {
-  const snap = await getDocs(collection(db, "submissions"));
-  const items = [];
+let submissions = []; // full cached submission docs, kept in sync by onSnapshot
+let unsubscribe = null;
+let retryCount = 0;
+let retryTimer = null;
+const MAX_RETRIES = 8;
 
-  snap.forEach((docSnap) => {
-    const data = docSnap.data();
+function setConnStatus(state) {
+  connDot.className = 'conn-dot ' + state;
+  const labels = {
+    connecting: 'Connecting…',
+    live: 'Live',
+    offline: 'Offline',
+    retrying: `Retrying… (${retryCount}/${MAX_RETRIES})`
+  };
+  connLabel.textContent = labels[state] || state;
+  offlineBanner.classList.toggle('visible', state === 'offline' || state === 'retrying');
+}
+
+window.addEventListener('online', () => { if (!unsubscribe || retryCount > 0) startListener(); });
+window.addEventListener('offline', () => setConnStatus('offline'));
+
+/* Extracts every needs_review item from the current submissions cache —
+   both the legacy single-track field and the new per-track map. */
+function computeFlaggedItems() {
+  const items = [];
+  submissions.forEach((data) => {
     const artistName = data.artistName || 'Unknown Artist';
 
     if (data.youtubeMatchStatus === 'needs_review' && Array.isArray(data.youtubeMatchCandidates)) {
       items.push({
-        docId: docSnap.id,
+        docId: data.id,
         trackKey: null,
         artistName,
         trackTitle: data.releaseTitle || data.songTitle || data.title || 'Untitled',
@@ -99,7 +165,7 @@ async function loadFlaggedItems() {
       Object.entries(data.youtubeTrackMatches).forEach(([key, match]) => {
         if (match && match.status === 'needs_review' && Array.isArray(match.candidates)) {
           items.push({
-            docId: docSnap.id,
+            docId: data.id,
             trackKey: key,
             artistName,
             trackTitle: match.title || `Track ${Number(key) + 1}`,
@@ -109,7 +175,6 @@ async function loadFlaggedItems() {
       });
     }
   });
-
   return items;
 }
 
@@ -119,12 +184,14 @@ async function acceptMatch(item, videoId) {
     await updateDoc(ref, {
       youtubeVideoId: videoId,
       youtubeMatchStatus: 'matched',
-      youtubeMatchScore: null
+      youtubeMatchScore: null // was manually chosen, not auto-scored
     });
   } else {
-    const snap = await getDocs(collection(db, "submissions"));
-    let currentMatches = {};
-    snap.forEach((d) => { if (d.id === item.docId) currentMatches = d.data().youtubeTrackMatches || {}; });
+    // Use the already-cached submission data instead of a fresh
+    // getDocs() round-trip — cheaper and avoids the exact kind of
+    // one-shot network call that was failing before.
+    const current = submissions.find((s) => s.id === item.docId);
+    const currentMatches = { ...(current?.youtubeTrackMatches || {}) };
     currentMatches[item.trackKey] = {
       videoId,
       status: 'matched',
@@ -140,15 +207,15 @@ async function skipMatch(item) {
   if (item.trackKey === null) {
     await updateDoc(ref, { youtubeMatchStatus: 'no_match_found' });
   } else {
-    const snap = await getDocs(collection(db, "submissions"));
-    let currentMatches = {};
-    snap.forEach((d) => { if (d.id === item.docId) currentMatches = d.data().youtubeTrackMatches || {}; });
+    const current = submissions.find((s) => s.id === item.docId);
+    const currentMatches = { ...(current?.youtubeTrackMatches || {}) };
     currentMatches[item.trackKey] = { ...currentMatches[item.trackKey], status: 'no_match_found' };
     await updateDoc(ref, { youtubeTrackMatches: currentMatches });
   }
 }
 
-function render(items) {
+function render() {
+  const items = computeFlaggedItems();
   countBadge.textContent = `${items.length} track${items.length === 1 ? '' : 's'} need${items.length === 1 ? 's' : ''} review`;
 
   if (items.length === 0) {
@@ -167,7 +234,7 @@ function render(items) {
       <div class="item-meta">${item.trackKey !== null ? 'Track from a multi-track release' : 'Single release'}</div>
       <span class="track-tag">${escHtml(item.trackTitle)}</span>
       <div class="candidates">
-        ${item.candidates.map((c, i) => `
+        ${item.candidates.map((c) => `
           <div class="candidate">
             <div class="candidate-info">
               <div class="candidate-title">${escHtml(c.title)}</div>
@@ -189,10 +256,8 @@ function render(items) {
         btn.textContent = 'Saving…';
         try {
           await acceptMatch(item, btn.dataset.videoId);
-          el.remove();
-          const remaining = document.querySelectorAll('.item').length;
-          countBadge.textContent = `${remaining} track${remaining === 1 ? '' : 's'} need${remaining === 1 ? 's' : ''} review`;
-          if (remaining === 0) resultsEl.innerHTML = `<div class="empty"><div class="big">✓</div>All caught up — nothing needs review right now.</div>`;
+          // onSnapshot will fire and re-render automatically once the
+          // write lands — no manual removal/refetch needed here.
         } catch (err) {
           alert('Failed to save: ' + err.message);
           el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = false);
@@ -205,10 +270,6 @@ function render(items) {
       el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = true);
       try {
         await skipMatch(item);
-        el.remove();
-        const remaining = document.querySelectorAll('.item').length;
-        countBadge.textContent = `${remaining} track${remaining === 1 ? '' : 's'} need${remaining === 1 ? 's' : ''} review`;
-        if (remaining === 0) resultsEl.innerHTML = `<div class="empty"><div class="big">✓</div>All caught up — nothing needs review right now.</div>`;
       } catch (err) {
         alert('Failed to save: ' + err.message);
         el.querySelectorAll('.use-btn, .skip-btn').forEach(b => b.disabled = false);
@@ -219,9 +280,75 @@ function render(items) {
   });
 }
 
-loadFlaggedItems().then(render).catch((err) => {
-  resultsEl.innerHTML = `<div class="empty">Failed to load: ${escHtml(err.message)}</div>`;
-});
+function startListener() {
+  if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+  clearTimeout(retryTimer);
+  setConnStatus('connecting');
+
+  if (submissions.length === 0) {
+    resultsEl.innerHTML = `<div class="loading"><div class="loader"></div>Loading flagged tracks…</div>`;
+  }
+
+  try {
+    unsubscribe = onSnapshot(
+      collection(db, "submissions"),
+      { includeMetadataChanges: true },
+      (snap) => {
+        const fromCache = snap.metadata.fromCache;
+
+        if (!fromCache) {
+          retryCount = 0;
+          setConnStatus('live');
+        } else if (fromCache && navigator.onLine) {
+          setConnStatus('connecting');
+        } else {
+          setConnStatus('offline');
+        }
+
+        submissions = [];
+        snap.forEach((d) => submissions.push({ id: d.id, ...d.data() }));
+        render();
+      },
+      (err) => {
+        console.error('Snapshot error:', err.code, err.message);
+        scheduleRetry(err);
+      }
+    );
+  } catch (e) {
+    console.error('Failed to attach listener:', e);
+    scheduleRetry(e);
+  }
+}
+
+function scheduleRetry(err) {
+  if (retryCount >= MAX_RETRIES) {
+    setConnStatus('offline');
+    if (submissions.length === 0) {
+      resultsEl.innerHTML = `
+        <div class="empty">
+          <div class="big">⚠</div>
+          Could not reach the database.<br>
+          <span style="font-size:0.78rem;">${escHtml(err.message || 'Check your connection and try again.')}</span><br>
+          <button class="retry-btn" id="manualRetryBtn">↺ Try Again</button>
+        </div>`;
+      document.getElementById('manualRetryBtn')?.addEventListener('click', () => {
+        retryCount = 0;
+        startListener();
+      });
+    }
+    return;
+  }
+
+  retryCount++;
+  setConnStatus('retrying');
+  const delay = Math.min(2000 * Math.pow(1.8, retryCount - 1), 30000);
+  retryTimer = setTimeout(() => {
+    if (navigator.onLine) startListener();
+    else scheduleRetry({ message: 'No network' });
+  }, delay);
+}
+
+startListener();
 </script>
 </body>
 </html>
