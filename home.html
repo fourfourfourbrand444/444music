@@ -470,7 +470,7 @@
       margin-bottom: 16px;
       animation: fadeUp 0.4s ease both;
     }
-    .post-header { display: flex; gap: 12px; }
+    .post-header { display: flex; gap: 12px; align-items: center; }
     .post-avatar-link, .post-name-link {
       text-decoration: none; color: inherit;
     }
@@ -486,9 +486,13 @@
     .post-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .post-name { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 15px; color: var(--white); }
     .post-name-link:hover .post-name { text-decoration: underline; }
-    .post-verified { color: var(--blue); font-size: 13px; }
+    /* Verified badge — kept wired in code but hidden until an admin account
+       sets users/{uid}.verified = true (see getUserInfo() in the script).
+       To go live later: build the admin toggle to write that field. */
+    .post-verified { color: var(--blue); font-size: 13px; display: none; }
+    .post-verified.visible { display: inline; }
     .post-time { font-size: 12px; color: var(--grey); font-weight: 600; margin-top: 2px; }
-    .post-menu-wrap { position: relative; }
+    .post-menu-wrap { position: relative; flex-shrink: 0; }
     .post-menu { color: var(--grey); cursor: pointer; padding: 6px; }
     .post-menu:hover { color: var(--white); }
     .post-menu-dropdown {
@@ -519,8 +523,11 @@
       font-size: 12px; font-weight: 800; border: none; cursor: pointer;
       font-family: 'Nunito', sans-serif;
       transition: all 0.2s;
+      flex-shrink: 0;
     }
     .follow-btn:hover { opacity: 0.85; }
+    /* In the post header, the button sits beside the name — not under it */
+    .post-header > .follow-btn { margin-top: 0; }
     .follow-btn.following {
       background: transparent; color: var(--white-70);
       border: 1px solid var(--border-hover);
@@ -981,6 +988,30 @@
   const viewedPostIds = new Set();       // de-dupe view-count writes this session
   let feedObserver = null;               // IntersectionObserver for view counts
 
+  // ── Live user-info cache ──────────────────────────────────────────────────
+  // Posts/comments used to store a name+avatar SNAPSHOT at creation time, so an
+  // old post kept showing whatever picture the author had when they posted —
+  // not their current one. This cache looks the author up from users/{uid}
+  // (the same doc profile.html writes to) at render time instead, so every
+  // avatar everywhere always matches the account page, retroactively too.
+  // `verified` is read from the same doc — false until an admin account sets
+  // users/{uid}.verified = true, which is the field to wire an admin panel to.
+  const userInfoCache = new Map(); // uid -> { name, avatar, verified }
+  async function getUserInfo(uid) {
+    if (userInfoCache.has(uid)) return userInfoCache.get(uid);
+    let info;
+    try {
+      const snap = await getDoc(doc(db, "users", uid));
+      info = snap.exists()
+        ? { name: snap.data().name || "Artist", avatar: snap.data().profilePic || "", verified: !!snap.data().verified }
+        : { name: "Artist", avatar: "", verified: false };
+    } catch (e) {
+      info = { name: "Artist", avatar: "", verified: false };
+    }
+    userInfoCache.set(uid, info);
+    return info;
+  }
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) { location.href = "login.html"; return; }
     currentUser = user;
@@ -990,14 +1021,17 @@
     // account page, with zero extra sync work.
     const userDocRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userDocRef);
+    let currentUserVerified = false;
     if (userSnap.exists()) {
       const u = userSnap.data();
       currentUserData.name   = u.name || user.displayName || "Artist";
       currentUserData.avatar = u.profilePic || user.photoURL || "";
+      currentUserVerified    = !!u.verified;
     } else {
       currentUserData.name   = user.displayName || "Artist";
       currentUserData.avatar = user.photoURL || "";
     }
+    userInfoCache.set(user.uid, { name: currentUserData.name, avatar: currentUserData.avatar, verified: currentUserVerified });
 
     // Keep the analytics doc alive for the dashboard's stream stats (unrelated to identity)
     const analyticsRef = doc(db, "analytics", user.uid);
@@ -1221,10 +1255,14 @@
     });
   });
 
-  // ─── Search filter ───
+  // ─── Search filter (works on both posts and People suggestions) ───
   document.getElementById("feedSearch").addEventListener("input", (e) => {
-    if (currentTab === "people") return; // search only filters posts, not suggestions
-    renderFeed(filterPosts(allPosts, e.target.value.trim().toLowerCase()));
+    const term = e.target.value.trim().toLowerCase();
+    if (currentTab === "people") {
+      renderPeopleList(filterPeople(allPeople, term));
+    } else {
+      renderFeed(filterPosts(allPosts, term));
+    }
   });
 
   function filterPosts(posts, term) {
@@ -1266,12 +1304,17 @@
     });
   }
 
-  function renderFeed(posts) {
+  async function renderFeed(posts) {
     const container = document.getElementById("feedContainer");
     if (!posts.length) {
       container.innerHTML = `<div class="feed-empty"><i class="fa-solid fa-comment-slash"></i>No posts yet — be the first to share something.</div>`;
       return;
     }
+    // Look up every author's CURRENT name/avatar/verified status before drawing
+    // cards, so pictures never lag behind what's on their account page.
+    const uniqueUids = [...new Set(posts.map(p => p.authorUid))];
+    await Promise.all(uniqueUids.map(uid => getUserInfo(uid)));
+
     container.innerHTML = posts.map(p => renderPostCard(p)).join("");
     attachPostListeners();
     posts.forEach(p => loadCommentsPreview(p.id));
@@ -1279,11 +1322,12 @@
   }
 
   function renderPostCard(p) {
+    const info = userInfoCache.get(p.authorUid) || { name: p.authorName || "Artist", avatar: p.authorAvatar || "", verified: false };
     const isSelf = p.authorUid === currentUser.uid;
     const isFollowing = followingSet.has(p.authorUid);
-    const initials = (p.authorName || "A").trim().charAt(0).toUpperCase();
-    const avatarHtml = p.authorAvatar
-      ? `<img src="${p.authorAvatar}" alt="">`
+    const initials = (info.name || "A").trim().charAt(0).toUpperCase();
+    const avatarHtml = info.avatar
+      ? `<img src="${info.avatar}" alt="">`
       : initials;
     const createdDate = p.createdAt && p.createdAt.toDate ? p.createdAt.toDate() : null;
     const profileUrl = `viewpro.html?uid=${encodeURIComponent(p.authorUid)}`;
@@ -1305,6 +1349,10 @@
           </div>
         </div>` : "";
 
+    // Verified badge stays in the markup (class "visible" toggled by info.verified)
+    // so wiring an admin panel later is just: set users/{uid}.verified = true.
+    const verifiedHtml = `<i class="fa-solid fa-circle-check post-verified${info.verified ? " visible" : ""}"></i>`;
+
     return `
       <div class="post-card" data-post-id="${p.id}">
         <div class="post-header">
@@ -1313,14 +1361,14 @@
           </a>
           <div class="post-headtext">
             <div class="post-name-row">
-              <a class="post-name-link" href="${profileUrl}"><span class="post-name">${p.authorName || "Artist"}</span></a>
-              <i class="fa-solid fa-circle-check post-verified"></i>
+              <a class="post-name-link" href="${profileUrl}"><span class="post-name">${info.name}</span></a>
+              ${verifiedHtml}
             </div>
             <div class="post-time">${timeAgo(createdDate)}</div>
-            <button class="follow-btn ${isFollowing ? "following" : ""} ${isSelf ? "self" : ""}" data-uid="${p.authorUid}">
-              ${isFollowing ? "Following" : "Follow"}
-            </button>
           </div>
+          <button class="follow-btn ${isFollowing ? "following" : ""} ${isSelf ? "self" : ""}" data-uid="${p.authorUid}">
+            ${isFollowing ? "Following" : "Follow"}
+          </button>
           ${menuHtml}
         </div>
         <div class="post-body-wrap">${bodyHtml}</div>
@@ -1591,16 +1639,18 @@
       );
       const snap = await getDocs(q);
       if (snap.empty) { previewEl.innerHTML = ""; return; }
-      const rows = [];
-      snap.forEach(d => {
-        const c = d.data();
-        const initials = (c.authorName || "A").trim().charAt(0).toUpperCase();
-        const avatarHtml = c.authorAvatar ? `<img src="${c.authorAvatar}" alt="">` : initials;
-        rows.push(`
+      const docs = [];
+      snap.forEach(d => docs.push(d.data()));
+      await Promise.all([...new Set(docs.map(c => c.authorUid))].map(uid => getUserInfo(uid)));
+      const rows = docs.map(c => {
+        const info = userInfoCache.get(c.authorUid) || { name: c.authorName || "Artist", avatar: c.authorAvatar || "" };
+        const initials = (info.name || "A").trim().charAt(0).toUpperCase();
+        const avatarHtml = info.avatar ? `<img src="${info.avatar}" alt="">` : initials;
+        return `
           <div class="preview-comment-row">
             <div class="preview-comment-avatar">${avatarHtml}</div>
-            <div class="preview-comment-text"><b>${c.authorName || "Artist"}</b> ${linkifyHashtags(c.text || "")}</div>
-          </div>`);
+            <div class="preview-comment-text"><b>${info.name}</b> ${linkifyHashtags(c.text || "")}</div>
+          </div>`;
       });
       rows.reverse(); // show oldest of the two first
       previewEl.innerHTML = rows.join("") + `<button class="view-all-comments" data-post-id="${postId}">View all comments</button>`;
@@ -1623,9 +1673,11 @@
     panel.dataset.listenerAttached = "1";
 
     const q = query(collection(db, "posts", postId, "comments"), orderBy("createdAt", "asc"), limit(200));
-    onSnapshot(q, (snap) => {
+    onSnapshot(q, async (snap) => {
       const all = [];
       snap.forEach(d => all.push({ id: d.id, ...d.data() }));
+      await Promise.all([...new Set(all.map(c => c.authorUid))].map(uid => getUserInfo(uid)));
+
       const topLevel = all.filter(c => !c.parentId);
       const repliesByParent = {};
       all.filter(c => c.parentId).forEach(c => {
