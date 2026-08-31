@@ -1,3 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>444Music — Artist Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --bg:       #000000;
+    --surface:  #0a0a0a;
+    --card:     #111111;
+    --border:   rgba(255,255,255,0.10);
+    --accent:   #ffffff;
+    --accent2:  #cfcfcf;
+    --accent3:  #e8e8e8;
+    --glow:     rgba(255,255,255,0.14);
+    --glow2:    rgba(255,255,255,0.05);
+    --red:      #ef4444;
+    --green:    #22c55e;
+    --amber:    #f59e0b;
+    --text:     #ffffff;
+    --muted:    #888888;
+    --subtle:   #171717;
+    --radius:   14px;
+    --radius-sm:8px;
+    --transition: .28s cubic-bezier(.4,0,.2,1);
+    --font-display: 'Outfit', sans-serif;
+    --font-body:    'Inter', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity:.025;
+    pointer-events:none;
+    z-index:9999;
+  }
+
+  .orb {
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    pointer-events:none;
+    z-index:0;
+    animation: orbFloat 12s ease-in-out infinite;
+  }
+  .orb-1 { width:520px; height:520px; background:rgba(255,255,255,.05); top:-120px; right:-120px; animation-delay:0s; }
+  .orb-2 { width:380px; height:380px; background:rgba(255,255,255,.035); bottom:80px; left:-80px; animation-delay:-5s; }
+  .orb-3 { width:260px; height:260px; background:rgba(255,255,255,.045); top:50%; left:50%; transform:translate(-50%,-50%); animation-delay:-3s; }
+
+  @keyframes orbFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%      { transform: translate(24px,-18px) scale(1.04); }
+    66%      { transform: translate(-16px,22px) scale(.97); }
+  }
+
+  .shell {
+    position:relative;
+    z-index:1;
+    display:grid;
+    grid-template-columns: 240px 1fr;
+    min-height:100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    padding:32px 0 24px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+    animation: slideInLeft .6s var(--transition) both;
+  }
+
+  @keyframes slideInLeft {
+    from { transform:translateX(-30px); opacity:0; }
+    to   { transform:translateX(0);    opacity:1; }
+  }
+
+  .logo-area {
+    padding:0 24px 32px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:24px;
+  }
+  .logo-text {
+    font-family: var(--font-display);
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:.5px;
+    color: var(--text);
+  }
+
+  .nav-label {
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding:0 24px;
+    margin-bottom:8px;
+  }
+
+  .nav-link {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 24px;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:.2px;
+    border-left:3px solid transparent;
+    transition: all var(--transition);
+    position:relative;
+    cursor:pointer;
+    overflow:hidden;
+  }
+
+  .nav-link::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+    pointer-events:none;
+  }
+
+  .nav-link::after {
+    content:'';
+    position:absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%) scaleY(0);
+    width: 3px;
+    height: 60%;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, var(--accent3), var(--accent2));
+    box-shadow: 0 0 12px rgba(255,255,255,.5), 0 0 24px rgba(255,255,255,0.25);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .nav-link i {
+    font-size:15px;
+    width:18px;
+    text-align:center;
+    transition: all var(--transition);
+    position:relative;
+    z-index:1;
+  }
+
+  .nav-link span:not(.badge):not(.soon-badge) {
+    position:relative;
+    z-index:1;
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+    background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+    border-left-color: rgba(255,255,255,0.35);
+  }
+  .nav-link:hover::before { transform: translateX(100%); }
+  .nav-link:hover i { color: var(--accent3); transform: translateX(2px); }
+
+  .nav-link.active {
+    color: var(--text);
+    background: linear-gradient(90deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 60%, transparent 100%);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+  .nav-link.active::after { transform: translateY(-50%) scaleY(1); }
+  .nav-link.active i {
+    color: var(--accent);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+    transform: scale(1.1);
+  }
+  .nav-link.active > span:not(.badge):not(.soon-badge) {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .nav-active-pill {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(255,255,255,0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+  .nav-link.active .nav-active-pill { opacity: 1; }
+  @keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 6px var(--accent), 0 0 12px rgba(255,255,255,0.35); transform: translateY(-50%) scale(1); }
+    50%       { box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(255,255,255,0.6); transform: translateY(-50%) scale(1.3); }
+  }
+
+  .nav-link .badge {
+    margin-left:auto;
+    background:var(--accent);
+    color:#000000;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:20px;
+    position:relative;
+    z-index:1;
+  }
+
+  .nav-link .soon-badge {
+    margin-left:auto;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    padding:2px 7px;
+    border-radius:20px;
+    position:relative;
+    z-index:1;
+  }
+
+  .nav-sep { height:1px; background:var(--border); margin:16px 0; }
+
+  .sidebar-footer {
+    margin-top:auto;
+    padding:16px 24px 0;
+    border-top:1px solid var(--border);
+  }
+  .plan-badge {
+    background: linear-gradient(135deg,#1a1a1a,#0a0a0a);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:12px;
+    font-size:12px;
+  }
+  .plan-badge strong {
+    color:var(--accent3);
+    display:block;
+    font-family: var(--font-display);
+    font-size:14px;
+    letter-spacing:.5px;
+    margin-bottom:3px;
+  }
+  .plan-badge a { color:var(--accent); text-decoration:underline; font-weight:600; }
+
+  /* MAIN */
+  .main { display:flex; flex-direction:column; overflow:hidden; }
+
+  .topbar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 32px;
+    border-bottom:1px solid var(--border);
+    background:rgba(0,0,0,.85);
+    backdrop-filter:blur(12px);
+    position:sticky;
+    top:0;
+    z-index:100;
+    animation: fadeDown .5s var(--transition) both;
+  }
+  @keyframes fadeDown {
+    from { transform:translateY(-16px); opacity:0; }
+    to   { transform:translateY(0);    opacity:1; }
+  }
+
+  .topbar-left { display:flex; align-items:center; gap:12px; }
+  .hamburger {
+    display:none;
+    background:none;
+    border:none;
+    color:var(--text);
+    font-size:20px;
+    cursor:pointer;
+    padding:4px;
+  }
+  .page-title {
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:.5px;
+  }
+
+  .topbar-right { display:flex; align-items:center; gap:12px; }
+  .topbar-btn {
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--muted);
+    width:38px; height:38px;
+    border-radius:var(--radius-sm);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:var(--transition);
+    position:relative;
+    text-decoration:none;
+  }
+  .topbar-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .notif-dot {
+    position:absolute;
+    top:7px; right:7px;
+    width:7px; height:7px;
+    background:var(--red);
+    border-radius:50%;
+    border:2px solid var(--bg);
+  }
+
+  .avatar-sm {
+    width:38px; height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid var(--accent);
+    cursor:pointer;
+    transition:var(--transition);
+  }
+  .avatar-sm:hover { box-shadow:0 0 0 4px var(--glow); }
+
+  .content {
+    padding:32px;
+    flex:1;
+    overflow-y:auto;
+    animation: fadeUp .55s var(--transition) .1s both;
+  }
+  @keyframes fadeUp {
+    from { transform:translateY(24px); opacity:0; }
+    to   { transform:translateY(0);    opacity:1; }
+  }
+
+  /* PROFILE HERO */
+  .profile-hero {
+    background: linear-gradient(135deg, #14141460 0%, #0a0a0a 100%);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:28px 32px;
+    display:flex;
+    align-items:center;
+    gap:24px;
+    margin-bottom:28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .profile-hero::before {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 60% at 100% 0%, rgba(255,255,255,.06), transparent);
+    pointer-events:none;
+  }
+
+  .avatar-wrap { position:relative; flex-shrink:0; }
+  .avatar-wrap img {
+    width:88px; height:88px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid var(--accent);
+    box-shadow:0 0 0 6px var(--glow2), 0 0 30px var(--glow);
+    transition:var(--transition);
+  }
+  .avatar-wrap:hover img { box-shadow:0 0 0 6px rgba(255,255,255,.14), 0 0 50px var(--glow); }
+  .cam-btn {
+    position:absolute; bottom:2px; right:2px;
+    background:var(--accent); border:none; color:#000000;
+    width:26px; height:26px; border-radius:50%; font-size:11px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:var(--transition);
+  }
+  .cam-btn:hover { background:var(--accent2); transform:scale(1.1); }
+  #uploadPic { display:none; }
+
+  /* Upload progress overlay */
+  .pic-uploading {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.55);
+    border-radius:50%;
+    display:none;
+    align-items:center; justify-content:center;
+    font-size:10px; color:white; font-weight:600;
+  }
+  .pic-uploading.show { display:flex; }
+
+  .hero-info { flex:1; }
+
+  /* Name row */
+  .hero-name-row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:4px;
+    flex-wrap:wrap;
+  }
+  .hero-name {
+    font-family: var(--font-display);
+    font-size:30px;
+    font-weight:800;
+    letter-spacing:.5px;
+  }
+
+  /* Edit name button */
+  .edit-name-btn {
+    background:rgba(255,255,255,.08);
+    border:1px solid var(--border);
+    color:var(--accent3);
+    width:28px; height:28px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:11px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .edit-name-btn:hover {
+    background:rgba(255,255,255,.16);
+    border-color:var(--accent);
+    color:var(--accent);
+    transform:scale(1.08);
+  }
+
+  /* Inline edit row */
+  .name-edit-row {
+    display:none;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .name-edit-row.visible { display:flex; }
+
+  .name-input {
+    background:var(--subtle);
+    border:1px solid var(--accent);
+    color:var(--text);
+    font-family: var(--font-display);
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:.5px;
+    padding:5px 12px;
+    border-radius:8px;
+    outline:none;
+    width:220px;
+    transition:border-color var(--transition);
+  }
+  .name-input:focus { border-color:var(--accent3); box-shadow:0 0 0 3px rgba(255,255,255,.12); }
+  .name-input.error { border-color:var(--red); box-shadow:0 0 0 3px rgba(239,68,68,.12); }
+
+  .name-save-btn {
+    background:var(--accent);
+    border:none;
+    color:#000000;
+    width:32px; height:32px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .name-save-btn:hover { background:var(--accent2); transform:scale(1.08); }
+  .name-save-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .name-cancel-btn {
+    background:rgba(239,68,68,.1);
+    border:1px solid rgba(239,68,68,.2);
+    color:var(--red);
+    width:32px; height:32px;
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:13px;
+    transition:var(--transition);
+    flex-shrink:0;
+  }
+  .name-cancel-btn:hover { background:rgba(239,68,68,.2); transform:scale(1.08); }
+
+  .name-save-status {
+    font-size:12px;
+    font-weight:600;
+    min-width:60px;
+  }
+  .name-save-status.saving { color:var(--muted); }
+  .name-save-status.saved  { color:var(--green); }
+  .name-save-status.error  { color:var(--red); }
+
+  .hero-email { color:var(--muted); font-size:13px; margin-bottom:10px; }
+  .hero-tags { display:flex; gap:8px; flex-wrap:wrap; }
+  .tag {
+    background:var(--subtle); border:1px solid var(--border);
+    color:var(--muted); font-size:11px; font-weight:600;
+    padding:3px 10px; border-radius:20px;
+    letter-spacing:.5px; text-transform:uppercase;
+  }
+  .tag.verified { border-color:var(--green); color:var(--green); background:rgba(34,197,94,.08); }
+
+  .hero-actions { display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+  .upload-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--accent); color:#000000;
+    padding:10px 20px; border-radius:var(--radius-sm);
+    font-weight:600; font-size:13px;
+    text-decoration:none; transition:var(--transition);
+    border:none; cursor:pointer; font-family: var(--font-body);
+    box-shadow:0 4px 24px rgba(255,255,255,.15);
+    letter-spacing:.2px;
+  }
+  .upload-btn:hover { background:var(--accent2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(255,255,255,.22); }
+
+  .stats-grid {
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:16px;
+    margin-bottom:28px;
+  }
+
+  .stat-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:20px;
+    position:relative; overflow:hidden; transition:var(--transition);
+    animation: cardPop .5s var(--transition) both;
+  }
+  .stat-card:nth-child(1) { animation-delay:.05s; }
+  .stat-card:nth-child(2) { animation-delay:.1s; }
+  .stat-card:nth-child(3) { animation-delay:.15s; }
+  .stat-card:nth-child(4) { animation-delay:.2s; }
+
+  @keyframes cardPop {
+    from { transform:translateY(20px) scale(.97); opacity:0; }
+    to   { transform:translateY(0) scale(1); opacity:1; }
+  }
+
+  .stat-card::after {
+    content:''; position:absolute; bottom:0; left:0; right:0;
+    height:2px; background:linear-gradient(90deg, var(--accent), transparent);
+    transform:scaleX(0); transform-origin:left; transition:.4s ease;
+  }
+  .stat-card:hover { border-color:rgba(255,255,255,.25); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.4); }
+  .stat-card:hover::after { transform:scaleX(1); }
+
+  .stat-icon {
+    width:36px; height:36px; border-radius:8px;
+    background:var(--glow2); border:1px solid rgba(255,255,255,.15);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--accent); margin-bottom:12px;
+  }
+  .stat-val {
+    font-family: var(--font-display);
+    font-size:30px; font-weight:800;
+    letter-spacing:.5px; margin-bottom:2px;
+  }
+  .stat-label { font-size:12px; color:var(--muted); font-weight:500; }
+  .stat-delta {
+    position:absolute; top:18px; right:18px;
+    font-size:11px; font-weight:700;
+    padding:3px 8px; border-radius:20px;
+  }
+  .stat-delta.up      { background:rgba(34,197,94,.12); color:var(--green); }
+  .stat-delta.down    { background:rgba(239,68,68,.12); color:var(--red); }
+  .stat-delta.neutral { background:rgba(255,255,255,.07); color:#bbbbbb; }
+
+  .two-col { display:grid; grid-template-columns: 1fr 340px; gap:20px; margin-bottom:28px; }
+
+  .panel {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden;
+    animation: cardPop .5s var(--transition) .25s both;
+  }
+  .panel-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 22px 14px; border-bottom:1px solid var(--border);
+  }
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight:700; font-size:15px; letter-spacing:.3px;
+  }
+  .panel-action {
+    color:var(--accent); font-size:12px; font-weight:600;
+    text-decoration:underline; cursor:pointer; transition:var(--transition);
+    background:none; border:none; font-family: var(--font-body);
+  }
+  .panel-action:hover { color:#bbbbbb; }
+  .panel-body { padding:16px 22px; }
+
+  .chart-wrap { padding:16px 22px 20px; }
+  .chart-tabs { display:flex; gap:6px; margin-bottom:16px; }
+  .chart-tab {
+    font-size:12px; font-weight:600; padding:5px 12px;
+    border-radius:20px; cursor:pointer; border:1px solid var(--border);
+    background:transparent; color:var(--muted); transition:var(--transition);
+    font-family: var(--font-body);
+  }
+  .chart-tab.active, .chart-tab:hover { background:var(--accent); color:#000000; border-color:var(--accent); }
+  canvas#chart { width:100% !important; max-height:200px; }
+
+  .release-item {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 0; border-bottom:1px solid var(--border); transition:var(--transition);
+  }
+  .release-item:last-child { border-bottom:none; }
+  .release-item:hover { padding-left:4px; }
+  .rel-thumb {
+    width:44px; height:44px;
+    background: linear-gradient(135deg,#1e1e1e,#0a0a0a);
+    border:1px solid var(--border); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent); font-size:16px; flex-shrink:0;
+  }
+  .rel-info { flex:1; min-width:0; }
+  .rel-title { font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rel-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+  .rel-status {
+    font-size:10px; font-weight:700; padding:3px 9px;
+    border-radius:20px; text-transform:uppercase; letter-spacing:.5px; flex-shrink:0;
+  }
+  .status-pending  { background:rgba(245,158,11,.1); color:var(--amber); border:1px solid rgba(245,158,11,.2); }
+  .status-live     { background:rgba(34,197,94,.1);  color:var(--green); border:1px solid rgba(34,197,94,.2); }
+  .status-review   { background:rgba(255,255,255,.08); color:#e5e5e5; border:1px solid rgba(255,255,255,.18); }
+  .status-rejected { background:rgba(239,68,68,.1);  color:var(--red); border:1px solid rgba(239,68,68,.2); }
+
+  .tools-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:14px 22px 20px; }
+  .tool-card {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; padding:16px 10px; border-radius:var(--radius-sm);
+    background:var(--subtle); border:1px solid var(--border);
+    text-decoration:none; color:var(--text); font-size:12px; font-weight:600;
+    text-align:center; transition:var(--transition); cursor:pointer;
+    letter-spacing:.2px;
+  }
+  .tool-card i { font-size:20px; color:var(--accent); transition:var(--transition); }
+  .tool-card:hover { border-color:var(--accent); background:rgba(255,255,255,.06); transform:translateY(-3px); }
+  .tool-card:hover i { transform:scale(1.15); }
+
+  .player-card {
+    background: linear-gradient(135deg,#111111,#0a0a0a);
+    border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:20px;
+    animation: cardPop .5s var(--transition) .3s both;
+  }
+  .player-label {
+    font-size:10px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:2px; font-weight:600; margin-bottom:14px;
+    font-family: var(--font-display);
+  }
+  .player-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .player-disc {
+    width:52px; height:52px; border-radius:50%;
+    background:linear-gradient(135deg,#262626,#0f0f0f);
+    border:2px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent); font-size:18px;
+    animation: spin 10s linear infinite paused;
+  }
+  .player-disc.playing { animation-play-state:running; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .player-meta { flex:1; }
+  .player-track {
+    font-weight:700; font-size:14px;
+    font-family: var(--font-display);
+    letter-spacing:.3px;
+  }
+  .player-artist { font-size:12px; color:var(--muted); margin-top:2px; }
+  #playBtn {
+    width:42px; height:42px; border-radius:50%;
+    background:var(--accent); border:none; color:#000000; font-size:15px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:var(--transition);
+    box-shadow:0 4px 20px rgba(255,255,255,.2);
+  }
+  #playBtn:hover { background:var(--accent2); transform:scale(1.1); box-shadow:0 6px 28px rgba(255,255,255,.32); }
+  .progress-bar { background:var(--border); border-radius:4px; height:4px; margin-bottom:8px; cursor:pointer; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent)); border-radius:4px; width:35%; transition:width .1s linear; }
+  .player-time { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
+
+  .notif-item {
+    display:flex; gap:12px; padding:12px 22px;
+    border-bottom:1px solid var(--border); transition:var(--transition);
+  }
+  .notif-item:last-child { border-bottom:none; }
+  .notif-item:hover { background:var(--glow2); }
+  .notif-dot-icon {
+    width:36px; height:36px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:13px;
+  }
+  .notif-dot-icon.purple { background:rgba(255,255,255,.08); color:var(--text); }
+  .notif-dot-icon.green  { background:rgba(34,197,94,.12); color:var(--green); }
+  .notif-dot-icon.red    { background:rgba(239,68,68,.12); color:var(--red); }
+  .notif-dot-icon.gold   { background:rgba(245,158,11,.12); color:var(--amber); }
+  .notif-text { flex:1; }
+  .notif-text p { font-size:13px; line-height:1.4; }
+  .notif-text small { font-size:11px; color:var(--muted); }
+  .notif-unread { width:7px; height:7px; background:var(--accent); border-radius:50%; margin-top:4px; flex-shrink:0; }
+
+  .stores-row { display:flex; flex-wrap:wrap; gap:8px; padding:16px 22px 20px; }
+  .store-chip {
+    display:flex; align-items:center; gap:6px;
+    background:var(--subtle); border:1px solid var(--border);
+    border-radius:20px; padding:5px 12px; font-size:12px; font-weight:500; transition:var(--transition);
+  }
+  .store-chip i { font-size:12px; color:var(--accent); }
+  .store-chip:hover { border-color:var(--accent); color:#e5e5e5; }
+
+  .earn-table { width:100%; border-collapse:collapse; }
+  .earn-table th {
+    font-size:11px; color:var(--muted); text-transform:uppercase;
+    letter-spacing:1px; padding:8px 0; border-bottom:1px solid var(--border);
+    text-align:left; font-weight:600; font-family: var(--font-display);
+  }
+  .earn-table td { padding:10px 0; font-size:13px; border-bottom:1px solid rgba(255,255,255,.04); }
+  .earn-table tr:last-child td { border-bottom:none; }
+  .earn-table td:last-child { text-align:right; color:var(--green); font-weight:700; }
+
+  .bottom-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; animation: cardPop .5s var(--transition) .35s both; }
+
+  .sidebar-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.7); z-index:200; backdrop-filter:blur(4px);
+  }
+  .sidebar-overlay.open { display:block; }
+
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+
+  @media (max-width:1100px) {
+    .stats-grid { grid-template-columns:repeat(2,1fr); }
+    .two-col { grid-template-columns:1fr; }
+  }
+  @media (max-width:900px) {
+    .shell { grid-template-columns:1fr; }
+    .sidebar { position:fixed; left:-260px; top:0; bottom:0; width:240px; z-index:300; transition:.3s ease; }
+    .sidebar.open { left:0; }
+    .hamburger { display:flex; }
+    .content { padding:20px 16px; }
+    .topbar { padding:16px 20px; }
+    .profile-hero { flex-wrap:wrap; }
+    .hero-actions { align-items:flex-start; }
+    .bottom-row { grid-template-columns:1fr; }
+  }
+  @media (max-width:600px) {
+    .stats-grid { grid-template-columns:repeat(2,1fr); }
+    .profile-hero { padding:20px; }
+    .topbar { padding:14px 16px; }
+    .name-input { width:160px; font-size:20px; }
+    .hero-name { font-size:24px; }
+  }
+  @media (max-width:400px) {
+    .stats-grid { grid-template-columns:1fr 1fr; }
+    .stat-val { font-size:24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-area">
+      <span class="logo-text">444MUSIC</span>
+    </div>
+
+    <div class="nav-label">Main</div>
+    <a class="nav-link" data-page="index.html" href="index.html">
+      <i class="fa-solid fa-house"></i>
+      <span>Dashboard</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="insights.html" href="insights.html">
+      <i class="fa-solid fa-chart-simple"></i>
+      <span>Analytics</span>
+      <span class="badge">New</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="pricing.html" href="pricing.html">
+      <i class="fa-solid fa-circle-up"></i>
+      <span>Upload Release</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="ear.html" href="ear.html">
+      <i class="fa-solid fa-wallet"></i>
+      <span>Earnings</span>
+      <span class="nav-active-pill"></span>
+    </a>
+
+    <div class="nav-sep"></div>
+    <div class="nav-label">Manage</div>
+    <a class="nav-link" data-page="wey.html" href="wey.html">
+      <i class="fa-solid fa-compact-disc"></i>
+      <span>Releases</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="stores.html" href="#">
+      <i class="fa-solid fa-store"></i>
+      <span>Stores</span>
+      <span class="soon-badge">Soon</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="tools.html" href="tools.html">
+      <i class="fa-solid fa-sliders"></i>
+      <span>Tools</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="licensing.html" href="#">
+      <i class="fa-solid fa-tag"></i>
+      <span>Licensing</span>
+      <span class="soon-badge">Soon</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="smartlinks.html" href="#">
+      <i class="fa-solid fa-share-nodes"></i>
+      <span>Smart Links</span>
+      <span class="soon-badge">Soon</span>
+      <span class="nav-active-pill"></span>
+    </a>
+
+    <div class="nav-sep"></div>
+    <div class="nav-label">Account</div>
+    <a class="nav-link" data-page="support.html" href="support.html">
+      <i class="fa-solid fa-circle-question"></i>
+      <span>Support</span>
+      <span class="nav-active-pill"></span>
+    </a>
+    <a class="nav-link" data-page="settings.html" href="#">
+      <i class="fa-solid fa-gear"></i>
+      <span>Settings</span>
+      <span class="soon-badge">Soon</span>
+      <span class="nav-active-pill"></span>
+    </a>
+
+    <div class="sidebar-footer">
+      <div class="plan-badge">
+        <strong><i class="fa-solid fa-bolt"></i> Free Plan</strong>
+        Unlock unlimited releases. <a href="pricing.html">Upgrade →</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <span class="page-title" id="topbarPageTitle">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <a href="#" class="topbar-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="#" class="topbar-btn" title="Notifications">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notif-dot"></span>
+        </a>
+        <label for="uploadPic" style="cursor:pointer;">
+          <img id="profilePicTop" src="https://i.imgur.com/2DhmtJ4.png" class="avatar-sm" alt="Profile">
+        </label>
+        <input type="file" id="uploadPic" accept="image/*">
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- PROFILE HERO -->
+      <div class="profile-hero">
+        <div class="avatar-wrap">
+          <img id="profilePic" src="https://i.imgur.com/2DhmtJ4.png" alt="Artist">
+          <!-- uploading spinner overlay -->
+          <div class="pic-uploading" id="picUploading">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          </div>
+          <label class="cam-btn" for="uploadPic"><i class="fa-solid fa-camera"></i></label>
+        </div>
+
+        <div class="hero-info">
+
+          <!-- Name display row -->
+          <div class="hero-name-row">
+            <div class="hero-name" id="artistName">Artist</div>
+            <button class="edit-name-btn" id="editNameBtn" title="Edit artist name">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+
+          <!-- Inline edit row (hidden until edit clicked) -->
+          <div class="name-edit-row" id="nameEditRow">
+            <input
+              class="name-input"
+              id="nameInput"
+              type="text"
+              placeholder="Enter artist name…"
+              maxlength="60"
+              autocomplete="off"
+            >
+            <button class="name-save-btn" id="saveNameBtn" title="Save name">
+              <i class="fa-solid fa-check"></i>
+            </button>
+            <button class="name-cancel-btn" id="cancelNameBtn" title="Cancel">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span class="name-save-status" id="nameSaveStatus"></span>
+          </div>
+
+          <div class="hero-email" id="artistEmail">—</div>
+          <div class="hero-tags">
+            <span class="tag verified"><i class="fa-solid fa-circle-check"></i> Verified</span>
+            <span class="tag">Afrobeats</span>
+            <span class="tag">Free Plan</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="pricing.html" class="upload-btn"><i class="fa-solid fa-circle-plus"></i> New Release</a>
+          <a href="ear.html" class="upload-btn" style="background:transparent;border:1px solid var(--accent);box-shadow:none;color:var(--text);"><i class="fa-solid fa-arrow-up-right-from-square"></i> Withdraw</a>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-compact-disc"></i></div>
+          <div class="stat-val" id="totalReleases">0</div>
+          <div class="stat-label">Total Releases</div>
+          <span class="stat-delta neutral" id="releasesDelta">Since joining</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="stat-val" id="totalEarnings">$0.00</div>
+          <div class="stat-label">Total Earnings</div>
+          <span class="stat-delta neutral" id="earningsDelta">Lifetime total</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-headphones"></i></div>
+          <div class="stat-val" id="totalStreams">0</div>
+          <div class="stat-label">Total Streams</div>
+          <span class="stat-delta neutral" id="streamsDelta">All-time plays</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-globe"></i></div>
+          <div class="stat-val">50+</div>
+          <div class="stat-label">Stores Distributed</div>
+          <span class="stat-delta neutral">Always active</span>
+        </div>
+      </div>
+
+      <!-- ANALYTICS + QUICK TOOLS -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fa-solid fa-chart-line" style="color:var(--accent);margin-right:8px;"></i>Streaming Analytics</span>
+            <button class="panel-action">Export CSV</button>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-tabs">
+              <button class="chart-tab active">7D</button>
+              <button class="chart-tab">30D</button>
+              <button class="chart-tab">90D</button>
+              <button class="chart-tab">1Y</button>
+            </div>
+            <canvas id="chart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fa-solid fa-bolt" style="color:var(--accent);margin-right:8px;"></i>Quick Tools</span>
+          </div>
+          <div class="tools-grid">
+            <a href="pricing.html" class="tool-card"><i class="fa-solid fa-cloud-arrow-up"></i>Upload</a>
+            <a href="insights.html" class="tool-card"><i class="fa-solid fa-chart-pie"></i>Analytics</a>
+            <a href="ear.html" class="tool-card"><i class="fa-solid fa-coins"></i>Earnings</a>
+            <a href="tools.html" class="tool-card"><i class="fa-solid fa-sliders"></i>Tools</a>
+            <a href="#" class="tool-card"><i class="fa-solid fa-link"></i>Smart Link</a>
+            <a href="#" class="tool-card"><i class="fa-solid fa-tag"></i>License</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RELEASES + NOTIFICATIONS -->
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fa-solid fa-record-vinyl" style="color:var(--accent);margin-right:8px;"></i>Recent Submissions</span>
+            <a href="wey.html" class="panel-action">View all</a>
+          </div>
+          <div class="panel-body" style="padding:0 22px;">
+            <div id="releaseList">
+              <div style="padding:28px 0;text-align:center;color:var(--muted);font-size:13px;">
+                <i class="fa-solid fa-compact-disc" style="font-size:28px;margin-bottom:10px;display:block;opacity:.3;"></i>
+                No releases yet. <a href="pricing.html" style="color:var(--accent);text-decoration:underline;">Upload your first track →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fa-solid fa-bell" style="color:var(--accent);margin-right:8px;"></i>Notifications</span>
+            <button class="panel-action">Mark all read</button>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot-icon purple"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="notif-text"><p>Your latest release is currently being reviewed by our team.</p><small>2 hours ago</small></div>
+            <div class="notif-unread"></div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot-icon green"><i class="fa-solid fa-store"></i></div>
+            <div class="notif-text"><p>Your music is now live on Spotify, Apple Music & 48 more stores.</p><small>Yesterday</small></div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot-icon gold"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="notif-text"><p>Royalty payout is available for withdrawal.</p><small>3 days ago</small></div>
+            <div class="notif-unread"></div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot-icon purple"><i class="fa-solid fa-bullhorn"></i></div>
+            <div class="notif-text"><p>New feature: Smart Links — create shareable links for all your releases.</p><small>1 week ago</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYER + EARNINGS + STORES -->
+      <div class="bottom-row">
+        <div>
+          <div class="player-card">
+            <div class="player-label"><i class="fa-solid fa-music"></i> &nbsp;Music Preview</div>
+            <div class="player-row">
+              <div class="player-disc" id="playerDisc"><i class="fa-solid fa-compact-disc"></i></div>
+              <div class="player-meta">
+                <div class="player-track">Preview Track</div>
+                <div class="player-artist" id="artistName2">Artist</div>
+              </div>
+              <button id="playBtn"><i class="fa-solid fa-play" id="playIcon"></i></button>
+            </div>
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="player-time"><span id="currentTime">0:00</span><span>3:24</span></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title"><i class="fa-solid fa-coins" style="color:var(--accent);margin-right:8px;"></i>Earnings Breakdown</span>
+              <a href="ear.html" class="panel-action">Withdraw</a>
+            </div>
+            <div class="panel-body">
+              <table class="earn-table">
+                <thead><tr><th>Store</th><th>Streams</th><th>Earnings</th></tr></thead>
+                <tbody>
+                  <tr><td><i class="fa-brands fa-spotify" style="color:#1db954;margin-right:6px;"></i>Spotify</td><td id="spotifyStreams" style="color:var(--muted);">—</td><td>$0.00</td></tr>
+                  <tr><td><i class="fa-solid fa-music" style="color:#fc3c44;margin-right:6px;"></i>Apple Music</td><td id="appleStreams" style="color:var(--muted);">—</td><td>$0.00</td></tr>
+                  <tr><td><i class="fa-brands fa-youtube" style="color:#ff0000;margin-right:6px;"></i>YouTube Music</td><td id="youtubeStreams" style="color:var(--muted);">—</td><td>$0.00</td></tr>
+                  <tr><td><i class="fa-solid fa-headphones" style="color:#ff6600;margin-right:6px;"></i>Audiomack</td><td style="color:var(--muted);">—</td><td>$0.00</td></tr>
+                  <tr><td><i class="fa-solid fa-ellipsis" style="color:var(--muted);margin-right:6px;"></i>Others</td><td style="color:var(--muted);">—</td><td>$0.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="height:fit-content;">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fa-solid fa-store" style="color:var(--accent);margin-right:8px;"></i>Distribution Stores</span>
+            <span style="font-size:12px;color:var(--muted);">50+ stores</span>
+          </div>
+          <div class="stores-row">
+            <span class="store-chip"><i class="fa-brands fa-spotify"></i>Spotify</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Apple Music</span>
+            <span class="store-chip"><i class="fa-brands fa-youtube"></i>YouTube Music</span>
+            <span class="store-chip"><i class="fa-brands fa-amazon"></i>Amazon Music</span>
+            <span class="store-chip"><i class="fa-brands fa-tidal"></i>Tidal</span>
+            <span class="store-chip"><i class="fa-solid fa-headphones"></i>Deezer</span>
+            <span class="store-chip"><i class="fa-solid fa-headphones"></i>Audiomack</span>
+            <span class="store-chip"><i class="fa-brands fa-soundcloud"></i>SoundCloud</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Boomplay</span>
+            <span class="store-chip"><i class="fa-brands fa-itunes"></i>iTunes</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Pandora</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>iHeartRadio</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Napster</span>
+            <span class="store-chip"><i class="fa-brands fa-facebook"></i>FB Audio</span>
+            <span class="store-chip"><i class="fa-brands fa-tiktok"></i>TikTok</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Anghami</span>
+            <span class="store-chip"><i class="fa-solid fa-music"></i>Resso</span>
+            <span class="store-chip"><i class="fa-solid fa-ellipsis"></i>+33 more</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }       from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, updateDoc,
+  collection, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getStorage, ref as storageRef,
+  uploadBytes, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ── ACTIVE NAV ────────────────────────────────────────────────────────────────
+function setActiveNav() {
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+    const page = link.getAttribute('data-page');
+    link.classList.toggle('active', page === currentPage);
+    if (page === currentPage) {
+      const labelEl = link.querySelector('span:not(.badge):not(.soon-badge):not(.nav-active-pill)');
+      if (labelEl) {
+        const titleEl = document.getElementById('topbarPageTitle');
+        if (titleEl) titleEl.textContent = labelEl.textContent.trim();
+      }
+    }
+  });
+  if (!document.querySelector('.nav-link.active')) {
+    const dash = document.querySelector('.nav-link[data-page="index.html"]');
+    if (dash) dash.classList.add('active');
+  }
+}
+setActiveNav();
+window.addEventListener('popstate', setActiveNav);
+
+document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+  link.addEventListener('click', function () {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  });
+});
+
+// ── AUTH + LOAD DATA ──────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return location.href = "login.html";
+
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  if (userSnap.exists()) {
+    const data = userSnap.data();
+    const name = data.name || "Artist";
+    document.getElementById("artistName").textContent  = name;
+    document.getElementById("artistName2").textContent = name;
+    document.getElementById("artistEmail").textContent = data.email || "";
+
+    const earnings = data.earnings || 0;
+    document.getElementById("totalEarnings").textContent = "$" + earnings.toFixed(2);
+    document.getElementById("earningsDelta").textContent = earnings > 0 ? "Lifetime total" : "No earnings yet";
+
+    // Load saved profile picture from Firestore URL
+    if (data.profilePic) {
+      document.getElementById("profilePic").src    = data.profilePic;
+      document.getElementById("profilePicTop").src = data.profilePic;
+    }
+  }
+
+  // Releases
+  const q    = query(collection(db, "submissions"), where("userId", "==", user.uid));
+  const snap = await getDocs(q);
+  document.getElementById("totalReleases").textContent = snap.size;
+  document.getElementById("releasesDelta").textContent = snap.size > 0 ? "Since joining" : "Get started";
+
+  const container = document.getElementById("releaseList");
+  if (snap.size > 0) {
+    container.innerHTML = "";
+    snap.forEach(d => {
+      const r = d.data();
+      const statusMap = { pending:"status-pending", live:"status-live", review:"status-review", rejected:"status-rejected" };
+      const statusLabel = r.status || "pending";
+      const statusClass = statusMap[statusLabel] || "status-pending";
+      const div = document.createElement("div");
+      div.className = "release-item";
+      div.innerHTML = `
+        <div class="rel-thumb"><i class="fa-solid fa-compact-disc"></i></div>
+        <div class="rel-info">
+          <div class="rel-title">${r.releaseTitle || "Untitled Release"}</div>
+          <div class="rel-meta">${r.releaseType || "Single"} &middot; ${r.genre || "—"}</div>
+        </div>
+        <span class="rel-status ${statusClass}">${statusLabel.charAt(0).toUpperCase() + statusLabel.slice(1)}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // Streaming analytics — wired to the analytics/{uid} doc created at signup
+  // (previously the Total Streams stat card just showed a literal "____"
+  // placeholder that was never replaced with real data).
+  try {
+    const analyticsSnap = await getDoc(doc(db, "analytics", user.uid));
+    if (analyticsSnap.exists()) {
+      const a = analyticsSnap.data();
+      const totalStreams = a.totalStreams || 0;
+      document.getElementById("totalStreams").textContent = totalStreams.toLocaleString();
+      document.getElementById("streamsDelta").textContent = totalStreams > 0 ? "All-time plays" : "No plays yet";
+
+      document.getElementById("spotifyStreams").textContent = (a.spotifyStreams || 0).toLocaleString();
+      document.getElementById("appleStreams").textContent   = (a.appleStreams || 0).toLocaleString();
+      document.getElementById("youtubeStreams").textContent = (a.youtubeStreams || 0).toLocaleString();
+    }
+  } catch (err) {
+    console.error("Failed to load analytics:", err);
+  }
+});
+
+// ── ARTIST NAME EDIT ──────────────────────────────────────────────────────────
+const editNameBtn    = document.getElementById("editNameBtn");
+const artistNameEl   = document.getElementById("artistName");
+const nameEditRow    = document.getElementById("nameEditRow");
+const nameInput      = document.getElementById("nameInput");
+const saveNameBtn    = document.getElementById("saveNameBtn");
+const cancelNameBtn  = document.getElementById("cancelNameBtn");
+const nameSaveStatus = document.getElementById("nameSaveStatus");
+
+function openEdit() {
+  nameInput.value = artistNameEl.textContent.trim();
+  artistNameEl.style.display  = "none";
+  editNameBtn.style.display   = "none";
+  nameEditRow.classList.add("visible");
+  nameSaveStatus.textContent  = "";
+  nameSaveStatus.className    = "name-save-status";
+  nameInput.classList.remove("error");
+  setTimeout(() => { nameInput.focus(); nameInput.select(); }, 50);
+}
+
+function closeEdit() {
+  nameEditRow.classList.remove("visible");
+  artistNameEl.style.display = "";
+  editNameBtn.style.display  = "";
+  nameSaveStatus.textContent = "";
+  nameSaveStatus.className   = "name-save-status";
+  nameInput.classList.remove("error");
+}
+
+async function saveName() {
+  const newName = nameInput.value.trim();
+  if (!newName) {
+    nameInput.classList.add("error");
+    nameSaveStatus.textContent = "Name can't be empty.";
+    nameSaveStatus.className   = "name-save-status error";
+    nameInput.focus();
+    return;
+  }
+  if (newName === artistNameEl.textContent.trim()) { closeEdit(); return; }
+
+  saveNameBtn.disabled        = true;
+  nameSaveStatus.textContent  = "Saving…";
+  nameSaveStatus.className    = "name-save-status saving";
+
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Not signed in.");
+    await updateDoc(doc(db, "users", user.uid), { name: newName });
+    artistNameEl.textContent  = newName;
+    document.getElementById("artistName2").textContent = newName;
+    nameSaveStatus.textContent = "✓ Saved";
+    nameSaveStatus.className   = "name-save-status saved";
+    setTimeout(closeEdit, 900);
+  } catch (err) {
+    nameSaveStatus.textContent = "Error: " + err.message;
+    nameSaveStatus.className   = "name-save-status error";
+  } finally {
+    saveNameBtn.disabled = false;
+  }
+}
+
+editNameBtn.addEventListener("click", openEdit);
+saveNameBtn.addEventListener("click", saveName);
+cancelNameBtn.addEventListener("click", closeEdit);
+nameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter")  { e.preventDefault(); saveName(); }
+  if (e.key === "Escape") closeEdit();
+});
+nameInput.addEventListener("input", () => {
+  nameInput.classList.remove("error");
+  if (nameSaveStatus.className.includes("error")) {
+    nameSaveStatus.textContent = "";
+    nameSaveStatus.className   = "name-save-status";
+  }
+});
+
+// ── PROFILE PICTURE — permanent via Firebase Storage ─────────────────────────
+document.getElementById("uploadPic").addEventListener("change", async function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  // Show preview immediately while uploading
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById("profilePic").src    = e.target.result;
+    document.getElementById("profilePicTop").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // Show spinner on avatar
+  const spinner = document.getElementById("picUploading");
+  spinner.classList.add("show");
+
+  try {
+    // Upload file to Firebase Storage at profilePics/{uid}
+    const picRef  = storageRef(storage, `profilePics/${user.uid}`);
+    await uploadBytes(picRef, file);
+
+    // Get permanent download URL
+    const downloadURL = await getDownloadURL(picRef);
+
+    // Save URL to Firestore so it loads on next sign-in / page refresh
+    await updateDoc(doc(db, "users", user.uid), { profilePic: downloadURL });
+
+    // Update both avatars with the permanent URL
+    document.getElementById("profilePic").src    = downloadURL;
+    document.getElementById("profilePicTop").src = downloadURL;
+
+  } catch (err) {
+    console.error("Profile picture upload failed:", err);
+  } finally {
+    spinner.classList.remove("show");
+    // Reset input so the same file can be re-selected if needed
+    this.value = "";
+  }
+});
+
+// ── CHART ─────────────────────────────────────────────────────────────────────
+const ctx = document.getElementById("chart");
+new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    datasets: [{
+      label: "Streams",
+      data: [0,0,0,0,0,0,0],
+      borderColor: "#ffffff",
+      backgroundColor: "rgba(255,255,255,0.08)",
       tension: .4, fill: true,
       pointBackgroundColor: "#ffffff",
       pointRadius: 4, pointHoverRadius: 7, borderWidth: 2
