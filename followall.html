@@ -85,7 +85,7 @@
   <div class="card">
     <i class="fa-solid fa-user-group icon"></i>
     <h1>Make everyone follow 444Music</h1>
-    <p>This finds the account signed up with <span class="target-email">fourfourfourbrand444@gmail.com</span> and makes every other user on the platform follow it. It's safe to run more than once — users who already follow it are skipped.</p>
+    <p>This finds the accounts signed up with <span class="target-email">fourfourfourbrand444@gmail.com</span> and <span class="target-email">444musicdistro@gmail.com</span>, and makes every other user on the platform follow both of them. It's safe to run more than once — users who already follow an account are skipped.</p>
     <button class="run-btn" id="runBtn">Run Script</button>
     <div class="log-box" id="logBox"></div>
   </div>
@@ -105,10 +105,10 @@
     appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
   };
 
-  // Admin accounts allowed to run this script.
+  // The admin accounts allowed to run this script.
   const ADMIN_EMAILS = ["444musicdistro@gmail.com", "fourfourfourbrand444@gmail.com"];
-  // The account every user should end up following.
-  const TARGET_EMAIL = "fourfourfourbrand444@gmail.com";
+  // Every account that every other user should end up following.
+  const TARGET_EMAILS = ["fourfourfourbrand444@gmail.com", "444musicdistro@gmail.com"];
 
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -159,25 +159,32 @@
   }
 
   runBtn.addEventListener("click", async () => {
-    if (!confirm(`This will make every user follow the account signed up with ${TARGET_EMAIL}. Continue?`)) return;
+    if (!confirm(`This will make every user follow both ${TARGET_EMAILS.join(" and ")}. Continue?`)) return;
     runBtn.disabled = true;
     logBox.innerHTML = "";
-    log("Looking up the target account…");
+    log("Looking up the target accounts…");
 
-    let targetUid = null;
+    const targetUids = [];
     try {
-      const q = query(collection(db, "users"), where("email", "==", TARGET_EMAIL));
-      const snap = await getDocs(q);
-      if (snap.empty) {
-        log(`No user account found with email ${TARGET_EMAIL}. Make sure that account has signed up first.`, "err");
+      for (const email of TARGET_EMAILS) {
+        const q = query(collection(db, "users"), where("email", "==", email));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          log(`No user account found with email ${email} — skipping it. Make sure that account has signed up first.`, "err");
+          continue;
+        }
+        const uid = snap.docs[0].id;
+        targetUids.push(uid);
+        log(`Found ${email} (uid: ${uid}).`, "ok");
+      }
+      if (!targetUids.length) {
+        log("No target accounts found — nothing to do.", "err");
         runBtn.disabled = false;
         return;
       }
-      targetUid = snap.docs[0].id;
-      log(`Found target account (uid: ${targetUid}).`, "ok");
     } catch (e) {
       console.error(e);
-      log("Couldn't look up the target account: " + e.message, "err");
+      log("Couldn't look up the target accounts: " + e.message, "err");
       runBtn.disabled = false;
       return;
     }
@@ -185,7 +192,7 @@
     let allUsers = [];
     try {
       const allSnap = await getDocs(collection(db, "users"));
-      allSnap.forEach(d => { if (d.id !== targetUid) allUsers.push(d.id); });
+      allSnap.forEach(d => { if (!targetUids.includes(d.id)) allUsers.push(d.id); });
       log(`Found ${allUsers.length} other user(s) to process.`);
     } catch (e) {
       console.error(e);
@@ -196,19 +203,22 @@
 
     let followed = 0, skipped = 0, failed = 0;
     for (const uid of allUsers) {
-      try {
-        const existing = await getDoc(doc(db, "users", uid, "following", targetUid));
-        if (existing.exists()) { skipped++; continue; }
-        await setDoc(doc(db, "users", uid, "following", targetUid), { since: serverTimestamp() });
-        await setDoc(doc(db, "users", targetUid, "followers", uid), { since: serverTimestamp() });
-        followed++;
-      } catch (e) {
-        console.error(e);
-        failed++;
+      for (const targetUid of targetUids) {
+        if (uid === targetUid) continue; // a target account doesn't need to follow itself
+        try {
+          const existing = await getDoc(doc(db, "users", uid, "following", targetUid));
+          if (existing.exists()) { skipped++; continue; }
+          await setDoc(doc(db, "users", uid, "following", targetUid), { since: serverTimestamp() });
+          await setDoc(doc(db, "users", targetUid, "followers", uid), { since: serverTimestamp() });
+          followed++;
+        } catch (e) {
+          console.error(e);
+          failed++;
+        }
       }
     }
 
-    log(`Done — ${followed} user(s) now follow the account, ${skipped} already did, ${failed} failed.`, failed ? "err" : "ok");
+    log(`Done — ${followed} new follow(s) created, ${skipped} already existed, ${failed} failed.`, failed ? "err" : "ok");
     runBtn.disabled = false;
     runBtn.textContent = "Run Again";
   });
