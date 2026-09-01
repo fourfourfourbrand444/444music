@@ -805,6 +805,61 @@
     .notif-text b { color: var(--white); font-weight: 800; }
     .notif-time { font-size: 11.5px; color: var(--grey); font-weight: 600; margin-top: 3px; }
     .notif-type-icon { color: var(--grey); font-size: 14px; flex-shrink: 0; }
+    .notif-context {
+      font-size: 12.5px; color: var(--white-70); font-style: italic;
+      margin-top: 4px; line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .notif-thumb {
+      width: 44px; height: 44px; border-radius: 10px; overflow: hidden;
+      flex-shrink: 0; border: 1px solid var(--border); background: var(--black-4);
+    }
+    .notif-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ─── Post detail modal (opened from a notification) ─── */
+    .post-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 4500;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .post-modal-overlay.active { opacity: 1; pointer-events: all; }
+    .post-modal {
+      position: fixed; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0.96);
+      width: 92%; max-width: 480px; max-height: 86vh;
+      z-index: 5000;
+      background: var(--black-1);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+      display: flex; flex-direction: column;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s, transform 0.28s;
+    }
+    .post-modal.active { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
+    .post-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px; border-bottom: 1px solid var(--border);
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px;
+      color: var(--white); flex-shrink: 0;
+    }
+    .post-modal-close {
+      width: 30px; height: 30px; display: grid; place-items: center;
+      border-radius: 8px; border: 1px solid var(--border);
+      cursor: pointer; color: var(--grey); font-size: 14px;
+      transition: all 0.2s;
+    }
+    .post-modal-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
+    .post-modal-body { overflow-y: auto; padding: 14px; }
+    .post-modal-body .post-card { margin-bottom: 0; border: none; padding: 4px; }
+    @media (max-width: 560px) {
+      .post-modal { width: 100%; max-width: 100%; max-height: 92vh; border-radius: 20px 20px 0 0; left: 0; right: 0; top: auto; bottom: 0; transform: translateY(100%); }
+      .post-modal.active { transform: translateY(0); }
+    }
 
     footer {
       position: relative; z-index: 1;
@@ -1042,6 +1097,15 @@
   </div>
 </div>
 
+<div class="post-modal-overlay" id="postModalOverlay"></div>
+<div class="post-modal" id="postModal">
+  <div class="post-modal-header">
+    <span>Post</span>
+    <div class="post-modal-close" id="postModalClose"><i class="fa-solid fa-xmark"></i></div>
+  </div>
+  <div class="post-modal-body" id="postModalBody"></div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -1175,21 +1239,24 @@
         fromName: currentUserData.name,
         fromAvatar: currentUserData.avatar || "",
         postId: data.postId || null,
+        postText: data.postText ? data.postText.slice(0, 120) : null,
+        postImage: data.postImage || null,
+        commentText: data.commentText ? data.commentText.slice(0, 140) : null,
         read: false,
         createdAt: serverTimestamp()
       });
     } catch (e) { console.error("notification error", e); }
   }
 
-  // Looks up a post's author uid — checks the in-memory feed cache first,
-  // falls back to a direct read so notifications still fire for posts not
-  // currently loaded in allPosts.
-  async function getPostAuthorUid(postId) {
+  // Looks up a post's full data — checks the in-memory feed cache first,
+  // falls back to a direct read so notifications still carry context
+  // (which post/photo, what it said) even for posts not currently loaded.
+  async function getPostData(postId) {
     const cached = allPosts.find(p => p.id === postId);
-    if (cached) return cached.authorUid;
+    if (cached) return cached;
     try {
       const snap = await getDoc(doc(db, "posts", postId));
-      return snap.exists() ? snap.data().authorUid : null;
+      return snap.exists() ? { id: snap.id, ...snap.data() } : null;
     } catch (e) { return null; }
   }
 
@@ -1785,8 +1852,8 @@
       } else {
         await setDoc(likeRef, { uid: currentUser.uid, likedAt: serverTimestamp() });
         await updateDoc(postRef, { likesCount: increment(1) });
-        const authorUid = await getPostAuthorUid(postId);
-        sendNotification(authorUid, "like", { postId });
+        const postData = await getPostData(postId);
+        if (postData) sendNotification(postData.authorUid, "like", { postId, postText: postData.text, postImage: postData.imageUrl });
       }
     } catch (e) {
       console.error(e);
@@ -1929,8 +1996,8 @@
         await updateDoc(doc(db, "posts", postId), { commentsCount: increment(1) });
         bumpCommentCount(postId, 1);
         loadCommentsPreview(postId);
-        const authorUid = await getPostAuthorUid(postId);
-        sendNotification(authorUid, "comment", { postId });
+        const postData = await getPostData(postId);
+        if (postData) sendNotification(postData.authorUid, "comment", { postId, postText: postData.text, postImage: postData.imageUrl, commentText: prevValue });
       } catch (e) { console.error(e); inputEl.value = prevValue; }
       inputEl.disabled = false;
       inputEl.focus();
