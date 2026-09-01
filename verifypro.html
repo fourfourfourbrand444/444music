@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Artists — 444Music Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --black:      #000000;
+      --black-2:    #0a0a0a;
+      --black-3:    #0e0e0e;
+      --black-4:    #161616;
+      --white:      #ffffff;
+      --white-90:   rgba(255,255,255,0.90);
+      --white-70:   rgba(255,255,255,0.70);
+      --white-40:   rgba(255,255,255,0.40);
+      --white-06:   rgba(255,255,255,0.06);
+      --grey:       #888888;
+      --grey-dark:  #444444;
+      --rose:       #f87171;
+      --blue:       #4da3ff;
+      --green:      #22c55e;
+      --border:        rgba(255,255,255,0.10);
+      --border-hover:  rgba(255,255,255,0.40);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+    }
+    .header-title { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 18px; display:flex; align-items:center; gap:10px; }
+    .header-title i { color: var(--blue); }
+    .header-count { font-size: 12.5px; color: var(--grey); font-weight: 700; }
+
+    .shell { max-width: 720px; margin: 0 auto; padding: 24px 18px 60px; }
+
+    .search-bar { position: relative; margin-bottom: 18px; }
+    .search-bar i { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); color: var(--grey); font-size: 14px; }
+    .search-bar input {
+      width: 100%; background: var(--black-2); border: 1px solid var(--border);
+      border-radius: 100px; padding: 13px 18px 13px 42px; color: var(--white);
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; outline: none;
+      transition: border-color .2s;
+    }
+    .search-bar input::placeholder { color: var(--grey); font-weight: 500; }
+    .search-bar input:focus { border-color: var(--border-hover); }
+
+    .filter-row { display: flex; gap: 8px; margin-bottom: 18px; }
+    .filter-chip {
+      background: var(--white-06); border: 1px solid var(--border); color: var(--white-70);
+      border-radius: 100px; padding: 7px 15px; font-size: 12.5px; font-weight: 700;
+      cursor: pointer; transition: all .2s; font-family: 'Nunito', sans-serif;
+    }
+    .filter-chip:hover { border-color: var(--border-hover); color: var(--white); }
+    .filter-chip.active { background: var(--white); color: var(--black); border-color: var(--white); }
+
+    .user-row {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--black-2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 12px 16px; margin-bottom: 8px;
+    }
+    .user-avatar {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+      background: var(--black-4); border: 1px solid var(--border);
+      display: grid; place-items: center; font-family:'Outfit',sans-serif; font-weight:800; font-size:15px; color: var(--white-70);
+    }
+    .user-avatar img { width:100%; height:100%; object-fit:cover; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name-row { display: flex; align-items: center; gap: 6px; }
+    .user-name { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 14.5px; }
+    .user-verified-badge { color: var(--blue); font-size: 13px; display: none; }
+    .user-verified-badge.visible { display: inline; }
+    .user-email { font-size: 12px; color: var(--grey); margin-top: 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .verify-btn {
+      flex-shrink: 0; border-radius: 100px; padding: 9px 18px; font-size: 12.5px; font-weight: 800;
+      cursor: pointer; border: none; font-family: 'Nunito', sans-serif; transition: all .2s;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .verify-btn.unverified { background: var(--white); color: var(--black); }
+    .verify-btn.unverified:hover { opacity: .85; }
+    .verify-btn.verified { background: transparent; color: var(--rose); border: 1px solid rgba(248,113,113,0.3); }
+    .verify-btn.verified:hover { background: rgba(248,113,113,0.1); }
+    .verify-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .state-msg { text-align: center; padding: 60px 20px; color: var(--grey); font-size: 14px; font-weight: 600; }
+    .state-msg i { display:block; font-size: 26px; margin-bottom: 12px; color: var(--white-40); }
+
+    /* Simple admin gate */
+    .gate-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .gate-card {
+      background: var(--black-2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 32px 28px; max-width: 340px; width: 100%; text-align: center;
+    }
+    .gate-card i { font-size: 26px; color: var(--white-40); margin-bottom: 12px; display:block; }
+    .gate-card h2 { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 17px; margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--grey); margin-bottom: 18px; line-height: 1.5; }
+    .gate-card input {
+      width: 100%; background: var(--black-3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--white); font-family:'Nunito',sans-serif;
+      font-size: 13.5px; outline: none; margin-bottom: 12px;
+    }
+    .gate-card input:focus { border-color: var(--border-hover); }
+    .gate-btn {
+      width: 100%; background: var(--white); color: var(--black); border: none;
+      border-radius: 100px; padding: 11px; font-size: 13.5px; font-weight: 800;
+      cursor: pointer; font-family:'Nunito',sans-serif;
+    }
+    .gate-btn:hover { opacity: .85; }
+    .gate-error { color: var(--rose); font-size: 12.5px; margin-top: 10px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- Simple admin gate — swap ADMIN_EMAILS below for your real admin accounts -->
+<div class="gate-shell" id="gateShell">
+  <div class="gate-card">
+    <i class="fa-solid fa-lock"></i>
+    <h2>Admin Sign-In</h2>
+    <p>Sign in with an admin account to manage artist verification.</p>
+    <input type="email" id="gateEmail" placeholder="Admin email">
+    <input type="password" id="gatePassword" placeholder="Password">
+    <button class="gate-btn" id="gateBtn">Sign In</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div id="adminApp" style="display:none;">
+  <header>
+    <div class="header-title"><i class="fa-solid fa-circle-check"></i> Verify Artists</div>
+    <div class="header-count" id="userCount">0 users</div>
+  </header>
+
+  <div class="shell">
+    <div class="search-bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by name or email…" autocomplete="off">
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="verified">Verified</button>
+      <button class="filter-chip" data-filter="unverified">Unverified</button>
+    </div>
+
+    <div id="userList">
+      <div class="state-msg"><i class="fa-solid fa-spinner fa-spin"></i>Loading users…</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
+
+  // Swap in your real admin account email(s) here.
+  const ADMIN_EMAILS = ["444musicdistro@gmail.com"];
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  let allUsers = [];
+  let currentFilter = "all";
+
+  const gateShell   = document.getElementById("gateShell");
+  const adminApp    = document.getElementById("adminApp");
+  const gateBtn     = document.getElementById("gateBtn");
+  const gateEmail   = document.getElementById("gateEmail");
+  const gatePassword= document.getElementById("gatePassword");
+  const gateError   = document.getElementById("gateError");
+
+  gateBtn.addEventListener("click", async () => {
+    gateError.textContent = "";
+    gateBtn.disabled = true;
+    gateBtn.textContent = "Signing in…";
+    try {
+      await signInWithEmailAndPassword(auth, gateEmail.value.trim(), gatePassword.value);
+    } catch (e) {
+      gateError.textContent = "Sign-in failed. Check your email and password.";
+    } finally {
+      gateBtn.disabled = false;
+      gateBtn.textContent = "Sign In";
+    }
+  });
+  gatePassword.addEventListener("keydown", (e) => { if (e.key === "Enter") gateBtn.click(); });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user || !ADMIN_EMAILS.includes((user.email || "").toLowerCase())) {
+      gateShell.style.display = "flex";
+      adminApp.style.display = "none";
+      if (user && !ADMIN_EMAILS.includes((user.email || "").toLowerCase())) {
+        gateError.textContent = "This account isn't authorized for admin access.";
+      }
+      return;
+    }
+    gateShell.style.display = "none";
+    adminApp.style.display = "block";
+    await loadUsers();
+  });
+
+  async function loadUsers() {
+    const listEl = document.getElementById("userList");
+    listEl.innerHTML = `<div class="state-msg"><i class="fa-solid fa-spinner fa-spin"></i>Loading users…</div>`;
+    try {
+      const snap = await getDocs(collection(db, "users"));
+      allUsers = [];
+      snap.forEach(d => allUsers.push({ uid: d.id, ...d.data() }));
+      allUsers.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      document.getElementById("userCount").textContent = `${allUsers.length} user${allUsers.length === 1 ? "" : "s"}`;
+      renderList();
+    } catch (e) {
+      console.error(e);
+      listEl.innerHTML = `<div class="state-msg"><i class="fa-solid fa-triangle-exclamation"></i>Couldn't load users right now.</div>`;
+    }
+  }
+
+  function renderList() {
+    const listEl = document.getElementById("userList");
+    const term = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    let users = allUsers;
+    if (currentFilter === "verified") users = users.filter(u => u.verified);
+    if (currentFilter === "unverified") users = users.filter(u => !u.verified);
+    if (term) {
+      users = users.filter(u =>
+        (u.name || "").toLowerCase().includes(term) ||
+        (u.email || "").toLowerCase().includes(term)
+      );
+    }
+
+    if (!users.length) {
+      listEl.innerHTML = `<div class="state-msg"><i class="fa-solid fa-user-slash"></i>No users found.</div>`;
+      return;
+    }
+
+    listEl.innerHTML = users.map(u => {
+      const initials = (u.name || "A").trim().charAt(0).toUpperCase();
+      const avatarHtml = u.profilePic ? `<img src="${u.profilePic}" alt="">` : initials;
+      const verified = !!u.verified;
+      return `
+        <div class="user-row" data-uid="${u.uid}">
+          <div class="user-avatar">${avatarHtml}</div>
+          <div class="user-info">
+            <div class="user-name-row">
+              <span class="user-name">${u.name || "Artist"}</span>
+              <i class="fa-solid fa-circle-check user-verified-badge${verified ? " visible" : ""}"></i>
+            </div>
+            <div class="user-email">${u.email || "—"}</div>
+          </div>
+          <button class="verify-btn ${verified ? "verified" : "unverified"}" data-uid="${u.uid}">
+            <i class="fa-solid ${verified ? "fa-user-xmark" : "fa-circle-check"}"></i>
+            ${verified ? "Unverify" : "Verify"}
+          </button>
+        </div>`;
+    }).join("");
+
+    listEl.querySelectorAll(".verify-btn").forEach(btn => {
+      btn.addEventListener("click", () => toggleVerify(btn.dataset.uid, btn));
+    });
+  }
+
+  async function toggleVerify(uid, btn) {
+    const user = allUsers.find(u => u.uid === uid);
+    if (!user) return;
+    const newState = !user.verified;
+    btn.disabled = true;
+    try {
+      await updateDoc(doc(db, "users", uid), { verified: newState });
+      user.verified = newState;
+      renderList();
+    } catch (e) {
+      console.error(e);
+      btn.disabled = false;
+      alert("Couldn't update verification. Please try again.");
+    }
+  }
+
+  document.getElementById("searchInput").addEventListener("input", renderList);
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      currentFilter = chip.dataset.filter;
+      renderList();
+    });
+  });
+</script>
+</body>
+</html>
