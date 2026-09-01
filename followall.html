@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Follow All — 444Music Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --black: #000000; --black-2: #0a0a0a; --black-3: #0e0e0e;
+      --white: #ffffff; --white-70: rgba(255,255,255,0.70); --white-40: rgba(255,255,255,0.40);
+      --grey: #888888; --rose: #f87171; --green: #22c55e;
+      --border: rgba(255,255,255,0.10); --border-hover: rgba(255,255,255,0.40);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Nunito',sans-serif; background:var(--black); color:var(--white); min-height:100vh; }
+
+    .gate-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .gate-card {
+      background: var(--black-2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 32px 28px; max-width: 340px; width: 100%; text-align: center;
+    }
+    .gate-card i { font-size: 26px; color: var(--white-40); margin-bottom: 12px; display:block; }
+    .gate-card h2 { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 17px; margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--grey); margin-bottom: 18px; line-height: 1.5; }
+    .gate-card input {
+      width: 100%; background: var(--black-3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--white); font-family:'Nunito',sans-serif;
+      font-size: 13.5px; outline: none; margin-bottom: 12px;
+    }
+    .gate-card input:focus { border-color: var(--border-hover); }
+    .gate-btn {
+      width: 100%; background: var(--white); color: var(--black); border: none;
+      border-radius: 100px; padding: 11px; font-size: 13.5px; font-weight: 800;
+      cursor: pointer; font-family:'Nunito',sans-serif;
+    }
+    .gate-btn:hover { opacity: .85; }
+    .gate-error { color: var(--rose); font-size: 12.5px; margin-top: 10px; font-weight: 700; }
+
+    .shell { max-width: 480px; margin: 0 auto; padding: 60px 20px; }
+    .card {
+      background: var(--black-2); border: 1px solid var(--border); border-radius: 20px;
+      padding: 28px 24px; text-align: center;
+    }
+    .card i.icon { font-size: 30px; color: var(--white-40); margin-bottom: 14px; display: block; }
+    .card h1 { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 19px; margin-bottom: 8px; }
+    .card p { font-size: 13.5px; color: var(--grey); line-height: 1.55; margin-bottom: 20px; }
+    .target-email { color: var(--white-70); font-weight: 700; }
+    .run-btn {
+      width: 100%; background: var(--white); color: var(--black); border: none;
+      border-radius: 100px; padding: 13px; font-size: 14px; font-weight: 800;
+      cursor: pointer; font-family:'Nunito',sans-serif; transition: opacity .2s;
+    }
+    .run-btn:hover { opacity: .85; }
+    .run-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .log-box {
+      margin-top: 20px; text-align: left; background: var(--black-3);
+      border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+      font-size: 12.5px; color: var(--white-70); line-height: 1.7;
+      max-height: 220px; overflow-y: auto; display: none;
+    }
+    .log-box.visible { display: block; }
+    .log-line.ok { color: var(--green); }
+    .log-line.err { color: var(--rose); }
+  </style>
+</head>
+<body>
+
+<div class="gate-shell" id="gateShell">
+  <div class="gate-card">
+    <i class="fa-solid fa-lock"></i>
+    <h2>Admin Sign-In</h2>
+    <p>Sign in with an admin account to run this script.</p>
+    <input type="email" id="gateEmail" placeholder="Admin email">
+    <input type="password" id="gatePassword" placeholder="Password">
+    <button class="gate-btn" id="gateBtn">Sign In</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div class="shell" id="appShell" style="display:none;">
+  <div class="card">
+    <i class="fa-solid fa-user-group icon"></i>
+    <h1>Make everyone follow 444Music</h1>
+    <p>This finds the account signed up with <span class="target-email">fourfourfourbrand@gmail.com</span> and makes every other user on the platform follow it. It's safe to run more than once — users who already follow it are skipped.</p>
+    <button class="run-btn" id="runBtn">Run Script</button>
+    <div class="log-box" id="logBox"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
+
+  // Admin accounts allowed to run this script.
+  const ADMIN_EMAILS = ["444musicdistro@gmail.com", "fourfourfourbrand@gmail.com"];
+  // The account every user should end up following.
+  const TARGET_EMAIL = "fourfourfourbrand@gmail.com";
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const gateShell = document.getElementById("gateShell");
+  const appShell  = document.getElementById("appShell");
+  const gateBtn   = document.getElementById("gateBtn");
+  const gateEmail = document.getElementById("gateEmail");
+  const gatePassword = document.getElementById("gatePassword");
+  const gateError = document.getElementById("gateError");
+  const runBtn = document.getElementById("runBtn");
+  const logBox = document.getElementById("logBox");
+
+  gateBtn.addEventListener("click", async () => {
+    gateError.textContent = "";
+    gateBtn.disabled = true;
+    gateBtn.textContent = "Signing in…";
+    try {
+      await signInWithEmailAndPassword(auth, gateEmail.value.trim(), gatePassword.value);
+    } catch (e) {
+      gateError.textContent = "Sign-in failed. Check your email and password.";
+    } finally {
+      gateBtn.disabled = false;
+      gateBtn.textContent = "Sign In";
+    }
+  });
+  gatePassword.addEventListener("keydown", (e) => { if (e.key === "Enter") gateBtn.click(); });
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user || !ADMIN_EMAILS.includes((user.email || "").toLowerCase())) {
+      gateShell.style.display = "flex";
+      appShell.style.display = "none";
+      if (user) gateError.textContent = "This account isn't authorized to run this script.";
+      return;
+    }
+    gateShell.style.display = "none";
+    appShell.style.display = "block";
+  });
+
+  function log(text, cls) {
+    logBox.classList.add("visible");
+    const line = document.createElement("div");
+    line.className = "log-line" + (cls ? " " + cls : "");
+    line.textContent = text;
+    logBox.appendChild(line);
+    logBox.scrollTop = logBox.scrollHeight;
+  }
+
+  runBtn.addEventListener("click", async () => {
+    if (!confirm(`This will make every user follow the account signed up with ${TARGET_EMAIL}. Continue?`)) return;
+    runBtn.disabled = true;
+    logBox.innerHTML = "";
+    log("Looking up the target account…");
+
+    let targetUid = null;
+    try {
+      const q = query(collection(db, "users"), where("email", "==", TARGET_EMAIL));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        log(`No user account found with email ${TARGET_EMAIL}. Make sure that account has signed up first.`, "err");
+        runBtn.disabled = false;
+        return;
+      }
+      targetUid = snap.docs[0].id;
+      log(`Found target account (uid: ${targetUid}).`, "ok");
+    } catch (e) {
+      console.error(e);
+      log("Couldn't look up the target account: " + e.message, "err");
+      runBtn.disabled = false;
+      return;
+    }
+
+    let allUsers = [];
+    try {
+      const allSnap = await getDocs(collection(db, "users"));
+      allSnap.forEach(d => { if (d.id !== targetUid) allUsers.push(d.id); });
+      log(`Found ${allUsers.length} other user(s) to process.`);
+    } catch (e) {
+      console.error(e);
+      log("Couldn't load the user list: " + e.message, "err");
+      runBtn.disabled = false;
+      return;
+    }
+
+    let followed = 0, skipped = 0, failed = 0;
+    for (const uid of allUsers) {
+      try {
+        const existing = await getDoc(doc(db, "users", uid, "following", targetUid));
+        if (existing.exists()) { skipped++; continue; }
+        await setDoc(doc(db, "users", uid, "following", targetUid), { since: serverTimestamp() });
+        await setDoc(doc(db, "users", targetUid, "followers", uid), { since: serverTimestamp() });
+        followed++;
+      } catch (e) {
+        console.error(e);
+        failed++;
+      }
+    }
+
+    log(`Done — ${followed} user(s) now follow the account, ${skipped} already did, ${failed} failed.`, failed ? "err" : "ok");
+    runBtn.disabled = false;
+    runBtn.textContent = "Run Again";
+  });
+</script>
+</body>
+</html>
