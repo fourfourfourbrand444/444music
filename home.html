@@ -303,6 +303,31 @@
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* ─── PROMO AD OVERLAY (hero) ─── */
+    .ad-overlay {
+      position: absolute; inset: 0; z-index: 50;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; padding: 24px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .ad-overlay.active { display: flex; }
+    .ad-card {
+      width: 100%; max-width: 380px; border-radius: 24px; overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      animation: fadeUp 0.4s ease both;
+    }
+    .ad-image-link { display: block; line-height: 0; cursor: pointer; }
+    .ad-card img { width: 100%; display: block; object-fit: cover; }
+    .ad-dismiss-btn {
+      background: none; border: none; color: var(--white-70);
+      font-size: 14px; font-weight: 700; letter-spacing: 0.3px;
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+      padding: 10px 18px; transition: color 0.2s;
+    }
+    .ad-dismiss-btn:hover { color: var(--white); }
+
     /* ═══════════════════════════ FEED ═══════════════════════════ */
 
     .feed-shell {
@@ -1200,6 +1225,16 @@
       Go to Dashboard
     </a>
   </div>
+
+  <!-- Promo ad — populated from Firestore (siteAds), shown every login until an admin deletes it -->
+  <div class="ad-overlay" id="adOverlay">
+    <div class="ad-card">
+      <a href="#" target="_blank" rel="noopener noreferrer" id="adImageLink" class="ad-image-link">
+        <img id="adImage" src="" alt="Sponsored">
+      </a>
+    </div>
+    <button type="button" class="ad-dismiss-btn" id="adDismissBtn">dismiss</button>
+  </div>
 </section>
 
 <!-- ═══ FEED — replaces stats/features/platforms/steps/cta ═══ -->
@@ -1401,10 +1436,18 @@
   let viewerAuthorUid = null;
   let viewerStories = [];
   let viewerIndex = 0;
-  let viewerTimer = null;
   const STORY_DURATION = 5000;
   let storyComposerType = "image";
   let storyComposerImageFile = null;
+  // Press-and-hold-to-pause progress engine (replaces a plain setTimeout so
+  // a hold can freeze the exact elapsed time and resume from there, instead
+  // of just clearing/resetting a timer).
+  let storyRAF = null;
+  let storyStartTime = 0;
+  let storyElapsed = 0;
+  let isHolding = false;
+  let holdTimer = null;
+  let didHold = false;
 
   // ── Live user-info cache ──────────────────────────────────────────────────
   // Posts/comments used to store a name+avatar SNAPSHOT at creation time, so an
@@ -1475,6 +1518,38 @@
     loadFeed(currentTab);
     setupNotifications();
     setupStories();
+    loadAndShowAd();
+  });
+
+  // ─── Promo ad (hero) ────────────────────────────────────────────────────
+  // Reads the most recently created doc in "siteAds". The admin page (built
+  // separately) is responsible for deleting the old ad before adding a new
+  // one, so in practice there's at most one — but ordering by createdAt and
+  // taking the latest means an accidental extra doc still resolves sanely.
+  // No "seen" flag is stored anywhere, so this shows again on every login,
+  // exactly until an admin removes the doc.
+  async function loadAndShowAd() {
+    try {
+      const q = query(collection(db, "siteAds"), orderBy("createdAt", "desc"), limit(1));
+      const snap = await getDocs(q);
+      if (snap.empty) return;
+      const ad = { id: snap.docs[0].id, ...snap.docs[0].data() };
+      if (!ad.imageUrl || !ad.linkUrl) return;
+      showAdOverlay(ad);
+    } catch (e) {
+      console.error("ad load error", e);
+    }
+  }
+
+  function showAdOverlay(ad) {
+    const overlay = document.getElementById("adOverlay");
+    document.getElementById("adImage").src = ad.imageUrl;
+    document.getElementById("adImageLink").href = ad.linkUrl;
+    overlay.classList.add("active");
+  }
+
+  document.getElementById("adDismissBtn").addEventListener("click", () => {
+    document.getElementById("adOverlay").classList.remove("active");
   });
 
   async function loadFollowing() {
@@ -1990,8 +2065,8 @@
     showStoryAt(0);
   }
   function closeStoryViewer() {
-    clearTimeout(viewerTimer);
-    viewerTimer = null;
+    cancelAnimationFrame(storyRAF);
+    isHolding = false;
     document.getElementById("storyViewerOverlay").classList.remove("active");
     renderStoriesBar();
   }
@@ -2000,8 +2075,42 @@
     row.innerHTML = viewerStories.map((_, i) => `<div class="story-progress-bar"><div class="story-progress-fill" id="storyFill${i}"></div></div>`).join("");
   }
 
+  // Press-and-hold-to-pause progress engine — runs on requestAnimationFrame
+  // instead of a plain setTimeout so a hold can freeze the exact elapsed
+  // time (storyElapsed) and pick back up from there, like WhatsApp/IG
+  // status, rather than the story just sliding past on a fixed clock.
+  function startStoryProgress(index) {
+    cancelAnimationFrame(storyRAF);
+    storyElapsed = 0;
+    storyStartTime = performance.now();
+    isHolding = false;
+    tickStoryProgress(index);
+  }
+  function tickStoryProgress(index) {
+    const fill = document.getElementById(`storyFill${index}`);
+    const frame = (now) => {
+      if (isHolding) { storyRAF = requestAnimationFrame(frame); return; }
+      const elapsed = storyElapsed + (now - storyStartTime);
+      const pct = Math.min(100, (elapsed / STORY_DURATION) * 100);
+      if (fill) fill.style.width = pct + "%";
+      if (pct >= 100) { showStoryAt(index + 1); return; }
+      storyRAF = requestAnimationFrame(frame);
+    };
+    storyRAF = requestAnimationFrame(frame);
+  }
+  function pauseStoryProgress() {
+    if (isHolding) return;
+    isHolding = true;
+    storyElapsed += performance.now() - storyStartTime;
+  }
+  function resumeStoryProgress(index) {
+    if (!isHolding) return;
+    isHolding = false;
+    storyStartTime = performance.now();
+  }
+
   async function showStoryAt(index) {
-    clearTimeout(viewerTimer);
+    cancelAnimationFrame(storyRAF);
     if (index < 0 || index >= viewerStories.length) { closeStoryViewer(); return; }
     viewerIndex = index;
     const story = viewerStories[index];
@@ -2048,15 +2157,36 @@
       setDoc(doc(db, "stories", story.id, "viewers", currentUser.uid), { viewedAt: serverTimestamp() }).catch(() => {});
     }
 
-    requestAnimationFrame(() => {
-      const fill = document.getElementById(`storyFill${index}`);
-      if (fill) {
-        fill.style.transition = `width ${STORY_DURATION}ms linear`;
-        fill.style.width = "100%";
-      }
-    });
-    viewerTimer = setTimeout(() => showStoryAt(index + 1), STORY_DURATION);
+    startStoryProgress(index);
   }
+
+  // Attaches press-and-hold pause/resume to a story-viewer element. A
+  // short press (under the hold threshold) leaves didHold false so the
+  // element's own click handler (tap-to-navigate) still fires normally;
+  // a genuine hold sets didHold true so that same click is swallowed —
+  // releasing a hold should resume reading, never jump to the next story.
+  function attachHoldToPause(el) {
+    if (!el) return;
+    const start = () => {
+      didHold = false;
+      clearTimeout(holdTimer);
+      holdTimer = setTimeout(() => {
+        didHold = true;
+        pauseStoryProgress();
+      }, 180);
+    };
+    const end = () => {
+      clearTimeout(holdTimer);
+      if (didHold) resumeStoryProgress(viewerIndex);
+    };
+    el.addEventListener("pointerdown", start);
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointerleave", end);
+    el.addEventListener("pointercancel", end);
+  }
+  attachHoldToPause(document.getElementById("storyViewerContent"));
+  attachHoldToPause(document.getElementById("storyTapLeft"));
+  attachHoldToPause(document.getElementById("storyTapRight"));
 
   async function renderStoryFooter(story, isOwn) {
     const footer = document.getElementById("storyViewerFooter");
@@ -2100,7 +2230,7 @@
   }
 
   async function openStoryViewers(story) {
-    clearTimeout(viewerTimer); // pause auto-advance while checking the list
+    pauseStoryProgress(); // freeze the story while checking the viewer list
     document.getElementById("storyViewersOverlay").classList.add("active");
     const listEl = document.getElementById("storyViewersList");
     listEl.innerHTML = `<div class="feed-loading"><i class="fa-solid fa-spinner fa-spin"></i>Loading…</div>`;
@@ -2139,18 +2269,24 @@
 
   document.getElementById("storyViewersClose").addEventListener("click", () => {
     document.getElementById("storyViewersOverlay").classList.remove("active");
-    showStoryAt(viewerIndex); // resume the timer
+    resumeStoryProgress(viewerIndex); // pick up from where it was paused, don't restart the story
   });
 
   document.getElementById("storyCloseBtn").addEventListener("click", closeStoryViewer);
-  document.getElementById("storyTapLeft").addEventListener("click", () => showStoryAt(viewerIndex - 1));
-  document.getElementById("storyTapRight").addEventListener("click", () => showStoryAt(viewerIndex + 1));
+  document.getElementById("storyTapLeft").addEventListener("click", () => {
+    if (didHold) { didHold = false; return; } // a hold-release shouldn't also count as a nav tap
+    showStoryAt(viewerIndex - 1);
+  });
+  document.getElementById("storyTapRight").addEventListener("click", () => {
+    if (didHold) { didHold = false; return; }
+    showStoryAt(viewerIndex + 1);
+  });
 
   document.getElementById("storyDeleteBtn").addEventListener("click", async () => {
     const story = viewerStories[viewerIndex];
     if (!story || story.authorUid !== currentUser.uid) return;
     if (!confirm("Delete this story? This can't be undone.")) return;
-    clearTimeout(viewerTimer);
+    cancelAnimationFrame(storyRAF);
     try {
       await deleteDoc(doc(db, "stories", story.id));
       viewerStories.splice(viewerIndex, 1);
