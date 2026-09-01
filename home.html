@@ -303,31 +303,6 @@
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ─── PROMO AD OVERLAY (hero) ─── */
-    .ad-overlay {
-      position: absolute; inset: 0; z-index: 50;
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      gap: 18px; padding: 24px;
-      background: rgba(0,0,0,0.72);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
-    .ad-overlay.active { display: flex; }
-    .ad-card {
-      width: 100%; max-width: 380px; border-radius: 24px; overflow: hidden;
-      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
-      animation: fadeUp 0.4s ease both;
-    }
-    .ad-image-link { display: block; line-height: 0; cursor: pointer; }
-    .ad-card img { width: 100%; display: block; object-fit: cover; }
-    .ad-dismiss-btn {
-      background: none; border: none; color: var(--white-70);
-      font-size: 14px; font-weight: 700; letter-spacing: 0.3px;
-      cursor: pointer; font-family: 'Nunito', sans-serif;
-      padding: 10px 18px; transition: color 0.2s;
-    }
-    .ad-dismiss-btn:hover { color: var(--white); }
-
     /* ═══════════════════════════ FEED ═══════════════════════════ */
 
     .feed-shell {
@@ -358,51 +333,6 @@
     }
     .feed-search input::placeholder { color: var(--grey); font-weight: 500; }
     .feed-search input:focus { border-color: var(--border-hover); background: var(--black-3); }
-
-    /* ─── STORIES BAR ─── */
-    .stories-bar-wrap {
-      margin-bottom: 20px;
-      padding-bottom: 4px;
-    }
-    .stories-bar {
-      display: flex; gap: 14px;
-      overflow-x: auto; overflow-y: hidden;
-      scrollbar-width: none; -ms-overflow-style: none;
-      padding: 2px 2px 6px;
-    }
-    .stories-bar::-webkit-scrollbar { display: none; }
-    .story-bubble {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      cursor: pointer; flex-shrink: 0; width: 68px;
-    }
-    .story-ring {
-      width: 64px; height: 64px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; padding: 2.5px; flex-shrink: 0;
-      transition: transform .15s;
-    }
-    .story-bubble:hover .story-ring { transform: scale(1.04); }
-    .story-ring.unseen-ring { background: var(--white); }
-    .story-ring.seen-ring   { background: var(--grey-dark); }
-    .story-ring.add-ring    { background: var(--white-20); }
-    .story-avatar {
-      width: 100%; height: 100%; border-radius: 50%;
-      background: var(--black-4); border: 2px solid var(--black);
-      overflow: hidden; display: flex; align-items: center; justify-content: center;
-      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: var(--white-70);
-    }
-    .story-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .story-plus {
-      position: absolute; bottom: -1px; right: -1px;
-      width: 20px; height: 20px; border-radius: 50%;
-      background: var(--white); color: var(--black);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; border: 2px solid var(--black);
-    }
-    .story-label {
-      font-size: 11px; font-weight: 700; color: var(--white-70);
-      max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
 
     /* Publish box */
     .publish-box {
@@ -611,8 +541,6 @@
     }
     .post-body .hashtag { color: var(--blue); font-weight: 700; }
     .post-body .hashtag:hover { text-decoration: underline; cursor: pointer; }
-    .post-body .mention { color: var(--blue); font-weight: 700; }
-    .post-body .mention:hover { text-decoration: underline; cursor: pointer; }
     .post-edited-tag { font-size: 11px; color: var(--grey); font-weight: 700; margin-left: 6px; }
 
     .post-edit-box { margin-top: 12px; }
@@ -706,7 +634,6 @@
     .comment-bubble { background: var(--black-3); border-radius: 14px; padding: 8px 13px; flex: 1; }
     .comment-name { font-size: 12.5px; font-weight: 800; color: var(--white); }
     .comment-text { font-size: 13px; color: var(--white-70); margin-top: 2px; line-height: 1.5; }
-    .comment-text .hashtag, .comment-text .mention { color: var(--blue); font-weight: 700; }
     .comment-meta-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
     .comment-reply-btn {
       background: none; border: none; cursor: pointer;
@@ -934,155 +861,6 @@
       .post-modal.active { transform: translateY(0); }
     }
 
-    /* ─── STORY VIEWER ─── */
-    .story-viewer-overlay {
-      position: fixed; inset: 0; background: var(--black);
-      z-index: 6000; display: none; align-items: center; justify-content: center;
-    }
-    .story-viewer-overlay.active { display: flex; }
-    .story-viewer {
-      position: relative; width: 100%; max-width: 420px; height: 100%; max-height: 100svh;
-      display: flex; flex-direction: column; background: var(--black-1);
-    }
-    .story-progress-row { display: flex; gap: 4px; padding: 10px 12px 0; flex-shrink: 0; }
-    .story-progress-bar { flex: 1; height: 3px; border-radius: 3px; background: var(--white-20); overflow: hidden; }
-    .story-progress-fill { height: 100%; width: 0%; background: var(--white); }
-    .story-viewer-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 14px; flex-shrink: 0;
-    }
-    .story-viewer-user { display: flex; align-items: center; gap: 10px; }
-    .story-viewer-avatar {
-      width: 36px; height: 36px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-      background: var(--black-4); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-family:'Outfit',sans-serif; font-weight:800; font-size:14px; color: var(--white-70);
-    }
-    .story-viewer-avatar img { width:100%; height:100%; object-fit:cover; }
-    .story-viewer-name { font-family:'Outfit',sans-serif; font-weight: 800; font-size: 13.5px; }
-    .story-viewer-time { font-size: 11px; color: var(--grey); font-weight: 600; margin-top: 1px; }
-    .story-viewer-actions { display: flex; align-items: center; gap: 16px; }
-    .story-delete-btn, .story-close-btn { color: var(--white-70); font-size: 17px; cursor: pointer; transition: color .15s; }
-    .story-delete-btn:hover { color: var(--rose); }
-    .story-close-btn:hover { color: var(--white); }
-    .story-viewer-content {
-      flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
-      overflow: hidden; background: var(--black);
-    }
-    .story-viewer-content img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .story-text-card {
-      padding: 32px; text-align: center; font-family:'Outfit',sans-serif; font-weight: 700;
-      font-size: 22px; line-height: 1.5; color: var(--white); word-break: break-word;
-    }
-    .story-link-card {
-      display: flex; align-items: center; gap: 12px; background: var(--black-3);
-      border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px;
-      margin: 0 24px; cursor: pointer; max-width: 100%;
-    }
-    .story-link-card i { color: var(--blue); font-size: 18px; flex-shrink: 0; }
-    .story-link-card span { color: var(--white-90); font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .story-tap-zone { position: absolute; top: 60px; bottom: 60px; width: 33%; z-index: 2; cursor: pointer; }
-    .story-tap-left { left: 0; }
-    .story-tap-right { right: 0; }
-    .story-viewer-footer { padding: 14px; display: flex; justify-content: center; flex-shrink: 0; }
-    .story-viewers-btn, .story-like-btn {
-      background: var(--white-06); border: 1px solid var(--border); color: var(--white-90);
-      border-radius: 100px; padding: 10px 20px; font-size: 13px; font-weight: 700;
-      cursor: pointer; font-family: 'Nunito', sans-serif; display: flex; align-items: center; gap: 8px;
-      transition: all .2s;
-    }
-    .story-viewers-btn:hover { border-color: var(--border-hover); }
-    .story-like-btn { width: 46px; height: 46px; justify-content: center; border-radius: 50%; padding: 0; }
-    .story-like-btn.liked { color: var(--rose); border-color: rgba(248,113,113,0.35); }
-
-    /* Story viewers list */
-    .story-viewers-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
-      z-index: 6500; display: flex; align-items: flex-end; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity .28s;
-    }
-    .story-viewers-overlay.active { opacity: 1; pointer-events: all; }
-    .story-viewers-modal {
-      background: var(--black-1); border: 1px solid var(--border); border-radius: 20px 20px 0 0;
-      width: 100%; max-width: 420px; max-height: 60vh; display: flex; flex-direction: column; overflow: hidden;
-    }
-    .story-viewers-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 18px; border-bottom: 1px solid var(--border);
-      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0;
-    }
-    .story-viewers-close {
-      width: 30px; height: 30px; display: grid; place-items: center;
-      border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; color: var(--grey); font-size: 14px; transition: all .2s;
-    }
-    .story-viewers-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
-    .story-viewers-list { overflow-y: auto; padding: 8px 10px 20px; }
-    .story-viewer-row { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 12px; cursor: pointer; }
-    .story-viewer-row:hover { background: var(--white-06); }
-    .story-viewer-row-avatar {
-      width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-      background: var(--black-4); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-family:'Outfit',sans-serif; font-weight:800; font-size:13px; color: var(--white-70);
-    }
-    .story-viewer-row-avatar img { width:100%; height:100%; object-fit:cover; }
-    .story-viewer-row-name { flex: 1; font-size: 13.5px; font-weight: 700; color: var(--white-90); }
-
-    /* Story composer */
-    .story-composer-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
-      z-index: 6500; display: flex; align-items: center; justify-content: center; padding: 20px;
-      opacity: 0; pointer-events: none; transition: opacity .28s;
-    }
-    .story-composer-overlay.active { opacity: 1; pointer-events: all; }
-    .story-composer-modal {
-      background: var(--black-1); border: 1px solid var(--border); border-radius: 20px;
-      width: 100%; max-width: 420px; overflow: hidden;
-    }
-    .story-composer-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 18px; border-bottom: 1px solid var(--border);
-      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 15px;
-    }
-    .story-composer-close {
-      width: 30px; height: 30px; display: grid; place-items: center;
-      border-radius: 8px; border: 1px solid var(--border);
-      cursor: pointer; color: var(--grey); font-size: 14px; transition: all .2s;
-    }
-    .story-composer-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
-    .story-composer-tabs { display: flex; gap: 8px; padding: 14px 18px 0; }
-    .story-tab {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-      background: var(--white-06); border: 1px solid var(--border); border-radius: 100px;
-      padding: 9px 10px; font-size: 12.5px; font-weight: 700; color: var(--white-70);
-      cursor: pointer; font-family: 'Nunito', sans-serif; transition: all .2s;
-    }
-    .story-tab.active { background: var(--white); color: var(--black); border-color: var(--white); }
-    .story-composer-body { padding: 18px; min-height: 140px; display: flex; align-items: center; justify-content: center; }
-    .story-file-drop {
-      width: 100%; padding: 26px; border: 1px dashed var(--border-hover); border-radius: 14px;
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: var(--white-70); font-size: 13px; font-weight: 700; cursor: pointer; text-align: center;
-    }
-    .story-file-drop i { font-size: 22px; color: var(--grey); }
-    .story-img-preview { width: 100%; margin-top: 12px; }
-    .story-img-preview img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; }
-    .story-text-input, .story-link-input {
-      width: 100%; background: var(--black-3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 14px; color: var(--white);
-      font-family: 'Nunito', sans-serif; font-size: 14px; outline: none;
-    }
-    .story-text-input { min-height: 100px; resize: vertical; line-height: 1.5; }
-    .story-text-input:focus, .story-link-input:focus { border-color: var(--border-hover); }
-    .story-share-btn {
-      width: calc(100% - 36px); margin: 0 18px 18px; background: var(--white); color: var(--black);
-      border: none; border-radius: 100px; padding: 13px; font-size: 13.5px; font-weight: 800;
-      cursor: pointer; font-family: 'Nunito', sans-serif; transition: opacity .2s;
-    }
-    .story-share-btn:hover { opacity: .85; }
-    .story-share-btn:disabled { opacity: .35; cursor: not-allowed; }
-
     footer {
       position: relative; z-index: 1;
       background: var(--black);
@@ -1126,7 +904,7 @@
 
   <a href="profile.html">
     <i class="fa-solid fa-user"></i>
-    <span>Settings</span>
+    <span>Account</span>
   </a>
   <a href="wey.html">
     <i class="fa-solid fa-gauge-high"></i>
@@ -1225,16 +1003,6 @@
       Go to Dashboard
     </a>
   </div>
-
-  <!-- Promo ad — populated from Firestore (siteAds), shown every login until an admin deletes it -->
-  <div class="ad-overlay" id="adOverlay">
-    <div class="ad-card">
-      <a href="#" target="_blank" rel="noopener noreferrer" id="adImageLink" class="ad-image-link">
-        <img id="adImage" src="" alt="Sponsored">
-      </a>
-    </div>
-    <button type="button" class="ad-dismiss-btn" id="adDismissBtn">dismiss</button>
-  </div>
 </section>
 
 <!-- ═══ FEED — replaces stats/features/platforms/steps/cta ═══ -->
@@ -1243,10 +1011,6 @@
   <div class="feed-search">
     <i class="fa-solid fa-magnifying-glass"></i>
     <input type="text" id="feedSearch" placeholder="Search artists, posts, hashtags…" autocomplete="off">
-  </div>
-
-  <div class="stories-bar-wrap">
-    <div class="stories-bar" id="storiesBar"></div>
   </div>
 
   <div class="publish-box" id="publishBox">
@@ -1304,7 +1068,7 @@
   <a href="wey.html" class="bnav-item active">
     <i class="fa-solid fa-house"></i><span>Home</span>
   </a>
-  <a href="viewpro.html" class="bnav-item">
+  <a href="profile.html" class="bnav-item">
     <i class="fa-solid fa-user"></i><span>Account</span>
   </a>
   <a href="#" class="bnav-item" id="bnavNotif">
@@ -1340,52 +1104,6 @@
     <div class="post-modal-close" id="postModalClose"><i class="fa-solid fa-xmark"></i></div>
   </div>
   <div class="post-modal-body" id="postModalBody"></div>
-</div>
-
-<!-- ═══ STORY VIEWER ═══ -->
-<div class="story-viewer-overlay" id="storyViewerOverlay">
-  <div class="story-viewer">
-    <div class="story-progress-row" id="storyProgressRow"></div>
-    <div class="story-viewer-header">
-      <div class="story-viewer-user" id="storyViewerUser"></div>
-      <div class="story-viewer-actions">
-        <i class="fa-solid fa-trash story-delete-btn" id="storyDeleteBtn" style="display:none;"></i>
-        <i class="fa-solid fa-xmark story-close-btn" id="storyCloseBtn"></i>
-      </div>
-    </div>
-    <div class="story-viewer-content" id="storyViewerContent"></div>
-    <div class="story-tap-zone story-tap-left" id="storyTapLeft"></div>
-    <div class="story-tap-zone story-tap-right" id="storyTapRight"></div>
-    <div class="story-viewer-footer" id="storyViewerFooter"></div>
-  </div>
-</div>
-
-<!-- ═══ STORY VIEWERS LIST ═══ -->
-<div class="story-viewers-overlay" id="storyViewersOverlay">
-  <div class="story-viewers-modal">
-    <div class="story-viewers-header">
-      <span>Viewers</span>
-      <div class="story-viewers-close" id="storyViewersClose"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-    <div class="story-viewers-list" id="storyViewersList"></div>
-  </div>
-</div>
-
-<!-- ═══ STORY COMPOSER ═══ -->
-<div class="story-composer-overlay" id="storyComposerOverlay">
-  <div class="story-composer-modal">
-    <div class="story-composer-header">
-      <span>Add to Your Story</span>
-      <div class="story-composer-close" id="storyComposerClose"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-    <div class="story-composer-tabs">
-      <button type="button" class="story-tab active" data-type="image"><i class="fa-solid fa-image"></i> Photo</button>
-      <button type="button" class="story-tab" data-type="text"><i class="fa-solid fa-font"></i> Text</button>
-      <button type="button" class="story-tab" data-type="link"><i class="fa-solid fa-link"></i> Link</button>
-    </div>
-    <div class="story-composer-body" id="storyComposerBody"></div>
-    <button type="button" class="story-share-btn" id="storyShareBtn" disabled>Share to Story</button>
-  </div>
 </div>
 
 <script type="module">
@@ -1428,26 +1146,6 @@
   let allNotifs = [];                    // cache of loaded notifications
   let unreadNotifCount = 0;
   let notifUnsubscribe = null;
-
-  // Stories state
-  let storiesUnsub = null;
-  let allStories = [];
-  let storiesByAuthor = new Map();       // uid -> [stories asc by createdAt]
-  let viewerAuthorUid = null;
-  let viewerStories = [];
-  let viewerIndex = 0;
-  const STORY_DURATION = 5000;
-  let storyComposerType = "image";
-  let storyComposerImageFile = null;
-  // Press-and-hold-to-pause progress engine (replaces a plain setTimeout so
-  // a hold can freeze the exact elapsed time and resume from there, instead
-  // of just clearing/resetting a timer).
-  let storyRAF = null;
-  let storyStartTime = 0;
-  let storyElapsed = 0;
-  let isHolding = false;
-  let holdTimer = null;
-  let didHold = false;
 
   // ── Live user-info cache ──────────────────────────────────────────────────
   // Posts/comments used to store a name+avatar SNAPSHOT at creation time, so an
@@ -1517,39 +1215,6 @@
     await loadFollowing();
     loadFeed(currentTab);
     setupNotifications();
-    setupStories();
-    loadAndShowAd();
-  });
-
-  // ─── Promo ad (hero) ────────────────────────────────────────────────────
-  // Reads the most recently created doc in "siteAds". The admin page (built
-  // separately) is responsible for deleting the old ad before adding a new
-  // one, so in practice there's at most one — but ordering by createdAt and
-  // taking the latest means an accidental extra doc still resolves sanely.
-  // No "seen" flag is stored anywhere, so this shows again on every login,
-  // exactly until an admin removes the doc.
-  async function loadAndShowAd() {
-    try {
-      const q = query(collection(db, "siteAds"), orderBy("createdAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (snap.empty) return;
-      const ad = { id: snap.docs[0].id, ...snap.docs[0].data() };
-      if (!ad.imageUrl || !ad.linkUrl) return;
-      showAdOverlay(ad);
-    } catch (e) {
-      console.error("ad load error", e);
-    }
-  }
-
-  function showAdOverlay(ad) {
-    const overlay = document.getElementById("adOverlay");
-    document.getElementById("adImage").src = ad.imageUrl;
-    document.getElementById("adImageLink").href = ad.linkUrl;
-    overlay.classList.add("active");
-  }
-
-  document.getElementById("adDismissBtn").addEventListener("click", () => {
-    document.getElementById("adOverlay").classList.remove("active");
   });
 
   async function loadFollowing() {
@@ -1628,13 +1293,12 @@
     let icon = "fa-bell", text = `<b>${n.fromName || "Someone"}</b> sent you a notification`;
     if (n.type === "follow")  { icon = "fa-user-plus"; text = `<b>${n.fromName || "Someone"}</b> started following you`; }
     else if (n.type === "like")    { icon = "fa-heart";     text = `<b>${n.fromName || "Someone"}</b> liked your post`; }
-    else if (n.type === "story_like") { icon = "fa-heart";  text = `<b>${n.fromName || "Someone"}</b> liked your story`; }
     else if (n.type === "comment") { icon = "fa-comment";   text = `<b>${n.fromName || "Someone"}</b> commented on your post`; }
     else if (n.type === "reply")   { icon = "fa-reply";     text = `<b>${n.fromName || "Someone"}</b> replied to your comment`; }
     const initials = (n.fromName || "A").trim().charAt(0).toUpperCase();
     const avatarHtml = n.fromAvatar ? `<img src="${n.fromAvatar}" alt="">` : initials;
     return `
-      <div class="notif-item ${n.read ? "" : "unread"}" data-from-uid="${n.fromUid || ""}">
+      <div class="notif-item ${n.read ? "" : "unread"}" data-from-uid="${n.fromUid || ""}" data-post-id="${n.postId || ""}">
         <div class="notif-avatar">${avatarHtml}</div>
         <div class="notif-body">
           <div class="notif-text">${text}</div>
@@ -1651,13 +1315,15 @@
       return;
     }
     listEl.innerHTML = notifs.map(renderNotifItem).join("");
-    // Every notification opens the profile of whoever triggered it —
-    // same destination the Followers / Following lists use, on request,
-    // rather than jumping into the post itself.
     listEl.querySelectorAll(".notif-item").forEach(el => {
       el.addEventListener("click", () => {
+        const postId = el.dataset.postId;
         const uid = el.dataset.fromUid;
-        if (uid) location.href = `viewpro.html?uid=${encodeURIComponent(uid)}`;
+        if (postId) {
+          location.href = `wey.html#post-${postId}`;
+        } else if (uid) {
+          location.href = `viewpro.html?uid=${encodeURIComponent(uid)}`;
+        }
       });
     });
   }
@@ -1784,15 +1450,9 @@
     refreshPublishState();
   });
 
-  // Hashtags AND @mentions both render blue, same styling — mentions are
-  // visual-only (not resolved to a specific account) since there's no
-  // unique-handle system in place yet to safely link one.
   function linkifyHashtags(text) {
     const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    return escaped.replace(/(^|\s)([#@][a-zA-Z0-9_.]+)/g, (match, pre, tag) => {
-      const cls = tag.charAt(0) === "#" ? "hashtag" : "mention";
-      return `${pre}<span class="${cls}">${tag}</span>`;
-    });
+    return escaped.replace(/(^|\s)(#[a-zA-Z0-9_]+)/g, '$1<span class="hashtag">$2</span>');
   }
 
   function timeAgo(date) {
@@ -1866,437 +1526,6 @@
     } finally {
       publishBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Publish`;
       refreshPublishState();
-    }
-  });
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // STORIES — 24h auto-expiring posts (photo / text / link), viewers +
-  // likes visible to the owner only, deletable anytime by the owner.
-  // ═══════════════════════════════════════════════════════════════════════
-
-  function setupStories() {
-    if (storiesUnsub) { storiesUnsub(); storiesUnsub = null; }
-    const cutoff = Timestamp.fromMillis(Date.now() - 24 * 60 * 60 * 1000);
-    const q = query(collection(db, "stories"), where("createdAt", ">", cutoff), orderBy("createdAt", "asc"));
-    storiesUnsub = onSnapshot(q, (snap) => {
-      allStories = [];
-      snap.forEach(d => allStories.push({ id: d.id, ...d.data() }));
-      storiesByAuthor = new Map();
-      allStories.forEach(s => {
-        if (!storiesByAuthor.has(s.authorUid)) storiesByAuthor.set(s.authorUid, []);
-        storiesByAuthor.get(s.authorUid).push(s);
-      });
-      renderStoriesBar();
-    }, (err) => console.error("stories listener error", err));
-  }
-
-  async function hasSeenLatestStory(uid) {
-    const stories = storiesByAuthor.get(uid) || [];
-    if (!stories.length) return true;
-    const latest = stories[stories.length - 1];
-    try {
-      const snap = await getDoc(doc(db, "stories", latest.id, "viewers", currentUser.uid));
-      return snap.exists();
-    } catch (e) { return false; }
-  }
-
-  async function renderStoriesBar() {
-    const bar = document.getElementById("storiesBar");
-    if (!bar || !currentUser) return;
-
-    const authorUids = [...storiesByAuthor.keys()].filter(uid => uid !== currentUser.uid);
-    // Followed accounts surface first, like Instagram's ranking — then
-    // everyone else, each group ordered by their most recent story.
-    authorUids.sort((a, b) => {
-      const aFollowed = followingSet.has(a) ? 0 : 1;
-      const bFollowed = followingSet.has(b) ? 0 : 1;
-      if (aFollowed !== bFollowed) return aFollowed - bFollowed;
-      const aLatest = storiesByAuthor.get(a).slice(-1)[0]?.createdAt?.toMillis?.() || 0;
-      const bLatest = storiesByAuthor.get(b).slice(-1)[0]?.createdAt?.toMillis?.() || 0;
-      return bLatest - aLatest;
-    });
-
-    const myStories = storiesByAuthor.get(currentUser.uid) || [];
-    await Promise.all(authorUids.map(uid => getUserInfo(uid)));
-
-    let html = `
-      <div class="story-bubble" id="addStoryBtn">
-        <div class="story-ring ${myStories.length ? "seen-ring" : "add-ring"}">
-          <div class="story-avatar">${currentUserData.avatar ? `<img src="${currentUserData.avatar}" alt="">` : (currentUserData.name || "A").trim().charAt(0).toUpperCase()}</div>
-          <div class="story-plus" id="addStoryPlus"><i class="fa-solid fa-plus"></i></div>
-        </div>
-        <span class="story-label">Your Story</span>
-      </div>`;
-
-    for (const uid of authorUids) {
-      const info = userInfoCache.get(uid) || { name: "Artist", avatar: "" };
-      const seen = await hasSeenLatestStory(uid);
-      const initials = (info.name || "A").trim().charAt(0).toUpperCase();
-      html += `
-        <div class="story-bubble" data-uid="${uid}">
-          <div class="story-ring ${seen ? "seen-ring" : "unseen-ring"}">
-            <div class="story-avatar">${info.avatar ? `<img src="${info.avatar}" alt="">` : initials}</div>
-          </div>
-          <span class="story-label">${info.name}</span>
-        </div>`;
-    }
-
-    bar.innerHTML = html;
-
-    document.getElementById("addStoryBtn").addEventListener("click", () => {
-      if (myStories.length) openStoryViewer(currentUser.uid);
-      else openStoryComposer();
-    });
-    const plusBtn = document.getElementById("addStoryPlus");
-    if (plusBtn) plusBtn.addEventListener("click", (e) => { e.stopPropagation(); openStoryComposer(); });
-
-    bar.querySelectorAll(".story-bubble[data-uid]").forEach(el => {
-      el.addEventListener("click", () => openStoryViewer(el.dataset.uid));
-    });
-  }
-
-  // ── Composer ──
-  function openStoryComposer() {
-    document.getElementById("storyComposerOverlay").classList.add("active");
-    resetStoryComposer();
-  }
-  function closeStoryComposer() {
-    document.getElementById("storyComposerOverlay").classList.remove("active");
-  }
-  function resetStoryComposer() {
-    storyComposerType = "image";
-    storyComposerImageFile = null;
-    document.querySelectorAll(".story-tab").forEach(t => t.classList.toggle("active", t.dataset.type === "image"));
-    renderStoryComposerBody();
-  }
-  function renderStoryComposerBody() {
-    const body = document.getElementById("storyComposerBody");
-    const shareBtn = document.getElementById("storyShareBtn");
-    shareBtn.disabled = true;
-
-    if (storyComposerType === "image") {
-      body.innerHTML = `
-        <div style="width:100%;">
-          <label class="story-file-drop" for="storyImageInput">
-            <i class="fa-solid fa-image"></i>
-            <span>Tap to choose a photo</span>
-          </label>
-          <input type="file" accept="image/*" id="storyImageInput" style="display:none;">
-          <div class="story-img-preview" id="storyImgPreview"></div>
-        </div>`;
-      document.getElementById("storyImageInput").addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        storyComposerImageFile = file;
-        document.getElementById("storyImgPreview").innerHTML = `<img src="${URL.createObjectURL(file)}" alt="">`;
-        shareBtn.disabled = false;
-      });
-    } else if (storyComposerType === "text") {
-      body.innerHTML = `<textarea class="story-text-input" id="storyTextInput" maxlength="280" placeholder="Share something…"></textarea>`;
-      document.getElementById("storyTextInput").addEventListener("input", (e) => {
-        shareBtn.disabled = !e.target.value.trim();
-      });
-    } else {
-      body.innerHTML = `<input type="url" class="story-link-input" id="storyLinkInput" placeholder="Paste a link…">`;
-      document.getElementById("storyLinkInput").addEventListener("input", (e) => {
-        shareBtn.disabled = !e.target.value.trim();
-      });
-    }
-  }
-
-  document.querySelectorAll(".story-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".story-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      storyComposerType = tab.dataset.type;
-      storyComposerImageFile = null;
-      renderStoryComposerBody();
-    });
-  });
-  document.getElementById("storyComposerClose").addEventListener("click", closeStoryComposer);
-  document.getElementById("storyComposerOverlay").addEventListener("click", (e) => {
-    if (e.target.id === "storyComposerOverlay") closeStoryComposer();
-  });
-
-  document.getElementById("storyShareBtn").addEventListener("click", async () => {
-    if (!currentUser) return;
-    const btn = document.getElementById("storyShareBtn");
-    btn.disabled = true;
-    btn.textContent = "Sharing…";
-    try {
-      const payload = {
-        authorUid: currentUser.uid,
-        authorName: currentUserData.name,
-        authorAvatar: currentUserData.avatar || "",
-        type: storyComposerType,
-        createdAt: serverTimestamp()
-      };
-      if (storyComposerType === "image") {
-        if (!storyComposerImageFile) throw new Error("Pick a photo first.");
-        payload.imageUrl = await uploadToCloudinary(storyComposerImageFile);
-      } else if (storyComposerType === "text") {
-        const val = document.getElementById("storyTextInput").value.trim();
-        if (!val) throw new Error("Write something first.");
-        payload.text = val;
-      } else {
-        const val = document.getElementById("storyLinkInput").value.trim();
-        if (!val) throw new Error("Paste a link first.");
-        payload.linkUrl = val;
-      }
-      await addDoc(collection(db, "stories"), payload);
-      closeStoryComposer();
-    } catch (e) {
-      alert(e.message || "Couldn't share your story. Please try again.");
-    } finally {
-      btn.textContent = "Share to Story";
-      btn.disabled = false;
-    }
-  });
-
-  // ── Viewer ──
-  function openStoryViewer(uid) {
-    const stories = storiesByAuthor.get(uid) || [];
-    if (!stories.length) return;
-    viewerAuthorUid = uid;
-    viewerStories = [...stories];
-    viewerIndex = 0;
-    document.getElementById("storyViewerOverlay").classList.add("active");
-    renderStoryProgressRow();
-    showStoryAt(0);
-  }
-  function closeStoryViewer() {
-    cancelAnimationFrame(storyRAF);
-    isHolding = false;
-    document.getElementById("storyViewerOverlay").classList.remove("active");
-    renderStoriesBar();
-  }
-  function renderStoryProgressRow() {
-    const row = document.getElementById("storyProgressRow");
-    row.innerHTML = viewerStories.map((_, i) => `<div class="story-progress-bar"><div class="story-progress-fill" id="storyFill${i}"></div></div>`).join("");
-  }
-
-  // Press-and-hold-to-pause progress engine — runs on requestAnimationFrame
-  // instead of a plain setTimeout so a hold can freeze the exact elapsed
-  // time (storyElapsed) and pick back up from there, like WhatsApp/IG
-  // status, rather than the story just sliding past on a fixed clock.
-  function startStoryProgress(index) {
-    cancelAnimationFrame(storyRAF);
-    storyElapsed = 0;
-    storyStartTime = performance.now();
-    isHolding = false;
-    tickStoryProgress(index);
-  }
-  function tickStoryProgress(index) {
-    const fill = document.getElementById(`storyFill${index}`);
-    const frame = (now) => {
-      if (isHolding) { storyRAF = requestAnimationFrame(frame); return; }
-      const elapsed = storyElapsed + (now - storyStartTime);
-      const pct = Math.min(100, (elapsed / STORY_DURATION) * 100);
-      if (fill) fill.style.width = pct + "%";
-      if (pct >= 100) { showStoryAt(index + 1); return; }
-      storyRAF = requestAnimationFrame(frame);
-    };
-    storyRAF = requestAnimationFrame(frame);
-  }
-  function pauseStoryProgress() {
-    if (isHolding) return;
-    isHolding = true;
-    storyElapsed += performance.now() - storyStartTime;
-  }
-  function resumeStoryProgress(index) {
-    if (!isHolding) return;
-    isHolding = false;
-    storyStartTime = performance.now();
-  }
-
-  async function showStoryAt(index) {
-    cancelAnimationFrame(storyRAF);
-    if (index < 0 || index >= viewerStories.length) { closeStoryViewer(); return; }
-    viewerIndex = index;
-    const story = viewerStories[index];
-
-    viewerStories.forEach((_, i) => {
-      const fill = document.getElementById(`storyFill${i}`);
-      if (!fill) return;
-      fill.style.transition = "none";
-      fill.style.width = i < index ? "100%" : "0%";
-    });
-
-    const isOwn = story.authorUid === currentUser.uid;
-    const info = await getUserInfo(story.authorUid);
-    const createdDate = story.createdAt && story.createdAt.toDate ? story.createdAt.toDate() : null;
-    document.getElementById("storyViewerUser").innerHTML = `
-      <div class="story-viewer-avatar">${info.avatar ? `<img src="${info.avatar}" alt="">` : (info.name || "A").trim().charAt(0).toUpperCase()}</div>
-      <div>
-        <div class="story-viewer-name">${info.name}${info.verified ? ' <i class="fa-solid fa-circle-check" style="color:var(--blue);font-size:12px;"></i>' : ""}</div>
-        <div class="story-viewer-time">${timeAgo(createdDate)}</div>
-      </div>`;
-    document.getElementById("storyDeleteBtn").style.display = isOwn ? "block" : "none";
-
-    const content = document.getElementById("storyViewerContent");
-    if (story.type === "image" && story.imageUrl) {
-      content.innerHTML = `<img src="${story.imageUrl}" alt="">`;
-    } else if (story.type === "link" && story.linkUrl) {
-      content.innerHTML = `
-        <div class="story-link-card" id="storyLinkOpen">
-          <i class="fa-solid fa-link"></i>
-          <span>${story.linkUrl}</span>
-        </div>`;
-      document.getElementById("storyLinkOpen").addEventListener("click", (e) => {
-        e.stopPropagation();
-        window.open(story.linkUrl, "_blank", "noopener");
-      });
-    } else {
-      const safeText = (story.text || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      content.innerHTML = `<div class="story-text-card">${safeText}</div>`;
-    }
-
-    await renderStoryFooter(story, isOwn);
-
-    if (!isOwn) {
-      setDoc(doc(db, "stories", story.id, "viewers", currentUser.uid), { viewedAt: serverTimestamp() }).catch(() => {});
-    }
-
-    startStoryProgress(index);
-  }
-
-  // Attaches press-and-hold pause/resume to a story-viewer element. A
-  // short press (under the hold threshold) leaves didHold false so the
-  // element's own click handler (tap-to-navigate) still fires normally;
-  // a genuine hold sets didHold true so that same click is swallowed —
-  // releasing a hold should resume reading, never jump to the next story.
-  function attachHoldToPause(el) {
-    if (!el) return;
-    const start = () => {
-      didHold = false;
-      clearTimeout(holdTimer);
-      holdTimer = setTimeout(() => {
-        didHold = true;
-        pauseStoryProgress();
-      }, 180);
-    };
-    const end = () => {
-      clearTimeout(holdTimer);
-      if (didHold) resumeStoryProgress(viewerIndex);
-    };
-    el.addEventListener("pointerdown", start);
-    el.addEventListener("pointerup", end);
-    el.addEventListener("pointerleave", end);
-    el.addEventListener("pointercancel", end);
-  }
-  attachHoldToPause(document.getElementById("storyViewerContent"));
-  attachHoldToPause(document.getElementById("storyTapLeft"));
-  attachHoldToPause(document.getElementById("storyTapRight"));
-
-  async function renderStoryFooter(story, isOwn) {
-    const footer = document.getElementById("storyViewerFooter");
-    if (isOwn) {
-      let viewerCount = 0;
-      try {
-        const snap = await getDocs(collection(db, "stories", story.id, "viewers"));
-        viewerCount = snap.size;
-      } catch (e) {}
-      footer.innerHTML = `<button type="button" class="story-viewers-btn" id="storyViewersBtn"><i class="fa-solid fa-eye"></i> ${viewerCount} viewer${viewerCount === 1 ? "" : "s"}</button>`;
-      document.getElementById("storyViewersBtn").addEventListener("click", (e) => { e.stopPropagation(); openStoryViewers(story); });
-    } else {
-      let liked = false;
-      try {
-        const likeSnap = await getDoc(doc(db, "stories", story.id, "likes", currentUser.uid));
-        liked = likeSnap.exists();
-      } catch (e) {}
-      footer.innerHTML = `<button type="button" class="story-like-btn ${liked ? "liked" : ""}" id="storyLikeBtn"><i class="fa-${liked ? "solid" : "regular"} fa-heart"></i></button>`;
-      document.getElementById("storyLikeBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleStoryLike(story); });
-    }
-  }
-
-  async function toggleStoryLike(story) {
-    const btn = document.getElementById("storyLikeBtn");
-    const alreadyLiked = btn.classList.contains("liked");
-    btn.classList.toggle("liked", !alreadyLiked);
-    btn.querySelector("i").className = `fa-${!alreadyLiked ? "solid" : "regular"} fa-heart`;
-    try {
-      const likeRef = doc(db, "stories", story.id, "likes", currentUser.uid);
-      if (alreadyLiked) {
-        await deleteDoc(likeRef);
-      } else {
-        await setDoc(likeRef, { uid: currentUser.uid, likedAt: serverTimestamp() });
-        sendNotification(story.authorUid, "story_like", {});
-      }
-    } catch (e) {
-      console.error(e);
-      btn.classList.toggle("liked", alreadyLiked);
-      btn.querySelector("i").className = `fa-${alreadyLiked ? "solid" : "regular"} fa-heart`;
-    }
-  }
-
-  async function openStoryViewers(story) {
-    pauseStoryProgress(); // freeze the story while checking the viewer list
-    document.getElementById("storyViewersOverlay").classList.add("active");
-    const listEl = document.getElementById("storyViewersList");
-    listEl.innerHTML = `<div class="feed-loading"><i class="fa-solid fa-spinner fa-spin"></i>Loading…</div>`;
-    try {
-      const [viewersSnap, likesSnap] = await Promise.all([
-        getDocs(collection(db, "stories", story.id, "viewers")),
-        getDocs(collection(db, "stories", story.id, "likes"))
-      ]);
-      const likedUids = new Set();
-      likesSnap.forEach(d => likedUids.add(d.id));
-      const viewerUids = [];
-      viewersSnap.forEach(d => viewerUids.push(d.id));
-      if (!viewerUids.length) {
-        listEl.innerHTML = `<div class="feed-empty"><i class="fa-solid fa-eye-slash"></i>No views yet.</div>`;
-        return;
-      }
-      const infos = await Promise.all(viewerUids.map(uid => getUserInfo(uid).then(info => ({ uid, ...info }))));
-      listEl.innerHTML = infos.map(v => {
-        const initials = (v.name || "A").trim().charAt(0).toUpperCase();
-        const avatarHtml = v.avatar ? `<img src="${v.avatar}" alt="">` : initials;
-        return `
-          <div class="story-viewer-row" data-uid="${v.uid}">
-            <div class="story-viewer-row-avatar">${avatarHtml}</div>
-            <div class="story-viewer-row-name">${v.name}</div>
-            ${likedUids.has(v.uid) ? '<i class="fa-solid fa-heart" style="color:var(--rose);font-size:13px;"></i>' : ""}
-          </div>`;
-      }).join("");
-      listEl.querySelectorAll(".story-viewer-row").forEach(row => {
-        row.addEventListener("click", () => { location.href = `viewpro.html?uid=${encodeURIComponent(row.dataset.uid)}`; });
-      });
-    } catch (e) {
-      console.error(e);
-      listEl.innerHTML = `<div class="feed-empty"><i class="fa-solid fa-triangle-exclamation"></i>Couldn't load viewers.</div>`;
-    }
-  }
-
-  document.getElementById("storyViewersClose").addEventListener("click", () => {
-    document.getElementById("storyViewersOverlay").classList.remove("active");
-    resumeStoryProgress(viewerIndex); // pick up from where it was paused, don't restart the story
-  });
-
-  document.getElementById("storyCloseBtn").addEventListener("click", closeStoryViewer);
-  document.getElementById("storyTapLeft").addEventListener("click", () => {
-    if (didHold) { didHold = false; return; } // a hold-release shouldn't also count as a nav tap
-    showStoryAt(viewerIndex - 1);
-  });
-  document.getElementById("storyTapRight").addEventListener("click", () => {
-    if (didHold) { didHold = false; return; }
-    showStoryAt(viewerIndex + 1);
-  });
-
-  document.getElementById("storyDeleteBtn").addEventListener("click", async () => {
-    const story = viewerStories[viewerIndex];
-    if (!story || story.authorUid !== currentUser.uid) return;
-    if (!confirm("Delete this story? This can't be undone.")) return;
-    cancelAnimationFrame(storyRAF);
-    try {
-      await deleteDoc(doc(db, "stories", story.id));
-      viewerStories.splice(viewerIndex, 1);
-      renderStoryProgressRow();
-      if (!viewerStories.length) { closeStoryViewer(); return; }
-      showStoryAt(Math.min(viewerIndex, viewerStories.length - 1));
-    } catch (e) {
-      console.error(e);
-      alert("Couldn't delete this story. Please try again.");
-      showStoryAt(viewerIndex);
     }
   });
 
@@ -2587,7 +1816,6 @@
         await setDoc(doc(db, "users", targetUid, "followers", currentUser.uid), { since: serverTimestamp() });
         sendNotification(targetUid, "follow");
       }
-      renderStoriesBar(); // re-rank the stories bar now that follow state changed
     } catch (e) {
       console.error(e);
       // roll back on failure
@@ -2848,8 +2076,8 @@
           bumpCommentCount(postId, 1);
           input.value = "";
           row.classList.remove("open");
-          const postData = await getPostData(postId);
-          if (postData) sendNotification(postData.authorUid, "reply", { postId });
+          const authorUid = await getPostAuthorUid(postId);
+          sendNotification(authorUid, "reply", { postId });
         } catch (e) { console.error(e); }
         input.disabled = false;
       }
@@ -2943,7 +2171,6 @@
             await setDoc(doc(db, "users", targetUid, "followers", currentUser.uid), { since: serverTimestamp() });
             sendNotification(targetUid, "follow");
           }
-          renderStoriesBar();
         } catch (e) {
           console.error(e);
           followingSet[wasFollowing ? "add" : "delete"](targetUid);
