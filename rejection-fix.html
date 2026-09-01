@@ -39,7 +39,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .detail-val{font-size:13px;font-weight:700;}
 .section-title{font-size:14px;font-weight:800;margin-bottom:4px;}
 .section-sub{font-size:12px;color:var(--grey);line-height:1.5;margin-bottom:12px;}
-.filezone{width:100%;padding:18px;background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .15s;margin-bottom:20px;}
+
+/* Editable metadata fields */
+.field-row{margin-bottom:12px;}
+.field-row:last-child{margin-bottom:0;}
+.field-row label{display:block;font-size:10.5px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.field-row input{width:100%;background:var(--black-4);border:1px solid var(--white-10);border-radius:10px;padding:11px 13px;color:var(--white);font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s;}
+.field-row input:focus{border-color:rgba(255,255,255,.4);}
+.field-row input::placeholder{color:var(--grey-dark);}
+
+/* Original-on-file reference */
+.original-media-label{font-size:10px;font-weight:800;color:var(--grey-dark);letter-spacing:1.5px;margin-bottom:12px;}
+.original-media-row{display:flex;gap:12px;align-items:center;}
+.original-media-cover{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--black-4);border:1px solid var(--white-10);}
+.original-media-audio{flex:1;min-width:0;}
+.original-media-audio audio{width:100%;height:34px;}
+
+/* New-pick preview */
+.media-preview{margin-top:10px;}
+.media-preview audio{width:100%;height:36px;}
+.media-preview img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid var(--white-10);display:block;}
+
+.filezone{width:100%;padding:18px;background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .15s;margin-bottom:8px;}
 .filezone.has-file{border-color:var(--green-brd);text-align:left;}
 .filezone-empty-icon{width:52px;height:52px;margin:0 auto 12px;background:var(--black-4);border:1px solid var(--white-10);border-radius:14px;display:flex;align-items:center;justify-content:center;}
 .filezone-empty-icon svg{width:24px;height:24px;color:var(--grey-dark);}
@@ -51,6 +72,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .filezone-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .filezone-size{font-size:11px;color:var(--grey);}
 .filezone-swap{width:18px;height:18px;color:var(--grey-dark);flex-shrink:0;}
+.zone-block{margin-bottom:20px;}
 .error-banner{display:flex;gap:8px;padding:12px 14px;background:var(--rose-dim);border:1px solid var(--rose-brd);border-radius:10px;margin-bottom:20px;}
 .error-banner svg{width:16px;height:16px;color:var(--rose);flex-shrink:0;margin-top:1px;}
 .error-banner span{font-size:12.5px;color:var(--rose);line-height:1.5;}
@@ -70,31 +92,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
 .loading-wrap .spinner{width:28px;height:28px;border-width:3px;}
 .loading-wrap span{font-size:12.5px;color:var(--grey);}
 input[type=file]{display:none;}
-
-/* ─── Metadata edit fields (Artist / Title / Copyright) ─── */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--grey);margin-bottom:6px;}
-.field input{width:100%;background:var(--black-4);border:1px solid var(--white-10);border-radius:10px;padding:12px 14px;color:var(--white);font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;transition:border-color .15s;}
-.field input::placeholder{color:var(--grey-dark);}
-.field input:focus{border-color:var(--white-40);}
-
-/* ─── Composer / songwriter credit rows ─── */
-.composer-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
-.composer-row input, .composer-row select{flex:1;min-width:0;background:var(--black-4);border:1px solid var(--white-10);border-radius:10px;padding:11px 12px;color:var(--white);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
-.composer-row select{cursor:pointer;flex:0 0 40%;}
-.composer-row input:focus, .composer-row select:focus{border-color:var(--white-40);}
-.composer-remove{width:38px;height:38px;flex-shrink:0;border-radius:10px;background:var(--rose-dim);border:1px solid var(--rose-brd);color:var(--rose);display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.composer-remove:hover{background:rgba(239,68,68,0.18);}
-.composer-remove svg{width:13px;height:13px;}
-.add-composer-btn{width:100%;padding:11px;border:1px dashed var(--white-10);border-radius:10px;color:var(--grey);font-size:12px;font-weight:800;text-align:center;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;}
-.add-composer-btn:hover{border-color:var(--white-40);color:var(--white-70);}
-.add-composer-btn svg{width:13px;height:13px;}
-
-/* ─── Audio / cover preview (confirm before resubmitting) ─── */
-.media-preview{margin:-10px 0 20px;}
-.media-preview audio{width:100%;height:38px;border-radius:10px;}
-.media-preview audio::-webkit-media-controls-panel{background:var(--black-4);}
-.cover-preview-img{width:110px;height:110px;object-fit:cover;border-radius:12px;border:1px solid var(--white-10);display:block;}
 </style>
 </head>
 <body>
@@ -140,7 +137,11 @@ const db   = getFirestore(app);
 const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/dlbgqtvqg/auto/upload";
 const CLOUDINARY_PRESET = "glmamp2y";
 
-// Same admin-notify backend the app's RejectionFixScreen hits.
+// Same admin-notify backend the app's RejectionFixScreen hits — untouched.
+// The metadata edits below just mutate `submissionData` before this is
+// called, so the existing email template keeps receiving the same
+// field names (artist_name, release_title, copyright, songwriters…)
+// it always has, just with corrected values.
 const NOTIFY_URL  = "https://four44music-broadcast-backend.onrender.com/api/submissions/notify";
 const APP_SECRET  = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
 
@@ -162,10 +163,6 @@ let pickedAudio   = null;
 let pickedCover   = null;
 let submitting    = false;
 let errorMsg      = "";
-let composerCredits  = [];   // {name, role, ipi} — editable Songwriters & Composers list
-let audioPreviewUrl  = null; // object URL for the audio preview player
-let coverPreviewUrl  = null; // object URL for the cover art preview image
-const WRITER_ROLES = ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer'];
 
 function isCopyright(category) {
   const c = (category || "").toLowerCase();
@@ -193,6 +190,28 @@ function fmtFeaturing(data) {
   }
   if (data.featuring && data.featuring.trim()) return data.featuring.trim();
   return "None";
+}
+
+// Mirrors the credits.writer shape used on the Release Info step
+// ({ name, role, ipi }) — updates just the composer's name so any
+// existing role/IPI already on file isn't wiped out by this quick fix.
+function getComposerName(data) {
+  const writers = (data.credits && Array.isArray(data.credits.writer)) ? data.credits.writer : [];
+  return (writers[0] && writers[0].name) || "";
+}
+function buildUpdatedWriterCredits(data, composerName) {
+  const writers = (data.credits && Array.isArray(data.credits.writer)) ? [...data.credits.writer] : [];
+  const trimmed = (composerName || "").trim();
+  if (!trimmed) return writers; // left blank on purpose — don't wipe existing credits
+  if (writers.length && writers[0] && (writers[0].name || "").trim().toLowerCase() === trimmed.toLowerCase()) {
+    return writers; // unchanged
+  }
+  if (writers.length) {
+    writers[0] = { name: trimmed, role: (writers[0] && writers[0].role) || "Composer", ipi: (writers[0] && writers[0].ipi) || "" };
+  } else {
+    writers.push({ name: trimmed, role: "Composer", ipi: "" });
+  }
+  return writers;
 }
 
 async function loadData() {
@@ -226,6 +245,10 @@ function render() {
   const title    = data.releaseTitle || "Your release";
   const copyrightMode = isCopyright(category);
 
+  const originalAudioUrl = (Array.isArray(data.audioFiles) && data.audioFiles[0] && data.audioFiles[0].url) || "";
+  const originalCoverUrl = data.officialCoverURL || data.coverURL || "";
+  const hasOriginalMedia = !copyrightMode && (originalAudioUrl || originalCoverUrl);
+
   content.innerHTML = `
     <div class="card reason-card">
       <div class="reason-head">
@@ -248,43 +271,53 @@ function render() {
       <div class="filezone" id="zone-license" onclick="document.getElementById('input-license').click()"></div>
       <input type="file" id="input-license" accept="application/pdf,.pdf">
     ` : `
-      <div class="section-title">Release Details</div>
-      <div class="section-sub">Fix any metadata mistakes along with your re-upload.</div>
-      <div class="field">
-        <label>Artist Name</label>
-        <input type="text" id="editArtistName" placeholder="Artist name" value="${escHtml(data.artistName || "")}">
-      </div>
-      <div class="field">
-        <label>Release Title</label>
-        <input type="text" id="editReleaseTitle" placeholder="Release title" value="${escHtml(data.releaseTitle || "")}">
-      </div>
-      <div class="field">
-        <label>Copyright Holder</label>
-        <input type="text" id="editCopyright" placeholder="e.g. © 2026 Your Name" value="${escHtml(data.copyright || "")}">
+      ${hasOriginalMedia ? `
+        <div class="card">
+          <div class="original-media-label">CURRENTLY ON FILE — WHAT WE RECEIVED</div>
+          <div class="original-media-row">
+            ${originalCoverUrl ? `<img class="original-media-cover" src="${escHtml(originalCoverUrl)}" alt="Current cover">` : ""}
+            <div class="original-media-audio">
+              ${originalAudioUrl ? `<audio controls src="${escHtml(originalAudioUrl)}"></audio>` : `<span style="font-size:12px;color:var(--grey);">No audio on file yet.</span>`}
+            </div>
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="section-title">Update Release Details</div>
+      <div class="section-sub">Fix anything that was wrong — this goes out with your resubmission.</div>
+      <div class="card">
+        <div class="field-row">
+          <label>Artist Name</label>
+          <input type="text" id="fieldArtistName" value="${escHtml(data.artistName || "")}" placeholder="Artist name">
+        </div>
+        <div class="field-row">
+          <label>Release Title</label>
+          <input type="text" id="fieldReleaseTitle" value="${escHtml(data.releaseTitle || "")}" placeholder="Release title">
+        </div>
+        <div class="field-row">
+          <label>Copyright Holder</label>
+          <input type="text" id="fieldCopyright" value="${escHtml(data.copyright || "")}" placeholder="e.g. © 2026 Your Name">
+        </div>
+        <div class="field-row">
+          <label>Composer</label>
+          <input type="text" id="fieldComposer" value="${escHtml(getComposerName(data))}" placeholder="Composer / songwriter name">
+        </div>
       </div>
 
-      <div class="section-title">Songwriters &amp; Composers</div>
-      <div class="section-sub">Correct any composer credit names, roles, or IPI numbers.</div>
-      <div id="composerList"></div>
-      <button type="button" class="add-composer-btn" id="addComposerBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Add Songwriter / Composer
-      </button>
-
-      <div class="section-title" style="margin-top:20px;">Re-upload Audio File</div>
-      <div class="section-sub">Fixed version of the track — MP3 only, max 50 MB.</div>
-      <div class="filezone" id="zone-audio" onclick="document.getElementById('input-audio').click()"></div>
-      <input type="file" id="input-audio" accept="audio/mpeg,.mp3">
-      <div class="media-preview" id="audioPreviewWrap" style="display:none;">
-        <audio id="audioPreviewPlayer" controls></audio>
+      <div class="zone-block">
+        <div class="section-title">Re-upload Audio File</div>
+        <div class="section-sub">Fixed version of the track — MP3 only, max 50 MB.</div>
+        <div class="filezone" id="zone-audio" onclick="document.getElementById('input-audio').click()"></div>
+        <input type="file" id="input-audio" accept="audio/mpeg,.mp3">
+        <div class="media-preview" id="audioPreviewWrap"></div>
       </div>
 
-      <div class="section-title">Re-upload Cover Art</div>
-      <div class="section-sub">Fixed cover artwork — JPG or PNG, square, max 15 MB.</div>
-      <div class="filezone" id="zone-cover" onclick="document.getElementById('input-cover').click()"></div>
-      <input type="file" id="input-cover" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
-      <div class="media-preview" id="coverPreviewWrap" style="display:none;">
-        <img class="cover-preview-img" id="coverPreviewImg" src="" alt="Cover preview">
+      <div class="zone-block">
+        <div class="section-title">Re-upload Cover Art</div>
+        <div class="section-sub">Fixed cover artwork — JPG or PNG, square, max 15 MB.</div>
+        <div class="filezone" id="zone-cover" onclick="document.getElementById('input-cover').click()"></div>
+        <input type="file" id="input-cover" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+        <div class="media-preview" id="coverPreviewWrap"></div>
       </div>
     `}
 
@@ -305,14 +338,6 @@ function render() {
   } else {
     document.getElementById("input-audio").addEventListener("change", e => handlePick(e, "audio"));
     document.getElementById("input-cover").addEventListener("change", e => handlePick(e, "cover"));
-    composerCredits = Array.isArray(data.credits && data.credits.writer)
-      ? data.credits.writer.map(c => ({ ...c }))
-      : [];
-    renderComposerRows();
-    document.getElementById("addComposerBtn").addEventListener("click", () => {
-      composerCredits.push({ name: "", role: "", ipi: "" });
-      renderComposerRows();
-    });
   }
 
   document.getElementById("loadingState").style.display = "none";
@@ -355,6 +380,9 @@ function setError(msg) {
   slot.innerHTML = msg ? `<div class="error-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${escHtml(msg)}</span></div>` : "";
 }
 
+// New file picks now also drop a local (object-URL) preview so the
+// artist can listen / look before resubmitting — nothing is uploaded
+// until they hit Resubmit.
 function handlePick(e, kind) {
   const file = e.target.files[0];
   if (!file) return;
@@ -367,11 +395,15 @@ function handlePick(e, kind) {
     if (!file.name.toLowerCase().endsWith(".mp3")) { setError("Only MP3 files are accepted."); return; }
     if (file.size > 50 * 1024 * 1024) { setError("Audio file exceeds 50 MB limit."); return; }
     pickedAudio = { file, name: file.name, size: file.size };
+    const wrap = document.getElementById("audioPreviewWrap");
+    if (wrap) wrap.innerHTML = `<audio controls src="${URL.createObjectURL(file)}"></audio>`;
   } else if (kind === "cover") {
     const ext = file.name.toLowerCase();
     if (!ext.endsWith(".jpg") && !ext.endsWith(".jpeg") && !ext.endsWith(".png")) { setError("Only JPG or PNG accepted."); return; }
     if (file.size > 15 * 1024 * 1024) { setError("Cover art exceeds 15 MB limit."); return; }
     pickedCover = { file, name: file.name, size: file.size };
+    const wrap = document.getElementById("coverPreviewWrap");
+    if (wrap) wrap.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="Cover preview">`;
   }
   renderZones();
 }
@@ -388,6 +420,12 @@ async function uploadToCloudinary(file, folder) {
   return null;
 }
 
+// UNCHANGED end-to-end — still hits the exact same admin-notify
+// endpoint with the exact same field names the current email template
+// expects. The only difference is that by the time this runs,
+// `submissionData` (aliased as `data`) may already have been mutated
+// with the artist's corrected artist_name / release_title / copyright
+// / songwriters, so the email just reflects the fix.
 async function notifyAdmin(kind, { licenseUrl, audioUrl, coverUrl } = {}) {
   const data     = submissionData;
   const category = (data.rejectionCategory || "Other").toString().trim();
@@ -474,7 +512,21 @@ async function submit() {
 
   if (!data._id) { setError("Missing submission reference. Please go back and try again."); return; }
   if (copyrightMode && !pickedLicense) { setError("Please upload your license / proof document."); return; }
-  if (!copyrightMode && (!pickedAudio || !pickedCover)) { setError("Please upload both the fixed MP3 and cover art."); return; }
+
+  let newArtistName = data.artistName || "";
+  let newReleaseTitle = data.releaseTitle || "";
+  let newCopyright = data.copyright || "";
+  let newComposer = getComposerName(data);
+
+  if (!copyrightMode) {
+    if (!pickedAudio || !pickedCover) { setError("Please upload both the fixed MP3 and cover art."); return; }
+    newArtistName   = (document.getElementById("fieldArtistName")?.value || "").trim();
+    newReleaseTitle = (document.getElementById("fieldReleaseTitle")?.value || "").trim();
+    newCopyright    = (document.getElementById("fieldCopyright")?.value || "").trim();
+    newComposer     = document.getElementById("fieldComposer")?.value || "";
+    if (!newArtistName)   { setError("Artist name is required."); return; }
+    if (!newReleaseTitle) { setError("Release title is required."); return; }
+  }
 
   submitting = true;
   setError("");
@@ -501,6 +553,14 @@ async function submit() {
       if (!audioUrl) { throw new Error("Audio upload failed. Check your connection and try again."); }
       const coverUrl = await uploadToCloudinary(pickedCover.file, "covers");
       if (!coverUrl) { throw new Error("Cover art upload failed. Check your connection and try again."); }
+
+      const updatedWriters = buildUpdatedWriterCredits(data, newComposer);
+      const updatedCredits = {
+        producer: (data.credits && data.credits.producer) || [],
+        musician: (data.credits && data.credits.musician) || [],
+        writer:   updatedWriters,
+      };
+
       await updateDoc(docRef, {
         status: "Review",
         rejectionReason: deleteField(),
@@ -515,7 +575,20 @@ async function submit() {
         // would ever show the corrected artwork.
         coverURL: coverUrl,
         officialCoverURL: coverUrl,
+        artistName: newArtistName,
+        releaseTitle: newReleaseTitle,
+        copyright: newCopyright,
+        credits: updatedCredits,
       });
+
+      // Reflect the edits on the in-memory object too, so notifyAdmin()
+      // (below) — which reads straight off `submissionData` — sends
+      // the corrected metadata in the same admin email it always sends.
+      data.artistName   = newArtistName;
+      data.releaseTitle = newReleaseTitle;
+      data.copyright     = newCopyright;
+      data.credits        = updatedCredits;
+
       notifyResult = await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
     }
 
