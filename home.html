@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>444Music Distribution</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://res.cloudinary.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -981,6 +983,15 @@
     }
     .story-link-card i { color: var(--blue); font-size: 18px; flex-shrink: 0; }
     .story-link-card span { color: var(--white-90); font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .story-repost-badge {
+      position: absolute; top: 14px; left: 14px; z-index: 3;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+      border: 1px solid var(--white-20); border-radius: 100px;
+      padding: 6px 12px; font-size: 11.5px; font-weight: 700; color: var(--white);
+      cursor: pointer;
+    }
+    .story-viewer-user-clickable { cursor: pointer; }
     .story-tap-zone { position: absolute; top: 60px; bottom: 60px; width: 33%; z-index: 2; cursor: pointer; }
     .story-tap-left { left: 0; }
     .story-tap-right { right: 0; }
@@ -1082,6 +1093,84 @@
     }
     .story-share-btn:hover { opacity: .85; }
     .story-share-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ─── SHARE SHEET (IG-style: people + Add to Story) ─── */
+    .share-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px); z-index: 5500;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .share-overlay.active { opacity: 1; pointer-events: all; }
+    .share-panel {
+      position: fixed; left: 0; right: 0; bottom: -100%; max-height: 78vh;
+      z-index: 6000; background: var(--black-1); border-top: 1px solid var(--border);
+      border-radius: 22px 22px 0 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.7);
+      display: flex; flex-direction: column;
+      transition: bottom 0.38s cubic-bezier(0.4,0,0.2,1);
+    }
+    .share-panel.active { bottom: 0; }
+    .share-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; flex-shrink: 0;
+    }
+    .share-panel-close {
+      width: 30px; height: 30px; display: grid; place-items: center;
+      border-radius: 8px; border: 1px solid var(--border);
+      cursor: pointer; color: var(--grey); font-size: 14px; transition: all 0.2s;
+    }
+    .share-panel-close:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--rose); }
+    .share-panel-body { overflow-y: auto; padding: 14px 16px 20px; }
+
+    .share-story-row {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      background: var(--white-06); border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px 14px; margin-bottom: 16px; cursor: pointer; color: var(--white);
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; transition: all 0.2s;
+    }
+    .share-story-row:hover { border-color: var(--border-hover); background: var(--black-4); }
+    .share-story-row:disabled { opacity: 0.5; cursor: not-allowed; }
+    .share-story-icon {
+      width: 38px; height: 38px; border-radius: 50%; background: var(--black-4);
+      border: 1px solid var(--border); display: grid; place-items: center;
+      color: var(--white); font-size: 16px; flex-shrink: 0;
+    }
+
+    .share-people-search { position: relative; margin-bottom: 12px; }
+    .share-people-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--grey); font-size: 13px; }
+    .share-people-search input {
+      width: 100%; background: var(--black-3); border: 1px solid var(--border); border-radius: 100px;
+      padding: 10px 14px 10px 38px; color: var(--white); font-family: 'Nunito', sans-serif; font-size: 13px; outline: none;
+    }
+    .share-people-search input:focus { border-color: var(--border-hover); }
+
+    .share-people-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; min-height: 40px; }
+    .share-person-row { display: flex; align-items: center; gap: 12px; padding: 9px 6px; border-radius: 12px; }
+    .share-person-row:hover { background: var(--white-06); }
+    .share-person-avatar {
+      width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      background: var(--black-4); border: 1px solid var(--border); display: grid; place-items: center;
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 14px; color: var(--white-70);
+    }
+    .share-person-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .share-person-name { flex: 1; font-size: 13.5px; font-weight: 700; color: var(--white-90); }
+    .share-send-btn {
+      background: var(--white); color: var(--black); border: none; border-radius: 100px;
+      padding: 7px 16px; font-size: 12px; font-weight: 800; cursor: pointer;
+      font-family: 'Nunito', sans-serif; transition: all 0.2s; flex-shrink: 0;
+    }
+    .share-send-btn:hover { opacity: 0.85; }
+    .share-send-btn.sent { background: transparent; border: 1px solid var(--border-hover); color: var(--white-70); cursor: default; }
+    .share-send-btn:disabled { opacity: 0.6; cursor: default; }
+
+    .share-more-row { display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .share-more-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--white-06); border: 1px solid var(--border); border-radius: 100px;
+      padding: 11px; font-size: 12.5px; font-weight: 700; color: var(--white-70); cursor: pointer;
+      font-family: 'Nunito', sans-serif; transition: all 0.2s;
+    }
+    .share-more-btn:hover { border-color: var(--border-hover); color: var(--white); }
 
     footer {
       position: relative; z-index: 1;
@@ -1388,6 +1477,31 @@
   </div>
 </div>
 
+<!-- ═══ SHARE SHEET (posts) ═══ -->
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-panel" id="sharePanel">
+    <div class="share-panel-header">
+      <span>Share</span>
+      <div class="share-panel-close" id="shareModalClose"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="share-panel-body">
+      <button type="button" class="share-story-row" id="shareAddToStoryBtn">
+        <div class="share-story-icon"><i class="fa-solid fa-circle-plus"></i></div>
+        <span>Add to Your Story</span>
+      </button>
+      <div class="share-people-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="sharePeopleSearch" placeholder="Search people…" autocomplete="off">
+      </div>
+      <div class="share-people-list" id="sharePeopleList"></div>
+      <div class="share-more-row">
+        <button type="button" class="share-more-btn" id="shareCopyLinkBtn"><i class="fa-solid fa-link"></i> Copy Link</button>
+        <button type="button" class="share-more-btn" id="shareMoreBtn"><i class="fa-solid fa-ellipsis"></i> More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
@@ -1449,6 +1563,9 @@
   let holdTimer = null;
   let didHold = false;
 
+  // Share sheet state
+  let shareTargetPost = null;
+
   // ── Live user-info cache ──────────────────────────────────────────────────
   // Posts/comments used to store a name+avatar SNAPSHOT at creation time, so an
   // old post kept showing whatever picture the author had when they posted —
@@ -1476,6 +1593,14 @@
   onAuthStateChanged(auth, async (user) => {
     if (!user) { location.href = "login.html"; return; }
     currentUser = user;
+
+    // Fire this FIRST, before any profile/follow/feed loading — it was
+    // previously queued behind three sequential Firestore round-trips
+    // (user doc, analytics doc, following list), which is what made the
+    // ad feel like it took ~5s to appear. Its own query now starts the
+    // instant auth resolves, in parallel with everything else, so the
+    // hero-section ad shows as fast as the connection allows.
+    loadAndShowAd();
 
     // ── Identity: sourced from users/{uid} — the SAME doc profile.html
     // reads/writes — so the avatar and name here always match the
@@ -1518,7 +1643,6 @@
     loadFeed(currentTab);
     setupNotifications();
     setupStories();
-    loadAndShowAd();
   });
 
   // ─── Promo ad (hero) ────────────────────────────────────────────────────
@@ -1629,6 +1753,8 @@
     if (n.type === "follow")  { icon = "fa-user-plus"; text = `<b>${n.fromName || "Someone"}</b> started following you`; }
     else if (n.type === "like")    { icon = "fa-heart";     text = `<b>${n.fromName || "Someone"}</b> liked your post`; }
     else if (n.type === "story_like") { icon = "fa-heart";  text = `<b>${n.fromName || "Someone"}</b> liked your story`; }
+    else if (n.type === "share")      { icon = "fa-share";  text = `<b>${n.fromName || "Someone"}</b> shared a post with you`; }
+    else if (n.type === "story_share"){ icon = "fa-circle-plus"; text = `<b>${n.fromName || "Someone"}</b> added your post to their story`; }
     else if (n.type === "comment") { icon = "fa-comment";   text = `<b>${n.fromName || "Someone"}</b> commented on your post`; }
     else if (n.type === "reply")   { icon = "fa-reply";     text = `<b>${n.fromName || "Someone"}</b> replied to your comment`; }
     const initials = (n.fromName || "A").trim().charAt(0).toUpperCase();
@@ -2125,30 +2251,46 @@
     const isOwn = story.authorUid === currentUser.uid;
     const info = await getUserInfo(story.authorUid);
     const createdDate = story.createdAt && story.createdAt.toDate ? story.createdAt.toDate() : null;
-    document.getElementById("storyViewerUser").innerHTML = `
+    const storyUserEl = document.getElementById("storyViewerUser");
+    storyUserEl.classList.add("story-viewer-user-clickable");
+    storyUserEl.innerHTML = `
       <div class="story-viewer-avatar">${info.avatar ? `<img src="${info.avatar}" alt="">` : (info.name || "A").trim().charAt(0).toUpperCase()}</div>
       <div>
         <div class="story-viewer-name">${info.name}${info.verified ? ' <i class="fa-solid fa-circle-check" style="color:var(--blue);font-size:12px;"></i>' : ""}</div>
         <div class="story-viewer-time">${timeAgo(createdDate)}</div>
       </div>`;
+    // Clicking the author, like a post, opens their profile — overwritten
+    // (not appended) each call since this element persists across stories.
+    storyUserEl.onclick = () => { location.href = `viewpro.html?uid=${encodeURIComponent(story.authorUid)}`; };
     document.getElementById("storyDeleteBtn").style.display = isOwn ? "block" : "none";
 
     const content = document.getElementById("storyViewerContent");
+    // A story added via a post's "Add to Your Story" carries sharedFromUid —
+    // show who the original post belongs to, also clickable to their profile.
+    const repostBadge = story.sharedFromUid
+      ? `<div class="story-repost-badge" id="storyRepostBadge"><i class="fa-solid fa-retweet"></i> ${story.sharedFromName || "Original post"}</div>`
+      : "";
     if (story.type === "image" && story.imageUrl) {
-      content.innerHTML = `<img src="${story.imageUrl}" alt="">`;
+      content.innerHTML = `<img src="${story.imageUrl}" alt="">${repostBadge}`;
     } else if (story.type === "link" && story.linkUrl) {
       content.innerHTML = `
         <div class="story-link-card" id="storyLinkOpen">
           <i class="fa-solid fa-link"></i>
           <span>${story.linkUrl}</span>
-        </div>`;
+        </div>${repostBadge}`;
       document.getElementById("storyLinkOpen").addEventListener("click", (e) => {
         e.stopPropagation();
         window.open(story.linkUrl, "_blank", "noopener");
       });
     } else {
       const safeText = (story.text || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      content.innerHTML = `<div class="story-text-card">${safeText}</div>`;
+      content.innerHTML = `<div class="story-text-card">${safeText}</div>${repostBadge}`;
+    }
+    if (story.sharedFromUid) {
+      document.getElementById("storyRepostBadge").addEventListener("click", (e) => {
+        e.stopPropagation();
+        location.href = `viewpro.html?uid=${encodeURIComponent(story.sharedFromUid)}`;
+      });
     }
 
     await renderStoryFooter(story, isOwn);
@@ -2297,6 +2439,138 @@
       console.error(e);
       alert("Couldn't delete this story. Please try again.");
       showStoryAt(viewerIndex);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SHARE SHEET — people to send the post to (currently-followed accounts),
+  // "Add to Your Story" (reposts the post's own content as a new story and
+  // notifies its original author), and link fallbacks.
+  // ═══════════════════════════════════════════════════════════════════════
+
+  function openShareModal(post) {
+    shareTargetPost = post;
+    document.getElementById("shareOverlay").classList.add("active");
+    document.getElementById("sharePanel").classList.add("active");
+    document.getElementById("sharePeopleSearch").value = "";
+    renderSharePeopleList("");
+  }
+  function closeShareModal() {
+    document.getElementById("shareOverlay").classList.remove("active");
+    document.getElementById("sharePanel").classList.remove("active");
+    shareTargetPost = null;
+  }
+  document.getElementById("shareModalClose").addEventListener("click", closeShareModal);
+  document.getElementById("shareOverlay").addEventListener("click", (e) => {
+    if (e.target.id === "shareOverlay") closeShareModal();
+  });
+  document.getElementById("sharePeopleSearch").addEventListener("input", (e) => {
+    renderSharePeopleList(e.target.value.trim());
+  });
+
+  async function renderSharePeopleList(term) {
+    const listEl = document.getElementById("sharePeopleList");
+    const uids = [...followingSet];
+    if (!uids.length) {
+      listEl.innerHTML = `<div class="feed-empty" style="padding:20px 0;"><i class="fa-solid fa-user-group"></i>Follow people to share posts with them.</div>`;
+      return;
+    }
+    await Promise.all(uids.map(uid => getUserInfo(uid)));
+    let people = uids.map(uid => ({ uid, ...(userInfoCache.get(uid) || { name: "Artist", avatar: "" }) }));
+    if (term) people = people.filter(p => (p.name || "").toLowerCase().includes(term.toLowerCase()));
+    if (!people.length) {
+      listEl.innerHTML = `<div class="feed-empty" style="padding:20px 0;"><i class="fa-solid fa-magnifying-glass"></i>No matches.</div>`;
+      return;
+    }
+    listEl.innerHTML = people.map(p => {
+      const initials = (p.name || "A").trim().charAt(0).toUpperCase();
+      const avatarHtml = p.avatar ? `<img src="${p.avatar}" alt="">` : initials;
+      return `
+        <div class="share-person-row" data-uid="${p.uid}">
+          <div class="share-person-avatar">${avatarHtml}</div>
+          <div class="share-person-name">${p.name}</div>
+          <button type="button" class="share-send-btn" data-uid="${p.uid}">Send</button>
+        </div>`;
+    }).join("");
+    listEl.querySelectorAll(".share-send-btn").forEach(btn => {
+      btn.addEventListener("click", () => sendPostToPerson(btn.dataset.uid, btn));
+    });
+  }
+
+  async function sendPostToPerson(targetUid, btn) {
+    if (!shareTargetPost || btn.classList.contains("sent")) return;
+    btn.disabled = true;
+    try {
+      await sendNotification(targetUid, "share", {
+        postId: shareTargetPost.id,
+        postText: shareTargetPost.text,
+        postImage: shareTargetPost.imageUrl
+      });
+      btn.textContent = "Sent";
+      btn.classList.add("sent");
+    } catch (e) {
+      console.error(e);
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById("shareAddToStoryBtn").addEventListener("click", async () => {
+    if (!shareTargetPost) return;
+    const btn = document.getElementById("shareAddToStoryBtn");
+    btn.disabled = true;
+    try {
+      await addPostToStory(shareTargetPost);
+      closeShareModal();
+    } catch (e) {
+      console.error(e);
+      alert("Couldn't add this to your story. Please try again.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Reposts a post's own content (image or text) as a new story authored
+  // by the current user, tagged with where it came from so the story
+  // viewer can show "Shared from @X" and link back to the original
+  // author — and notifies that original author it happened.
+  async function addPostToStory(post) {
+    const authorInfo = userInfoCache.get(post.authorUid) || { name: post.authorName || "Artist", avatar: post.authorAvatar || "" };
+    const payload = {
+      authorUid: currentUser.uid,
+      authorName: currentUserData.name,
+      authorAvatar: currentUserData.avatar || "",
+      type: post.imageUrl ? "image" : "text",
+      createdAt: serverTimestamp(),
+      sharedPostId: post.id,
+      sharedFromUid: post.authorUid,
+      sharedFromName: authorInfo.name,
+      sharedFromAvatar: authorInfo.avatar || ""
+    };
+    if (post.imageUrl) payload.imageUrl = post.imageUrl;
+    else payload.text = post.text || "";
+    await addDoc(collection(db, "stories"), payload);
+    if (post.authorUid !== currentUser.uid) {
+      sendNotification(post.authorUid, "story_share", { postId: post.id, postText: post.text, postImage: post.imageUrl });
+    }
+  }
+
+  document.getElementById("shareCopyLinkBtn").addEventListener("click", async () => {
+    if (!shareTargetPost) return;
+    const shareUrl = `${location.origin}${location.pathname}#post-${shareTargetPost.id}`;
+    await navigator.clipboard.writeText(shareUrl);
+    const btn = document.getElementById("shareCopyLinkBtn");
+    const original = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
+    setTimeout(() => { btn.innerHTML = original; }, 1800);
+  });
+
+  document.getElementById("shareMoreBtn").addEventListener("click", async () => {
+    if (!shareTargetPost) return;
+    const shareUrl = `${location.origin}${location.pathname}#post-${shareTargetPost.id}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "444Music", url: shareUrl }); } catch (e) {}
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
     }
   });
 
@@ -2516,16 +2790,10 @@
     });
 
     document.querySelectorAll(".share-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
+      btn.addEventListener("click", () => {
         const postId = btn.dataset.postId;
-        const shareUrl = `${location.origin}${location.pathname}#post-${postId}`;
-        if (navigator.share) {
-          try { await navigator.share({ title: "444Music", url: shareUrl }); } catch (e) {}
-        } else {
-          await navigator.clipboard.writeText(shareUrl);
-          btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
-          setTimeout(() => { btn.innerHTML = `<i class="fa-solid fa-share"></i> Share`; }, 1800);
-        }
+        const post = allPosts.find(p => p.id === postId);
+        if (post) openShareModal(post);
       });
     });
 
