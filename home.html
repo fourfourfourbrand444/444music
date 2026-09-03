@@ -1543,6 +1543,39 @@
   let unreadNotifCount = 0;
   let notifUnsubscribe = null;
 
+  // ── Weighted-shuffle feed state — mirrors the Flutter app's v9 feed
+  // ordering exactly: recency + follower-count weighting, A-Res
+  // weighted-random draw, keys held stable until a real reshuffle point
+  // (initial load / tab switch) so the feed doesn't jump around from a
+  // background like/comment update.
+  const shuffleKeys = new Map(); // postId -> rolled key
+
+  function recencyWeight(createdAt) {
+    if (!createdAt) return 0.2;
+    const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+    const halfLifeHours = 72, floor = 0.2;
+    const decayed = Math.pow(0.5, hoursOld / halfLifeHours);
+    return decayed < floor ? floor : decayed;
+  }
+  function followerWeightFromCount(followers) {
+    const boost = 1 + Math.log10((followers < 0 ? 0 : followers) + 1) * 0.5;
+    return Math.min(3.5, Math.max(1.0, boost));
+  }
+  function rollWeightedKey(weight) {
+    const u = Math.min(1, Math.max(1e-9, Math.random()));
+    return Math.pow(u, 1 / weight);
+  }
+  async function applyRandomizedOrder(posts) {
+    for (const p of posts) {
+      if (!p.id || shuffleKeys.has(p.id)) continue;
+      const createdAt = p.createdAt && p.createdAt.toDate ? p.createdAt.toDate() : null;
+      const info = await getUserInfo(p.authorUid);
+      shuffleKeys.set(p.id, rollWeightedKey(recencyWeight(createdAt) * followerWeightFromCount(info.followersCount || 0)));
+    }
+    posts.sort((a, b) => (shuffleKeys.get(b.id) || 0) - (shuffleKeys.get(a.id) || 0));
+  }
+  function resetShuffle() { shuffleKeys.clear(); }
+
   // Stories state
   let storiesUnsub = null;
   let allStories = [];
@@ -1574,21 +1607,23 @@
   // avatar everywhere always matches the account page, retroactively too.
   // `verified` is read from the same doc — false until an admin account sets
   // users/{uid}.verified = true, which is the field to wire an admin panel to.
-  const userInfoCache = new Map(); // uid -> { name, avatar, verified }
+  // `followersCount` powers the feed's weighted-shuffle follower boost.
+  const userInfoCache = new Map(); // uid -> { name, avatar, verified, followersCount }
   async function getUserInfo(uid) {
     if (userInfoCache.has(uid)) return userInfoCache.get(uid);
     let info;
     try {
       const snap = await getDoc(doc(db, "users", uid));
       info = snap.exists()
-        ? { name: snap.data().name || "Artist", avatar: snap.data().profilePic || "", verified: !!snap.data().verified }
-        : { name: "Artist", avatar: "", verified: false };
+        ? { name: snap.data().name || "Artist", avatar: snap.data().profilePic || "", verified: !!snap.data().verified, followersCount: snap.data().followersCount || 0 }
+        : { name: "Artist", avatar: "", verified: false, followersCount: 0 };
     } catch (e) {
-      info = { name: "Artist", avatar: "", verified: false };
+      info = { name: "Artist", avatar: "", verified: false, followersCount: 0 };
     }
     userInfoCache.set(uid, info);
     return info;
   }
+  function invalidateUserInfo(uid) { userInfoCache.delete(uid); }
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { location.href = "login.html"; return; }
@@ -1617,7 +1652,7 @@
       currentUserData.name   = user.displayName || "Artist";
       currentUserData.avatar = user.photoURL || "";
     }
-    userInfoCache.set(user.uid, { name: currentUserData.name, avatar: currentUserData.avatar, verified: currentUserVerified });
+    userInfoCache.set(user.uid, { name: currentUserData.name, avatar: currentUserData.avatar, verified: currentUserVerified, followersCount: (userSnap.exists() ? (userSnap.data().followersCount || 0) : 0) });
 
     // Keep the analytics doc alive for the dashboard's stream stats (unrelated to identity)
     const analyticsRef = doc(db, "analytics", user.uid);
@@ -1950,6 +1985,33 @@
     return data.secure_url;
   }
 
+  // ─── Cloudflare R2 (posts + stories) ────────────────────────────────
+  // Same backend/bucket the Flutter app now uses for posts, stories, and
+  // avatars. Browser-side twin of that helper: gets a presigned upload
+  // URL from the backend, PUTs the file straight to it, returns the
+  // public URL to save on the doc.
+  const R2_BACKEND_BASE_URL = "https://four44music-backend.onrender.com";
+
+  async function uploadToR2(file, kind) {
+    const contentType = file.type || "image/jpeg";
+    const urlResp = await fetch(`${R2_BACKEND_BASE_URL}/r2/upload-url`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind, uid: currentUser.uid, contentType })
+    });
+    if (!urlResp.ok) throw new Error("Couldn't get an upload URL");
+    const { uploadUrl, publicUrl } = await urlResp.json();
+    if (!uploadUrl || !publicUrl) throw new Error("Couldn't get an upload URL");
+
+    const putResp = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": contentType },
+      body: file
+    });
+    if (!putResp.ok) throw new Error("Image upload failed");
+    return publicUrl;
+  }
+
   publishBtn.addEventListener("click", async () => {
     const text = publishInput.value.trim();
     if (!text && !selectedImageFile && !linkMode) return;
@@ -1960,7 +2022,7 @@
     try {
       let imageUrl = null;
       if (selectedImageFile) {
-        imageUrl = await uploadToCloudinary(selectedImageFile);
+        imageUrl = await uploadToR2(selectedImageFile, "post");
       }
       const linkUrl = linkMode ? linkPreviewText.textContent : null;
 
@@ -2159,7 +2221,7 @@
       };
       if (storyComposerType === "image") {
         if (!storyComposerImageFile) throw new Error("Pick a photo first.");
-        payload.imageUrl = await uploadToCloudinary(storyComposerImageFile);
+        payload.imageUrl = await uploadToR2(storyComposerImageFile, "story");
       } else if (storyComposerType === "text") {
         const val = document.getElementById("storyTextInput").value.trim();
         if (!val) throw new Error("Write something first.");
@@ -2614,15 +2676,24 @@
       return;
     }
 
+    // Fresh shuffle roll on every real feed (re)load — initial page load
+    // and switching feed tabs — same reshuffle points as the app.
+    resetShuffle();
+
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(50));
 
-    unsubscribeFeed = onSnapshot(q, (snap) => {
+    unsubscribeFeed = onSnapshot(q, async (snap) => {
       let posts = [];
       snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
 
       if (tab === "following") {
         posts = posts.filter(p => followingSet.has(p.authorUid) || p.authorUid === currentUser.uid);
       }
+
+      // Weighted-random order — posts that already hold a rolled key keep
+      // their position even though this listener re-fires on every
+      // like/comment write to any of the 50 docs it's watching.
+      await applyRandomizedOrder(posts);
 
       allPosts = posts;
       const term = document.getElementById("feedSearch").value.trim().toLowerCase();
@@ -2847,14 +2918,18 @@
     });
 
     try {
+      const targetUserRef = doc(db, "users", targetUid);
       if (wasFollowing) {
         await deleteDoc(doc(db, "users", currentUser.uid, "following", targetUid));
         await deleteDoc(doc(db, "users", targetUid, "followers", currentUser.uid));
+        await updateDoc(targetUserRef, { followersCount: increment(-1) });
       } else {
         await setDoc(doc(db, "users", currentUser.uid, "following", targetUid), { since: serverTimestamp() });
         await setDoc(doc(db, "users", targetUid, "followers", currentUser.uid), { since: serverTimestamp() });
+        await updateDoc(targetUserRef, { followersCount: increment(1) });
         sendNotification(targetUid, "follow");
       }
+      invalidateUserInfo(targetUid); // stale count — next shuffle read picks up the change
       renderStoriesBar(); // re-rank the stories bar now that follow state changed
     } catch (e) {
       console.error(e);
@@ -3203,14 +3278,18 @@
         if (subEl) subEl.textContent = !wasFollowing ? "Following" : "Suggested for you";
 
         try {
+          const targetUserRef = doc(db, "users", targetUid);
           if (wasFollowing) {
             await deleteDoc(doc(db, "users", currentUser.uid, "following", targetUid));
             await deleteDoc(doc(db, "users", targetUid, "followers", currentUser.uid));
+            await updateDoc(targetUserRef, { followersCount: increment(-1) });
           } else {
             await setDoc(doc(db, "users", currentUser.uid, "following", targetUid), { since: serverTimestamp() });
             await setDoc(doc(db, "users", targetUid, "followers", currentUser.uid), { since: serverTimestamp() });
+            await updateDoc(targetUserRef, { followersCount: increment(1) });
             sendNotification(targetUid, "follow");
           }
+          invalidateUserInfo(targetUid);
           renderStoriesBar();
         } catch (e) {
           console.error(e);
