@@ -68,11 +68,8 @@
     display-count boost, not meant to simulate real engaged users.</p>
 
   <div class="card">
-    <h2>Firebase Config</h2>
-    <label>Paste your Firebase config as JSON</label>
-    <textarea id="configInput" rows="7" placeholder='{"apiKey": "...", "projectId": "...", ...}'></textarea>
-    <button id="connectBtn">Connect</button>
-    <div class="status" id="connectStatus"></div>
+    <h2>Connection</h2>
+    <div class="status" id="connectStatus">Connecting…</div>
   </div>
 
   <div class="card" id="actionCard" style="display:none;">
@@ -104,42 +101,32 @@
     serverTimestamp, writeBatch
   } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  let db, auth;
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
   const logEl = document.getElementById("log");
   const log = (msg) => { logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; };
 
-  document.getElementById("connectBtn").addEventListener("click", async () => {
-    const statusEl = document.getElementById("connectStatus");
-    let config;
-    try {
-      config = JSON.parse(document.getElementById("configInput").value);
-    } catch (e) {
-      statusEl.textContent = "✗ Invalid config JSON: " + e.message;
-      statusEl.className = "status err";
-      return;
-    }
-    try {
-      const app = initializeApp(config);
-      auth = getAuth(app);
-      db = getFirestore(app);
-      statusEl.textContent = "Signing in…";
-      statusEl.className = "status";
-
-      // You must already be signed in via your normal login for this project's
-      // security rules to allow writes to users/{uid}/followers — this tool relies
-      // on an existing session, it doesn't create one.
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          statusEl.textContent = "✓ Connected as " + (user.email || user.uid);
-          statusEl.className = "status ok";
-          document.getElementById("actionCard").style.display = "block";
-        } else {
-          statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser (e.g. open home.html and log in), then reload this page and Connect again.";
-          statusEl.className = "status err";
-        }
-      });
-    } catch (e) {
-      statusEl.textContent = "✗ Connect failed: " + e.message;
+  const statusEl = document.getElementById("connectStatus");
+  // Relies on your existing login session in this browser — this tool doesn't log
+  // you in itself. Open home.html and log into your admin account first if needed.
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      statusEl.textContent = "✓ Connected as " + (user.email || user.uid);
+      statusEl.className = "status ok";
+      document.getElementById("actionCard").style.display = "block";
+    } else {
+      statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser (e.g. open home.html and log in), then reload this page.";
       statusEl.className = "status err";
     }
   });
