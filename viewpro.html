@@ -300,6 +300,15 @@
     .post-tile:hover .post-tile-overlay { opacity: 1; }
     .post-tile-overlay span { display:flex; align-items:center; gap:6px; }
 
+    /* ─── Always-on like/comment badge (touch parity with app) ─── */
+    .post-tile-badge {
+      position: absolute; left: 5px; bottom: 5px;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.55); border-radius: 8px; padding: 3px 6px;
+      font-size: 10px; font-weight: 700; color: var(--white); z-index: 2;
+    }
+    .post-tile-badge span { display:flex; align-items:center; gap:3px; }
+
     /* ─── GENERIC MODAL (lightbox / people list) ─── */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.65);
@@ -512,6 +521,23 @@
   let followingSet = new Set(); // who the CURRENT user follows
   const userInfoCache = new Map();
 
+  // Matches app's formatCount() — abbreviates large numbers for stat display
+  // (e.g. 1500 -> "1.5K", 2400000 -> "2.4M") instead of printing raw digits.
+  function formatCount(n) {
+    n = Number(n) || 0;
+    if (n < 1000) return String(n);
+    if (n < 1000000) {
+      const v = n / 1000;
+      return (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 1 : 0)) + "K";
+    }
+    if (n < 1000000000) {
+      const v = n / 1000000;
+      return (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 1 : 0)) + "M";
+    }
+    const v = n / 1000000000;
+    return (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 1 : 0)) + "B";
+  }
+
   async function getUserInfo(uid) {
     if (userInfoCache.has(uid)) return userInfoCache.get(uid);
     let info;
@@ -604,16 +630,32 @@
     const avatar = userData.profilePic || "";
     const verified = !!userData.verified;
     document.getElementById("headerTitle").textContent = name;
+    // Force this account's cached info to match what was just read — same
+    // reasoning as the app's UserInfoCache.invalidate() on every profile load,
+    // so a just-saved edit never shows stale in the header/avatar.
     userInfoCache.set(targetUid, { name, avatar, verified });
 
-    const [followersSnap, followingSnap, postsSnap] = await Promise.all([
-      getDocs(collection(db, "users", targetUid, "followers")).catch(() => ({ size: 0, docs: [] })),
-      getDocs(collection(db, "users", targetUid, "following")).catch(() => ({ size: 0, docs: [] })),
-      getDocs(query(collection(db, "posts"), where("authorUid", "==", targetUid))).catch(() => ({ size: 0, docs: [] }))
-    ]);
+    // Read the cheap counter fields on the user doc instead of counting the
+    // followers/following subcollections live — matches viewpro_screen.dart.
+    // A popular account's profile used to cost one read PER FOLLOWER, every view.
+    const followersCount = Number(userData.followersCount) || 0;
+    const followingCount = Number(userData.followingCount) || 0;
 
-    const followersCount = followersSnap.size || 0;
-    const followingCount = followingSnap.size || 0;
+    let postsSnap = { size: 0, docs: [], forEach: () => {} };
+    try {
+      postsSnap = await getDocs(query(
+        collection(db, "posts"),
+        where("authorUid", "==", targetUid),
+        orderBy("createdAt", "desc"),
+        limit(60)
+      ));
+    } catch (e) {
+      // Falls back to an unsorted fetch if the composite index for
+      // authorUid+createdAt hasn't been created yet in Firestore.
+      try {
+        postsSnap = await getDocs(query(collection(db, "posts"), where("authorUid", "==", targetUid), limit(60)));
+      } catch (e2) { console.error(e2); }
+    }
     const postsCount = postsSnap.size || 0;
     const isFollowing = followingSet.has(targetUid);
 
@@ -628,13 +670,13 @@
           <button class="avatar-btn" id="avatarBtn">${avatarHtml}</button>
           <div class="profile-stats-row">
             <button class="stat-item" id="postsStatBtn">
-              <span class="stat-num">${postsCount}</span><span class="stat-label">Posts</span>
+              <span class="stat-num">${formatCount(postsCount)}</span><span class="stat-label">Posts</span>
             </button>
             <button class="stat-item" id="followersStatBtn">
-              <span class="stat-num">${followersCount}</span><span class="stat-label">Followers</span>
+              <span class="stat-num">${formatCount(followersCount)}</span><span class="stat-label">Followers</span>
             </button>
             <button class="stat-item" id="followingStatBtn">
-              <span class="stat-num">${followingCount}</span><span class="stat-label">Following</span>
+              <span class="stat-num">${formatCount(followingCount)}</span><span class="stat-label">Following</span>
             </button>
           </div>
         </div>
@@ -736,6 +778,8 @@
     const grid = document.getElementById("postsGrid");
     const posts = [];
     postsSnap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+    // Already server-sorted by the query above when the index exists; this
+    // client-side sort is just the safety net for the unsorted-fallback path.
     posts.sort((a, b) => {
       const ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
       const tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
@@ -748,14 +792,21 @@
     }
 
     grid.innerHTML = posts.map(p => {
+      const likes = p.likesCount || 0;
+      const comments = p.commentsCount || 0;
+      // Always-visible badge (not hover-only) — matches the app's touch-first
+      // treatment, since hover doesn't exist on mobile.
+      const badge = (likes > 0 || comments > 0)
+        ? `<div class="post-tile-badge"><span><i class="fa-solid fa-heart"></i>${likes}</span><span><i class="fa-solid fa-comment"></i>${comments}</span></div>`
+        : "";
       if (p.imageUrl) {
-        return `<div class="post-tile" data-post-id="${p.id}"><img src="${p.imageUrl}" alt="">
-          <div class="post-tile-overlay"><span><i class="fa-solid fa-heart"></i> ${p.likesCount || 0}</span><span><i class="fa-solid fa-comment"></i> ${p.commentsCount || 0}</span></div>
+        return `<div class="post-tile" data-post-id="${p.id}"><img src="${p.imageUrl}" alt="">${badge}
+          <div class="post-tile-overlay"><span><i class="fa-solid fa-heart"></i> ${likes}</span><span><i class="fa-solid fa-comment"></i> ${comments}</span></div>
         </div>`;
       }
       const text = p.text || "";
-      return `<div class="post-tile text-tile" data-post-id="${p.id}"><span>${escapeAttr(text)}</span>
-        <div class="post-tile-overlay"><span><i class="fa-solid fa-heart"></i> ${p.likesCount || 0}</span><span><i class="fa-solid fa-comment"></i> ${p.commentsCount || 0}</span></div>
+      return `<div class="post-tile text-tile" data-post-id="${p.id}"><span>${escapeAttr(text)}</span>${badge}
+        <div class="post-tile-overlay"><span><i class="fa-solid fa-heart"></i> ${likes}</span><span><i class="fa-solid fa-comment"></i> ${comments}</span></div>
       </div>`;
     }).join("");
 
@@ -850,6 +901,11 @@
     }
   }
 
+  // ─── Follow / unfollow ───────────────────────────────────────────────────
+  // Matches _toggleFollow in viewpro_screen.dart exactly: writes both
+  // subcollection docs AND increments both counter fields, so the cheap
+  // followersCount/followingCount fields never drift from reality when
+  // a real user follows/unfollows on web.
   async function toggleFollow(uid, btn) {
     const wasFollowing = followingSet.has(uid);
     followingSet[wasFollowing ? "delete" : "add"](uid);
@@ -860,13 +916,20 @@
       if (wasFollowing) {
         await deleteDoc(doc(db, "users", currentUser.uid, "following", uid));
         await deleteDoc(doc(db, "users", uid, "followers", currentUser.uid));
+        await updateDoc(doc(db, "users", uid), { followersCount: increment(-1) });
+        await updateDoc(doc(db, "users", currentUser.uid), { followingCount: increment(-1) });
       } else {
         await setDoc(doc(db, "users", currentUser.uid, "following", uid), { since: serverTimestamp() });
         await setDoc(doc(db, "users", uid, "followers", currentUser.uid), { since: serverTimestamp() });
+        await updateDoc(doc(db, "users", uid), { followersCount: increment(1) });
+        await updateDoc(doc(db, "users", currentUser.uid), { followingCount: increment(1) });
         sendNotification(uid, "follow");
       }
-      // refresh counts on screen
-      loadProfile();
+      // Only refresh the on-screen counts when the account being followed IS
+      // the profile currently open — matches the app's `if (uid == _targetUid)`
+      // guard, so toggling Follow from inside the Followers/Following list
+      // (a different uid) doesn't trigger a jarring full reload behind the modal.
+      if (uid === targetUid) loadProfile();
     } catch (e) {
       console.error(e);
       followingSet[wasFollowing ? "add" : "delete"](uid);
