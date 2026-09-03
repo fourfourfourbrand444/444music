@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music — Set Follower Count (dev tool)</title>
+<title>444Music — Boost Tools (dev)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -34,6 +34,19 @@
   #log { background:var(--black-3); border:1px solid var(--white-10); border-radius:10px; padding:12px;
     font-family:monospace; font-size:12px; color:var(--white-70); max-height:200px; overflow-y:auto;
     white-space:pre-wrap; margin-top:14px; }
+  .section-title { font-family:'Outfit',sans-serif; font-weight:800; font-size:16px; margin:34px 0 6px; }
+  .post-row { display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--white-10); }
+  .post-row:last-child { border-bottom:none; }
+  .post-thumb { width:64px; height:64px; border-radius:10px; object-fit:cover; background:var(--black-3); flex-shrink:0; border:1px solid var(--white-10); }
+  .post-thumb.text-thumb { display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--grey); text-align:center; padding:4px; }
+  .post-body { flex:1; min-width:0; }
+  .post-text { font-size:12.5px; color:var(--white-70); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; margin-bottom:8px; }
+  .post-fields { display:flex; gap:10px; align-items:flex-end; }
+  .post-fields .fld { flex:1; }
+  .post-fields label { margin-bottom:4px; font-size:10.5px; }
+  .post-fields input { margin-bottom:0; padding:8px 10px; font-size:12.5px; }
+  .post-fields button { padding:9px 16px; font-size:12px; flex-shrink:0; }
+  .post-status { font-size:11px; font-weight:700; margin-top:6px; height:14px; }
 </style>
 </head>
 <body>
@@ -59,12 +72,28 @@
     <div class="status" id="runStatus"></div>
     <div id="log"></div>
   </div>
+
+  <div class="section-title">Boost Post Likes / Views</div>
+  <p class="sub">Only 444Music's own posts — loaded automatically, no UID needed. Same idea as
+    followers: this edits the <b>likesCount</b> / <b>viewsCount</b> fields directly, no fake
+    like documents created, so real likes (if anyone taps ♥) still count separately underneath
+    whatever number you set here.</p>
+
+  <div class="card" id="postsCard" style="display:none;">
+    <button id="loadPostsBtn" class="secondary" style="margin-left:0;">Reload Posts</button>
+    <div id="postsList"></div>
+  </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  import {
+    getFirestore, doc, getDoc, updateDoc, collection, query, where, orderBy, getDocs
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+  // Hardcoded — 444Music's own account. Boost tool only ever touches this account's posts.
+  const FOUR44_UID = "hLgfW6bqVKWw5KqAzntJpAhDPRy2";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -88,6 +117,8 @@
       statusEl.textContent = "✓ Connected as " + (user.email || user.uid);
       statusEl.className = "status ok";
       document.getElementById("actionCard").style.display = "block";
+      document.getElementById("postsCard").style.display = "block";
+      loadFour44Posts();
     } else {
       statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser first, then reload this page.";
       statusEl.className = "status err";
@@ -132,6 +163,97 @@
       setBtn.disabled = false;
     }
   });
+
+  // ─── Boost post likes/views — 444Music's own posts only ──────────────
+  async function loadFour44Posts() {
+    const listEl = document.getElementById("postsList");
+    listEl.innerHTML = `<div class="status">Loading posts…</div>`;
+    try {
+      let snap;
+      try {
+        snap = await getDocs(query(
+          collection(db, "posts"),
+          where("authorUid", "==", FOUR44_UID),
+          orderBy("createdAt", "desc")
+        ));
+      } catch (e) {
+        // Fallback if there's no composite index for authorUid+createdAt yet
+        snap = await getDocs(query(collection(db, "posts"), where("authorUid", "==", FOUR44_UID)));
+      }
+
+      const posts = [];
+      snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+
+      if (!posts.length) {
+        listEl.innerHTML = `<div class="status">No posts found for this account.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = posts.map(p => {
+        const thumb = p.imageUrl
+          ? `<img class="post-thumb" src="${p.imageUrl}" alt="">`
+          : `<div class="post-thumb text-thumb">${(p.text || "No image").slice(0, 40)}</div>`;
+        const textPreview = p.text ? p.text.slice(0, 90) : "";
+        return `
+          <div class="post-row" data-post-id="${p.id}">
+            ${thumb}
+            <div class="post-body">
+              ${textPreview ? `<div class="post-text">${textPreview}</div>` : ""}
+              <div class="post-fields">
+                <div class="fld">
+                  <label>Likes (currently ${p.likesCount || 0})</label>
+                  <input type="number" min="0" class="likesInput" value="${p.likesCount || 0}">
+                </div>
+                <div class="fld">
+                  <label>Views (currently ${p.viewsCount || 0})</label>
+                  <input type="number" min="0" class="viewsInput" value="${p.viewsCount || 0}">
+                </div>
+                <button class="saveBtn">Save</button>
+              </div>
+              <div class="post-status"></div>
+            </div>
+          </div>`;
+      }).join("");
+
+      listEl.querySelectorAll(".post-row").forEach(row => {
+        const postId = row.dataset.postId;
+        const likesInput = row.querySelector(".likesInput");
+        const viewsInput = row.querySelector(".viewsInput");
+        const saveBtn = row.querySelector(".saveBtn");
+        const statusEl2 = row.querySelector(".post-status");
+
+        saveBtn.addEventListener("click", async () => {
+          const newLikes = Math.floor(Number(likesInput.value));
+          const newViews = Math.floor(Number(viewsInput.value));
+          if (isNaN(newLikes) || newLikes < 0 || isNaN(newViews) || newViews < 0) {
+            statusEl2.textContent = "✗ Invalid number.";
+            statusEl2.className = "post-status" ;
+            statusEl2.style.color = "var(--rose)";
+            return;
+          }
+          saveBtn.disabled = true;
+          statusEl2.textContent = "Saving…";
+          statusEl2.style.color = "var(--grey)";
+          try {
+            await updateDoc(doc(db, "posts", postId), { likesCount: newLikes, viewsCount: newViews });
+            statusEl2.textContent = "✓ Saved";
+            statusEl2.style.color = "var(--green)";
+            row.querySelectorAll("label")[0].textContent = `Likes (currently ${newLikes})`;
+            row.querySelectorAll("label")[1].textContent = `Views (currently ${newViews})`;
+          } catch (e) {
+            statusEl2.textContent = "✗ " + e.message;
+            statusEl2.style.color = "var(--rose)";
+          } finally {
+            saveBtn.disabled = false;
+          }
+        });
+      });
+    } catch (e) {
+      listEl.innerHTML = `<div class="status" style="color:var(--rose);">✗ ${e.message}</div>`;
+    }
+  }
+
+  document.getElementById("loadPostsBtn").addEventListener("click", loadFour44Posts);
 </script>
 </body>
 </html>
