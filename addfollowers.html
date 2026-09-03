@@ -3,89 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music — Add Followers (dev tool)</title>
+<title>444Music — Set Follower Count (dev tool)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #000000; --black-2: #0a0a0a; --black-3: #0e0e0e; --black-4: #161616;
-    --white: #ffffff; --white-70: rgba(255,255,255,0.70); --white-40: rgba(255,255,255,0.40);
-    --white-10: rgba(255,255,255,0.10); --white-06: rgba(255,255,255,0.06);
-    --grey: #888888; --rose: #f87171; --green: #22c55e; --blue: #4da3ff;
-    --border: var(--white-10); --border-hover: var(--white-40);
+    --black: #000000; --black-2: #0a0a0a; --black-3: #0e0e0e;
+    --white: #ffffff; --white-70: rgba(255,255,255,0.70);
+    --white-10: rgba(255,255,255,0.10); --border-hover: rgba(255,255,255,0.40);
+    --grey: #888888; --rose: #f87171; --green: #22c55e;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; font-family: 'Nunito', sans-serif; background: var(--black); color: var(--white);
-    min-height: 100vh; padding: 60px 20px;
-  }
-  .wrap { max-width: 640px; margin: 0 auto; }
-  h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 22px; margin: 0 0 6px; }
-  .sub { color: var(--grey); font-size: 13.5px; line-height: 1.6; margin-bottom: 28px; }
+  body { margin:0; font-family:'Nunito',sans-serif; background:var(--black); color:var(--white); padding:60px 20px; }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 { font-family:'Outfit',sans-serif; font-weight:800; font-size:20px; margin:0 0 6px; }
+  .sub { color: var(--grey); font-size:13.5px; line-height:1.6; margin-bottom:24px; }
   .sub b { color: var(--white-70); }
-  .card {
-    background: var(--black-2); border: 1px solid var(--border); border-radius: 18px;
-    padding: 22px; margin-bottom: 18px;
-  }
-  .card h2 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 13px;
-    text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin: 0 0 14px; }
-  label { display: block; font-size: 12px; font-weight: 700; color: var(--grey); margin-bottom: 6px; }
-  input, textarea {
-    width: 100%; background: var(--black-3); border: 1px solid var(--border); border-radius: 10px;
-    padding: 11px 13px; color: var(--white); font-family: 'Nunito', sans-serif; font-size: 13.5px;
-    outline: none; margin-bottom: 16px;
-  }
-  input:focus, textarea:focus { border-color: var(--border-hover); }
-  .row { display: flex; gap: 12px; }
-  .row > div { flex: 1; }
-  button {
-    background: var(--white); color: var(--black); border: none; border-radius: 100px;
-    padding: 12px 26px; font-size: 13.5px; font-weight: 800; cursor: pointer;
-    font-family: 'Nunito', sans-serif; transition: opacity .2s;
-  }
-  button:hover { opacity: .85; }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  button.secondary { background: transparent; color: var(--white-70); border: 1px solid var(--border-hover); }
-  .status { font-size: 12.5px; font-weight: 700; margin-top: 12px; }
-  .status.ok { color: var(--green); }
-  .status.err { color: var(--rose); }
-  #log {
-    background: var(--black-3); border: 1px solid var(--border); border-radius: 10px;
-    padding: 12px; font-family: monospace; font-size: 12px; color: var(--white-70);
-    max-height: 260px; overflow-y: auto; white-space: pre-wrap; margin-top: 14px;
-  }
+  .card { background:var(--black-2); border:1px solid var(--white-10); border-radius:18px; padding:22px; margin-bottom:16px; }
+  label { display:block; font-size:12px; font-weight:700; color:var(--grey); margin-bottom:6px; }
+  input { width:100%; background:var(--black-3); border:1px solid var(--white-10); border-radius:10px;
+    padding:11px 13px; color:var(--white); font-family:'Nunito',sans-serif; font-size:13.5px; outline:none; margin-bottom:16px; }
+  input:focus { border-color: var(--border-hover); }
+  button { background:var(--white); color:var(--black); border:none; border-radius:100px; padding:12px 26px;
+    font-size:13.5px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; }
+  button:hover { opacity:.85; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  button.secondary { background:transparent; color:var(--white-70); border:1px solid var(--border-hover); margin-left:10px; }
+  .status { font-size:12.5px; font-weight:700; margin-top:12px; }
+  .status.ok { color: var(--green); } .status.err { color: var(--rose); }
+  #log { background:var(--black-3); border:1px solid var(--white-10); border-radius:10px; padding:12px;
+    font-family:monospace; font-size:12px; color:var(--white-70); max-height:200px; overflow-y:auto;
+    white-space:pre-wrap; margin-top:14px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Add Followers (dev tool)</h1>
-  <p class="sub">Adds real documents to <b>users/{uid}/followers</b> for a target account, and increments
-    its <b>followersCount</b> field to match. This is the actual subcollection <b>viewpro.html</b> reads live —
-    so the number on the profile page will update for real, not just cosmetically.
-    <br><br>
-    Note: the fake follower IDs won't correspond to real user accounts, so if that account's "Followers" list
-    modal is opened, these entries will show up as generic "Artist" placeholders (no name/avatar). Fine for a
-    display-count boost, not meant to simulate real engaged users.</p>
+  <h1>Set Follower Count</h1>
+  <p class="sub">Writes one number to the <b>followersCount</b> field on the user doc — nothing else.
+    No subcollection documents are created. The real "Followers" list (who actually follows this
+    account) is completely separate and untouched, so it will always show the real people regardless
+    of what this number says. Once <b>viewpro.html</b> is updated to read this field (like the app
+    already does), the number you set here shows on both app and web identically.</p>
 
   <div class="card">
-    <h2>Connection</h2>
     <div class="status" id="connectStatus">Connecting…</div>
   </div>
 
   <div class="card" id="actionCard" style="display:none;">
-    <h2>Add Followers</h2>
-    <div class="row">
-      <div>
-        <label>Target user UID</label>
-        <input id="targetUid" placeholder="e.g. hLgfW6bqVKWw5KqAzntJpAhDPRy2">
-      </div>
-      <div>
-        <label>How many to add</label>
-        <input id="addCount" type="number" min="1" max="2000" value="50">
-      </div>
-    </div>
-    <button id="runBtn">Add Followers</button>
-    <button class="secondary" id="checkBtn" style="margin-left:10px;">Check Current Count</button>
+    <label>Target user UID</label>
+    <input id="targetUid" placeholder="e.g. hLgfW6bqVKWw5KqAzntJpAhDPRy2">
+    <label>New followers count</label>
+    <input id="newCount" type="number" min="0" placeholder="e.g. 10000000">
+    <button id="checkBtn" class="secondary">Check Current</button>
+    <button id="setBtn">Set Count</button>
     <div class="status" id="runStatus"></div>
     <div id="log"></div>
   </div>
@@ -93,13 +63,8 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import {
-    getAuth, signInAnonymously, onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-  import {
-    getFirestore, doc, getDoc, setDoc, updateDoc, collection, increment,
-    serverTimestamp, writeBatch
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -118,15 +83,13 @@
   const log = (msg) => { logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; };
 
   const statusEl = document.getElementById("connectStatus");
-  // Relies on your existing login session in this browser — this tool doesn't log
-  // you in itself. Open home.html and log into your admin account first if needed.
   onAuthStateChanged(auth, (user) => {
     if (user) {
       statusEl.textContent = "✓ Connected as " + (user.email || user.uid);
       statusEl.className = "status ok";
       document.getElementById("actionCard").style.display = "block";
     } else {
-      statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser (e.g. open home.html and log in), then reload this page.";
+      statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser first, then reload this page.";
       statusEl.className = "status err";
     }
   });
@@ -138,49 +101,35 @@
       const snap = await getDoc(doc(db, "users", uid));
       if (!snap.exists()) { log(`No user found for uid ${uid}`); return; }
       const d = snap.data();
-      log(`${d.name || uid} → followersCount field: ${d.followersCount ?? "(not set)"}`);
+      log(`${d.name || uid} → followersCount is currently: ${d.followersCount ?? "(not set)"}`);
     } catch (e) { log("Error: " + e.message); }
   });
 
-  document.getElementById("runBtn").addEventListener("click", async () => {
+  document.getElementById("setBtn").addEventListener("click", async () => {
     const uid = document.getElementById("targetUid").value.trim();
-    const count = parseInt(document.getElementById("addCount").value, 10);
-    const statusEl = document.getElementById("runStatus");
-    const runBtn = document.getElementById("runBtn");
+    const val = document.getElementById("newCount").value;
+    const runStatus = document.getElementById("runStatus");
+    const setBtn = document.getElementById("setBtn");
 
-    if (!uid) { statusEl.textContent = "✗ Enter a target UID."; statusEl.className = "status err"; return; }
-    if (!count || count < 1 || count > 2000) { statusEl.textContent = "✗ Enter a count between 1 and 2000."; statusEl.className = "status err"; return; }
+    if (!uid) { runStatus.textContent = "✗ Enter a target UID."; runStatus.className = "status err"; return; }
+    if (val === "" || isNaN(val) || Number(val) < 0) { runStatus.textContent = "✗ Enter a valid number."; runStatus.className = "status err"; return; }
 
-    runBtn.disabled = true;
-    statusEl.textContent = "Writing…";
-    statusEl.className = "status";
-    log(`Adding ${count} follower entries to ${uid}…`);
+    const newCount = Math.floor(Number(val));
+    setBtn.disabled = true;
+    runStatus.textContent = "Writing…";
+    runStatus.className = "status";
 
     try {
-      // Batch in chunks of 400 (Firestore max 500 ops per batch, leave headroom)
-      let written = 0;
-      while (written < count) {
-        const batch = writeBatch(db);
-        const chunkSize = Math.min(400, count - written);
-        for (let i = 0; i < chunkSize; i++) {
-          const fakeId = "seed_" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-4);
-          batch.set(doc(db, "users", uid, "followers", fakeId), { since: serverTimestamp(), seeded: true });
-        }
-        await batch.commit();
-        written += chunkSize;
-        log(`  wrote ${written}/${count}`);
-      }
-
-      await updateDoc(doc(db, "users", uid), { followersCount: increment(count) });
-      log(`Done. followersCount field incremented by ${count}.`);
-      statusEl.textContent = `✓ Added ${count} followers.`;
-      statusEl.className = "status ok";
+      await updateDoc(doc(db, "users", uid), { followersCount: newCount });
+      log(`followersCount set to ${newCount.toLocaleString()} for ${uid}`);
+      runStatus.textContent = `✓ Set to ${newCount.toLocaleString()}.`;
+      runStatus.className = "status ok";
     } catch (e) {
       log("Error: " + e.message);
-      statusEl.textContent = "✗ " + e.message;
-      statusEl.className = "status err";
+      runStatus.textContent = "✗ " + e.message;
+      runStatus.className = "status err";
     } finally {
-      runBtn.disabled = false;
+      setBtn.disabled = false;
     }
   });
 </script>
