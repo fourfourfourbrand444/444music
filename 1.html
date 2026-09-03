@@ -1,60 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>444 Music Distribution</title>
-
-  <link rel="stylesheet" href="style.css">
-
-  <!-- PWA Setup -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#7a2cff">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music — Remove Fake Followers (dev tool)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000; --black-2: #0a0a0a; --black-3: #0e0e0e;
+    --white: #ffffff; --white-70: rgba(255,255,255,0.70);
+    --white-10: rgba(255,255,255,0.10); --border-hover: rgba(255,255,255,0.40);
+    --grey: #888888; --rose: #f87171; --green: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Nunito',sans-serif; background:var(--black); color:var(--white); padding:60px 20px; }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  h1 { font-family:'Outfit',sans-serif; font-weight:800; font-size:20px; margin:0 0 6px; }
+  .sub { color: var(--grey); font-size:13.5px; line-height:1.6; margin-bottom:24px; }
+  .card { background:var(--black-2); border:1px solid var(--white-10); border-radius:18px; padding:22px; margin-bottom:16px; }
+  label { display:block; font-size:12px; font-weight:700; color:var(--grey); margin-bottom:6px; }
+  input { width:100%; background:var(--black-3); border:1px solid var(--white-10); border-radius:10px;
+    padding:11px 13px; color:var(--white); font-family:'Nunito',sans-serif; font-size:13.5px; outline:none; margin-bottom:16px; }
+  input:focus { border-color: var(--border-hover); }
+  button { background:var(--white); color:var(--black); border:none; border-radius:100px; padding:12px 26px;
+    font-size:13.5px; font-weight:800; cursor:pointer; font-family:'Nunito',sans-serif; }
+  button:hover { opacity:.85; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  .status { font-size:12.5px; font-weight:700; margin-top:12px; }
+  .status.ok { color: var(--green); } .status.err { color: var(--rose); }
+  #log { background:var(--black-3); border:1px solid var(--white-10); border-radius:10px; padding:12px;
+    font-family:monospace; font-size:12px; color:var(--white-70); max-height:260px; overflow-y:auto;
+    white-space:pre-wrap; margin-top:14px; }
+</style>
 </head>
-
 <body>
+<div class="wrap">
+  <h1>Remove Fake Followers</h1>
+  <p class="sub">Finds every follower doc under <b>users/{uid}/followers</b> whose ID starts with
+    <b>seed_</b> (the tag the add-followers tool used) and deletes them, then reduces
+    <b>followersCount</b> by exactly how many were removed. Real followers (no seed_ prefix)
+    are never touched.</p>
 
-  <div class="hero">
-    <div class="overlay"></div>
-
-    <div class="content">
-      <img src="logo.png" alt="444Music Logo" class="logo">
-      <h1>444 Music Distribution</h1>
-
-      <a href="alonzy.html" class="btn">Get Started →</a>
-
-      <!-- Install button -->
-      <button id="installBtn" style="display:none;">Install App</button>
-    </div>
+  <div class="card">
+    <div class="status" id="connectStatus">Connecting…</div>
   </div>
 
-<script>
-// Install prompt
-let deferredPrompt;
+  <div class="card" id="actionCard" style="display:none;">
+    <label>Target user UID</label>
+    <input id="targetUid" placeholder="e.g. hLgfW6bqVKWw5KqAzntJpAhDPRy2">
+    <button id="scanBtn">Scan for Fake Followers</button>
+    <button id="removeBtn" style="margin-left:10px; display:none;">Remove Them</button>
+    <div class="status" id="runStatus"></div>
+    <div id="log"></div>
+  </div>
+</div>
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById("installBtn").style.display = "block";
-});
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDocs, collection, updateDoc, increment, writeBatch
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-document.getElementById("installBtn").addEventListener("click", async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  }
-});
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+    authDomain: "usersubmissionsportal.firebaseapp.com",
+    projectId: "usersubmissionsportal",
+    storageBucket: "usersubmissionsportal.firebasestorage.app",
+    messagingSenderId: "734783502459",
+    appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+  };
 
-// Register service worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const logEl = document.getElementById("log");
+  const log = (msg) => { logEl.textContent += msg + "\n"; logEl.scrollTop = logEl.scrollHeight; };
+
+  const statusEl = document.getElementById("connectStatus");
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      statusEl.textContent = "✓ Connected as " + (user.email || user.uid);
+      statusEl.className = "status ok";
+      document.getElementById("actionCard").style.display = "block";
+    } else {
+      statusEl.textContent = "✗ Not signed in. Log into your admin account in this same browser first, then reload this page.";
+      statusEl.className = "status err";
+    }
+  });
+
+  let fakeIds = [];
+
+  document.getElementById("scanBtn").addEventListener("click", async () => {
+    const uid = document.getElementById("targetUid").value.trim();
+    const runStatus = document.getElementById("runStatus");
+    const removeBtn = document.getElementById("removeBtn");
+    if (!uid) { runStatus.textContent = "✗ Enter a target UID."; runStatus.className = "status err"; return; }
+
+    runStatus.textContent = "Scanning…";
+    runStatus.className = "status";
+    logEl.textContent = "";
+    removeBtn.style.display = "none";
+
+    try {
+      const snap = await getDocs(collection(db, "users", uid, "followers"));
+      fakeIds = [];
+      let total = 0;
+      snap.forEach(d => {
+        total++;
+        if (d.id.startsWith("seed_")) fakeIds.push(d.id);
+      });
+      log(`Total followers found: ${total}`);
+      log(`Fake (seed_) entries found: ${fakeIds.length}`);
+      log(`Real followers (untouched): ${total - fakeIds.length}`);
+      if (fakeIds.length > 0) {
+        runStatus.textContent = `Found ${fakeIds.length} fake entries. Review the log, then click Remove.`;
+        runStatus.className = "status ok";
+        removeBtn.style.display = "inline-block";
+      } else {
+        runStatus.textContent = "No fake entries found — nothing to remove.";
+        runStatus.className = "status ok";
+      }
+    } catch (e) {
+      log("Error: " + e.message);
+      runStatus.textContent = "✗ " + e.message;
+      runStatus.className = "status err";
+    }
+  });
+
+  document.getElementById("removeBtn").addEventListener("click", async () => {
+    const uid = document.getElementById("targetUid").value.trim();
+    const runStatus = document.getElementById("runStatus");
+    const removeBtn = document.getElementById("removeBtn");
+    if (!fakeIds.length) return;
+
+    removeBtn.disabled = true;
+    runStatus.textContent = "Removing…";
+    runStatus.className = "status";
+
+    try {
+      let removed = 0;
+      while (removed < fakeIds.length) {
+        const chunk = fakeIds.slice(removed, removed + 400);
+        const batch = writeBatch(db);
+        chunk.forEach(id => batch.delete(doc(db, "users", uid, "followers", id)));
+        await batch.commit();
+        removed += chunk.length;
+        log(`  deleted ${removed}/${fakeIds.length}`);
+      }
+      await updateDoc(doc(db, "users", uid), { followersCount: increment(-fakeIds.length) });
+      log(`Done. followersCount reduced by ${fakeIds.length}.`);
+      runStatus.textContent = `✓ Removed ${fakeIds.length} fake followers.`;
+      runStatus.className = "status ok";
+      fakeIds = [];
+      removeBtn.style.display = "none";
+    } catch (e) {
+      log("Error: " + e.message);
+      runStatus.textContent = "✗ " + e.message;
+      runStatus.className = "status err";
+    } finally {
+      removeBtn.disabled = false;
+    }
+  });
 </script>
-
 </body>
 </html>
-
