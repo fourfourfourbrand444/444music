@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Distribute Your Music — Select Platforms</title>
+<title>Distribute Your Music — Platforms</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 
 /* ─── RESET & BASE ─────────────────────────────────────────── */
@@ -59,23 +60,8 @@ body::before {
 /* ─── WRAPPER ──────────────────────────────────────────────── */
 .wrapper { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 56px 24px 100px; }
 
-/* ─── HEADER ───────────────────────────────────────────────── */
-.header { text-align: center; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.5s ease forwards; }
-.header .badge {
-  display: inline-flex; align-items: center; gap: 7px; padding: 6px 16px; border-radius: 999px;
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
-  font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--text-muted); margin-bottom: 22px;
-}
-.header .badge svg { width:14px; height:14px; }
-h1 {
-  font-family: 'Outfit', sans-serif; font-size: clamp(28px, 5vw, 52px); font-weight: 800;
-  letter-spacing: -0.02em; line-height: 1.1; color: #fff; margin-bottom: 14px;
-}
-.subtitle { color: var(--text-muted); font-size: 16px; max-width: 520px; margin: 0 auto; line-height: 1.65; }
-
 /* ─── CONTROLS BAR ─────────────────────────────────────────── */
-.controls-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.5s 0.08s ease forwards; }
+.controls-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.5s ease forwards; }
 
 .search-wrap { position: relative; flex: 1; min-width: 220px; }
 .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; }
@@ -100,7 +86,7 @@ h1 {
 /* ─── GRID ─────────────────────────────────────────────────── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
 
-/* ─── PLATFORM CARD (perf-tuned: transform/opacity only, no per-card blur) ─── */
+/* ─── PLATFORM CARD (locked/read-only: no hover lift, no pointer) ─── */
 .platform {
   position: relative;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
@@ -108,22 +94,12 @@ h1 {
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  cursor: pointer;
-  transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
-  will-change: transform;
+  cursor: default;
   user-select: none;
   transform: translateZ(0);
 }
 
-.platform:hover {
-  transform: translateY(-3px);
-  background-color: var(--glass-hover);
-  border-color: rgba(255,255,255,0.22);
-}
-
-.platform:active { transform: translateY(0) scale(0.98); }
-
-/* SELECTED STATE — instant, no re-triggering keyframe animation */
+/* SELECTED STATE — every card is selected and locked */
 .platform.selected {
   background-color: rgba(255,255,255,0.09);
   border-color: rgba(255,255,255,0.55);
@@ -135,11 +111,8 @@ h1 {
   position: absolute; top: 10px; right: 10px; width: 22px; height: 22px;
   background: var(--accent); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transform: scale(0.4);
-  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 .checkmark svg { width: 12px; height: 12px; color: #000; stroke-width: 3; }
-.platform.selected .checkmark { opacity: 1; transform: scale(1); }
 
 /* PLATFORM ICON */
 .platform-icon {
@@ -152,9 +125,7 @@ h1 {
 .platform-icon i { font-size: 20px; color: rgba(255,255,255,0.75); }
 
 /* PLATFORM NAME */
-.platform span.pname { font-size: 12.5px; font-weight: 500; text-align: center; color: var(--text-muted); line-height: 1.3; transition: color 0.15s ease; }
-.platform:hover span.pname { color: var(--text); }
-.platform.selected span.pname { color: #fff; font-weight: 600; }
+.platform span.pname { font-size: 12.5px; font-weight: 600; text-align: center; color: #fff; line-height: 1.3; }
 
 /* POPULAR tag */
 .tag-popular {
@@ -188,12 +159,6 @@ h1 {
 }
 .btn:active { transform: scale(0.96) !important; }
 
-.btn-ghost { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text-muted); }
-.btn-ghost:hover { background: var(--glass-hover); color: var(--text); }
-
-.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.28); color: #fff; }
-.btn-outline:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.5); }
-
 .btn-primary { background: #ffffff; color: #080808; }
 .btn-primary:hover { background: #d9d9d9; }
 
@@ -211,16 +176,12 @@ h1 {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
-#deselect-btn { display: none; }
-
 /* ─── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .wrapper { padding: 36px 14px 80px; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
   .platform { padding: 18px 10px 15px; }
   .platform-icon { width: 44px; height: 44px; }
-  h1 { font-size: 26px; }
-  .subtitle { font-size: 14px; }
   .actions-inner { gap: 8px; }
   .btn { padding: 12px 18px; font-size: 13px; }
 }
@@ -236,15 +197,6 @@ h1 {
 <div class="bg-mesh"></div>
 
 <div class="wrapper">
-
-  <div class="header">
-    <div class="badge">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Step 2 of 4 — Distribution
-    </div>
-    <h1>Where should your<br>music live?</h1>
-    <p class="subtitle">Select every platform you want to reach. Your music will go live simultaneously across all chosen stores within 24–72 hours.</p>
-  </div>
 
   <div class="controls-bar">
     <div class="search-wrap">
@@ -262,78 +214,78 @@ h1 {
   <div class="section-label">Major Streaming Platforms</div>
   <div class="grid" id="platformGrid">
 
-    <div class="platform" data-name="Spotify">
+    <div class="platform selected" data-name="Spotify">
       <div class="tag-popular">Top</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/spotify/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-headphones\'></i>'"></div>
+      <div class="platform-icon"><img src="https://cdn.simpleicons.org/spotify/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-spotify\'></i>'"></div>
       <span class="pname">Spotify</span>
     </div>
 
-    <div class="platform" data-name="Apple Music">
+    <div class="platform selected" data-name="Apple Music">
       <div class="tag-popular">Top</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/applemusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-apple\'></i>'"></div>
       <span class="pname">Apple Music</span>
     </div>
 
-    <div class="platform" data-name="YouTube Music">
+    <div class="platform selected" data-name="YouTube Music">
       <div class="tag-popular">Top</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/youtubemusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-youtube\'></i>'"></div>
       <span class="pname">YouTube Music</span>
     </div>
 
-    <div class="platform" data-name="Amazon Music">
+    <div class="platform selected" data-name="Amazon Music">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/amazonmusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-amazon\'></i>'"></div>
       <span class="pname">Amazon Music</span>
     </div>
 
-    <div class="platform" data-name="Tidal">
+    <div class="platform selected" data-name="Tidal">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/tidal/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-water\'></i>'"></div>
       <span class="pname">Tidal</span>
     </div>
 
-    <div class="platform" data-name="Deezer">
+    <div class="platform selected" data-name="Deezer">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/deezer/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-circle-play\'></i>'"></div>
       <span class="pname">Deezer</span>
     </div>
 
-    <div class="platform" data-name="Pandora">
+    <div class="platform selected" data-name="Pandora">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/pandora/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-radio\'></i>'"></div>
       <span class="pname">Pandora</span>
     </div>
 
-    <div class="platform" data-name="SoundCloud">
+    <div class="platform selected" data-name="SoundCloud">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/soundcloud/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-soundcloud\'></i>'"></div>
       <span class="pname">SoundCloud</span>
     </div>
 
-    <div class="platform" data-name="Napster">
+    <div class="platform selected" data-name="Napster">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/napster/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
       <span class="pname">Napster</span>
     </div>
 
-    <div class="platform" data-name="Qobuz">
+    <div class="platform selected" data-name="Qobuz">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/qobuz/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-compact-disc\'></i>'"></div>
+      <div class="platform-icon"><i class="fa-solid fa-compact-disc"></i></div>
       <span class="pname">Qobuz</span>
     </div>
 
-    <div class="platform" data-name="iHeart Radio">
+    <div class="platform selected" data-name="iHeart Radio">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/iheartradio/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-tower-broadcast\'></i>'"></div>
       <span class="pname">iHeart Radio</span>
     </div>
 
-    <div class="platform" data-name="Anghami">
+    <div class="platform selected" data-name="Anghami">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/anghami/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-globe\'></i>'"></div>
+      <div class="platform-icon"><i class="fa-solid fa-globe"></i></div>
       <span class="pname">Anghami</span>
     </div>
 
@@ -343,40 +295,40 @@ h1 {
   <div class="more-label"><span>Social &amp; Video Platforms</span></div>
   <div class="grid" id="socialGrid">
 
-    <div class="platform" data-name="TikTok">
+    <div class="platform selected" data-name="TikTok">
       <div class="tag-popular">Viral</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-tiktok\'></i>'"></div>
       <span class="pname">TikTok</span>
     </div>
 
-    <div class="platform" data-name="Instagram">
+    <div class="platform selected" data-name="Instagram">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/instagram/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-instagram\'></i>'"></div>
       <span class="pname">Instagram</span>
     </div>
 
-    <div class="platform" data-name="Facebook">
+    <div class="platform selected" data-name="Facebook">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-facebook\'></i>'"></div>
       <span class="pname">Facebook</span>
     </div>
 
-    <div class="platform" data-name="YouTube">
+    <div class="platform selected" data-name="YouTube">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-youtube\'></i>'"></div>
       <span class="pname">YouTube</span>
     </div>
 
-    <div class="platform" data-name="Snapchat">
+    <div class="platform selected" data-name="Snapchat">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/snapchat/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-snapchat\'></i>'"></div>
       <span class="pname">Snapchat</span>
     </div>
 
-    <div class="platform" data-name="Triller">
+    <div class="platform selected" data-name="Triller">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-video" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-video"></i></div>
       <span class="pname">Triller</span>
     </div>
 
@@ -386,41 +338,41 @@ h1 {
   <div class="more-label"><span>African Platforms</span></div>
   <div class="grid" id="africaGrid">
 
-    <div class="platform" data-name="Boomplay">
+    <div class="platform selected" data-name="Boomplay">
       <div class="tag-popular">Africa</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/boomplay/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
+      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
       <span class="pname">Boomplay</span>
     </div>
 
-    <div class="platform" data-name="Audiomack">
+    <div class="platform selected" data-name="Audiomack">
       <div class="tag-popular">Africa</div>
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/audiomack/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-headphones\'></i>'"></div>
       <span class="pname">Audiomack</span>
     </div>
 
-    <div class="platform" data-name="Mdundo">
+    <div class="platform selected" data-name="Mdundo">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-compact-disc" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-compact-disc"></i></div>
       <span class="pname">Mdundo</span>
     </div>
 
-    <div class="platform" data-name="Aftown">
+    <div class="platform selected" data-name="Aftown">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
       <span class="pname">Aftown</span>
     </div>
 
-    <div class="platform" data-name="Spinlet">
+    <div class="platform selected" data-name="Spinlet">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-headphones-simple" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-headphones-simple"></i></div>
       <span class="pname">Spinlet</span>
     </div>
 
-    <div class="platform" data-name="Iroking">
+    <div class="platform selected" data-name="Iroking">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-play" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-play"></i></div>
       <span class="pname">iROKING</span>
     </div>
 
@@ -430,99 +382,99 @@ h1 {
   <div class="more-label"><span>Radio, Sync &amp; More</span></div>
   <div class="grid" id="radioGrid">
 
-    <div class="platform" data-name="Shazam">
+    <div class="platform selected" data-name="Shazam">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/shazam/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-magnifying-glass\'></i>'"></div>
       <span class="pname">Shazam</span>
     </div>
 
-    <div class="platform" data-name="Beatport">
+    <div class="platform selected" data-name="Beatport">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/beatport/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-record-vinyl\'></i>'"></div>
       <span class="pname">Beatport</span>
     </div>
 
-    <div class="platform" data-name="Bandcamp">
+    <div class="platform selected" data-name="Bandcamp">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/bandcamp/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-bandcamp\'></i>'"></div>
       <span class="pname">Bandcamp</span>
     </div>
 
-    <div class="platform" data-name="7digital">
+    <div class="platform selected" data-name="7digital">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-download" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-download"></i></div>
       <span class="pname">7digital</span>
     </div>
 
-    <div class="platform" data-name="Resso">
+    <div class="platform selected" data-name="Resso">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-waveform-lines" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-waveform-lines"></i></div>
       <span class="pname">Resso</span>
     </div>
 
-    <div class="platform" data-name="NetEase Music">
+    <div class="platform selected" data-name="NetEase Music">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/neteasecloudmusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-cloud\'></i>'"></div>
       <span class="pname">NetEase</span>
     </div>
 
-    <div class="platform" data-name="KKBox">
+    <div class="platform selected" data-name="KKBox">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/kkbox/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-box\'></i>'"></div>
       <span class="pname">KKBox</span>
     </div>
 
-    <div class="platform" data-name="Joox">
+    <div class="platform selected" data-name="Joox">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
       <span class="pname">Joox</span>
     </div>
 
-    <div class="platform" data-name="Claro Música">
+    <div class="platform selected" data-name="Claro Música">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-signal" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-signal"></i></div>
       <span class="pname">Claro Música</span>
     </div>
 
-    <div class="platform" data-name="Fizy">
+    <div class="platform selected" data-name="Fizy">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-play" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-play"></i></div>
       <span class="pname">Fizy</span>
     </div>
 
-    <div class="platform" data-name="Yandex Music">
+    <div class="platform selected" data-name="Yandex Music">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/yandex/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
       <span class="pname">Yandex Music</span>
     </div>
 
-    <div class="platform" data-name="Gaana">
+    <div class="platform selected" data-name="Gaana">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/gaana/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
+      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
       <span class="pname">Gaana</span>
     </div>
 
-    <div class="platform" data-name="JioSaavn">
+    <div class="platform selected" data-name="JioSaavn">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="platform-icon"><img src="https://cdn.simpleicons.org/jiosaavn/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-play\'></i>'"></div>
       <span class="pname">JioSaavn</span>
     </div>
 
-    <div class="platform" data-name="Hungama">
+    <div class="platform selected" data-name="Hungama">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-headphones" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-headphones"></i></div>
       <span class="pname">Hungama</span>
     </div>
 
-    <div class="platform" data-name="Nuuday">
+    <div class="platform selected" data-name="Nuuday">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-tower-broadcast" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
       <span class="pname">Nuuday</span>
     </div>
 
-    <div class="platform" data-name="MediaNet">
+    <div class="platform selected" data-name="MediaNet">
       <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-network-wired" style="color:rgba(255,255,255,0.75);font-size:20px;"></i></div>
+      <div class="platform-icon"><i class="fa-solid fa-network-wired"></i></div>
       <span class="pname">MediaNet</span>
     </div>
 
@@ -539,16 +491,8 @@ h1 {
     <div class="actions-inner">
       <div class="actions-left">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        <span><strong id="countNum2">0</strong> platform<span id="pluralText">s</span> selected</span>
+        <span>All <strong id="countNum2">0</strong> platforms selected</span>
       </div>
-      <button class="btn btn-ghost" id="deselect-btn" onclick="deselectAll()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        Clear All
-      </button>
-      <button class="btn btn-outline" onclick="selectAll()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Select All
-      </button>
       <button class="btn btn-primary" onclick="continueNext()">
         Continue
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -559,40 +503,15 @@ h1 {
 </div><!-- /wrapper -->
 
 <script>
-/* No stagger delay on load — every card renders at once for a smooth, instant grid (removes the perceived "slow" load) */
+const searchInput = document.getElementById('searchInput');
+const emptyState  = document.getElementById('emptyState');
 
-const searchInput  = document.getElementById('searchInput');
-const emptyState   = document.getElementById('emptyState');
-
+/* All platforms are pre-selected and locked — no click-to-toggle.
+   updateCount just reflects the total (always everything) on load. */
 function updateCount() {
-  const n = document.querySelectorAll('.platform.selected').length;
-  const el  = document.getElementById('countNum');
-  const el2 = document.getElementById('countNum2');
-  const pl  = document.getElementById('pluralText');
-  const desBtn = document.getElementById('deselect-btn');
-
-  el.textContent  = n;
-  el2.textContent = n;
-  pl.textContent  = n === 1 ? '' : 's';
-  desBtn.style.display = n > 0 ? 'flex' : 'none';
-}
-
-/* Toggle select — single class flip, no animation restart, no layout thrash */
-document.querySelectorAll('.platform').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.toggle('selected');
-    updateCount();
-  });
-});
-
-function selectAll() {
-  document.querySelectorAll('.platform').forEach(i => i.classList.add('selected'));
-  updateCount();
-}
-
-function deselectAll() {
-  document.querySelectorAll('.platform').forEach(i => i.classList.remove('selected'));
-  updateCount();
+  const n = document.querySelectorAll('.platform').length;
+  document.getElementById('countNum').textContent  = n;
+  document.getElementById('countNum2').textContent = n;
 }
 
 searchInput.addEventListener('input', () => {
@@ -610,28 +529,10 @@ searchInput.addEventListener('input', () => {
 });
 
 function continueNext() {
-  const selected = [...document.querySelectorAll('.platform.selected')].map(i => i.dataset.name);
-
-  if (selected.length === 0) {
-    const btn = document.querySelector('.btn-primary');
-    btn.style.animation = 'shake 0.35s ease';
-    btn.addEventListener('animationend', () => btn.style.animation = '', { once: true });
-    return;
-  }
-
+  const selected = [...document.querySelectorAll('.platform')].map(i => i.dataset.name);
   localStorage.setItem('selectedPlatforms', JSON.stringify(selected));
   window.location.href = 'confirm.html';
 }
-
-const style = document.createElement('style');
-style.textContent = `@keyframes shake {
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-6px)}
-  40%{transform:translateX(6px)}
-  60%{transform:translateX(-4px)}
-  80%{transform:translateX(4px)}
-}`;
-document.head.appendChild(style);
 
 updateCount();
 </script>
