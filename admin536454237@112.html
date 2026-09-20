@@ -494,7 +494,7 @@ body.select-mode .card { cursor: pointer; }
 .badge-rejected { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
 .badge-paid     { background: rgba(52,211,153,0.1);  color: #34d399; border-color: rgba(52,211,153,0.25); }
 .badge-unpaid   { background: rgba(248,113,113,0.1); color: #f87171; border-color: rgba(248,113,113,0.25); }
-
+.badge-takendown { background: rgba(148,163,184,0.12); color: #94a3b8; border-color: rgba(148,163,184,0.28); }
 /* UPC BADGE */
 .upc-badge {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -530,7 +530,21 @@ body.select-mode .card { cursor: pointer; }
   text-transform: uppercase; color: var(--red); display: block; margin-bottom: 3px;
 }
 .rejection-box .rej-text { color: var(--text-sec); line-height: 1.5; word-break: break-word; }
-
+.takendown-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(148,163,184,0.06);
+  border: 1px solid rgba(148,163,184,0.22);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+}
+.takendown-box svg { flex-shrink: 0; margin-top: 1px; color: #94a3b8; }
+.takendown-box .tkd-label {
+  font-family: var(--ff-head); font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 3px;
+}
+.takendown-box .tkd-text { color: var(--text-sec); line-height: 1.5; word-break: break-word; }
 /* META */
 .meta-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -933,6 +947,7 @@ option { background: #13132a; }
       <option value="Review">Review</option>
       <option value="Approved">Approved</option>
       <option value="Rejected">Rejected</option>
+      <option value="Taken Down">Taken Down</option>
     </select>
 
     <select class="filter-select" id="paymentFilter">
@@ -1481,11 +1496,13 @@ function display(data) {
     const isPaid     = isSubmissionPaid(item);
     const isApproved = statusKey === "approved";
     const isRejected = statusKey === "rejected";
+    const isTakenDown = statusKey === "taken down";
     const initial    = name.charAt(0).toUpperCase();
     const existingUPC = item.upc || '';
     const existingCatalog = item.catalogNumber || '';
     const rejectionReason = item.rejectionReason || '';
     const rejectionCategory = item.rejectionCategory || '';
+    const takedownReason = item.takedownReason || '';
     const licenseProofUrl = item.licenseProofUrl || '';
 
     let date = '—';
@@ -1504,7 +1521,8 @@ function display(data) {
       pending:  'badge-pending',
       review:   'badge-review',
       approved: 'badge-approved',
-      rejected: 'badge-rejected'
+      rejected: 'badge-rejected',
+      'taken down': 'badge-takendown'
     }[statusKey] || 'badge-pending';
 
     const card = document.createElement("div");
@@ -1532,6 +1550,15 @@ function display(data) {
 
     // Show the rejection reason (if any) right under the badges, so
     // it's visible on the card without needing to open anything.
+        const takedownHtml = (isTakenDown && takedownReason)
+      ? `<div class="takendown-box">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+           <div>
+             <span class="tkd-label">Taken down — reason</span>
+             <span class="tkd-text">${escHtml(takedownReason)}</span>
+           </div>
+         </div>`
+      : '';
     const rejectionHtml = (isRejected && rejectionReason)
       ? `<div class="rejection-box">
            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1559,6 +1586,13 @@ function display(data) {
 
     // Let admin edit/add a reason after the fact, even without
     // changing the status dropdown again.
+        const editTakedownHtml = isTakenDown
+      ? `<button class="edit-reason-btn" data-id="${item.id}" data-takedown="true" data-current="${escHtml(takedownReason)}">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+           ${takedownReason ? 'Edit Takedown Reason' : 'Add Takedown Reason'}
+         </button>`
+      : '';
+    
     const editReasonHtml = isRejected
       ? `<button class="edit-reason-btn" data-id="${item.id}" data-current="${escHtml(rejectionReason)}" data-current-category="${escHtml(rejectionCategory)}">
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
@@ -1597,6 +1631,7 @@ function display(data) {
 
       ${upcHtml}
       ${rejectionHtml}
+      ${takedownHtml}
 
       <div class="meta-grid">
         <div class="meta-item">
@@ -1637,12 +1672,14 @@ function display(data) {
             data-artist="${escHtml(name)}"
             data-title="${escHtml(title)}"
             data-upc="${escHtml(existingUPC)}"
-            data-catalog="${escHtml(existingCatalog)}">
+            data-catalog="${escHtml(existingCatalog)}" data-original-status="${escHtml(status)}">
+            
             <option value="">— Change Status —</option>
             <option value="Pending"  ${statusKey==='pending'  ?'selected':''}>Pending</option>
             <option value="Review"   ${statusKey==='review'   ?'selected':''}>Review</option>
             <option value="Approved" ${statusKey==='approved' ?'selected':''}>Approved</option>
             <option value="Rejected" ${statusKey==='rejected' ?'selected':''}>Rejected</option>
+            <option value="Taken Down" ${statusKey==='taken down' ?'selected':''}>Taken Down</option>
           </select>
         </div>
         <div class="control-row">
@@ -1655,6 +1692,7 @@ function display(data) {
         </div>
         ${resendHtml}
         ${editReasonHtml}
+        ${editTakedownHtml}
         ${editUpcHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -1683,9 +1721,8 @@ function display(data) {
           sub: `Tell ${artistName} what needs fixing before resubmitting. This is shown on their dashboard.`,
           existing: ''
         });
-        if (result === null) {
-          // Cancelled — snap the dropdown back to the current status
-          this.value = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+                if (result === null) {
+          this.value = this.dataset.originalStatus;
           return;
         }
         this.disabled = true;
@@ -1707,6 +1744,33 @@ function display(data) {
       // Approving always routes through the UPC / catalog number
       // dialog — the admin supplies the real identifiers here; nothing
       // is auto-generated anymore.
+            if (newStatus === "Taken Down") {
+        const result = await promptForReason({
+          title: 'Take Down Submission',
+          sub: `Explain why "${songTitle}" is being taken down. This is shown on ${artistName}'s dashboard.`,
+          existing: ''
+        });
+        if (result === null) {
+          this.value = this.dataset.originalStatus;
+          return;
+        }
+        this.disabled = true;
+        const ok = await safeUpdate(subId, {
+          status: newStatus,
+          takedownReason: result.reason,
+          rejectionReason: '',
+          rejectionCategory: '',
+          licenseProofUrl: ''
+        });
+        if (ok) {
+          toast('⛔', 'Marked as Taken Down');
+          setTimeout(() => startListener(), 800);
+        } else {
+          this.disabled = false;
+        }
+        return;
+      }
+      
       if (newStatus === "Approved") {
         const result = await promptForUpcCatalog({
           title: 'Approve Submission',
@@ -1715,7 +1779,7 @@ function display(data) {
           existingCatalog: catalog || ''
         });
         if (result === null) {
-          this.value = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+                  this.value = this.dataset.originalStatus;
           return;
         }
         this.disabled = true;
@@ -1725,7 +1789,8 @@ function display(data) {
           catalogNumber: result.catalogNumber,
           rejectionReason: '',
           rejectionCategory: '',
-          licenseProofUrl: ''
+          licenseProofUrl: '',
+          takedownReason: ''
         };
         this.dataset.upc = result.upc;
         this.dataset.catalog = result.catalogNumber;
@@ -1752,6 +1817,10 @@ function display(data) {
         updateData.rejectionReason = '';
         updateData.rejectionCategory = '';
         updateData.licenseProofUrl = '';
+      }
+      
+      if (newStatus !== "Taken Down") {
+        updateData.takedownReason = '';
       }
 
       const ok = await safeUpdate(subId, updateData);
@@ -1846,6 +1915,23 @@ function display(data) {
         const subId = this.dataset.id;
         const current = this.dataset.current || '';
         const currentCategory = this.dataset.currentCategory || '';
+        
+        if (this.dataset.takedown === 'true') {
+          const result = await promptForReason({
+            title: 'Edit Takedown Reason',
+            sub: `Update why ${name}'s release was taken down. They'll see this on their dashboard.`,
+            existing: current
+          });
+          if (result === null) return;
+          this.disabled = true;
+          const ok = await safeUpdate(subId, { takedownReason: result.reason });
+          if (ok) {
+            toast('✅', 'Takedown reason updated');
+            setTimeout(() => startListener(), 500);
+          }
+          this.disabled = false;
+          return;
+        }
         const result = await promptForReason({
           title: 'Edit Rejection Reason',
           sub: `Update what ${name} needs to fix. They'll see this on their dashboard.`,
