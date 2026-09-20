@@ -150,13 +150,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .row-dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--grey-dark); flex-shrink: 0; }
 .row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
 .row-right-top { display: flex; align-items: center; gap: 8px; }
-.row-countdown { font-size: 11px; font-weight: 800; color: var(--amber); background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; border-radius: 8px; white-space: nowrap; }
+.row-countdown { font-size: 11px; font-weight: 800; color: #000; background: #fff; border: 1px solid #fff; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
 .row-chevron { color: var(--grey-dark); flex-shrink: 0; transition: color 0.15s; }
 .release-row:hover .row-chevron { color: var(--white-70); }
 .row-chevron svg { width: 14px; height: 14px; }
 
 /* ===== BADGES (used inside the opened modal only) ===== */
-.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .badge.pending  { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
 .badge.pending::before { background: var(--amber); }
@@ -169,6 +169,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .badge.paid   { background: rgba(34,197,94,0.15);  color: var(--green); border: 1px solid rgba(34,197,94,0.5); }
 .badge.paid::before { background: var(--green); }
 .badge.unpaid { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
+.badge.taken-down { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.5); }
+.badge.taken-down::before { background: #94a3b8; }   
 .badge.unpaid::before { background: var(--amber); }
 @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
@@ -359,6 +361,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
 .meta-rejection-reason { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 4px; }
 .meta-rejection-reason strong { color: var(--rose); display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+.meta-takendown-reason { background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.28); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 4px; }
+.meta-takendown-reason strong { color: #94a3b8; display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
 
 /* ═══════════════════════════════════════════════
    CONFIRM MODAL (generic — used before creating a payment)
@@ -528,6 +532,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <button class="filter-chip" data-filter="review">In Review</button>
         <button class="filter-chip" data-filter="approved">Approved</button>
         <button class="filter-chip" data-filter="rejected">Rejection</button>
+        <button class="filter-chip" data-filter="taken-down">Taken Down</button>
       </div>
     </div>
 
@@ -777,6 +782,9 @@ function renderModalTopAction(data, releaseId, statusClass) {
   if (statusClass === "approved") {
     return `<a href="https://444musicblog.vercel.app" target="_blank" class="modal-top-action promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote This Release</a>`;
   }
+     if (statusClass === "taken-down") {
+    return `<div class="modal-top-action" style="background: rgba(148,163,184,0.14); color: #94a3b8; cursor: default;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This Release Was Taken Down</div>`;
+  }
   if (statusClass === "rejected") {
     return `<button type="button" class="modal-top-action fix" onclick="openRejectionFix('${releaseId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`;
   }
@@ -803,14 +811,14 @@ async function openMetaModal(releaseId) {
   const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
   const topAction = renderModalTopAction(data, releaseId, statusClass);
 
-  /* Cover strip now always shows a "Change Cover" edit control,
-     whether or not artwork already exists — editing happens here,
-     inside the opened card, and nowhere else. */
+  /* Cover strip shows a "Change Cover" edit control for every status
+     EXCEPT Taken Down — a taken-down release is display-only, no fixes. */
+  const coverEditHtml = statusClass === "taken-down" ? "" : renderCoverEditControl(releaseId);
   const coverHtml = data.coverURL
-    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art">${renderCoverEditControl(releaseId)}</div>`
-    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>${renderCoverEditControl(releaseId)}</div>`;
-
-  const paid = isPaidValue(data.paid);
+    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art">${coverEditHtml}</div>`
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>${coverEditHtml}</div>`;
+     const takedownReasonHtml = (statusClass === "taken-down" && data.takedownReason && data.takedownReason.trim())
+    ? `<div class="meta-takendown-reason"><strong>Reason for takedown</strong>${escHtml(data.takedownReason)}</div>` : '';
   const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
     ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
   content.innerHTML = `
@@ -824,6 +832,7 @@ async function openMetaModal(releaseId) {
           ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--grey-dark);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
         </div>
         ${rejectionReasonHtml}
+        ${takedownReasonHtml}
       </div>
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
         <div class="meta-fields-grid">
