@@ -952,7 +952,8 @@ option { background: #13132a; }
       </span>
       <input type="text" id="search" placeholder="Search current page — artist, title, email…">
     </div>
-
+    <button class="refresh-btn" id="searchAllBtn" type="button">🔍 Search All</button>
+    
     <select class="filter-select" id="statusFilter">
       <option value="">All Statuses</option>
       <option value="Pending">Pending</option>
@@ -1241,6 +1242,7 @@ const bulkMarkPaidBtn = document.getElementById("bulkMarkPaid");
 const bulkDeleteBtn   = document.getElementById("bulkDelete");
 const bulkClearBtn    = document.getElementById("bulkClear");
 const refreshBtn      = document.getElementById("refreshBtn");
+const searchAllBtn    = document.getElementById("searchAllBtn");
 const confirmOverlay  = document.getElementById("confirmOverlay");
 const confirmMsg      = document.getElementById("confirmMsg");
 const confirmYes      = document.getElementById("confirmYes");
@@ -1288,7 +1290,57 @@ let currentPageIndex     = 0;
 let hasNextPage           = false;
 let totalMatchingCount   = null; // count for the current status filter (aggregate, cheap)
 let isLoadingPage        = false;
+let isSearchAllMode      = false;   // true while showing full-database search results
 
+async function searchAllSubmissions(term) {
+  const q = term.trim();
+  if (!q) return;
+
+  searchAllBtn.disabled = true;
+  searchAllBtn.textContent = '🔍 Searching…';
+  resultsEl.innerHTML = `<div class="loading-state"><div class="loader"></div><p>Searching entire database…</p></div>`;
+  paginationBar.style.display = 'none';
+
+  const endTerm = q + '\uf8ff'; // Firestore trick: matches anything starting with q
+
+  try {
+    const [byName, byEmail, byTitle] = await Promise.all([
+      getDocs(query(collection(db, 'submissions'),
+        orderBy('artistName'), where('artistName', '>=', q), where('artistName', '<=', endTerm), limit(50))),
+      getDocs(query(collection(db, 'submissions'),
+        orderBy('email'), where('email', '>=', q), where('email', '<=', endTerm), limit(50))),
+      getDocs(query(collection(db, 'submissions'),
+        orderBy('releaseTitle'), where('releaseTitle', '>=', q), where('releaseTitle', '<=', endTerm), limit(50)))
+    ]);
+
+    const merged = new Map();
+    [...byName.docs, ...byEmail.docs, ...byTitle.docs].forEach(d => merged.set(d.id, { id: d.id, ...d.data() }));
+    const results = Array.from(merged.values());
+
+    isSearchAllMode = true;
+    lastSyncEl.textContent = `Full search: ${results.length} match(es) for "${q}"`;
+    document.getElementById('countShown').textContent = results.length;
+    document.getElementById('countTotal').textContent = results.length;
+    display(results);
+    renderSearchAllBackButton();
+  } catch (e) {
+    console.error('Search-all error:', e);
+    toast('❌', 'Full search failed: ' + e.message);
+    resultsEl.innerHTML = `<div class="empty-state"><p>Search failed — check console.</p></div>`;
+  } finally {
+    searchAllBtn.disabled = false;
+    searchAllBtn.textContent = '🔍 Search All';
+  }
+}
+
+function renderSearchAllBackButton() {
+  paginationBar.style.display = 'flex';
+  paginationBar.innerHTML = `<button class="page-btn" id="backToBrowsingBtn">← Back to Browsing</button>`;
+  document.getElementById('backToBrowsingBtn').addEventListener('click', () => {
+    isSearchAllMode = false;
+    resetAndLoad();
+  });
+}
 /* ─── CONNECTION / STATE INDICATOR ───────────────────────────────── */
 function setConnStatus(state, msg) {
   connDot.className = 'conn-dot ' + (state === 'ready' ? 'live' : state === 'error' ? 'offline' : 'connecting');
@@ -1472,6 +1524,10 @@ function applyClientFilters() {
 }
 
 searchEl.addEventListener('input', applyClientFilters);
+searchAllBtn.addEventListener('click', () => searchAllSubmissions(searchEl.value));
+searchEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') searchAllSubmissions(searchEl.value);
+});
 paymentFilterEl.addEventListener('change', applyClientFilters);
 statusFilterEl.addEventListener('change', () => { currentStatusFilter = statusFilterEl.value; resetAndLoad(); });
 sortSelectEl.addEventListener('change', () => { currentSortMode = sortSelectEl.value; resetAndLoad(); });
