@@ -636,6 +636,29 @@ catch(e) { console.warn('Persistence not enabled:', e.code); }
 
 const PAYMENT_AMOUNT = 30; // GHC, fixed per submission marked Paid
 
+/* ============ PAID-STATUS DERIVATION ============
+   A submission counts as "paid" if:
+     (a) it was manually marked Paid in admin.html (paymentVerified / paid),
+         OR
+     (b) its status has progressed past "Pending" (Review, Approved,
+         Rejected, Taken Down) — because in this platform's real flow, a
+         submission only ever advances past Pending once Paystack has
+         confirmed the payment. This lets automated Paystack submissions
+         show correctly here even though that flow doesn't yet write a
+         `payments` doc or flip `paymentVerified` itself.
+   paymentAmountFor() prefers a matching `payments` doc's real amount
+   (covers the manual-mark path, which may differ from the flat rate)
+   and falls back to the flat PAYMENT_AMOUNT otherwise. */
+function isPaidSubmission(item) {
+  return item.paymentVerified === true
+      || item.paid === 'Paid'
+      || (!!item.status && item.status !== 'Pending');
+}
+function paymentAmountFor(sub) {
+  const p = payments.find(p => p.submissionId === sub.id);
+  return (p && typeof p.amount === 'number') ? p.amount : PAYMENT_AMOUNT;
+}
+
 /* ============ LOGIN ============ */
 const loginGate   = document.getElementById('loginGate');
 const loginForm   = document.getElementById('loginForm');
@@ -816,22 +839,24 @@ function render() {
 }
 
 /* ============ TODAY RECEIPT STRIP ============
-   "Today's Payments" reads the payments collection filtered to records
-   whose createdAt falls on today's date. A payment record is only ever
-   created the moment the admin panel marks a submission Paid, so this
-   accurately reflects payments made *today*, not historical paid totals. */
+   "Today's Payments" now reads directly off submissions whose status has
+   progressed past Pending (see isPaidSubmission above) and were
+   submitted today — so an automated Paystack submission that reaches
+   Review today shows up immediately, without needing a manual admin
+   toggle or a payments doc to exist. */
 function renderReceiptStrip() {
-  const todaysPayments = payments.filter(p => isToday(toDate(p.createdAt)));
-  const todaysTotal = todaysPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+  const todaysSubs = submissions.filter(s => isToday(getSubDate(s)));
+  const todaysPaidSubs = todaysSubs.filter(isPaidSubmission);
+  const todaysTotal = todaysPaidSubs.reduce((sum, s) => sum + paymentAmountFor(s), 0);
+
   document.getElementById('todayPayment').textContent = fmtMoney(todaysTotal);
-  document.getElementById('todayPaymentSub').textContent = todaysTotal > 0
-    ? `${todaysPayments.length} payment${todaysPayments.length === 1 ? '' : 's'} received`
+  document.getElementById('todayPaymentSub').textContent = todaysPaidSubs.length > 0
+    ? `${todaysPaidSubs.length} payment${todaysPaidSubs.length === 1 ? '' : 's'} received`
     : 'No payments received yet today';
 
-  const todaysSubs = submissions.filter(s => isToday(getSubDate(s)));
   document.getElementById('todaySubs').textContent = todaysSubs.length;
   document.getElementById('todaySubsSub').textContent = todaysSubs.length > 0
-    ? `${todaysSubs.filter(s => s.paymentVerified).length} paid · ${todaysSubs.filter(s => !s.paymentVerified).length} unpaid`
+    ? `${todaysPaidSubs.length} paid · ${todaysSubs.length - todaysPaidSubs.length} unpaid`
     : 'across all release types';
 
   document.getElementById('todayDate').textContent = fmtDate(new Date());
@@ -839,19 +864,15 @@ function renderReceiptStrip() {
 }
 
 /* ============ STAT GRID ============
-   - Revenue: sum of `payments` docs whose createdAt falls in the selected range.
-   - Paid Submissions: counted directly off `submissions.paymentVerified === true`
-     within range — this is the "all true paid submissions" source of truth,
-     independent of whether a payments doc happens to exist for it.
+   - Revenue / Paid Submissions: now derived entirely from submissions
+     via isPaidSubmission() + paymentAmountFor() — no longer dependent on
+     a `payments` doc existing for the automated Paystack flow.
    - Releases / Submitters: counted off submission dates within range.
    - Total Registered Users: counted off `users` collection docs within range
      (falls back to "all" if a user doc has no readable createdAt, so real
      accounts are never silently dropped from the grand total). */
 function filteredSubs() {
   return submissions.filter(s => currentRange === 'all' || inRange(getSubDate(s), currentRange));
-}
-function filteredPayments() {
-  return payments.filter(p => currentRange === 'all' || inRange(toDate(p.createdAt), currentRange));
 }
 function filteredUsers() {
   if (currentRange === 'all') return users;
@@ -864,13 +885,13 @@ function filteredUsers() {
 
 function renderStatGrid() {
   const subs = filteredSubs();
-  const pays = filteredPayments();
   const usrs = filteredUsers();
 
-  const revenue = pays.reduce((sum, p) => sum + (p.amount || 0), 0);
+  const paidSubs = subs.filter(isPaidSubmission);
+  const revenue = paidSubs.reduce((sum, s) => sum + paymentAmountFor(s), 0);
   document.getElementById('statRevenue').textContent = fmtMoney(revenue);
 
-  const paidCount = subs.filter(s => s.paymentVerified).length;
+  const paidCount = paidSubs.length;
   document.getElementById('statPaid').textContent = paidCount;
 
   document.getElementById('statReleases').textContent = subs.length;
@@ -890,29 +911,26 @@ function renderStatGrid() {
 function computePrevValue(metric) {
   if (currentRange === 'all') return null;
   const now = new Date();
-  let prevSubs = [], prevPays = [], prevUsers = [];
+  let prevSubs = [], prevUsers = [];
 
   if (currentRange === 'today') {
     const y = new Date(now); y.setDate(now.getDate() - 1);
     prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d.toDateString() === y.toDateString(); });
-    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.toDateString() === y.toDateString(); });
     prevUsers = users.filter(u => { const d = getUserDate(u); return d && d.toDateString() === y.toDateString(); });
   } else if (currentRange === 'week') {
     const start = new Date(now); start.setDate(now.getDate() - now.getDay() - 7); start.setHours(0,0,0,0);
     const end = new Date(now); end.setDate(now.getDate() - now.getDay()); end.setHours(0,0,0,0);
     prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d >= start && d < end; });
-    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d >= start && d < end; });
     prevUsers = users.filter(u => { const d = getUserDate(u); return d && d >= start && d < end; });
   } else if (currentRange === 'month') {
     const m = now.getMonth() - 1, y = m < 0 ? now.getFullYear() - 1 : now.getFullYear();
     const mm = (m + 12) % 12;
     prevSubs = submissions.filter(s => { const d = getSubDate(s); return d && d.getMonth() === mm && d.getFullYear() === y; });
-    prevPays = payments.filter(p => { const d = toDate(p.createdAt); return d && d.getMonth() === mm && d.getFullYear() === y; });
     prevUsers = users.filter(u => { const d = getUserDate(u); return d && d.getMonth() === mm && d.getFullYear() === y; });
   }
 
-  if (metric === 'revenue')     return prevPays.reduce((s,p) => s + (p.amount||0), 0);
-  if (metric === 'paid')        return prevSubs.filter(s => s.paymentVerified).length;
+  if (metric === 'revenue')     return prevSubs.filter(isPaidSubmission).reduce((s,x) => s + paymentAmountFor(x), 0);
+  if (metric === 'paid')        return prevSubs.filter(isPaidSubmission).length;
   if (metric === 'releases')    return prevSubs.length;
   if (metric === 'submitters')  return new Set(prevSubs.map(s => (s.email||'').toLowerCase()).filter(Boolean)).size;
   if (metric === 'users')       return prevUsers.length;
@@ -932,18 +950,21 @@ function setTrend(elId, current, prev) {
   else { el.className = 'stat-trend flat'; el.textContent = '0%'; }
 }
 
-/* ============ BAR CHART (revenue over time) ============ */
+/* ============ BAR CHART (revenue over time) ============
+   Buckets by each paid submission's own submitted date rather than a
+   payments doc's createdAt, since automated submissions may not have a
+   payments doc at all. */
 function renderBarChart() {
   const svg = document.getElementById('barChart');
   const tooltip = document.getElementById('barTooltip');
-  const pays = filteredPayments();
+  const paidSubs = filteredSubs().filter(isPaidSubmission);
 
   const byDay = {};
-  pays.forEach(p => {
-    const d = toDate(p.createdAt);
+  paidSubs.forEach(s => {
+    const d = getSubDate(s);
     if (!d) return;
     const key = d.toISOString().slice(0,10);
-    byDay[key] = (byDay[key] || 0) + (p.amount || 0);
+    byDay[key] = (byDay[key] || 0) + paymentAmountFor(s);
   });
 
   let days = Object.keys(byDay).sort();
@@ -1054,16 +1075,19 @@ function renderLedger() {
   }
 
   body.innerHTML = subs.map(s => {
-    const isPaid = !!s.paymentVerified;
+    const isPaid = isPaidSubmission(s);
     const dSub = getSubDate(s);
     const matchingPayment = payments.find(p => p.submissionId === s.id);
-    const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : null;
+    // Prefer a real payments-doc date (manual-mark path); otherwise, for
+    // an automated submission that's paid, the submission date itself is
+    // the best available approximation of when payment happened.
+    const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : (isPaid ? dSub : null);
     return `<tr>
       <td class="ledger-id" data-label="Ref">#${s.id.slice(0,6).toUpperCase()}</td>
       <td data-label="Submitted">${fmtDate(dSub)}</td>
       <td data-label="Status"><span class="ledger-badge ${isPaid ? 'paid' : 'unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span></td>
       <td data-label="Paid">${dPaid ? fmtDate(dPaid) : '—'}</td>
-      <td class="ledger-amt" data-label="Amount">${isPaid ? fmtMoney(PAYMENT_AMOUNT) : '—'}</td>
+      <td class="ledger-amt" data-label="Amount">${isPaid ? fmtMoney(paymentAmountFor(s)) : '—'}</td>
     </tr>`;
   }).join('');
 }
@@ -1133,9 +1157,9 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     const { jsPDF } = window.jspdf;
     const docPdf = new jsPDF();
     const subs = filteredSubs();
-    const pays = filteredPayments();
     const usrs = filteredUsers();
-    const revenue = pays.reduce((s,p) => s + (p.amount||0), 0);
+    const paidSubs = subs.filter(isPaidSubmission);
+    const revenue = paidSubs.reduce((s,x) => s + paymentAmountFor(x), 0);
 
     docPdf.setFont('helvetica', 'bold');
     docPdf.setFontSize(16);
@@ -1149,18 +1173,20 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     docPdf.setFontSize(11);
     docPdf.text(`Total Revenue: GH₵ ${revenue.toFixed(2)}`, 14, 36);
     docPdf.text(`Total Releases: ${subs.length}`, 14, 43);
-    docPdf.text(`Paid Submissions: ${subs.filter(s=>s.paymentVerified).length}`, 14, 50);
+    docPdf.text(`Paid Submissions: ${paidSubs.length}`, 14, 50);
     docPdf.text(`Total Registered Users: ${usrs.length}`, 14, 57);
 
     const rows = subs.sort((a,b) => (getSubDate(b)?.getTime()||0) - (getSubDate(a)?.getTime()||0))
       .map(s => {
-        const matchingPayment = pays.find(p => p.submissionId === s.id);
+        const paid = isPaidSubmission(s);
+        const matchingPayment = payments.find(p => p.submissionId === s.id);
+        const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : (paid ? getSubDate(s) : null);
         return [
           '#' + s.id.slice(0,6).toUpperCase(),
           fmtDate(getSubDate(s)),
-          s.paymentVerified ? 'Paid' : 'Unpaid',
-          matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
-          s.paymentVerified ? `GH₵ ${PAYMENT_AMOUNT.toFixed(2)}` : '—'
+          paid ? 'Paid' : 'Unpaid',
+          dPaid ? fmtDate(dPaid) : '—',
+          paid ? `GH₵ ${paymentAmountFor(s).toFixed(2)}` : '—'
         ];
       });
 
@@ -1184,16 +1210,17 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 document.getElementById('exportXlsBtn').addEventListener('click', () => {
   try {
     const subs = filteredSubs();
-    const pays = filteredPayments();
     const rows = subs.sort((a,b) => (getSubDate(b)?.getTime()||0) - (getSubDate(a)?.getTime()||0))
       .map(s => {
-        const matchingPayment = pays.find(p => p.submissionId === s.id);
+        const paid = isPaidSubmission(s);
+        const matchingPayment = payments.find(p => p.submissionId === s.id);
+        const dPaid = matchingPayment ? toDate(matchingPayment.createdAt) : (paid ? getSubDate(s) : null);
         return {
           'Ref': '#' + s.id.slice(0,6).toUpperCase(),
           'Date Submitted': fmtDate(getSubDate(s)),
-          'Status': s.paymentVerified ? 'Paid' : 'Unpaid',
-          'Date Paid': matchingPayment ? fmtDate(toDate(matchingPayment.createdAt)) : '—',
-          'Amount (GHS)': s.paymentVerified ? PAYMENT_AMOUNT : 0
+          'Status': paid ? 'Paid' : 'Unpaid',
+          'Date Paid': dPaid ? fmtDate(dPaid) : '—',
+          'Amount (GHS)': paid ? paymentAmountFor(s) : 0
         };
       });
 
