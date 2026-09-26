@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>444Music — Smart Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #050505; --card: #0e0e10; --border: rgba(255,255,255,0.08);
+    --text: #f2f2f3; --text-sec: #9a9a9f; --text-mut: #55555c;
+    --green: #1DB954;
+    --ff-display: 'Poppins', sans-serif; --ff-body: 'Inter', sans-serif;
+  }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--ff-body);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    width: 100%; max-width: 420px; text-align: center;
+  }
+  .artwork {
+    width: 220px; height: 220px; border-radius: 16px; object-fit: cover;
+    margin: 0 auto 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+    background: var(--card); border: 1px solid var(--border);
+  }
+  .artwork.placeholder {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--ff-display); font-weight: 800; font-size: 3rem;
+    color: var(--text-mut);
+  }
+  .title { font-family: var(--ff-display); font-weight: 700; font-size: 1.35rem; margin-bottom: 4px; }
+  .artist { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 28px; }
+  .stores { display: flex; flex-direction: column; gap: 10px; }
+  .store-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; text-decoration: none; color: var(--text);
+    font-weight: 600; font-size: 0.9rem; transition: border-color 0.15s, background 0.15s;
+  }
+  .store-btn:hover { border-color: rgba(255,255,255,0.25); background: #131315; }
+  .footer-mark {
+    margin-top: 32px; color: var(--text-mut); font-size: 0.72rem;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .footer-mark b { color: var(--text-sec); }
+  .state { color: var(--text-sec); font-size: 0.9rem; padding: 60px 0; }
+  .loader {
+    width: 26px; height: 26px; border: 2px solid var(--border); border-top-color: var(--green);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="state"><div class="loader"></div>Loading…</div>
+</div>
+
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, limit }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const STORE_LABELS = {
+  spotify:      'Spotify',
+  appleMusic:   'Apple Music',
+  itunes:       'iTunes',
+  youtubeMusic: 'YouTube Music',
+  youtube:      'YouTube',
+  deezer:       'Deezer',
+  amazonMusic:  'Amazon Music',
+  boomplay:     'Boomplay',
+  audiomack:    'Audiomack',
+  tidal:        'Tidal',
+  soundcloud:   'SoundCloud'
+};
+// Order the buttons in a sensible priority — anything not listed here
+// still renders, just appended after these.
+const STORE_ORDER = ['spotify','appleMusic','youtubeMusic','audiomack','boomplay','deezer','amazonMusic','tidal','youtube','itunes','soundcloud'];
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getSlugFromUrl() {
+  // Supports both /l/{slug} (if your host rewrites it here) and
+  // /l.html?slug={slug} as a fallback.
+  const path = window.location.pathname;
+  const parts = path.split('/').filter(Boolean);
+  const fromPath = parts[parts.length - 1];
+  if (fromPath && fromPath !== 'l.html' && fromPath !== 'l') return fromPath;
+  return new URLSearchParams(window.location.search).get('slug');
+}
+
+function renderState(html) {
+  document.getElementById('card').innerHTML = `<div class="state">${html}</div>`;
+}
+
+function renderRelease(item) {
+  const sl = item.smartLink || {};
+  const stores = sl.stores || {};
+  const title = sl.title || item.releaseTitle || 'Untitled';
+  const artist = sl.artistName || item.artistName || 'Unknown Artist';
+  const initial = artist.charAt(0).toUpperCase();
+
+  const artworkHtml = sl.thumbnailUrl
+    ? `<img class="artwork" src="${escHtml(sl.thumbnailUrl)}" alt="${escHtml(title)}">`
+    : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
+
+  const orderedKeys = [
+    ...STORE_ORDER.filter(k => stores[k]),
+    ...Object.keys(stores).filter(k => !STORE_ORDER.includes(k))
+  ];
+
+  const storeButtons = orderedKeys.map(key => {
+    const label = STORE_LABELS[key] || key;
+    return `<a class="store-btn" href="${escHtml(stores[key])}" target="_blank" rel="noopener">${escHtml(label)}</a>`;
+  }).join('');
+
+  const fallback = (!sl.resolved && sl.pageUrl)
+    ? `<a class="store-btn" href="${escHtml(sl.pageUrl)}" target="_blank" rel="noopener">More platforms →</a>`
+    : '';
+
+  document.getElementById('card').innerHTML = `
+    ${artworkHtml}
+    <div class="title">${escHtml(title)}</div>
+    <div class="artist">${escHtml(artist)}</div>
+    <div class="stores">
+      ${storeButtons || '<div class="state" style="padding:20px 0;">Still gathering store links — check back soon.</div>'}
+      ${fallback}
+    </div>
+    <div class="footer-mark">Distributed by <b>444Music</b></div>
+  `;
+}
+
+async function load() {
+  const slug = getSlugFromUrl();
+  if (!slug) { renderState('No release specified.'); return; }
+
+  try {
+    const q = query(collection(db, 'submissions'), where('smartLinkSlug', '==', slug), limit(1));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      renderState('Release not found.');
+      return;
+    }
+    const item = snap.docs[0].data();
+    renderRelease(item);
+  } catch (e) {
+    console.error(e);
+    renderState('Something went wrong loading this release.');
+  }
+}
+
+load();
+</script>
+
+</body>
+</html>
