@@ -122,9 +122,9 @@ function renderRelease(item) {
   const artist = sl.artistName || item.artistName || 'Unknown Artist';
   const initial = artist.charAt(0).toUpperCase();
 
-  const artworkHtml = sl.thumbnailUrl
-    ? `<img class="artwork" src="${escHtml(sl.thumbnailUrl)}" alt="${escHtml(title)}">`
-    : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
+ const artworkHtml = (sl.thumbnailUrl || item.coverURL)
+  ? `<img class="artwork" src="${escHtml(sl.thumbnailUrl || item.coverURL)}" alt="${escHtml(title)}">`
+  : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
 
   const orderedKeys = [
     ...STORE_ORDER.filter(k => stores[k]),
