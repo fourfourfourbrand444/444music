@@ -625,6 +625,21 @@ body.select-mode .card { cursor: pointer; }
   transition: all var(--trans);
 }
 .edit-upc-btn:hover { background: rgba(74,222,128,0.08); border-color: var(--green); }
+/* EDIT SMARTLINK STORES BUTTON */
+.edit-smartlink-btn {
+  width: 100%; margin-top: 2px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(96,165,250,0.3);
+  border-radius: 6px;
+  color: var(--blue);
+  font-family: var(--ff); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--trans);
+}
+.edit-smartlink-btn:hover { background: rgba(96,165,250,0.08); border-color: var(--blue); }
 
 /* DELETE BUTTON */
 .delete-btn {
@@ -1038,6 +1053,47 @@ body.select-mode .card { cursor: pointer; }
   </div>
 </div>
 
+<!-- SMARTLINK STORES DIALOG -->
+<div class="reason-overlay" id="smartlinkOverlay" style="display:none;">
+  <div class="reason-card">
+    <div class="reason-icon" style="background: rgba(96,165,250,0.08); border-color: rgba(96,165,250,0.25); color:var(--blue);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </div>
+    <div class="reason-title" id="smartlinkTitle">Edit Store Links</div>
+    <div class="reason-sub" id="smartlinkSub">Paste the platform links for this release. Leave blank to skip a platform.</div>
+
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Apple Music</label>
+      <input type="url" id="smartlinkAppleMusic"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://music.apple.com/...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Amazon Music</label>
+      <input type="url" id="smartlinkAmazonMusic"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://music.amazon.com/...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Boomplay</label>
+      <input type="url" id="smartlinkBoomplay"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://www.boomplay.com/...">
+    </div>
+    <div style="margin-bottom:18px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Audiomack</label>
+      <input type="url" id="smartlinkAudiomack"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://audiomack.com/...">
+    </div>
+
+    <div class="reason-btns">
+      <button class="reason-submit" id="smartlinkSubmit" style="background:var(--blue);color:var(--black);">Save Links</button>
+      <button class="reason-cancel" id="smartlinkCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+  
 <!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp }
@@ -1202,6 +1258,15 @@ const catalogInputEl  = document.getElementById("catalogInput");
 const upcSubmit       = document.getElementById("upcSubmit");
 const upcCancel       = document.getElementById("upcCancel");
 const paginationBar   = document.getElementById('paginationBar');
+const smartlinkOverlay      = document.getElementById("smartlinkOverlay");
+const smartlinkTitle        = document.getElementById("smartlinkTitle");
+const smartlinkSub          = document.getElementById("smartlinkSub");
+const smartlinkAppleMusicEl = document.getElementById("smartlinkAppleMusic");
+const smartlinkAmazonMusicEl= document.getElementById("smartlinkAmazonMusic");
+const smartlinkBoomplayEl   = document.getElementById("smartlinkBoomplay");
+const smartlinkAudiomackEl  = document.getElementById("smartlinkAudiomack");
+const smartlinkSubmit       = document.getElementById("smartlinkSubmit");
+const smartlinkCancel       = document.getElementById("smartlinkCancel");
 
 /* ─── PAGINATION / QUERY STATE ─────────────────────────────────────── */
 let submissions   = [];
@@ -1502,6 +1567,7 @@ function display(data) {
     const initial    = name.charAt(0).toUpperCase();
     const existingUPC = item.upc || '';
     const existingCatalog = item.catalogNumber || '';
+    const existingStores = (item.smartLink && item.smartLink.stores) || {};
     const rejectionReason = item.rejectionReason || '';
     const rejectionCategory = item.rejectionCategory || '';
     const takedownReason = item.takedownReason || '';
@@ -1600,6 +1666,17 @@ function display(data) {
            ${existingUPC ? 'Edit UPC / Catalog Number' : 'Add UPC / Catalog Number'}
          </button>`
       : '';
+        const editSmartlinkHtml = isApproved
+      ? `<button class="edit-smartlink-btn" data-id="${item.id}"
+           data-artist="${escHtml(name)}" data-title="${escHtml(title)}"
+           data-applemusic="${escHtml(existingStores.appleMusic || '')}"
+           data-amazonmusic="${escHtml(existingStores.amazonMusic || '')}"
+           data-boomplay="${escHtml(existingStores.boomplay || '')}"
+           data-audiomack="${escHtml(existingStores.audiomack || '')}">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+           ${(existingStores.appleMusic || existingStores.amazonMusic || existingStores.boomplay || existingStores.audiomack) ? 'Edit Store Links' : 'Add Store Links'}
+         </button>`
+      : '';
 
     card.innerHTML = `
       <div class="card-select-box ${selectedIds.has(item.id) ? 'checked' : ''}" data-select-id="${item.id}">
@@ -1685,7 +1762,8 @@ function display(data) {
         ${resendHtml}
         ${editReasonHtml}
         ${editTakedownHtml}
-        ${editUpcHtml}
+       ${editUpcHtml}
+        ${editSmartlinkHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
@@ -1945,6 +2023,35 @@ function display(data) {
         this.disabled = false;
       });
     }
+        const editSmartlinkBtn = card.querySelector('.edit-smartlink-btn');
+    if (editSmartlinkBtn) {
+      editSmartlinkBtn.addEventListener('click', async function() {
+        const subId = this.dataset.id;
+        const result = await promptForSmartLinks({
+          title: 'Edit Store Links',
+          sub: `Paste platform links for "${this.dataset.title}" by ${this.dataset.artist}. Leave blank to skip.`,
+          existing: {
+            appleMusic:  this.dataset.applemusic || '',
+            amazonMusic: this.dataset.amazonmusic || '',
+            boomplay:    this.dataset.boomplay || '',
+            audiomack:   this.dataset.audiomack || ''
+          }
+        });
+        if (result === null) return;
+        this.disabled = true;
+        const ok = await safeUpdate(subId, {
+          'smartLink.stores.appleMusic':  result.appleMusic,
+          'smartLink.stores.amazonMusic': result.amazonMusic,
+          'smartLink.stores.boomplay':    result.boomplay,
+          'smartLink.stores.audiomack':   result.audiomack
+        });
+        if (ok) {
+          toast('success', 'Store links updated');
+          setTimeout(() => refreshCurrentView(), 300);
+        }
+        this.disabled = false;
+      });
+    }
 
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
@@ -2064,6 +2171,50 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
     upcSubmit.addEventListener('click', onSubmit);
     upcCancel.addEventListener('click', onCancel);
     upcOverlay.addEventListener('click', onOverlayClick);
+  });
+}
+  function promptForSmartLinks({ title, sub, existing }) {
+  return new Promise((resolve) => {
+    smartlinkTitle.textContent = title;
+    smartlinkSub.textContent = sub;
+    smartlinkAppleMusicEl.value  = existing.appleMusic  || '';
+    smartlinkAmazonMusicEl.value = existing.amazonMusic || '';
+    smartlinkBoomplayEl.value    = existing.boomplay    || '';
+    smartlinkAudiomackEl.value   = existing.audiomack   || '';
+    smartlinkOverlay.style.display = 'flex';
+    smartlinkOverlay.classList.remove('hide');
+    smartlinkSubmit.disabled = false;
+    smartlinkSubmit.textContent = 'Save Links';
+    setTimeout(() => smartlinkAppleMusicEl.focus(), 50);
+
+    function cleanup(result) {
+      smartlinkOverlay.classList.add('hide');
+      setTimeout(() => {
+        smartlinkOverlay.style.display = 'none';
+        smartlinkOverlay.classList.remove('hide');
+      }, 180);
+      smartlinkSubmit.removeEventListener('click', onSubmit);
+      smartlinkCancel.removeEventListener('click', onCancel);
+      smartlinkOverlay.removeEventListener('click', onOverlayClick);
+      resolve(result);
+    }
+    function onSubmit() {
+      cleanup({
+        appleMusic:  smartlinkAppleMusicEl.value.trim(),
+        amazonMusic: smartlinkAmazonMusicEl.value.trim(),
+        boomplay:    smartlinkBoomplayEl.value.trim(),
+        audiomack:   smartlinkAudiomackEl.value.trim()
+      });
+    }
+    function onCancel() {
+      cleanup(null);
+    }
+    function onOverlayClick(e) {
+      if (e.target === smartlinkOverlay) cleanup(null);
+    }
+    smartlinkSubmit.addEventListener('click', onSubmit);
+    smartlinkCancel.addEventListener('click', onCancel);
+    smartlinkOverlay.addEventListener('click', onOverlayClick);
   });
 }
 
