@@ -702,7 +702,17 @@ function priceForReleaseType(releaseType) {
 
 function escHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
+const SMARTLINK_BASE = "https://444musicdistro.com/l/";
 
+function copySmartLink(slug) {
+  const url = SMARTLINK_BASE + slug;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast("SmartLink copied to clipboard!");
+  }).catch(() => {
+    showToast("Couldn't copy — long-press the link to copy manually.", true);
+  });
+}
+window.copySmartLink = copySmartLink;
 /* ═══════════════════════════════════════════════════════
    APPLE-STYLE SHOWCASE — approved releases only. Opens first
    when the row is clicked; tapping anywhere hands off to the
@@ -860,6 +870,13 @@ async function openMetaModal(releaseId) {
           <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">${data.catalogNumber ? escHtml(data.catalogNumber) : (isApproved ? 'Pending assignment' : 'Assigned upon approval')}</div></div>
         </div>
       </div>
+            ${isApproved && data.smartLinkSlug ? `
+      <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Smart Link</div>
+        <div class="meta-field full" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div class="meta-field-value" style="font-family:monospace;font-size:12px;word-break:break-all;">${escHtml(SMARTLINK_BASE + data.smartLinkSlug)}</div>
+          <button type="button" onclick="copySmartLink('${escHtml(data.smartLinkSlug)}')" style="flex-shrink:0;background:var(--white);color:var(--black);border:none;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;">Copy</button>
+        </div>
+      </div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Contact & Location</div>
         <div class="meta-fields-grid">
           <div class="meta-field"><div class="meta-field-label">Country</div><div class="meta-field-value">${escHtml(metaVal(data.country))}</div></div>
