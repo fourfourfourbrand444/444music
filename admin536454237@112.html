@@ -948,6 +948,10 @@ body.select-mode .card { cursor: pointer; }
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       Select
     </button>
+        <button class="select-mode-btn" id="needsSmartlinkBtn" style="border-color: rgba(234,179,8,0.4); color: var(--yellow);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Needs SmartLink
+    </button>
 
     <button class="export-btn" id="exportBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1177,6 +1181,13 @@ async function sendRejectionEmail({ email, artistName, songTitle, reason }) {
 function isSubmissionPaid(item) {
   return item.paymentVerified === true || item.paid === 'Paid';
 }
+  // True if this submission has NOT had a single store link populated
+// yet — neither auto-resolved (Spotify/YouTube/iTunes/Deezer) nor
+// manually pasted (Apple Music/Amazon Music/Boomplay/Audiomack).
+function hasAnyStoreLink(item) {
+  const stores = (item.smartLink && item.smartLink.stores) || {};
+  return Object.values(stores).some(v => v && String(v).trim());
+}
 
 async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
   if (!email) {
@@ -1258,6 +1269,7 @@ const catalogInputEl  = document.getElementById("catalogInput");
 const upcSubmit       = document.getElementById("upcSubmit");
 const upcCancel       = document.getElementById("upcCancel");
 const paginationBar   = document.getElementById('paginationBar');
+const needsSmartlinkBtn = document.getElementById('needsSmartlinkBtn');
 const smartlinkOverlay      = document.getElementById("smartlinkOverlay");
 const smartlinkTitle        = document.getElementById("smartlinkTitle");
 const smartlinkSub          = document.getElementById("smartlinkSub");
@@ -1284,6 +1296,7 @@ let hasNextPage           = false;
 let totalMatchingCount   = null;
 let isLoadingPage        = false;
 let isSearchAllMode      = false;
+let needsSmartlinkOnly    = false;
 
 /* ─── FULL-DATABASE SEARCH ─────────────────────────────────────────
    Fetches every submission once, caches it, and matches case-
@@ -1491,10 +1504,12 @@ function applyClientFilters() {
     const email = (item.email || "").toLowerCase();
     const phone = (item.phone || "").toLowerCase();
     const matchQ = !q || name.includes(q) || title.includes(q) || email.includes(q) || phone.includes(q);
-    const matchP = !pFilter ||
+        const matchP = !pFilter ||
       (pFilter === "paid"   &&  isSubmissionPaid(item)) ||
       (pFilter === "unpaid" && !isSubmissionPaid(item));
-    return matchQ && matchP;
+    const matchNeedsSmartlink = !needsSmartlinkOnly ||
+      ((item.status || '').toLowerCase() === 'approved' && !hasAnyStoreLink(item));
+    return matchQ && matchP && matchNeedsSmartlink;
   });
 
   document.getElementById("countShown").textContent = filteredSubmissions.length;
@@ -1691,11 +1706,11 @@ function display(data) {
           </div>
         </div>
       </div>
-
       <div class="badge-row">
         <span class="badge ${statusClass}">${escHtml(status)}</span>
         <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span>
         ${item.releaseType ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">${escHtml(item.releaseType)}</span>` : ''}
+        ${(isApproved && !hasAnyStoreLink(item)) ? `<span class="badge" style="color:var(--yellow);border-color:rgba(234,179,8,0.35);">⚠ Needs SmartLink</span>` : ''}
       </div>
 
       ${upcHtml}
@@ -2314,7 +2329,18 @@ document.addEventListener('click', (e) => {
     navMenuDropdown.classList.remove('open');
   }
 });
-
+needsSmartlinkBtn.addEventListener('click', () => {
+  needsSmartlinkOnly = !needsSmartlinkOnly;
+  needsSmartlinkBtn.classList.toggle('active', needsSmartlinkOnly);
+  if (needsSmartlinkOnly) {
+    statusFilterEl.value = 'Approved';
+    currentStatusFilter = 'Approved';
+    resetAndLoad();
+  } else {
+    applyClientFilters();
+  }
+});
+  
 selectModeBtn.addEventListener('click', () => {
   selectMode = !selectMode;
   document.body.classList.toggle('select-mode', selectMode);
