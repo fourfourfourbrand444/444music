@@ -1063,8 +1063,20 @@ body.select-mode .card { cursor: pointer; }
     <div class="reason-icon" style="background: rgba(96,165,250,0.08); border-color: rgba(96,165,250,0.25); color:var(--blue);">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
     </div>
-    <div class="reason-title" id="smartlinkTitle">Edit Store Links</div>
+       <div class="reason-title" id="smartlinkTitle">Edit Store Links</div>
     <div class="reason-sub" id="smartlinkSub">Paste the platform links for this release. Leave blank to skip a platform.</div>
+
+    <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border-strong);">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Spotify Link — auto-fills YouTube / iTunes / Deezer</label>
+      <div style="display:flex; gap:8px;">
+        <input type="url" id="smartlinkSpotifyInput"
+          style="flex:1;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+          placeholder="https://open.spotify.com/track/...">
+        <button type="button" id="smartlinkAutofillBtn"
+          style="flex-shrink:0;background:var(--green);color:var(--black);border:none;border-radius:8px;padding:0 16px;font-size:0.72rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;">Auto-fill</button>
+      </div>
+      <div id="smartlinkAutofillStatus" style="font-size:0.72rem;color:var(--text-mut);margin-top:8px;"></div>
+    </div>
 
     <div style="margin-bottom:12px;">
       <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Apple Music</label>
@@ -1189,6 +1201,18 @@ function hasAnyStoreLink(item) {
   return Object.values(stores).some(v => v && String(v).trim());
 }
 
+// True once the release date has arrived (or if there's no release
+// date on file at all — treated conservatively as "already out",
+// so an old/legacy release without this field still gets flagged
+// rather than silently skipped).
+function isReleaseDateReached(item) {
+  if (!item.releaseDate) return true;
+  const releaseDate = new Date(item.releaseDate);
+  if (isNaN(releaseDate.getTime())) return true;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return releaseDate.getTime() <= startOfToday.getTime();
+}
 async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
   if (!email) {
     toast("warning", "No email on file — skipped sending");
@@ -1279,6 +1303,9 @@ const smartlinkBoomplayEl   = document.getElementById("smartlinkBoomplay");
 const smartlinkAudiomackEl  = document.getElementById("smartlinkAudiomack");
 const smartlinkSubmit       = document.getElementById("smartlinkSubmit");
 const smartlinkCancel       = document.getElementById("smartlinkCancel");
+const smartlinkSpotifyInputEl  = document.getElementById("smartlinkSpotifyInput");
+const smartlinkAutofillBtn    = document.getElementById("smartlinkAutofillBtn");
+const smartlinkAutofillStatusEl = document.getElementById("smartlinkAutofillStatus");
 
 /* ─── PAGINATION / QUERY STATE ─────────────────────────────────────── */
 let submissions   = [];
@@ -1507,8 +1534,8 @@ function applyClientFilters() {
         const matchP = !pFilter ||
       (pFilter === "paid"   &&  isSubmissionPaid(item)) ||
       (pFilter === "unpaid" && !isSubmissionPaid(item));
-    const matchNeedsSmartlink = !needsSmartlinkOnly ||
-      ((item.status || '').toLowerCase() === 'approved' && !hasAnyStoreLink(item));
+       const matchNeedsSmartlink = !needsSmartlinkOnly ||
+      ((item.status || '').toLowerCase() === 'approved' && isReleaseDateReached(item) && !hasAnyStoreLink(item));
     return matchQ && matchP && matchNeedsSmartlink;
   });
 
@@ -1710,7 +1737,8 @@ function display(data) {
         <span class="badge ${statusClass}">${escHtml(status)}</span>
         <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span>
         ${item.releaseType ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">${escHtml(item.releaseType)}</span>` : ''}
-        ${(isApproved && !hasAnyStoreLink(item)) ? `<span class="badge" style="color:var(--yellow);border-color:rgba(234,179,8,0.35);">⚠ Needs SmartLink</span>` : ''}
+                ${(isApproved && isReleaseDateReached(item) && !hasAnyStoreLink(item)) ? `<span class="badge" style="color:var(--yellow);border-color:rgba(234,179,8,0.35);">⚠ Needs SmartLink</span>` : ''}
+        ${(isApproved && !isReleaseDateReached(item)) ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">Releases ${new Date(item.releaseDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</span>` : ''}
       </div>
 
       ${upcHtml}
@@ -1734,9 +1762,13 @@ function display(data) {
           <span class="meta-label">Country</span>
           <span class="meta-value">${escHtml(item.country || '—')}</span>
         </div>
-        <div class="meta-item">
+                <div class="meta-item">
           <span class="meta-label">Submitted</span>
           <span class="meta-value">${date}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Release Date</span>
+          <span class="meta-value">${item.releaseDate ? new Date(item.releaseDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Referral</span>
@@ -2042,7 +2074,7 @@ function display(data) {
     if (editSmartlinkBtn) {
       editSmartlinkBtn.addEventListener('click', async function() {
         const subId = this.dataset.id;
-        const result = await promptForSmartLinks({
+              const result = await promptForSmartLinks({
           title: 'Edit Store Links',
           sub: `Paste platform links for "${this.dataset.title}" by ${this.dataset.artist}. Leave blank to skip.`,
           existing: {
@@ -2050,7 +2082,8 @@ function display(data) {
             amazonMusic: this.dataset.amazonmusic || '',
             boomplay:    this.dataset.boomplay || '',
             audiomack:   this.dataset.audiomack || ''
-          }
+          },
+          subId
         });
         if (result === null) return;
         this.disabled = true;
@@ -2188,7 +2221,7 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
     upcOverlay.addEventListener('click', onOverlayClick);
   });
 }
-  function promptForSmartLinks({ title, sub, existing }) {
+  function promptForSmartLinks({ title, sub, existing, subId }) {
   return new Promise((resolve) => {
     smartlinkTitle.textContent = title;
     smartlinkSub.textContent = sub;
@@ -2196,11 +2229,55 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
     smartlinkAmazonMusicEl.value = existing.amazonMusic || '';
     smartlinkBoomplayEl.value    = existing.boomplay    || '';
     smartlinkAudiomackEl.value   = existing.audiomack   || '';
+    smartlinkSpotifyInputEl.value = '';
+    smartlinkAutofillStatusEl.textContent = '';
     smartlinkOverlay.style.display = 'flex';
     smartlinkOverlay.classList.remove('hide');
     smartlinkSubmit.disabled = false;
     smartlinkSubmit.textContent = 'Save Links';
     setTimeout(() => smartlinkAppleMusicEl.focus(), 50);
+
+    async function onAutofill() {
+      const spotifyUrl = smartlinkSpotifyInputEl.value.trim();
+      if (!spotifyUrl) {
+        smartlinkAutofillStatusEl.textContent = 'Paste a Spotify track link first.';
+        smartlinkAutofillStatusEl.style.color = 'var(--red)';
+        return;
+      }
+      smartlinkAutofillBtn.disabled = true;
+      smartlinkAutofillBtn.textContent = 'Fetching…';
+      smartlinkAutofillStatusEl.style.color = 'var(--text-mut)';
+      smartlinkAutofillStatusEl.textContent = 'Looking up YouTube, iTunes, and Deezer…';
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/submissions/resolve-spotify-link`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-app-secret': APP_SECRET },
+          body: JSON.stringify({ spotifyUrl })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Lookup failed.');
+
+        const found = [];
+        const missed = [];
+        const updates = {};
+        if (data.stores.spotify) { updates['smartLink.stores.spotify'] = data.stores.spotify; found.push('Spotify'); }
+        if (data.stores.youtube) { updates['smartLink.stores.youtube'] = data.stores.youtube; found.push('YouTube'); } else missed.push('YouTube');
+        if (data.stores.itunes)  { updates['smartLink.stores.itunes']  = data.stores.itunes;  found.push('iTunes');  } else missed.push('iTunes');
+        if (data.stores.deezer)  { updates['smartLink.stores.deezer']  = data.stores.deezer;  found.push('Deezer');  } else missed.push('Deezer');
+
+        await safeUpdate(subId, updates);
+
+        smartlinkAutofillStatusEl.style.color = 'var(--green)';
+        smartlinkAutofillStatusEl.textContent = `Found: ${found.join(', ') || 'none'}.${missed.length ? ' Not found: ' + missed.join(', ') + '.' : ''}`;
+        toast('success', 'Auto-fill saved');
+      } catch (err) {
+        smartlinkAutofillStatusEl.style.color = 'var(--red)';
+        smartlinkAutofillStatusEl.textContent = err.message;
+      } finally {
+        smartlinkAutofillBtn.disabled = false;
+        smartlinkAutofillBtn.textContent = 'Auto-fill';
+      }
+    }
 
     function cleanup(result) {
       smartlinkOverlay.classList.add('hide');
@@ -2211,6 +2288,7 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
       smartlinkSubmit.removeEventListener('click', onSubmit);
       smartlinkCancel.removeEventListener('click', onCancel);
       smartlinkOverlay.removeEventListener('click', onOverlayClick);
+      smartlinkAutofillBtn.removeEventListener('click', onAutofill);
       resolve(result);
     }
     function onSubmit() {
@@ -2227,9 +2305,10 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
     function onOverlayClick(e) {
       if (e.target === smartlinkOverlay) cleanup(null);
     }
-    smartlinkSubmit.addEventListener('click', onSubmit);
+      smartlinkSubmit.addEventListener('click', onSubmit);
     smartlinkCancel.addEventListener('click', onCancel);
     smartlinkOverlay.addEventListener('click', onOverlayClick);
+    smartlinkAutofillBtn.addEventListener('click', onAutofill);
   });
 }
 
