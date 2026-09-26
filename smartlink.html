@@ -6,58 +6,92 @@
 <title>444Music — Smart Link</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #050505; --card: #0e0e10; --border: rgba(255,255,255,0.08);
-    --text: #f2f2f3; --text-sec: #9a9a9f; --text-mut: #55555c;
-    --green: #1DB954;
+    --text: #ffffff; --text-sec: rgba(255,255,255,0.75); --text-mut: rgba(255,255,255,0.45);
     --ff-display: 'Poppins', sans-serif; --ff-body: 'Inter', sans-serif;
   }
+  html, body { height: 100%; }
   html { -webkit-font-smoothing: antialiased; }
   body {
-    background: var(--bg); color: var(--text); font-family: var(--ff-body);
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #050505; color: var(--text); font-family: var(--ff-body);
+    min-height: 100vh; overflow-x: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center;
     padding: 24px;
   }
+
+  /* ── Blurred artwork backdrop — same image, heavily blurred and
+       scaled so its own dominant color fills the whole screen ── */
+  .bg-blur {
+    position: fixed; inset: -10%; z-index: 0;
+    background-size: cover; background-position: center;
+    filter: blur(70px) saturate(1.3) brightness(0.6);
+    transform: scale(1.15);
+  }
+  .bg-scrim {
+    position: fixed; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+  }
+
   .card {
-    width: 100%; max-width: 420px; text-align: center;
+    position: relative; z-index: 2;
+    width: 100%; max-width: 380px; text-align: center;
   }
   .artwork {
-    width: 220px; height: 220px; border-radius: 16px; object-fit: cover;
-    margin: 0 auto 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.5);
-    background: var(--card); border: 1px solid var(--border);
+    width: 200px; height: 200px; border-radius: 18px; object-fit: cover;
+    margin: 0 auto 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.45);
   }
   .artwork.placeholder {
     display: flex; align-items: center; justify-content: center;
     font-family: var(--ff-display); font-weight: 800; font-size: 3rem;
-    color: var(--text-mut);
+    color: var(--text-mut); background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
   }
-  .title { font-family: var(--ff-display); font-weight: 700; font-size: 1.35rem; margin-bottom: 4px; }
-  .artist { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 28px; }
-  .stores { display: flex; flex-direction: column; gap: 10px; }
+  .title { font-family: var(--ff-display); font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; }
+  .artist { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 26px; }
+
+  .stores { display: flex; flex-direction: column; gap: 12px; }
   .store-btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px; text-decoration: none; color: var(--text);
-    font-weight: 600; font-size: 0.9rem; transition: border-color 0.15s, background 0.15s;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: rgba(255,255,255,0.92);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    border-radius: 999px; padding: 14px 8px 14px 22px;
+    text-decoration: none; color: #0a0a0a;
+    font-weight: 700; font-size: 0.95rem; font-family: var(--ff-body);
+    transition: transform 0.15s ease, background 0.15s ease;
   }
-  .store-btn:hover { border-color: rgba(255,255,255,0.25); background: #131315; }
+  .store-btn:active { transform: scale(0.97); }
+  .store-btn:hover { background: #ffffff; }
+  .store-btn .play-label { flex-shrink: 0; }
+  .store-btn .store-right {
+    display: flex; align-items: center; gap: 8px;
+    color: rgba(0,0,0,0.45); font-weight: 600; font-size: 0.85rem;
+  }
+  .store-icon {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .store-icon svg { width: 18px; height: 18px; }
+
   .footer-mark {
-    margin-top: 32px; color: var(--text-mut); font-size: 0.72rem;
+    margin-top: 28px; color: var(--text-mut); font-size: 0.72rem;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .footer-mark b { color: var(--text-sec); }
   .state { color: var(--text-sec); font-size: 0.9rem; padding: 60px 0; }
   .loader {
-    width: 26px; height: 26px; border: 2px solid var(--border); border-top-color: var(--green);
+    width: 26px; height: 26px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff;
     border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
+
+<div class="bg-blur" id="bgBlur"></div>
+<div class="bg-scrim"></div>
 
 <div class="card" id="card">
   <div class="state"><div class="loader"></div>Loading…</div>
@@ -93,17 +127,30 @@ const STORE_LABELS = {
   tidal:        'Tidal',
   soundcloud:   'SoundCloud'
 };
-// Order the buttons in a sensible priority — anything not listed here
-// still renders, just appended after these.
 const STORE_ORDER = ['spotify','appleMusic','youtubeMusic','audiomack','boomplay','deezer','amazonMusic','tidal','youtube','itunes','soundcloud'];
+
+// Brand-colored icon circle + glyph per store. Falls back to a plain
+// music-note glyph on a dark circle for anything not listed here.
+const STORE_ICONS = {
+  spotify: { bg: '#1DB954', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.4a.62.62 0 0 1-.86.21c-2.36-1.44-5.33-1.77-8.83-.97a.63.63 0 1 1-.28-1.23c3.83-.88 7.12-.5 9.76 1.12.31.19.4.58.21.87zm1.22-2.73a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.5c3.65-1.1 8.18-.57 11.28 1.33.37.23.5.72.26 1.08zm.11-2.84C14.98 9 8.9 8.8 5.38 9.87a.94.94 0 1 1-.54-1.8c4.04-1.23 10.74-.99 14.98 1.53a.94.94 0 0 1-.96 1.62z"/></svg>' },
+  appleMusic: { bg: 'linear-gradient(135deg,#fa5a9a,#fb3355)', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 3.5c-.6.7-1.5 1.2-2.4 1.1-.1-.9.3-1.9.9-2.5.6-.7 1.6-1.2 2.4-1.1.1 1-.3 1.9-.9 2.5zM19 8.3c-1.3-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .7 1 1.5 2.1 2.6 2 1-.1 1.4-.6 2.7-.6 1.2 0 1.6.6 2.7.6 1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2.2-.9-2.2-3.3 0-2.1 1.7-3 1.8-3.1-1-1.4-2.4-1.4-2.9-1.3z"/></svg>' },
+  itunes: { bg: 'linear-gradient(135deg,#fa5a9a,#fb3355)', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm3.3 7.6-4.6 1.3v5.3a1.9 1.9 0 1 1-1-1.6V9.2a.6.6 0 0 1 .4-.6l5.2-1.5a.6.6 0 0 1 .8.6v1.4a.6.6 0 0 1-.8.5z"/></svg>' },
+  youtubeMusic: { bg: '#FF0000', svg: '<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6" fill="#FF0000"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg>' },
+  youtube: { bg: '#FF0000', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M21.6 7.2s-.2-1.5-.8-2.1c-.8-.8-1.7-.8-2.1-.9C15.9 4 12 4 12 4h0s-3.9 0-6.7.2c-.4 0-1.3.1-2.1.9-.6.6-.8 2.1-.8 2.1S2 9 2 10.7v1.6C2 14 2.2 15.7 2.2 15.7s.2 1.5.8 2.1c.8.8 1.9.8 2.4.9C7.2 19 12 19 12 19s3.9 0 6.7-.3c.4 0 1.3-.1 2.1-.9.6-.6.8-2.1.8-2.1s.2-1.7.2-3.4v-1.6c0-1.7-.2-3.5-.2-3.5zM9.9 14.1V8.9l5 2.6z"/></svg>' },
+  deezer: { bg: '#1a1a1a', svg: '<svg viewBox="0 0 24 24" fill="#a238ff"><rect x="2" y="14" width="3.2" height="4" rx="0.5"/><rect x="6.4" y="11" width="3.2" height="7" rx="0.5"/><rect x="10.8" y="8" width="3.2" height="10" rx="0.5"/><rect x="15.2" y="5" width="3.2" height="13" rx="0.5"/><rect x="19.6" y="2" width="3.2" height="16" rx="0.5"/></svg>' },
+  amazonMusic: { bg: '#25D1DA', svg: '<svg viewBox="0 0 24 24" fill="#0a0a0a"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm5 13.4c-2.9 2.1-7.1 2.1-10 0a.4.4 0 0 1 .5-.6c2.6 1.9 6.4 1.9 9 0a.4.4 0 0 1 .5.6zM9.5 9.5v5l4.3-2.5z"/></svg>' },
+  boomplay: { bg: '#EE1D23', svg: '<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/><path d="M9 8.5l7 3.5-7 3.5z" fill="#EE1D23"/></svg>' },
+  audiomack: { bg: '#FFA200', svg: '<svg viewBox="0 0 24 24" fill="#0a0a0a"><circle cx="12" cy="12" r="10"/><path d="M7 15V9l3 3zM11 16V8l3 4zM15 15V9l3 3z" fill="#FFA200"/></svg>' },
+  tidal: { bg: '#000000', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3l3 3-3 3-3-3zM6 9l3 3-3 3-3-3zM18 9l3 3-3 3-3-3zM12 15l3 3-3 3-3-3z"/></svg>' },
+  soundcloud: { bg: '#FF5500', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M2 14v3h1v-3zm2-2v5h1v-5zm2 1v4h1v-4zm2-3v7h1v-7zm2-1v8h1v-8zm2 .5v7.5h1V9.5zm2-2v9.5h1V7.5zm2 1.5a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3z"/></svg>' },
+};
+const DEFAULT_ICON = { bg: 'rgba(0,0,0,0.55)', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9 18V5l12-2v13M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' };
 
 function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function getSlugFromUrl() {
-  // Supports both /l/{slug} (if your host rewrites it here) and
-  // /l.html?slug={slug} as a fallback.
   const path = window.location.pathname;
   const parts = path.split('/').filter(Boolean);
   const fromPath = parts[parts.length - 1];
@@ -121,23 +168,35 @@ function renderRelease(item) {
   const title = sl.title || item.releaseTitle || 'Untitled';
   const artist = sl.artistName || item.artistName || 'Unknown Artist';
   const initial = artist.charAt(0).toUpperCase();
+  const artworkUrl = sl.thumbnailUrl || item.coverURL || '';
 
- const artworkHtml = (sl.thumbnailUrl || item.coverURL)
-  ? `<img class="artwork" src="${escHtml(sl.thumbnailUrl || item.coverURL)}" alt="${escHtml(title)}">`
-  : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
+  if (artworkUrl) {
+    document.getElementById('bgBlur').style.backgroundImage = `url("${artworkUrl.replace(/"/g,'')}")`;
+  }
+
+  const artworkHtml = artworkUrl
+    ? `<img class="artwork" src="${escHtml(artworkUrl)}" alt="${escHtml(title)}">`
+    : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
 
   const orderedKeys = [
     ...STORE_ORDER.filter(k => stores[k]),
-    ...Object.keys(stores).filter(k => !STORE_ORDER.includes(k))
+    ...Object.keys(stores).filter(k => !STORE_ORDER.includes(k) && stores[k])
   ];
 
   const storeButtons = orderedKeys.map(key => {
     const label = STORE_LABELS[key] || key;
-    return `<a class="store-btn" href="${escHtml(stores[key])}" target="_blank" rel="noopener">${escHtml(label)}</a>`;
+    const icon = STORE_ICONS[key] || DEFAULT_ICON;
+    return `<a class="store-btn" href="${escHtml(stores[key])}" target="_blank" rel="noopener">
+      <span class="play-label">Play</span>
+      <span class="store-right">
+        ${label}
+        <span class="store-icon" style="background:${icon.bg}">${icon.svg}</span>
+      </span>
+    </a>`;
   }).join('');
 
   const fallback = (!sl.resolved && sl.pageUrl)
-    ? `<a class="store-btn" href="${escHtml(sl.pageUrl)}" target="_blank" rel="noopener">More platforms →</a>`
+    ? `<a class="store-btn" href="${escHtml(sl.pageUrl)}" target="_blank" rel="noopener"><span class="play-label">More</span><span class="store-right">All platforms</span></a>`
     : '';
 
   document.getElementById('card').innerHTML = `
