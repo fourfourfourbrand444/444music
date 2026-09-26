@@ -1078,6 +1078,36 @@ body.select-mode .card { cursor: pointer; }
       <div id="smartlinkAutofillStatus" style="font-size:0.72rem;color:var(--text-mut);margin-top:8px;"></div>
     </div>
 
+       <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Spotify (manual)</label>
+      <input type="url" id="smartlinkSpotify"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://open.spotify.com/track/...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">YouTube</label>
+      <input type="url" id="smartlinkYoutube"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://youtube.com/watch?v=...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">iTunes</label>
+      <input type="url" id="smartlinkItunes"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://music.apple.com/.../song/...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Deezer</label>
+      <input type="url" id="smartlinkDeezer"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://www.deezer.com/track/...">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Tidal</label>
+      <input type="url" id="smartlinkTidal"
+        style="width:100%;background:var(--input-bg);border:1px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:var(--ff);font-size:0.86rem;padding:12px 14px;outline:none;"
+        placeholder="https://tidal.com/browse/track/...">
+    </div>
     <div style="margin-bottom:12px;">
       <label style="display:block;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mut);margin-bottom:6px;font-weight:700;">Apple Music</label>
       <input type="url" id="smartlinkAppleMusic"
@@ -1301,6 +1331,11 @@ const smartlinkAppleMusicEl = document.getElementById("smartlinkAppleMusic");
 const smartlinkAmazonMusicEl= document.getElementById("smartlinkAmazonMusic");
 const smartlinkBoomplayEl   = document.getElementById("smartlinkBoomplay");
 const smartlinkAudiomackEl  = document.getElementById("smartlinkAudiomack");
+const smartlinkSpotifyEl    = document.getElementById("smartlinkSpotify");
+const smartlinkYoutubeEl    = document.getElementById("smartlinkYoutube");
+const smartlinkItunesEl     = document.getElementById("smartlinkItunes");
+const smartlinkDeezerEl     = document.getElementById("smartlinkDeezer");
+const smartlinkTidalEl      = document.getElementById("smartlinkTidal");
 const smartlinkSubmit       = document.getElementById("smartlinkSubmit");
 const smartlinkCancel       = document.getElementById("smartlinkCancel");
 const smartlinkSpotifyInputEl  = document.getElementById("smartlinkSpotifyInput");
@@ -1708,9 +1743,14 @@ function display(data) {
            ${existingUPC ? 'Edit UPC / Catalog Number' : 'Add UPC / Catalog Number'}
          </button>`
       : '';
-        const editSmartlinkHtml = isApproved
+             const editSmartlinkHtml = isApproved
       ? `<button class="edit-smartlink-btn" data-id="${item.id}"
            data-artist="${escHtml(name)}" data-title="${escHtml(title)}"
+           data-spotify="${escHtml(existingStores.spotify || '')}"
+           data-youtube="${escHtml(existingStores.youtube || '')}"
+           data-itunes="${escHtml(existingStores.itunes || '')}"
+           data-deezer="${escHtml(existingStores.deezer || '')}"
+           data-tidal="${escHtml(existingStores.tidal || '')}"
            data-applemusic="${escHtml(existingStores.appleMusic || '')}"
            data-amazonmusic="${escHtml(existingStores.amazonMusic || '')}"
            data-boomplay="${escHtml(existingStores.boomplay || '')}"
@@ -2074,10 +2114,15 @@ function display(data) {
     if (editSmartlinkBtn) {
       editSmartlinkBtn.addEventListener('click', async function() {
         const subId = this.dataset.id;
-              const result = await promptForSmartLinks({
+                   const result = await promptForSmartLinks({
           title: 'Edit Store Links',
           sub: `Paste platform links for "${this.dataset.title}" by ${this.dataset.artist}. Leave blank to skip.`,
           existing: {
+            spotify:     this.dataset.spotify || '',
+            youtube:     this.dataset.youtube || '',
+            itunes:      this.dataset.itunes || '',
+            deezer:      this.dataset.deezer || '',
+            tidal:       this.dataset.tidal || '',
             appleMusic:  this.dataset.applemusic || '',
             amazonMusic: this.dataset.amazonmusic || '',
             boomplay:    this.dataset.boomplay || '',
@@ -2088,6 +2133,11 @@ function display(data) {
         if (result === null) return;
         this.disabled = true;
         const ok = await safeUpdate(subId, {
+          'smartLink.stores.spotify':     result.spotify,
+          'smartLink.stores.youtube':     result.youtube,
+          'smartLink.stores.itunes':      result.itunes,
+          'smartLink.stores.deezer':      result.deezer,
+          'smartLink.stores.tidal':       result.tidal,
           'smartLink.stores.appleMusic':  result.appleMusic,
           'smartLink.stores.amazonMusic': result.amazonMusic,
           'smartLink.stores.boomplay':    result.boomplay,
@@ -2225,6 +2275,11 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
   return new Promise((resolve) => {
     smartlinkTitle.textContent = title;
     smartlinkSub.textContent = sub;
+        smartlinkSpotifyEl.value     = existing.spotify     || '';
+    smartlinkYoutubeEl.value     = existing.youtube     || '';
+    smartlinkItunesEl.value      = existing.itunes      || '';
+    smartlinkDeezerEl.value      = existing.deezer      || '';
+    smartlinkTidalEl.value       = existing.tidal       || '';
     smartlinkAppleMusicEl.value  = existing.appleMusic  || '';
     smartlinkAmazonMusicEl.value = existing.amazonMusic || '';
     smartlinkBoomplayEl.value    = existing.boomplay    || '';
@@ -2260,10 +2315,10 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
         const found = [];
         const missed = [];
         const updates = {};
-        if (data.stores.spotify) { updates['smartLink.stores.spotify'] = data.stores.spotify; found.push('Spotify'); }
-        if (data.stores.youtube) { updates['smartLink.stores.youtube'] = data.stores.youtube; found.push('YouTube'); } else missed.push('YouTube');
-        if (data.stores.itunes)  { updates['smartLink.stores.itunes']  = data.stores.itunes;  found.push('iTunes');  } else missed.push('iTunes');
-        if (data.stores.deezer)  { updates['smartLink.stores.deezer']  = data.stores.deezer;  found.push('Deezer');  } else missed.push('Deezer');
+               if (data.stores.spotify) { updates['smartLink.stores.spotify'] = data.stores.spotify; smartlinkSpotifyEl.value = data.stores.spotify; found.push('Spotify'); }
+        if (data.stores.youtube) { updates['smartLink.stores.youtube'] = data.stores.youtube; smartlinkYoutubeEl.value = data.stores.youtube; found.push('YouTube'); } else missed.push('YouTube');
+        if (data.stores.itunes)  { updates['smartLink.stores.itunes']  = data.stores.itunes;  smartlinkItunesEl.value  = data.stores.itunes;  found.push('iTunes');  } else missed.push('iTunes');
+        if (data.stores.deezer)  { updates['smartLink.stores.deezer']  = data.stores.deezer;  smartlinkDeezerEl.value  = data.stores.deezer;  found.push('Deezer');  } else missed.push('Deezer');
 
         await safeUpdate(subId, updates);
 
@@ -2291,8 +2346,13 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
       smartlinkAutofillBtn.removeEventListener('click', onAutofill);
       resolve(result);
     }
-    function onSubmit() {
+       function onSubmit() {
       cleanup({
+        spotify:     smartlinkSpotifyEl.value.trim(),
+        youtube:     smartlinkYoutubeEl.value.trim(),
+        itunes:      smartlinkItunesEl.value.trim(),
+        deezer:      smartlinkDeezerEl.value.trim(),
+        tidal:       smartlinkTidalEl.value.trim(),
         appleMusic:  smartlinkAppleMusicEl.value.trim(),
         amazonMusic: smartlinkAmazonMusicEl.value.trim(),
         boomplay:    smartlinkBoomplayEl.value.trim(),
