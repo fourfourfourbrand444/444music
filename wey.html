@@ -11,10 +11,14 @@
 <style>
 /* ═══════════════════════════════════════════════════════
    444MUSIC — MY RELEASES (WEB)
-   Theme: pure Black & White Luxury — matches the Flutter app
-   exactly. No purple/accent color anywhere except the same
-   status colors the app uses (green / amber / rose / cyan).
-   Font: Nunito (body) + Outfit (display) — same as the app.
+   Mirrors the Flutter app exactly, including FEATURING FIX:
+     - Singles: "Featuring" shows under Main Artist (names or
+       "None"), list row shows "Artist ft. Name".
+     - EP / Album: release level shows Main Artist only. Featured
+       artists are listed PER TRACK in a "Tracklist" section.
+       List row subtitle shows main artist only.
+     - Data read from audioFiles[].artists[] (type == 'featured'),
+       with featuredArtists[] and old `featuring` as fallbacks.
 ═══════════════════════════════════════════════════════ */
 :root {
   --black:      #000000;
@@ -41,26 +45,12 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--black);
-  color: var(--white);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(--white); min-height: 100vh; overflow-x: hidden; }
 a { text-decoration: none; color: inherit; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
-.icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.125em; }
 
 /* ===== SIDEBAR ===== */
-.sidebar {
-  position: fixed; top: 0; left: 0;
-  width: var(--sidebar-w); height: 100vh;
-  background: var(--black-1); border-right: 1px solid var(--white-10);
-  display: flex; flex-direction: column; z-index: 200;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  overflow-y: auto;
-}
+.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--black-1); border-right: 1px solid var(--white-10); display: flex; flex-direction: column; z-index: 200; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; }
 .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 24px 20px 20px; border-bottom: 1px solid var(--white-10); }
 .sidebar-logo img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
 .sidebar-logo-fallback { width: 32px; height: 32px; background: var(--white); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -68,12 +58,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .sidebar-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--white); }
 .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
 .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); padding: 12px 8px 6px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 10px;
-  color: var(--grey); font-size: 14px; font-weight: 600;
-  transition: all 0.15s; cursor: pointer; position: relative;
-}
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--grey); font-size: 14px; font-weight: 600; transition: all 0.15s; cursor: pointer; position: relative; }
 .nav-item:hover { background: var(--black-4); color: var(--white-90); }
 .nav-item.active { background: var(--white-10); color: var(--white); border: 1px solid var(--white-10); }
 .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
@@ -100,21 +85,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .topbar-icon-btn:hover { background: var(--black-4); color: var(--white); border-color: var(--white-20); }
 .topbar-icon-btn svg { width: 15px; height: 15px; }
 
-/* ===== PAGE CONTENT ===== */
 .page-content { padding: 28px; flex: 1; }
 
-/* ===== SEARCH BAR ===== */
-.search-bar-wrap {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--black-2); border: 1px solid var(--white-10); border-radius: 14px;
-  padding: 12px 16px; margin-bottom: 18px; transition: border-color 0.15s;
-}
+/* ===== SEARCH ===== */
+.search-bar-wrap { display: flex; align-items: center; gap: 10px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 14px; padding: 12px 16px; margin-bottom: 18px; transition: border-color 0.15s; }
 .search-bar-wrap:focus-within { border-color: var(--white-40); }
 .search-bar-wrap svg { width: 16px; height: 16px; color: var(--grey-dark); flex-shrink: 0; }
-.search-bar-wrap input {
-  flex: 1; background: transparent; border: none; outline: none;
-  color: var(--white); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
-}
+.search-bar-wrap input { flex: 1; background: transparent; border: none; outline: none; color: var(--white); font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; }
 .search-bar-wrap input::placeholder { color: var(--grey-dark); font-weight: 500; }
 .search-clear-btn { display: none; width: 20px; height: 20px; border-radius: 50%; background: var(--white-10); align-items: center; justify-content: center; color: var(--grey); flex-shrink: 0; }
 .search-clear-btn svg { width: 10px; height: 10px; }
@@ -134,7 +111,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .list-head-row span { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); }
 .container { display: flex; flex-direction: column; }
 
-/* ===== ROW ===== */
 .release-row { display: grid; grid-template-columns: 28px 62px 1fr auto; align-items: center; gap: 16px; padding: 16px 12px; border-bottom: 1px solid var(--white-10); cursor: pointer; transition: background 0.15s; position: relative; }
 .release-row:hover { background: var(--black-2); }
 .row-index { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); text-align: center; }
@@ -174,13 +150,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .badge.taken-down::before { background: #94a3b8; }
 @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-/* ===== TOP-OF-MODAL ACTION BAR ===== */
-.modal-top-action {
-  display: flex; align-items: center; justify-content: center; gap: 9px;
-  padding: 14px 16px; font-size: 13px; font-weight: 800; font-family: 'Nunito', sans-serif;
-  cursor: pointer; transition: all 0.15s; border-bottom: 1px solid var(--white-10);
-  position: sticky; top: 0; z-index: 4; text-decoration: none; width: 100%;
-}
+/* ===== MODAL TOP ACTION ===== */
+.modal-top-action { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 14px 16px; font-size: 13px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid var(--white-10); position: sticky; top: 0; z-index: 4; text-decoration: none; width: 100%; }
 .modal-top-action svg { width: 16px; height: 16px; flex-shrink: 0; }
 .modal-top-action.pay     { background: rgba(6,182,212,0.14); color: var(--cyan); }
 .modal-top-action.pay:hover { background: rgba(6,182,212,0.22); }
@@ -189,7 +160,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .modal-top-action.fix     { background: rgba(239,68,68,0.14); color: var(--rose); }
 .modal-top-action.fix:hover { background: rgba(239,68,68,0.22); }
 
-/* ===== EMPTY STATE ===== */
+/* ===== EMPTY ===== */
 .empty { text-align: center; padding: 80px 20px; }
 .empty-icon-wrap { width: 72px; height: 72px; margin: 0 auto 18px; background: var(--black-2); border-radius: 20px; border: 1px solid var(--white-10); display: flex; align-items: center; justify-content: center; }
 .empty-icon-wrap svg { width: 34px; height: 34px; color: var(--grey); }
@@ -216,69 +187,24 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
 
-/* ═══════════════════════════════════════════════
-   APPLE-STYLE SHOWCASE SCREEN
-═══════════════════════════════════════════════ */
-.apple-tpl-overlay {
-  position: fixed; inset: 0; z-index: 7000;
-  background: linear-gradient(165deg, #FAF9F6 0%, #F1EFE9 42%, #E7E4DB 78%, #DEDBD0 100%);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.45s ease;
-  overflow-y: auto;
-}
+/* ===== APPLE SHOWCASE ===== */
+.apple-tpl-overlay { position: fixed; inset: 0; z-index: 7000; background: linear-gradient(165deg, #FAF9F6 0%, #F1EFE9 42%, #E7E4DB 78%, #DEDBD0 100%); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.45s ease; overflow-y: auto; }
 .apple-tpl-overlay.open { opacity: 1; pointer-events: all; }
-.apple-tpl-close {
-  position: fixed; top: 20px; right: 20px; z-index: 3;
-  width: 36px; height: 36px; border-radius: 50%;
-  background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.10);
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(0,0,0,0.55); cursor: pointer; transition: all 0.15s;
-}
+.apple-tpl-close { position: fixed; top: 20px; right: 20px; z-index: 3; width: 36px; height: 36px; border-radius: 50%; background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.10); display: flex; align-items: center; justify-content: center; color: rgba(0,0,0,0.55); cursor: pointer; transition: all 0.15s; }
 .apple-tpl-close:hover { background: rgba(0,0,0,0.10); color: #000; }
 .apple-tpl-close svg { width: 14px; height: 14px; }
-.apple-tpl-inner {
-  width: 100%; max-width: 430px; margin: 0 auto; padding: 100px 30px 60px;
-  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
-}
-.apple-tpl-status {
-  display: inline-flex; align-items: center;
-  padding: 6px 14px; border-radius: 999px;
-  background: #000; color: #fff;
-  font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;
-  margin-bottom: 18px;
-  opacity: 0; transform: translateY(12px);
-}
+.apple-tpl-inner { width: 100%; max-width: 430px; margin: 0 auto; padding: 100px 30px 60px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.apple-tpl-status { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; background: #000; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 18px; opacity: 0; transform: translateY(12px); }
 .apple-tpl-status.hidden { display: none; }
-.apple-tpl-title {
-  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.7rem; line-height: 1.25;
-  color: #000; letter-spacing: -0.3px; margin-bottom: 10px;
-  opacity: 0; transform: translateY(16px);
-}
+.apple-tpl-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.7rem; line-height: 1.25; color: #000; letter-spacing: -0.3px; margin-bottom: 10px; opacity: 0; transform: translateY(16px); }
 .apple-tpl-title .apple-tpl-type { font-weight: 500; color: rgba(0,0,0,0.55); }
-.apple-tpl-subtitle {
-  font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.48); margin-bottom: 28px;
-  opacity: 0; transform: translateY(14px);
-}
-.apple-tpl-distrib {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 52px;
-  opacity: 0; transform: translateY(14px);
-}
+.apple-tpl-subtitle { font-size: 16px; font-weight: 600; color: rgba(0,0,0,0.48); margin-bottom: 28px; opacity: 0; transform: translateY(14px); }
+.apple-tpl-distrib { display: flex; align-items: center; gap: 10px; margin-bottom: 52px; opacity: 0; transform: translateY(14px); }
 .apple-tpl-distrib img { height: 26px; width: auto; display: block; }
 .apple-tpl-distrib span { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; color: #000; letter-spacing: -0.1px; }
-.apple-tpl-artwork-wrap {
-  width: 100%; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.20), 0 8px 18px rgba(0,0,0,0.10);
-  background: #e3e2dd;
-  opacity: 0; transform: translateY(26px) scale(0.96);
-}
+.apple-tpl-artwork-wrap { width: 100%; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.20), 0 8px 18px rgba(0,0,0,0.10); background: #e3e2dd; opacity: 0; transform: translateY(26px) scale(0.96); }
 .apple-tpl-artwork-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.apple-tpl-hint {
-  margin-top: 32px; align-self: center; font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: rgba(0,0,0,0.32);
-  opacity: 0;
-}
+.apple-tpl-hint { margin-top: 32px; align-self: center; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(0,0,0,0.32); opacity: 0; }
 .apple-tpl-overlay.animate .apple-tpl-status       { animation: appleFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.20s forwards; }
 .apple-tpl-overlay.animate .apple-tpl-title        { animation: appleFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.55s forwards; }
 .apple-tpl-overlay.animate .apple-tpl-subtitle     { animation: appleFadeUp 0.9s cubic-bezier(0.22,1,0.36,1) 1.00s forwards; }
@@ -287,14 +213,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .apple-tpl-overlay.animate .apple-tpl-hint         { animation: appleFadeUp 0.7s ease 2.90s forwards; }
 @keyframes appleFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes appleArtworkIn { from { opacity: 0; transform: translateY(26px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@media (max-width: 480px) {
-  .apple-tpl-inner { padding: 80px 24px 48px; }
-  .apple-tpl-title { font-size: 1.45rem; }
-}
+@media (max-width: 480px) { .apple-tpl-inner { padding: 80px 24px 48px; } .apple-tpl-title { font-size: 1.45rem; } }
 
-/* ═══════════════════════════════════════════════
-   META VIEW MODAL
-═══════════════════════════════════════════════ */
+/* ===== META MODAL ===== */
 .meta-overlay { position: fixed; inset: 0; z-index: 6000; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px) saturate(0.7); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
 .meta-overlay.open { opacity: 1; pointer-events: all; }
 .meta-modal { background: var(--black-2); border: 1px solid var(--white-20); border-radius: 22px; width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; transform: translateY(22px) scale(0.97); transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1); position: relative; scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
@@ -302,7 +223,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--white-40) 45%, var(--white) 50%, var(--white-40) 55%, transparent 100%); border-radius: 22px 22px 0 0; z-index: 2; }
 .meta-modal::-webkit-scrollbar { width: 4px; }
 .meta-modal::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
-
 .meta-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 16px; border-bottom: 1px solid var(--white-10); position: sticky; top: 0; background: var(--black-2); z-index: 5; border-radius: 22px 22px 0 0; }
 .meta-modal-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--white); }
 .meta-modal-title svg { width: 15px; height: 15px; color: var(--white-70); }
@@ -353,26 +273,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-sub-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 7px; margin-top: 4px; }
 .meta-sub-label.spaced { margin-top: 12px; }
 
-/* ===== PER-TRACK ARTISTS ===== */
-.track-list { display: flex; flex-direction: column; gap: 8px; }
-.track-card { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 12px; padding: 12px 14px; transition: border-color 0.15s; }
-.track-card:hover { border-color: var(--white-20); }
-.track-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.track-num { width: 22px; height: 22px; border-radius: 6px; background: var(--white-10); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 800; color: var(--white-70); flex-shrink: 0; }
-.track-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--white); min-width: 0; word-break: break-word; }
-.track-artists { display: flex; flex-direction: column; gap: 6px; }
-.track-artist { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--black-4); border: 1px solid var(--white-06); border-radius: 9px; padding: 8px 10px; }
-.track-artist-name { font-size: 13px; font-weight: 700; color: var(--white); }
-.artist-type-chip { font-size: 9px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--white-20); color: var(--white-70); background: var(--white-06); }
-.artist-type-chip.main { background: var(--white); color: var(--black); border-color: var(--white); }
-.artist-link { margin-left: auto; display: inline-flex; gap: 6px; }
-.artist-link a { font-size: 10px; font-weight: 800; color: var(--grey); border: 1px solid var(--white-10); border-radius: 99px; padding: 3px 9px; transition: all 0.15s; }
-.artist-link a:hover { color: var(--white); border-color: var(--white-40); }
-.track-no-artists { font-size: 12px; color: var(--grey-dark); font-style: italic; }
+/* ===== TRACKLIST (EP / Album) — same as the app ===== */
+.tracklist { display: flex; flex-direction: column; gap: 8px; }
+.track-item { display: flex; align-items: flex-start; gap: 4px; background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 10px 12px; }
+.track-num { width: 26px; flex-shrink: 0; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 800; color: var(--grey-dark); }
+.track-body { min-width: 0; flex: 1; }
+.track-title { font-size: 13px; font-weight: 700; color: var(--white); word-break: break-word; }
+.track-feat { font-size: 12px; margin-top: 3px; color: var(--white-70); word-break: break-word; }
+.track-feat.none { color: var(--grey-dark); }
 
-/* ═══════════════════════════════════════════════
-   CONFIRM MODAL
-═══════════════════════════════════════════════ */
+/* ===== CONFIRM / PAY-WAIT ===== */
 .confirm-overlay { position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .confirm-overlay.open { opacity: 1; pointer-events: all; }
 .confirm-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 24px 22px 20px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
@@ -388,9 +298,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .confirm-btn.primary { background: var(--white); border: 1px solid var(--white); color: var(--black); }
 .confirm-btn.primary:hover { opacity: 0.9; }
 
-/* ═══════════════════════════════════════════════
-   PAYMENT WAITING MODAL
-═══════════════════════════════════════════════ */
 .pay-wait-overlay { position: fixed; inset: 0; z-index: 8500; background: rgba(0,0,0,0.9); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .pay-wait-overlay.open { opacity: 1; pointer-events: all; }
 .pay-wait-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 28px 24px 24px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
@@ -427,7 +334,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .meta-field.full { grid-column: 1; }
   .list-head-row { grid-template-columns: 20px 48px 1fr auto; padding: 0 6px 8px; }
   .release-row { grid-template-columns: 20px 48px 1fr auto; padding: 12px 6px; gap: 12px; }
-  .row-thumb { width: 48px; height: 48px; }
+  .skeleton-row { grid-template-columns: 20px 48px 1fr auto; padding: 12px 6px; gap: 12px; }
+  .row-thumb, .skeleton-thumb { width: 48px; height: 48px; }
   .row-right { align-items: flex-end; }
   .row-countdown { font-size: 10px; padding: 3px 8px; }
   .search-bar-wrap { padding: 11px 14px; }
@@ -619,7 +527,7 @@ const hamburger = document.getElementById("hamburgerBtn");
 hamburger.onclick = () => { sidebar.classList.toggle("open"); overlay.classList.toggle("show"); };
 overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); };
 
-/* --- STATUS LABEL MAPPING — display only --- */
+/* --- STATUS LABEL — display only --- */
 function statusDisplayLabel(rawStatus) {
   const s = (rawStatus || "Pending").trim();
   if (s.toLowerCase() === "pending") return "Draft";
@@ -627,7 +535,7 @@ function statusDisplayLabel(rawStatus) {
   return s;
 }
 
-/* --- RELEASE COUNTDOWN --- */
+/* --- COUNTDOWN --- */
 function releaseCountdownLabel(releaseDateStr) {
   if (!releaseDateStr) return "";
   const releaseDate = new Date(releaseDateStr);
@@ -641,7 +549,7 @@ function releaseCountdownLabel(releaseDateStr) {
   return "";
 }
 
-/* --- FILTER CHIPS + SEARCH --- */
+/* --- FILTER + SEARCH (title / artist — same as the app) --- */
 let activeFilter = "all";
 let allCards = [];
 document.querySelectorAll(".filter-chip").forEach(btn => {
@@ -684,10 +592,8 @@ function showToast(msg, isError = false) {
   setTimeout(() => toast.classList.remove("show"), 3200);
 }
 
-/* --- PAID / PRICE HELPERS --- */
-function isPaidValue(paidField) {
-  return (paidField || "").toString().toLowerCase() === "paid";
-}
+/* --- PAID / PRICE --- */
+function isPaidValue(paidField) { return (paidField || "").toString().toLowerCase() === "paid"; }
 function priceForReleaseType(releaseType) {
   const t = (releaseType || "").toString().toLowerCase();
   if (t === "single") return 39.99;
@@ -696,94 +602,86 @@ function priceForReleaseType(releaseType) {
 
 function escHtml(str) { return String(str == null ? '' : str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
-function safeUrl(u) { const s = String(u || '').trim(); return /^https?:\/\//i.test(s) ? s : ''; }
 
 /* ═══════════════════════════════════════════════════════
-   ARTISTS / FEATURINGS / PER-TRACK  (one source of truth —
-   the row, search, modal and showcase all read from here)
-
-   Saved shape: `featuredArtists` (and `audioFiles`) are arrays
-   of tracks; each track has its own `artists` array of
-   {name, type, spotifyUrl, appleUrl}. type === "main" is a
-   main artist, anything else is treated as featured.
-   A flat `featuring` string (older releases) is still honoured
-   and merged in, de-duplicated.
+   FEATURING HELPERS — line-for-line port of the app's
+   _featuredFromArtists / _trackList / _isMultiTrack /
+   _featuringDisplay.
 ═══════════════════════════════════════════════════════ */
-const AUDIO_EXT_RE = /\.(mp3|wav|flac|m4a|aac|ogg|aiff?)$/i;
-
-function pickTrackTitle(t) {
-  if (!t || typeof t !== 'object') return '';
-  const raw = t.title || t.trackTitle || t.trackName || t.songTitle || t.name || t.fileName || '';
-  return String(raw).replace(AUDIO_EXT_RE, '').trim();
-}
-
-function getTracks(data) {
-  const withArtists = Array.isArray(data.featuredArtists) && data.featuredArtists.length ? data.featuredArtists : null;
-  const files = Array.isArray(data.audioFiles) ? data.audioFiles : [];
-  const src = withArtists || files;
-  return src.map((t, i) => {
-    const artists = ((t && t.artists) || [])
-      .filter(a => a && a.name && String(a.name).trim())
-      .map(a => ({
-        name: String(a.name).trim(),
-        type: String(a.type || 'main').trim().toLowerCase(),
-        spotifyUrl: safeUrl(a.spotifyUrl),
-        appleUrl: safeUrl(a.appleUrl)
-      }));
-    return { title: pickTrackTitle(t) || pickTrackTitle(files[i]) || `Track ${i + 1}`, artists };
+// Featured names from one track's `artists` list (type == 'featured').
+function featuredFromArtists(artists) {
+  const out = [];
+  if (!Array.isArray(artists)) return out;
+  artists.forEach(a => {
+    if (a && typeof a === 'object' && String(a.type || '') === 'featured') {
+      const n = String(a.name || '').trim();
+      if (n && !out.some(x => x.toLowerCase() === n.toLowerCase())) out.push(n);
+    }
   });
+  return out;
 }
 
-function getArtistCredits(data) {
-  const mainName = (data.artistName || '').trim();
-  const seenF = new Set(), seenM = new Set([mainName.toLowerCase()]);
-  const featured = [], extraMain = [];
-  getTracks(data).forEach(t => t.artists.forEach(a => {
-    const key = a.name.toLowerCase();
-    if (a.type === 'main') {
-      if (!seenM.has(key)) { seenM.add(key); extraMain.push(a.name); }
-    } else if (!seenF.has(key)) { seenF.add(key); featured.push(a.name); }
-  }));
-  // legacy flat string
-  String(data.featuring || '').split(/,|&|\bfeat\.?\b|\bft\.?\b/i).map(s => s.trim()).filter(Boolean).forEach(n => {
-    const key = n.toLowerCase();
-    if (!seenF.has(key)) { seenF.add(key); featured.push(n); }
-  });
-  return { mainName, extraMain, featured };
+// Per-track list: [{title, featuring: [names]}]. audioFiles first,
+// falls back to featuredArtists (stores {track, artists}).
+function trackList(data) {
+  const keys = ['audioFiles', 'featuredArtists'];
+  for (const key of keys) {
+    const list = data[key];
+    if (!Array.isArray(list) || !list.length) continue;
+    const out = [];
+    list.forEach(t => {
+      if (!t || typeof t !== 'object') return;
+      out.push({
+        title: String(t.title || t.track || '').trim(),
+        featuring: featuredFromArtists(t.artists)
+      });
+    });
+    if (out.length) return out;
+  }
+  return [];
 }
 
-function artistLine(data) {
-  const c = getArtistCredits(data);
-  const mains = [c.mainName || 'Unknown Artist', ...c.extraMain].join(', ');
-  return c.featured.length ? `${mains} ft. ${c.featured.join(', ')}` : mains;
+// True for EP / Album (more than one track).
+function isMultiTrack(data) { return trackList(data).length > 1; }
+
+// Release-level featuring text, used for SINGLES. 'None' if nobody.
+// Also reads the old `featuring` field so older releases still show.
+function featuringDisplay(data) {
+  const names = [];
+  const add = n => {
+    const s = String(n == null ? '' : n).trim();
+    if (s && !names.some(x => x.toLowerCase() === s.toLowerCase())) names.push(s);
+  };
+  const direct = data.featuring;
+  if (Array.isArray(direct)) direct.forEach(x => add(x && typeof x === 'object' ? x.name : x));
+  else add(direct);
+  trackList(data).forEach(t => t.featuring.forEach(add));
+  return names.length ? names.join(', ') : 'None';
 }
 
-function typeLabel(t) {
-  if (t === 'main') return 'Main';
-  if (t === 'featured' || t === 'feat' || t === 'featuring') return 'Featured';
-  return t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Featured';
+// List-row subtitle: singles "Artist ft. Name"; EP/Album main artist only.
+function rowArtistLine(data) {
+  const main = data.artistName || 'Unknown Artist';
+  const feat = featuringDisplay(data);
+  return (isMultiTrack(data) || feat === 'None') ? main : `${main} ft. ${feat}`;
 }
 
-function renderTracksSection(data) {
-  const tracks = getTracks(data);
-  if (!tracks.length) return '';
-  return `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Tracks & Artists</div>
-    <div class="track-list">${tracks.map((t, i) => `
-      <div class="track-card">
-        <div class="track-head"><div class="track-num">${i + 1}</div><div class="track-title">${escHtml(t.title)}</div></div>
-        <div class="track-artists">${t.artists.length ? t.artists.map(a => `
-          <div class="track-artist">
-            <span class="track-artist-name">${escHtml(a.name)}</span>
-            <span class="artist-type-chip ${a.type === 'main' ? 'main' : ''}">${escHtml(typeLabel(a.type))}</span>
-            ${(a.spotifyUrl || a.appleUrl) ? `<span class="artist-link">${a.spotifyUrl ? `<a href="${escHtml(a.spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}${a.appleUrl ? `<a href="${escHtml(a.appleUrl)}" target="_blank" rel="noopener">Apple</a>` : ''}</span>` : ''}
-          </div>`).join('') : '<div class="track-no-artists">No artists tagged</div>'}
-        </div>
-      </div>`).join('')}
-    </div></div>`;
+function renderTracklist(data) {
+  const tracks = trackList(data);
+  return `<div class="tracklist">${tracks.map((t, i) => {
+    const title = t.title || `Track ${i + 1}`;
+    const none = t.featuring.length === 0;
+    return `<div class="track-item">
+      <div class="track-num">${i + 1}</div>
+      <div class="track-body">
+        <div class="track-title">${escHtml(title)}</div>
+        <div class="track-feat ${none ? 'none' : ''}">${none ? 'Featuring: None' : 'Featuring: ' + escHtml(t.featuring.join(', '))}</div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 }
 
 const SMARTLINK_BASE = "https://444musicdistro.com/smartlink.html?slug=";
-
 function copySmartLink(slug) {
   const url = SMARTLINK_BASE + slug;
   navigator.clipboard.writeText(url).then(() => {
@@ -816,8 +714,7 @@ function openAppleTemplate(releaseId) {
     statusEl.textContent = statusDisplayLabel(rawStatus);
   }
 
-  const titleEl = document.getElementById('appleTplTitle');
-  titleEl.innerHTML = `${escHtml(data.releaseTitle || 'Untitled Release')} <span class="apple-tpl-type">- ${escHtml(data.releaseType || 'Single')}</span>`;
+  document.getElementById('appleTplTitle').innerHTML = `${escHtml(data.releaseTitle || 'Untitled Release')} <span class="apple-tpl-type">- ${escHtml(data.releaseType || 'Single')}</span>`;
   document.getElementById('appleTplArtwork').src = data.coverURL || '';
 
   appleTplOverlay.classList.remove('animate');
@@ -840,10 +737,7 @@ appleTplOverlay.addEventListener('click', function(e) {
   if (e.target === appleTplClose || appleTplClose.contains(e.target)) return;
   closeAppleTemplateAndProceed();
 });
-appleTplClose.addEventListener('click', function(e) {
-  e.stopPropagation();
-  closeAppleTemplateOnly();
-});
+appleTplClose.addEventListener('click', function(e) { e.stopPropagation(); closeAppleTemplateOnly(); });
 
 /* === META MODAL === */
 window._releaseMeta = {};
@@ -859,7 +753,7 @@ function renderCreditsSection(arr) {
       </div></div>`).join('') + '</div>';
 }
 
-/* TOP-OF-MODAL ACTION BAR */
+/* TOP ACTION BAR */
 function renderModalTopAction(data, releaseId, statusClass) {
   const paid = isPaidValue(data.paid);
   if (statusClass === "pending" && !paid) {
@@ -878,8 +772,9 @@ function renderModalTopAction(data, releaseId, statusClass) {
   return "";
 }
 
-/* Delegated handler for the action bar (no inline onclick with data) */
 document.getElementById('metaModalContent').addEventListener('click', function(e) {
+  const copyBtn = e.target.closest('[data-copy-slug]');
+  if (copyBtn) { copySmartLink(copyBtn.dataset.copySlug); return; }
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
   const id = btn.dataset.id;
@@ -896,14 +791,14 @@ async function openMetaModal(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
   const content  = document.getElementById('metaModalContent');
-  const subtitle = document.getElementById('metaModalSubtitle');
-  subtitle.textContent = data.releaseTitle || 'Release Details';
+  document.getElementById('metaModalSubtitle').textContent = data.releaseTitle || 'Release Details';
   const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) : '—';
   const submittedAt  = data.createdAt   ? new Date(data.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
   const rawStatus    = (data.status || 'Pending').trim();
   const statusClass  = rawStatus.toLowerCase().replace(/\s+/g, '-');
   const isApproved   = statusClass === 'approved';
   const isRejected   = statusClass === 'rejected';
+  const isMulti      = isMultiTrack(data);
   const credits      = data.credits || {};
   const hasProducers  = credits.producer   && credits.producer.some(c => c.name && c.name.trim());
   const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
@@ -912,17 +807,17 @@ async function openMetaModal(releaseId) {
   const hasAnyCredits = hasProducers || hasMusicians;
   const topAction = renderModalTopAction(data, releaseId, statusClass);
 
+  // Cover art can no longer be changed once a release is submitted.
   const coverHtml = data.coverURL
     ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
     : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
   const takedownReasonHtml = (statusClass === "taken-down" && data.takedownReason && data.takedownReason.trim())
     ? `<div class="meta-takendown-reason"><strong>Reason for takedown</strong>${escHtml(data.takedownReason)}</div>` : '';
   const paid = isPaidValue(data.paid);
-  const ac = getArtistCredits(data);
-  const mainArtists = [ac.mainName, ...ac.extraMain].filter(Boolean).join(', ');
   const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
     ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
   const smartSlug = data.smartLinkSlug ? String(data.smartLinkSlug) : '';
+  const feat = featuringDisplay(data);
 
   content.innerHTML = `
     ${topAction}
@@ -946,8 +841,8 @@ async function openMetaModal(releaseId) {
       </div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
         <div class="meta-fields-grid">
-          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(mainArtists))}</div></div>
-          <div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value ${ac.featured.length ? '' : 'none'}">${ac.featured.length ? escHtml(ac.featured.join(', ')) : 'None'}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
+          ${!isMulti ? `<div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value ${feat === 'None' ? 'none' : ''}">${escHtml(feat)}</div></div>` : ''}
           <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
@@ -956,7 +851,7 @@ async function openMetaModal(releaseId) {
           <div class="meta-field"><div class="meta-field-label">Explicit Content</div><div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div></div>
         </div>
       </div>
-      ${renderTracksSection(data)}
+      ${isMulti ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Tracklist</div>${renderTracklist(data)}</div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Label & Rights</div>
         <div class="meta-fields-grid">
           <div class="meta-field"><div class="meta-field-label">Label Name</div><div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">${escHtml(metaVal(data.label, 'Independent'))}</div></div>
@@ -993,18 +888,12 @@ async function openMetaModal(releaseId) {
   document.getElementById('metaModal').scrollTop = 0;
 }
 
-/* Smart link copy button (delegated) */
-document.getElementById('metaModalContent').addEventListener('click', function(e) {
-  const b = e.target.closest('[data-copy-slug]');
-  if (b) copySmartLink(b.dataset.copySlug);
-});
-
 function closeMetaModal() { document.getElementById('metaOverlay').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
 document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeMetaModal(); closeAppleTemplateOnly(); } });
 
-/* Row click -> Apple showcase -> metadata modal */
+/* Row click -> showcase -> metadata modal */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const row = e.target.closest('.release-row');
   if (!row) return;
@@ -1032,42 +921,25 @@ function looksLikeRouteNotFound(status, text) {
 
 async function postCreatePaymentWithProbing(body) {
   const cached = sessionStorage.getItem("paymentApiBase");
-  const ordered = cached
-    ? [cached, ...PAYMENT_BASE_CANDIDATES.filter(b => b !== cached)]
-    : PAYMENT_BASE_CANDIDATES;
-
+  const ordered = cached ? [cached, ...PAYMENT_BASE_CANDIDATES.filter(b => b !== cached)] : PAYMENT_BASE_CANDIDATES;
   let lastError = null;
   for (const base of ordered) {
     try {
-      const res  = await fetch(`${base}/create-payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res  = await fetch(`${base}/create-payment`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const text = await res.text();
-      if (looksLikeRouteNotFound(res.status, text)) {
-        lastError = new Error(`Route not found at ${base}/create-payment`);
-        continue;
-      }
+      if (looksLikeRouteNotFound(res.status, text)) { lastError = new Error(`Route not found at ${base}/create-payment`); continue; }
       let json = {};
       try { json = JSON.parse(text); } catch (e) {}
       sessionStorage.setItem("paymentApiBase", base);
       return { ok: res.ok, status: res.status, payload: json, base };
-    } catch (e) {
-      lastError = e;
-    }
+    } catch (e) { lastError = e; }
   }
   throw lastError || new Error("No working payment endpoint found.");
 }
 
-function verifyPaymentUrl(base, reference) {
-  return `${base}/verify-payment/${encodeURIComponent(reference)}`;
-}
+function verifyPaymentUrl(base, reference) { return `${base}/verify-payment/${encodeURIComponent(reference)}`; }
 
-let _pendingPay = null;
-let _pollTimer  = null;
-let _pollDeadline = null;
-let _pollBase   = null;
+let _pendingPay = null, _pollTimer = null, _pollDeadline = null, _pollBase = null;
 
 function requestPayNow(releaseId, releaseTitle, amount) {
   _pendingPay = { releaseId, releaseTitle, amount };
@@ -1092,6 +964,8 @@ function closePayWait() {
   if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
 }
 
+const ICON_ERR = `<div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>`;
+
 async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
   const user = window._currentUser;
   if (!user) { showToast("Please sign in again to continue.", true); return; }
@@ -1104,36 +978,26 @@ async function createAndTrackPayment({ releaseId, releaseTitle, amount }) {
 
   let payload;
   try {
-    const result = await postCreatePaymentWithProbing({
-      amountGHS: amount,
-      submissionId: releaseId,
-      uid: user.uid,
-      email: user.email || "",
-      isExistingSubmission: true,
-    });
+    const result = await postCreatePaymentWithProbing({ amountGHS: amount, submissionId: releaseId, uid: user.uid, email: user.email || "", isExistingSubmission: true });
     payload   = result.payload;
     _pollBase = result.base;
     if (!result.ok) throw new Error(payload.error || payload.message || `Payment server returned ${result.status}.`);
   } catch (err) {
     console.error("[create-payment] error:", err);
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+    openPayWait(`${ICON_ERR}
       <div class="pay-wait-title">Couldn't start payment</div>
       <div class="pay-wait-text">${escHtml(err.message || "Please check your connection and try again.")}</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>`);
     return;
   }
 
-  const authUrl    = payload.paymentUrl || payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
-  const reference  = payload.reference || payload.ref;
+  const authUrl   = payload.paymentUrl || payload.authorization_url || payload.authorizationUrl || payload.url || payload.link;
+  const reference = payload.reference || payload.ref;
   if (!authUrl || !reference) {
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+    openPayWait(`${ICON_ERR}
       <div class="pay-wait-title">Unexpected response</div>
       <div class="pay-wait-text">The payment server didn't return a checkout link. Please try again shortly.</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>`);
     return;
   }
 
@@ -1160,12 +1024,10 @@ window.requestPayNow = requestPayNow;
 async function pollPaymentStatus(reference, releaseId) {
   if (Date.now() > _pollDeadline) {
     clearInterval(_pollTimer); _pollTimer = null;
-    openPayWait(`
-      <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    openPayWait(`${ICON_ERR}
       <div class="pay-wait-title">Still waiting</div>
       <div class="pay-wait-text">We haven't seen confirmation yet. If you completed checkout, it'll update shortly — you can safely close this and check back.</div>
-      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-    `);
+      <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>`);
     return;
   }
   try {
@@ -1178,21 +1040,16 @@ async function pollPaymentStatus(reference, releaseId) {
         <div class="pay-wait-icon-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         <div class="pay-wait-title">Payment confirmed</div>
         <div class="pay-wait-text">Your release has moved to review — no further action needed.</div>
-        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait(); loadReleasesForCurrentUser();">Done</button></div>
-      `);
+        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait(); loadReleasesForCurrentUser();">Done</button></div>`);
       showToast("Payment confirmed — release moved to review!");
     } else if (status === "failed" || status === "abandoned") {
       clearInterval(_pollTimer); _pollTimer = null;
-      openPayWait(`
-        <div class="pay-wait-icon-error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+      openPayWait(`${ICON_ERR}
         <div class="pay-wait-title">Payment not completed</div>
         <div class="pay-wait-text">The checkout was closed or the payment failed. You can try again from the release.</div>
-        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>
-      `);
+        <div class="pay-wait-actions"><button class="pay-wait-btn primary" onclick="closePayWait()">Close</button></div>`);
     }
-  } catch (err) {
-    console.error("[verify-payment] error:", err);
-  }
+  } catch (err) { console.error("[verify-payment] error:", err); }
 }
 function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
 
@@ -1242,24 +1099,17 @@ async function loadReleases(user) {
       return;
     }
     let rowIndex = 0;
-    const docsSorted = snapshot.docs.slice().sort((a, b) => {
-      const aTime = a.data().createdAt || 0;
-      const bTime = b.data().createdAt || 0;
-      return bTime - aTime;
-    });
+    const docsSorted = snapshot.docs.slice().sort((a, b) => (b.data().createdAt || 0) - (a.data().createdAt || 0));
     docsSorted.forEach((docSnap) => {
       const data = docSnap.data();
       const id   = docSnap.id;
       window._releaseMeta[id] = { ...data, _id: id };
 
-      const rawStatus = (data.status || "Pending").trim().toLowerCase();
-
-      const releaseDate  = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
-      const statusClass  = rawStatus.replace(/\s+/g, "-");
-      const isPending    = statusClass === "pending";
-      const countdown    = releaseCountdownLabel(data.releaseDate);
-      const credits      = getArtistCredits(data);
-      const trackTitles  = getTracks(data).map(t => t.title).join(' ');
+      const rawStatus   = (data.status || "Pending").trim().toLowerCase();
+      const releaseDate = data.releaseDate ? new Date(data.releaseDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "TBA";
+      const statusClass = rawStatus.replace(/\s+/g, "-");
+      const isPending   = statusClass === "pending";
+      const countdown   = releaseCountdownLabel(data.releaseDate);
 
       const thumbSection = data.coverURL
         ? `<img src="${escHtml(data.coverURL)}" class="cover-image" alt="Cover art">`
@@ -1269,13 +1119,13 @@ async function loadReleases(user) {
       row.className = "release-row";
       row.dataset.status = statusClass;
       row.dataset.releaseId = id;
-      row.dataset.searchText = `${data.releaseTitle || ""} ${data.artistName || ""} ${credits.extraMain.join(' ')} ${credits.featured.join(' ')} ${trackTitles}`.toLowerCase();
+      row.dataset.searchText = `${data.releaseTitle || ""} ${data.artistName || ""}`.toLowerCase();
       row.innerHTML = `
         <div class="row-index">${rowIndex + 1}</div>
         <div class="row-thumb">${thumbSection}</div>
         <div class="row-info">
           <div class="row-title">${escHtml(data.releaseTitle || "Untitled Release")}</div>
-          <div class="row-artist">${escHtml(artistLine(data))}</div>
+          <div class="row-artist">${escHtml(rowArtistLine(data))}</div>
           <div class="row-meta-line">
             <span class="row-type-tag">${escHtml(data.releaseType || "Single")}</span>
             <span class="row-dot-sep"></span>
