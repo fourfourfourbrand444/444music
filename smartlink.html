@@ -8,67 +8,111 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ═══════════════════════════════════════════════════════
+     444MUSIC — SMART LINK (rebuilt for smoothness)
+     What changed vs. the old version, and why it feels smoother:
+       • No backdrop-filter on buttons (it re-blurs every frame
+         while scrolling — the main cause of the stutter).
+       • The blurred artwork backdrop is one static, GPU-composited
+         layer that never repaints during scroll.
+       • Body no longer vertically centers with flex + min-height
+         (that caused the jump/shift); the card centers itself with
+         margin:auto and 100dvh, so mobile address-bar changes
+         don't resize anything.
+       • Adding a store updates only the list — the artwork and
+         page never re-render, so nothing flashes.
+       • Only transform/opacity are animated. Hover effects only
+         apply on devices that can really hover.
+  ═══════════════════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --text: #ffffff; --text-sec: rgba(255,255,255,0.75); --text-mut: rgba(255,255,255,0.45);
-    --ff-display: 'Poppins', sans-serif; --ff-body: 'Inter', sans-serif;
+    --text: #ffffff;
+    --text-sec: rgba(255,255,255,0.75);
+    --text-mut: rgba(255,255,255,0.45);
+    --ff-display: 'Poppins', sans-serif;
+    --ff-body: 'Inter', sans-serif;
   }
-  /* min-height (not a fixed height) lets the page grow taller than the
-     viewport and scroll normally once content — artwork + title +
-     6+ store buttons + footer — no longer fits on one screen. */
-  html, body { min-height: 100%; }
-  html { -webkit-font-smoothing: antialiased; }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    background: #050505;
+  }
   body {
-    background: #050505; color: var(--text); font-family: var(--ff-body);
-    min-height: 100vh; overflow-x: hidden; position: relative;
-    display: flex; align-items: center; justify-content: center;
+    background: #050505;
+    color: var(--text);
+    font-family: var(--ff-body);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
     padding: 32px 20px;
     padding-top: calc(32px + env(safe-area-inset-top, 0px));
     padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
+  a, button { touch-action: manipulation; }
 
-  /* ── Blurred artwork backdrop — same image, heavily blurred and
-       scaled so its own dominant color fills the whole screen ── */
+  /* ── Static blurred backdrop: painted once, then only composited ── */
   .bg-blur {
-    position: fixed; inset: -10%; z-index: 0;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
     background-size: cover; background-position: center;
-    filter: blur(70px) saturate(1.3) brightness(0.6);
-    transform: scale(1.15);
+    filter: blur(48px) saturate(1.3) brightness(0.6);
+    transform: translateZ(0) scale(1.3);
+    will-change: transform;
+    contain: strict;
+    opacity: 0;
+    transition: opacity 0.6s ease;
   }
+  .bg-blur.ready { opacity: 1; }
   .bg-scrim {
-    position: fixed; inset: 0; z-index: 1;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1; pointer-events: none;
     background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+    transform: translateZ(0);
   }
 
   .card {
     position: relative; z-index: 2;
-    width: 100%; max-width: 380px; text-align: center;
+    width: 100%; max-width: 380px;
+    margin: auto;               /* centers vertically, never clips the top when content is tall */
+    text-align: center;
   }
-  .artwork {
-    width: 200px; height: 200px; border-radius: 18px; object-fit: cover;
-    margin: 0 auto 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+
+  .artwork-wrap {
+    width: 200px; height: 200px; margin: 0 auto 22px;
+    border-radius: 18px; overflow: hidden;
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 20px 44px rgba(0,0,0,0.45);
   }
-  .artwork.placeholder {
+  .artwork-wrap img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    opacity: 0; transition: opacity 0.35s ease;
+  }
+  .artwork-wrap img.loaded { opacity: 1; }
+  .artwork-wrap.placeholder {
     display: flex; align-items: center; justify-content: center;
     font-family: var(--ff-display); font-weight: 800; font-size: 3rem;
-    color: var(--text-mut); background: rgba(255,255,255,0.08);
+    color: var(--text-mut);
     border: 1px solid rgba(255,255,255,0.12);
   }
-  .title { font-family: var(--ff-display); font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; }
-  .artist { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 26px; }
 
+  .title  { font-family: var(--ff-display); font-weight: 700; font-size: 1.3rem; margin-bottom: 3px; overflow-wrap: anywhere; }
+  .artist { color: var(--text-sec); font-size: 0.95rem; margin-bottom: 26px; overflow-wrap: anywhere; }
+
+  /* ── Store buttons ── */
   .stores { display: flex; flex-direction: column; gap: 12px; }
   .store-btn {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: rgba(255,255,255,0.92);
-    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    background: rgba(255,255,255,0.94);
     border-radius: 999px; padding: 14px 8px 14px 22px;
     text-decoration: none; color: #0a0a0a;
     font-weight: 700; font-size: 0.95rem; font-family: var(--ff-body);
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background-color 0.15s ease;
   }
-  .store-btn:active { transform: scale(0.97); }
-  .store-btn:hover { background: #ffffff; }
+  .store-btn:active { transform: scale(0.975); }
+  .store-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   .store-btn .play-label { flex-shrink: 0; }
   .store-btn .store-right {
     display: flex; align-items: center; gap: 8px;
@@ -79,8 +123,22 @@
     display: flex; align-items: center; justify-content: center;
   }
   .store-icon svg { width: 18px; height: 18px; }
+  .store-btn.enter { animation: rise 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ── Add-a-store — self-service link for platforms not yet listed */
+  /* ── Not-delivered-yet state (release has zero links) ── */
+  .pending-box {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 22px 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+  }
+  .pending-box svg { width: 26px; height: 26px; color: var(--text-sec); }
+  .pending-title { font-family: var(--ff-display); font-weight: 700; font-size: 1rem; }
+  .pending-text  { color: var(--text-sec); font-size: 0.88rem; line-height: 1.5; }
+
+  /* ── Add-a-store (only rendered when at least one link exists) ── */
   #addStoreSection { margin-top: 12px; }
   .add-store-btn {
     display: flex; align-items: center; justify-content: center;
@@ -89,30 +147,36 @@
     border-radius: 999px; padding: 14px;
     color: var(--text-sec); font-weight: 700; font-size: 0.85rem;
     cursor: pointer; width: 100%; font-family: var(--ff-body);
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
-  .add-store-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.5); }
+  .add-store-btn:active { transform: scale(0.98); }
+  .add-store-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   .add-store-form {
     display: flex; flex-direction: column; gap: 10px;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 16px; padding: 14px;
-    text-align: left;
+    border-radius: 16px; padding: 14px; text-align: left;
+    animation: rise 0.3s cubic-bezier(0.22,1,0.36,1) both;
   }
   .add-store-select, .add-store-input {
     width: 100%; padding: 12px 14px; border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.3); color: var(--text);
-    font-family: var(--ff-body); font-size: 0.9rem; outline: none;
+    background: rgba(0,0,0,0.35); color: var(--text);
+    font-family: var(--ff-body);
+    font-size: 16px;            /* 16px stops iOS from zooming the page on focus */
+    outline: none;
   }
+  .add-store-select:focus, .add-store-input:focus { border-color: rgba(255,255,255,0.55); }
   .add-store-select option { background: #111; color: #fff; }
   .add-store-error { color: #ff8f8f; font-size: 0.78rem; }
   .add-store-actions { display: flex; gap: 10px; }
   .add-store-save, .add-store-cancel {
-    flex: 1; padding: 11px; border-radius: 10px; border: none;
-    font-weight: 700; font-size: 0.82rem; cursor: pointer;
-    font-family: var(--ff-body); transition: opacity 0.15s ease;
+    flex: 1; padding: 12px; border-radius: 10px; border: none;
+    font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    font-family: var(--ff-body);
+    transition: opacity 0.15s ease, transform 0.15s ease;
   }
+  .add-store-save:active, .add-store-cancel:active { transform: scale(0.97); }
   .add-store-save { background: #fff; color: #0a0a0a; }
   .add-store-save:disabled { opacity: 0.6; cursor: default; }
   .add-store-cancel { background: rgba(255,255,255,0.1); color: var(--text-sec); }
@@ -121,12 +185,25 @@
     margin-top: 28px; color: var(--text-mut); font-size: 0.72rem;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
+  .footer-mark a { color: var(--text-sec); font-weight: 700; text-decoration: none; }
+
   .state { color: var(--text-sec); font-size: 0.9rem; padding: 60px 0; }
   .loader {
     width: 26px; height: 26px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff;
     border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Hover only where a real pointer exists — avoids sticky hover on touch */
+  @media (hover: hover) and (pointer: fine) {
+    .store-btn:hover { background: #ffffff; transform: translateY(-1px); }
+    .add-store-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.5); }
+    .footer-mark a:hover { color: #fff; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -134,9 +211,9 @@
 <div class="bg-blur" id="bgBlur"></div>
 <div class="bg-scrim"></div>
 
-<div class="card" id="card">
+<main class="card" id="card">
   <div class="state"><div class="loader"></div>Loading…</div>
-</div>
+</main>
 
 <script type="module">
 import { initializeApp }
@@ -168,14 +245,11 @@ const STORE_LABELS = {
   tidal:        'Tidal',
   soundcloud:   'SoundCloud'
 };
-// The only platforms this page ever shows or lets someone add — a
-// fixed list, not free text. STORE_ORDER also doubles as "every
-// platform this page knows how to display" for the Add Store dropdown.
+// Fixed list of platforms this page can show or let someone add —
+// never free text.
 const STORE_ORDER = ['spotify','appleMusic','youtubeMusic','audiomack','boomplay','deezer','amazonMusic','tidal','youtube','itunes','soundcloud'];
 
-// Real, official brand marks — paths sourced directly from the
-// Simple Icons library (simpleicons.org), each on its own official
-// brand color as the circle background.
+// Official brand marks (Simple Icons paths) on each brand's own color.
 const STORE_ICONS = {
   spotify: { bg: '#1ED760', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>' },
   appleMusic: { bg: '#FA243C', svg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026-.747.043-1.49.123-2.193.4-1.336.53-2.3 1.452-2.865 2.78-.192.448-.292.925-.363 1.408-.056.392-.088.785-.1 1.18 0 .032-.007.062-.01.093v12.223c.01.14.017.283.027.424.05.815.154 1.624.497 2.373.65 1.42 1.738 2.353 3.234 2.801.42.127.856.187 1.293.228.555.053 1.11.06 1.667.06h11.03a12.5 12.5 0 001.57-.1c.822-.106 1.596-.35 2.295-.81a5.046 5.046 0 001.88-2.207c.186-.42.293-.87.37-1.324.113-.675.138-1.358.137-2.04-.002-3.8 0-7.595-.003-11.393zm-6.423 3.99v5.712c0 .417-.058.827-.244 1.206-.29.59-.76.962-1.388 1.14-.35.1-.706.157-1.07.173-.95.045-1.773-.6-1.943-1.536a1.88 1.88 0 011.038-2.022c.323-.16.67-.25 1.018-.324.378-.082.758-.153 1.134-.24.274-.063.457-.23.51-.516a.904.904 0 00.02-.193c0-1.815 0-3.63-.002-5.443a.725.725 0 00-.026-.185c-.04-.15-.15-.243-.304-.234-.16.01-.318.035-.475.066-.76.15-1.52.303-2.28.456l-2.325.47-1.374.278c-.016.003-.032.01-.048.013-.277.077-.377.203-.39.49-.002.042 0 .086 0 .13-.002 2.602 0 5.204-.003 7.805 0 .42-.047.836-.215 1.227-.278.64-.77 1.04-1.434 1.233-.35.1-.71.16-1.075.172-.96.036-1.755-.6-1.92-1.544-.14-.812.23-1.685 1.154-2.075.357-.15.73-.232 1.108-.31.287-.06.575-.116.86-.177.383-.083.583-.323.6-.714v-.15c0-2.96 0-5.922.002-8.882 0-.123.013-.25.042-.37.07-.285.273-.448.546-.518.255-.066.515-.112.774-.165.733-.15 1.466-.296 2.2-.444l2.27-.46c.67-.134 1.34-.27 2.01-.403.22-.043.442-.088.663-.106.31-.025.523.17.554.482.008.073.012.148.012.223.002 1.91.002 3.822 0 5.732z"/></svg>' },
@@ -191,29 +265,29 @@ const STORE_ICONS = {
 };
 const DEFAULT_ICON = { bg: 'rgba(0,0,0,0.55)', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>' };
 
-// ── module-level state the Add Store flow needs across renders ──
-let currentItem = null;
+// ── state ──
+let currentItem   = null;
 let currentDocRef = null;
-let addFormOpen = false;
+let addFormOpen   = false;
+
+const $ = (id) => document.getElementById(id);
 
 function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function getSlugFromUrl() {
-  const path = window.location.pathname;
-  const parts = path.split('/').filter(Boolean);
+  const parts = window.location.pathname.split('/').filter(Boolean);
   const fromPath = parts[parts.length - 1];
   if (fromPath && fromPath !== 'smartlink.html' && fromPath !== 'smartlink' && fromPath !== 'l' && fromPath !== 'go') return fromPath;
   return new URLSearchParams(window.location.search).get('slug');
 }
 
 function renderState(html) {
-  document.getElementById('card').innerHTML = `<div class="state">${html}</div>`;
+  $('card').innerHTML = `<div class="state">${html}</div>`;
 }
 
-// Only http/https links pass — plain text, names, or anything else
-// is rejected outright before it ever reaches Firestore.
+// Only real http/https links are ever accepted or rendered.
 function isValidHttpUrl(str) {
   try {
     const u = new URL(String(str).trim());
@@ -223,28 +297,87 @@ function isValidHttpUrl(str) {
   }
 }
 
-// Every platform this page is able to show, minus whichever ones the
-// release already has a real link for — never a free-text platform.
-function availablePlatformsToAdd() {
+// Returns only stores that have a real, valid link.
+function getLiveStores() {
   const stores = (currentItem.smartLink && currentItem.smartLink.stores) || {};
-  return STORE_ORDER.filter(key => !stores[key] || !String(stores[key]).trim());
+  const out = {};
+  Object.keys(stores).forEach(k => {
+    const v = stores[k];
+    if (v && String(v).trim() && isValidHttpUrl(v)) out[k] = String(v).trim();
+  });
+  return out;
 }
 
+function orderedStoreKeys(live) {
+  return [
+    ...STORE_ORDER.filter(k => live[k]),
+    ...Object.keys(live).filter(k => !STORE_ORDER.includes(k))
+  ];
+}
+
+function buildStoreButton(key, url, animate) {
+  const a = document.createElement('a');
+  a.className = 'store-btn' + (animate ? ' enter' : '');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.dataset.key = key;
+  const icon = STORE_ICONS[key] || DEFAULT_ICON;
+  a.innerHTML = `
+    <span class="play-label">Play</span>
+    <span class="store-right">
+      ${escHtml(STORE_LABELS[key] || key)}
+      <span class="store-icon" style="background:${icon.bg}">${icon.svg}</span>
+    </span>`;
+  return a;
+}
+
+// Draws the store list. Existing buttons are left untouched — only
+// missing ones are added — so nothing flashes or re-animates.
+function renderStores(animateNew) {
+  const list = $('storesList');
+  if (!list) return;
+  const live = getLiveStores();
+  const keys = orderedStoreKeys(live);
+  const existing = new Set([...list.children].map(el => el.dataset.key));
+
+  if (keys.length === list.children.length && keys.every(k => existing.has(k))) return;
+
+  const frag = document.createDocumentFragment();
+  keys.forEach(k => {
+    const el = list.querySelector(`[data-key="${k}"]`);
+    frag.appendChild(el || buildStoreButton(k, live[k], animateNew));
+  });
+  list.replaceChildren(frag);
+}
+
+function availablePlatformsToAdd() {
+  const live = getLiveStores();
+  return STORE_ORDER.filter(k => !live[k]);
+}
+
+// The add-a-store control ONLY exists once the release already has at
+// least one live link. A release with none is "not delivered yet".
 function renderAddStoreSection() {
-  const container = document.getElementById('addStoreSection');
+  const container = $('addStoreSection');
   if (!container) return;
+
+  const hasAnyLink = Object.keys(getLiveStores()).length > 0;
   const missing = availablePlatformsToAdd();
 
-  if (missing.length === 0) {
+  if (!hasAnyLink || missing.length === 0) {
     container.innerHTML = '';
+    addFormOpen = false;
     return;
   }
 
   if (!addFormOpen) {
     container.innerHTML = `<button type="button" class="add-store-btn" id="openAddStoreBtn">+ Add a store link</button>`;
-    document.getElementById('openAddStoreBtn').addEventListener('click', () => {
+    $('openAddStoreBtn').addEventListener('click', () => {
       addFormOpen = true;
       renderAddStoreSection();
+      const input = $('addStoreUrl');
+      if (input) input.focus({ preventScroll: true });
     });
     return;
   }
@@ -253,26 +386,24 @@ function renderAddStoreSection() {
   container.innerHTML = `
     <div class="add-store-form">
       <select id="addStorePlatform" class="add-store-select">${options}</select>
-      <input type="url" id="addStoreUrl" class="add-store-input" placeholder="https://..." autocomplete="off">
+      <input type="url" id="addStoreUrl" class="add-store-input" placeholder="https://..." autocomplete="off" inputmode="url">
       <div class="add-store-error" id="addStoreError" style="display:none;"></div>
       <div class="add-store-actions">
         <button type="button" class="add-store-save" id="addStoreSave">Save</button>
         <button type="button" class="add-store-cancel" id="addStoreCancel">Cancel</button>
       </div>
-    </div>
-  `;
-  document.getElementById('addStoreCancel').addEventListener('click', () => {
+    </div>`;
+  $('addStoreCancel').addEventListener('click', () => {
     addFormOpen = false;
     renderAddStoreSection();
   });
-  document.getElementById('addStoreSave').addEventListener('click', onSaveNewStore);
+  $('addStoreSave').addEventListener('click', onSaveNewStore);
 }
 
 async function onSaveNewStore() {
-  const platform = document.getElementById('addStorePlatform').value;
-  const urlInput = document.getElementById('addStoreUrl');
-  const errorEl  = document.getElementById('addStoreError');
-  const val = urlInput.value.trim();
+  const platform = $('addStorePlatform').value;
+  const errorEl  = $('addStoreError');
+  const val      = $('addStoreUrl').value.trim();
 
   if (!val || !isValidHttpUrl(val)) {
     errorEl.textContent = 'Please paste a real link starting with http:// or https:// — no names or other text.';
@@ -281,7 +412,7 @@ async function onSaveNewStore() {
   }
   errorEl.style.display = 'none';
 
-  const saveBtn = document.getElementById('addStoreSave');
+  const saveBtn = $('addStoreSave');
   saveBtn.disabled = true;
   saveBtn.textContent = 'Saving…';
 
@@ -291,7 +422,8 @@ async function onSaveNewStore() {
     if (!currentItem.smartLink.stores) currentItem.smartLink.stores = {};
     currentItem.smartLink.stores[platform] = val;
     addFormOpen = false;
-    renderRelease(currentItem);
+    renderStores(true);          // adds just the new button — no full re-render
+    renderAddStoreSection();
   } catch (e) {
     console.error(e);
     errorEl.textContent = "Couldn't save that link — please try again.";
@@ -301,57 +433,68 @@ async function onSaveNewStore() {
   }
 }
 
+function setBackdrop(url) {
+  const bg = $('bgBlur');
+  if (!url) return;
+  const probe = new Image();
+  probe.onload = () => {
+    bg.style.backgroundImage = `url("${url.replace(/"/g, '')}")`;
+    requestAnimationFrame(() => bg.classList.add('ready'));
+  };
+  probe.src = url;
+}
+
+// Built ONCE per page load. Later changes only touch the store list
+// and add-store section.
 function renderRelease(item) {
   currentItem = item;
-  const sl = item.smartLink || {};
-  const stores = sl.stores || {};
-  const title = sl.title || item.releaseTitle || 'Untitled';
-  const artist = sl.artistName || item.artistName || 'Unknown Artist';
+  const sl      = item.smartLink || {};
+  const title   = sl.title || item.releaseTitle || 'Untitled';
+  const artist  = sl.artistName || item.artistName || 'Unknown Artist';
   const initial = artist.charAt(0).toUpperCase();
   const artworkUrl = sl.thumbnailUrl || item.coverURL || '';
 
-  if (artworkUrl) {
-    document.getElementById('bgBlur').style.backgroundImage = `url("${artworkUrl.replace(/"/g,'')}")`;
-  }
-
   const artworkHtml = artworkUrl
-    ? `<img class="artwork" src="${escHtml(artworkUrl)}" alt="${escHtml(title)}">`
-    : `<div class="artwork placeholder">${escHtml(initial)}</div>`;
+    ? `<div class="artwork-wrap"><img id="artworkImg" src="${escHtml(artworkUrl)}" alt="${escHtml(title)}" width="200" height="200" decoding="async"></div>`
+    : `<div class="artwork-wrap placeholder">${escHtml(initial)}</div>`;
 
-  const orderedKeys = [
-    ...STORE_ORDER.filter(k => stores[k]),
-    ...Object.keys(stores).filter(k => !STORE_ORDER.includes(k) && stores[k])
-  ];
+  const live     = getLiveStores();
+  const hasLinks = Object.keys(live).length > 0;
 
-  const storeButtons = orderedKeys.map(key => {
-    const label = STORE_LABELS[key] || key;
-    const icon = STORE_ICONS[key] || DEFAULT_ICON;
-    return `<a class="store-btn" href="${escHtml(stores[key])}" target="_blank" rel="noopener">
-      <span class="play-label">Play</span>
-      <span class="store-right">
-        ${label}
-        <span class="store-icon" style="background:${icon.bg}">${icon.svg}</span>
-      </span>
-    </a>`;
-  }).join('');
-
-  const fallback = (!sl.resolved && sl.pageUrl)
+  // Optional "all platforms" link — only when links exist but the
+  // release isn't fully resolved yet.
+  const fallback = (hasLinks && !sl.resolved && sl.pageUrl && isValidHttpUrl(sl.pageUrl))
     ? `<a class="store-btn" href="${escHtml(sl.pageUrl)}" target="_blank" rel="noopener"><span class="play-label">More</span><span class="store-right">All platforms</span></a>`
     : '';
 
-  document.getElementById('card').innerHTML = `
+  const bodyHtml = hasLinks
+    ? `<div class="stores"><div class="stores" id="storesList"></div>${fallback}</div>
+       <div id="addStoreSection"></div>`
+    : `<div class="pending-box">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+         <div class="pending-title">Not live yet</div>
+         <div class="pending-text">This release hasn't been delivered to stores yet. Check back soon.</div>
+       </div>`;
+
+  $('card').innerHTML = `
     ${artworkHtml}
     <div class="title">${escHtml(title)}</div>
     <div class="artist">${escHtml(artist)}</div>
-    <div class="stores">
-      ${storeButtons || '<div class="state" style="padding:20px 0;">Still gathering store links — check back soon.</div>'}
-      ${fallback}
-    </div>
-    <div id="addStoreSection"></div>
-    <div class="footer-mark">Distributed by <a href="https://www.444musicdistro.com" target="_blank" rel="noopener" style="color: var(--text-sec); font-weight: 700; text-decoration: none;">444Music</a></div>
-  `;
+    ${bodyHtml}
+    <div class="footer-mark">Distributed by <a href="https://www.444musicdistro.com" target="_blank" rel="noopener">444Music</a></div>`;
 
-  renderAddStoreSection();
+  const img = $('artworkImg');
+  if (img) {
+    if (img.complete) img.classList.add('loaded');
+    else img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+    img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
+  }
+  setBackdrop(artworkUrl);
+
+  if (hasLinks) {
+    renderStores(false);
+    renderAddStoreSection();
+  }
 }
 
 async function load() {
@@ -359,12 +502,9 @@ async function load() {
   if (!slug) { renderState('No release specified.'); return; }
 
   try {
-    const q = query(collection(db, 'submissions'), where('smartLinkSlug', '==', slug), limit(1));
+    const q    = query(collection(db, 'submissions'), where('smartLinkSlug', '==', slug), limit(1));
     const snap = await getDocs(q);
-    if (snap.empty) {
-      renderState('Release not found.');
-      return;
-    }
+    if (snap.empty) { renderState('Release not found.'); return; }
     const docSnap = snap.docs[0];
     currentDocRef = docSnap.ref;
     renderRelease(docSnap.data());
