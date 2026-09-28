@@ -134,7 +134,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .list-head-row span { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--grey-dark); }
 .container { display: flex; flex-direction: column; }
 
-/* ===== ROW (slightly bigger than before) ===== */
+/* ===== ROW ===== */
 .release-row { display: grid; grid-template-columns: 28px 62px 1fr auto; align-items: center; gap: 16px; padding: 16px 12px; border-bottom: 1px solid var(--white-10); cursor: pointer; transition: background 0.15s; position: relative; }
 .release-row:hover { background: var(--black-2); }
 .row-index { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; color: var(--grey-dark); text-align: center; }
@@ -155,7 +155,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .release-row:hover .row-chevron { color: var(--white-70); }
 .row-chevron svg { width: 14px; height: 14px; }
 
-/* ===== BADGES (used inside the opened modal only) ===== */
+/* ===== BADGES ===== */
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .badge.pending  { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
@@ -169,9 +169,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .badge.paid   { background: rgba(34,197,94,0.15);  color: var(--green); border: 1px solid rgba(34,197,94,0.5); }
 .badge.paid::before { background: var(--green); }
 .badge.unpaid { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.5); }
-.badge.taken-down { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.5); }
-.badge.taken-down::before { background: #94a3b8; }   
 .badge.unpaid::before { background: var(--amber); }
+.badge.taken-down { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.5); }
+.badge.taken-down::before { background: #94a3b8; }
 @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 /* ===== TOP-OF-MODAL ACTION BAR ===== */
@@ -179,7 +179,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: flex; align-items: center; justify-content: center; gap: 9px;
   padding: 14px 16px; font-size: 13px; font-weight: 800; font-family: 'Nunito', sans-serif;
   cursor: pointer; transition: all 0.15s; border-bottom: 1px solid var(--white-10);
-  position: sticky; top: 0; z-index: 4; text-decoration: none;
+  position: sticky; top: 0; z-index: 4; text-decoration: none; width: 100%;
 }
 .modal-top-action svg { width: 16px; height: 16px; flex-shrink: 0; }
 .modal-top-action.pay     { background: rgba(6,182,212,0.14); color: var(--cyan); }
@@ -217,14 +217,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
 
 /* ═══════════════════════════════════════════════
-   APPLE-STYLE "APPROVED RELEASE" SHOWCASE SCREEN
-   Full-screen share-card layout, matching Apple Music's own
-   promo template exactly: left-aligned "Title - Type" over a
-   soft grey-white gradient, a "Distributed by 444Music" lockup,
-   then the artwork filling the width of the card edge-to-edge
-   below it. Shown first (approved releases only) when a row is
-   opened, before the existing metadata modal. Each element
-   reveals in its own slow, staggered beat — never all at once.
+   APPLE-STYLE SHOWCASE SCREEN
 ═══════════════════════════════════════════════ */
 .apple-tpl-overlay {
   position: fixed; inset: 0; z-index: 7000;
@@ -300,7 +293,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 /* ═══════════════════════════════════════════════
-   META VIEW MODAL — matches app bottom-sheet style
+   META VIEW MODAL
 ═══════════════════════════════════════════════ */
 .meta-overlay { position: fixed; inset: 0; z-index: 6000; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px) saturate(0.7); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
 .meta-overlay.open { opacity: 1; pointer-events: all; }
@@ -310,7 +303,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-modal::-webkit-scrollbar { width: 4px; }
 .meta-modal::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
 
-.meta-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 16px; border-bottom: 1px solid var(--white-10); position: sticky; top: 0; background: var(--black-2); z-index: 3; border-radius: 22px 22px 0 0; }
+.meta-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 16px; border-bottom: 1px solid var(--white-10); position: sticky; top: 0; background: var(--black-2); z-index: 5; border-radius: 22px 22px 0 0; }
 .meta-modal-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--white); }
 .meta-modal-title svg { width: 15px; height: 15px; color: var(--white-70); }
 .meta-modal-subtitle { font-size: 11px; color: var(--grey-dark); font-weight: 500; margin-top: 1px; }
@@ -323,18 +316,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-cover-strip-placeholder { width: 100%; height: 100%; background: var(--black-3); display: flex; align-items: center; justify-content: center; }
 .meta-cover-strip-placeholder svg { width: 44px; height: 44px; color: var(--grey-dark); }
 .meta-cover-strip::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, var(--black-2), transparent); pointer-events: none; }
-.meta-cover-edit-btn {
-  position: absolute; bottom: 12px; right: 14px; z-index: 3;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 13px; border-radius: 10px;
-  background: rgba(0,0,0,0.55); border: 1px solid var(--white-20);
-  backdrop-filter: blur(6px);
-  color: var(--white); font-size: 11px; font-weight: 800; font-family: 'Nunito', sans-serif;
-  cursor: pointer; transition: all 0.15s;
-}
-.meta-cover-edit-btn svg { width: 12px; height: 12px; }
-.meta-cover-edit-btn:hover { background: rgba(0,0,0,0.75); border-color: var(--white-40); transform: translateY(-1px); }
-.meta-cover-edit-btn.uploading { pointer-events: none; opacity: 0.7; }
 
 .meta-modal-body { padding: 20px 22px 26px; }
 .meta-section { margin-bottom: 20px; }
@@ -359,19 +340,38 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .meta-no-credits  { font-size: 12px; color: var(--grey-dark); font-style: italic; padding: 4px 0; }
 .meta-lyrics { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; padding: 13px; font-size: 12px; line-height: 1.8; color: var(--grey); white-space: pre-wrap; word-break: break-word; max-height: 220px; overflow-y: auto; }
 .meta-status-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 4px; }
-.meta-smartlink-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 12px; background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; }
+.meta-smartlink-row { display: flex; align-items: center; gap: 8px; margin: 0 0 20px; padding: 10px 12px; background: var(--black-3); border: 1px solid var(--white-10); border-radius: 10px; }
 .meta-smartlink-link { flex: 1; min-width: 0; font-weight: 800; font-size: 13px; color: var(--white); text-decoration: underline; text-decoration-color: var(--white-40); word-break: break-all; transition: color 0.15s; }
 .meta-smartlink-link:hover { color: var(--white-90); text-decoration-color: var(--white); }
 .meta-smartlink-copy { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--white); border: 1px solid var(--white); display: flex; align-items: center; justify-content: center; color: var(--black); transition: all 0.15s; }
 .meta-smartlink-copy svg { width: 14px; height: 14px; }
 .meta-smartlink-copy:hover { opacity: 0.85; transform: translateY(-1px); }
-.meta-rejection-reason { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 4px; }
+.meta-rejection-reason { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 10px; }
 .meta-rejection-reason strong { color: var(--rose); display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-.meta-takendown-reason { background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.28); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 4px; }
+.meta-takendown-reason { background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.28); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--white-90); line-height: 1.55; margin-top: 10px; }
 .meta-takendown-reason strong { color: #94a3b8; display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+.meta-sub-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 7px; margin-top: 4px; }
+.meta-sub-label.spaced { margin-top: 12px; }
+
+/* ===== PER-TRACK ARTISTS ===== */
+.track-list { display: flex; flex-direction: column; gap: 8px; }
+.track-card { background: var(--black-3); border: 1px solid var(--white-10); border-radius: 12px; padding: 12px 14px; transition: border-color 0.15s; }
+.track-card:hover { border-color: var(--white-20); }
+.track-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.track-num { width: 22px; height: 22px; border-radius: 6px; background: var(--white-10); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 800; color: var(--white-70); flex-shrink: 0; }
+.track-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--white); min-width: 0; word-break: break-word; }
+.track-artists { display: flex; flex-direction: column; gap: 6px; }
+.track-artist { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--black-4); border: 1px solid var(--white-06); border-radius: 9px; padding: 8px 10px; }
+.track-artist-name { font-size: 13px; font-weight: 700; color: var(--white); }
+.artist-type-chip { font-size: 9px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--white-20); color: var(--white-70); background: var(--white-06); }
+.artist-type-chip.main { background: var(--white); color: var(--black); border-color: var(--white); }
+.artist-link { margin-left: auto; display: inline-flex; gap: 6px; }
+.artist-link a { font-size: 10px; font-weight: 800; color: var(--grey); border: 1px solid var(--white-10); border-radius: 99px; padding: 3px 9px; transition: all 0.15s; }
+.artist-link a:hover { color: var(--white); border-color: var(--white-40); }
+.track-no-artists { font-size: 12px; color: var(--grey-dark); font-style: italic; }
 
 /* ═══════════════════════════════════════════════
-   CONFIRM MODAL (generic — used before creating a payment)
+   CONFIRM MODAL
 ═══════════════════════════════════════════════ */
 .confirm-overlay { position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
 .confirm-overlay.open { opacity: 1; pointer-events: all; }
@@ -396,6 +396,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pay-wait-modal { width: 100%; max-width: 380px; background: var(--black-2); border: 1px solid var(--white-10); border-radius: 18px; padding: 28px 24px 24px; transform: translateY(16px) scale(0.97); transition: transform 0.25s cubic-bezier(0.34,1.25,0.64,1); text-align: center; }
 .pay-wait-overlay.open .pay-wait-modal { transform: translateY(0) scale(1); }
 .pay-wait-spinner { width: 46px; height: 46px; border: 3px solid var(--white-10); border-top-color: var(--cyan); border-radius: 50%; margin: 0 auto 18px; animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .pay-wait-icon-done { width: 52px; height: 52px; border-radius: 50%; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
 .pay-wait-icon-done svg { width: 24px; height: 24px; color: var(--green); }
 .pay-wait-icon-error { width: 52px; height: 52px; border-radius: 50%; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
@@ -470,7 +471,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </a>
     <a class="nav-item" href="https://www.youtube.com/@444musicdistribution">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      Wathch Tutorials
+      Watch Tutorials
     </a>
     <a class="nav-item" href="splits.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -547,19 +548,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
 
     <div class="container" id="submissionsContainer">
-      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
-      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
-      <div class="skeleton-row"><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div><div></div></div>
+      <div class="skeleton-row"><div></div><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div></div>
+      <div class="skeleton-row"><div></div><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div></div>
+      <div class="skeleton-row"><div></div><div class="skeleton skeleton-thumb"></div><div><div class="skeleton skeleton-line w-60"></div><div class="skeleton skeleton-line w-40"></div></div><div></div></div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast">
   <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toastMsg">Cover art updated!</span>
+  <span id="toastMsg">Done</span>
 </div>
 
-<!-- APPLE-STYLE APPROVED RELEASE SHOWCASE — shown first, approved releases only -->
+<!-- APPLE-STYLE SHOWCASE -->
 <div class="apple-tpl-overlay" id="appleTplOverlay" role="dialog" aria-modal="true">
   <button type="button" class="apple-tpl-close" id="appleTplClose" aria-label="Close">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -592,7 +593,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   </div>
 </div>
 
-<!-- Generic confirm modal (used before creating a payment) -->
 <div class="confirm-overlay" id="payConfirmOverlay">
   <div class="confirm-modal">
     <div class="confirm-icon" style="background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3);">
@@ -607,7 +607,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   </div>
 </div>
 
-<!-- Payment waiting modal — same job as the app's PaymentWaitingScreen -->
 <div class="pay-wait-overlay" id="payWaitOverlay">
   <div class="pay-wait-modal" id="payWaitModal"></div>
 </div>
@@ -620,9 +619,7 @@ const hamburger = document.getElementById("hamburgerBtn");
 hamburger.onclick = () => { sidebar.classList.toggle("open"); overlay.classList.toggle("show"); };
 overlay.onclick   = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); };
 
-/* --- STATUS LABEL MAPPING — display only.
-   Backend/Firestore keeps reading and writing "Pending" exactly as
-   before; only what the user SEES on screen changes. --- */
+/* --- STATUS LABEL MAPPING — display only --- */
 function statusDisplayLabel(rawStatus) {
   const s = (rawStatus || "Pending").trim();
   if (s.toLowerCase() === "pending") return "Draft";
@@ -630,9 +627,7 @@ function statusDisplayLabel(rawStatus) {
   return s;
 }
 
-/* --- RELEASE COUNTDOWN — shown alongside the row instead of any
-   status indicator. If the release date is in the future, shows
-   "X days left". If it's today, released, or unknown, shows nothing. --- */
+/* --- RELEASE COUNTDOWN --- */
 function releaseCountdownLabel(releaseDateStr) {
   if (!releaseDateStr) return "";
   const releaseDate = new Date(releaseDateStr);
@@ -643,7 +638,7 @@ function releaseCountdownLabel(releaseDateStr) {
   const diffDays = Math.round((startOfRelease - startOfToday) / (1000 * 60 * 60 * 24));
   if (diffDays > 1) return `${diffDays} days left`;
   if (diffDays === 1) return `1 day left`;
-  return ""; // releasing today or already out — show nothing
+  return "";
 }
 
 /* --- FILTER CHIPS + SEARCH --- */
@@ -689,52 +684,104 @@ function showToast(msg, isError = false) {
   setTimeout(() => toast.classList.remove("show"), 3200);
 }
 
-/* ── PAID HELPER — reads the SAME real field the app reads.
-   The backend/admin panel writes `paid` as text "Paid"/"Unpaid",
-   never a `paymentVerified` boolean — so that's the only field
-   this page (and every badge on it) ever checks. ── */
+/* --- PAID / PRICE HELPERS --- */
 function isPaidValue(paidField) {
   return (paidField || "").toString().toLowerCase() === "paid";
 }
-
-/* ── PRICE HELPER — mirrors the app's _priceForReleaseType so the
-   Pay Now action on a Draft+Unpaid release always shows/charges the
-   same amount the app would. ── */
 function priceForReleaseType(releaseType) {
   const t = (releaseType || "").toString().toLowerCase();
   if (t === "single") return 39.99;
-  return 69.99; // EP / Album / unset
+  return 69.99;
 }
 
-function escHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHtml(str) { return String(str == null ? '' : str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
+function safeUrl(u) { const s = String(u || '').trim(); return /^https?:\/\//i.test(s) ? s : ''; }
 
-// Pulls featured-artist names out of the real saved shape.
-// Release Info never writes a flat `featuring` string — it writes
-// `featuredArtists` (and `audioFiles`), each an array of tracks with
-// their own tagged artists array: {name, type, spotifyUrl, appleUrl}.
-// This walks every track, keeps names tagged anything but "main",
-// and dedupes them.
-function getFeaturedArtistNames(data) {
-  const seen = new Set();
-  const names = [];
-  const collect = (tracks) => {
-    (tracks || []).forEach(t => {
-      (t.artists || []).forEach(a => {
-        if (a && a.name && a.type && a.type !== 'main') {
-          const key = a.name.trim().toLowerCase();
-          if (key && !seen.has(key)) { seen.add(key); names.push(a.name.trim()); }
-        }
-      });
-    });
-  };
-  if (Array.isArray(data.featuredArtists) && data.featuredArtists.length) {
-    collect(data.featuredArtists);
-  } else if (Array.isArray(data.audioFiles) && data.audioFiles.length) {
-    collect(data.audioFiles);
-  }
-  return names;
+/* ═══════════════════════════════════════════════════════
+   ARTISTS / FEATURINGS / PER-TRACK  (one source of truth —
+   the row, search, modal and showcase all read from here)
+
+   Saved shape: `featuredArtists` (and `audioFiles`) are arrays
+   of tracks; each track has its own `artists` array of
+   {name, type, spotifyUrl, appleUrl}. type === "main" is a
+   main artist, anything else is treated as featured.
+   A flat `featuring` string (older releases) is still honoured
+   and merged in, de-duplicated.
+═══════════════════════════════════════════════════════ */
+const AUDIO_EXT_RE = /\.(mp3|wav|flac|m4a|aac|ogg|aiff?)$/i;
+
+function pickTrackTitle(t) {
+  if (!t || typeof t !== 'object') return '';
+  const raw = t.title || t.trackTitle || t.trackName || t.songTitle || t.name || t.fileName || '';
+  return String(raw).replace(AUDIO_EXT_RE, '').trim();
 }
+
+function getTracks(data) {
+  const withArtists = Array.isArray(data.featuredArtists) && data.featuredArtists.length ? data.featuredArtists : null;
+  const files = Array.isArray(data.audioFiles) ? data.audioFiles : [];
+  const src = withArtists || files;
+  return src.map((t, i) => {
+    const artists = ((t && t.artists) || [])
+      .filter(a => a && a.name && String(a.name).trim())
+      .map(a => ({
+        name: String(a.name).trim(),
+        type: String(a.type || 'main').trim().toLowerCase(),
+        spotifyUrl: safeUrl(a.spotifyUrl),
+        appleUrl: safeUrl(a.appleUrl)
+      }));
+    return { title: pickTrackTitle(t) || pickTrackTitle(files[i]) || `Track ${i + 1}`, artists };
+  });
+}
+
+function getArtistCredits(data) {
+  const mainName = (data.artistName || '').trim();
+  const seenF = new Set(), seenM = new Set([mainName.toLowerCase()]);
+  const featured = [], extraMain = [];
+  getTracks(data).forEach(t => t.artists.forEach(a => {
+    const key = a.name.toLowerCase();
+    if (a.type === 'main') {
+      if (!seenM.has(key)) { seenM.add(key); extraMain.push(a.name); }
+    } else if (!seenF.has(key)) { seenF.add(key); featured.push(a.name); }
+  }));
+  // legacy flat string
+  String(data.featuring || '').split(/,|&|\bfeat\.?\b|\bft\.?\b/i).map(s => s.trim()).filter(Boolean).forEach(n => {
+    const key = n.toLowerCase();
+    if (!seenF.has(key)) { seenF.add(key); featured.push(n); }
+  });
+  return { mainName, extraMain, featured };
+}
+
+function artistLine(data) {
+  const c = getArtistCredits(data);
+  const mains = [c.mainName || 'Unknown Artist', ...c.extraMain].join(', ');
+  return c.featured.length ? `${mains} ft. ${c.featured.join(', ')}` : mains;
+}
+
+function typeLabel(t) {
+  if (t === 'main') return 'Main';
+  if (t === 'featured' || t === 'feat' || t === 'featuring') return 'Featured';
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Featured';
+}
+
+function renderTracksSection(data) {
+  const tracks = getTracks(data);
+  if (!tracks.length) return '';
+  return `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Tracks & Artists</div>
+    <div class="track-list">${tracks.map((t, i) => `
+      <div class="track-card">
+        <div class="track-head"><div class="track-num">${i + 1}</div><div class="track-title">${escHtml(t.title)}</div></div>
+        <div class="track-artists">${t.artists.length ? t.artists.map(a => `
+          <div class="track-artist">
+            <span class="track-artist-name">${escHtml(a.name)}</span>
+            <span class="artist-type-chip ${a.type === 'main' ? 'main' : ''}">${escHtml(typeLabel(a.type))}</span>
+            ${(a.spotifyUrl || a.appleUrl) ? `<span class="artist-link">${a.spotifyUrl ? `<a href="${escHtml(a.spotifyUrl)}" target="_blank" rel="noopener">Spotify</a>` : ''}${a.appleUrl ? `<a href="${escHtml(a.appleUrl)}" target="_blank" rel="noopener">Apple</a>` : ''}</span>` : ''}
+          </div>`).join('') : '<div class="track-no-artists">No artists tagged</div>'}
+        </div>
+      </div>`).join('')}
+    </div></div>`;
+}
+
 const SMARTLINK_BASE = "https://444musicdistro.com/smartlink.html?slug=";
 
 function copySmartLink(slug) {
@@ -746,10 +793,9 @@ function copySmartLink(slug) {
   });
 }
 window.copySmartLink = copySmartLink;
+
 /* ═══════════════════════════════════════════════════════
-   APPLE-STYLE SHOWCASE — approved releases only. Opens first
-   when the row is clicked; tapping anywhere hands off to the
-   existing meta modal underneath.
+   APPLE-STYLE SHOWCASE
 ═══════════════════════════════════════════════════════ */
 const appleTplOverlay = document.getElementById('appleTplOverlay');
 const appleTplClose   = document.getElementById('appleTplClose');
@@ -775,7 +821,6 @@ function openAppleTemplate(releaseId) {
   document.getElementById('appleTplArtwork').src = data.coverURL || '';
 
   appleTplOverlay.classList.remove('animate');
-  // force reflow so the entrance animation replays every time it opens
   void appleTplOverlay.offsetWidth;
   appleTplOverlay.classList.add('open', 'animate');
   document.body.style.overflow = 'hidden';
@@ -814,25 +859,38 @@ function renderCreditsSection(arr) {
       </div></div>`).join('') + '</div>';
 }
 
-/* ── TOP-OF-MODAL ACTION BAR — Pay Now (Draft/unpaid), Promote
-   (Approved), or Check Reasons & Fix (Rejection). ── */
+/* TOP-OF-MODAL ACTION BAR */
 function renderModalTopAction(data, releaseId, statusClass) {
   const paid = isPaidValue(data.paid);
   if (statusClass === "pending" && !paid) {
     const price = priceForReleaseType(data.releaseType);
-    return `<button type="button" class="modal-top-action pay" onclick="closeMetaModal(); requestPayNow('${releaseId}', '${escHtml(data.releaseTitle || 'this release')}', ${price})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`;
+    return `<button type="button" class="modal-top-action pay" data-action="pay" data-id="${escHtml(releaseId)}" data-price="${price}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Pay GHC ${price.toFixed(2)} to Release</button>`;
   }
   if (statusClass === "approved") {
-    return `<a href="https://444musicblog.vercel.app" target="_blank" class="modal-top-action promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote This Release</a>`;
+    return `<a href="https://444musicblog.vercel.app" target="_blank" rel="noopener" class="modal-top-action promote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Promote This Release</a>`;
   }
-     if (statusClass === "taken-down") {
+  if (statusClass === "taken-down") {
     return `<div class="modal-top-action" style="background: rgba(148,163,184,0.14); color: #94a3b8; cursor: default;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This Release Was Taken Down</div>`;
   }
   if (statusClass === "rejected") {
-    return `<button type="button" class="modal-top-action fix" onclick="openRejectionFix('${releaseId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`;
+    return `<button type="button" class="modal-top-action fix" data-action="fix" data-id="${escHtml(releaseId)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Check Reasons & Fix</button>`;
   }
   return "";
 }
+
+/* Delegated handler for the action bar (no inline onclick with data) */
+document.getElementById('metaModalContent').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  if (btn.dataset.action === 'pay') {
+    const d = window._releaseMeta[id];
+    closeMetaModal();
+    requestPayNow(id, (d && d.releaseTitle) || 'this release', parseFloat(btn.dataset.price));
+  } else if (btn.dataset.action === 'fix') {
+    openRejectionFix(id);
+  }
+});
 
 async function openMetaModal(releaseId) {
   const data = window._releaseMeta[releaseId];
@@ -851,45 +909,45 @@ async function openMetaModal(releaseId) {
   const hasMusicians  = credits.musician   && credits.musician.some(c => c.name && c.name.trim());
   const hasWriters    = credits.writer     && credits.writer.some(c => c.name && c.name.trim());
   const hasPublishers = credits.publishing && credits.publishing.some(c => c.name && c.name.trim());
-  const hasAnyCredits = hasProducers || hasMusicians || hasWriters || hasPublishers;
+  const hasAnyCredits = hasProducers || hasMusicians;
   const topAction = renderModalTopAction(data, releaseId, statusClass);
 
-  /* Cover strip shows a "Change Cover" edit control for every status
-     EXCEPT Taken Down — a taken-down release is display-only, no fixes. */
-   const coverEditHtml = ""; // Cover art can no longer be changed once a release is submitted.
   const coverHtml = data.coverURL
-    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art">${coverEditHtml}</div>`
-    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>${coverEditHtml}</div>`;
-     const takedownReasonHtml = (statusClass === "taken-down" && data.takedownReason && data.takedownReason.trim())
+    ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art"></div>`
+    : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
+  const takedownReasonHtml = (statusClass === "taken-down" && data.takedownReason && data.takedownReason.trim())
     ? `<div class="meta-takendown-reason"><strong>Reason for takedown</strong>${escHtml(data.takedownReason)}</div>` : '';
-     const paid = isPaidValue(data.paid);
-  const featuredNames = getFeaturedArtistNames(data);
+  const paid = isPaidValue(data.paid);
+  const ac = getArtistCredits(data);
+  const mainArtists = [ac.mainName, ...ac.extraMain].filter(Boolean).join(', ');
   const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
     ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
+  const smartSlug = data.smartLinkSlug ? String(data.smartLinkSlug) : '';
+
   content.innerHTML = `
     ${topAction}
     ${coverHtml}
     <div class="meta-modal-body">
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Status</div>
         <div class="meta-status-row">
-          <span class="badge ${statusClass}">${escHtml(statusDisplayLabel(rawStatus))}</span>
+          <span class="badge ${escHtml(statusClass)}">${escHtml(statusDisplayLabel(rawStatus))}</span>
           <span class="badge ${paid ? 'paid' : 'unpaid'}">${paid ? 'Paid' : 'Unpaid'}</span>
           ${submittedAt !== '—' ? `<span style="font-size:11px;color:var(--grey-dark);margin-left:4px;">Submitted ${escHtml(submittedAt)}</span>` : ''}
         </div>
-              ${rejectionReasonHtml}
+        ${rejectionReasonHtml}
         ${takedownReasonHtml}
       </div>
-      ${isApproved && data.smartLinkSlug ? `
+      ${isApproved && smartSlug ? `
       <div class="meta-smartlink-row">
-        <a href="${escHtml(SMARTLINK_BASE + data.smartLinkSlug)}" target="_blank" rel="noopener" class="meta-smartlink-link">${escHtml(SMARTLINK_BASE + data.smartLinkSlug)}</a>
-        <button type="button" class="meta-smartlink-copy" onclick="copySmartLink('${escHtml(data.smartLinkSlug)}')" aria-label="Copy link">
+        <a href="${escHtml(SMARTLINK_BASE + smartSlug)}" target="_blank" rel="noopener" class="meta-smartlink-link">${escHtml(SMARTLINK_BASE + smartSlug)}</a>
+        <button type="button" class="meta-smartlink-copy" data-copy-slug="${escHtml(smartSlug)}" aria-label="Copy link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>
       </div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
         <div class="meta-fields-grid">
-                   <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
-          <div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value ${featuredNames.length ? '' : 'none'}">${featuredNames.length ? escHtml(featuredNames.join(', ')) : 'None'}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(mainArtists))}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value ${ac.featured.length ? '' : 'none'}">${ac.featured.length ? escHtml(ac.featured.join(', ')) : 'None'}</div></div>
           <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
@@ -898,6 +956,7 @@ async function openMetaModal(releaseId) {
           <div class="meta-field"><div class="meta-field-label">Explicit Content</div><div class="meta-field-value">${escHtml(metaVal(data.explicit, 'No'))}</div></div>
         </div>
       </div>
+      ${renderTracksSection(data)}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Label & Rights</div>
         <div class="meta-fields-grid">
           <div class="meta-field"><div class="meta-field-label">Label Name</div><div class="meta-field-value ${!data.label || !data.label.trim() ? 'none' : ''}">${escHtml(metaVal(data.label, 'Independent'))}</div></div>
@@ -908,10 +967,9 @@ async function openMetaModal(releaseId) {
         <div class="meta-fields-grid">
           <div class="meta-field"><div class="meta-field-label">ISRC Code</div><div class="meta-field-value ${!data.isrc || !data.isrc.trim() ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">${escHtml(metaVal(data.isrc))}</div></div>
           <div class="meta-field"><div class="meta-field-label">UPC / EAN Barcode</div><div class="meta-field-value ${!data.upc ? 'none' : ''}" style="font-family:monospace;letter-spacing:0.06em;">${data.upc ? escHtml(data.upc) : (isApproved ? 'Pending assignment' : 'Assigned upon approval')}</div></div>
-          <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !data.catalogNumber.trim() ? 'none' : ''}">${data.catalogNumber ? escHtml(data.catalogNumber) : (isApproved ? 'Pending assignment' : 'Assigned upon approval')}</div></div>
+          <div class="meta-field"><div class="meta-field-label">Catalog Number</div><div class="meta-field-value ${!data.catalogNumber || !String(data.catalogNumber).trim() ? 'none' : ''}">${data.catalogNumber ? escHtml(data.catalogNumber) : (isApproved ? 'Pending assignment' : 'Assigned upon approval')}</div></div>
         </div>
       </div>
-          
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Contact & Location</div>
         <div class="meta-fields-grid">
           <div class="meta-field"><div class="meta-field-label">Country</div><div class="meta-field-value">${escHtml(metaVal(data.country))}</div></div>
@@ -921,40 +979,32 @@ async function openMetaModal(releaseId) {
         </div>
       </div>
       ${hasAnyCredits ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>Production Credits</div>
-        ${hasProducers ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:4px;">Producers & Engineers</div>${renderCreditsSection(credits.producer)}` : ''}
-        ${hasMusicians ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:12px;">Musicians</div>${renderCreditsSection(credits.musician)}` : ''}
+        ${hasProducers ? `<div class="meta-sub-label">Producers & Engineers</div>${renderCreditsSection(credits.producer)}` : ''}
+        ${hasMusicians ? `<div class="meta-sub-label spaced">Musicians</div>${renderCreditsSection(credits.musician)}` : ''}
       </div>` : ''}
       ${(hasWriters || hasPublishers) ? `<div class="meta-section"><div class="meta-section-label">Songwriting & Publishing</div>
-        ${hasWriters ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:4px;">Songwriters & Composers</div>${renderCreditsSection(credits.writer)}` : ''}
-        ${hasPublishers ? `<div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--grey-dark);margin-bottom:7px;margin-top:12px;">Publishing & PRO</div>${renderCreditsSection(credits.publishing)}` : ''}
+        ${hasWriters ? `<div class="meta-sub-label">Songwriters & Composers</div>${renderCreditsSection(credits.writer)}` : ''}
+        ${hasPublishers ? `<div class="meta-sub-label spaced">Publishing & PRO</div>${renderCreditsSection(credits.publishing)}` : ''}
       </div>` : ''}
       ${data.description && data.description.trim() ? `<div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Lyrics</div><div class="meta-lyrics">${escHtml(data.description)}</div></div>` : ''}
     </div>`;
   document.getElementById('metaOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('metaModal').scrollTop = 0;
 }
 
-/* Cover edit control — pencil button + hidden file input, rendered
-   inside the modal's cover strip for both blank and filled covers. */
-function renderCoverEditControl(releaseId) {
-  return `
-    <button type="button" class="meta-cover-edit-btn" id="coverEditBtn-${releaseId}" onclick="document.getElementById('coverEditInput-${releaseId}').click()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Change Cover
-    </button>
-    <input type="file" accept="image/*" id="coverEditInput-${releaseId}" style="display:none;" onchange="handleCoverEditChange(event, '${releaseId}')">
-  `;
-}
+/* Smart link copy button (delegated) */
+document.getElementById('metaModalContent').addEventListener('click', function(e) {
+  const b = e.target.closest('[data-copy-slug]');
+  if (b) copySmartLink(b.dataset.copySlug);
+});
 
 function closeMetaModal() { document.getElementById('metaOverlay').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('metaModalClose').addEventListener('click', closeMetaModal);
 document.getElementById('metaOverlay').addEventListener('click', function(e) { if (e.target === this) closeMetaModal(); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeMetaModal(); closeAppleTemplateOnly(); } });
 
-/* Clicking anywhere on a row opens the Apple-style showcase first for
-   every status (with a small status badge on non-approved releases so
-   the artist always knows where it stands), then hands off into the
-   full metadata modal. */
+/* Row click -> Apple showcase -> metadata modal */
 document.getElementById('submissionsContainer').addEventListener('click', function(e) {
   const row = e.target.closest('.release-row');
   if (!row) return;
@@ -964,9 +1014,7 @@ document.getElementById('submissionsContainer').addEventListener('click', functi
 });
 
 /* ═══════════════════════════════════════════════════════
-   PAY NOW — creates a REAL payment via the same backend
-   route the app's PaymentWaitingScreen uses, then polls
-   for confirmation right here on the dashboard.
+   PAY NOW
 ═══════════════════════════════════════════════════════ */
 const PAYMENT_HOST = "https://four44music-broadcast-backend.onrender.com";
 const PAYMENT_BASE_CANDIDATES = [
@@ -1002,7 +1050,7 @@ async function postCreatePaymentWithProbing(body) {
         continue;
       }
       let json = {};
-      try { json = JSON.parse(text); } catch (e) { /* non-JSON body */ }
+      try { json = JSON.parse(text); } catch (e) {}
       sessionStorage.setItem("paymentApiBase", base);
       return { ok: res.ok, status: res.status, payload: json, base };
     } catch (e) {
@@ -1148,8 +1196,7 @@ async function pollPaymentStatus(reference, releaseId) {
 }
 function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
 
-/* ── CHECK REASONS & FIX — hands the full submission doc to
-   rejection-fix.html via sessionStorage. ── */
+/* CHECK REASONS & FIX */
 function openRejectionFix(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
@@ -1162,7 +1209,7 @@ window.openRejectionFix = openRejectionFix;
 <script type="module">
 import { initializeApp }               from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -1177,55 +1224,6 @@ const app       = initializeApp(firebaseConfig);
 const auth      = getAuth(app);
 const db        = getFirestore(app);
 const container = document.getElementById("submissionsContainer");
-
-/* ── COVER ART EDIT — reachable only from inside the opened card.
-   Stores the new image as a base64 data URL directly on the
-   submission doc in Firestore, exactly like the previous flow did. ── */
-window.handleCoverEditChange = async function(e, releaseId) {
-  const file = e.target.files && e.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast("Image must be under 5MB", true); return; }
-
-  const btn = document.getElementById(`coverEditBtn-${releaseId}`);
-  const originalBtnHtml = btn ? btn.innerHTML : "";
-  if (btn) {
-    btn.classList.add('uploading');
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading…`;
-  }
-
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    const base64 = ev.target.result;
-    try {
-      await updateDoc(doc(db, "submissions", releaseId), { coverURL: base64 });
-      if (window._releaseMeta[releaseId]) window._releaseMeta[releaseId].coverURL = base64;
-
-      const stripImg = document.querySelector('#metaModalContent .meta-cover-strip img');
-      const stripPlaceholder = document.querySelector('#metaModalContent .meta-cover-strip-placeholder');
-      if (stripImg) {
-        stripImg.src = base64;
-      } else if (stripPlaceholder) {
-        const strip = stripPlaceholder.closest('.meta-cover-strip');
-        stripPlaceholder.remove();
-        const img = document.createElement('img');
-        img.src = base64;
-        img.alt = "Cover Art";
-        strip.insertBefore(img, strip.firstChild);
-      }
-
-      const rowThumb = document.querySelector(`.release-row[data-release-id="${releaseId}"] .row-thumb`);
-      if (rowThumb) rowThumb.innerHTML = `<img src="${base64}" class="cover-image" alt="Cover art">`;
-
-      if (btn) { btn.classList.remove('uploading'); btn.innerHTML = originalBtnHtml; }
-      showToast("Cover art updated successfully!");
-    } catch (err) {
-      console.error("Cover art update error:", err);
-      if (btn) { btn.classList.remove('uploading'); btn.innerHTML = originalBtnHtml; }
-      showToast("Failed to update cover art. Please try again.", true);
-    }
-  };
-  reader.readAsDataURL(file);
-};
 
 async function loadReleases(user) {
   container.innerHTML = "";
@@ -1260,31 +1258,33 @@ async function loadReleases(user) {
       const statusClass  = rawStatus.replace(/\s+/g, "-");
       const isPending    = statusClass === "pending";
       const countdown    = releaseCountdownLabel(data.releaseDate);
+      const credits      = getArtistCredits(data);
+      const trackTitles  = getTracks(data).map(t => t.title).join(' ');
 
       const thumbSection = data.coverURL
-        ? `<img src="${data.coverURL}" class="cover-image" alt="Cover art">`
+        ? `<img src="${escHtml(data.coverURL)}" class="cover-image" alt="Cover art">`
         : `<div class="cover-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
 
       const row = document.createElement("div");
       row.className = "release-row";
       row.dataset.status = statusClass;
       row.dataset.releaseId = id;
-      row.dataset.searchText = `${(data.releaseTitle || "")} ${(data.artistName || "")}`.toLowerCase();
+      row.dataset.searchText = `${data.releaseTitle || ""} ${data.artistName || ""} ${credits.extraMain.join(' ')} ${credits.featured.join(' ')} ${trackTitles}`.toLowerCase();
       row.innerHTML = `
         <div class="row-index">${rowIndex + 1}</div>
         <div class="row-thumb">${thumbSection}</div>
         <div class="row-info">
-          <div class="row-title">${data.releaseTitle || "Untitled Release"}</div>
-          <div class="row-artist">${data.artistName || "Unknown Artist"}${data.featuring && data.featuring.trim() ? ` ft. ${data.featuring}` : ""}</div>
+          <div class="row-title">${escHtml(data.releaseTitle || "Untitled Release")}</div>
+          <div class="row-artist">${escHtml(artistLine(data))}</div>
           <div class="row-meta-line">
-            <span class="row-type-tag">${data.releaseType || "Single"}</span>
+            <span class="row-type-tag">${escHtml(data.releaseType || "Single")}</span>
             <span class="row-dot-sep"></span>
-            <span>${isPending ? "Scheduled: " : "Release: "}${releaseDate}</span>
+            <span>${isPending ? "Scheduled: " : "Release: "}${escHtml(releaseDate)}</span>
           </div>
         </div>
         <div class="row-right">
           <div class="row-right-top">
-            ${countdown ? `<span class="row-countdown">${countdown}</span>` : ''}
+            ${countdown ? `<span class="row-countdown">${escHtml(countdown)}</span>` : ''}
             <span class="row-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
           </div>
         </div>`;
@@ -1294,6 +1294,7 @@ async function loadReleases(user) {
       setTimeout(() => { row.style.transition = "opacity 0.3s ease, transform 0.3s ease"; row.style.opacity = "1"; row.style.transform = "translateY(0)"; }, idx * 45);
       allCards.push({ card: row, status: statusClass });
     });
+    filterCards();
   } catch (err) {
     console.error("Error loading releases:", err);
     container.innerHTML = `<div class="empty"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><h3>Something went wrong</h3><p>Failed to load your releases. Please refresh or contact support.</p></div>`;
