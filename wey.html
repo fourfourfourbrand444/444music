@@ -708,6 +708,33 @@ function priceForReleaseType(releaseType) {
 
 function escHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function metaVal(v, fallback) { const f = fallback !== undefined ? fallback : '—'; return (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : f; }
+
+// Pulls featured-artist names out of the real saved shape.
+// Release Info never writes a flat `featuring` string — it writes
+// `featuredArtists` (and `audioFiles`), each an array of tracks with
+// their own tagged artists array: {name, type, spotifyUrl, appleUrl}.
+// This walks every track, keeps names tagged anything but "main",
+// and dedupes them.
+function getFeaturedArtistNames(data) {
+  const seen = new Set();
+  const names = [];
+  const collect = (tracks) => {
+    (tracks || []).forEach(t => {
+      (t.artists || []).forEach(a => {
+        if (a && a.name && a.type && a.type !== 'main') {
+          const key = a.name.trim().toLowerCase();
+          if (key && !seen.has(key)) { seen.add(key); names.push(a.name.trim()); }
+        }
+      });
+    });
+  };
+  if (Array.isArray(data.featuredArtists) && data.featuredArtists.length) {
+    collect(data.featuredArtists);
+  } else if (Array.isArray(data.audioFiles) && data.audioFiles.length) {
+    collect(data.audioFiles);
+  }
+  return names;
+}
 const SMARTLINK_BASE = "https://444musicdistro.com/smartlink.html?slug=";
 
 function copySmartLink(slug) {
@@ -829,13 +856,14 @@ async function openMetaModal(releaseId) {
 
   /* Cover strip shows a "Change Cover" edit control for every status
      EXCEPT Taken Down — a taken-down release is display-only, no fixes. */
-  const coverEditHtml = statusClass === "taken-down" ? "" : renderCoverEditControl(releaseId);
+   const coverEditHtml = ""; // Cover art can no longer be changed once a release is submitted.
   const coverHtml = data.coverURL
     ? `<div class="meta-cover-strip"><img src="${escHtml(data.coverURL)}" alt="Cover Art">${coverEditHtml}</div>`
     : `<div class="meta-cover-strip"><div class="meta-cover-strip-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>${coverEditHtml}</div>`;
      const takedownReasonHtml = (statusClass === "taken-down" && data.takedownReason && data.takedownReason.trim())
     ? `<div class="meta-takendown-reason"><strong>Reason for takedown</strong>${escHtml(data.takedownReason)}</div>` : '';
-   const paid = isPaidValue(data.paid);
+     const paid = isPaidValue(data.paid);
+  const featuredNames = getFeaturedArtistNames(data);
   const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
     ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
   content.innerHTML = `
@@ -860,8 +888,8 @@ async function openMetaModal(releaseId) {
       </div>` : ''}
       <div class="meta-section"><div class="meta-section-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>Artist & Release</div>
         <div class="meta-fields-grid">
-          <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
-          ${data.featuring && data.featuring.trim() ? `<div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value">${escHtml(data.featuring)}</div></div>` : ''}
+                   <div class="meta-field full"><div class="meta-field-label">Main Artist</div><div class="meta-field-value">${escHtml(metaVal(data.artistName))}</div></div>
+          <div class="meta-field full"><div class="meta-field-label">Featuring</div><div class="meta-field-value ${featuredNames.length ? '' : 'none'}">${featuredNames.length ? escHtml(featuredNames.join(', ')) : 'None'}</div></div>
           <div class="meta-field full"><div class="meta-field-label">Release Title</div><div class="meta-field-value">${escHtml(metaVal(data.releaseTitle))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Type</div><div class="meta-field-value">${escHtml(metaVal(data.releaseType))}</div></div>
           <div class="meta-field"><div class="meta-field-label">Genre</div><div class="meta-field-value">${escHtml(metaVal(data.genre))}</div></div>
