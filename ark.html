@@ -786,6 +786,44 @@ body.nav-open { overflow: hidden; }
 /* =========================================
    RESPONSIVE
    ========================================= */
+   /* =========================================
+   FLOW IMAGES — full-bleed, attached to the hero
+   Image colour = row background, so no edges show on wide screens.
+   ========================================= */
+.flow-images { background: #ffffff; line-height: 0; }
+
+.flow-row { width: 100%; overflow: hidden; }          /* overflow hides the slide-in travel */
+.flow-row--one { background: #ffffff; }               /* image 1 edge colour */
+.flow-row--two { background: linear-gradient(180deg, #fcfcfc 0%, #ffffff 100%); } /* image 2 edge colour */
+
+.flow-image {
+  --slide: clamp(48px, 18vw, 120px);                  /* how far each image travels */
+  display: block;
+  width: 100%;
+  max-width: 520px;                                   /* phones: full width. Desktop: centred */
+  margin: 0 auto;
+}
+.flow-image img { display: block; width: 100%; height: auto; }
+
+.slide-from-left,
+.slide-from-right {
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide-from-left  { transform: translate3d(calc(var(--slide) * -1), 0, 0); }
+.slide-from-right { transform: translate3d(var(--slide), 0, 0); }
+.slide-from-left.in,
+.slide-from-right.in { opacity: 1; transform: none; will-change: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-from-left, .slide-from-right { opacity: 1; transform: none; transition: none; }
+}
+
+/* Platforms block sits right under the images: make it full width so no black
+   side bands show on wide monitors */
+.section.light-section { max-width: none; }
 @media (max-width: 1024px) {
   .hero-inner { grid-template-columns: 1fr; }
   .hero-card { display: none; }
@@ -900,12 +938,23 @@ body.nav-open { overflow: hidden; }
 </div><!-- /.white-hero-wrap -->
 
 <!-- ===== POSTER SHOWCASE ===== -->
-<div class="photo-strip-section">
-  <div class="poster-showcase">
-    <img src="https://cdn.phototourl.com/free/2026-08-29-349592b5-c116-4e78-a023-abc53949cccf.jpg"
-         alt="444Music artist journey poster" loading="eager" class="stand-out-photo poster-showcase-img">
+<!-- ===== FLOW IMAGES (attached to hero) ===== -->
+<section class="flow-images" aria-label="444Music tools preview">
+  <div class="flow-row flow-row--one">
+    <div class="flow-image slide-from-left">
+      <img src="https://cdn.phototourl.com/member/2026-09-29-a0392454-f66a-4b49-93b6-1fbf4f24e336.jpg"
+           alt="Bio link page with email signup and streaming links"
+           width="510" height="960" loading="eager" decoding="async">
+    </div>
   </div>
-</div>
+  <div class="flow-row flow-row--two">
+    <div class="flow-image slide-from-right">
+      <img src="https://cdn.phototourl.com/member/2026-09-29-8f55c9ac-0480-4524-be66-f02233f80369.jpg"
+           alt="Analytics showing which platforms and countries bring in listeners"
+           width="470" height="960" loading="lazy" decoding="async">
+    </div>
+  </div>
+</section>
 
 <!-- ===== PLATFORMS ===== -->
 <div class="section reveal light-section">
@@ -1476,6 +1525,24 @@ const statObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.2 });
 document.querySelectorAll('.stats-grid').forEach(g => statObs.observe(g));
+   /* ── FLOW IMAGES — slide in when scrolled into view ── */
+(function flowImageSlides() {
+  const items = document.querySelectorAll('.slide-from-left, .slide-from-right');
+  if (!items.length) return;
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  items.forEach(el => io.observe(el));
+})();
 </script>
 </body>
 </html>
