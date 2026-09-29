@@ -954,7 +954,7 @@ body.select-mode .card { cursor: pointer; }
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Needs SmartLink
     </button>
-
+        <button class="select-mode-btn" id="backfillSlugBtn" style="border-color: rgba(96,165,250,0.4); color: var(--blue);">Backfill Slugs</button>
     <button class="export-btn" id="exportBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
@@ -1244,6 +1244,26 @@ function isReleaseDateReached(item) {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   return releaseDate.getTime() <= startOfToday.getTime();
+}
+  function slugify(str) {
+  return String(str || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Returns a slug like "bad-boy-kwame-god". If another release already
+// uses it, adds -2, -3, etc. Never returns a slug owned by a different release.
+async function generateUniqueSlug(title, artist, excludeId) {
+  const base = slugify(`${title} ${artist}`) || 'release';
+  let slug = base, n = 2;
+  while (true) {
+    const snap = await getDocs(query(collection(db, 'submissions'), where('smartLinkSlug', '==', slug), limit(1)));
+    if (snap.empty || snap.docs[0].id === excludeId) return slug;
+    slug = `${base}-${n++}`;
+  }
 }
 async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
   if (!email) {
@@ -1571,8 +1591,8 @@ function applyClientFilters() {
         const matchP = !pFilter ||
       (pFilter === "paid"   &&  isSubmissionPaid(item)) ||
       (pFilter === "unpaid" && !isSubmissionPaid(item));
-       const matchNeedsSmartlink = !needsSmartlinkOnly ||
-      ((item.status || '').toLowerCase() === 'approved' && isReleaseDateReached(item) && !hasAnyStoreLink(item));
+                 const matchNeedsSmartlink = !needsSmartlinkOnly ||
+      ((item.status || '').toLowerCase() === 'approved' && (!item.smartLinkSlug || (isReleaseDateReached(item) && !hasAnyStoreLink(item))));
     return matchQ && matchP && matchNeedsSmartlink;
   });
 
@@ -1779,6 +1799,7 @@ function display(data) {
         <span class="badge ${statusClass}">${escHtml(status)}</span>
         <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span>
         ${item.releaseType ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">${escHtml(item.releaseType)}</span>` : ''}
+                  ${(isApproved && !item.smartLinkSlug) ? `<span class="badge" style="color:var(--red);border-color:rgba(248,113,113,0.35);">No Slug</span>` : ''}
                 ${(isApproved && isReleaseDateReached(item) && !hasAnyStoreLink(item)) ? `<span class="badge" style="color:var(--yellow);border-color:rgba(234,179,8,0.35);">⚠ Needs SmartLink</span>` : ''}
         ${(isApproved && !isReleaseDateReached(item)) ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">Releases ${new Date(item.releaseDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</span>` : ''}
       </div>
@@ -1944,6 +1965,9 @@ function display(data) {
           licenseProofUrl: '',
           takedownReason: ''
         };
+                if (!item.smartLinkSlug) {
+          updateData.smartLinkSlug = await generateUniqueSlug(songTitle, artistName, subId);
+        }
         this.dataset.upc = result.upc;
         this.dataset.catalog = result.catalogNumber;
         const ok = await safeUpdate(subId, updateData);
@@ -2510,7 +2534,14 @@ async function bulkUpdateStatus(newStatus) {
   const ids = Array.from(selectedIds);
   toast('info', `Updating ${ids.length} submissions…`);
   for (const id of ids) {
-    await safeUpdate(id, { status: newStatus });
+       const data = { status: newStatus };
+    if (newStatus === 'Approved') {
+      const sub = submissions.find(s => s.id === id);
+      if (sub && !sub.smartLinkSlug) {
+        data.smartLinkSlug = await generateUniqueSlug(sub.releaseTitle || sub.songTitle || sub.title || '', sub.artistName || '', id);
+      }
+    }
+    await safeUpdate(id, data);
   }
   toast('success', `${ids.length} submissions → "${newStatus}"`);
   selectedIds.clear();
@@ -2640,6 +2671,32 @@ document.addEventListener('keydown', (e) => {
 refreshStatCounts();
 refreshTotalMatchingCount();
 loadPage(0);
+document.getElementById('backfillSlugBtn').addEventListener('click', async function () {
+  this.disabled = true;
+  const original = this.textContent;
+  this.textContent = 'Scanning…';
+  try {
+    const all = await fetchAllSubmissionsCached(true);
+    const missing = all.filter(s => (s.status || '').toLowerCase() === 'approved' && !s.smartLinkSlug);
+    if (missing.length === 0) {
+      toast('success', 'Every approved release already has a slug');
+      return;
+    }
+    let done = 0;
+    for (const s of missing) {
+      const slug = await generateUniqueSlug(s.releaseTitle || s.songTitle || s.title || '', s.artistName || '', s.id);
+      if (await safeUpdate(s.id, { smartLinkSlug: slug })) done++;
+    }
+    toast('success', `Created ${done} of ${missing.length} slugs`);
+    fullCollectionCache = null;
+    refreshCurrentView();
+  } catch (e) {
+    toast('error', 'Backfill failed: ' + e.message);
+  } finally {
+    this.disabled = false;
+    this.textContent = original;
+  }
+});
 </script>
 
 </body>
