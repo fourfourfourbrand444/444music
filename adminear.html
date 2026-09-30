@@ -4,1607 +4,335 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>444Music — Earnings Manager</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg-void:    #ffffff;
-    --bg-card:    #ffffff;
-    --bg-card2:   #fafafa;
-    --bg-input:   #f4f4f4;
-    --border:     rgba(0,0,0,0.10);
-    --border-lt:  rgba(0,0,0,0.22);
-    --accent:     #000000;
-    --accent-dim: rgba(0,0,0,0.05);
-    --accent-glow:rgba(0,0,0,0.10);
-    --green:      #17803d;
-    --green-dim:  rgba(23,128,61,0.08);
-    --red:        #d92d3f;
-    --text-pri:   #0a0a0a;
-    --text-sec:   #5c5c5c;
-    --text-dim:   #a3a3a3;
-    --radius:     14px;
-    --radius-sm:  9px;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-void);
-    color: var(--text-pri);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  .mono { font-family: 'IBM Plex Mono', monospace; }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 60% -10%, rgba(0,0,0,0.03) 0%, transparent 60%),
-                radial-gradient(ellipse at 0% 80%,  rgba(0,0,0,0.02) 0%, transparent 50%);
-    pointer-events: none; z-index: 0;
-  }
-
-  /* ── PASSWORD GATE ── */
-  .gate {
-    position: fixed; inset: 0; z-index: 1000;
-    background: var(--bg-void);
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-  }
-  .gate-box {
-    width: 100%; max-width: 360px;
-    background: var(--bg-card); border: 1px solid var(--border-lt);
-    border-radius: 18px; padding: 34px 28px; text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-  }
-  .gate-icon {
-    width: 48px; height: 48px; margin: 0 auto 18px;
-    background: var(--accent); border: 1px solid var(--accent);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    font-size: 20px; filter: grayscale(1) brightness(3);
-  }
-  .gate-box h2 { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; letter-spacing: -0.2px; }
-  .gate-box p { font-size: 12.5px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.6; }
-  .gate-input {
-    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: 10px; padding: 13px 14px; color: var(--text-pri);
-    font-family: 'IBM Plex Mono', monospace; font-size: 13.5px; outline: none;
-    text-align: center; letter-spacing: 1px; transition: border-color 0.15s;
-  }
-  .gate-input:focus { border-color: var(--border-lt); }
-  .gate-input::placeholder { color: var(--text-dim); letter-spacing: normal; }
-  .gate-btn {
-    width: 100%; margin-top: 10px; padding: 13px; border-radius: 10px;
-    background: var(--accent); color: #fff; font-weight: 700; font-size: 13.5px;
-    border: none; cursor: pointer; transition: opacity 0.15s;
-  }
-  .gate-btn:hover { opacity: 0.82; }
-  .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .gate-error { min-height: 16px; font-size: 12px; color: var(--red); margin-top: 12px; }
-  .gate-shake { animation: shake 0.4s; }
-  @keyframes shake {
-    10%,90% { transform: translateX(-2px); }
-    20%,80% { transform: translateX(4px); }
-    30%,50%,70% { transform: translateX(-8px); }
-    40%,60% { transform: translateX(8px); }
-  }
-
-  /* HEADER */
-  .header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 40px;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px;
-  }
-
-  .logo {
-    display: flex; align-items: center; gap: 12px;
-    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
-  }
-
-  .logo-badge {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; color: #fff; font-weight: 800;
-  }
-
-  .logo-text span { color: var(--text-sec); font-weight: 500; }
-
-  .header-right { display: flex; align-items: center; gap: 12px; }
-
-  .refresh-btn {
-    background: var(--bg-void); border: 1px solid var(--border-lt);
-    color: var(--text-pri); font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    letter-spacing: 0.5px;
-  }
-  .refresh-btn:hover { background: var(--accent); color: #fff; }
-
-  .header-tag {
-    font-size: 11px; color: var(--text-dim);
-    letter-spacing: 0.8px;
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); box-shadow: 0 0 6px rgba(0,0,0,0.4);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-  /* MAIN */
-  .main {
-    position: relative; z-index: 1;
-    max-width: 980px; margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-
-  .page-title {
-    font-weight: 800; font-size: 32px;
-    letter-spacing: -1px; margin-bottom: 4px;
-  }
-
-  .page-title span { color: var(--text-sec); font-weight: 500; }
-
-  .page-sub { color: var(--text-sec); font-size: 13px; margin-bottom: 32px; line-height: 1.7; max-width: 640px; }
-
-  /* STATS */
-  .stats-bar {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px;
-  }
-
-  .stat-pill {
-    background: var(--bg-card2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 16px 18px;
-  }
-
-  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; }
-
-  .stat-value {
-    font-weight: 700; font-size: 23px; letter-spacing: -0.3px;
-  }
-
-  .stat-value.white { color: var(--text-pri); }
-  .stat-value.green { color: var(--green); }
-
-  /* CONTROLS */
-  .controls-row {
-    display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
-  }
-
-  .search-wrapper { position: relative; flex: 1; min-width: 220px; }
-
-  .search-icon {
-    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-    color: var(--text-dim); font-size: 15px; pointer-events: none;
-  }
-
-  .search-input {
-    width: 100%; background: var(--bg-card2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px 14px 44px;
-    font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text-pri);
-    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .search-input::placeholder { color: var(--text-dim); }
-  .search-input:focus {
-    border-color: var(--border-lt);
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
-  }
-
-  .group-select, .sort-select {
-    background: var(--bg-card2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 0 16px;
-    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-pri);
-    outline: none; cursor: pointer; min-width: 200px;
-  }
-  .group-select:focus, .sort-select:focus { border-color: var(--border-lt); }
-  .group-select option, .sort-select option { background: #fff; color: var(--text-pri); }
-
-  /* TOOLBAR */
-  .toolbar {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-  }
-
-  .count-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; font-family: 'IBM Plex Mono', monospace; }
-  .count-label span { color: var(--text-pri); font-weight: 700; }
-
-  /* GROUP HEADINGS */
-  .group-heading {
-    display: flex; align-items: center; gap: 10px;
-    margin: 26px 0 12px; font-weight: 700; font-size: 13px;
-    letter-spacing: 0.3px; color: var(--text-pri);
-  }
-  .group-heading:first-child { margin-top: 0; }
-  .group-heading::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  .group-count {
-    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-sec);
-    background: var(--bg-card2); border: 1px solid var(--border);
-    padding: 2px 8px; border-radius: 20px;
-  }
-
-  /* CARDS */
-  .results { display: flex; flex-direction: column; gap: 10px; }
-
-  .card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 22px 24px;
-    display: flex; flex-direction: column; gap: 18px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    animation: fadeUp 0.3s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .card:hover {
-    border-color: var(--border-lt);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.06);
-  }
-
-  .card-top { display: flex; align-items: center; gap: 16px; }
-
-  .avatar {
-    width: 46px; height: 46px; border-radius: 11px; flex-shrink: 0;
-    background: var(--accent);
-    border: 1px solid var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 15px;
-    color: #fff; text-transform: uppercase;
-  }
-
-  .card-info { flex: 1; min-width: 0; }
-
-  .artist-name {
-    font-weight: 700; font-size: 15px; letter-spacing: -0.1px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .artist-email {
-    font-size: 11px; color: var(--text-sec); margin-top: 2px;
-    font-family: 'IBM Plex Mono', monospace;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .artist-id {
-    font-size: 10px; color: var(--text-dim); margin-top: 3px;
-    font-family: 'IBM Plex Mono', monospace;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  /* AUTO TOTAL BADGE */
-  .total-badge {
-    flex-shrink: 0; text-align: right;
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 10px 16px;
-  }
-  .total-badge-label {
-    font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
-    color: var(--text-dim); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace;
-  }
-  .total-badge-value {
-    font-weight: 800; font-size: 19px; letter-spacing: -0.3px;
-    color: var(--text-pri);
-  }
-
-  /* SECTIONS */
-  .card-section {
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-
-  .section-heading {
-    font-size: 9.5px; text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;
-  }
-
-  /* OWNED SONG BLOCK */
-  .owned-song {
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-
-  .owned-song-head {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  }
-
-  .owned-song-title {
-    font-weight: 700; font-size: 13.5px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .owned-song-tag {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    background: var(--accent); color: #fff;
-    border: 1px solid var(--accent);
-    border-radius: 5px; padding: 3px 7px; white-space: nowrap; flex-shrink: 0;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .collab-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    font-size: 11.5px; color: var(--text-sec);
-    padding: 6px 0; border-top: 1px dashed var(--border);
-  }
-  .collab-row:first-of-type { border-top: none; padding-top: 0; }
-  .collab-name { color: var(--text-pri); font-weight: 500; }
-  .collab-pct { color: var(--text-sec); font-weight: 700; margin-left: 6px; font-family: 'IBM Plex Mono', monospace; }
-  .collab-balance { color: var(--green); font-weight: 700; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; }
-
-  .owner-share-row {
-    font-size: 11.5px; color: var(--text-sec);
-    padding-top: 4px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; gap: 10px;
-  }
-  .owner-share-row .pct { color: var(--text-pri); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
-  .owner-share-row .bal { color: var(--green); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
-
-  .payout-row { display: flex; gap: 8px; margin-top: 2px; }
-
-  .payout-input {
-    flex: 1; min-width: 0; background: #fff; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 10px 12px;
-    font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 13px;
-    color: var(--text-pri); outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .payout-input::placeholder { color: var(--text-dim); font-size: 11px; }
-  .payout-input:focus { border-color: var(--border-lt); box-shadow: 0 0 0 2px rgba(0,0,0,0.04); }
-
-  .distribute-btn {
-    background: var(--accent); border: 1px solid var(--accent); color: #fff;
-    font-weight: 700; font-size: 11.5px;
-    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
-    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
-  }
-  .distribute-btn:hover:not(:disabled) { opacity: 0.82; }
-  .distribute-btn:active:not(:disabled) { transform: scale(0.97); }
-  .distribute-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .total-edit-btn {
-    background: #fff; border: 1px solid var(--border-lt); color: var(--text-pri);
-    font-weight: 700; font-size: 11.5px;
-    padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, background 0.2s, color 0.2s;
-    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
-  }
-  .total-edit-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
-  .total-edit-btn:active:not(:disabled) { transform: scale(0.97); }
-  .total-edit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .total-edit-note {
-    font-size: 10.5px; color: var(--text-dim); line-height: 1.5;
-  }
-
-  /* CONTRIBUTOR CREDIT ROW (read-only) */
-  .credit-row {
-    background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 10px 14px;
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  }
-  .credit-song {
-    font-weight: 700; font-size: 12.5px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .credit-owner {
-    font-size: 10.5px; color: var(--text-sec); margin-top: 2px;
-    font-family: 'IBM Plex Mono', monospace;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .credit-right { text-align: right; flex-shrink: 0; }
-  .credit-pct { font-size: 10px; color: var(--text-sec); font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
-  .credit-balance { font-weight: 800; font-size: 14px; color: var(--green); font-family: 'IBM Plex Mono', monospace; }
-
-  .no-entries-note {
-    font-size: 11px; color: var(--text-dim); font-style: italic;
-  }
-
-  /* TOAST */
-  .toast-container {
-    position: fixed; bottom: 28px; right: 28px; left: 28px;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 8px; z-index: 9999;
-  }
-
-  .toast {
-    background: #fff; border: 1px solid var(--border-lt);
-    border-radius: var(--radius-sm); padding: 13px 18px;
-    display: flex; align-items: center; gap: 10px;
-    font-size: 12px; min-width: 240px; max-width: 90vw;
-    color: var(--text-pri);
-    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
-    animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
-  }
-
-  .toast.success { border-left: 3px solid var(--green); }
-  .toast.error   { border-left: 3px solid var(--red); }
-  .toast-icon    { font-size: 14px; }
-
-  @keyframes toastIn  { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes toastOut { to  {opacity:0;transform:translateX(24px)} }
-
-  /* EMPTY / LOADING */
-  .empty { text-align: center; padding: 72px 24px; color: var(--text-dim); }
-  .empty-icon { font-size: 32px; margin-bottom: 12px; }
-  .empty-text { font-weight: 700; font-size: 15px; color: var(--text-sec); }
-  .empty-sub  { font-size: 12px; margin-top: 8px; line-height: 1.7; }
-
-  .loading-wrap {
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    padding: 60px; color: var(--text-sec); font-size: 13px;
-  }
-
-  .spinner {
-    width: 20px; height: 20px;
-    border: 2px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to{transform:rotate(360deg)} }
-
-  /* RESPONSIVE */
-  @media (max-width: 640px) {
-    .header { padding: 0 16px; }
-    .main { padding: 24px 14px 60px; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .card-top { flex-wrap: wrap; }
-    .total-badge { width: 100%; text-align: left; }
-    .page-title { font-size: 25px; }
-    .payout-row { flex-wrap: wrap; }
-    .distribute-btn { flex: 1; }
-    .total-edit-btn { flex: 1; }
-    .credit-row { flex-wrap: wrap; }
-    .controls-row { flex-direction: column; }
-    .group-select, .sort-select { width: 100%; }
-    .toast-container { left: 16px; right: 16px; bottom: 16px; }
-    .toast { width: 100%; max-width: none; }
-  }
-
-  @media (max-width: 400px) {
-    .stats-bar { grid-template-columns: 1fr; }
-    .card { padding: 18px 16px; }
-    .stat-value { font-size: 20px; }
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bd:rgba(0,0,0,.1);--bd2:rgba(0,0,0,.22);--ink:#0a0a0a;--sec:#5c5c5c;--dim:#a3a3a3;--bg2:#fafafa;--in:#f4f4f4;--green:#17803d;--red:#d92d3f;--r:14px;--rs:9px}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Inter,sans-serif;background:#fff;color:var(--ink);min-height:100vh;overflow-x:hidden}
+.mono,input,.tag,.row2 em,.lbl{font-family:'IBM Plex Mono',monospace}
+button{font-family:inherit;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+.gate{position:fixed;inset:0;z-index:1000;background:#fff;display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-box{width:100%;max-width:360px;border:1px solid var(--bd2);border-radius:18px;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.08)}
+.gate-box h2{font-size:1.05rem;margin:0 0 6px}.gate-box p{font-size:12.5px;color:var(--dim);margin-bottom:20px}
+.gate-box input{width:100%;background:var(--in);border:1px solid var(--bd);border-radius:10px;padding:13px;text-align:center;font-size:16px;outline:none}
+.gate-box button{width:100%;margin-top:10px;padding:13px;border-radius:10px;background:#000;color:#fff;font-weight:700;border:0}
+#gateError{min-height:16px;font-size:12px;color:var(--red);margin-top:10px}
+
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));height:58px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.badge{width:30px;height:30px;background:#000;color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.logo span{color:var(--sec);font-weight:500}
+.hbtn{background:#fff;border:1px solid var(--bd2);font-size:12px;padding:8px 14px;border-radius:var(--rs);font-family:'IBM Plex Mono',monospace}
+.hbtn:hover{background:#000;color:#fff}
+
+.main{max-width:900px;margin:0 auto;padding:28px 16px 70px}
+h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{color:var(--sec);font-weight:500}
+.sub{color:var(--sec);font-size:13px;line-height:1.7;margin:6px 0 22px;max-width:640px}
+.controls{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:14px}
+.controls input,.controls select{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--ink);outline:none;min-width:0;width:100%}
+.controls input:focus,.controls select:focus{border-color:var(--bd2)}
+.sbtn{background:#000;color:#fff;border:0;border-radius:12px;padding:0 18px;font-weight:700;font-size:13px}
+.count{font-size:11px;color:var(--dim);margin-bottom:12px;font-family:'IBM Plex Mono',monospace}
+#results{display:flex;flex-direction:column;gap:12px}
+
+.card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px}
+.card:hover{border-color:var(--bd2)}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.av{width:44px;height:44px;border-radius:11px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;text-transform:uppercase}
+.info{flex:1;min-width:140px}.nm{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.em,.uid{font-size:11px;color:var(--sec);margin-top:2px;overflow-wrap:anywhere;font-family:'IBM Plex Mono',monospace}.uid{color:var(--dim);font-size:10px}
+.tot{background:var(--in);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 14px;text-align:right}
+.tot .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}.tot b{font-size:18px;font-weight:800}
+.sec{border-top:1px solid var(--bd);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.sec>.lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim)}
+.song{background:var(--in);border:1px solid var(--bd);border-radius:var(--rs);padding:12px;display:flex;flex-direction:column;gap:10px}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:8px}.sh b{font-size:13.5px;overflow-wrap:anywhere}
+.tag{font-size:9px;font-weight:700;text-transform:uppercase;background:#000;color:#fff;border-radius:5px;padding:3px 7px;white-space:nowrap}
+.row2{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--sec);padding-top:6px;border-top:1px dashed var(--bd)}
+.row2 i{font-style:normal;font-weight:700;font-family:'IBM Plex Mono',monospace}.row2 em{font-style:normal;color:var(--green);font-weight:700;white-space:nowrap}
+.own{border-top:1px solid var(--bd)}
+.note{font-size:10.5px;color:var(--dim)}
+.pr{display:flex;gap:8px}
+.pr input{flex:1;min-width:0;background:#fff;border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;font-size:16px;outline:none}
+.pr input:focus{border-color:var(--bd2)}
+.btn{background:#000;color:#fff;border:1px solid #000;font-weight:700;font-size:11.5px;padding:10px 14px;border-radius:var(--rs);white-space:nowrap}
+.btn.ghost{background:#fff;color:#000;border-color:var(--bd2)}.btn.ghost:hover:not(:disabled){background:#000;color:#fff}
+.none{font-size:11px;color:var(--dim);font-style:italic}
+.pager{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:22px}
+.pager span{font-size:12px;color:var(--sec);font-family:'IBM Plex Mono',monospace}
+.empty,.loading{text-align:center;padding:60px 20px;color:var(--sec);font-size:13px}
+.spin{width:20px;height:20px;border:2px solid var(--bd);border-top-color:#000;border-radius:50%;animation:s .8s linear infinite;margin:0 auto 10px}
+@keyframes s{to{transform:rotate(360deg)}}
+#toasts{position:fixed;bottom:16px;left:16px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:9999;pointer-events:none}
+.toast{background:#fff;border:1px solid var(--bd2);border-left:3px solid var(--green);border-radius:var(--rs);padding:12px 16px;font-size:12.5px;box-shadow:0 8px 28px rgba(0,0,0,.14);max-width:100%}
+.toast.error{border-left-color:var(--red)}
+@media(max-width:640px){
+ .controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.sbtn{grid-column:1/-1;padding:13px}
+ .card{padding:14px}.tot{width:100%;text-align:left}.pr{flex-wrap:wrap}.pr .btn{flex:1}.pr input{flex:1 1 100%}
+}
 </style>
 </head>
 <body>
 
-<!-- PASSWORD GATE -->
-<div class="gate" id="gate">
-  <div class="gate-box" id="gateBox">
-    <div class="gate-icon">🔒</div>
-    <h2>Admin Access</h2>
-    <p>Enter the admin password to open the Earnings Manager.</p>
-    <input class="gate-input" id="gatePassword" type="password" placeholder="Password" autocomplete="off">
-    <button class="gate-btn" id="gateBtn">Unlock</button>
-    <div class="gate-error" id="gateError"></div>
-  </div>
-</div>
+<div class="gate" id="gate"><div class="gate-box">
+  <h2>Admin Access</h2><p>Enter the admin password to open the Earnings Manager.</p>
+  <input id="gatePassword" type="password" placeholder="Password" autocomplete="off">
+  <button id="gateBtn">Unlock</button><div id="gateError"></div>
+</div></div>
 
-<div class="toast-container" id="toasts"></div>
+<div id="toasts"></div>
 
-<header class="header" id="appHeader" style="display:none;">
-  <div class="logo">
-    <div class="logo-badge">$</div>
-    <div class="logo-text">444<span>Music</span></div>
-  </div>
-  <div class="header-right">
-    <button class="refresh-btn" onclick="runBackfill()">⇪ Sync Earnings</button>
-    <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
-    <div class="header-tag">
-      <div class="dot"></div>
-      <span>Admin · Earnings</span>
-    </div>
-  </div>
+<header class="header" id="appHeader" style="display:none">
+  <div class="logo"><div class="badge">$</div><div>444<span>Music</span></div></div>
+  <button class="hbtn" id="refreshBtn">↻ Refresh</button>
 </header>
 
-<main class="main" id="appMain" style="display:none;">
-  <div class="page-title">Earnings <span>Manager</span></div>
-  <div class="page-sub">Total earnings are auto-calculated from the splits collection, plus directly from your submissions for any release that has no splits doc at all — whether that's genuinely solo, or a collab release whose split doc never got created. To pay out a release, enter an amount under that song and hit Distribute — releases with collaborators divide by each person's locked %, solo releases credit the owner in full. Every distribute action also updates that artist's users/{uid}.earnings field, so the mobile app and website earnings pages reflect it automatically. Each release also has an <strong style="color:var(--text-pri)">Edit Total</strong> control — type the correct combined total for that song and it re-splits everyone's balance by their locked %, syncing only the difference to each person's live earnings. Every card also has a <strong style="color:var(--text-pri)">Manual earnings override</strong> — always available, no release or split required — that directly sets the live earnings field to any value, up or down, for correcting mistakes or paying artists with nothing on file yet. Releases whose submission was deleted from the Submissions Portal are automatically hidden here.</div>
+<main class="main" id="appMain" style="display:none">
+  <h1>Earnings <span>Manager</span></h1>
+  <p class="sub">Artists load 10 at a time, with only their own releases. Distribute adds money split by locked %. Update Total corrects a release's combined total. Set Earnings overwrites the live <span class="mono">users/{uid}.earnings</span> field. Saving updates only that card — no reload.</p>
 
-  <!-- STATS -->
-  <div class="stats-bar">
-    <div class="stat-pill">
-      <div class="stat-label">Total Artists</div>
-      <div class="stat-value white" id="statCount">—</div>
-    </div>
-    <div class="stat-pill">
-      <div class="stat-label">Total Paid Out</div>
-      <div class="stat-value white" id="statTotal">—</div>
-    </div>
-    <div class="stat-pill">
-      <div class="stat-label">Artists with Earnings</div>
-      <div class="stat-value green" id="statActive">—</div>
-    </div>
+  <div class="controls">
+    <input id="search" placeholder="Search name, email or UID — press Enter" autocomplete="off" spellcheck="false">
+    <select id="sortSelect"><option value="id">Sort: Default</option><option value="earnings">Sort: Highest earnings</option></select>
+    <button class="sbtn" id="searchBtn">Search</button>
   </div>
-
-  <!-- CONTROLS -->
-  <div class="controls-row">
-    <div class="search-wrapper">
-      <span class="search-icon">⌕</span>
-      <input type="text" class="search-input" id="search"
-        placeholder="Search by name, email, UID, song, or owner…" autocomplete="off" spellcheck="false">
-    </div>
-    <select class="group-select" id="groupSelect">
-      <option value="grouped">Group: has releases / no releases</option>
-      <option value="has">Only artists with releases</option>
-      <option value="none">Only artists with no releases at all</option>
-      <option value="flat">No grouping (all artists)</option>
-    </select>
-    <select class="sort-select" id="sortSelect">
-      <option value="earnings_desc">Sort: Highest earnings first</option>
-      <option value="earnings_asc">Sort: Lowest earnings first</option>
-      <option value="name_asc">Sort: Name (A–Z)</option>
-      <option value="name_desc">Sort: Name (Z–A)</option>
-    </select>
-  </div>
-
-  <!-- TOOLBAR -->
-  <div class="toolbar">
-    <div class="count-label" id="countLabel">Loading…</div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="results" id="results">
-    <div class="loading-wrap">
-      <div class="spinner"></div>
-      <span>Loading users…</span>
-    </div>
-  </div>
+  <div class="count" id="count">Loading…</div>
+  <div id="results"></div>
+  <div class="pager" id="pager"></div>
 </main>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getFirestore, collection, getDocs,
-  doc, getDoc, updateDoc, increment, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, increment, serverTimestamp, query, where, orderBy, limit, startAfter, documentId }
+  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const app = initializeApp({
-  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain:        "usersubmissionsportal.firebaseapp.com",
-  projectId:         "usersubmissionsportal",
-  storageBucket:     "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
-});
+const db = getFirestore(initializeApp({
+  apiKey:"AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg", authDomain:"usersubmissionsportal.firebaseapp.com",
+  projectId:"usersubmissionsportal", storageBucket:"usersubmissionsportal.firebasestorage.app",
+  messagingSenderId:"734783502459", appId:"1:734783502459:web:cfa2cc5de6976003b24ade"
+}));
 
-const db = getFirestore(app);
-let allUsers       = [];
-let allSplits      = [];
-let allSubmissions = [];
-let financeByEmail = {};
-let emailToUid     = {}; // normalized email -> users/{uid} doc id, rebuilt on every loadUsers()
-let validUserIds   = new Set(); // set of real users/{uid} doc IDs, rebuilt on every loadUsers()
+const PAGE = 10;
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const num = v => parseFloat(v) || 0;
+const r2 = x => Math.round(x*100)/100;
+const ne = e => (e||'').toLowerCase().trim();
+const money = n => '₵' + num(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uName = d => (d.name||d.artistName||d.displayName||d.fullName||d.username||'').trim();
+const uEmail = d => (d.email||d.Email||d.userEmail||'').trim();
+const sTitle = s => (s.releaseTitle||s.songTitle||s.title||s.trackTitle||s.name||'').trim() || 'Untitled';
+const low = s => (s||'').toLowerCase().trim();
+const ini = u => { const n=uName(u); if(n){const p=n.split(/\s+/);return p.length>1?p[0][0]+p[p.length-1][0]:n.slice(0,2)} return (uEmail(u)||'??').slice(0,2); };
 
-/* ── HELPERS ── */
-function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function resolveName(d) { return (d.name || d.artistName || d.displayName || d.fullName || d.username || '').trim(); }
-function resolveEmail(d) { return (d.email || d.Email || d.userEmail || '').trim(); }
-function normEmail(e) { return (e || '').toLowerCase().trim(); }
-function initials(name, email) {
-  if (name) {
-    const p = name.trim().split(/\s+/);
-    return p.length >= 2 ? (p[0][0] + p[p.length-1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
+function toast(msg, type='success'){
+  const t=document.createElement('div'); t.className='toast '+type; t.textContent=msg;
+  $('toasts').appendChild(t); setTimeout(()=>t.remove(), 3000);
+}
+
+/* ── STATE ── */
+let pages=[], idx=0, sortMode='id', searching=false, loading=false;
+let current=[];                 // users currently on screen
+const all=new Map();            // uid -> user (every user loaded this session)
+const uidCache={};              // email -> uid for collaborators
+
+/* ── DATA ── */
+async function chunked(col, field, vals){
+  const out=[];
+  for(let i=0;i<vals.length;i+=30){
+    const snap=await getDocs(query(collection(db,col), where(field,'in',vals.slice(i,i+30))));
+    snap.forEach(d=>out.push({id:d.id,...d.data()}));
   }
-  return email ? email.slice(0,2).toUpperCase() : '??';
-}
-function fmtMoney(n) {
-  const num = Number(n) || 0;
-  return '₵' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return out;
 }
 
-/* Submission field resolvers — confirmed against the real submissions schema:
-   releaseTitle, email, userId, status, splitLocked. Fallbacks kept for safety
-   in case any older doc used different naming. */
-function resolveSubmissionTitle(s) {
-  return (s.releaseTitle || s.songTitle || s.title || s.trackTitle || s.trackName || s.name || '').trim() || 'Untitled';
-}
-function resolveSubmissionOwnerEmailDirect(s) {
-  return (s.email || s.userEmail || s.ownerEmail || s.artistEmail || '').trim();
-}
-function resolveSubmissionOwnerId(s) {
-  return s.userId || s.uid || s.userID || s.ownerId || '';
-}
-function resolveSubmissionOwnerEmail(s, usersById) {
-  const direct = normEmail(resolveSubmissionOwnerEmailDirect(s));
-  if (direct) return direct;
-  const uid = resolveSubmissionOwnerId(s);
-  if (uid && usersById[uid]) return normEmail(resolveEmail(usersById[uid]));
-  return '';
-}
-
-/* ── OWNER/CONTRIBUTOR UID RESOLUTION ──
-   FIX (previously the root cause of owner earnings never syncing):
-   Submission docs carry their own userId/uid field, but for some accounts
-   that value is stale — left over from a re-signup, an account rebuild, or
-   an older ID scheme — and no longer matches any real users/{uid} doc. The
-   old code trusted that stored field FIRST and only fell back to the email
-   map if it was empty, so a stale-but-present ID silently won and the write
-   failed with "No document to update" (swallowed by bumpUserEarnings's
-   catch, so nothing visibly broke — the owner's balance just never moved).
-
-   Fix: only trust a stored ID if it actually exists in the current users
-   collection (validUserIds, rebuilt fresh every loadUsers()). Otherwise
-   fall back to the reliable email → uid map. Email match wins whenever the
-   stored ID doesn't check out. */
-function resolveOwnerUid(storedId, email) {
-  if (storedId && validUserIds.has(storedId)) return storedId;
-  return emailToUid[normEmail(email)] || '';
-}
-
-/* ── TOAST ── */
-function toast(msg, type = 'success') {
-  const c = document.getElementById('toasts');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${esc(msg)}</span>`;
-  c.appendChild(t);
-  setTimeout(() => t.remove(), 3200);
-}
-
-/* ── users/{uid}.earnings SYNC ──
-   This is the piece that used to be missing. ear.html (the website earnings
-   page) and the Flutter app both read a single number from
-   users/{uid}.earnings — but nothing ever wrote to that field, since all
-   three Distribute paths below only ever touched splits/contributors or
-   submissions/royaltySplits+earningsBalance. So the admin tool's math was
-   always correct, it just never reached the field the other two surfaces
-   actually display.
-   Fix: every successful distribute now ALSO increments users/{uid}.earnings
-   for every person who got paid in that distribution (owner + any real
-   collaborators), by uid where we have one. This means ear.html and the
-   Flutter app need NO changes — they keep reading the same field, it just
-   finally gets written to. */
-async function bumpUserEarnings(uid, amount) {
-  if (!uid) return;
-  const amt = parseFloat(amount) || 0;
-  if (!amt) return;
-  try {
-    await updateDoc(doc(db, 'users', uid), { earnings: increment(amt) });
-  } catch (err) {
-    // Don't let a missing/mismatched user doc block the actual payout —
-    // the splits/submissions write already succeeded by the time this runs.
-    console.warn(`Could not sync users/${uid}.earnings (+${amt}):`, err.message);
-  }
-}
-
-/* ── RELEASE EXISTENCE KEY ──
-   Used to detect "orphaned" splits/submission-derived entries: a split doc
-   (or a submission's own royaltySplits) whose matching submission no longer
-   exists in the `submissions` collection at all — i.e. it was deleted from
-   the Submissions Portal (adminpage.html). Deleting a submission there never
-   touches the separate `splits` collection doc, so without this check a
-   deleted release would keep showing up here forever.
-   Keyed by owner email + release title (case-insensitive), since that's the
-   only link between a splits doc and its originating submission. */
-function releaseKey(email, title) {
-  return normEmail(email) + '::' + (title || '').toLowerCase().trim();
-}
-
-function buildExistingReleaseKeys(submissions, usersById) {
-  const set = new Set();
-  submissions.forEach(s => {
-    const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
-    const title = resolveSubmissionTitle(s);
-    if (ownerEm) set.add(releaseKey(ownerEm, title));
-  });
-  return set;
-}
-
-/* ── FINANCE MODEL ──
-   Every owned release — whether it came from a locked split doc or from a
-   submission that never got one — is normalized into the same shape:
-     { type: 'split' | 'solo', id, songTitle, others, ownerEffPct, ownerBalance }
-
-   For splits:
-     - "other" contributors = contributors[] whose email !== ownerEmail (real collaborators)
-     - ownerEffPct = 100 - sum(other contributors' pct)   (absorbs any self-listed owner row automatically)
-     - ownerBalance (field on the split doc) = money already credited to the owner for that song
-     - each real collaborator's own balance field = money already credited to them for that song
-
-   For submissions with NO matching split doc (solo releases — the bug this fixes):
-     - others = [] always, ownerEffPct = 100 always — money is never divided
-     - ownerBalance comes from the submission's own `earningsBalance` field
-
-   "Has releases" (for grouping) means this user shows up in financeByEmail at all —
-   either as an owner of at least one split/solo release, or as a paid collaborator
-   on someone else's split. */
-function splitBreakdown(s) {
-  const ownerEm = normEmail(s.ownerEmail);
-  const others = (s.contributors || []).filter(c => normEmail(c.email) !== ownerEm);
-  const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
-  const ownerEffPct = Math.max(0, 100 - othersPctSum);
-  return { others, ownerEffPct };
-}
-
-function buildFinanceMap(splits, existingKeys) {
-  const map = {};
-  const ensure = (email) => {
-    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
-    return map[email];
-  };
-
-  let orphanCount = 0;
-
-  splits.forEach(s => {
-    const ownerEm = normEmail(s.ownerEmail);
-
-    // FIX (deleted-song bug): if this split's matching submission was
-    // deleted from the Submissions Portal, the split doc is left behind as
-    // an orphan — skip it entirely instead of letting it show as a live
-    // release. existingKeys is rebuilt fresh from the current submissions
-    // collection on every loadUsers(), so this always reflects the latest
-    // deletions.
-    if (existingKeys && !existingKeys.has(releaseKey(ownerEm, s.songTitle))) {
-      orphanCount++;
-      console.warn(`Ignoring orphaned split "${s.songTitle}" (splits/${s.id}) — no matching submission exists anymore (likely deleted via the Submissions Portal).`);
-      return;
-    }
-
-    const { others, ownerEffPct } = splitBreakdown(s);
-
-    if (ownerEm) {
-      const bucket = ensure(ownerEm);
-      const ownerBal = parseFloat(s.ownerBalance) || 0;
-      bucket.owned.push({
-        type: 'split', id: s.id, songTitle: s.songTitle || 'Untitled',
-        others, ownerEffPct, ownerBalance: ownerBal
-      });
-      bucket.total += ownerBal;
-    }
-
-    others.forEach(c => {
-      const em = normEmail(c.email);
-      if (!em) return;
-      const bal = parseFloat(c.balance) || 0;
-      const bucket = ensure(em);
-      bucket.credits.push({
-        splitId: s.id, songTitle: s.songTitle || 'Untitled',
-        ownerEmail: s.ownerEmail || '', pct: parseFloat(c.pct) || 0, balance: bal
-      });
-      bucket.total += bal;
+// Loads releases ONLY for the users on this page (2 batched queries).
+async function attach(users){
+  users.forEach(u=>{ u.ownerEm=ne(uEmail(u)); u.rel=[]; all.set(u.id,u); });
+  const emails=[...new Set(users.flatMap(u=>{const e=uEmail(u);return e?[e,e.toLowerCase()]:[]}))];
+  if(!emails.length) return;
+  const [subs,splits]=await Promise.all([chunked('submissions','email',emails), chunked('splits','ownerEmail',emails)]);
+  users.forEach(u=>{
+    const em=u.ownerEm;
+    const mine=subs.filter(s=>ne(s.email)===em);
+    const titles=new Set(mine.map(s=>low(sTitle(s))));
+    splits.filter(s=>ne(s.ownerEmail)===em && titles.has(low(s.songTitle))).forEach(s=>
+      u.rel.push({type:'split',id:s.id,title:s.songTitle||'Untitled',raw:Array.isArray(s.contributors)?s.contributors:[],ownerBal:num(s.ownerBalance)}));
+    mine.filter(s=>low(s.status)==='approved').forEach(s=>{
+      const t=sTitle(s);
+      if(u.rel.some(r=>r.type==='split'&&low(r.title)===low(t))) return;
+      const raw=Array.isArray(s.royaltySplits)?s.royaltySplits:[];
+      const hasOthers=raw.some(c=>ne(c.email)!==em);
+      u.rel.push({type:hasOthers?'submission':'solo',id:s.id,title:t,raw,ownerBal:num(s.earningsBalance)});
     });
   });
-
-  if (orphanCount) {
-    console.warn(`${orphanCount} orphaned split doc(s) hidden from Earnings Manager (deleted release cleanup — safe to remove those docs from the splits collection whenever convenient).`);
-  }
-
-  return map;
 }
 
-/* Adds releases that have no corresponding doc in the `splits` collection at
-   all — whether solo or multi-contributor. "Lighter" is the case that
-   exposed why this matters: it has 3 people in its own royaltySplits array
-   (with splitLocked: true and invite emails already sent), but the app never
-   actually created a splits doc for it. So the old logic — "solo goes here,
-   multi-person means look for a splits doc" — correctly found no match and
-   just hid it, which is safe but useless.
-   The fix: when no matching splits doc exists for a release (by title),
-   build the entry straight from the submission's own royaltySplits array,
-   regardless of how many people are on it. Distributing on this kind of
-   entry writes balances directly onto the submission doc's royaltySplits
-   field (see window.distributeSubmissionMulti below) — same math as the
-   real splits-based Distribute, just a different document to update.
-   Only `status === 'Approved'` submissions are counted as earning-worthy —
-   this filters out drafts, rejected, and stray duplicate submission docs.
-   Note: entries built here always come straight from a currently-existing
-   submission doc, so there is no orphan case to filter — the submission
-   itself IS the source of truth for these. */
-function attachSubmissionsToFinanceMap(map, submissions, usersById) {
-  const ensure = (email) => {
-    if (!map[email]) map[email] = { owned: [], credits: [], total: 0 };
-    return map[email];
-  };
-
-  let unmatchedOwner = 0;
-
-  submissions.forEach(s => {
-    if ((s.status || '').toLowerCase() !== 'approved') return;
-
-    const ownerEm = resolveSubmissionOwnerEmail(s, usersById);
-    if (!ownerEm) { unmatchedOwner++; return; }
-
-    const title = resolveSubmissionTitle(s);
-    const bucket = ensure(ownerEm);
-
-    const matchingSplitEntry = bucket.owned.find(
-      e => e.type === 'split' && e.songTitle.toLowerCase().trim() === title.toLowerCase().trim()
-    );
-    if (matchingSplitEntry) {
-      // A real splits doc now covers this release — but if money was already
-      // distributed while it was solo (before the split doc existed), that
-      // amount lives in this submission's earningsBalance field, which the
-      // new splits doc knows nothing about. Surface it instead of letting it
-      // silently vanish from view.
-      const leftover = parseFloat(s.earningsBalance) || 0;
-      if (leftover > 0) {
-        matchingSplitEntry.orphanedBalance = (matchingSplitEntry.orphanedBalance || 0) + leftover;
-      }
-      return;
+async function loadPage(i){
+  if(loading) return; loading=true; searching=false;
+  try{
+    if(!pages[i]){
+      $('results').innerHTML='<div class="loading"><div class="spin"></div>Loading artists…</div>';
+      const order = sortMode==='earnings'?orderBy('earnings','desc'):orderBy(documentId());
+      const cur = i>0?pages[i-1].cursor:null;
+      const q = cur?query(collection(db,'users'),order,startAfter(cur),limit(PAGE+1)):query(collection(db,'users'),order,limit(PAGE+1));
+      const docs=(await getDocs(q)).docs, shown=docs.slice(0,PAGE);
+      const users=shown.map(d=>({id:d.id,...d.data()}));
+      await attach(users);
+      pages[i]={users,cursor:shown[shown.length-1],has:docs.length>PAGE};
     }
-
-    const royaltySplits = Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
-    const others = royaltySplits
-      .filter(r => normEmail(r.email) !== ownerEm)
-      .map(r => ({ name: r.name || r.email, email: r.email, pct: parseFloat(r.pct) || 0, balance: parseFloat(r.balance) || 0 }));
-    const othersPctSum = others.reduce((sum, c) => sum + c.pct, 0);
-    const ownerEffPct = Math.max(0, 100 - othersPctSum);
-    const ownerBal = parseFloat(s.earningsBalance) || 0;
-
-    bucket.owned.push({
-      type: others.length ? 'submission' : 'solo',
-      id: s.id, songTitle: title,
-      others, ownerEffPct, ownerBalance: ownerBal
-    });
-    bucket.total += ownerBal;
-
-    others.forEach(c => {
-      const em = normEmail(c.email);
-      if (!em) return;
-      const cbucket = ensure(em);
-      cbucket.credits.push({
-        splitId: s.id, songTitle: title,
-        ownerEmail: s.email || '', pct: c.pct, balance: c.balance
-      });
-      cbucket.total += c.balance;
-    });
-  });
-
-  if (unmatchedOwner) {
-    console.warn(`${unmatchedOwner} submission(s) could not be matched to a user (no email/userId match).`);
-  }
-}
-
-function hasAnyRelease(email) {
-  const f = financeByEmail[normEmail(email)];
-  return !!(f && (f.owned.length || f.credits.length));
-}
-
-/* ── STATS ── */
-function updateStats(users) {
-  const total  = users.reduce((s, u) => s + (financeByEmail[normEmail(resolveEmail(u))]?.total || 0), 0);
-  const active = users.filter(u => (financeByEmail[normEmail(resolveEmail(u))]?.total || 0) > 0).length;
-  document.getElementById('statCount').textContent  = users.length;
-  document.getElementById('statTotal').textContent  = fmtMoney(total);
-  document.getElementById('statActive').textContent = active;
-}
-
-/* ── LOAD ── */
-window.loadUsers = async function () {
-  document.getElementById('results').innerHTML =
-    `<div class="loading-wrap"><div class="spinner"></div><span>Loading users…</span></div>`;
-  document.getElementById('countLabel').textContent = 'Loading…';
-
-  try {
-    const [usersSnap, splitsSnap, submissionsSnap] = await Promise.all([
-      getDocs(collection(db, 'users')),
-      getDocs(collection(db, 'splits')),
-      getDocs(collection(db, 'submissions'))
-    ]);
-
-    allUsers       = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    allSplits      = splitsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    allSubmissions = submissionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    const usersById = {};
-    emailToUid = {};
-    validUserIds = new Set();
-    allUsers.forEach(u => {
-      usersById[u.id] = u;
-      validUserIds.add(u.id);
-      const em = normEmail(resolveEmail(u));
-      if (em) emailToUid[em] = u.id;
-    });
-
-    // FIX (deleted-song bug): compute which releases still have a real
-    // submission doc BEFORE building the finance map from splits, so
-    // orphaned split docs (submission deleted, split left behind) never
-    // make it into the cards at all.
-    const existingKeys = buildExistingReleaseKeys(allSubmissions, usersById);
-
-    financeByEmail = buildFinanceMap(allSplits, existingKeys);
-    attachSubmissionsToFinanceMap(financeByEmail, allSubmissions, usersById);
-
-    allUsers.sort((a, b) => {
-      const ta = financeByEmail[normEmail(resolveEmail(a))]?.total || 0;
-      const tb = financeByEmail[normEmail(resolveEmail(b))]?.total || 0;
-      return tb - ta || (resolveName(a) || '').localeCompare(resolveName(b) || '');
-    });
-
-    applyFilters();
-    updateStats(allUsers);
-  } catch (err) {
+    idx=i; current=pages[i].users; show();
+  }catch(err){
     console.error(err);
-    document.getElementById('results').innerHTML =
-      `<div class="empty">
-        <div class="empty-icon">⚠</div>
-        <div class="empty-text">Failed to load users</div>
-        <div class="empty-sub">${esc(err.message)}</div>
-      </div>`;
-    document.getElementById('countLabel').textContent = 'Error';
-    toast('Load failed: ' + err.message, 'error');
-  }
-};
-
-/* ── OWNED / CREDITS PANELS ── */
-function buildOwnedSection(entries) {
-  if (!entries.length) return '';
-  const blocks = entries.map(entry => {
-    const { type, id, songTitle, others, ownerEffPct, ownerBalance, orphanedBalance } = entry;
-
-    const collabRows = others.map(c => `
-      <div class="collab-row">
-        <span><span class="collab-name">${esc(c.name || c.email)}</span><span class="collab-pct">${(parseFloat(c.pct)||0).toFixed(1)}%</span></span>
-        <span class="collab-balance">${fmtMoney(c.balance)}</span>
-      </div>`).join('');
-
-    const tagLabel = others.length
-      ? others.length + ' collaborator' + (others.length > 1 ? 's' : '')
-      : 'Solo release';
-
-    const orphanWarning = orphanedBalance
-      ? `<div style="font-size:11px;line-height:1.5;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;">
-           ⚠ ${fmtMoney(orphanedBalance)} was paid to the owner before this release had a splits doc — not counted in the totals above. Add it to the owner's balance by hand if it should still count.
-         </div>`
-      : '';
-
-    const inputId = `payout-${type}-${id}`;
-    const onclickCall = type === 'split'
-      ? `window.distribute('${id}', this)`
-      : type === 'submission'
-        ? `window.distributeSubmissionMulti('${id}', this)`
-        : `window.distributeSolo('${id}', this)`;
-
-    // Combined total currently sitting on this release — owner's share plus
-    // every real collaborator's balance. Editing this and hitting "Update
-    // Total" re-splits the whole thing by each person's locked % (same math
-    // as Distribute), then syncs only the DIFFERENCE to each person's live
-    // users/{uid}.earnings — not the full new total — so it works correctly
-    // whether you're raising, lowering, or correcting a mistaken amount.
-    const currentTotal = (parseFloat(ownerBalance) || 0) + others.reduce((sum, c) => sum + (parseFloat(c.balance) || 0), 0);
-    const totalInputId = `total-${type}-${id}`;
-
-    return `
-      <div class="owned-song">
-        <div class="owned-song-head">
-          <div class="owned-song-title">${esc(songTitle)}</div>
-          <div class="owned-song-tag">${tagLabel}</div>
-        </div>
-        ${collabRows}
-        <div class="owner-share-row">
-          <span>Your share <span class="pct">${ownerEffPct.toFixed(1)}%</span></span>
-          <span class="bal">${fmtMoney(ownerBalance)}</span>
-        </div>
-        ${orphanWarning}
-        <div class="payout-row">
-          <input type="number" class="payout-input" id="${inputId}" placeholder="Amount to distribute (GHS)" min="0" step="0.01">
-          <button class="distribute-btn" onclick="${onclickCall}">Distribute</button>
-        </div>
-        <div class="total-edit-note">Edit total for this release — redistributes to owner + collaborators by their locked %</div>
-        <div class="payout-row">
-          <input type="number" class="payout-input" id="${totalInputId}" placeholder="Correct combined total (GHS)" min="0" step="0.01" value="${currentTotal.toFixed(2)}">
-          <button class="total-edit-btn" onclick="window.setReleaseTotal('${type}','${id}', this)">Update Total</button>
-        </div>
-      </div>`;
-  }).join('');
-
-  return `<div class="card-section">
-      <div class="section-heading">Releases you own (${entries.length})</div>
-      ${blocks}
-    </div>`;
+    $('results').innerHTML=`<div class="empty">Failed to load: ${esc(err.message)}</div>`;
+    toast('Load failed: '+err.message,'error');
+  }finally{ loading=false; }
 }
 
-function buildCreditsSection(entries) {
-  if (!entries.length) return '';
-  const rows = entries.map(c => `
-    <div class="credit-row">
-      <div>
-        <div class="credit-song">${esc(c.songTitle)}</div>
-        <div class="credit-owner">Owner: ${esc(c.ownerEmail || '—')}</div>
-      </div>
-      <div class="credit-right">
-        <div class="credit-pct">${c.pct.toFixed(1)}%</div>
-        <div class="credit-balance">${fmtMoney(c.balance)}</div>
-      </div>
-    </div>`).join('');
-
-  return `<div class="card-section">
-      <div class="section-heading">Contributor credits (${entries.length})</div>
-      ${rows}
-    </div>`;
+async function runSearch(){
+  const q=$('search').value.trim();
+  if(!q){ pages=[]; return loadPage(0); }
+  if(loading) return; loading=true; searching=true;
+  $('results').innerHTML='<div class="loading"><div class="spin"></div>Searching…</div>';
+  try{
+    const pre=(f,v)=>getDocs(query(collection(db,'users'),where(f,'>=',v),where(f,'<=',v+'\uf8ff'),limit(20)));
+    const cap=q.charAt(0).toUpperCase()+q.slice(1);
+    const jobs=[pre('email',q.toLowerCase()),pre('name',q)];
+    if(cap!==q) jobs.push(pre('name',cap));
+    if(q.length>=20 && !/\s/.test(q)) jobs.push(getDoc(doc(db,'users',q)));
+    const map=new Map();
+    (await Promise.all(jobs)).forEach(r=>{ (r.docs||[r]).forEach(d=>{ if(d.exists===undefined||d.exists()) map.set(d.id,{id:d.id,...d.data()}); }); });
+    const users=[...map.values()].slice(0,20);
+    await attach(users);
+    current=users; show();
+  }catch(err){ console.error(err); $('results').innerHTML=`<div class="empty">Search failed: ${esc(err.message)}</div>`; }
+  finally{ loading=false; }
 }
 
-function buildCardHtml(u, i) {
-  const name    = resolveName(u)  || 'Unknown Artist';
-  const email   = resolveEmail(u) || '—';
-  const ini     = initials(resolveName(u), resolveEmail(u));
-  const finance = financeByEmail[normEmail(email)] || { owned: [], credits: [], total: 0 };
+/* ── RENDER ── */
+function relHtml(u,r,ri){
+  const others=r.raw.filter(c=>ne(c.email)!==u.ownerEm);
+  const eff=Math.max(0,100-others.reduce((s,c)=>s+num(c.pct),0));
+  const tot=r.ownerBal+others.reduce((s,c)=>s+num(c.balance),0);
+  const d=`data-u="${esc(u.id)}" data-r="${ri}"`;
+  return `<div class="song">
+    <div class="sh"><b>${esc(r.title)}</b><span class="tag">${others.length?others.length+' collaborator'+(others.length>1?'s':''):'Solo release'}</span></div>
+    ${others.map(c=>`<div class="row2"><span>${esc(c.name||c.email)} <i>${num(c.pct).toFixed(1)}%</i></span><em>${money(c.balance)}</em></div>`).join('')}
+    <div class="row2 own"><span>Owner share <i>${eff.toFixed(1)}%</i></span><em>${money(r.ownerBal)}</em></div>
+    <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount to distribute (GHS)"><button class="btn" data-act="add" ${d}>Distribute</button></div>
+    <div class="note">Correct combined total — re-splits by locked %</div>
+    <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${tot.toFixed(2)}"><button class="btn ghost" data-act="set" ${d}>Update Total</button></div>
+  </div>`;
+}
 
-  const ownedHtml   = buildOwnedSection(finance.owned);
-  const creditsHtml = buildCreditsSection(finance.credits);
-  const emptyNote = (!finance.owned.length && !finance.credits.length)
-    ? `<div class="card-section"><div class="no-entries-note">Not part of any locked split yet</div></div>`
-    : '';
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.style.animationDelay = `${Math.min(i * 25, 350)}ms`;
-  card.innerHTML = `
-    <div class="card-top">
-      <div class="avatar">${esc(ini)}</div>
-      <div class="card-info">
-        <div class="artist-name">${esc(name)}</div>
-        <div class="artist-email">${esc(email)}</div>
-        <div class="artist-id">UID: ${esc(u.id)}</div>
-      </div>
-      <div class="total-badge">
-        <div class="total-badge-label">Total earnings (auto)</div>
-        <div class="total-badge-value">${fmtMoney(finance.total)}</div>
-      </div>
+function cardEl(u){
+  const el=document.createElement('div'); el.className='card'; el.dataset.card=u.id;
+  const live=num(u.earnings);
+  el.innerHTML=`
+    <div class="top">
+      <div class="av">${esc(ini(u))}</div>
+      <div class="info"><div class="nm">${esc(uName(u)||'Unknown Artist')}</div><div class="em">${esc(uEmail(u)||'—')}</div><div class="uid">UID: ${esc(u.id)}</div></div>
+      <div class="tot"><div class="lbl">Live earnings</div><b>${money(live)}</b></div>
     </div>
-    ${buildManualOverrideSection(u)}
-    ${ownedHtml}
-    ${creditsHtml}
-    ${emptyNote}
-  `;
-  return card;
+    <div class="sec"><div class="lbl">Manual earnings override</div>
+      <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${live.toFixed(2)}" placeholder="Set earnings to (GHS)"><button class="btn" data-act="earn" data-u="${esc(u.id)}">Set Earnings</button></div>
+    </div>
+    ${u.rel.length?`<div class="sec"><div class="lbl">Releases owned (${u.rel.length})</div>${u.rel.map((r,i)=>relHtml(u,r,i)).join('')}</div>`:'<div class="sec"><div class="none">No approved releases found for this artist</div></div>'}`;
+  return el;
 }
 
-/* ── MANUAL EARNINGS OVERRIDE ──
-   Always shown, regardless of whether this artist owns any releases or is
-   credited on any split. Distribute only ever ADDS money and only works for
-   releases that already exist as a split/submission — there was no way to
-   correct a mistaken amount, zero someone out, or pay an artist who has no
-   release/split on file at all. This writes users/{uid}.earnings directly
-   with a plain overwrite (not increment), so it works in every case and can
-   move the number in either direction. */
-function buildManualOverrideSection(u) {
-  const liveVal = (parseFloat(u.earnings) || 0);
-  return `
-    <div class="card-section">
-      <div class="section-heading">Manual earnings override</div>
-      <div class="owned-song">
-        <div class="owned-song-head">
-          <div class="owned-song-title">Live users/${esc(u.id)}.earnings field</div>
-          <div class="owned-song-tag" style="background:var(--green);border-color:var(--green);">${fmtMoney(liveVal)}</div>
-        </div>
-        <div class="payout-row">
-          <input type="number" class="payout-input" id="manual-earn-${u.id}"
-            placeholder="Set earnings to (GHS)" min="0" step="0.01" value="${liveVal.toFixed(2)}">
-          <button class="distribute-btn" onclick="window.setUserEarnings('${u.id}', this)">Set Earnings</button>
-        </div>
-      </div>
-    </div>`;
+function renderCard(u){
+  const old=document.querySelector(`[data-card="${CSS.escape(u.id)}"]`);
+  if(old) old.replaceWith(cardEl(u));
 }
 
-/* ── RENDER (with grouping) ── */
-function render(data, mode) {
-  const el  = document.getElementById('results');
-  el.innerHTML = '';
-
-  if (!data.length) {
-    el.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">◎</div>
-        <div class="empty-text">No users found</div>
-        <div class="empty-sub">The users collection may be empty,<br>or your search has no matches.</div>
-      </div>`;
-    return;
-  }
-
-  const withReleases = data.filter(u => hasAnyRelease(resolveEmail(u)));
-  const noReleases    = data.filter(u => !hasAnyRelease(resolveEmail(u)));
-
-  let counter = 0;
-  const appendGroup = (label, list) => {
-    if (!list.length) return;
-    const heading = document.createElement('div');
-    heading.className = 'group-heading';
-    heading.innerHTML = `<span>${esc(label)}</span><span class="group-count">${list.length}</span>`;
-    el.appendChild(heading);
-    list.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
-  };
-
-  if (mode === 'has') {
-    appendGroup('Artists with releases', withReleases);
-  } else if (mode === 'none') {
-    appendGroup('Artists with no releases at all', noReleases);
-  } else if (mode === 'flat') {
-    data.forEach(u => { el.appendChild(buildCardHtml(u, counter)); counter++; });
-  } else {
-    appendGroup('Artists with releases', withReleases);
-    appendGroup('Artists with no releases at all', noReleases);
-  }
+function show(){
+  const box=$('results'); box.innerHTML='';
+  if(!current.length){ box.innerHTML='<div class="empty">No artists found.</div>'; }
+  current.forEach(u=>box.appendChild(cardEl(u)));
+  $('count').textContent = searching ? `${current.length} match${current.length===1?'':'es'} (max 20 shown)` : `Page ${idx+1} · ${current.length} artists`;
+  const p=$('pager');
+  if(searching){ p.innerHTML=''; return; }
+  p.innerHTML=`<button class="btn ghost" id="prev" ${idx===0?'disabled':''}>‹ Prev</button><span>Page ${idx+1}</span><button class="btn ghost" id="next" ${pages[idx]&&pages[idx].has?'':'disabled'}>Next ›</button>`;
+  $('prev').onclick=()=>{ loadPage(idx-1); window.scrollTo({top:0}); };
+  $('next').onclick=()=>{ loadPage(idx+1); window.scrollTo({top:0}); };
 }
 
-/* ── SORT ──
-   Independent of grouping: this decides the ORDER of cards, grouping (above)
-   decides which SECTION a card lands in. Both controls apply together. */
-function sortUsers(list, sortBy) {
-  const totalOf = u => financeByEmail[normEmail(resolveEmail(u))]?.total || 0;
-  const sorted = [...list];
-  if (sortBy === 'name_asc') {
-    sorted.sort((a, b) => (resolveName(a) || '').localeCompare(resolveName(b) || ''));
-  } else if (sortBy === 'name_desc') {
-    sorted.sort((a, b) => (resolveName(b) || '').localeCompare(resolveName(a) || ''));
-  } else if (sortBy === 'earnings_asc') {
-    sorted.sort((a, b) => totalOf(a) - totalOf(b) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
-  } else {
-    // earnings_desc (default)
-    sorted.sort((a, b) => totalOf(b) - totalOf(a) || (resolveName(a) || '').localeCompare(resolveName(b) || ''));
-  }
-  return sorted;
+/* ── WRITES (no reads before writing, no page reload after) ── */
+async function uidFor(email){
+  const k=ne(email); if(!k) return '';
+  for(const u of all.values()) if(u.ownerEm===k) return u.id;
+  if(k in uidCache) return uidCache[k];
+  let s=await getDocs(query(collection(db,'users'),where('email','==',email),limit(1)));
+  if(s.empty && email!==k) s=await getDocs(query(collection(db,'users'),where('email','==',k),limit(1)));
+  return uidCache[k]=s.empty?'':s.docs[0].id;
 }
 
-/* ── FILTER + GROUP + SORT DRIVER ── */
-function applyFilters() {
-  const q = document.getElementById('search').value.toLowerCase().trim();
-  const mode = document.getElementById('groupSelect').value;
-  const sortBy = document.getElementById('sortSelect').value;
-
-  const filtered = q
-    ? allUsers.filter(u => {
-        const email = normEmail(resolveEmail(u));
-        const finance = financeByEmail[email] || { owned: [], credits: [] };
-        const songMatch =
-          finance.owned.some(o => (o.songTitle || '').toLowerCase().includes(q)) ||
-          finance.credits.some(c => c.songTitle.toLowerCase().includes(q) || (c.ownerEmail || '').toLowerCase().includes(q));
-        return (resolveName(u) || '').toLowerCase().includes(q) ||
-               email.includes(q) ||
-               (u.id || '').toLowerCase().includes(q) ||
-               songMatch;
-      })
-    : allUsers;
-
-  const sorted = sortUsers(filtered, sortBy);
-
-  document.getElementById('countLabel').innerHTML =
-    `Showing <span>${sorted.length}</span> of ${allUsers.length} artist${allUsers.length !== 1 ? 's' : ''}`;
-
-  render(sorted, mode);
-  updateStats(sorted);
+async function bump(uid,d){
+  d=r2(d); if(!uid||!d) return;
+  try{
+    await updateDoc(doc(db,'users',uid),{earnings:increment(d)});
+    const t=all.get(uid); if(t){ t.earnings=r2(num(t.earnings)+d); renderCard(t); }
+  }catch(err){ console.warn('earnings sync failed',uid,err); toast('Payout saved, but could not sync earnings for '+uid,'error'); }
 }
 
-document.getElementById('search').addEventListener('input', applyFilters);
-document.getElementById('groupSelect').addEventListener('change', applyFilters);
-document.getElementById('sortSelect').addEventListener('change', applyFilters);
-
-/* ── DISTRIBUTE PAYOUT (split-based release, may have collaborators) ── */
-window.distribute = async function (splitId, btn) {
-  const input = document.getElementById(`payout-split-${splitId}`);
-  if (!input) { toast('Input not found.', 'error'); return; }
-
-  const amount = parseFloat(input.value);
-  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
-
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  try {
-    const ref  = doc(db, 'splits', splitId);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) { toast('Split not found.', 'error'); return; }
-
-    const data = snap.data();
-    const ownerEm = normEmail(data.ownerEmail);
-    const contributors = Array.isArray(data.contributors) ? data.contributors : [];
-
-    const others = contributors.filter(c => normEmail(c.email) !== ownerEm);
-    const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
-    const ownerEffPct = Math.max(0, 100 - othersPctSum);
-
-    const updatedContributors = contributors.map(c => {
-      if (normEmail(c.email) === ownerEm) return c;
-      const share = amount * ((parseFloat(c.pct) || 0) / 100);
-      return { ...c, balance: (parseFloat(c.balance) || 0) + share };
-    });
-
-    const ownerShare = amount * (ownerEffPct / 100);
-
-    await updateDoc(ref, {
-      contributors: updatedContributors,
-      ownerBalance: increment(ownerShare),
-      lastPayoutAt: serverTimestamp()
-    });
-
-    // Sync users/{uid}.earnings for everyone who got paid in this split —
-    // this is what makes ear.html and the Flutter app pick it up.
-    // FIX: resolveOwnerUid validates against real user docs before trusting
-    // any stored id, falling back to the email map — see its definition above.
-    const ownerUid = resolveOwnerUid(emailToUid[ownerEm], ownerEm);
-    await bumpUserEarnings(ownerUid, ownerShare);
-    for (const c of others) {
-      const cShare = amount * ((parseFloat(c.pct) || 0) / 100);
-      const cUid = resolveOwnerUid(emailToUid[normEmail(c.email)], c.email);
-      await bumpUserEarnings(cUid, cShare);
-    }
-
-    toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
-
-    input.value = '';
-    await loadUsers();
-  } catch (err) {
-    console.error(err);
-    toast('Distribution failed: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-
-/* ── DISTRIBUTE PAYOUT (multi-contributor release with NO splits doc —
-   like "Lighter": splitLocked, invites sent, but the splits collection doc
-   never got created). Same math as window.distribute above, just written
-   onto the submission doc's own royaltySplits/earningsBalance fields
-   instead of a splits doc's contributors/ownerBalance fields. ── */
-window.distributeSubmissionMulti = async function (submissionId, btn) {
-  const input = document.getElementById(`payout-submission-${submissionId}`);
-  if (!input) { toast('Input not found.', 'error'); return; }
-
-  const amount = parseFloat(input.value);
-  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
-
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  try {
-    const ref  = doc(db, 'submissions', submissionId);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
-
-    const data = snap.data();
-    const ownerEm = normEmail(data.email);
-    const royaltySplits = Array.isArray(data.royaltySplits) ? data.royaltySplits : [];
-
-    const others = royaltySplits.filter(r => normEmail(r.email) !== ownerEm);
-    const othersPctSum = others.reduce((sum, r) => sum + (parseFloat(r.pct) || 0), 0);
-    const ownerEffPct = Math.max(0, 100 - othersPctSum);
-
-    const updatedRoyaltySplits = royaltySplits.map(r => {
-      if (normEmail(r.email) === ownerEm) return r;
-      const share = amount * ((parseFloat(r.pct) || 0) / 100);
-      return { ...r, balance: (parseFloat(r.balance) || 0) + share };
-    });
-
-    const ownerShare = amount * (ownerEffPct / 100);
-
-    await updateDoc(ref, {
-      royaltySplits: updatedRoyaltySplits,
-      earningsBalance: increment(ownerShare),
-      lastPayoutAt: serverTimestamp()
-    });
-
-    // Sync users/{uid}.earnings for everyone who got paid.
-    // FIX: previously this trusted resolveSubmissionOwnerId(data) FIRST even
-    // when it was a stale id pointing at no real user doc. Now it's only
-    // used if it actually exists in the current users collection — otherwise
-    // the reliable email → uid map wins. See resolveOwnerUid above.
-    const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), ownerEm);
-    await bumpUserEarnings(ownerUid, ownerShare);
-    for (const r of others) {
-      const rShare = amount * ((parseFloat(r.pct) || 0) / 100);
-      const rUid = resolveOwnerUid(emailToUid[normEmail(r.email)], r.email);
-      await bumpUserEarnings(rUid, rShare);
-    }
-
-    toast(`Distributed ${fmtMoney(amount)} — owner +${fmtMoney(ownerShare)}${others.length ? `, ${others.length} collaborator${others.length>1?'s':''} paid` : ''}`, 'success');
-
-    input.value = '';
-    await loadUsers();
-  } catch (err) {
-    console.error(err);
-    toast('Distribution failed: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-
-/* ── DISTRIBUTE PAYOUT (solo release — a submission with no split doc at all).
-   No collaborators exist for these, so the full amount goes straight to the
-   owner. This writes directly to the submission doc's earningsBalance field
-   rather than touching the splits collection. ── */
-window.distributeSolo = async function (submissionId, btn) {
-  const input = document.getElementById(`payout-solo-${submissionId}`);
-  if (!input) { toast('Input not found.', 'error'); return; }
-
-  const amount = parseFloat(input.value);
-  if (!amount || isNaN(amount)) { toast('Enter a valid amount.', 'error'); return; }
-
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  try {
-    const ref = doc(db, 'submissions', submissionId);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
-
-    const data = snap.data();
-
-    await updateDoc(ref, {
-      earningsBalance: increment(amount),
-      lastPayoutAt: serverTimestamp()
-    });
-
-    // Sync users/{uid}.earnings — solo means the whole amount goes to the
-    // owner. FIX: same as above — only trust the submission's own stored id
-    // if it resolves to a real user doc, otherwise fall back to email match.
-    const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), data.email);
-    await bumpUserEarnings(ownerUid, amount);
-
-    toast(`Distributed ${fmtMoney(amount)} — full amount to owner (solo release, no split)`, 'success');
-
-    input.value = '';
-    await loadUsers();
-  } catch (err) {
-    console.error(err);
-    toast('Distribution failed: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-
-/* ── EDIT RELEASE TOTAL (redistributes by locked %, syncs only the delta) ──
-   Distribute always ADDS an amount, split proportionally. This does
-   something different: the admin types the CORRECT combined total for a
-   release (owner share + every collaborator's share, added together), and
-   this recomputes each person's individual balance from that total using
-   their locked %, exactly like Distribute's math would if the whole history
-   of payouts for that release had been that one number.
-   Every person's users/{uid}.earnings is then adjusted by the DIFFERENCE
-   between their new and old balance (not the new total, not a blind add) —
-   so correcting one release's total never double-counts or wipes out
-   earnings from someone's other releases. */
-window.setReleaseTotal = async function (type, id, btn) {
-  const input = document.getElementById(`total-${type}-${id}`);
-  if (!input) { toast('Input not found.', 'error'); return; }
-
-  const newTotal = parseFloat(input.value);
-  if (isNaN(newTotal) || newTotal < 0) { toast('Enter a valid non-negative total.', 'error'); return; }
-
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  try {
-    if (type === 'split') {
-      const ref = doc(db, 'splits', id);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) { toast('Split not found.', 'error'); return; }
-
-      const data = snap.data();
-      const ownerEm = normEmail(data.ownerEmail);
-      const contributors = Array.isArray(data.contributors) ? data.contributors : [];
-      const others = contributors.filter(c => normEmail(c.email) !== ownerEm);
-      const othersPctSum = others.reduce((sum, c) => sum + (parseFloat(c.pct) || 0), 0);
-      const ownerEffPct = Math.max(0, 100 - othersPctSum);
-
-      const newOwnerBal = newTotal * (ownerEffPct / 100);
-      const ownerDelta = newOwnerBal - (parseFloat(data.ownerBalance) || 0);
-
-      const deltas = [];
-      const updatedContributors = contributors.map(c => {
-        if (normEmail(c.email) === ownerEm) return c;
-        const pct = parseFloat(c.pct) || 0;
-        const newBal = newTotal * (pct / 100);
-        deltas.push({ email: c.email, delta: newBal - (parseFloat(c.balance) || 0) });
-        return { ...c, balance: newBal };
-      });
-
-      await updateDoc(ref, {
-        contributors: updatedContributors,
-        ownerBalance: newOwnerBal,
-        lastPayoutAt: serverTimestamp()
-      });
-
-      const ownerUid = resolveOwnerUid(emailToUid[ownerEm], ownerEm);
-      await bumpUserEarnings(ownerUid, ownerDelta);
-      for (const d of deltas) {
-        const uid = resolveOwnerUid(emailToUid[normEmail(d.email)], d.email);
-        await bumpUserEarnings(uid, d.delta);
-      }
-
-    } else if (type === 'submission') {
-      const ref = doc(db, 'submissions', id);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
-
-      const data = snap.data();
-      const ownerEm = normEmail(data.email);
-      const royaltySplits = Array.isArray(data.royaltySplits) ? data.royaltySplits : [];
-      const others = royaltySplits.filter(r => normEmail(r.email) !== ownerEm);
-      const othersPctSum = others.reduce((sum, r) => sum + (parseFloat(r.pct) || 0), 0);
-      const ownerEffPct = Math.max(0, 100 - othersPctSum);
-
-      const newOwnerBal = newTotal * (ownerEffPct / 100);
-      const ownerDelta = newOwnerBal - (parseFloat(data.earningsBalance) || 0);
-
-      const deltas = [];
-      const updatedRoyaltySplits = royaltySplits.map(r => {
-        if (normEmail(r.email) === ownerEm) return r;
-        const pct = parseFloat(r.pct) || 0;
-        const newBal = newTotal * (pct / 100);
-        deltas.push({ email: r.email, delta: newBal - (parseFloat(r.balance) || 0) });
-        return { ...r, balance: newBal };
-      });
-
-      await updateDoc(ref, {
-        royaltySplits: updatedRoyaltySplits,
-        earningsBalance: newOwnerBal,
-        lastPayoutAt: serverTimestamp()
-      });
-
-      const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), ownerEm);
-      await bumpUserEarnings(ownerUid, ownerDelta);
-      for (const d of deltas) {
-        const uid = resolveOwnerUid(emailToUid[normEmail(d.email)], d.email);
-        await bumpUserEarnings(uid, d.delta);
-      }
-
-    } else {
-      // 'solo' — a submission with no collaborators at all; the whole total
-      // belongs to the owner.
-      const ref = doc(db, 'submissions', id);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) { toast('Submission not found.', 'error'); return; }
-
-      const data = snap.data();
-      const delta = newTotal - (parseFloat(data.earningsBalance) || 0);
-
-      await updateDoc(ref, {
-        earningsBalance: newTotal,
-        lastPayoutAt: serverTimestamp()
-      });
-
-      const ownerUid = resolveOwnerUid(resolveSubmissionOwnerId(data), data.email);
-      await bumpUserEarnings(ownerUid, delta);
-    }
-
-    toast(`Total set to ${fmtMoney(newTotal)} — redistributed by locked %`, 'success');
-    await loadUsers();
-  } catch (err) {
-    console.error(err);
-    toast('Update failed: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-
-/* ── MANUAL SET (overwrite, not increment) ──
-   Works for ANY user regardless of whether they own a release, are credited
-   on a split, or have any submissions at all. Lets you correct a mistaken
-   Distribute, zero someone out, or pay an artist with no release on file. */
-window.setUserEarnings = async function (uid, btn) {
-  const input = document.getElementById(`manual-earn-${uid}`);
-  if (!input) { toast('Input not found.', 'error'); return; }
-
-  const val = parseFloat(input.value);
-  if (isNaN(val) || val < 0) { toast('Enter a valid non-negative amount.', 'error'); return; }
-
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  try {
-    await updateDoc(doc(db, 'users', uid), { earnings: val, updatedAt: serverTimestamp() });
-    toast(`Earnings set to ${fmtMoney(val)}`, 'success');
-    await loadUsers();
-  } catch (err) {
-    console.error(err);
-    toast('Failed to set earnings: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
-};
-
-/* ── ONE-TIME BACKFILL ──
-   Every distribute action going forward now writes to users/{uid}.earnings
-   (see bumpUserEarnings above), but anything paid out BEFORE that fix only
-   lives in splits.ownerBalance / contributors[].balance / submissions
-   .earningsBalance / royaltySplits[].balance — financeByEmail already sums
-   all of that correctly for the cards on this page.
-   This button just writes that same computed total straight into
-   users/{uid}.earnings for every artist. It's a SET, not an increment, so
-   running it twice (or after new distributions) never double-counts —
-   it just re-syncs the field to match the true total shown on this page.
-   Uses emailToUid directly (not resolveOwnerUid) since this is purely an
-   email-keyed backfill with no stored submission id involved. */
-window.runBackfill = async function () {
-  if (!Object.keys(financeByEmail).length) {
-    toast('Load users first.', 'error');
-    return;
-  }
-  const confirmed = window.confirm(
-    'This will set users/{uid}.earnings to match each artist\'s total shown on this page (a full overwrite of that field, not an add-on). Continue?'
-  );
-  if (!confirmed) return;
-
-  let updated = 0, skipped = 0, failed = 0;
-
-  for (const email of Object.keys(financeByEmail)) {
-    const uid = emailToUid[email];
-    if (!uid) { skipped++; continue; }
-    const total = financeByEmail[email].total || 0;
-    try {
-      await updateDoc(doc(db, 'users', uid), { earnings: total });
-      updated++;
-    } catch (err) {
-      console.warn(`Backfill failed for ${email} (uid ${uid}):`, err.message);
-      failed++;
-    }
-  }
-
-  toast(`Synced ${updated} artist${updated !== 1 ? 's' : ''}${skipped ? `, ${skipped} skipped (no matching uid)` : ''}${failed ? `, ${failed} failed` : ''}`, failed ? 'error' : 'success');
-};
-
-/* ── PASSWORD GATE ──
-   Client-side only: keeps casual visitors out of the admin view, but the
-   password lives in this file's JS, so anyone who reads the page source can
-   find it. Pair this with Firestore security rules if this data truly needs
-   to be protected from a determined attacker. */
-const ADMIN_PASSWORD = "Music112@";
-const SESSION_KEY = 'em_admin_unlocked';
-
-function unlockApp() {
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('appHeader').style.display = 'flex';
-  document.getElementById('appMain').style.display = 'block';
-  loadUsers();
+async function commit(u,r,mode,v){
+  const em=u.ownerEm, raw=r.raw;
+  const others=raw.filter(c=>ne(c.email)!==em);
+  const eff=Math.max(0,100-others.reduce((s,c)=>s+num(c.pct),0));
+  const ownerNew=r2(mode==='add'?r.ownerBal+v*eff/100:v*eff/100);
+  const deltas=[];
+  const newRaw=raw.map(c=>{
+    if(ne(c.email)===em) return c;
+    const old=num(c.balance), nb=r2(mode==='add'?old+v*num(c.pct)/100:v*num(c.pct)/100);
+    deltas.push([c.email,nb-old]); return {...c,balance:nb};
+  });
+  const ts=serverTimestamp();
+  const patch=r.type==='split'?{contributors:newRaw,ownerBalance:ownerNew,lastPayoutAt:ts}
+    :r.type==='submission'?{royaltySplits:newRaw,earningsBalance:ownerNew,lastPayoutAt:ts}
+    :{earningsBalance:ownerNew,lastPayoutAt:ts};
+  await updateDoc(doc(db,r.type==='split'?'splits':'submissions',r.id),patch);
+  const ownerDelta=ownerNew-r.ownerBal;
+  r.raw=newRaw; r.ownerBal=ownerNew;
+  await bump(u.id,ownerDelta);
+  for(const [email,d] of deltas) await bump(await uidFor(email),d);
 }
 
-function attemptUnlock() {
-  const input = document.getElementById('gatePassword');
-  const errEl = document.getElementById('gateError');
-  const box   = document.getElementById('gateBox');
-  if (input.value === ADMIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    unlockApp();
-  } else {
-    errEl.textContent = 'Incorrect password.';
-    box.classList.remove('gate-shake');
-    void box.offsetWidth;
-    box.classList.add('gate-shake');
-    input.value = '';
-    input.focus();
-  }
-}
-
-document.getElementById('gateBtn').addEventListener('click', attemptUnlock);
-document.getElementById('gatePassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') attemptUnlock();
+$('results').addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const u=all.get(b.dataset.u); if(!u) return;
+  const act=b.dataset.act, v=parseFloat(b.parentElement.querySelector('input').value);
+  if(isNaN(v)||v<0||(act==='add'&&!v)){ toast('Enter a valid amount.','error'); return; }
+  const t=b.textContent; b.disabled=true; b.textContent='…';
+  try{
+    if(act==='earn'){
+      await updateDoc(doc(db,'users',u.id),{earnings:v,updatedAt:serverTimestamp()});
+      u.earnings=v;
+    } else await commit(u,u.rel[+b.dataset.r],act,v);
+    renderCard(u);
+    toast(act==='earn'?`Earnings set to ${money(v)}`:act==='add'?`Distributed ${money(v)}`:`Total set to ${money(v)}`);
+  }catch(err){ console.error(err); toast('Failed: '+err.message,'error'); b.disabled=false; b.textContent=t; }
 });
 
-if (sessionStorage.getItem(SESSION_KEY) === '1') {
-  unlockApp();
-} else {
-  document.getElementById('gatePassword').focus();
-}
+/* ── CONTROLS ── */
+$('searchBtn').onclick=runSearch;
+$('search').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
+$('sortSelect').onchange=e=>{ sortMode=e.target.value; $('search').value=''; pages=[]; loadPage(0); };
+$('refreshBtn').onclick=()=>{ if(searching){ runSearch(); return; } pages.length=idx; loadPage(idx); };
 
+/* ── PASSWORD GATE (client-side only — pair with Firestore security rules) ── */
+const PW="Music112@", KEY='em_admin_unlocked';
+function unlock(){ $('gate').style.display='none'; $('appHeader').style.display='flex'; $('appMain').style.display='block'; loadPage(0); }
+function tryUnlock(){
+  if($('gatePassword').value===PW){ sessionStorage.setItem(KEY,'1'); unlock(); }
+  else { $('gateError').textContent='Incorrect password.'; $('gatePassword').value=''; }
+}
+$('gateBtn').onclick=tryUnlock;
+$('gatePassword').addEventListener('keydown',e=>{ if(e.key==='Enter') tryUnlock(); });
+sessionStorage.getItem(KEY)==='1'?unlock():$('gatePassword').focus();
 </script>
 </body>
 </html>
