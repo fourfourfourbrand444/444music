@@ -31,10 +31,23 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .main{max-width:900px;margin:0 auto;padding:28px 16px 70px}
 h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{color:var(--sec);font-weight:500}
 .sub{color:var(--sec);font-size:13px;line-height:1.7;margin:6px 0 22px;max-width:640px}
-.controls{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:14px}
-.controls input,.controls select{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--ink);outline:none;min-width:0;width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.controls input,.controls select{flex:1 1 180px;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--ink);outline:none;min-width:0}
+.controls #search{flex:2 1 260px}
 .controls input:focus,.controls select:focus{border-color:var(--bd2)}
-.sbtn{background:#000;color:#fff;border:0;border-radius:12px;padding:0 18px;font-weight:700;font-size:13px}
+.sbtn{background:#000;color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:13px}
+.sbtn.alt{background:#fff;color:#000;border:1px solid var(--bd2)}
+.hr{display:flex;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rs);padding:14px}
+.stat .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);margin-bottom:6px}
+.stat b{font-size:clamp(16px,4.5vw,23px);font-weight:700}.stat b.g,.cr .g{color:var(--green)}
+.gh{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-weight:700;font-size:13px}
+.gh::after{content:'';flex:1;height:1px;background:var(--bd)}
+.gc{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--sec);background:var(--bg2);border:1px solid var(--bd);padding:2px 8px;border-radius:20px}
+.cr{background:var(--in);border:1px solid var(--bd);border-radius:var(--rs);padding:10px 12px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.cr b{font-size:12.5px;overflow-wrap:anywhere}.cr .g{font-size:14px;font-family:'IBM Plex Mono',monospace}
+.warn{font-size:11px;line-height:1.5;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px}
 .count{font-size:11px;color:var(--dim);margin-bottom:12px;font-family:'IBM Plex Mono',monospace}
 #results{display:flex;flex-direction:column;gap:12px}
 
@@ -70,7 +83,7 @@ h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{co
 .toast{background:#fff;border:1px solid var(--bd2);border-left:3px solid var(--green);border-radius:var(--rs);padding:12px 16px;font-size:12.5px;box-shadow:0 8px 28px rgba(0,0,0,.14);max-width:100%}
 .toast.error{border-left-color:var(--red)}
 @media(max-width:640px){
- .controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.sbtn{grid-column:1/-1;padding:13px}
+ .controls>*{flex:1 1 100%!important}.stats{gap:8px}.stat{padding:12px 10px}.hbtn{padding:8px 10px;font-size:11px}
  .card{padding:14px}.tot{width:100%;text-align:left}.pr{flex-wrap:wrap}.pr .btn{flex:1}.pr input{flex:1 1 100%}
 }
 </style>
@@ -87,17 +100,24 @@ h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{co
 
 <header class="header" id="appHeader" style="display:none">
   <div class="logo"><div class="badge">$</div><div>444<span>Music</span></div></div>
-  <button class="hbtn" id="refreshBtn">↻ Refresh</button>
+  <div class="hr"><button class="hbtn" id="syncBtn">⇪ Sync Earnings</button><button class="hbtn" id="refreshBtn">↻ Refresh</button></div>
 </header>
 
 <main class="main" id="appMain" style="display:none">
   <h1>Earnings <span>Manager</span></h1>
-  <p class="sub">Artists load 10 at a time, with only their own releases. Distribute adds money split by locked %. Update Total corrects a release's combined total. Set Earnings overwrites the live <span class="mono">users/{uid}.earnings</span> field. Saving updates only that card — no reload.</p>
+  <p class="sub">Artists load 10 at a time with only their own releases. <b>Distribute</b> splits an amount by locked %. <b>Update Total</b> corrects a release's combined total. <b>Set Earnings</b> overwrites the live <span class="mono">users/{uid}.earnings</span> field. Saving updates only that card — no reload. <b>Load contributor credits</b> reads the splits once to show collaborator credits. <b>Sync Earnings</b> reads everything once and writes only artists whose number differs.</p>
 
+  <div class="stats">
+    <div class="stat"><div class="lbl">Total Artists</div><b id="statCount">—</b></div>
+    <div class="stat"><div class="lbl">Total Paid Out</div><b id="statTotal">—</b></div>
+    <div class="stat"><div class="lbl">Artists with Earnings</div><b class="g" id="statActive">—</b></div>
+  </div>
   <div class="controls">
     <input id="search" placeholder="Search name, email or UID — press Enter" autocomplete="off" spellcheck="false">
-    <select id="sortSelect"><option value="id">Sort: Default</option><option value="earnings">Sort: Highest earnings</option></select>
     <button class="sbtn" id="searchBtn">Search</button>
+    <select id="groupSelect"><option value="grouped">Group: has releases / no releases</option><option value="has">Only artists with releases</option><option value="none">Only artists with no releases</option><option value="flat">No grouping</option></select>
+    <select id="sortSelect"><option value="id">Sort: Default order</option><option value="earnings_desc">Sort: Highest earnings first</option><option value="earnings_asc">Sort: Lowest earnings first</option><option value="name_asc">Sort: Name (A–Z)</option><option value="name_desc">Sort: Name (Z–A)</option></select>
+    <button class="sbtn alt" id="credBtn">Load contributor credits</button>
   </div>
   <div class="count" id="count">Loading…</div>
   <div id="results"></div>
@@ -106,7 +126,7 @@ h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{co
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, increment, serverTimestamp, query, where, orderBy, limit, startAfter, documentId }
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, increment, serverTimestamp, query, where, orderBy, limit, startAfter, documentId, getCountFromServer, getAggregateFromServer, sum }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const db = getFirestore(initializeApp({
@@ -138,6 +158,7 @@ let pages=[], idx=0, sortMode='id', searching=false, loading=false;
 let current=[];                 // users currently on screen
 const all=new Map();            // uid -> user (every user loaded this session)
 const uidCache={};              // email -> uid for collaborators
+let group='grouped', creditsOn=false, credits={}, stats={n:0,paid:0,active:0};
 
 /* ── DATA ── */
 async function chunked(col, field, vals){
@@ -149,26 +170,46 @@ async function chunked(col, field, vals){
   return out;
 }
 
+function buildRel(users, subs, splits){
+  users.forEach(u=>{
+    const em=u.ownerEm; u.rel=[];
+    const mine=subs.filter(s=>ne(s.email)===em);
+    const titles=new Set(mine.map(s=>low(sTitle(s))));
+    splits.filter(s=>ne(s.ownerEmail)===em && titles.has(low(s.songTitle))).forEach(s=>
+      u.rel.push({type:'split',id:s.id,title:s.songTitle||'Untitled',raw:Array.isArray(s.contributors)?s.contributors:[],ownerBal:num(s.ownerBalance)}));
+    mine.filter(s=>low(s.status)==='approved').forEach(s=>{
+      const t=sTitle(s), hit=u.rel.find(r=>r.type==='split'&&low(r.title)===low(t));
+      if(hit){ if(num(s.earningsBalance)>0) hit.orphan=(hit.orphan||0)+num(s.earningsBalance); return; }
+      const raw=Array.isArray(s.royaltySplits)?s.royaltySplits:[];
+      u.rel.push({type:raw.some(c=>ne(c.email)!==em)?'submission':'solo',id:s.id,title:t,raw,ownerBal:num(s.earningsBalance)});
+    });
+  });
+}
+
 // Loads releases ONLY for the users on this page (2 batched queries).
 async function attach(users){
   users.forEach(u=>{ u.ownerEm=ne(uEmail(u)); u.rel=[]; all.set(u.id,u); });
   const emails=[...new Set(users.flatMap(u=>{const e=uEmail(u);return e?[e,e.toLowerCase()]:[]}))];
   if(!emails.length) return;
   const [subs,splits]=await Promise.all([chunked('submissions','email',emails), chunked('splits','ownerEmail',emails)]);
-  users.forEach(u=>{
-    const em=u.ownerEm;
-    const mine=subs.filter(s=>ne(s.email)===em);
-    const titles=new Set(mine.map(s=>low(sTitle(s))));
-    splits.filter(s=>ne(s.ownerEmail)===em && titles.has(low(s.songTitle))).forEach(s=>
-      u.rel.push({type:'split',id:s.id,title:s.songTitle||'Untitled',raw:Array.isArray(s.contributors)?s.contributors:[],ownerBal:num(s.ownerBalance)}));
-    mine.filter(s=>low(s.status)==='approved').forEach(s=>{
-      const t=sTitle(s);
-      if(u.rel.some(r=>r.type==='split'&&low(r.title)===low(t))) return;
-      const raw=Array.isArray(s.royaltySplits)?s.royaltySplits:[];
-      const hasOthers=raw.some(c=>ne(c.email)!==em);
-      u.rel.push({type:hasOthers?'submission':'solo',id:s.id,title:t,raw,ownerBal:num(s.earningsBalance)});
-    });
+  buildRel(users,subs,splits);
+}
+
+function buildCredits(splits, subs, existing){
+  const map={}, add=(em,x)=>(map[em]=map[em]||[]).push(x), key=(e,t)=>ne(e)+'::'+low(t), covered=new Set();
+  splits.forEach(s=>{
+    const o=ne(s.ownerEmail);
+    if(existing&&!existing.has(key(s.ownerEmail,s.songTitle))) return;
+    covered.add(key(s.ownerEmail,s.songTitle));
+    (Array.isArray(s.contributors)?s.contributors:[]).filter(c=>ne(c.email)&&ne(c.email)!==o)
+      .forEach(c=>add(ne(c.email),{src:s.id,title:s.songTitle||'Untitled',owner:s.ownerEmail||'',pct:num(c.pct),bal:num(c.balance)}));
   });
+  subs.filter(s=>low(s.status)==='approved'&&!covered.has(key(s.email,sTitle(s)))).forEach(s=>{
+    const o=ne(s.email);
+    (Array.isArray(s.royaltySplits)?s.royaltySplits:[]).filter(c=>ne(c.email)&&ne(c.email)!==o)
+      .forEach(c=>add(ne(c.email),{src:s.id,title:sTitle(s),owner:s.email||'',pct:num(c.pct),bal:num(c.balance)}));
+  });
+  return map;
 }
 
 async function loadPage(i){
@@ -176,7 +217,7 @@ async function loadPage(i){
   try{
     if(!pages[i]){
       $('results').innerHTML='<div class="loading"><div class="spin"></div>Loading artists…</div>';
-      const order = sortMode==='earnings'?orderBy('earnings','desc'):orderBy(documentId());
+      const order = {earnings_desc:()=>orderBy('earnings','desc'),earnings_asc:()=>orderBy('earnings','asc'),name_asc:()=>orderBy('name'),name_desc:()=>orderBy('name','desc')}[sortMode]?.() || orderBy(documentId());
       const cur = i>0?pages[i-1].cursor:null;
       const q = cur?query(collection(db,'users'),order,startAfter(cur),limit(PAGE+1)):query(collection(db,'users'),order,limit(PAGE+1));
       const docs=(await getDocs(q)).docs, shown=docs.slice(0,PAGE);
@@ -222,25 +263,32 @@ function relHtml(u,r,ri){
     <div class="sh"><b>${esc(r.title)}</b><span class="tag">${others.length?others.length+' collaborator'+(others.length>1?'s':''):'Solo release'}</span></div>
     ${others.map(c=>`<div class="row2"><span>${esc(c.name||c.email)} <i>${num(c.pct).toFixed(1)}%</i></span><em>${money(c.balance)}</em></div>`).join('')}
     <div class="row2 own"><span>Owner share <i>${eff.toFixed(1)}%</i></span><em>${money(r.ownerBal)}</em></div>
+    ${r.orphan?`<div class="warn">⚠ ${money(r.orphan)} was paid to the owner before this release had a splits doc — not counted in the totals above. Add it to the owner's balance by hand if it should still count.</div>`:''}
     <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount to distribute (GHS)"><button class="btn" data-act="add" ${d}>Distribute</button></div>
     <div class="note">Correct combined total — re-splits by locked %</div>
     <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${tot.toFixed(2)}"><button class="btn ghost" data-act="set" ${d}>Update Total</button></div>
   </div>`;
 }
 
+const credOf=u=>creditsOn?(credits[u.ownerEm]||[]):[];
+const hasAny=u=>u.rel.length>0||credOf(u).length>0;
 function cardEl(u){
   const el=document.createElement('div'); el.className='card'; el.dataset.card=u.id;
-  const live=num(u.earnings);
+  const live=num(u.earnings), cr=credOf(u);
+  const auto=u.rel.reduce((s,r)=>s+r.ownerBal,0)+cr.reduce((s,c)=>s+c.bal,0);
   el.innerHTML=`
     <div class="top">
       <div class="av">${esc(ini(u))}</div>
       <div class="info"><div class="nm">${esc(uName(u)||'Unknown Artist')}</div><div class="em">${esc(uEmail(u)||'—')}</div><div class="uid">UID: ${esc(u.id)}</div></div>
-      <div class="tot"><div class="lbl">Live earnings</div><b>${money(live)}</b></div>
+      <div class="tot"><div class="lbl">${creditsOn?'Total earnings (auto)':'Owned releases total'}</div><b>${money(auto)}</b></div>
     </div>
     <div class="sec"><div class="lbl">Manual earnings override</div>
-      <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${live.toFixed(2)}" placeholder="Set earnings to (GHS)"><button class="btn" data-act="earn" data-u="${esc(u.id)}">Set Earnings</button></div>
+      <div class="song"><div class="sh"><b>Live users/${esc(u.id)}.earnings field</b><span class="tag" style="background:var(--green)">${money(live)}</span></div>
+      <div class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${live.toFixed(2)}" placeholder="Set earnings to (GHS)"><button class="btn" data-act="earn" data-u="${esc(u.id)}">Set Earnings</button></div></div>
     </div>
-    ${u.rel.length?`<div class="sec"><div class="lbl">Releases owned (${u.rel.length})</div>${u.rel.map((r,i)=>relHtml(u,r,i)).join('')}</div>`:'<div class="sec"><div class="none">No approved releases found for this artist</div></div>'}`;
+    ${u.rel.length?`<div class="sec"><div class="lbl">Releases you own (${u.rel.length})</div>${u.rel.map((r,i)=>relHtml(u,r,i)).join('')}</div>`:''}
+    ${cr.length?`<div class="sec"><div class="lbl">Contributor credits (${cr.length})</div>${cr.map(c=>`<div class="cr"><div><b>${esc(c.title)}</b><div class="em">Owner: ${esc(c.owner||'—')}</div></div><div style="text-align:right"><div class="lbl">${c.pct.toFixed(1)}%</div><b class="g">${money(c.bal)}</b></div></div>`).join('')}</div>`:''}
+    ${hasAny(u)?'':'<div class="sec"><div class="none">Not part of any locked split yet</div></div>'}`;
   return el;
 }
 
@@ -251,8 +299,15 @@ function renderCard(u){
 
 function show(){
   const box=$('results'); box.innerHTML='';
-  if(!current.length){ box.innerHTML='<div class="empty">No artists found.</div>'; }
-  current.forEach(u=>box.appendChild(cardEl(u)));
+  const w=current.filter(hasAny), n=current.filter(u=>!hasAny(u));
+  const add=(label,list)=>{ if(!list.length) return;
+    const h=document.createElement('div'); h.className='gh'; h.innerHTML=`<span>${label}</span><span class="gc">${list.length}</span>`; box.appendChild(h);
+    list.forEach(u=>box.appendChild(cardEl(u))); };
+  if(group==='has') add('Artists with releases',w);
+  else if(group==='none') add('Artists with no releases at all',n);
+  else if(group==='flat') current.forEach(u=>box.appendChild(cardEl(u)));
+  else { add('Artists with releases',w); add('Artists with no releases at all',n); }
+  if(!box.children.length) box.innerHTML='<div class="empty">No artists found.</div>';
   $('count').textContent = searching ? `${current.length} match${current.length===1?'':'es'} (max 20 shown)` : `Page ${idx+1} · ${current.length} artists`;
   const p=$('pager');
   if(searching){ p.innerHTML=''; return; }
@@ -271,11 +326,17 @@ async function uidFor(email){
   return uidCache[k]=s.empty?'':s.docs[0].id;
 }
 
+function setEarn(t,v2){
+  const old=num(t.earnings); stats.paid=r2(stats.paid+v2-old);
+  if(old<=0&&v2>0) stats.active++; if(old>0&&v2<=0) stats.active--;
+  t.earnings=v2; drawStats();
+}
 async function bump(uid,d){
   d=r2(d); if(!uid||!d) return;
   try{
     await updateDoc(doc(db,'users',uid),{earnings:increment(d)});
-    const t=all.get(uid); if(t){ t.earnings=r2(num(t.earnings)+d); renderCard(t); }
+    const t=all.get(uid);
+    if(t){ setEarn(t,r2(num(t.earnings)+d)); renderCard(t); } else { stats.paid=r2(stats.paid+d); drawStats(); }
   }catch(err){ console.warn('earnings sync failed',uid,err); toast('Payout saved, but could not sync earnings for '+uid,'error'); }
 }
 
@@ -288,13 +349,14 @@ async function commit(u,r,mode,v){
   const newRaw=raw.map(c=>{
     if(ne(c.email)===em) return c;
     const old=num(c.balance), nb=r2(mode==='add'?old+v*num(c.pct)/100:v*num(c.pct)/100);
-    deltas.push([c.email,nb-old]); return {...c,balance:nb};
+    deltas.push([c.email,nb-old,nb]); return {...c,balance:nb};
   });
   const ts=serverTimestamp();
   const patch=r.type==='split'?{contributors:newRaw,ownerBalance:ownerNew,lastPayoutAt:ts}
     :r.type==='submission'?{royaltySplits:newRaw,earningsBalance:ownerNew,lastPayoutAt:ts}
     :{earningsBalance:ownerNew,lastPayoutAt:ts};
   await updateDoc(doc(db,r.type==='split'?'splits':'submissions',r.id),patch);
+  if(creditsOn) deltas.forEach(([em2,,nb])=>(credits[ne(em2)]||[]).forEach(c=>{ if(c.src===r.id) c.bal=nb; }));
   const ownerDelta=ownerNew-r.ownerBal;
   r.raw=newRaw; r.ownerBal=ownerNew;
   await bump(u.id,ownerDelta);
@@ -310,22 +372,73 @@ $('results').addEventListener('click',async e=>{
   try{
     if(act==='earn'){
       await updateDoc(doc(db,'users',u.id),{earnings:v,updatedAt:serverTimestamp()});
-      u.earnings=v;
+      setEarn(u,v);
     } else await commit(u,u.rel[+b.dataset.r],act,v);
     renderCard(u);
     toast(act==='earn'?`Earnings set to ${money(v)}`:act==='add'?`Distributed ${money(v)}`:`Total set to ${money(v)}`);
   }catch(err){ console.error(err); toast('Failed: '+err.message,'error'); b.disabled=false; b.textContent=t; }
 });
 
+/* ── STATS (server-side aggregates: ~1 read per 1000 users) ── */
+const drawStats=()=>{ $('statCount').textContent=stats.n; $('statTotal').textContent=money(stats.paid); $('statActive').textContent=stats.active; };
+async function loadStats(){
+  try{
+    const c=collection(db,'users');
+    const [a,b,d]=await Promise.all([getCountFromServer(c), getAggregateFromServer(c,{t:sum('earnings')}), getCountFromServer(query(c,where('earnings','>',0)))]);
+    stats={n:a.data().count,paid:num(b.data().t),active:d.data().count}; drawStats();
+  }catch(err){ console.warn('stats failed',err); }
+}
+
+/* ── CONTRIBUTOR CREDITS (one read of splits + locked submissions, cached) ── */
+async function loadCredits(){
+  const b=$('credBtn'); b.disabled=true; b.textContent='Loading credits…';
+  try{
+    const [sp,sb]=await Promise.all([getDocs(collection(db,'splits')), getDocs(query(collection(db,'submissions'),where('splitLocked','==',true)))]);
+    credits=buildCredits(sp.docs.map(d=>({id:d.id,...d.data()})), sb.docs.map(d=>({id:d.id,...d.data()})), null);
+    creditsOn=true; show(); toast('Contributor credits loaded');
+    b.textContent='↻ Reload contributor credits';
+  }catch(err){ toast('Failed: '+err.message,'error'); b.textContent='Load contributor credits'; }
+  b.disabled=false;
+}
+
+/* ── SYNC EARNINGS (manual, reads everything once, writes only changed artists) ── */
+async function runSync(){
+  if(!confirm("Sync Earnings reads ALL users, splits and submissions once, then writes users/{uid}.earnings only for artists whose value differs from their computed total. Continue?")) return;
+  const b=$('syncBtn'); b.disabled=true; b.textContent='Syncing…';
+  try{
+    const [us,sp,sb]=await Promise.all([getDocs(collection(db,'users')),getDocs(collection(db,'splits')),getDocs(collection(db,'submissions'))]);
+    const users=us.docs.map(d=>({id:d.id,...d.data()})), splits=sp.docs.map(d=>({id:d.id,...d.data()})), subs=sb.docs.map(d=>({id:d.id,...d.data()}));
+    users.forEach(u=>u.ownerEm=ne(uEmail(u)));
+    buildRel(users,subs,splits);
+    credits=buildCredits(splits,subs,new Set(subs.map(s=>ne(s.email)+'::'+low(sTitle(s)))));
+    let up=0,same=0,fail=0;
+    for(const u of users){
+      const cr=credits[u.ownerEm]||[];
+      if(!u.ownerEm||(!u.rel.length&&!cr.length)) continue;
+      const total=r2(u.rel.reduce((s,r)=>s+r.ownerBal,0)+cr.reduce((s,c)=>s+c.bal,0));
+      if(Math.abs(num(u.earnings)-total)<0.005){ same++; continue; }
+      try{ await updateDoc(doc(db,'users',u.id),{earnings:total}); up++; const t=all.get(u.id); if(t) t.earnings=total; }
+      catch(err){ fail++; console.warn('sync failed',u.id,err.message); }
+    }
+    creditsOn=true; $('credBtn').textContent='↻ Reload contributor credits';
+    await loadStats(); show();
+    toast(`Synced ${up} artist${up!==1?'s':''}, ${same} already correct${fail?`, ${fail} failed`:''}`,fail?'error':'success');
+  }catch(err){ toast('Sync failed: '+err.message,'error'); }
+  b.disabled=false; b.textContent='⇪ Sync Earnings';
+}
+
 /* ── CONTROLS ── */
 $('searchBtn').onclick=runSearch;
 $('search').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
 $('sortSelect').onchange=e=>{ sortMode=e.target.value; $('search').value=''; pages=[]; loadPage(0); };
-$('refreshBtn').onclick=()=>{ if(searching){ runSearch(); return; } pages.length=idx; loadPage(idx); };
+$('refreshBtn').onclick=()=>{ loadStats(); if(searching){ runSearch(); return; } pages.length=idx; loadPage(idx); };
+$('groupSelect').onchange=e=>{ group=e.target.value; show(); };
+$('credBtn').onclick=loadCredits;
+$('syncBtn').onclick=runSync;
 
 /* ── PASSWORD GATE (client-side only — pair with Firestore security rules) ── */
 const PW="Music112@", KEY='em_admin_unlocked';
-function unlock(){ $('gate').style.display='none'; $('appHeader').style.display='flex'; $('appMain').style.display='block'; loadPage(0); }
+function unlock(){ $('gate').style.display='none'; $('appHeader').style.display='flex'; $('appMain').style.display='block'; loadPage(0); loadStats(); }
 function tryUnlock(){
   if($('gatePassword').value===PW){ sessionStorage.setItem(KEY,'1'); unlock(); }
   else { $('gateError').textContent='Incorrect password.'; $('gatePassword').value=''; }
