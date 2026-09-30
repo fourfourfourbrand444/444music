@@ -23,6 +23,8 @@
          page never re-render, so nothing flashes.
        • Only transform/opacity are animated. Hover effects only
          apply on devices that can really hover.
+     Access: fans see only the store buttons. The "Add a store link"
+     control is shown only to the signed-in owner of the release.
   ═══════════════════════════════════════════════════════ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -138,7 +140,7 @@
   .pending-title { font-family: var(--ff-display); font-weight: 700; font-size: 1rem; }
   .pending-text  { color: var(--text-sec); font-size: 0.88rem; line-height: 1.5; }
 
-  /* ── Add-a-store (only rendered when at least one link exists) ── */
+  /* ── Add-a-store (owner only, and only once at least one link exists) ── */
   #addStoreSection { margin-top: 12px; }
   .add-store-btn {
     display: flex; align-items: center; justify-content: center;
@@ -220,6 +222,8 @@ import { initializeApp }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs, limit, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -229,8 +233,9 @@ const firebaseConfig = {
   messagingSenderId: "734783502459",
   appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
 };
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
 
 const STORE_LABELS = {
   spotify:      'Spotify',
@@ -245,7 +250,7 @@ const STORE_LABELS = {
   tidal:        'Tidal',
   soundcloud:   'SoundCloud'
 };
-// Fixed list of platforms this page can show or let someone add —
+// Fixed list of platforms this page can show or let the owner add —
 // never free text.
 const STORE_ORDER = ['spotify','appleMusic','youtubeMusic','audiomack','boomplay','deezer','amazonMusic','tidal','youtube','itunes','soundcloud'];
 
@@ -269,8 +274,15 @@ const DEFAULT_ICON = { bg: 'rgba(0,0,0,0.55)', svg: '<svg viewBox="0 0 24 24" fi
 let currentItem   = null;
 let currentDocRef = null;
 let addFormOpen   = false;
+let authUser      = null;   // the signed-in visitor, if any
 
 const $ = (id) => document.getElementById(id);
+
+// Only the signed-in owner of this release may add store links.
+// Fans (signed out, or signed in as someone else) never see the control.
+function canManage() {
+  return !!(authUser && currentItem && currentItem.userId && authUser.uid === currentItem.userId);
+}
 
 function escHtml(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -356,8 +368,10 @@ function availablePlatformsToAdd() {
   return STORE_ORDER.filter(k => !live[k]);
 }
 
-// The add-a-store control ONLY exists once the release already has at
-// least one live link. A release with none is "not delivered yet".
+// The add-a-store control ONLY exists for the signed-in owner of the
+// release, and only once the release already has at least one live
+// link (a release with none is "not delivered yet"). Everyone else
+// gets an empty section.
 function renderAddStoreSection() {
   const container = $('addStoreSection');
   if (!container) return;
@@ -365,7 +379,7 @@ function renderAddStoreSection() {
   const hasAnyLink = Object.keys(getLiveStores()).length > 0;
   const missing = availablePlatformsToAdd();
 
-  if (!hasAnyLink || missing.length === 0) {
+  if (!canManage() || !hasAnyLink || missing.length === 0) {
     container.innerHTML = '';
     addFormOpen = false;
     return;
@@ -401,6 +415,8 @@ function renderAddStoreSection() {
 }
 
 async function onSaveNewStore() {
+  if (!canManage()) return;   // belt and braces: never save for a non-owner
+
   const platform = $('addStorePlatform').value;
   const errorEl  = $('addStoreError');
   const val      = $('addStoreUrl').value.trim();
@@ -493,9 +509,16 @@ function renderRelease(item) {
 
   if (hasLinks) {
     renderStores(false);
-    renderAddStoreSection();
+    renderAddStoreSection();   // stays empty unless the visitor is the owner
   }
 }
+
+// Learn who (if anyone) is signed in. Fans stay signed out and never
+// get the add control; the owner sees it as soon as their session loads.
+onAuthStateChanged(auth, (user) => {
+  authUser = user || null;
+  if (currentItem) renderAddStoreSection();
+});
 
 async function load() {
   const slug = getSlugFromUrl();
