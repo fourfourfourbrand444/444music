@@ -6,414 +6,181 @@
 <title>Royalty Splits — 444Music</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
+/* Three colors only: black, white, and one soft green (used for locked splits and collaborator shares). */
 :root {
-  --black:         #000000;
-  --black-1:       #080808;
-  --black-2:       #0d0d0d;
-  --black-3:       #111111;
-  --black-4:       #161616;
-  --black-5:       #1a1a1a;
-  --border:        rgba(255,255,255,0.06);
-  --border-light:  rgba(255,255,255,0.10);
-  --purple:        #ffffff;
-  --purple-light:  #d4d4d4;
-  --purple-dim:    rgba(255,255,255,0.08);
-  --purple-border: rgba(255,255,255,0.25);
-  --text:          #f5f5f5;
-  --text-2:        #a0a0a0;
-  --text-3:        #606060;
-  --green:         #22c55e;
-  --amber:         #f59e0b;
-  --rose:          #ef4444;
-  --cyan:          #06b6d4;
+  --bg:      #000000;
+  --card:    #0b0b0b;
+  --white:   #ffffff;
+  --green:   #7fcf8e;
+  --line:    rgba(255,255,255,0.09);
+  --line-2:  rgba(255,255,255,0.18);
+  --field:   rgba(255,255,255,0.05);
+  --text-2:  rgba(255,255,255,0.62);
+  --text-3:  rgba(255,255,255,0.38);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
 body {
-  font-family: 'Space Grotesk', sans-serif;
-  background: var(--black);
-  color: var(--text);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--white);
   min-height: 100vh;
-  padding: 32px 24px 64px;
+  padding: 36px 20px 72px;
+  font-size: 14px;
+  line-height: 1.45;
 }
-a { text-decoration: none; color: inherit; }
-button { font-family: inherit; cursor: pointer; border: none; }
-.page-wrap { max-width: 1100px; margin: 0 auto; }
-.releases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+a { color: inherit; text-decoration: none; }
+button, input, select { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+.page { max-width: 1040px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; align-items: start; }
 
-/* ===== SPLIT CARD ===== */
-.split-card { background: var(--black-2); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; position: relative; }
-.split-card:hover { border-color: var(--border-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
-.split-card.locked { border-color: rgba(34,197,94,0.22) !important; }
-.split-card.locked:hover { border-color: rgba(34,197,94,0.40) !important; box-shadow: 0 12px 40px rgba(34,197,94,0.06); }
-.locked-ribbon { position: absolute; top: 14px; right: -1px; background: var(--green); color: #000; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px 4px 12px; border-radius: 4px 0 0 4px; display: flex; align-items: center; gap: 5px; box-shadow: -2px 2px 10px rgba(34,197,94,0.35); z-index: 10; }
-.locked-ribbon svg { width: 10px; height: 10px; }
-.sc-header { display: flex; align-items: center; gap: 14px; padding: 18px 18px 14px; border-bottom: 1px solid var(--border); }
-.sc-cover { width: 54px; height: 54px; border-radius: 10px; overflow: hidden; background: var(--black-4); flex-shrink: 0; }
-.sc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sc-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.sc-cover-ph svg { width: 22px; height: 22px; color: var(--text-3); opacity: 0.25; }
-.sc-info { flex: 1; min-width: 0; }
-.sc-title { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-.sc-artist { font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
-.sc-badges { display: flex; gap: 5px; flex-wrap: wrap; }
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
-.badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
-.badge.pending  { background: rgba(245,158,11,0.10); color: var(--amber);  border: 1px solid rgba(245,158,11,0.20); }
-.badge.pending::before  { background: var(--amber); }
-.badge.review   { background: rgba(6,182,212,0.10);  color: var(--cyan);   border: 1px solid rgba(6,182,212,0.20); }
-.badge.review::before   { background: var(--cyan); }
-.badge.approved { background: rgba(34,197,94,0.10);  color: var(--green);  border: 1px solid rgba(34,197,94,0.20); }
-.badge.approved::before { background: var(--green); }
-.badge.rejected { background: rgba(239,68,68,0.10);  color: var(--rose);   border: 1px solid rgba(239,68,68,0.20); }
-.badge.rejected::before { background: var(--rose); }
-.badge.paid     { background: rgba(34,197,94,0.10);  color: var(--green);  border: 1px solid rgba(34,197,94,0.20); }
-.badge.paid::before     { background: var(--green); }
-.badge.unpaid   { background: rgba(245,158,11,0.10); color: var(--amber);  border: 1px solid rgba(245,158,11,0.20); }
-.badge.unpaid::before   { background: var(--amber); }
-.badge.split-active { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.30); }
-.badge.split-active::before { background: var(--green); animation: dp 2s ease-in-out infinite; }
-@keyframes dp { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-.sc-body { padding: 16px 18px; }
-.sec-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-.sec-lbl span { color: var(--purple-light); font-size: 9px; }
-.split-visual { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.donut-wrap { flex-shrink: 0; position: relative; width: 76px; height: 76px; }
-.donut-wrap svg { width: 76px; height: 76px; transform: rotate(-90deg); }
-.donut-bg { fill: none; stroke: var(--black-4); stroke-width: 10; }
-.donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
-.donut-pct { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; }
-.donut-sub { font-size: 8px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
-.split-legend { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.legend-item { display: flex; align-items: center; gap: 8px; }
-.legend-dot  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.legend-name { font-size: 11px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.legend-pct  { font-size: 11px; font-weight: 700; color: var(--text-2); font-family: 'Outfit', sans-serif; }
-.collabs-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-.collab-row { display: flex; align-items: center; gap: 10px; background: var(--black-3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; transition: border-color 0.15s; }
-.collab-row:hover { border-color: var(--border-light); }
-.collab-avatar { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 800; color: white; flex-shrink: 0; }
-.collab-info { flex: 1; min-width: 0; }
-.collab-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.collab-meta { font-size: 10px; color: var(--text-3); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.collab-meta-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
-.collab-pct-col { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
-.collab-pct { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; }
-.collab-bar { width: 50px; height: 3px; background: var(--black-4); border-radius: 2px; overflow: hidden; }
-.collab-bar-fill { height: 100%; border-radius: 2px; }
-.collab-del { width: 24px; height: 24px; border-radius: 5px; flex-shrink: 0; background: transparent; border: 1px solid transparent; display: flex; align-items: center; justify-content: center; color: var(--text-3); cursor: pointer; transition: all 0.15s; }
-.collab-del:hover { background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.22); color: var(--rose); }
-.collab-del svg { width: 11px; height: 11px; pointer-events: none; }
-.no-collabs { font-size: 12px; color: var(--text-3); font-style: italic; padding: 4px 0 10px; }
-.add-toggle { width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px dashed rgba(255,255,255,0.25); background: var(--purple-dim); color: var(--purple-light); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.15s; }
-.add-toggle:hover { border-color: var(--purple-border); background: rgba(255,255,255,0.14); }
-.add-toggle svg { width: 13px; height: 13px; }
-.add-form { background: var(--black-3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 10px; display: none; flex-direction: column; gap: 11px; }
-.add-form.open { display: flex; }
-.form-row { display: flex; gap: 9px; }
-.form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
-.form-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
-.form-lbl .req { color: var(--rose); font-size: 10px; line-height: 1; }
-.form-input, .form-select { background: var(--black-4); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: var(--text); font-size: 12px; font-family: inherit; outline: none; transition: border-color 0.15s; width: 100%; }
-.form-input:focus, .form-select:focus { border-color: var(--purple-border); }
-.form-input::placeholder { color: var(--text-3); }
-.form-select option { background: var(--black-3); }
-.pct-wrap { position: relative; }
-.pct-wrap .form-input { padding-right: 22px; }
-.pct-sfx { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-3); font-weight: 600; pointer-events: none; }
-.form-divider { display: flex; align-items: center; gap: 8px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); }
-.form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.rem-pill { padding: 4px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; text-align: center; }
-.rem-pill.ok     { background: rgba(34,197,94,0.10);  color: var(--green); }
-.rem-pill.warn   { background: rgba(245,158,11,0.10); color: var(--amber); }
-.rem-pill.danger { background: rgba(239,68,68,0.10);  color: var(--rose); }
-.form-actions { display: flex; gap: 8px; margin-top: 2px; }
-.btn-add { flex: 1; padding: 10px; border-radius: 8px; background: var(--purple); color: #000; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
-.btn-add:hover:not(:disabled) { background: var(--purple-light); }
-.btn-add:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-add svg { width: 12px; height: 12px; }
-.btn-cancel-f { padding: 10px 16px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-3); font-size: 12px; font-weight: 600; transition: all 0.15s; }
-.btn-cancel-f:hover { border-color: var(--border-light); color: var(--text-2); }
-.sc-footer { padding: 12px 18px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.footer-total { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-.footer-total strong { font-weight: 700; }
-.ft-ok     { color: var(--green); }
-.ft-warn   { color: var(--amber); }
-.ft-danger { color: var(--rose); }
-.btn-submit { display: flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 8px; background: var(--green); color: #000; font-size: 11px; font-weight: 800; transition: all 0.15s; }
-.btn-submit:hover:not(:disabled) { background: #16a34a; transform: translateY(-1px); }
-.btn-submit:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-.btn-submit svg { width: 12px; height: 12px; }
-.btn-view { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: var(--black-4); border: 1px solid var(--border); color: var(--text-2); font-size: 11px; font-weight: 600; transition: all 0.15s; }
-.btn-view:hover { background: var(--black-5); color: var(--text); border-color: var(--border-light); }
-.btn-view svg { width: 12px; height: 12px; }
-.send-row { display: flex; align-items: center; gap: 8px; }
-.send-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.send-dot.sending  { background: var(--amber); animation: dp 0.8s ease-in-out infinite; }
-.send-dot.sent     { background: var(--green); }
-.send-dot.failed   { background: var(--rose); }
-.send-dot.pending  { background: var(--text-3); }
-.send-name { font-size: 11px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.send-email { font-size: 10px; color: var(--text-3); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.send-status { font-size: 10px; font-weight: 700; flex-shrink: 0; }
-.send-status.sending { color: var(--amber); }
-.send-status.sent    { color: var(--green); }
-.send-status.failed  { color: var(--rose); }
-.send-status.pending { color: var(--text-3); }
+/* card */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.card.locked { border-color: rgba(127,207,142,0.35); }
+.head { display: flex; gap: 14px; align-items: center; padding: 18px; }
+.cover { width: 56px; height: 56px; border-radius: 10px; background: var(--field); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-3); font-size: 20px; }
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.meta { min-width: 0; flex: 1; }
+.title { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.artist { font-size: 13px; color: var(--text-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tags { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.pill { background: var(--white); color: #000; border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 600; }
+.lock-note { font-size: 12px; color: var(--green); font-weight: 600; }
 
-/* ===== VIEW MODAL ===== */
-.modal-overlay { position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.88); backdrop-filter: blur(7px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal-box { background: var(--black-2); border: 1px solid var(--border-light); border-radius: 18px; width: 100%; max-width: 500px; max-height: 88vh; overflow-y: auto; position: relative; transform: translateY(20px) scale(0.97); transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1); scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
-.modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-.modal-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--green) 40%, var(--green) 60%, transparent); border-radius: 18px 18px 0 0; z-index: 2; }
-.modal-box::-webkit-scrollbar { width: 4px; }
-.modal-box::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 2px; }
-.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--black-2); z-index: 3; border-radius: 18px 18px 0 0; }
-.modal-head-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-.modal-head-title svg { width: 15px; height: 15px; color: var(--green); }
-.modal-head-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
-.modal-close { width: 30px; height: 30px; border-radius: 50%; background: var(--black-4); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-2); cursor: pointer; font-size: 14px; transition: all 0.15s; }
-.modal-close:hover { background: var(--black-5); color: var(--text); }
-.modal-body { padding: 20px 22px 26px; }
-.modal-release-row { display: flex; align-items: center; gap: 12px; background: var(--black-3); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 20px; }
-.modal-cover { width: 44px; height: 44px; border-radius: 8px; overflow: hidden; background: var(--black-4); flex-shrink: 0; }
-.modal-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.modal-cover-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.modal-cover-ph svg { width: 18px; height: 18px; color: var(--text-3); opacity: 0.3; }
-.modal-rel-title { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; }
-.modal-rel-artist { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-.modal-notice { display: flex; align-items: flex-start; gap: 10px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.18); border-radius: 10px; padding: 12px 14px; margin-bottom: 20px; }
-.modal-notice svg { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; margin-top: 1px; }
-.modal-notice p { font-size: 12px; color: var(--text-2); line-height: 1.6; }
-.modal-notice strong { color: var(--green); }
-.modal-sec-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-.modal-sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.modal-collabs { display: flex; flex-direction: column; gap: 8px; }
-.modal-collab { background: var(--black-3); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; }
-.modal-collab-av { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 800; color: white; flex-shrink: 0; }
-.modal-collab-info { flex: 1; min-width: 0; }
-.modal-collab-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-.modal-collab-role { font-size: 10px; color: var(--text-3); }
-.modal-collab-contact { margin-top: 4px; display: flex; flex-direction: column; gap: 3px; }
-.modal-collab-contact span { font-size: 10px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
-.modal-collab-contact svg { width: 9px; height: 9px; flex-shrink: 0; }
-.modal-collab-pct { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; flex-shrink: 0; }
-.email-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-top: 3px; }
-.email-chip.sent   { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.22); }
-.email-chip.failed { background: rgba(239,68,68,0.10); color: var(--rose);  border: 1px solid rgba(239,68,68,0.20); }
-.email-chip svg { width: 8px; height: 8px; }
+.body { padding: 0 18px 18px; }
+.bar { display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--field); gap: 2px; margin-bottom: 14px; }
+.bar span { display: block; height: 100%; }
+.rows { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); }
+.row:first-child { border-top: none; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--field); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+.avatar.owner { background: var(--white); color: #000; }
+.who { flex: 1; min-width: 0; }
+.who b { display: block; font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who small { display: block; font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.share { font-weight: 700; font-size: 14px; }
+.x { width: 26px; height: 26px; border-radius: 50%; color: var(--text-3); font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+.x:hover { background: var(--field); color: var(--white); }
 
-/* ===== CONFIRM MODAL ===== */
-.confirm-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.92); backdrop-filter: blur(9px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.confirm-overlay.open { opacity: 1; pointer-events: all; }
-.confirm-box { background: var(--black-2); border: 1px solid var(--border-light); border-radius: 20px; width: 100%; max-width: 460px; overflow: hidden; transform: scale(0.95) translateY(16px); transition: transform 0.3s cubic-bezier(0.34,1.3,0.64,1); }
-.confirm-overlay.open .confirm-box { transform: scale(1) translateY(0); }
-.confirm-box::before { content: ''; display: block; height: 2px; background: linear-gradient(90deg, transparent, var(--amber) 30%, var(--rose) 70%, transparent); }
-.confirm-icon-row { display: flex; justify-content: center; padding: 28px 28px 16px; }
-.confirm-icon { width: 56px; height: 56px; border-radius: 14px; background: rgba(245,158,11,0.10); border: 1px solid rgba(245,158,11,0.22); display: flex; align-items: center; justify-content: center; }
-.confirm-icon svg { width: 26px; height: 26px; color: var(--amber); }
-.confirm-text { padding: 0 28px 18px; text-align: center; }
-.confirm-text h2 { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; }
-.confirm-text p { font-size: 13px; color: var(--text-2); line-height: 1.65; }
-.confirm-checks { margin: 0 28px 18px; display: flex; flex-direction: column; gap: 8px; }
-.confirm-check { display: flex; align-items: flex-start; gap: 10px; background: var(--black-3); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; }
-.confirm-check svg { width: 14px; height: 14px; color: var(--amber); flex-shrink: 0; margin-top: 1px; }
-.confirm-check span { font-size: 12px; color: var(--text-2); line-height: 1.55; }
-.confirm-check strong { color: var(--text); }
-.confirm-preview { margin: 0 28px 18px; }
-.confirm-preview-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
-.confirm-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--black-5) transparent; }
-.confirm-preview-item { display: flex; align-items: center; gap: 9px; background: var(--black-3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-.confirm-preview-av { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 800; color: white; flex-shrink: 0; }
-.confirm-preview-info { flex: 1; min-width: 0; }
-.confirm-preview-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.confirm-preview-email { font-size: 10px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.confirm-preview-pct { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0; }
-.confirm-actions { display: flex; gap: 10px; padding: 6px 28px 28px; }
-.btn-confirm-go { flex: 1; padding: 12px; border-radius: 10px; background: var(--green); color: #000; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.15s; }
-.btn-confirm-go:hover:not(:disabled) { background: #16a34a; }
-.btn-confirm-go:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-confirm-go svg { width: 14px; height: 14px; }
-.btn-confirm-back { padding: 12px 20px; border-radius: 10px; background: transparent; border: 1px solid var(--border-light); color: var(--text-2); font-size: 13px; font-weight: 600; transition: all 0.15s; }
-.btn-confirm-back:hover { background: var(--black-4); color: var(--text); }
+.add-btn { width: 100%; margin-top: 8px; padding: 10px; border-radius: 10px; border: 1px dashed var(--line-2); color: var(--text-2); font-weight: 500; }
+.add-btn:hover { color: var(--white); border-color: var(--text-3); }
 
-/* ===== ROLE SELECT MODAL ===== */
-.role-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.94); backdrop-filter: blur(9px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
-.role-overlay.open { opacity: 1; pointer-events: all; }
-.role-box { background: var(--black-2); border: 1px solid var(--border-light); border-radius: 20px; width: 100%; max-width: 420px; overflow: hidden; transform: scale(0.95) translateY(16px); transition: transform 0.3s cubic-bezier(0.34,1.3,0.64,1); text-align: center; }
-.role-overlay.open .role-box { transform: scale(1) translateY(0); }
-.role-box::before { content: ''; display: block; height: 2px; background: linear-gradient(90deg, transparent, #ffffff 50%, transparent); }
-.role-head { padding: 30px 28px 6px; }
-.role-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--black-4); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-.role-icon svg { width: 24px; height: 24px; color: var(--text); }
-.role-head h2 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 8px; }
-.role-head p { font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
-.role-options { display: flex; flex-direction: column; gap: 10px; padding: 22px 28px 28px; }
-.role-option { display: flex; align-items: center; gap: 14px; background: var(--black-3); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: left; transition: all 0.15s; color: var(--text); }
-.role-option:hover { border-color: var(--border-light); background: var(--black-4); transform: translateY(-1px); }
-.role-option-ico { width: 38px; height: 38px; border-radius: 9px; background: var(--black-4); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.role-option-ico svg { width: 17px; height: 17px; color: var(--text); }
-.role-option-txt { flex: 1; min-width: 0; }
-.role-option-title { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; }
-.role-option-sub { font-size: 11px; color: var(--text-3); }
-.role-option-arrow { color: var(--text-3); flex-shrink: 0; }
-.role-option-arrow svg { width: 14px; height: 14px; }
+/* form */
+.form { display: none; margin-top: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; flex-direction: column; gap: 10px; }
+.form.open { display: flex; }
+.two { display: flex; gap: 10px; }
+.two > * { flex: 1; min-width: 0; }
+.field label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 5px; }
+.field input, .field select { width: 100%; background: var(--field); border: 1px solid transparent; border-radius: 9px; padding: 9px 11px; outline: none; }
+.field input:focus, .field select:focus { border-color: var(--line-2); }
+.field input::placeholder { color: var(--text-3); }
+.field select option { background: #111; }
+.hint { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+.hint.bad { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+.err { font-size: 12.5px; color: #000; background: var(--white); border-radius: 8px; padding: 8px 11px; display: none; }
+.err.show { display: block; }
+.form-actions { display: flex; gap: 8px; }
 
-/* ===== SKELETON ===== */
-.skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.03) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+.btn { padding: 10px 18px; border-radius: 999px; font-weight: 600; transition: opacity .15s; }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-primary { background: var(--white); color: #000; }
+.btn-primary:hover:not(:disabled) { opacity: 0.88; }
+.btn-ghost { border: 1px solid var(--line-2); color: var(--white); }
+.btn-ghost:hover { background: var(--field); }
+.form-actions .btn-primary { flex: 1; }
+
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-top: 1px solid var(--line); }
+.foot span { font-size: 13px; color: var(--text-2); }
+.foot .btn { padding: 8px 16px; font-size: 13px; }
+
+/* modals */
+.overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.82); display: flex; align-items: center; justify-content: center; padding: 18px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--card); border: 1px solid var(--line-2); border-radius: 18px; width: 100%; max-width: 440px; max-height: 88vh; overflow-y: auto; padding: 24px; }
+.modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.modal p { color: var(--text-2); font-size: 13.5px; }
+.modal .list { margin: 18px 0; display: flex; flex-direction: column; max-height: 240px; overflow-y: auto; }
+.modal .btns { display: flex; gap: 10px; margin-top: 4px; }
+.modal .btns .btn { flex: 1; }
+.modal-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.close { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line-2); font-size: 14px; flex-shrink: 0; }
+.close:hover { background: var(--field); }
+.role-opt { display: block; width: 100%; text-align: left; padding: 14px 16px; border: 1px solid var(--line-2); border-radius: 12px; margin-top: 10px; }
+.role-opt:hover { background: var(--field); }
+.role-opt b { display: block; font-weight: 600; font-size: 14px; }
+.role-opt small { color: var(--text-3); font-size: 12.5px; }
+.send-state { font-size: 12px; color: var(--text-3); flex-shrink: 0; }
+.send-state.sent { color: var(--green); }
+.send-state.failed { color: var(--white); text-decoration: line-through; }
+.chip { font-size: 12px; flex-shrink: 0; color: var(--green); }
+.chip.failed { color: var(--white); text-decoration: line-through; }
+
+/* empty + skeleton */
+.empty { grid-column: 1/-1; text-align: center; padding: 90px 20px; color: var(--text-2); }
+.empty h3 { color: var(--white); font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.empty a { display: inline-block; margin-top: 16px; }
+.skel { height: 190px; border-radius: 16px; background: linear-gradient(90deg, var(--card) 25%, rgba(255,255,255,0.04) 50%, var(--card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border: 1px solid var(--line); }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-.skel-card { border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
-.skel-hdr  { height: 90px; border-radius: 0; }
-.skel-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-.skel-line { height: 12px; }
-.skel-w80 { width: 80%; } .skel-w60 { width: 60%; } .skel-w40 { width: 40%; }
-.empty-state { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
-.empty-ico { width: 56px; height: 56px; background: var(--black-3); border: 1px solid var(--border); border-radius: 14px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
-.empty-ico svg { width: 24px; height: 24px; color: var(--text-3); opacity: 0.35; }
-.empty-state h3 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-2); margin-bottom: 7px; }
-.empty-state p  { font-size: 13px; color: var(--text-3); max-width: 300px; margin: 0 auto 16px; line-height: 1.6; }
-.empty-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; background: var(--purple); color: #000; font-size: 13px; font-weight: 600; transition: all 0.15s; }
-.empty-link:hover { background: var(--purple-light); }
-.empty-link svg { width: 13px; height: 13px; }
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--black-3); border: 1px solid var(--border-light); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 9999; transform: translateX(110%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.toast.show { transform: translateX(0); }
-.toast svg { width: 18px; height: 18px; flex-shrink: 0; }
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--black-5); border-radius: 3px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--white); color: #000; padding: 11px 18px; border-radius: 999px; font-weight: 600; font-size: 13px; z-index: 99; transition: transform .25s ease; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { transform: translate(-50%, 0); }
+
 @media (max-width: 640px) {
-  body { padding: 20px 14px 52px; }
-  .releases-grid { grid-template-columns: 1fr; }
-  .form-row { flex-direction: column; }
-  .toast { left: 14px; right: 14px; bottom: 14px; transform: translateY(120%); }
-  .toast.show { transform: translateY(0); }
-  .confirm-box { border-radius: 16px 16px 0 0; }
-  .confirm-overlay { align-items: flex-end; padding: 0; }
+  body { padding: 22px 14px 60px; }
+  .grid { grid-template-columns: 1fr; }
+  .two { flex-direction: column; }
 }
 </style>
 </head>
 <body>
-<div class="page-wrap">
-  <div class="releases-grid" id="releasesGrid">
-    <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
-    <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
-    <div class="skel-card"><div class="skeleton skel-hdr"></div><div class="skel-body"><div class="skeleton skel-line skel-w80"></div><div class="skeleton skel-line skel-w60"></div><div class="skeleton skel-line skel-w40"></div></div></div>
+<div class="page">
+  <div class="grid" id="grid">
+    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
   </div>
 </div>
 
-<!-- ROLE SELECT MODAL -->
-<div class="role-overlay open" id="roleOverlay">
-  <div class="role-box">
-    <div class="role-head">
-      <div class="role-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <h2>Who are you signing in as?</h2>
-      <p>This helps us take you to the right place.</p>
-    </div>
-    <div class="role-options">
-      <button class="role-option" id="roleArtist">
-        <div class="role-option-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        </div>
-        <div class="role-option-txt">
-          <div class="role-option-title">I'm an Artist</div>
-          <div class="role-option-sub">Manage your own releases &amp; royalty splits</div>
-        </div>
-        <div class="role-option-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </button>
-      <button class="role-option" id="roleContributor">
-        <div class="role-option-ico">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="role-option-txt">
-          <div class="role-option-title">I'm a Collaborator</div>
-          <div class="role-option-sub">Check the splits you've been added to</div>
-        </div>
-        <div class="role-option-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </button>
-    </div>
+<!-- who is signing in -->
+<div class="overlay open" id="roleOverlay">
+  <div class="modal">
+    <h2>Who are you signing in as?</h2>
+    <button class="role-opt" id="roleArtist"><b>Artist</b><small>Manage your releases and splits</small></button>
+    <button class="role-opt" id="roleContributor"><b>Collaborator</b><small>See splits you've been added to</small></button>
   </div>
 </div>
 
-<!-- VIEW MODAL -->
-<div class="modal-overlay" id="viewOverlay">
-  <div class="modal-box">
-    <div class="modal-head">
+<!-- view locked split -->
+<div class="overlay" id="viewOverlay">
+  <div class="modal">
+    <div class="modal-top">
       <div>
-        <div class="modal-head-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Royalty Split — Confirmed
-        </div>
-        <div class="modal-head-sub">Locked &amp; permanent — no further edits allowed</div>
+        <h2 id="viewTitle">Split</h2>
+        <p id="viewSub"></p>
       </div>
-      <button class="modal-close" id="viewClose">&#x2715;</button>
+      <button class="close" id="viewClose">&#x2715;</button>
     </div>
-    <div class="modal-body" id="viewBody"></div>
+    <div class="list" id="viewList" style="margin-top:18px;max-height:none;"></div>
+    <p>This split is locked and can't be edited.</p>
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-    <div class="confirm-icon-row">
-      <div class="confirm-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-      </div>
-    </div>
-    <div class="confirm-text">
-      <h2>Final Review Before Submitting</h2>
-      <p>Once submitted, this royalty split <strong style="color:var(--rose)">cannot be edited or changed.</strong> Each collaborator receives an invite email directly to their Gmail, and a copy goes to <strong>444musicdistro@gmail.com</strong>.</p>
-    </div>
-    <div class="confirm-checks">
-      <div class="confirm-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>All <strong>names, roles and percentages</strong> are correct and total exactly 100%.</span>
-      </div>
-      <div class="confirm-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>All <strong>email addresses</strong> belong to the correct collaborators — invite emails sent immediately, stored for contributor login.</span>
-      </div>
-      <div class="confirm-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <span>This action is <strong>permanent and irreversible.</strong> You cannot modify collaborators after submission.</span>
-      </div>
-    </div>
-    <div class="confirm-preview">
-      <div class="confirm-preview-label">Invites will be sent to</div>
-      <div class="confirm-preview-list" id="confirmPreviewList"></div>
-    </div>
-    <div class="confirm-actions">
-      <button class="btn-confirm-back" id="confirmBack">Go Back</button>
-      <button class="btn-confirm-go" id="confirmGo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-        Confirm &amp; Send Invites
-      </button>
+<!-- confirm submit -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <h2>Send invites?</h2>
+    <p>Each collaborator gets an email. The split can't be changed after this.</p>
+    <div class="list" id="confirmList"></div>
+    <div class="btns">
+      <button class="btn btn-ghost" id="confirmBack">Go back</button>
+      <button class="btn btn-primary" id="confirmGo">Send invites</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toastMsg"></span>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
@@ -425,73 +192,58 @@ const EJ_TEMPLATE_CONTRIBUTOR = "template_w9u4esr";
 const EJ_TEMPLATE_ADMIN       = "template_zxg81b9";
 const ADMIN_EMAIL             = "444musicdistro@gmail.com";
 
+const OWNER_CONFLICT_MSG = "The song owner can't be a collaborator.";
+
 /* ── HELPERS ── */
-const PALETTE = ['#7c5cfc','#22c55e','#06b6d4','#f59e0b','#ef4444','#a855f7','#3b82f6','#f97316','#10b981','#ec4899'];
-const OWNER_COLOR = '#ffffff'; // distinct fixed color for the owner's auto-share, never reused for collaborators
-const clr = i => PALETTE[i % PALETTE.length];
+const OWNER_COLOR = '#ffffff';
+// collaborator colors are the same green at decreasing strength
+const segColor = i => `rgba(127,207,142,${Math.max(0.3, 1 - i * 0.2)})`;
+const r2 = n => Math.round(n * 100) / 100;
+const fmt = n => r2(n) + '%';
+const sumPct = list => r2((list || []).reduce((s, c) => s + (parseFloat(c.pct) || 0), 0));
+
 function initials(n){ if(!n)return'?'; const p=n.trim().split(/\s+/); return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e||'').trim()); }
 function validPhone(p){ return /^[+\d\s\-(). ]{7,20}$/.test(String(p||'').trim()); }
 
-function showToast(msg,type){
-  const t=document.getElementById('toast'),ic=document.getElementById('toastIcon');
-  document.getElementById('toastMsg').textContent=msg;
-  ic.style.color=type==='error'?'var(--rose)':type==='warn'?'var(--amber)':'var(--green)';
-  ic.innerHTML=type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>':type==='warn'?'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>':'<polyline points="20 6 9 17 4 12"/>';
-  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3600);
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3400);
 }
 
-/* buildDonut now always includes the owner's implicit share (ownerPct) as
-   the first segment, using a fixed OWNER_COLOR — the owner is never part
-   of the `collabs` array itself, so backend/contributor data is untouched. */
-function buildDonut(collabs, ownerPct){
-  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  const total = Math.min(100, collabsTotal + (parseFloat(ownerPct)||0));
-  const R=30,C=2*Math.PI*R; let off=0,segs='';
-  const op = parseFloat(ownerPct)||0;
-  if(op > 0){
-    const f=op/100, d=f*C, g=C-d;
-    segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${OWNER_COLOR}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`;
-    off+=d;
-  }
-  collabs.forEach((c,i)=>{ const f=(parseFloat(c.pct)||0)/100,d=f*C,g=C-d; segs+=`<circle cx="38" cy="38" r="${R}" fill="none" stroke="${clr(i)}" stroke-width="10" stroke-dasharray="${d} ${g}" stroke-dashoffset="${-off}"/>`; off+=d; });
-  return {segs,total};
+/* Featured artists: read from the tracks' artist lists (type "featured"),
+   fall back to featuredArtists, then to a plain `featuring` string. */
+function featuredOf(rel){
+  const main=(rel.artistName||'').trim().toLowerCase();
+  const out=[];
+  const add=n=>{
+    n=String(n||'').trim();
+    if(n && n.toLowerCase()!==main && !out.some(x=>x.toLowerCase()===n.toLowerCase())) out.push(n);
+  };
+  const scan=list=>{ (Array.isArray(list)?list:[]).forEach(a=>{ if(a && a.type==='featured') add(a.name); }); };
+  (Array.isArray(rel.audioFiles)?rel.audioFiles:[]).forEach(t=>scan(t && t.artists));
+  (Array.isArray(rel.featuredArtists)?rel.featuredArtists:[]).forEach(t=>scan(t && t.artists));
+  if(!out.length && rel.featuring) String(rel.featuring).split(/[,&]/).forEach(add);
+  return out;
+}
+
+/* Is this the release owner? (by artist name or by account email) */
+function ownerConflict(rid,name,email){
+  const rel=window._RM[rid]||{};
+  const n=(name||'').trim().toLowerCase();
+  const e=(email||'').trim().toLowerCase();
+  const ownerNames=[rel.artistName].filter(Boolean).map(s=>String(s).trim().toLowerCase());
+  const ownerEmails=[rel.email,window._USER_EMAIL].filter(Boolean).map(s=>String(s).trim().toLowerCase());
+  return !!((n && ownerNames.includes(n)) || (e && ownerEmails.includes(e)));
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FIRESTORE WRITE STRATEGY
-   ─────────────────────────────────────────────────────────────
-   On lock/submit we write to TWO collections:
-
-   [A] submissions/{submissionId}  (existing — updated)
-       + contributorEmails: string[]   ← new field for easy querying
-       + royaltySplits, splitLocked, splitLockedAt, splitEmailResults (unchanged)
-       royaltySplits stores ONLY actual collaborators — the owner's share is
-       always derived on render as 100 - sum(royaltySplits), never written
-       as a fake collaborator entry.
-
-   [B] splits/{auto-id}  ← NEW dedicated collection
-       {
-         submissionId,
-         ownerUserId, ownerEmail,
-         songTitle,      ← from releaseTitle; Admin edits this field in Firestore
-         artistName, releaseType, genre, coverURL,
-         lockedAt,
-         contributors: [
-           { name, role, email, phone, pct, emailStatus, balance }
-                                   ↑ balance starts at 0; Admin sets it in Firestore
-         ]
-       }
-       contributors here also NEVER includes the owner — only real
-       collaborators added via "Add Collaborator".
-
-   Contributor Dashboard queries:
-     db.collection('splits')
-       .where('contributors', 'array-contains-any', [{ email: userEmail }])
-       ← won't work for nested objects; instead we store a flat index:
-       contributorEmails: string[]  on the splits doc too
-       then query: where('contributorEmails','array-contains', userEmail)
+   FIRESTORE WRITES
+   [A] submissions/{id}: royaltySplits (collaborators only), lock fields, contributorEmails
+   [B] splits/{auto-id}: dedicated doc for the contributor dashboard
+   The owner is never stored — their share is always 100 minus collaborators.
 ═══════════════════════════════════════════════════════════════ */
 async function fsave(rid,collabs){
   const {doc,updateDoc}=window._FF;
@@ -501,11 +253,8 @@ async function fsave(rid,collabs){
 async function flock(rid,collabs,emailResults){
   const {doc,updateDoc,collection,addDoc}=window._FF;
   const rel=window._RM[rid]||{};
-
-  // Flat email array for array-contains queries
   const contributorEmails=collabs.map(c=>(c.email||'').toLowerCase().trim()).filter(Boolean);
 
-  // [A] Update submission doc
   await updateDoc(doc(window._DB,'submissions',rid),{
     royaltySplits:    collabs,
     splitLocked:      true,
@@ -514,18 +263,17 @@ async function flock(rid,collabs,emailResults){
     contributorEmails:contributorEmails
   });
 
-  // [B] Build splits doc
   const splitPayload={
     submissionId:      rid,
     ownerUserId:       rel.userId          || '',
     ownerEmail:        (rel.email||'').toLowerCase().trim(),
-    songTitle:         rel.releaseTitle    || 'Untitled',  // Admin edits in Firestore
+    songTitle:         rel.releaseTitle    || 'Untitled',
     artistName:        rel.artistName      || '',
     releaseType:       rel.releaseType     || rel.type        || '',
     genre:             rel.genre           || rel.primaryGenre || '',
     coverURL:          rel.coverURL        || '',
     lockedAt:          new Date().toISOString(),
-    contributorEmails: contributorEmails,  // flat index for querying
+    contributorEmails: contributorEmails,
     contributors: collabs.map(c=>{
       const res=emailResults.find(r=>r.email===c.email)||{};
       return {
@@ -535,12 +283,11 @@ async function flock(rid,collabs,emailResults){
         phone:       c.phone || '',
         pct:         parseFloat(c.pct)||0,
         emailStatus: res.contributorStatus||'unknown',
-        balance:     0          // Admin sets this value in Firestore console
+        balance:     0
       };
     })
   };
 
-  // Upsert: update if already exists, else create
   const existingId=window._SPLIT_DOC_IDS[rid];
   if(existingId){
     await updateDoc(doc(window._DB,'splits',existingId),splitPayload);
@@ -589,162 +336,87 @@ async function sendAllEmails(releaseData,collabs,onProgress){
 function renderCard(rel,rid,collabs,locked){
   const card=document.getElementById('sc-'+rid);
   if(!card)return;
-  const stCls=(rel.status||'Pending').toLowerCase().trim().replace(/\s+/g,'-');
 
-  // Owner always auto-owns whatever percentage collaborators haven't taken.
-  // The owner is NEVER stored inside `collabs` — it's purely derived here.
-  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  const ownerPct = Math.max(0, 100 - collabsTotal);
-  const ownerName = rel.artistName || 'Owner';
+  const used=sumPct(collabs);
+  const ownerPct=r2(Math.max(0,100-used));
+  const ownerName=rel.artistName||'Owner';
+  const ft=featuredOf(rel);
+  const artistLine=esc(rel.artistName||'Unknown artist')+(ft.length?' ft. '+esc(ft.join(', ')):'');
 
-  const {segs,total}=buildDonut(collabs, ownerPct);
-  const tCls = total>100.05 ? 'ft-danger' : 'ft-ok'; // always complete by design
-  const canSubmit = true; // owner + collaborators always sum to 100% by construction
+  const segs=[{pct:ownerPct,color:OWNER_COLOR}].concat(collabs.map((c,i)=>({pct:parseFloat(c.pct)||0,color:segColor(i)})));
+  const barHtml=segs.filter(s=>s.pct>0).map(s=>`<span style="width:${s.pct}%;background:${s.color}"></span>`).join('');
 
-  const ownerLegendHtml=`
-    <div class="legend-item">
-      <div class="legend-dot" style="background:${OWNER_COLOR}"></div>
-      <span class="legend-name">${esc(ownerName)} <span style="color:var(--text-3);font-weight:500;">(Owner)</span></span>
-      <span class="legend-pct">${ownerPct.toFixed(1)}%</span>
+  const ownerRow=`
+    <div class="row">
+      <div class="avatar owner">${esc(initials(ownerName))}</div>
+      <div class="who"><b>${esc(ownerName)}</b><small>Owner</small></div>
+      <div class="share">${fmt(ownerPct)}</div>
     </div>`;
 
-  const legHtml=ownerLegendHtml+collabs.slice(0,3).map((c,i)=>`
-    <div class="legend-item">
-      <div class="legend-dot" style="background:${clr(i)}"></div>
-      <span class="legend-name">${esc(c.name)}</span>
-      <span class="legend-pct">${parseFloat(c.pct)||0}%</span>
-    </div>`).join('')+(collabs.length>3?`<div class="legend-item"><span style="font-size:10px;color:var(--text-3)">+${collabs.length-3} more</span></div>`:'');
-
-  const rowsHtml=collabs.map((c,i)=>`
-    <div class="collab-row">
-      <div class="collab-avatar" style="background:${clr(i)}">${esc(initials(c.name))}</div>
-      <div class="collab-info">
-        <div class="collab-name">${esc(c.name)}</div>
-        <div class="collab-meta">
-          <span>${esc(c.role)}</span>
-          ${c.email?`<span class="collab-meta-dot"></span><span>${esc(c.email)}</span>`:''}
-          ${c.phone?`<span class="collab-meta-dot"></span><span>${esc(c.phone)}</span>`:''}
-        </div>
-      </div>
-      <div class="collab-pct-col">
-        <span class="collab-pct" style="color:${clr(i)}">${parseFloat(c.pct)||0}%</span>
-        <div class="collab-bar"><div class="collab-bar-fill" style="background:${clr(i)};width:${Math.min(parseFloat(c.pct)||0,100)}%"></div></div>
-      </div>
-      ${!locked?`<button class="collab-del" data-rid="${rid}" data-idx="${i}" title="Remove">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <polyline points="3 6 5 6 21 6"/>
-          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-          <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-        </svg>
-      </button>`:''}
+  const collabRows=collabs.map((c,i)=>`
+    <div class="row">
+      <div class="avatar" style="color:${segColor(i)}">${esc(initials(c.name))}</div>
+      <div class="who"><b>${esc(c.name)}</b><small>${esc(c.role)} · ${esc(c.email)}</small></div>
+      <div class="share" style="color:${segColor(i)}">${fmt(parseFloat(c.pct)||0)}</div>
+      ${!locked?`<button class="x" data-rid="${rid}" data-idx="${i}" title="Remove" aria-label="Remove ${esc(c.name)}">&#x2715;</button>`:''}
     </div>`).join('');
 
-  const coverHtml=rel.coverURL
-    ?`<img src="${esc(rel.coverURL)}" alt="">`
-    :`<div class="sc-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  const coverHtml=rel.coverURL?`<img src="${esc(rel.coverURL)}" alt="">`:'&#9834;';
 
-  card.className='split-card'+(locked?' locked':'');
+  const formHtml=!locked?`
+    <button class="add-btn" onclick="toggleForm('${rid}')">+ Add collaborator</button>
+    <div class="form" id="af-${rid}">
+      <div class="two">
+        <div class="field"><label>Full name</label><input id="fn-${rid}" type="text" placeholder="Kwame Asante" autocomplete="off" oninput="checkOwner('${rid}')"></div>
+        <div class="field"><label>Role</label>
+          <select id="fr-${rid}">
+            <option>Artist</option><option>Producer</option><option>Songwriter</option>
+            <option>Composer</option><option>Musician</option><option>Engineer</option>
+            <option>Label</option><option>Publisher</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="two">
+        <div class="field"><label>Email</label><input id="fe-${rid}" type="email" placeholder="kwame@gmail.com" oninput="checkOwner('${rid}')"></div>
+        <div class="field"><label>Phone</label><input id="fp-${rid}" type="tel" placeholder="+233 24 000 0000"></div>
+      </div>
+      <div class="field">
+        <label>Share</label>
+        <input id="fpc-${rid}" type="number" min="0.1" max="100" step="0.1" placeholder="25" oninput="onPct('${rid}')">
+        <div class="hint" id="rp-${rid}">${fmt(ownerPct)} available</div>
+      </div>
+      <div class="err" id="er-${rid}"></div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="toggleForm('${rid}',false)">Cancel</button>
+        <button class="btn btn-primary" id="addBtn-${rid}" onclick="addCollab('${rid}')">Add</button>
+      </div>
+    </div>`:'';
+
+  const footBtn=locked
+    ?`<button class="btn btn-ghost" onclick="openView('${rid}')">View split</button>`
+    :`<button class="btn btn-primary" ${collabs.length?'':'disabled'} title="${collabs.length?'':'Add a collaborator first'}" onclick="initiateSubmit('${rid}')">Send invites</button>`;
+
+  card.className='card'+(locked?' locked':'');
   card.innerHTML=`
-    ${locked?`<div class="locked-ribbon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Split Active</div>`:''}
-    <div class="sc-header">
-      <div class="sc-cover">${coverHtml}</div>
-      <div class="sc-info">
-        <div class="sc-title">${esc(rel.releaseTitle||'Untitled Release')}</div>
-        <div class="sc-artist">${esc(rel.artistName||'Unknown Artist')}${rel.featuring?` <span style="color:var(--text-3)">ft. ${esc(rel.featuring)}</span>`:''}</div>
-        <div class="sc-badges">
-          <span class="badge ${stCls}">${esc(rel.status||'Pending')}</span>
-          <span class="badge ${rel.paymentVerified?'paid':'unpaid'}">${rel.paymentVerified?'Paid':'Unpaid'}</span>
-          ${locked?'<span class="badge split-active">Split Active</span>':''}
+    <div class="head">
+      <div class="cover">${coverHtml}</div>
+      <div class="meta">
+        <div class="title">${esc(rel.releaseTitle||'Untitled release')}</div>
+        <div class="artist">${artistLine}</div>
+        <div class="tags">
+          <span class="pill">Approved</span>
+          ${locked?'<span class="lock-note">Split locked</span>':''}
         </div>
       </div>
     </div>
-    <div class="sc-body">
-      <div class="sec-lbl">Split Overview <span>${collabs.length+1} ${collabs.length+1===1?'person':'people'}</span></div>
-      <div class="split-visual">
-        <div class="donut-wrap">
-          <svg viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg">
-            <circle class="donut-bg" cx="38" cy="38" r="30"/>
-            ${segs}
-          </svg>
-          <div class="donut-center">
-            <span class="donut-pct">${Math.round(total)}%</span>
-            <span class="donut-sub">split</span>
-          </div>
-        </div>
-        <div class="split-legend">${legHtml}</div>
-      </div>
-      <div class="sec-lbl" style="margin-top:14px;">Collaborators</div>
-      <div class="collabs-list">${collabs.length>0?rowsHtml:'<div class="no-collabs">No collaborators added yet — you own 100% of this release.</div>'}</div>
-      ${!locked?`
-      <button class="add-toggle" onclick="toggleForm('${rid}')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Add Collaborator
-      </button>
-      <div class="add-form" id="af-${rid}">
-        <div class="form-row">
-          <div class="form-group" style="flex:2">
-            <label class="form-lbl">Full Name <span class="req">*</span></label>
-            <input class="form-input" id="fn-${rid}" type="text" placeholder="e.g. Kwame Asante" autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label class="form-lbl">Role <span class="req">*</span></label>
-            <select class="form-select" id="fr-${rid}">
-              <option>Artist</option><option>Producer</option><option>Songwriter</option>
-              <option>Composer</option><option>Musician</option><option>Engineer</option>
-              <option>Label</option><option>Publisher</option><option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-divider">Contact Details</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-lbl">Email Address <span class="req">*</span></label>
-            <input class="form-input" id="fe-${rid}" type="email" placeholder="kwame@gmail.com">
-          </div>
-          <div class="form-group">
-            <label class="form-lbl">Phone Number <span class="req">*</span></label>
-            <input class="form-input" id="fp-${rid}" type="tel" placeholder="+233 24 000 0000">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-lbl">Split % <span class="req">*</span></label>
-            <div class="pct-wrap">
-              <input class="form-input" id="fpc-${rid}" type="number" min="0.1" max="100" step="0.1" placeholder="25" oninput="onPct('${rid}')">
-              <span class="pct-sfx">%</span>
-            </div>
-          </div>
-          <div class="form-group" style="justify-content:flex-end;">
-            <label class="form-lbl">From Owner's Share</label>
-            <div class="rem-pill warn" id="rp-${rid}">${ownerPct.toFixed(1)}% available</div>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn-add" id="addBtn-${rid}" onclick="addCollab('${rid}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Add to Split
-          </button>
-          <button class="btn-cancel-f" onclick="toggleForm('${rid}',false)">Cancel</button>
-        </div>
-      </div>`:''}
+    <div class="body">
+      <div class="bar">${barHtml}</div>
+      <div class="rows">${ownerRow}${collabRows}</div>
+      ${formHtml}
     </div>
-    <div class="sc-footer">
-      <div class="footer-total">
-        Total: <strong class="${tCls}">${total.toFixed(1)}%</strong>
-        <span class="ft-ok" style="font-size:10px"> — complete (owner + collaborators)</span>
-      </div>
-      ${locked
-        ?`<button class="btn-view" onclick="openView('${rid}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            View Split
-          </button>`
-        :`<button class="btn-submit" ${canSubmit?'':'disabled'} onclick="initiateSubmit('${rid}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-            </svg>
-            Submit &amp; Invite
-          </button>`
-      }
+    <div class="foot">
+      <span>${collabs.length?`You keep ${fmt(ownerPct)}`:'No collaborators yet'}</span>
+      ${footBtn}
     </div>`;
 }
 
@@ -755,13 +427,26 @@ function toggleForm(rid,force){
   if(open)document.getElementById('fn-'+rid)?.focus();
 }
 
+function setErr(rid,msg){
+  const el=document.getElementById('er-'+rid); if(!el)return;
+  el.textContent=msg||'';
+  el.classList.toggle('show',!!msg);
+}
+
+/* live check while typing name / email */
+function checkOwner(rid){
+  const name=document.getElementById('fn-'+rid)?.value||'';
+  const email=document.getElementById('fe-'+rid)?.value||'';
+  setErr(rid, ownerConflict(rid,name,email) ? OWNER_CONFLICT_MSG : '');
+}
+
 function onPct(rid){
-  const cur=(window._SD[rid]||[]).reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
+  const cur=sumPct(window._SD[rid]||[]);
   const np=parseFloat(document.getElementById('fpc-'+rid)?.value)||0;
-  const rem=100-cur-np; // remaining from the owner's share after this new entry
+  const rem=r2(100-cur-np);
   const el=document.getElementById('rp-'+rid); if(!el)return;
-  el.textContent=rem>=0?`${rem.toFixed(1)}% available`:`${Math.abs(rem).toFixed(1)}% over owner's share`;
-  el.className='rem-pill '+(rem<0?'danger':rem===0?'ok':'warn');
+  el.textContent=rem>=0?`${fmt(rem)} available`:`${fmt(Math.abs(rem))} over what's available`;
+  el.className='hint'+(rem<0?' bad':'');
 }
 
 async function addCollab(rid){
@@ -770,184 +455,167 @@ async function addCollab(rid){
   const email=document.getElementById('fe-'+rid)?.value.trim();
   const phone=document.getElementById('fp-'+rid)?.value.trim();
   const pct  =parseFloat(document.getElementById('fpc-'+rid)?.value);
-  if(!name)              {showToast('Full name is required','error');document.getElementById('fn-'+rid)?.focus();return;}
-  if(!validEmail(email)) {showToast('Enter a valid email address','error');document.getElementById('fe-'+rid)?.focus();return;}
-  if(!validPhone(phone)) {showToast('Enter a valid phone number','error');document.getElementById('fp-'+rid)?.focus();return;}
-  if(!pct||pct<=0)       {showToast('Enter a valid percentage','error');document.getElementById('fpc-'+rid)?.focus();return;}
+
+  if(!name)              {setErr(rid,'Enter a full name.');return;}
+  if(!validEmail(email)) {setErr(rid,'Enter a valid email address.');return;}
+  if(ownerConflict(rid,name,email)){setErr(rid,OWNER_CONFLICT_MSG);showToast(OWNER_CONFLICT_MSG);return;}
+  if(!validPhone(phone)) {setErr(rid,'Enter a valid phone number.');return;}
+  if(!pct||pct<=0)       {setErr(rid,'Enter a share above 0.');return;}
+
   const collabs=window._SD[rid]||[];
-  const cur=collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  if(cur+pct>100.001){showToast(`Only ${(100-cur).toFixed(1)}% remaining from the owner's share`,'warn');return;}
-  if(collabs.some(c=>c.name.toLowerCase()===name.toLowerCase())){showToast('Name already exists in this split','warn');return;}
+  const cur=sumPct(collabs);
+  if(r2(cur+pct)>100){setErr(rid,`Only ${fmt(100-cur)} is available.`);return;}
+  if(collabs.some(c=>c.name.toLowerCase()===name.toLowerCase())){setErr(rid,'This name is already in the split.');return;}
+  if(collabs.some(c=>(c.email||'').toLowerCase()===email.toLowerCase())){setErr(rid,'This email is already in the split.');return;}
+  setErr(rid,'');
+
   const btn=document.getElementById('addBtn-'+rid);
-  if(btn){btn.disabled=true;btn.textContent='Saving...';}
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
   try{
     const next=[...collabs,{name,role,email,phone,pct}];
     window._SD[rid]=next;
     await fsave(rid,next);
-    toggleForm(rid,false);
-    ['fn','fe','fp','fpc'].forEach(p=>{const el=document.getElementById(p+'-'+rid);if(el)el.value='';});
     renderCard(window._RM[rid],rid,next,false);
-    showToast(name+' added to split','success');
-  }catch(e){console.error(e);showToast('Save failed — please try again','error');}
-  finally{if(btn){btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Add to Split';}}
+    showToast(name+' added');
+  }catch(e){
+    console.error(e);
+    window._SD[rid]=collabs;
+    if(btn){btn.disabled=false;btn.textContent='Add';}
+    setErr(rid,'Could not save. Try again.');
+  }
 }
 
-document.getElementById('releasesGrid').addEventListener('click',async e=>{
-  const btn=e.target.closest('.collab-del'); if(!btn)return;
+document.getElementById('grid').addEventListener('click',async e=>{
+  const btn=e.target.closest('.x'); if(!btn)return;
   const rid=btn.dataset.rid,idx=parseInt(btn.dataset.idx);
   const c=(window._SD[rid]||[])[idx]; if(!c)return;
-  if(!confirm(`Remove "${c.name}" from this split?`))return;
+  if(!confirm(`Remove ${c.name} from this split?`))return;
+  const prev=window._SD[rid]||[];
   try{
-    const next=(window._SD[rid]||[]).filter((_,i)=>i!==idx);
+    const next=prev.filter((_,i)=>i!==idx);
     window._SD[rid]=next;
     await fsave(rid,next);
     renderCard(window._RM[rid],rid,next,false);
-    showToast(c.name+' removed','success');
-  }catch(e){console.error(e);showToast('Failed to remove','error');}
+    showToast(c.name+' removed');
+  }catch(err){
+    console.error(err);
+    window._SD[rid]=prev;
+    showToast('Could not remove. Try again.');
+  }
 });
 
 /* ── SUBMIT FLOW ── */
 let _pRid=null;
 function initiateSubmit(rid){
-  _pRid=rid;
   const collabs=window._SD[rid]||[];
-  document.getElementById('confirmPreviewList').innerHTML=collabs.map((c,i)=>`
-    <div class="confirm-preview-item">
-      <div class="confirm-preview-av" style="background:${clr(i)}">${esc(initials(c.name))}</div>
-      <div class="confirm-preview-info">
-        <div class="confirm-preview-name">${esc(c.name)} — ${esc(c.role)}</div>
-        <div class="confirm-preview-email">${esc(c.email)}</div>
-      </div>
-      <span class="confirm-preview-pct" style="color:${clr(i)}">${parseFloat(c.pct)||0}%</span>
-    </div>`).join('') || '<div style="font-size:12px;color:var(--text-3);font-style:italic;padding:6px 2px;">No collaborators — you own 100% of this release.</div>';
+  if(!collabs.length){showToast('Add a collaborator first.');return;}
+  _pRid=rid;
+  document.getElementById('confirmList').innerHTML=collabs.map((c,i)=>`
+    <div class="row">
+      <div class="avatar" style="color:${segColor(i)}">${esc(initials(c.name))}</div>
+      <div class="who"><b>${esc(c.name)}</b><small>${esc(c.email)}</small></div>
+      <div class="share">${fmt(parseFloat(c.pct)||0)}</div>
+    </div>`).join('');
+  const go=document.getElementById('confirmGo');
+  go.disabled=false; go.textContent='Send invites';
+  document.getElementById('confirmBack').style.display='';
   document.getElementById('confirmOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-document.getElementById('confirmBack').onclick=()=>{
+function closeConfirm(){
   document.getElementById('confirmOverlay').classList.remove('open');
   document.body.style.overflow=''; _pRid=null;
-};
+}
+document.getElementById('confirmBack').onclick=closeConfirm;
 
 document.getElementById('confirmGo').onclick=async()=>{
   if(!_pRid)return;
   const rid=_pRid, btn=document.getElementById('confirmGo');
   const collabs=window._SD[rid]||[];
-  const progressStates=collabs.map(()=>'pending');
+  if(!collabs.length)return;
+  const states=collabs.map(()=>'queued');
+  const label={queued:'Queued',sending:'Sending…',sent:'Sent',failed:'Failed'};
   const renderProgress=()=>{
-    if(collabs.length===0)return;
-    document.getElementById('confirmPreviewList').innerHTML=collabs.map((c,i)=>`
-      <div class="send-row">
-        <div class="send-dot ${progressStates[i]}"></div>
-        <span class="send-name">${esc(c.name)}</span>
-        <span class="send-email">${esc(c.email)}</span>
-        <span class="send-status ${progressStates[i]}">${
-          progressStates[i]==='sending'?'Sending...':progressStates[i]==='sent'?'Sent ✓':progressStates[i]==='failed'?'Failed':'Queued'
-        }</span>
+    document.getElementById('confirmList').innerHTML=collabs.map((c,i)=>`
+      <div class="row">
+        <div class="who"><b>${esc(c.name)}</b><small>${esc(c.email)}</small></div>
+        <span class="send-state ${states[i]}">${label[states[i]]}</span>
       </div>`).join('');
   };
-  btn.disabled=true;
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Sending invites...';
+  btn.disabled=true; btn.textContent='Sending…';
   document.getElementById('confirmBack').style.display='none';
-  const lbl=document.querySelector('.confirm-preview-label');
-  if(lbl)lbl.textContent=collabs.length?'Sending invites — please wait...':'Locking split...';
   renderProgress();
   try{
-    const results=await sendAllEmails(window._RM[rid],collabs,(idx,status)=>{progressStates[idx]=status;renderProgress();});
+    const results=await sendAllEmails(window._RM[rid],collabs,(idx,status)=>{states[idx]=status;renderProgress();});
     await flock(rid,collabs,results);
     window._LK.add(rid);
     if(window._RM[rid])window._RM[rid].splitEmailResults=results;
     renderCard(window._RM[rid],rid,collabs,true);
-    const failedCount=results.filter(r=>r.contributorStatus!=='sent').length;
-    document.getElementById('confirmOverlay').classList.remove('open');
-    document.body.style.overflow=''; _pRid=null;
-    showToast(
-      failedCount===0
-        ?(collabs.length?`Split locked — ${collabs.length} invite${collabs.length>1?'s':''} sent & stored for contributor login!`:'Split locked — you own 100% of this release.')
-        :`Split locked. ${failedCount} invite(s) may have failed — check EmailJS logs.`,
-      failedCount===0?'success':'warn'
-    );
+    const failed=results.filter(r=>r.contributorStatus!=='sent').length;
+    closeConfirm();
+    showToast(failed===0
+      ?`Split locked. ${collabs.length} invite${collabs.length>1?'s':''} sent.`
+      :`Split locked. ${failed} invite${failed>1?'s':''} may have failed.`);
   }catch(e){
     console.error('[Submit error]',e);
-    showToast('Submission error — please try again','error');
-    btn.disabled=false;
-    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Confirm &amp; Send Invites';
+    showToast('Something went wrong. Try again.');
+    btn.disabled=false; btn.textContent='Send invites';
     document.getElementById('confirmBack').style.display='';
   }
 };
 
-/* ── VIEW MODAL ── */
+/* ── VIEW LOCKED SPLIT ── */
 function openView(rid){
   const collabs=window._SD[rid]||[],rel=window._RM[rid]||{};
   const emailResults=Array.isArray(rel.splitEmailResults)?rel.splitEmailResults:[];
-  const getResult=(email)=>emailResults.find(r=>r.email===email)||{contributorStatus:'unknown'};
-  const coverHtml=rel.coverURL?`<img src="${esc(rel.coverURL)}" alt="">`:`<div class="modal-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
-  const collabsTotal = collabs.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);
-  const ownerPct = Math.max(0, 100 - collabsTotal);
-  const ownerRowHtml = `
-      <div class="modal-collab">
-        <div class="modal-collab-av" style="background:${OWNER_COLOR};color:#000;">${esc(initials(rel.artistName||'Owner'))}</div>
-        <div class="modal-collab-info">
-          <div class="modal-collab-name">${esc(rel.artistName||'Owner')} <span style="color:var(--text-3);font-weight:500;">(Owner)</span></div>
-          <div class="modal-collab-role">Release Owner</div>
-        </div>
-        <div class="modal-collab-pct" style="color:${OWNER_COLOR}">${ownerPct.toFixed(1)}%</div>
-      </div>`;
-  const items=collabs.map((c,i)=>{
-    const res=getResult(c.email);
-    const chipOk=res.contributorStatus==='sent';
+  const statusOf=email=>(emailResults.find(r=>r.email===email)||{}).contributorStatus;
+  const ownerPct=r2(Math.max(0,100-sumPct(collabs)));
+  const ft=featuredOf(rel);
+
+  document.getElementById('viewTitle').textContent=rel.releaseTitle||'Untitled release';
+  document.getElementById('viewSub').textContent=(rel.artistName||'')+(ft.length?' ft. '+ft.join(', '):'');
+
+  const ownerRow=`
+    <div class="row">
+      <div class="avatar owner">${esc(initials(rel.artistName||'Owner'))}</div>
+      <div class="who"><b>${esc(rel.artistName||'Owner')}</b><small>Owner</small></div>
+      <div class="share">${fmt(ownerPct)}</div>
+    </div>`;
+  const rows=collabs.map((c,i)=>{
+    const ok=statusOf(c.email)==='sent';
     return `
-      <div class="modal-collab">
-        <div class="modal-collab-av" style="background:${clr(i)}">${esc(initials(c.name))}</div>
-        <div class="modal-collab-info">
-          <div class="modal-collab-name">${esc(c.name)}</div>
-          <div class="modal-collab-role">${esc(c.role)}</div>
-          <div class="modal-collab-contact">
-            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${esc(c.email)}</span>
-            ${c.phone?`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${esc(c.phone)}</span>`:''}
-            <span class="email-chip ${chipOk?'sent':'failed'}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${chipOk?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}</svg>
-              ${chipOk?'Invite Sent':'Send Failed'}
-            </span>
-          </div>
-        </div>
-        <div class="modal-collab-pct" style="color:${clr(i)}">${parseFloat(c.pct)||0}%</div>
-      </div>`;
+    <div class="row">
+      <div class="avatar" style="color:${segColor(i)}">${esc(initials(c.name))}</div>
+      <div class="who"><b>${esc(c.name)}</b><small>${esc(c.role)} · ${esc(c.email)}</small></div>
+      <span class="chip ${ok?'':'failed'}">${ok?'Invited':'Not sent'}</span>
+      <div class="share" style="color:${segColor(i)}">${fmt(parseFloat(c.pct)||0)}</div>
+    </div>`;
   }).join('');
-  document.getElementById('viewBody').innerHTML=`
-    <div class="modal-release-row">
-      <div class="modal-cover">${coverHtml}</div>
-      <div><div class="modal-rel-title">${esc(rel.releaseTitle||'Untitled')}</div><div class="modal-rel-artist">${esc(rel.artistName||'')}</div></div>
-    </div>
-    <div class="modal-notice">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <p>Invites sent to each collaborator's Gmail. A copy was sent to <strong>444musicdistro@gmail.com</strong>. Split data is stored so contributors can log in to view their percentage. This split is <strong>permanently locked.</strong></p>
-    </div>
-    <div class="modal-sec-lbl">Collaborators &amp; Invite Status</div>
-    <div class="modal-collabs">${ownerRowHtml}${items}</div>`;
+  document.getElementById('viewList').innerHTML=ownerRow+rows;
   document.getElementById('viewOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-document.getElementById('viewClose').onclick=()=>{document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';};
-document.getElementById('viewOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('viewOverlay').classList.remove('open');document.getElementById('confirmOverlay').classList.remove('open');document.body.style.overflow='';}});
+function closeView(){document.getElementById('viewOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('viewClose').onclick=closeView;
+document.getElementById('viewOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeView();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeView();
+    if(!document.getElementById('confirmGo').disabled)closeConfirm();
+  }
+});
 
 /* ── ROLE SELECT ── */
 document.getElementById('roleArtist').onclick=()=>{
   document.getElementById('roleOverlay').classList.remove('open');
   document.body.style.overflow='';
 };
-document.getElementById('roleContributor').onclick=()=>{
-  window.location.href='contributor.html';
-};
+document.getElementById('roleContributor').onclick=()=>{ window.location.href='contributor.html'; };
 document.body.style.overflow='hidden';
 
-const spinStyle=document.createElement('style');
-spinStyle.textContent='@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
-document.head.appendChild(spinStyle);
-
-window._SD={}; window._RM={}; window._DB=null; window._FF={}; window._LK=new Set(); window._SPLIT_DOC_IDS={};
+window._SD={}; window._RM={}; window._DB=null; window._FF={}; window._LK=new Set(); window._SPLIT_DOC_IDS={}; window._USER_EMAIL='';
 </script>
 
 <script type="module">
@@ -971,47 +639,46 @@ const db   = getFirestore(app);
 window._DB = db;
 window._FF = { doc, updateDoc, collection, addDoc };
 
+const isApproved = d => String(d.status || '').trim().toLowerCase() === 'approved';
+
 onAuthStateChanged(auth, async user => {
   if (!user) { window.location.href='login.html'; return; }
-  const grid = document.getElementById('releasesGrid');
+  window._USER_EMAIL = (user.email || '').toLowerCase().trim();
+  const grid = document.getElementById('grid');
   try {
     const snap = await getDocs(query(collection(db,'submissions'), where('userId','==',user.uid)));
+
+    // Only approved releases can be split. Review, pending, rejected and taken-down are skipped.
+    const approved = [];
+    snap.forEach(ds => { const data = ds.data(); if (isApproved(data)) approved.push({ id: ds.id, data }); });
+
     grid.innerHTML = '';
-    if(snap.empty){
-      grid.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>No releases found</h3><p>Create your first release to begin setting up royalty splits.</p><a class="empty-link" href="pricing.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Create a Release</a></div>`;
+    if (!approved.length) {
+      grid.innerHTML = `<div class="empty"><h3>No approved releases yet</h3><p>Splits open once a release is approved.</p></div>`;
       return;
     }
 
-    // Pre-load existing splits docs to avoid creating duplicates
+    // Reuse existing splits docs so we never create duplicates
     const existingSplits = await getDocs(query(collection(db,'splits'), where('ownerUserId','==',user.uid)));
     existingSplits.forEach(ds => {
       const sid = ds.data().submissionId;
-      if(sid) window._SPLIT_DOC_IDS[sid] = ds.id;
+      if (sid) window._SPLIT_DOC_IDS[sid] = ds.id;
     });
 
-    let i=0;
-    snap.forEach(ds=>{
-      const data=ds.data(), id=ds.id, locked=data.splitLocked===true;
-      window._RM[id]={...data,_id:id};
-      // Owner is never seeded as a fake collaborator — royaltySplits holds
-      // only real collaborators. The owner's share (100 - sum) is derived
-      // automatically every time the card renders.
-      window._SD[id]=Array.isArray(data.royaltySplits)?data.royaltySplits:[];
-      if(locked)window._LK.add(id);
-      const card=document.createElement('div');
-      card.className='split-card'; card.id='sc-'+id;
-      card.style.cssText='opacity:0;transform:translateY(18px);';
+    approved.forEach(({ id, data }) => {
+      const locked = data.splitLocked === true;
+      window._RM[id] = { ...data, _id: id };
+      // royaltySplits holds real collaborators only; the owner share is derived at render time
+      window._SD[id] = Array.isArray(data.royaltySplits) ? data.royaltySplits : [];
+      if (locked) window._LK.add(id);
+      const card = document.createElement('div');
+      card.className = 'card'; card.id = 'sc-' + id;
       grid.appendChild(card);
-      setTimeout(()=>{
-        renderCard(data,id,window._SD[id],locked);
-        card.style.transition='opacity 0.35s ease,transform 0.35s ease';
-        card.style.opacity='1'; card.style.transform='translateY(0)';
-      },i*75);
-      i++;
+      renderCard(data, id, window._SD[id], locked);
     });
   } catch(e){
     console.error(e);
-    grid.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><h3>Failed to load releases</h3><p>Please refresh the page.</p></div>`;
+    grid.innerHTML = `<div class="empty"><h3>Couldn't load releases</h3><p>Refresh the page to try again.</p></div>`;
   }
 });
 </script>
