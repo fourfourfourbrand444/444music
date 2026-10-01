@@ -11,9 +11,6 @@
 <style>
 /* ═══════════════════════════════════════════════════
    444MUSIC — EARNINGS  ·  Deep black / true white
-   Two real tones, not a grayscale filter: cards are
-   either genuinely black (#0a0a0a) or genuinely white
-   (#ffffff), on top of a true-black (#000) page.
 ═══════════════════════════════════════════════════ */
 
 :root {
@@ -24,7 +21,6 @@
   --blk-border-h:  rgba(255,255,255,0.18);
 
   --wht:           #ffffff;
-  --wht-2:         #f4f4f4;
   --wht-border:    rgba(0,0,0,0.08);
   --wht-border-h:  rgba(0,0,0,0.16);
 
@@ -34,7 +30,6 @@
 
   --ink-1:         #0d0d0d;
   --ink-2:         #6e6e6e;
-  --ink-3:         #b3b3b3;
 
   --radius:        18px;
   --pill:          999px;
@@ -56,272 +51,182 @@ body{
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
+button{font-family:inherit;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:var(--page)}
 ::-webkit-scrollbar-thumb{background:#333;border-radius:99px}
 
-.orb{position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:0;}
-.orb-1{width:640px;height:640px;background:radial-gradient(circle,rgba(255,255,255,0.05) 0%,transparent 70%);top:-260px;right:-160px;}
-.orb-2{width:460px;height:460px;background:radial-gradient(circle,rgba(255,255,255,0.03) 0%,transparent 70%);bottom:-140px;left:-120px;}
-
-/* ===== TOPBAR — no logo, no live dot ===== */
-.topbar{
-  position:sticky;top:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 32px;height:64px;
-  background:rgba(0,0,0,0.92);backdrop-filter:blur(22px);
-  border-bottom:1px solid var(--blk-border);
-}
-.tb-links{display:flex;gap:2px;}
-.tb-link{color:var(--text-2);text-decoration:none;font-size:13px;font-weight:600;padding:7px 14px;border-radius:9px;transition:all var(--t);white-space:nowrap;}
-.tb-link:hover,.tb-link.active{color:#fff;background:var(--blk-2);}
-.tb-right{display:flex;align-items:center;gap:12px;}
-
-.profile-avatar-wrap{position:relative;flex-shrink:0;}
-.profile-avatar{
-  width:38px;height:38px;border-radius:50%;overflow:hidden;
-  background:var(--blk-2);border:1px solid var(--blk-border-h);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:border-color var(--t),transform var(--t);
-}
-.profile-avatar:hover{border-color:rgba(255,255,255,0.4);transform:translateY(-1px);}
-.profile-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-.profile-avatar i{font-size:0.95rem;color:var(--text-2);}
-.profile-avatar-edit{
-  position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;
-  background:#fff;border:2px solid #000;display:flex;align-items:center;justify-content:center;
-  color:#000;font-size:0.45rem;cursor:pointer;transition:transform var(--t);
-}
-.profile-avatar-edit:hover{transform:scale(1.15);}
-.profile-avatar-edit.uploading i{animation:spin 0.9s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.tb-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border-radius:9px;background:transparent;border:none;}
-.tb-burger:hover{background:var(--blk-2);}
-.tb-burger span{display:block;width:20px;height:2px;background:var(--text-2);border-radius:2px;transition:all 0.3s ease;}
-.tb-burger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
-.tb-burger.open span:nth-child(2){opacity:0;}
-.tb-burger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
-
-.mobile-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(0,0,0,0.98);backdrop-filter:blur(26px);border-bottom:1px solid var(--blk-border);flex-direction:column;gap:2px;padding:14px 16px 18px;z-index:99;}
-.mobile-drawer.open{display:flex;animation:drawerDown 0.26s var(--ease) both;}
-@keyframes drawerDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.mobile-drawer a{display:flex;align-items:center;gap:10px;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:600;padding:12px 14px;border-radius:10px;transition:all var(--t);}
-.mobile-drawer a i{width:16px;text-align:center;color:var(--text-3);font-size:13px;}
-.mobile-drawer a:hover,.mobile-drawer a.active{color:#fff;background:var(--blk-2);}
-
 /* ===== CONTAINER ===== */
-.container{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:44px 24px 88px;}
+.container{max-width:1080px;margin:0 auto;padding:28px 20px 80px;}
 
-.page-header{margin-bottom:22px;animation:slideDown 0.5s var(--ease) both;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
-.header-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:var(--pill);padding:5px 14px;margin-bottom:14px;}
-.page-header h1{font-family:var(--font-head);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;letter-spacing:-1px;color:#fff;line-height:1.1;margin-bottom:8px;}
-.page-header p{font-size:0.88rem;color:var(--text-2);font-weight:400;}
-
-/* ===== CURRENCY SELECTOR ===== */
-.currency-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:28px;animation:slideDown 0.5s var(--ease) 0.05s both;}
-.currency-label{font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);}
-.currency-pill{
-  position:relative;display:flex;align-items:center;
-  background:var(--blk-2);border:1px solid var(--blk-border-h);border-radius:var(--pill);
-  padding:5px 12px 5px 14px;transition:border-color var(--t);
-}
-.currency-pill:hover{border-color:rgba(255,255,255,0.3);}
-.currency-pill select{
-  appearance:none;-webkit-appearance:none;background:transparent;border:none;outline:none;
-  color:#fff;font-family:var(--font-body);font-size:0.82rem;font-weight:700;
-  padding-right:20px;cursor:pointer;max-width:230px;
-}
-.currency-pill select option{background:#111;color:#fff;}
-.currency-pill i{position:absolute;right:11px;pointer-events:none;color:var(--text-2);font-size:0.65rem;}
-.currency-note{width:100%;font-size:0.72rem;color:#5c5c5c;font-weight:500;margin-top:2px;}
-
-/* ===== CARDS — black variant ===== */
+/* ===== CARDS ===== */
 .card-blk{
   background:var(--blk);border:1px solid var(--blk-border);border-radius:var(--radius);
   padding:24px;position:relative;overflow:hidden;
-  transition:border-color var(--t) var(--ease),box-shadow var(--t);
+  transition:border-color var(--t) var(--ease);
 }
-.card-blk:hover{border-color:var(--blk-border-h);box-shadow:0 12px 36px rgba(0,0,0,0.6);}
-.card-blk .card-topline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#fff,transparent);opacity:0;transition:opacity var(--t);}
-.card-blk:hover .card-topline{opacity:1}
-
-/* ===== CARDS — white variant ===== */
+.card-blk:hover{border-color:var(--blk-border-h);}
 .card-wht{
   background:var(--wht);border:1px solid var(--wht-border);border-radius:var(--radius);
   padding:24px;position:relative;overflow:hidden;color:var(--ink-1);
-  transition:border-color var(--t) var(--ease),box-shadow var(--t),transform var(--t);
 }
-.card-wht:hover{border-color:var(--wht-border-h);box-shadow:0 14px 38px rgba(0,0,0,0.35);transform:translateY(-2px);}
-
 .card-title{font-family:var(--font-head);font-size:0.98rem;font-weight:800;letter-spacing:-0.3px;margin-bottom:18px;color:#fff;}
 .card-wht .card-title{color:var(--ink-1);}
 .card-title i{margin-right:8px;color:inherit;}
 
 /* ===== STAT ROW ===== */
-.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-bottom:20px;animation:revealUp 0.55s var(--ease) 0.08s both;}
-@keyframes revealUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-bottom:20px;animation:revealUp 0.5s var(--ease) both;}
+@keyframes revealUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-.stat-card{border-radius:var(--radius);padding:22px 20px 20px;position:relative;overflow:hidden;transition:transform var(--t) var(--ease),box-shadow var(--t);}
-.stat-card:hover{transform:translateY(-3px);}
-
-.stat-card.hero{background:var(--blk);border:1px solid var(--blk-border-h);box-shadow:0 16px 40px rgba(0,0,0,0.55);}
+.stat-card{border-radius:var(--radius);padding:22px 20px 20px;position:relative;overflow:hidden;}
+.stat-card.hero{background:var(--blk);border:1px solid var(--blk-border-h);}
 .stat-card.plain{background:var(--wht);border:1px solid var(--wht-border);color:var(--ink-1);}
-.stat-card.plain:hover{box-shadow:0 14px 34px rgba(0,0,0,0.28);}
 
-.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;margin-bottom:14px;}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;}
 .stat-card.hero .stat-icon{background:rgba(255,255,255,0.1);color:#fff;}
-.stat-card.plain .stat-icon{background:rgba(0,0,0,0.06);color:var(--ink-1);}
+.stat-card.plain .stat-icon{background:rgba(0,0,0,0.06);color:var(--ink-1);margin-bottom:14px;}
+
+/* simple currency select, sits inside the balance card */
+.cur-select select{
+  appearance:none;-webkit-appearance:none;outline:none;
+  background-color:rgba(255,255,255,0.08);border:1px solid var(--blk-border-h);border-radius:var(--pill);
+  color:#fff;font-family:var(--font-body);font-size:0.78rem;font-weight:700;
+  padding:7px 30px 7px 14px;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23969696' stroke-width='1.5' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.cur-select select:hover{border-color:rgba(255,255,255,0.32);}
+.cur-select select option{background:#111;color:#fff;}
+.cur-note{font-size:0.7rem;color:var(--text-2);margin-top:10px;min-height:0;}
+.cur-note:empty{display:none;}
 
 .stat-card h2{font-family:var(--font-head);font-size:2.05rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:6px;word-break:break-all;}
 .stat-card.hero h2{color:#fff;}
-.stat-card.hero h2 .cur{font-size:0.5em;color:var(--text-2);font-weight:600;margin-left:4px;}
-.stat-card.plain h2{font-size:1.6rem;color:var(--ink-1);}
+.stat-card.plain h2{font-size:1.5rem;color:var(--ink-1);}
 .stat-card p{font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
 .stat-card.hero p{color:var(--text-2);}
 .stat-card.plain p{color:var(--ink-2);}
+.stat-sub{font-size:0.74rem;color:var(--ink-2);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stat-sub:empty{display:none;}
 
-/* ===== WITHDRAW CARD — its own white card, own row ===== */
-.withdraw-card{margin-bottom:20px;animation:revealUp 0.55s var(--ease) 0.14s both;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+/* ===== WITHDRAW ===== */
+.withdraw-card{margin-bottom:20px;animation:revealUp 0.5s var(--ease) 0.06s both;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
 .withdraw-left{flex:1;min-width:240px;}
 .withdraw-left .card-title{margin-bottom:8px;}
 .withdraw-left p{font-size:0.84rem;color:var(--ink-2);line-height:1.55;margin-bottom:14px;}
 .thresh-track{height:6px;background:rgba(0,0,0,0.08);border-radius:var(--pill);overflow:hidden;max-width:340px;}
-.thresh-fill{height:100%;border-radius:var(--pill);width:0%;background:linear-gradient(90deg,#000,#3a3a3a);transition:width 1s var(--ease);}
+.thresh-fill{height:100%;border-radius:var(--pill);width:0%;background:#000;transition:width 1s var(--ease);}
 .thresh-label{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--ink-2);font-weight:600;margin-top:8px;max-width:340px;}
 .thresh-label strong{color:var(--ink-1);}
-
 .btn-withdraw{
   display:inline-flex;align-items:center;gap:9px;
   background:#000;color:#fff;border:none;border-radius:12px;
-  padding:15px 26px;font-family:var(--font-body);font-size:0.9rem;font-weight:700;
-  cursor:pointer;text-decoration:none;white-space:nowrap;flex-shrink:0;
-  transition:transform var(--t),box-shadow var(--t);
-  box-shadow:0 8px 22px rgba(0,0,0,0.28);
+  padding:15px 26px;font-size:0.9rem;font-weight:700;
+  white-space:nowrap;flex-shrink:0;transition:opacity var(--t);
 }
-.btn-withdraw:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,0.4);}
-.btn-withdraw:active{transform:translateY(0);}
+.btn-withdraw:hover{opacity:.85;}
 
-/* ===== PLATFORM BREAKDOWN (black card, source-row style) ===== */
-.sources{animation:revealUp 0.55s var(--ease) 0.2s both;}
-.source-list{display:flex;flex-direction:column;gap:10px;}
-.source-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--blk-2);border:1px solid var(--blk-border);border-radius:12px;transition:border-color var(--t),background var(--t);}
-.source-row:hover{border-color:var(--blk-border-h);background:#161616;}
-.source-icon{width:32px;height:32px;border-radius:9px;background:#000;border:1px solid var(--blk-border-h);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem;color:var(--text-2);}
-.source-name{font-size:0.84rem;color:var(--text-1);font-weight:700;min-width:110px;}
-.source-bar-wrap{flex:1;height:5px;background:#000;border-radius:var(--pill);overflow:hidden;}
-.source-bar{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,#cfcfcf,#fff);transition:width 1s var(--ease);}
-.source-pct{font-family:var(--font-head);font-size:0.82rem;font-weight:800;color:var(--text-1);min-width:40px;text-align:right;}
+/* ===== SONGS ===== */
+.songs{animation:revealUp 0.5s var(--ease) 0.12s both;}
+.songs-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.songs-head .card-title{margin-bottom:0;}
+.search-wrap{display:none;flex:1 1 220px;max-width:300px;}
+.search-wrap.show{display:block;}
+.search-wrap input{
+  width:100%;background:var(--blk-2);border:1px solid var(--blk-border-h);border-radius:var(--pill);
+  padding:9px 16px;color:#fff;font-family:var(--font-body);font-size:0.85rem;outline:none;
+}
+.search-wrap input::placeholder{color:var(--text-2);}
+.search-wrap input:focus{border-color:rgba(255,255,255,0.4);}
+
+.song-list{display:flex;flex-direction:column;gap:10px;}
+.song-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--blk-2);border:1px solid var(--blk-border);border-radius:12px;}
+.song-cover{width:44px;height:44px;border-radius:10px;background:#000;border:1px solid var(--blk-border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:0.9rem;}
+.song-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+.song-info{flex:1;min-width:0;}
+.song-title{font-size:0.9rem;font-weight:700;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-meta{font-size:0.72rem;color:var(--text-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-amt{font-family:var(--font-head);font-size:0.98rem;font-weight:800;color:#fff;flex-shrink:0;}
+.song-amt.zero{color:var(--text-2);font-weight:600;}
+.song-empty{text-align:center;padding:34px 10px;font-size:0.85rem;color:var(--text-2);}
+.song-row.sk{height:70px;background:linear-gradient(90deg,#111 25%,#1a1a1a 50%,#111 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-color:transparent;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+.songs-foot{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px;}
+.songs-foot.between{justify-content:space-between;}
+.songs-foot:empty{display:none;}
+.pill-btn{background:transparent;border:1px solid var(--blk-border-h);color:#fff;border-radius:var(--pill);padding:9px 22px;font-size:0.82rem;font-weight:700;transition:background var(--t);}
+.pill-btn:hover:not(:disabled){background:var(--blk-2);}
+.pill-btn.sm{padding:7px 14px;font-size:0.78rem;}
+.link-btn{background:none;border:none;color:var(--text-2);font-size:0.8rem;font-weight:600;padding:6px 2px;}
+.link-btn:hover{color:#fff;}
+.pager{display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--text-2);font-weight:600;}
 
 /* ===== POPUP ===== */
 .popup-overlay{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:20px;}
 .popup-overlay.active{opacity:1;pointer-events:auto;}
 .popup-box{background:var(--wht);color:var(--ink-1);border-radius:20px;padding:30px 26px;max-width:380px;width:100%;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,0.6);animation:popIn 0.3s var(--ease) both;}
-@keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .popup-icon{width:52px;height:52px;border-radius:14px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;color:var(--ink-1);font-size:22px;margin:0 auto 16px;}
 .popup-box h2{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:8px;}
 .popup-box p{font-size:0.85rem;color:var(--ink-2);line-height:1.6;margin-bottom:8px;}
 .popup-threshold{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,0.04);border-radius:10px;padding:12px;margin:14px 0;font-size:0.85rem;color:var(--ink-2);flex-wrap:wrap;}
 .popup-threshold strong{font-family:var(--font-head);font-size:1.05rem;color:var(--ink-1);}
-.popup-btn{width:100%;padding:13px;border:none;border-radius:11px;background:#000;color:#fff;font-family:var(--font-body);font-size:0.9rem;font-weight:700;cursor:pointer;transition:transform var(--t);margin-top:4px;}
-.popup-btn:hover{transform:translateY(-1px);}
+.popup-btn{width:100%;padding:13px;border:none;border-radius:11px;background:#000;color:#fff;font-size:0.9rem;font-weight:700;margin-top:4px;}
 
 @media(max-width:900px){
   .stats{grid-template-columns:1fr 1fr}
   .stats .stat-card.hero{grid-column:1/-1}
 }
 @media(max-width:640px){
-  .topbar{padding:0 16px;height:56px}
-  .tb-links{display:none}
-  .tb-burger{display:flex}
-  .mobile-drawer{top:56px}
-  .container{padding:30px 14px 64px}
-  .stats{grid-template-columns:1fr 1fr;gap:10px}
-  .stat-card h2{font-size:1.5rem}
+  .container{padding:18px 14px 64px}
+  .stats{gap:10px}
   .stat-card.hero h2{font-size:1.9rem}
+  .stat-card.plain h2{font-size:1.25rem}
   .withdraw-card{flex-direction:column;align-items:stretch;}
   .btn-withdraw{justify-content:center;width:100%;}
+  .search-wrap{max-width:none;flex-basis:100%;}
 }
 </style>
 </head>
 <body>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-<!-- ── TOPBAR — no logo, no live dot ── -->
-<nav class="topbar">
-  <div class="tb-links">
-    <a href="wey.html" class="tb-link">Dashboard</a>
-    <a href="ear.html" class="tb-link active">Earnings</a>
-    <a href="tools.html" class="tb-link">Tools</a>
-    <a href="legal.html" class="tb-link">Legal</a>
-  </div>
-  <div class="tb-right">
-    <div class="profile-avatar-wrap">
-      <div class="profile-avatar" id="profileAvatar" title="Change profile photo">
-        <i class="fa-solid fa-user"></i>
-      </div>
-      <div class="profile-avatar-edit" id="avatarEditBtn" title="Change profile photo">
-        <i class="fa-solid fa-pen"></i>
-      </div>
-      <input type="file" accept="image/*" id="avatarInput" style="display:none;">
-    </div>
-    <button class="tb-burger" id="burger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<div class="mobile-drawer" id="drawer">
-  <a href="wey.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-  <a href="ear.html" class="active"><i class="fa-solid fa-circle-dollar-to-slot"></i> Earnings</a>
-  <a href="tools.html"><i class="fa-solid fa-wrench"></i> Tools</a>
-  <a href="legal.html"><i class="fa-solid fa-scale-balanced"></i> Legal</a>
-</div>
-
 <div class="container">
 
-  <div class="page-header">
-    <h1>Earnings</h1>
-    <p>Your balance across every platform, all in one place.</p>
-  </div>
-
-  <!-- CURRENCY SELECTOR — display only. Balance is always tracked & withdrawn in USD. -->
-  <div class="currency-row">
-    <span class="currency-label">View earnings in</span>
-    <div class="currency-pill">
-      <select id="currencySelect"></select>
-      <i class="fa-solid fa-chevron-down"></i>
-    </div>
-    <div class="currency-note" id="currencyNote">Your real balance, shown in USD.</div>
-  </div>
-
-  <!-- STATS: hero balance + two plain white cards -->
+  <!-- BALANCE + TWO LIVE CARDS -->
   <section class="stats">
     <div class="stat-card hero">
-      <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
-      <h2 id="balanceValue">$0.00<span class="cur" id="balanceCur">USD</span></h2>
+      <div class="hero-top">
+        <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+        <div class="cur-select"><select id="currencySelect" aria-label="Currency"></select></div>
+      </div>
+      <h2 id="balanceValue">$0.00</h2>
       <p>Available Balance</p>
+      <div class="cur-note" id="curNote"></div>
     </div>
+
     <div class="stat-card plain">
-      <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
-      <h2 id="clearedValue">$0.00</h2>
-      <p>Cleared</p>
+      <div class="stat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <h2 id="payoutValue">—</h2>
+      <p>Last payout</p>
+      <div class="stat-sub" id="payoutSub"></div>
     </div>
+
     <div class="stat-card plain">
-      <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-      <h2 id="pendingValue">$0.00</h2>
-      <p>Pending</p>
+      <div class="stat-icon"><i class="fa-solid fa-music"></i></div>
+      <h2 id="earningValue">—</h2>
+      <p>Songs earning</p>
+      <div class="stat-sub" id="earningSub"></div>
     </div>
   </section>
 
-  <!-- WITHDRAW — its own white card, separate from the balance -->
+  <!-- WITHDRAW -->
   <section class="card-wht withdraw-card">
     <div class="withdraw-left">
       <div class="card-title"><i class="fa-solid fa-arrow-up-from-bracket"></i> Ready to withdraw</div>
-      <p id="withdrawCopy">Minimum withdrawal is $50.00. Balances update once platform reports come in, usually 45–60 days after month end.</p>
+      <p id="withdrawCopy">Minimum withdrawal is $50.00.</p>
       <div class="thresh-track"><div class="thresh-fill" id="threshFill"></div></div>
       <div class="thresh-label"><span>Progress to payout</span><strong id="threshText">$0 / $50</strong></div>
     </div>
@@ -330,37 +235,17 @@ body{
     </button>
   </section>
 
-  <!-- PLATFORM BREAKDOWN -->
-  <div class="card-blk sources">
-    <div class="card-topline"></div>
-    <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Earnings by Platform</div>
-    <div class="source-list">
-      <div class="source-row">
-        <div class="source-icon"><i class="fa-brands fa-spotify"></i></div>
-        <span class="source-name">Spotify</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="spotifyBar" style="width:0%"></div></div>
-        <span class="source-pct" id="spotifyPct">0%</span>
-      </div>
-      <div class="source-row">
-        <div class="source-icon"><i class="fa-brands fa-apple"></i></div>
-        <span class="source-name">Apple Music</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="appleBar" style="width:0%"></div></div>
-        <span class="source-pct" id="applePct">0%</span>
-      </div>
-      <div class="source-row">
-        <div class="source-icon"><i class="fa-brands fa-youtube"></i></div>
-        <span class="source-name">YouTube</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="youtubeBar" style="width:0%"></div></div>
-        <span class="source-pct" id="youtubePct">0%</span>
-      </div>
-      <div class="source-row">
-        <div class="source-icon"><i class="fa-brands fa-amazon"></i></div>
-        <span class="source-name">Amazon Music</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="amazonBar" style="width:0%"></div></div>
-        <span class="source-pct" id="amazonPct">0%</span>
+  <!-- EARNINGS BY SONG -->
+  <section class="card-blk songs">
+    <div class="songs-head">
+      <div class="card-title"><i class="fa-solid fa-compact-disc"></i> Earnings by song</div>
+      <div class="search-wrap" id="searchWrap">
+        <input id="songSearch" type="search" placeholder="Search a song, press Enter" autocomplete="off">
       </div>
     </div>
-  </div>
+    <div class="song-list" id="songList"></div>
+    <div class="songs-foot" id="songFoot"></div>
+  </section>
 
 </div>
 
@@ -371,7 +256,6 @@ body{
     <h2>Minimum Not Reached</h2>
     <p>Your balance is below the minimum withdrawal threshold.</p>
     <div class="popup-threshold">
-      <i class="fa-solid fa-circle-dollar-to-slot"></i>
       Your balance must reach <strong id="popupThreshold">$50.00</strong> to withdraw
     </div>
     <button id="closePopup" class="popup-btn">Got it</button>
@@ -381,7 +265,8 @@ body{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, collection, query, where, orderBy, limit, startAfter, getCountFromServer }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -396,190 +281,287 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const r2 = x => Math.round(x * 100) / 100;
+
 const MIN_WITHDRAWAL = 50;
-let userBalance = 0;   // always real USD — used for eligibility checks
-let rawCleared  = 0;
-let rawPending  = 0;
-let currentUid  = null;
+const APPROVED = ['Approved', 'approved'];
+const COMPACT_COUNT = 4;   // songs shown first
+const PAGE_SIZE = 10;      // songs per page after "See more"
 
-/* ── CURRENCY DISPLAY — display only, mirrors earnings_screen.dart ──
-   Rates are USD → target currency. Keep this table in sync with the
-   Flutter app's _currencyRates in earnings_screen.dart if you refresh
-   the numbers — both surfaces should always show the same conversion. */
+let uid = null;
+let userBalance = 0;       // real USD, used for eligibility checks
+
+/* ── CURRENCY (display only; balance is always tracked in USD) ──
+   Keep in sync with _currencyRates in earnings_screen.dart */
 const CURRENCY_RATES = {
-  USD: { symbol: '$',    rate: 1,       label: '🇺🇸 United States — USD' },
-  GHS: { symbol: 'GHC',  rate: 11.454,  label: '🇬🇭 Ghana — GHS' },
-  NGN: { symbol: '₦',    rate: 1500.5,  label: '🇳🇬 Nigeria — NGN' },
-  EUR: { symbol: '€',    rate: 0.9198,  label: '🇪🇺 Europe — EUR' },
-  GBP: { symbol: '£',    rate: 0.7903,  label: '🇬🇧 United Kingdom — GBP' },
-  ZAR: { symbol: 'R',    rate: 18.50,   label: '🇿🇦 South Africa — ZAR' },
-  KES: { symbol: 'KSh',  rate: 128.98,  label: '🇰🇪 Kenya — KES' },
-  CAD: { symbol: 'CA$',  rate: 1.360,   label: '🇨🇦 Canada — CAD' },
-  XOF: { symbol: 'CFA',  rate: 602.5,   label: '🌍 West Africa (CFA) — XOF' },
+  USD: { symbol: '$',    rate: 1 },
+  GHS: { symbol: 'GHC',  rate: 11.454 },
+  NGN: { symbol: '₦',    rate: 1500.5 },
+  EUR: { symbol: '€',    rate: 0.9198 },
+  GBP: { symbol: '£',    rate: 0.7903 },
+  ZAR: { symbol: 'R',    rate: 18.50 },
+  KES: { symbol: 'KSh',  rate: 128.98 },
+  CAD: { symbol: 'CA$',  rate: 1.360 },
+  XOF: { symbol: 'CFA',  rate: 602.5 },
 };
-
 let selectedCurrency = 'USD';
 
-const currencySelect = document.getElementById('currencySelect');
-const currencyNote   = document.getElementById('currencyNote');
-
-// Populate the dropdown
-Object.entries(CURRENCY_RATES).forEach(([code, info]) => {
+const currencySelect = $('currencySelect');
+Object.keys(CURRENCY_RATES).forEach(code => {
   const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = info.label;
+  opt.value = code; opt.textContent = code;
   currencySelect.appendChild(opt);
 });
 currencySelect.value = selectedCurrency;
 
 function formatSelected(usdValue, decimals) {
   const info = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
-  const converted = usdValue * info.rate;
   const d = decimals !== undefined ? decimals : (selectedCurrency === 'XOF' ? 0 : 2);
-  return `${info.symbol}${converted.toFixed(d)}`;
+  const n = (Number(usdValue) || 0) * info.rate;
+  return info.symbol + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 }
 
-function renderAllAmounts() {
-  // Available balance (hero card)
-  document.getElementById('balanceValue').innerHTML =
-    `${formatSelected(userBalance)}<span class="cur" id="balanceCur">${selectedCurrency}</span>`;
-
-  // Cleared / Pending
-  document.getElementById('clearedValue').textContent = formatSelected(rawCleared);
-  document.getElementById('pendingValue').textContent = formatSelected(rawPending);
-
-  // Withdraw card copy + progress
-  document.getElementById('withdrawCopy').textContent =
-    `Minimum withdrawal is ${formatSelected(MIN_WITHDRAWAL)}. Balances update once platform reports come in, usually 45–60 days after month end.`;
-
-  const pct = Math.min((userBalance / MIN_WITHDRAWAL) * 100, 100);
-  document.getElementById('threshFill').style.width = pct + '%';
-  document.getElementById('threshText').textContent =
-    `${formatSelected(userBalance, 0)} / ${formatSelected(MIN_WITHDRAWAL, 0)}`;
-
-  // Popup threshold text (in case it's already open)
-  document.getElementById('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
-
-  // Note under the dropdown
-  currencyNote.textContent = selectedCurrency === 'USD'
-    ? 'Your real balance, shown in USD.'
-    : `Approximate ${selectedCurrency} preview — your real balance is always tracked in USD.`;
+function fmtDate(d) {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-currencySelect.addEventListener('change', (e) => {
-  selectedCurrency = e.target.value;
-  renderAllAmounts();
-});
+/* ── STATE ── */
+let loading = true;
+let errorMsg = '';
+let busy = false;
+let mode = 'compact';          // 'compact' | 'paged' | 'search'
+let compact = { rows: [], earnerRows: [], cursor: null, more: false };
+let pages = [];                // paged mode: [{ rows, cursor, more }]
+let pg = 0;
+let results = [];
+let searchEnabled = false;     // shown once the user has more than 10 earning songs
+let stats = { earning: null, total: null, lastPayout: undefined };
 
-/* ── PROFILE AVATAR (nav badge) ── */
-const profileAvatar = document.getElementById("profileAvatar");
-const avatarEditBtn = document.getElementById("avatarEditBtn");
-const avatarInput   = document.getElementById("avatarInput");
+/* ── DATA ── */
+const subs = () => collection(db, 'submissions');
+const approvedFilters = () => [where('userId', '==', uid), where('status', 'in', APPROVED)];
+const isApproved = s => String(s.status || '').trim().toLowerCase() === 'approved';
 
-function renderAvatar(photoURL) {
-  profileAvatar.innerHTML = photoURL
-    ? `<img src="${photoURL}" alt="Profile photo">`
-    : `<i class="fa-solid fa-user"></i>`;
-}
-
-profileAvatar.addEventListener("click", () => avatarInput.click());
-avatarEditBtn.addEventListener("click", (e) => { e.stopPropagation(); avatarInput.click(); });
-
-avatarInput.addEventListener("change", async (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (!file || !currentUid) return;
-  if (file.size > 5 * 1024 * 1024) { alert("Image must be under 5MB"); return; }
-
-  avatarEditBtn.classList.add("uploading");
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    const base64 = ev.target.result;
-    try {
-      await setDoc(doc(db, "users", currentUid), { photoURL: base64 }, { merge: true });
-      renderAvatar(base64);
-    } catch (err) {
-      console.error("Avatar update error:", err);
-      alert("Couldn't update your photo. Please try again.");
-    } finally {
-      avatarEditBtn.classList.remove("uploading");
-    }
+function toRow(d) {
+  const s = d.data();
+  // Owner share is only shown when a locked split exists. royaltySplits holds collaborators only.
+  const collabs = s.splitLocked === true && Array.isArray(s.royaltySplits) ? s.royaltySplits : [];
+  const cp = collabs.reduce((a, c) => a + (parseFloat(c.pct) || 0), 0);
+  const share = cp > 0 ? Math.max(0, r2(100 - cp)) : null;
+  return {
+    id: d.id,
+    title: s.releaseTitle || 'Untitled',
+    cover: s.coverURL || s.officialCoverURL || '',
+    earned: Number(s.earningsBalance) || 0,
+    share,
+    paidAt: s.lastPayoutAt && typeof s.lastPayoutAt.toDate === 'function' ? s.lastPayoutAt.toDate() : null
   };
-  reader.readAsDataURL(file);
-});
+}
 
-/* ── BALANCE + PLATFORM DATA ── */
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = 'login.html'; return; }
-  currentUid = user.uid;
+/* One page of approved songs that have earned something, biggest first.
+   Needs index: submissions → userId ↑, status ↑, earningsBalance ↓ */
+async function earnersPage(after, n) {
+  const q = query(subs(), ...approvedFilters(), where('earningsBalance', '>', 0), orderBy('earningsBalance', 'desc'),
+    ...(after ? [startAfter(after)] : []), limit(n + 1));
+  const docs = (await getDocs(q)).docs;
+  const shown = docs.slice(0, n);
+  return { rows: shown.map(toRow), cursor: shown.length ? shown[shown.length - 1] : null, more: docs.length > n };
+}
 
+async function loadSongs() {
+  loading = true; errorMsg = ''; renderSongs();
   try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    const data = snap.exists() ? snap.data() : {};
-
-    renderAvatar(data.photoURL || null);
-
-    userBalance = Number(data.earnings) || 0;
-    rawCleared  = Number(data.clearedEarnings) || 0;
-    rawPending  = Number(data.pendingEarnings) || 0;
-
-    renderAllAmounts();
-
-    const sp = Number(data.spotifyEarnings) || 0;
-    const ap = Number(data.appleEarnings)   || 0;
-    const yt = Number(data.youtubeEarnings) || 0;
-    const az = Number(data.amazonEarnings)  || 0;
-    const tot = (sp + ap + yt + az) || 1;
-    const pct = v => Math.round((v / tot) * 100);
-
-    document.getElementById('spotifyBar').style.width = pct(sp) + '%';
-    document.getElementById('appleBar').style.width    = pct(ap) + '%';
-    document.getElementById('youtubeBar').style.width  = pct(yt) + '%';
-    document.getElementById('amazonBar').style.width   = pct(az) + '%';
-    document.getElementById('spotifyPct').textContent = pct(sp) + '%';
-    document.getElementById('applePct').textContent   = pct(ap) + '%';
-    document.getElementById('youtubePct').textContent = pct(yt) + '%';
-    document.getElementById('amazonPct').textContent  = pct(az) + '%';
-  } catch (err) {
-    console.error('Earnings read failed:', err);
-    userBalance = 0; rawCleared = 0; rawPending = 0;
-    renderAllAmounts();
+    const r = await earnersPage(null, COMPACT_COUNT);
+    const rows = [...r.rows];
+    // Fewer than 4 earning songs: fill the first view with approved songs so it's never empty.
+    if (!r.more && rows.length < COMPACT_COUNT) {
+      const sn = await getDocs(query(subs(), ...approvedFilters(), limit(COMPACT_COUNT)));
+      const have = new Set(rows.map(x => x.id));
+      sn.docs.forEach(d => { if (rows.length < COMPACT_COUNT && !have.has(d.id)) rows.push(toRow(d)); });
+    }
+    compact = { rows, earnerRows: r.rows, cursor: r.cursor, more: r.more };
+  } catch (e) {
+    console.error('Songs load failed:', e);
+    errorMsg = "Couldn't load your songs. Please refresh.";
   }
+  loading = false; renderSongs();
+}
+
+async function loadStats() {
+  const [tot, earn, last] = await Promise.allSettled([
+    getCountFromServer(query(subs(), ...approvedFilters())),
+    getCountFromServer(query(subs(), ...approvedFilters(), where('earningsBalance', '>', 0))),
+    // Needs index: submissions → userId ↑, lastPayoutAt ↓
+    getDocs(query(subs(), where('userId', '==', uid), orderBy('lastPayoutAt', 'desc'), limit(1)))
+  ]);
+  [tot, earn, last].forEach(x => { if (x.status === 'rejected') console.error('Stat failed:', x.reason); });
+  stats.total   = tot.status  === 'fulfilled' ? tot.value.data().count  : null;
+  stats.earning = earn.status === 'fulfilled' ? earn.value.data().count : null;
+  if (last.status === 'fulfilled') {
+    const d = last.value.docs[0];
+    const ts = d && d.data().lastPayoutAt;
+    stats.lastPayout = ts && typeof ts.toDate === 'function'
+      ? { date: ts.toDate(), title: d.data().releaseTitle || 'Untitled' } : null;
+  }
+  renderStats();
+}
+
+/* ── RENDER ── */
+function renderStats() {
+  const lp = stats.lastPayout;
+  $('payoutValue').textContent = lp ? fmtDate(lp.date) : '—';
+  $('payoutSub').textContent   = lp ? lp.title : (lp === null ? 'No payouts yet' : '');
+  $('earningValue').textContent = stats.earning == null ? '—' : stats.earning;
+  $('earningSub').textContent   = stats.total == null ? '' : `of ${stats.total} approved`;
+}
+
+function renderMoney() {
+  $('balanceValue').textContent = formatSelected(userBalance);
+  $('curNote').textContent = selectedCurrency === 'USD' ? '' : 'Approximate. Paid out in USD.';
+  $('withdrawCopy').textContent = `Minimum withdrawal is ${formatSelected(MIN_WITHDRAWAL)}.`;
+  const pct = Math.min((userBalance / MIN_WITHDRAWAL) * 100, 100);
+  $('threshFill').style.width = pct + '%';
+  $('threshText').textContent = `${formatSelected(userBalance, 0)} / ${formatSelected(MIN_WITHDRAWAL, 0)}`;
+  $('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
+  renderSongs();
+}
+
+function rowHtml(r) {
+  const meta = [];
+  if (r.share !== null) meta.push(`Your share ${r.share}%`);
+  if (r.earned > 0 && r.paidAt) meta.push(`Updated ${fmtDate(r.paidAt)}`);
+  const cover = r.cover ? `<img src="${esc(r.cover)}" alt="" loading="lazy">` : '<i class="fa-solid fa-music"></i>';
+  return `
+    <div class="song-row">
+      <div class="song-cover">${cover}</div>
+      <div class="song-info">
+        <div class="song-title">${esc(r.title)}</div>
+        ${meta.length ? `<div class="song-meta">${esc(meta.join(' · '))}</div>` : ''}
+      </div>
+      <div class="song-amt${r.earned > 0 ? '' : ' zero'}">${formatSelected(r.earned)}</div>
+    </div>`;
+}
+
+function footHtml() {
+  if (mode === 'compact') {
+    return compact.more ? `<button class="pill-btn" data-act="more" ${busy ? 'disabled' : ''}>${busy ? 'Loading…' : 'See more'}</button>` : '';
+  }
+  if (mode === 'search') return `<button class="link-btn" data-act="clear">Clear search</button>`;
+  const p = pages[pg]; if (!p) return '';
+  const paged = pages.length > 1 || p.more;
+  return `<button class="link-btn" data-act="less">Show less</button>` + (paged ? `
+    <div class="pager">
+      <button class="pill-btn sm" data-act="prev" ${pg === 0 || busy ? 'disabled' : ''}>‹ Prev</button>
+      <span>Page ${pg + 1}</span>
+      <button class="pill-btn sm" data-act="next" ${!p.more || busy ? 'disabled' : ''}>Next ›</button>
+    </div>` : '');
+}
+
+function renderSongs() {
+  const list = $('songList'), foot = $('songFoot');
+  $('searchWrap').classList.toggle('show', searchEnabled);
+  $('songSearch').disabled = busy;
+  if (loading) { list.innerHTML = '<div class="song-row sk"></div>'.repeat(COMPACT_COUNT); foot.innerHTML = ''; return; }
+  if (errorMsg) { list.innerHTML = `<div class="song-empty">${esc(errorMsg)}</div>`; foot.innerHTML = ''; return; }
+  const rows = mode === 'compact' ? compact.rows : mode === 'paged' ? ((pages[pg] && pages[pg].rows) || []) : results;
+  list.innerHTML = rows.length
+    ? rows.map(rowHtml).join('')
+    : `<div class="song-empty">${mode === 'search' ? 'No songs found.' : 'No approved songs yet.'}</div>`;
+  foot.className = 'songs-foot' + (mode === 'paged' ? ' between' : '');
+  foot.innerHTML = footHtml();
+}
+
+/* ── ACTIONS ── */
+async function seeMore() {
+  if (busy || !compact.more) return;
+  busy = true; renderSongs();
+  try {
+    // songs 5–10 (only songs that have earned)
+    const r = await earnersPage(compact.cursor, PAGE_SIZE - compact.earnerRows.length);
+    pages = [{ rows: compact.earnerRows.concat(r.rows), cursor: r.cursor || compact.cursor, more: r.more }];
+    pg = 0; mode = 'paged'; searchEnabled = r.more;
+  } catch (e) { console.error(e); errorMsg = "Couldn't load more songs. Please refresh."; }
+  busy = false; renderSongs();
+}
+
+async function goPage(i) {
+  if (busy || i < 0) return;
+  if (pages[i]) { pg = i; renderSongs(); return; }
+  busy = true; renderSongs();
+  try {
+    const r = await earnersPage(pages[i - 1].cursor, PAGE_SIZE);
+    if (r.rows.length) { pages[i] = { rows: r.rows, cursor: r.cursor, more: r.more }; pg = i; }
+    else pages[i - 1].more = false;
+  } catch (e) { console.error(e); errorMsg = "Couldn't load that page. Please refresh."; }
+  busy = false; renderSongs();
+}
+
+/* Search by title prefix across the user's own approved songs (earned or not).
+   Needs index: submissions → userId ↑, releaseTitle ↑ */
+async function runSearch() {
+  const q = $('songSearch').value.trim();
+  if (!q) { mode = 'paged'; renderSongs(); return; }
+  if (busy) return;
+  busy = true; renderSongs();
+  try {
+    const variants = [...new Set([q, q.toLowerCase(), q.toUpperCase(), q.replace(/\b\w/g, c => c.toUpperCase())])];
+    const snaps = await Promise.all(variants.map(v => getDocs(query(subs(),
+      where('userId', '==', uid), where('releaseTitle', '>=', v), where('releaseTitle', '<=', v + '\uf8ff'), limit(10)))));
+    const found = new Map();
+    snaps.forEach(sn => sn.docs.forEach(d => { if (isApproved(d.data())) found.set(d.id, toRow(d)); }));
+    results = [...found.values()].sort((a, b) => b.earned - a.earned);
+    mode = 'search';
+  } catch (e) { console.error(e); errorMsg = 'Search failed. Please try again.'; }
+  busy = false; renderSongs();
+}
+
+$('songFoot').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'more') seeMore();
+  else if (a === 'next') goPage(pg + 1);
+  else if (a === 'prev') goPage(pg - 1);
+  else if (a === 'less') { mode = 'compact'; $('songSearch').value = ''; renderSongs(); }
+  else if (a === 'clear') { $('songSearch').value = ''; mode = 'paged'; renderSongs(); }
 });
+$('songSearch').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+$('songSearch').addEventListener('input', e => { if (!e.target.value && mode === 'search') { mode = 'paged'; renderSongs(); } });
 
-/* ── WITHDRAW GUARD — eligibility ALWAYS checked in real USD, never the display currency ── */
-const withdrawBtn = document.getElementById('withdrawBtn');
-const popup       = document.getElementById('withdrawPopup');
-const closeBtn    = document.getElementById('closePopup');
+currencySelect.addEventListener('change', e => { selectedCurrency = e.target.value; renderMoney(); });
 
-withdrawBtn.addEventListener('click', () => {
+/* ── WITHDRAW GUARD — eligibility is always checked in real USD ── */
+const popup = $('withdrawPopup');
+$('withdrawBtn').addEventListener('click', () => {
   if (userBalance < MIN_WITHDRAWAL) {
-    document.getElementById('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
+    $('popupThreshold').textContent = formatSelected(MIN_WITHDRAWAL);
     popup.classList.add('active');
   } else {
     window.location.href = 'withdrawal.html';
   }
 });
-closeBtn.addEventListener('click', () => popup.classList.remove('active'));
-popup.addEventListener('click', (e) => { if (e.target === popup) popup.classList.remove('active'); });
+$('closePopup').addEventListener('click', () => popup.classList.remove('active'));
+popup.addEventListener('click', e => { if (e.target === popup) popup.classList.remove('active'); });
 
-/* ── BURGER / DRAWER ── */
-const burger = document.getElementById('burger');
-const drawer = document.getElementById('drawer');
-function toggleDrawer(force) {
-  const open = typeof force === 'boolean' ? force : !drawer.classList.contains('open');
-  drawer.classList.toggle('open', open);
-  burger.classList.toggle('open', open);
-  burger.setAttribute('aria-expanded', String(open));
-}
-burger.addEventListener('click', (e) => { e.stopPropagation(); toggleDrawer(); });
-drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleDrawer(false)));
-document.addEventListener('click', (e) => {
-  if (!drawer.contains(e.target) && !burger.contains(e.target)) toggleDrawer(false);
+/* ── AUTH + INITIAL LOAD ── */
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  uid = user.uid;
+  try {
+    const snap = await getDoc(doc(db, 'users', uid));
+    userBalance = snap.exists() ? Number(snap.data().earnings) || 0 : 0;
+  } catch (err) {
+    console.error('Balance read failed:', err);
+    userBalance = 0;
+  }
+  renderMoney();
+  loadSongs();
+  loadStats();
 });
-window.addEventListener('resize', () => { if (window.innerWidth > 640) toggleDrawer(false); });
 
-// Initial render before Firestore responds, so the dropdown/labels aren't blank
-renderAllAmounts();
+renderMoney();
+renderStats();
 </script>
 </body>
 </html>
