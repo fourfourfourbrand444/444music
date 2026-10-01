@@ -22,7 +22,6 @@
 
   --wht:           #ffffff;
   --wht-border:    rgba(0,0,0,0.08);
-  --wht-border-h:  rgba(0,0,0,0.16);
 
   --text-1:        #f5f5f5;
   --text-2:        #969696;
@@ -99,7 +98,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 }
 .cur-select select:hover{border-color:rgba(255,255,255,0.32);}
 .cur-select select option{background:#111;color:#fff;}
-.cur-note{font-size:0.7rem;color:var(--text-2);margin-top:10px;min-height:0;}
+.cur-note{font-size:0.7rem;color:var(--text-2);margin-top:10px;}
 .cur-note:empty{display:none;}
 
 .stat-card h2{font-family:var(--font-head);font-size:2.05rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:6px;word-break:break-all;}
@@ -339,6 +338,12 @@ let results = [];
 let searchEnabled = false;     // shown once the user has more than 10 earning songs
 let stats = { earning: null, total: null, lastPayout: undefined };
 
+/* Fallback mode: if the indexed queries fail (index not created yet), the page loads this
+   user's own releases once and does the sorting, paging and search in the browser. */
+let useMem = false;
+let searchMem = false;
+let memRows = null;
+
 /* ── DATA ── */
 const subs = () => collection(db, 'submissions');
 const approvedFilters = () => [where('userId', '==', uid), where('status', 'in', APPROVED)];
@@ -360,9 +365,26 @@ function toRow(d) {
   };
 }
 
+/* All approved songs of this user, biggest earners first (fallback mode only). */
+async function ensureMem() {
+  if (memRows) return memRows;
+  const sn = await getDocs(query(subs(), where('userId', '==', uid)));
+  const rows = [];
+  sn.docs.forEach(d => { if (isApproved(d.data())) rows.push(toRow(d)); });
+  rows.sort((a, b) => b.earned - a.earned);
+  memRows = rows;
+  return rows;
+}
+
 /* One page of approved songs that have earned something, biggest first.
-   Needs index: submissions → userId ↑, status ↑, earningsBalance ↓ */
+   Fast path needs index: submissions → userId ↑, status ↑, earningsBalance ↓ */
 async function earnersPage(after, n) {
+  if (useMem) {
+    const earners = (await ensureMem()).filter(r => r.earned > 0);
+    const start = after == null ? 0 : after;
+    const shown = earners.slice(start, start + n);
+    return { rows: shown, cursor: start + shown.length, more: earners.length > start + n };
+  }
   const q = query(subs(), ...approvedFilters(), where('earningsBalance', '>', 0), orderBy('earningsBalance', 'desc'),
     ...(after ? [startAfter(after)] : []), limit(n + 1));
   const docs = (await getDocs(q)).docs;
@@ -370,18 +392,30 @@ async function earnersPage(after, n) {
   return { rows: shown.map(toRow), cursor: shown.length ? shown[shown.length - 1] : null, more: docs.length > n };
 }
 
+async function fetchFirst() {
+  const r = await earnersPage(null, COMPACT_COUNT);
+  const rows = [...r.rows];
+  // Fewer than 4 earning songs: fill the first view with approved songs so it's never empty.
+  if (!r.more && rows.length < COMPACT_COUNT) {
+    const have = new Set(rows.map(x => x.id));
+    const extra = useMem
+      ? (await ensureMem()).filter(x => !have.has(x.id))
+      : (await getDocs(query(subs(), ...approvedFilters(), limit(COMPACT_COUNT)))).docs.map(toRow).filter(x => !have.has(x.id));
+    extra.forEach(x => { if (rows.length < COMPACT_COUNT) rows.push(x); });
+  }
+  return { rows, earnerRows: r.rows, cursor: r.cursor, more: r.more };
+}
+
 async function loadSongs() {
   loading = true; errorMsg = ''; renderSongs();
   try {
-    const r = await earnersPage(null, COMPACT_COUNT);
-    const rows = [...r.rows];
-    // Fewer than 4 earning songs: fill the first view with approved songs so it's never empty.
-    if (!r.more && rows.length < COMPACT_COUNT) {
-      const sn = await getDocs(query(subs(), ...approvedFilters(), limit(COMPACT_COUNT)));
-      const have = new Set(rows.map(x => x.id));
-      sn.docs.forEach(d => { if (rows.length < COMPACT_COUNT && !have.has(d.id)) rows.push(toRow(d)); });
+    try {
+      compact = await fetchFirst();
+    } catch (e) {
+      console.warn('Indexed songs query failed, using fallback. Create the index from this link:', e);
+      useMem = true;
+      compact = await fetchFirst();
     }
-    compact = { rows, earnerRows: r.rows, cursor: r.cursor, more: r.more };
   } catch (e) {
     console.error('Songs load failed:', e);
     errorMsg = "Couldn't load your songs. Please refresh.";
@@ -390,20 +424,33 @@ async function loadSongs() {
 }
 
 async function loadStats() {
-  const [tot, earn, last] = await Promise.allSettled([
-    getCountFromServer(query(subs(), ...approvedFilters())),
-    getCountFromServer(query(subs(), ...approvedFilters(), where('earningsBalance', '>', 0))),
-    // Needs index: submissions → userId ↑, lastPayoutAt ↓
-    getDocs(query(subs(), where('userId', '==', uid), orderBy('lastPayoutAt', 'desc'), limit(1)))
-  ]);
-  [tot, earn, last].forEach(x => { if (x.status === 'rejected') console.error('Stat failed:', x.reason); });
-  stats.total   = tot.status  === 'fulfilled' ? tot.value.data().count  : null;
-  stats.earning = earn.status === 'fulfilled' ? earn.value.data().count : null;
-  if (last.status === 'fulfilled') {
-    const d = last.value.docs[0];
-    const ts = d && d.data().lastPayoutAt;
-    stats.lastPayout = ts && typeof ts.toDate === 'function'
-      ? { date: ts.toDate(), title: d.data().releaseTitle || 'Untitled' } : null;
+  let done = false;
+  if (!useMem) {
+    const [tot, earn, last] = await Promise.allSettled([
+      getCountFromServer(query(subs(), ...approvedFilters())),
+      getCountFromServer(query(subs(), ...approvedFilters(), where('earningsBalance', '>', 0))),
+      // Fast path needs index: submissions → userId ↑, lastPayoutAt ↓
+      getDocs(query(subs(), where('userId', '==', uid), orderBy('lastPayoutAt', 'desc'), limit(1)))
+    ]);
+    [tot, earn, last].forEach(x => { if (x.status === 'rejected') console.warn('Stat query failed:', x.reason); });
+    if (tot.status === 'fulfilled' && earn.status === 'fulfilled' && last.status === 'fulfilled') {
+      stats.total = tot.value.data().count;
+      stats.earning = earn.value.data().count;
+      const d = last.value.docs[0];
+      const ts = d && d.data().lastPayoutAt;
+      stats.lastPayout = ts && typeof ts.toDate === 'function'
+        ? { date: ts.toDate(), title: d.data().releaseTitle || 'Untitled' } : null;
+      done = true;
+    }
+  }
+  if (!done) {
+    try {
+      const rows = await ensureMem();
+      stats.total = rows.length;
+      stats.earning = rows.filter(r => r.earned > 0).length;
+      const paid = rows.filter(r => r.paidAt).sort((a, b) => b.paidAt - a.paidAt)[0];
+      stats.lastPayout = paid ? { date: paid.paidAt, title: paid.title } : null;
+    } catch (e) { console.error('Stats failed:', e); }
   }
   renderStats();
 }
@@ -480,7 +527,7 @@ async function seeMore() {
   try {
     // songs 5–10 (only songs that have earned)
     const r = await earnersPage(compact.cursor, PAGE_SIZE - compact.earnerRows.length);
-    pages = [{ rows: compact.earnerRows.concat(r.rows), cursor: r.cursor || compact.cursor, more: r.more }];
+    pages = [{ rows: compact.earnerRows.concat(r.rows), cursor: r.cursor == null ? compact.cursor : r.cursor, more: r.more }];
     pg = 0; mode = 'paged'; searchEnabled = r.more;
   } catch (e) { console.error(e); errorMsg = "Couldn't load more songs. Please refresh."; }
   busy = false; renderSongs();
@@ -498,20 +545,33 @@ async function goPage(i) {
   busy = false; renderSongs();
 }
 
-/* Search by title prefix across the user's own approved songs (earned or not).
-   Needs index: submissions → userId ↑, releaseTitle ↑ */
+/* Search by title across the user's own approved songs (earned or not).
+   Fast path needs index: submissions → userId ↑, releaseTitle ↑ */
 async function runSearch() {
   const q = $('songSearch').value.trim();
   if (!q) { mode = 'paged'; renderSongs(); return; }
   if (busy) return;
   busy = true; renderSongs();
   try {
-    const variants = [...new Set([q, q.toLowerCase(), q.toUpperCase(), q.replace(/\b\w/g, c => c.toUpperCase())])];
-    const snaps = await Promise.all(variants.map(v => getDocs(query(subs(),
-      where('userId', '==', uid), where('releaseTitle', '>=', v), where('releaseTitle', '<=', v + '\uf8ff'), limit(10)))));
-    const found = new Map();
-    snaps.forEach(sn => sn.docs.forEach(d => { if (isApproved(d.data())) found.set(d.id, toRow(d)); }));
-    results = [...found.values()].sort((a, b) => b.earned - a.earned);
+    let list = null;
+    if (!useMem && !searchMem) {
+      try {
+        const variants = [...new Set([q, q.toLowerCase(), q.toUpperCase(), q.replace(/\b\w/g, c => c.toUpperCase())])];
+        const snaps = await Promise.all(variants.map(v => getDocs(query(subs(),
+          where('userId', '==', uid), where('releaseTitle', '>=', v), where('releaseTitle', '<=', v + '\uf8ff'), limit(10)))));
+        const found = new Map();
+        snaps.forEach(sn => sn.docs.forEach(d => { if (isApproved(d.data())) found.set(d.id, toRow(d)); }));
+        list = [...found.values()];
+      } catch (e) {
+        console.warn('Indexed search failed, using fallback. Create the index from this link:', e);
+        searchMem = true;
+      }
+    }
+    if (list === null) {
+      const ql = q.toLowerCase();
+      list = (await ensureMem()).filter(r => r.title.toLowerCase().includes(ql));
+    }
+    results = list.sort((a, b) => b.earned - a.earned);
     mode = 'search';
   } catch (e) { console.error(e); errorMsg = 'Search failed. Please try again.'; }
   busy = false; renderSongs();
@@ -556,7 +616,7 @@ onAuthStateChanged(auth, async user => {
     userBalance = 0;
   }
   renderMoney();
-  loadSongs();
+  await loadSongs();
   loadStats();
 });
 
