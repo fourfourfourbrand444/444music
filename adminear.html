@@ -105,7 +105,7 @@ h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{co
 
 <main class="main" id="appMain" style="display:none">
   <h1>Earnings <span>Manager</span></h1>
-  <p class="sub">Artists load 10 at a time with only their own releases. <b>Distribute</b> splits an amount by locked %. <b>Update Total</b> corrects a release's combined total. <b>Set Earnings</b> overwrites the live <span class="mono">users/{uid}.earnings</span> field. Saving updates only that card — no reload. <b>Load contributor credits</b> reads the splits once to show collaborator credits. <b>Sync Earnings</b> reads everything once and writes only artists whose number differs.</p>
+  <p class="sub">Artists load 10 at a time with only their own releases. <b>Search</b> looks through every artist and every release title. <b>Distribute</b> splits an amount by locked %. <b>Update Total</b> corrects a release's combined total. <b>Set Earnings</b> overwrites the live <span class="mono">users/{uid}.earnings</span> field. Saving updates only that card — no reload. <b>Load contributor credits</b> reads the splits once. <b>Sync Earnings</b> reads everything once, shows how many writes it needs, and also builds the release index used by the with/no-releases filters.</p>
 
   <div class="stats">
     <div class="stat"><div class="lbl">Total Artists</div><b id="statCount">—</b></div>
@@ -113,9 +113,9 @@ h1{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-1px}h1 span{co
     <div class="stat"><div class="lbl">Artists with Earnings</div><b class="g" id="statActive">—</b></div>
   </div>
   <div class="controls">
-    <input id="search" placeholder="Search name, email or UID — press Enter" autocomplete="off" spellcheck="false">
+    <input id="search" placeholder="Search ALL artists: name, email, UID, song or artist name — press Enter" autocomplete="off" spellcheck="false">
     <button class="sbtn" id="searchBtn">Search</button>
-    <select id="groupSelect"><option value="grouped">Group: has releases / no releases</option><option value="has">Only artists with releases</option><option value="none">Only artists with no releases</option><option value="flat">No grouping</option></select>
+    <select id="groupSelect"><option value="grouped">Show all (grouped on page)</option><option value="flat">Show all (no grouping)</option><option value="has">Only artists WITH releases (all pages)</option><option value="none">Only artists with NO releases (all pages)</option></select>
     <select id="sortSelect"><option value="id">Sort: Default order</option><option value="earnings_desc">Sort: Highest earnings first</option><option value="earnings_asc">Sort: Lowest earnings first</option><option value="name_asc">Sort: Name (A–Z)</option><option value="name_desc">Sort: Name (Z–A)</option></select>
     <button class="sbtn alt" id="credBtn">Load contributor credits</button>
   </div>
@@ -193,6 +193,8 @@ async function attach(users){
   if(!emails.length) return;
   const [subs,splits]=await Promise.all([chunked('submissions','email',emails), chunked('splits','ownerEmail',emails)]);
   buildRel(users,subs,splits);
+  // self-heal the release index: one tiny write, once per artist, only when it's missing/false
+  users.forEach(u=>{ if(u.rel.length&&u.hasReleases!==true){ u.hasReleases=true; updateDoc(doc(db,'users',u.id),{hasReleases:true}).catch(()=>{}); } });
 }
 
 function buildCredits(splits, subs, existing){
@@ -219,7 +221,8 @@ async function loadPage(i){
       $('results').innerHTML='<div class="loading"><div class="spin"></div>Loading artists…</div>';
       const order = {earnings_desc:()=>orderBy('earnings','desc'),earnings_asc:()=>orderBy('earnings','asc'),name_asc:()=>orderBy('name'),name_desc:()=>orderBy('name','desc')}[sortMode]?.() || orderBy(documentId());
       const cur = i>0?pages[i-1].cursor:null;
-      const q = cur?query(collection(db,'users'),order,startAfter(cur),limit(PAGE+1)):query(collection(db,'users'),order,limit(PAGE+1));
+      const f = group==='has'?[where('hasReleases','==',true)]:group==='none'?[where('hasReleases','==',false)]:[];
+      const q = query(collection(db,'users'),...f,order,...(cur?[startAfter(cur)]:[]),limit(PAGE+1));
       const docs=(await getDocs(q)).docs, shown=docs.slice(0,PAGE);
       const users=shown.map(d=>({id:d.id,...d.data()}));
       await attach(users);
@@ -237,16 +240,22 @@ async function runSearch(){
   const q=$('search').value.trim();
   if(!q){ pages=[]; return loadPage(0); }
   if(loading) return; loading=true; searching=true;
-  $('results').innerHTML='<div class="loading"><div class="spin"></div>Searching…</div>';
+  $('results').innerHTML='<div class="loading"><div class="spin"></div>Searching all artists and releases…</div>';
   try{
-    const pre=(f,v)=>getDocs(query(collection(db,'users'),where(f,'>=',v),where(f,'<=',v+'\uf8ff'),limit(20)));
-    const cap=q.charAt(0).toUpperCase()+q.slice(1);
-    const jobs=[pre('email',q.toLowerCase()),pre('name',q)];
-    if(cap!==q) jobs.push(pre('name',cap));
-    if(q.length>=20 && !/\s/.test(q)) jobs.push(getDoc(doc(db,'users',q)));
-    const map=new Map();
-    (await Promise.all(jobs)).forEach(r=>{ (r.docs||[r]).forEach(d=>{ if(d.exists===undefined||d.exists()) map.set(d.id,{id:d.id,...d.data()}); }); });
-    const users=[...map.values()].slice(0,20);
+    const pre=(col,f,v)=>getDocs(query(collection(db,col),where(f,'>=',v),where(f,'<=',v+'\uf8ff'),limit(20)));
+    const vars=[...new Set([q,q.toLowerCase(),q.toUpperCase(),q.charAt(0).toUpperCase()+q.slice(1),q.replace(/\b\w/g,c=>c.toUpperCase())])];
+    const map=new Map(), emails=new Set();
+    const keep=r=>r.docs.forEach(d=>map.set(d.id,{id:d.id,...d.data()}));
+    const jobs=[pre('users','email',q.toLowerCase()).then(keep)];
+    vars.forEach(v=>{
+      jobs.push(pre('users','name',v).then(keep));
+      ['releaseTitle','artistName'].forEach(f=>jobs.push(pre('submissions',f,v).then(r=>r.docs.forEach(d=>{ const e=(d.data().email||'').trim(); if(e) emails.add(e); }))));
+    });
+    if(/^[A-Za-z0-9]{20,}$/.test(q)) jobs.push(getDoc(doc(db,'users',q)).then(d=>{ if(d.exists()) map.set(d.id,{id:d.id,...d.data()}); }));
+    await Promise.all(jobs);
+    const em=[...emails].slice(0,15);
+    if(em.length) (await chunked('users','email',[...new Set(em.flatMap(e=>[e,e.toLowerCase()]))])).forEach(u=>map.set(u.id,u));
+    const users=[...map.values()].slice(0,20).map(u=>{ const o=all.get(u.id); return o?Object.assign(o,u):u; });
     await attach(users);
     current=users; show();
   }catch(err){ console.error(err); $('results').innerHTML=`<div class="empty">Search failed: ${esc(err.message)}</div>`; }
@@ -303,11 +312,13 @@ function show(){
   const add=(label,list)=>{ if(!list.length) return;
     const h=document.createElement('div'); h.className='gh'; h.innerHTML=`<span>${label}</span><span class="gc">${list.length}</span>`; box.appendChild(h);
     list.forEach(u=>box.appendChild(cardEl(u))); };
-  if(group==='has') add('Artists with releases',w);
+  const srv=!searching&&(group==='has'||group==='none');
+  if(srv) add(group==='has'?'Artists with releases':'Artists with no releases',current);
+  else if(group==='has') add('Artists with releases',w);
   else if(group==='none') add('Artists with no releases at all',n);
   else if(group==='flat') current.forEach(u=>box.appendChild(cardEl(u)));
   else { add('Artists with releases',w); add('Artists with no releases at all',n); }
-  if(!box.children.length) box.innerHTML='<div class="empty">No artists found.</div>';
+  if(!box.children.length) box.innerHTML='<div class="empty">No artists found.'+(!searching&&(group==='has'||group==='none')?'<br><br>This filter uses a release index. Run <b>Sync Earnings</b> once to build it.':'')+'</div>';
   $('count').textContent = searching ? `${current.length} match${current.length===1?'':'es'} (max 20 shown)` : `Page ${idx+1} · ${current.length} artists`;
   const p=$('pager');
   if(searching){ p.innerHTML=''; return; }
@@ -403,28 +414,34 @@ async function loadCredits(){
 
 /* ── SYNC EARNINGS (manual, reads everything once, writes only changed artists) ── */
 async function runSync(){
-  if(!confirm("Sync Earnings reads ALL users, splits and submissions once, then writes users/{uid}.earnings only for artists whose value differs from their computed total. Continue?")) return;
-  const b=$('syncBtn'); b.disabled=true; b.textContent='Syncing…';
+  const b=$('syncBtn'); b.disabled=true; b.textContent='Reading…';
   try{
     const [us,sp,sb]=await Promise.all([getDocs(collection(db,'users')),getDocs(collection(db,'splits')),getDocs(collection(db,'submissions'))]);
     const users=us.docs.map(d=>({id:d.id,...d.data()})), splits=sp.docs.map(d=>({id:d.id,...d.data()})), subs=sb.docs.map(d=>({id:d.id,...d.data()}));
     users.forEach(u=>u.ownerEm=ne(uEmail(u)));
     buildRel(users,subs,splits);
     credits=buildCredits(splits,subs,new Set(subs.map(s=>ne(s.email)+'::'+low(sTitle(s)))));
-    let up=0,same=0,fail=0;
-    for(const u of users){
-      const cr=credits[u.ownerEm]||[];
-      if(!u.ownerEm||(!u.rel.length&&!cr.length)) continue;
-      const total=r2(u.rel.reduce((s,r)=>s+r.ownerBal,0)+cr.reduce((s,c)=>s+c.bal,0));
-      if(Math.abs(num(u.earnings)-total)<0.005){ same++; continue; }
-      try{ await updateDoc(doc(db,'users',u.id),{earnings:total}); up++; const t=all.get(u.id); if(t) t.earnings=total; }
-      catch(err){ fail++; console.warn('sync failed',u.id,err.message); }
+    const jobs=[];
+    users.forEach(u=>{
+      const cr=credits[u.ownerEm]||[], has=u.rel.length>0||cr.length>0, patch={};
+      if(u.hasReleases!==has) patch.hasReleases=has;
+      if(has){ const total=r2(u.rel.reduce((s,r)=>s+r.ownerBal,0)+cr.reduce((s,c)=>s+c.bal,0)); if(Math.abs(num(u.earnings)-total)>=0.005) patch.earnings=total; }
+      if(Object.keys(patch).length) jobs.push([u.id,patch]);
+    });
+    if(!jobs.length){ toast('Everything is already in sync'); return; }
+    const MAXW=5000, run=jobs.slice(0,MAXW);
+    if(!confirm(`Read ${users.length+splits.length+subs.length} docs.\n${jobs.length} artists need an update (earnings and/or release index).\nThis run writes ${run.length} (one write per artist; free plan = 20,000 writes/day).${jobs.length>MAXW?'\nRun Sync again tomorrow for the rest.':''}\n\nContinue?`)) return;
+    b.textContent='Writing…';
+    let up=0,fail=0;
+    for(const [id,patch] of run){
+      try{ await updateDoc(doc(db,'users',id),patch); up++; const t=all.get(id); if(t) Object.assign(t,patch); }
+      catch(err){ fail++; console.warn('sync failed',id,err.message); }
     }
     creditsOn=true; $('credBtn').textContent='↻ Reload contributor credits';
     await loadStats(); show();
-    toast(`Synced ${up} artist${up!==1?'s':''}, ${same} already correct${fail?`, ${fail} failed`:''}`,fail?'error':'success');
+    toast(`Synced ${up} artist${up!==1?'s':''}${fail?`, ${fail} failed`:''}`,fail?'error':'success');
   }catch(err){ toast('Sync failed: '+err.message,'error'); }
-  b.disabled=false; b.textContent='⇪ Sync Earnings';
+  finally{ b.disabled=false; b.textContent='⇪ Sync Earnings'; }
 }
 
 /* ── CONTROLS ── */
@@ -432,7 +449,7 @@ $('searchBtn').onclick=runSearch;
 $('search').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
 $('sortSelect').onchange=e=>{ sortMode=e.target.value; $('search').value=''; pages=[]; loadPage(0); };
 $('refreshBtn').onclick=()=>{ loadStats(); if(searching){ runSearch(); return; } pages.length=idx; loadPage(idx); };
-$('groupSelect').onchange=e=>{ group=e.target.value; show(); };
+$('groupSelect').onchange=e=>{ const srv=g=>g==='has'||g==='none', was=group; group=e.target.value; if(srv(was)||srv(group)){ $('search').value=''; pages=[]; loadPage(0); } else show(); };
 $('credBtn').onclick=loadCredits;
 $('syncBtn').onclick=runSync;
 
