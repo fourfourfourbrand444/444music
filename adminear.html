@@ -13,7 +13,8 @@ button{font:inherit;cursor:pointer}button:disabled{opacity:.35;cursor:not-allowe
 input,select{font:inherit;font-size:16px;border:1px solid var(--b);border-radius:9px;padding:10px 12px;background:var(--g);min-width:0;color:#000}
 .btn{background:#000;color:#fff;border:1px solid #000;border-radius:9px;padding:10px 14px;font-weight:600;font-size:12px;white-space:nowrap}
 .btn.o{background:#fff;color:#000;border-color:var(--b)}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--b);font-weight:800}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--b);font-weight:800}
+.hr{display:flex;gap:8px;align-items:center;margin-left:auto}
 .wrap{max-width:880px;margin:0 auto;padding:22px 16px}
 h1{font-size:24px;font-weight:800;margin-bottom:6px}
 .sub{color:var(--d);font-size:13px;line-height:1.6;margin-bottom:16px}
@@ -45,7 +46,7 @@ h1{font-size:24px;font-weight:800;margin-bottom:6px}
 </div>
 <div id="toast"></div>
 <div id="app" style="display:none">
-  <header><span>444Music · Earnings</span><button class="btn o" id="out">Sign out</button></header>
+  <header><span>444Music · Earnings</span><span class="hr"><button class="btn" id="send" disabled>Send payout emails (0)</button><button class="btn o" id="out">Sign out</button></span></header>
   <div class="wrap">
     <h1>Earnings Manager</h1>
     <p class="sub">Approved releases only. The owner is the account that uploaded the release (its user ID), never the email typed on the form. Distribute splits an amount in USD: the owner's share goes to the owner's main earnings, each contributor's share goes only to the contributor dashboard.</p>
@@ -69,6 +70,8 @@ const auth=getAuth(app),db=getFirestore(app);
 const ADMINS=['444musicdistro@gmail.com'];   // accounts allowed to open this page
 const APPROVED=['approved','Approved'];       // status values that count as approved
 const PAGE=10;
+const BACKEND='https://four44music-broadcast-backend.onrender.com'; // payout email server
+const MAX_PEOPLE=50,MAX_SONGS=30;             // must match the limits on the backend
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -176,9 +179,12 @@ function show(items){
   $('pv').onclick=()=>{loadPage(idx-1);scrollTo(0,0);};$('nx').onclick=()=>{loadPage(idx+1);scrollTo(0,0);};
 }
 
-/* ── MONEY: one atomic transaction per action ── */
+/* ── MONEY: one atomic transaction per action ──
+   Returns what changed for each person: [{email,name,role,sharePct,delta,newBalance}] (delta can be negative). */
 async function run(r,kind,v,em){
+  let out=[];
   await runTransaction(db,async t=>{
+    out=[];
     const sref=doc(db,'submissions',r.id),S=await t.get(sref);
     if(!S.exists())throw new Error('Release not found');
     const sd=S.data(),uid=sd.userId;
@@ -190,6 +196,7 @@ async function run(r,kind,v,em){
     const SP=spref?await t.get(spref):null;
     if(sd.splitLocked===true&&!(SP&&SP.exists()))throw new Error('Split record missing');
     const cons=SP&&SP.exists()?[...(SP.data().contributors||[])]:[];
+    const oldB=cons.map(c=>num(c.balance));
     const oldO=num(sd.earningsBalance);let newO=oldO,nc=null;
     if(kind==='pay'){
       const cents=Math.round(v*100);let used=0;
@@ -203,21 +210,85 @@ async function run(r,kind,v,em){
     const d=r2(newO-oldO);
     if(d){t.update(sref,{earningsBalance:newO,lastPayoutAt:serverTimestamp()});t.update(doc(db,'users',uid),{earnings:increment(d)});}
     if(nc&&nc.length&&spref)t.update(spref,{contributors:nc,lastPayoutAt:serverTimestamp()});
+    /* who got what (owner email comes from the users record, never the upload form) */
+    const ownerEmail=lc(r.owner&&r.owner.email);
+    if(d&&ownerEmail)out.push({email:ownerEmail,name:uName(r.owner)||sd.artistName||'',role:'Owner',sharePct:Math.max(0,100-cons.reduce((a,c)=>a+num(c.pct),0)),delta:d,newBalance:newO});
+    if(nc)nc.forEach((c,i)=>{const cd=r2(num(c.balance)-oldB[i]);if(cd&&lc(c.email))out.push({email:lc(c.email),name:c.name||'',role:'Contributor',sharePct:num(c.pct),delta:cd,newBalance:num(c.balance)});});
   });
+  return out;
 }
 async function refresh(r){
   const [S,P]=await Promise.all([getDoc(doc(db,'submissions',r.id)),r.split?getDoc(doc(db,'splits',r.split.id)):null]);
   if(S.exists())r.s=S.data();if(P&&P.exists())r.split={id:P.id,...P.data()};
   const old=document.querySelector(`[data-c="${CSS.escape(r.id)}"]`);if(old)old.replaceWith(cardEl(r));
 }
+
+/* ── PAYOUT EMAILS: collected in memory, sent when you press the button (one email per person) ── */
+const pending=new Map();   // email -> {email,name,items:Map('releaseId|role' -> item)}
+let sending=false;
+function updateSend(){
+  const b=$('send');
+  b.disabled=sending||!pending.size;
+  b.textContent=sending?'Sending…':'Send payout emails ('+pending.size+')';
+}
+function queue(r,rows){
+  rows.forEach(x=>{
+    const k=r.id+'|'+x.role;let p=pending.get(x.email),it=p&&p.items.get(k);
+    if(x.delta>0){
+      if(!p){p={email:x.email,name:x.name,items:new Map()};pending.set(x.email,p);}
+      if(x.name)p.name=x.name;
+      if(it){it.amount=r2(it.amount+x.delta);it.balance=x.newBalance;it.sharePct=x.sharePct;}
+      else p.items.set(k,{releaseTitle:r.s.releaseTitle||'Untitled',artistName:r.s.artistName||'',role:x.role,sharePct:x.sharePct,amount:x.delta,balance:x.newBalance});
+    }else if(it){            // a correction downward only trims what is still waiting, it never emails
+      it.amount=r2(it.amount+x.delta);it.balance=x.newBalance;
+      if(it.amount<=0)p.items.delete(k);
+      if(!p.items.size)pending.delete(x.email);
+    }
+  });
+  updateSend();
+}
+async function sendEmails(){
+  if(sending||!pending.size)return;
+  const n=pending.size;
+  if(!confirm('Send payout emails to '+n+(n===1?' person?':' people?')))return;
+  sending=true;updateSend();
+  let sent=0,failed=[],stopped=false;
+  try{
+    const token=await auth.currentUser.getIdToken();
+    const people=[...pending.values()].map(p=>({email:p.email,name:p.name,keys:[...p.items.keys()].slice(0,MAX_SONGS)}));
+    for(let i=0;i<people.length;i+=MAX_PEOPLE){
+      const part=people.slice(i,i+MAX_PEOPLE),keysOf=new Map(part.map(p=>[p.email,p.keys]));
+      const res=await fetch(BACKEND+'/api/payout/notify',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+        body:JSON.stringify({recipients:part.map(p=>({email:p.email,name:p.name,items:p.keys.map(k=>pending.get(p.email).items.get(k))}))})});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data.success){toast(data.message||('Sending failed ('+res.status+'). Nothing was cleared.'),'e');stopped=true;break;}
+      (data.results||[]).forEach(x=>{
+        const p=pending.get(x.email);
+        if(x.success&&p){(keysOf.get(x.email)||[]).forEach(k=>p.items.delete(k));if(!p.items.size)pending.delete(x.email);sent++;}
+        else if(!x.success)failed.push(x);
+      });
+    }
+  }catch(err){console.error(err);toast('Could not reach the email server. Nothing was cleared.','e');stopped=true;}
+  finally{sending=false;updateSend();}
+  if(sent)toast('Sent '+sent+' email'+(sent===1?'':'s'));
+  failed.slice(0,5).forEach(x=>toast('Failed: '+x.email+' — '+(x.error||'could not send'),'e'));
+  if(failed.length>5)toast('…and '+(failed.length-5)+' more failed. They are still waiting.','e');
+  if(!stopped&&!failed.length&&pending.size)toast('More songs are waiting. Press Send again.');
+}
+$('send').onclick=sendEmails;
+addEventListener('beforeunload',e=>{if(pending.size){e.preventDefault();e.returnValue='';}});
+
 $('list').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;
+  if(sending){toast('Wait until the emails finish sending.','e');return;}
   const r=byId.get(b.closest('.card').dataset.c);if(!r)return;
   const v=parseFloat(b.parentElement.querySelector('input').value),a=b.dataset.a;
   if(isNaN(v)||v<0||(a==='pay'&&v<=0)){toast('Enter a valid amount.','e');return;}
   const txt=b.textContent;b.disabled=true;b.textContent='…';
   try{
-    await run(r,a,v,b.dataset.em);await refresh(r);
+    const changes=await run(r,a,v,b.dataset.em);
+    queue(r,changes);
+    await refresh(r);
     toast(a==='pay'?'Distributed '+usd(v):'Saved');
   }catch(err){console.error(err);toast('Failed: '+err.message,'e');b.disabled=false;b.textContent=txt;}
 });
@@ -226,7 +297,7 @@ $('list').addEventListener('click',async e=>{
 $('sb').onclick=runSearch;
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
 $('mode').onchange=()=>{$('q').value='';pages=[];loadPage(0);};
-$('out').onclick=()=>signOut(auth);
+$('out').onclick=()=>{if(pending.size&&!confirm('Some payout emails have not been sent yet. Sign out anyway?'))return;signOut(auth);};
 $('gb').onclick=async()=>{
   $('gerr').textContent='';
   try{await signInWithEmailAndPassword(auth,$('ge').value.trim(),$('gp').value);}
@@ -237,7 +308,7 @@ onAuthStateChanged(auth,u=>{
   const ok=u&&ADMINS.includes(lc(u.email));
   $('gate').style.display=ok?'none':'flex';$('app').style.display=ok?'block':'none';
   if(ok){pages=[];loadPage(0);}
-  else if(u){$('gerr').textContent='This account is not an admin.';signOut(auth);}
+  else{pending.clear();updateSend();if(u){$('gerr').textContent='This account is not an admin.';signOut(auth);}}
 });
 </script>
 </body>
