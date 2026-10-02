@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg:     #000000;
@@ -139,7 +140,10 @@ button:disabled { cursor: not-allowed; }
         <h1>Analytics</h1>
         <p>Streams for every approved song. Download the report when it's time to pay.</p>
       </div>
-      <button class="ghost" id="report">Download report</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="ghost" id="last">Last report</button>
+        <button class="ghost" id="report">Download report</button>
+      </div>
     </div>
 
     <form class="search" id="sf" autocomplete="off">
@@ -174,7 +178,7 @@ button:disabled { cursor: not-allowed; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, query, where, orderBy, limit, startAfter, documentId, serverTimestamp, increment, writeBatch }
+import { getFirestore, collection, doc, getDoc, setDoc, getDocs, query, where, orderBy, limit, startAfter, documentId, serverTimestamp, increment, writeBatch }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const app  = initializeApp({
@@ -519,20 +523,23 @@ async function seeMore(uid, btn) {
 let pending = [];
 let pendingLast = new Map();   // release id -> its saved "last report" numbers
 
-function csvText(items) {
-  const cell = v => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
-  const today = new Date().toISOString().slice(0, 10);
-  const lines = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date'].map(cell).join(',')];
-  items.forEach(it => lines.push([cell(it.artist), cell(it.email), cell(it.song), it.added, it.streams, today].join(',')));
-  return '\ufeff' + lines.join('\r\n');
+function buildBook(items, date) {
+  if (!window.XLSX) throw new Error('Excel library did not load');
+  const today = date || new Date().toISOString().slice(0, 10);
+  const rows = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date']];
+  items.forEach(it => rows.push([it.artist, it.email, it.song, it.added, it.streams, today]));
+  rows.push([]);
+  rows.push(['TOTAL', '', `${items.length} songs`, items.reduce((n, it) => n + it.added, 0), '', '']);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wide = i => Math.min(46, Math.max(10, ...rows.map(r => String(r[i] == null ? '' : r[i]).length)) + 3);
+  ws['!cols'] = [wide(0), wide(1), wide(2), 14, 15, 13].map(w => ({ wch: w }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Report ' + today);
+  return wb;
 }
 
-function saveFile(text) {
-  const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
-  const a = document.createElement('a');
-  a.href = url; a.download = `444music-streams-${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+function saveFile(book, date) {
+  XLSX.writeFile(book, `444music-streams-${date || new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
 async function prepareReport() {
@@ -582,8 +589,9 @@ $('dyes').onclick = async () => {
   const btn = $('dyes');
   btn.disabled = true; btn.textContent = 'Working…';
   const items = pending;
-  const text = csvText(items);
+  const date = new Date().toISOString().slice(0, 10);
   try {
+    const book = buildBook(items, date);
     // one write per release; all its exported tracks are reset together
     const bySub = new Map();
     items.forEach(it => {
@@ -597,12 +605,20 @@ $('dyes').onclick = async () => {
       entries.slice(i, i + 400).forEach(([id, m]) => batch.update(doc(db, 'submissions', id), { lastExport: m, lastExportAt: serverTimestamp() }));
       await batch.commit();
     }
-    saveFile(text);
+    // keep a copy of this report (1 write, replaces the previous copy) so it can be downloaded again
+    let kept = true;
+    try {
+      await setDoc(doc(db, 'reports', 'latest'), {
+        date, count: items.length, total: items.reduce((n, it) => n + it.added, 0), createdAt: serverTimestamp(),
+        items: items.map(it => ({ artist: it.artist, email: it.email, song: it.song, added: it.added, streams: it.streams }))
+      });
+    } catch (e) { console.error(e); kept = false; }
+    saveFile(book, date);
     bySub.forEach((m, id) => { const sub = subById.get(id); if (sub) sub.last = m; });
     pending = []; pendingLast = new Map();
     $('veil').classList.remove('show');
     render();
-    toast('Report downloaded');
+    toast(kept ? 'Report downloaded' : 'Report downloaded, but a copy could not be saved');
   } catch (e) {
     console.error(e);
     toast('Something went wrong, no file was downloaded. Try again.');
@@ -627,6 +643,19 @@ $('sf').addEventListener('submit', e => { e.preventDefault(); runSearch(); });
 $('clear').onclick = clearSearch;
 $('more').onclick = loadMore;
 $('report').onclick = prepareReport;
+$('last').onclick = async () => {
+  if (busy) return;
+  busy = true; $('last').disabled = true; $('last').textContent = 'Loading…';
+  try {
+    const snap = await getDoc(doc(db, 'reports', 'latest'));   // 1 read
+    if (!snap.exists()) toast('No saved report yet. It saves with your next download.');
+    else { const r = snap.data(); saveFile(buildBook(r.items || [], r.date), r.date); toast('Last report downloaded'); }
+  } catch (e) {
+    console.error(e);
+    toast('Could not load the last report: ' + e.message);
+  }
+  busy = false; $('last').disabled = false; $('last').textContent = 'Last report';
+};
 $('q').addEventListener('input', e => { if (!e.target.value && view === 'search') clearSearch(); });
 $('out').onclick = () => signOut(auth);
 
