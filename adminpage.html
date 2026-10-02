@@ -72,7 +72,9 @@ button:disabled { cursor: not-allowed; }
 .sname { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .sname span { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sname em { font-style: normal; font-size: 12px; color: var(--green); }
+.sname em.ed { color: var(--muted); }
 .n { width: 104px; flex: none; background: var(--field); border: 1px solid transparent; border-radius: 9px; padding: 8px 11px; outline: none; text-align: right; font-variant-numeric: tabular-nums; }
+.n::placeholder { color: var(--faint); }
 .n:focus { border-color: var(--line-2); }
 .n::-webkit-outer-spin-button, .n::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .n[type=number] { -moz-appearance: textfield; }
@@ -188,7 +190,7 @@ const db   = getFirestore(app);
 
 const ADMINS   = ['444musicdistro@gmail.com'];   // accounts allowed on this page
 const APPROVED = ['Approved', 'approved'];
-const PAGE = 10;            // approved songs read per page of artists
+const PAGE = 10;            // approved releases read per page of artists
 const SEARCH_LIMIT = 15;    // max documents per search query
 const SONGS_SHOWN = 5;      // songs shown on a card before "See more"
 const MIN_STREAMS = 50;     // a song needs this many new streams to land in the report
@@ -200,6 +202,8 @@ const isApproved = d => lc(d.status) === 'approved';
 const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
 const fmt = n => Number(n).toLocaleString('en-US');
 const num = v => { const t = String(v).trim(); if (t === '') return null; const n = Number(t); return Number.isInteger(n) && n >= 0 ? n : null; };
+/* song box: empty is allowed (means "use the synced number") */
+const val = v => { const t = String(v).trim(); if (t === '') return { ok: true, v: null }; const n = Number(t); return Number.isInteger(n) && n >= 0 ? { ok: true, v: n } : { ok: false }; };
 
 function toast(msg) {
   const t = $('toast');
@@ -209,7 +213,8 @@ function toast(msg) {
 
 /* ---------- state (kept in memory, nothing is read twice unless needed) ---------- */
 const stats = new Map();        // uid -> { youtube, total, exists }
-const songById = new Map();     // song id -> { id, title, streams, last }  (one shared object per song)
+const songById = new Map();     // "releaseId:trackNo" -> song (one shared object per track)
+const subById = new Map();      // release id -> { id, last:{trackNo:streams}, edits:{trackNo:streams} }
 const searchCache = new Map();  // search text -> Map(uid -> artist row)
 let browse = { rows: new Map(), cursor: null, more: false, loaded: false };
 let searchRows = new Map();
@@ -218,20 +223,52 @@ let busy = false;
 
 const currentRows = () => view === 'search' ? searchRows : browse.rows;
 const getRow = uid => currentRows().get(uid);
-const sortedSongs = r => [...r.songs.values()].sort((a, b) => a.id < b.id ? -1 : 1);
+const sortedSongs = r => [...r.songs.values()].sort((a, b) => a.sub.id < b.sub.id ? -1 : a.sub.id > b.sub.id ? 1 : a.idx - b.idx);
 
-/* One card per artist. Every song keeps its own streams and its own "streams at last report". */
+/* ---------- reading tracks from a release (same fields the artist page reads) ----------
+   multi-track: audioFiles[i].title + youtubeTrackMatches[i].views (status 'matched')
+   single/legacy: youtubeViews
+   no match yet = null (shown as "Pending", never as 0) */
+function readTracks(s) {
+  const list = Array.isArray(s.audioFiles) && s.audioFiles.length ? s.audioFiles : null;
+  if (list) {
+    const m = s.youtubeTrackMatches || {};
+    return list.map((t, i) => {
+      const x = m[String(i)];
+      const ok = x && x.status === 'matched' && typeof x.views === 'number';
+      const title = list.length === 1 ? (s.releaseTitle || (t && t.title) || 'Untitled') : ((t && t.title) || `Track ${i + 1}`);
+      return { idx: i, title, synced: ok ? x.views : null };
+    });
+  }
+  return [{ idx: 0, title: s.releaseTitle || s.songTitle || s.title || 'Untitled', synced: typeof s.youtubeViews === 'number' ? s.youtubeViews : null }];
+}
+const mapOf = v => (v && typeof v === 'object') ? Object.fromEntries(Object.entries(v).map(([k, n]) => [k, Number(n) || 0])) : {};
+const lastMapOf = v => typeof v === 'number' ? { '0': v } : mapOf(v);
+
+const effOf = sg => sg.edit !== null ? sg.edit : sg.synced;     // what the page shows (null = pending)
+const effNum = sg => effOf(sg) ?? 0;
+const lastOf = sg => Number(sg.sub.last[sg.idx]) || 0;
+/* typed value -> the edit to store (empty or same as synced = no edit) */
+const nextEdit = (sg, v) => (v === null || v === sg.synced) ? null : v;
+
+/* One card per artist. Every track keeps its own streams and its own "streams at last report". */
 function addSong(map, d) {
   const s = d.data();
   if (!isApproved(s) || !s.userId) return;
   let r = map.get(s.userId);
   if (!r) { r = { uid: s.userId, name: s.artistName || '', email: s.email || '', songs: new Map(), shown: SONGS_SHOWN, done: false }; map.set(s.userId, r); }
-  let song = songById.get(d.id);
-  if (!song) {
-    song = { id: d.id, title: s.releaseTitle || 'Untitled', streams: Number(s.streams) || 0, last: Number(s.lastExport) || 0 };
-    songById.set(d.id, song);
-  }
-  r.songs.set(d.id, song);
+  let sub = subById.get(d.id);
+  if (!sub) { sub = { id: d.id, last: lastMapOf(s.lastExport), edits: mapOf(s.streamEdits) }; subById.set(d.id, sub); }
+  readTracks(s).forEach(t => {
+    const key = `${d.id}:${t.idx}`;
+    let song = songById.get(key);
+    if (!song) {
+      const e = sub.edits[t.idx];
+      song = { key, sub, idx: t.idx, title: t.title, synced: t.synced, edit: e === undefined ? null : e };
+      songById.set(key, song);
+    }
+    r.songs.set(key, song);
+  });
 }
 
 /* Artist totals (analytics docs) for the cards on screen, only the ones not read yet. */
@@ -325,12 +362,16 @@ function moreLabel(r) {
 function cardHtml(r) {
   const s = stats.get(r.uid) || { youtube: 0, total: 0 };
   const songs = sortedSongs(r).slice(0, r.shown).map(sg => {
-    const added = sg.streams - sg.last;
+    const eff = effOf(sg);
+    const added = (eff ?? 0) - lastOf(sg);
+    const bits = [];
+    if (added > 0) bits.push(`+${fmt(added)} since last report`);
+    if (sg.edit !== null) bits.push('edited');
     return `
       <div class="song">
-        <div class="sname"><span title="${esc(sg.title)}">${esc(sg.title)}</span>${added > 0 ? `<em>+${fmt(added)} since last report</em>` : ''}</div>
-        <input class="n" type="number" inputmode="numeric" min="0" step="1" value="${sg.streams}"
-          data-s="${esc(sg.id)}" data-k="${esc(r.uid)}:${esc(sg.id)}" aria-label="Streams for ${esc(sg.title)}">
+        <div class="sname"><span title="${esc(sg.title)}">${esc(sg.title)}</span>${bits.length ? `<em class="${added > 0 ? '' : 'ed'}">${bits.join(' · ')}</em>` : ''}</div>
+        <input class="n" type="number" inputmode="numeric" min="0" step="1" value="${eff === null ? '' : eff}" placeholder="Pending"
+          data-s="${esc(sg.key)}" data-k="${esc(r.uid)}:${esc(sg.key)}" aria-label="Streams for ${esc(sg.title)}">
       </div>`;
   }).join('');
   const more = moreLabel(r);
@@ -385,9 +426,10 @@ function updateCard(card) {
   const cur = stats.get(card.dataset.uid) || { youtube: 0, total: 0 };
   let delta = 0, valid = true, dirty = false;
   card.querySelectorAll('input[data-s]').forEach(i => {
-    const v = num(i.value), sg = songById.get(i.dataset.s);
-    if (v === null) { valid = false; return; }
-    if (v !== sg.streams) { dirty = true; delta += v - sg.streams; }
+    const p = val(i.value), sg = songById.get(i.dataset.s);
+    if (!p.ok) { valid = false; return; }
+    const ne = nextEdit(sg, p.v);
+    if (ne !== sg.edit) { dirty = true; delta += (ne !== null ? ne : (sg.synced ?? 0)) - effNum(sg); }
   });
   const y = num(card.querySelector('[data-yt]').value);
   if (y === null) valid = false; else if (y !== cur.youtube) dirty = true;
@@ -405,9 +447,10 @@ async function saveCard(uid) {
   const changes = [];
   let delta = 0;
   for (const i of card.querySelectorAll('input[data-s]')) {
-    const v = num(i.value), sg = songById.get(i.dataset.s);
-    if (v === null) { toast('Use whole numbers, 0 or more.'); return; }
-    if (v !== sg.streams) { changes.push({ sg, v }); delta += v - sg.streams; }
+    const p = val(i.value), sg = songById.get(i.dataset.s);
+    if (!p.ok) { toast('Use whole numbers, 0 or more.'); return; }
+    const ne = nextEdit(sg, p.v);
+    if (ne !== sg.edit) { changes.push({ sg, ne }); delta += (ne !== null ? ne : (sg.synced ?? 0)) - effNum(sg); }
   }
   const y = num(card.querySelector('[data-yt]').value);
   if (y === null) { toast('Use whole numbers, 0 or more.'); return; }
@@ -416,13 +459,22 @@ async function saveCard(uid) {
   if (!cur.exists || y !== cur.youtube) patch.youtubeStreams = y;
   if (changes.length || !cur.exists) patch.totalStreams = increment(delta);
 
+  // one write per release that changed (all its edited tracks go in the same write)
+  const bySub = new Map();
+  changes.forEach(c => {
+    if (!bySub.has(c.sg.sub.id)) bySub.set(c.sg.sub.id, { ...c.sg.sub.edits });
+    const m = bySub.get(c.sg.sub.id);
+    if (c.ne === null) delete m[c.sg.idx]; else m[c.sg.idx] = c.ne;
+  });
+
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
     const batch = writeBatch(db);
-    changes.forEach(c => batch.update(doc(db, 'submissions', c.sg.id), { streams: c.v }));
+    bySub.forEach((m, id) => batch.update(doc(db, 'submissions', id), { streamEdits: m }));
     batch.set(doc(db, 'analytics', uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
     await batch.commit();
-    changes.forEach(c => { c.sg.streams = c.v; });
+    changes.forEach(c => { c.sg.edit = c.ne; });
+    bySub.forEach((m, id) => { subById.get(id).edits = m; });
     stats.set(uid, { youtube: y, total: cur.total + delta, exists: true });
     renderCard(uid);
     const fresh = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"] [data-act="save"]`);
@@ -448,7 +500,7 @@ async function seeMore(uid, btn) {
   if (busy) return;
   busy = true; btn.disabled = true; btn.textContent = 'Loading…';
   try {
-    const last = sortedSongs(r).pop().id;
+    const last = sortedSongs(r).pop().sub.id;
     const docs = (await getDocs(query(collection(db, 'submissions'),
       where('userId', '==', uid), where('status', 'in', APPROVED),
       orderBy(documentId()), startAfter(last), limit(SONGS_SHOWN)))).docs;
@@ -465,6 +517,7 @@ async function seeMore(uid, btn) {
 
 /* ---------- the report ---------- */
 let pending = [];
+let pendingLast = new Map();   // release id -> its saved "last report" numbers
 
 function csvText(items) {
   const cell = v => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
@@ -487,21 +540,29 @@ async function prepareReport() {
   if ([...document.querySelectorAll('[data-act="save"]')].some(b => !b.disabled)) { toast('Save your changes first.'); return; }
   busy = true; $('report').disabled = true; $('report').textContent = 'Checking…';
   try {
-    // a song can only have 50+ new streams if it has 50+ in total, so only those are read
-    const snap = await getDocs(query(collection(db, 'submissions'), where('streams', '>=', MIN_STREAMS)));
+    // streams live inside each release, so approved releases are read once (1 read each)
+    const snap = await getDocs(query(collection(db, 'submissions'), where('status', 'in', APPROVED)));
     const items = [];
+    const lasts = new Map();
     snap.forEach(d => {
       const s = d.data();
       if (!isApproved(s)) return;
-      const streams = Number(s.streams) || 0, last = Number(s.lastExport) || 0;
-      const added = streams - last;
-      if (added >= MIN_STREAMS) items.push({ id: d.id, artist: s.artistName || '', email: s.email || '', song: s.releaseTitle || 'Untitled', added, streams });
+      const edits = mapOf(s.streamEdits), last = lastMapOf(s.lastExport);
+      readTracks(s).forEach(t => {
+        const eff = edits[t.idx] !== undefined ? edits[t.idx] : t.synced;
+        if (eff === null || eff === undefined) return;
+        const added = eff - (Number(last[t.idx]) || 0);
+        if (added >= MIN_STREAMS) {
+          items.push({ sub: d.id, idx: t.idx, artist: s.artistName || '', email: s.email || '', song: t.title, added, streams: eff });
+          lasts.set(d.id, last);
+        }
+      });
     });
     items.sort((a, b) => a.artist.localeCompare(b.artist) || a.song.localeCompare(b.song));
     if (!items.length) {
       toast(`No songs have ${MIN_STREAMS}+ new streams yet.`);
     } else {
-      pending = items;
+      pending = items; pendingLast = lasts;
       const total = items.reduce((n, it) => n + it.added, 0);
       $('dt').textContent = `${items.length} song${items.length === 1 ? '' : 's'} ready`;
       $('dp').textContent = `${fmt(total)} new streams across songs with ${MIN_STREAMS}+ since the last report. Downloading starts these songs from 0 again. Songs under ${MIN_STREAMS} keep adding up.`;
@@ -514,7 +575,7 @@ async function prepareReport() {
   busy = false; $('report').disabled = false; $('report').textContent = 'Download report';
 }
 
-$('dno').onclick = () => { $('veil').classList.remove('show'); pending = []; };
+$('dno').onclick = () => { $('veil').classList.remove('show'); pending = []; pendingLast = new Map(); };
 
 $('dyes').onclick = async () => {
   if (!pending.length) return;
@@ -523,15 +584,22 @@ $('dyes').onclick = async () => {
   const items = pending;
   const text = csvText(items);
   try {
+    // one write per release; all its exported tracks are reset together
+    const bySub = new Map();
+    items.forEach(it => {
+      if (!bySub.has(it.sub)) bySub.set(it.sub, { ...(pendingLast.get(it.sub) || {}) });
+      bySub.get(it.sub)[it.idx] = it.streams;
+    });
+    const entries = [...bySub.entries()];
     // reset first; the file is only handed over once the reset has gone through
-    for (let i = 0; i < items.length; i += 400) {
+    for (let i = 0; i < entries.length; i += 400) {
       const batch = writeBatch(db);
-      items.slice(i, i + 400).forEach(it => batch.update(doc(db, 'submissions', it.id), { lastExport: it.streams, lastExportAt: serverTimestamp() }));
+      entries.slice(i, i + 400).forEach(([id, m]) => batch.update(doc(db, 'submissions', id), { lastExport: m, lastExportAt: serverTimestamp() }));
       await batch.commit();
     }
     saveFile(text);
-    items.forEach(it => { const sg = songById.get(it.id); if (sg) sg.last = it.streams; });
-    pending = [];
+    bySub.forEach((m, id) => { const sub = subById.get(id); if (sub) sub.last = m; });
+    pending = []; pendingLast = new Map();
     $('veil').classList.remove('show');
     render();
     toast('Report downloaded');
