@@ -63,7 +63,7 @@ h1{font-size:24px;font-weight:800;margin-bottom:6px}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,getDoc,doc,query,where,limit,startAfter,documentId,runTransaction,increment,serverTimestamp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,getDoc,doc,query,where,limit,startAfter,documentId,runTransaction,writeBatch,increment,serverTimestamp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",authDomain:"usersubmissionsportal.firebaseapp.com",projectId:"usersubmissionsportal",storageBucket:"usersubmissionsportal.firebasestorage.app",messagingSenderId:"734783502459",appId:"1:734783502459:web:cfa2cc5de6976003b24ade"});
 const auth=getAuth(app),db=getFirestore(app);
@@ -149,7 +149,7 @@ function info(r){
   if(!s.userId||!r.owner)block='The owner account for this release was not found (missing userId or deleted account). Payments are blocked.';
   else if(s.splitLocked===true&&!sp)block='This split is locked but has no split record, so contributors cannot see balances. Payments are blocked until it is repaired.';
   else if(!active&&draft.length)block='Collaborators were added but the split is not locked yet. Payments are paused until the owner locks it.';
-  return {active,list,opct:Math.max(0,100-cp),block};
+  return {active,list,opct:Math.max(0,100-cp),block,reset:s.splitLocked===true||draft.length>0||!!sp};
 }
 function cardEl(r){
   const s=r.s,o=r.owner,x=info(r),el=document.createElement('div');
@@ -162,7 +162,7 @@ function cardEl(r){
     <div class="row"><div><b>${esc(uName(o)||s.artistName||'Unknown')}</b><div class="s">Account: ${esc(o?o.email||'—':'—')}</div><div class="s">UID: ${esc(s.userId||'missing')}</div>${s.email&&o&&lc(s.email)!==lc(o.email)?`<div class="s">Upload form email (not used for payment): ${esc(s.email)}</div>`:''}</div>
     <div class="s">Owner share <b>${x.opct.toFixed(1)}%</b></div></div>
     <div class="row"><span class="lb">Owner earned on this release</span><span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${ownerBal.toFixed(2)}" ${x.block?'disabled':''}><button class="btn o" data-a="ob" ${x.block?'disabled':''}>Save</button></span></div></div>
-  <div class="box"><div class="lb">Contributors (${x.list.length})</div>
+  <div class="box"><div class="row"><div class="lb">Contributors (${x.list.length})</div>${x.reset?'<button class="btn o" data-a="reset">Reset split</button>':''}</div>
     ${x.list.length?x.list.map(c=>`<div class="row"><div><b>${esc(c.name||c.email)}</b> · ${num(c.pct).toFixed(1)}%<div class="s">${esc(c.role||'')} ${esc(c.email||'')}</div></div>
       ${x.active&&!x.block?`<span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${num(c.balance).toFixed(2)}"><button class="btn o" data-a="cb" data-em="${esc(lc(c.email))}">Save</button></span>`:`<span class="s">${x.active?usd(c.balance):'No balance until locked'}</span>`}</div>`).join(''):'<div class="s">No contributors on this release.</div>'}</div>
   ${x.block?`<div class="note">${esc(x.block)}</div>`:`<div class="row"><span class="lb">Distribute (USD)</span><span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"><button class="btn" data-a="pay">Distribute</button></span></div>`}`;
@@ -278,10 +278,24 @@ async function sendEmails(){
 $('send').onclick=sendEmails;
 addEventListener('beforeunload',e=>{if(pending.size){e.preventDefault();e.returnValue='';}});
 
+/* Admin reset: unlock the split and remove every contributor, so only the owner is paid. */
+async function resetSplit(r,b){
+  const bal=((r.split&&r.split.contributors)||[]).reduce((a,c)=>a+num(c.balance),0);
+  if(!confirm('Reset the split on "'+(r.s.releaseTitle||'Untitled')+'"?\n\nThis unlocks it and removes all contributors'+(bal>0?' and their balances ('+usd(bal)+' in total)':'')+'. Only the owner will be paid. This cannot be undone.'))return;
+  const txt=b.textContent;b.disabled=true;b.textContent='…';
+  try{
+    const batch=writeBatch(db);
+    batch.update(doc(db,'submissions',r.id),{splitLocked:false,royaltySplits:[]});
+    if(r.split)batch.delete(doc(db,'splits',r.split.id));
+    await batch.commit();
+    r.split=null;await refresh(r);toast('Split reset');
+  }catch(err){console.error(err);toast('Failed: '+err.message,'e');b.disabled=false;b.textContent=txt;}
+}
 $('list').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;
   if(sending){toast('Wait until the emails finish sending.','e');return;}
   const r=byId.get(b.closest('.card').dataset.c);if(!r)return;
+  if(b.dataset.a==='reset'){await resetSplit(r,b);return;}
   const v=parseFloat(b.parentElement.querySelector('input').value),a=b.dataset.a;
   if(isNaN(v)||v<0||(a==='pay'&&v<=0)){toast('Enter a valid amount.','e');return;}
   const txt=b.textContent;b.disabled=true;b.textContent='…';
