@@ -83,7 +83,15 @@ header{position:fixed;top:0;left:0;right:0;z-index:2000;display:flex;align-items
 /* modal */
 .modal-ov{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
 .modal-ov.open{opacity:1;pointer-events:all}
-.modal{width:100%;max-width:360px;background:var(--black-3);border:1px solid var(--border);border-radius:22px;padding:30px 26px 24px;text-align:center;transform:translateY(12px);transition:transform .25s}
+.modal{width:100%;max-width:400px;max-height:88vh;display:flex;flex-direction:column;background:var(--black-3);border:1px solid var(--border);border-radius:22px;padding:30px 24px 22px;text-align:center;transform:translateY(12px);transition:transform .25s}
+.modal h3 + p{margin-bottom:18px}
+.perks-title{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--w90);text-align:left;margin-bottom:10px}
+.perks{list-style:none;overflow-y:auto;text-align:left;margin-bottom:20px;padding-right:4px;scrollbar-width:thin}
+.perks li{display:flex;gap:13px;padding:11px 0;border-top:1px solid var(--border)}
+.perks li:first-child{border-top:none}
+.perks i{width:34px;height:34px;border-radius:10px;background:var(--w06);border:1px solid var(--border);display:grid;place-items:center;font-size:14px;color:var(--w90);flex-shrink:0}
+.perks b{display:block;font-size:14px;font-weight:800;margin-bottom:2px}
+.perks span{display:block;font-size:12.5px;line-height:1.5;color:var(--grey)}
 .modal-ov.open .modal{transform:translateY(0)}
 .modal h3{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;margin-bottom:10px}
 .modal p{font-size:14px;line-height:1.65;color:var(--w70);margin-bottom:22px}
@@ -176,6 +184,17 @@ footer span{color:var(--w90);font-weight:700}
   <div class="modal" role="dialog" aria-modal="true">
     <h3>Not live yet</h3>
     <p id="modalText"></p>
+    <div class="perks-title">What you'll get in the app</div>
+    <ul class="perks">
+      <li><i class="fa-solid fa-newspaper"></i><div><b>Your own feed</b><span>See what artists you follow are posting, or discover new music and people.</span></div></li>
+      <li><i class="fa-solid fa-image"></i><div><b>Post anything</b><span>Share updates, photos and links with your followers in seconds.</span></div></li>
+      <li><i class="fa-solid fa-heart"></i><div><b>Likes and comments</b><span>React to posts and reply in threaded comments, just like you'd expect.</span></div></li>
+      <li><i class="fa-solid fa-share"></i><div><b>Share posts</b><span>Send a post to a friend or add it to your own story with one tap.</span></div></li>
+      <li><i class="fa-solid fa-circle-plus"></i><div><b>Stories</b><span>Share photos, text and links that disappear after 24 hours, and see who viewed them.</span></div></li>
+      <li><i class="fa-solid fa-user-plus"></i><div><b>Follow and grow</b><span>Follow artists, build your audience and find new people in the People tab.</span></div></li>
+      <li><i class="fa-solid fa-bell"></i><div><b>Instant alerts</b><span>Know right away when someone follows you, likes, comments or replies.</span></div></li>
+      <li><i class="fa-solid fa-hashtag"></i><div><b>Hashtags and mentions</b><span>Get found through #tags and @mentions and search for artists and posts.</span></div></li>
+    </ul>
     <button type="button" id="modalClose">Got it</button>
   </div>
 </div>
@@ -227,7 +246,7 @@ new IntersectionObserver(es => es.forEach(e => $("bottomNav").classList.toggle("
 
 /* ── Store buttons ── */
 document.querySelectorAll(".store").forEach(b => b.onclick = () => {
-  $("modalText").textContent = `The 444Music app isn't live on ${b.dataset.store} yet. Please download it later, once it's released.`;
+  $("modalText").textContent = `The 444Music app isn't live on ${b.dataset.store} yet. Please come back and download it once it's released.`;
   $("modalOv").classList.add("open");
 });
 const closeModal = () => $("modalOv").classList.remove("open");
