@@ -10,14 +10,14 @@
 <style>
 :root {
   --bg:     #000000;
-  --card:   #0a0a0a;
-  --field:  #111111;
-  --line:   rgba(255,255,255,0.09);
+  --card:   #0b0b0b;
+  --field:  #141414;
+  --line:   rgba(255,255,255,0.08);
   --line-2: rgba(255,255,255,0.18);
-  --text:   #f5f5f5;
-  --muted:  #969696;
-  --faint:  #5c5c5c;
-  --green:  #7fcf8e;
+  --text:   #f2f0ec;
+  --muted:  #9a9791;
+  --faint:  #5f5d59;
+  --green:  #8fd19e;
   --head:   'Outfit', sans-serif;
   --body:   'Plus Jakarta Sans', system-ui, sans-serif;
 }
@@ -26,71 +26,90 @@ body { font-family: var(--body); background: var(--bg); color: var(--text); min-
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; border: none; background: none; }
 button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--line-2); outline-offset: 2px; }
 
-/* ── sign in ── */
+/* sign in */
 #gate { max-width: 340px; margin: 18vh auto 0; padding: 0 20px; }
 .gate-box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px; }
 .gate-box h2 { font-family: var(--head); font-size: 20px; font-weight: 700; }
 .gate-box p { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+.gate-box input { background: var(--field); border: 1px solid transparent; border-radius: 10px; padding: 11px 13px; outline: none; }
+.gate-box input:focus { border-color: var(--line-2); }
 #gerr { font-size: 12.5px; min-height: 16px; color: var(--muted); }
 
-/* ── shell ── */
+/* shell */
 #app { display: none; }
 .top { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 60px; border-bottom: 1px solid var(--line); }
 .brand { font-family: var(--head); font-weight: 800; font-size: 19px; letter-spacing: -0.4px; display: flex; align-items: center; gap: 10px; }
 .brand span { font-family: var(--body); font-size: 11px; font-weight: 600; letter-spacing: 0; color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px 10px; }
 .wrap { max-width: 1040px; margin: 0 auto; padding: 34px 24px 80px; }
-.title h1 { font-family: var(--head); font-size: 28px; font-weight: 700; letter-spacing: -0.6px; }
-.title p { color: var(--muted); margin-top: 4px; font-size: 13.5px; }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.head h1 { font-family: var(--head); font-size: 28px; font-weight: 700; letter-spacing: -0.6px; }
+.head p { color: var(--muted); margin-top: 4px; font-size: 13.5px; max-width: 52ch; }
 
-/* ── controls ── */
-.search { display: flex; gap: 10px; margin: 24px 0 16px; }
+/* controls */
+.search { display: flex; gap: 10px; margin: 24px 0 18px; }
 .search input { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; outline: none; }
 .search input::placeholder { color: var(--faint); }
 .search input:focus { border-color: var(--line-2); }
 
-.btn { background: #fff; color: #000; border-radius: 10px; padding: 10px 20px; font-weight: 600; font-size: 13px; white-space: nowrap; transition: opacity .15s; }
+.btn { background: var(--text); color: #000; border-radius: 10px; padding: 10px 20px; font-weight: 600; font-size: 13px; white-space: nowrap; transition: opacity .15s; }
 .btn:hover:not(:disabled) { opacity: .86; }
-.btn:disabled { opacity: .28; }
+.btn:disabled { opacity: .26; }
 .btn.ok { background: transparent; color: var(--green); opacity: 1; }
-.ghost { border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 13px; color: var(--text); background: transparent; transition: background .15s; }
+.ghost { border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 13px; color: var(--text); background: transparent; transition: background .15s; white-space: nowrap; }
 .ghost:hover:not(:disabled) { background: var(--field); }
 .ghost:disabled { opacity: .4; }
 
-/* ── table ── */
-.table { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
-.row, .thead { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.6fr) 130px 130px 92px; gap: 18px; align-items: center; padding: 14px 20px; }
-.thead { font-size: 12px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--line); padding-top: 12px; padding-bottom: 12px; }
-.row + .row { border-top: 1px solid var(--line); }
-.who b { display: block; font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.who small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.songs { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cell { display: block; }
-.cell span { display: none; font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
-.cell input { width: 100%; background: var(--field); border: 1px solid transparent; border-radius: 9px; padding: 9px 11px; outline: none; font-variant-numeric: tabular-nums; }
-.cell input:focus { border-color: var(--line-2); }
-.cell input::-webkit-outer-spin-button, .cell input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.cell input[type=number] { -moz-appearance: textfield; }
-.act { text-align: right; }
+/* artist cards */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px 20px 18px; }
+.who b { display: block; font-family: var(--head); font-weight: 600; font-size: 17px; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; color: var(--muted); font-size: 12.5px; min-height: 36px; }
-.note { text-align: center; padding: 60px 20px; color: var(--muted); }
+.songs { margin-top: 14px; }
+.song { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); }
+.sname { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.sname span { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sname em { font-style: normal; font-size: 12px; color: var(--green); }
+.n { width: 104px; flex: none; background: var(--field); border: 1px solid transparent; border-radius: 9px; padding: 8px 11px; outline: none; text-align: right; font-variant-numeric: tabular-nums; }
+.n:focus { border-color: var(--line-2); }
+.n::-webkit-outer-spin-button, .n::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.n[type=number] { -moz-appearance: textfield; }
+
+.more { display: block; width: 100%; padding: 9px 0 4px; color: var(--muted); font-size: 12.5px; font-weight: 600; text-align: center; border-top: 1px solid var(--line); }
+.more:hover:not(:disabled) { color: var(--text); }
+
+.cfoot { display: flex; align-items: flex-end; gap: 14px; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cfoot label, .tot { display: flex; flex-direction: column; gap: 4px; }
+.cfoot span, .tot span { font-size: 11.5px; color: var(--muted); }
+.cfoot label .n { width: 96px; text-align: left; }
+.tot { flex: 1; min-width: 0; }
+.tot b { font-family: var(--head); font-size: 22px; font-weight: 600; letter-spacing: -0.4px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; color: var(--muted); font-size: 12.5px; min-height: 36px; }
+.note { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); }
 .note b { display: block; color: var(--text); font-family: var(--head); font-size: 16px; font-weight: 600; margin-bottom: 4px; }
 
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: #fff; color: #000; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 13px; transition: transform .25s ease; z-index: 50; max-width: calc(100% - 32px); text-align: center; }
+/* confirm dialog */
+.veil { position: fixed; inset: 0; background: rgba(0,0,0,.66); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 40; }
+.veil.show { display: flex; }
+.dialog { background: var(--card); border: 1px solid var(--line-2); border-radius: 18px; padding: 24px; width: 100%; max-width: 380px; }
+.dialog h3 { font-family: var(--head); font-size: 19px; font-weight: 600; }
+.dialog p { color: var(--muted); margin-top: 8px; font-size: 13.5px; }
+.dact { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--text); color: #000; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 13px; transition: transform .25s ease; z-index: 50; max-width: calc(100% - 32px); text-align: center; }
 .toast.show { transform: translate(-50%, 0); }
 
 @media (max-width: 760px) {
   .top { padding: 0 16px; }
   .wrap { padding: 24px 14px 64px; }
-  .thead { display: none; }
-  .row { grid-template-columns: 1fr 1fr; gap: 12px 12px; padding: 16px; }
-  .who, .songs, .act { grid-column: 1 / -1; }
-  .act { text-align: left; }
-  .cell span { display: block; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
   .search { flex-wrap: wrap; }
   .search input { flex-basis: 100%; }
 }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
 </head>
 <body>
@@ -99,8 +118,8 @@ button:disabled { cursor: not-allowed; }
   <div class="gate-box">
     <h2>Admin sign in</h2>
     <p>Use your admin account.</p>
-    <input id="ge" type="email" placeholder="Email" autocomplete="username" style="background:var(--field);border:1px solid transparent;border-radius:10px;padding:11px 13px;outline:none;">
-    <input id="gp" type="password" placeholder="Password" autocomplete="current-password" style="background:var(--field);border:1px solid transparent;border-radius:10px;padding:11px 13px;outline:none;">
+    <input id="ge" type="email" placeholder="Email" autocomplete="username">
+    <input id="gp" type="password" placeholder="Password" autocomplete="current-password">
     <button class="btn" id="gb">Sign in</button>
     <div id="gerr"></div>
   </div>
@@ -113,9 +132,12 @@ button:disabled { cursor: not-allowed; }
   </header>
 
   <main class="wrap">
-    <div class="title">
-      <h1>Analytics</h1>
-      <p>YouTube and total streams for artists with approved songs.</p>
+    <div class="head">
+      <div>
+        <h1>Analytics</h1>
+        <p>Streams for every approved song. Download the report when it's time to pay.</p>
+      </div>
+      <button class="ghost" id="report">Download report</button>
     </div>
 
     <form class="search" id="sf" autocomplete="off">
@@ -124,18 +146,24 @@ button:disabled { cursor: not-allowed; }
       <button class="ghost" type="button" id="clear" style="display:none">Clear</button>
     </form>
 
-    <div class="table">
-      <div class="thead">
-        <div>Artist</div><div>Approved songs</div><div>YouTube</div><div>Total</div><div></div>
-      </div>
-      <div id="list"></div>
-    </div>
+    <div class="grid" id="list"></div>
 
     <div class="foot">
       <span id="count"></span>
-      <button class="ghost" id="more" style="display:none">Load more</button>
+      <button class="ghost" id="more" style="display:none">Load more artists</button>
     </div>
   </main>
+</div>
+
+<div class="veil" id="veil">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dt">
+    <h3 id="dt"></h3>
+    <p id="dp"></p>
+    <div class="dact">
+      <button class="ghost" id="dno">Cancel</button>
+      <button class="btn" id="dyes">Download and reset</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -144,7 +172,7 @@ button:disabled { cursor: not-allowed; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, setDoc, query, where, limit, startAfter, documentId, serverTimestamp }
+import { getFirestore, collection, doc, getDocs, query, where, orderBy, limit, startAfter, documentId, serverTimestamp, increment, writeBatch }
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const app  = initializeApp({
@@ -160,41 +188,53 @@ const db   = getFirestore(app);
 
 const ADMINS   = ['444musicdistro@gmail.com'];   // accounts allowed on this page
 const APPROVED = ['Approved', 'approved'];
-const PAGE = 10;           // approved songs per page
-const SEARCH_LIMIT = 15;   // max documents per search query
+const PAGE = 10;            // approved songs read per page of artists
+const SEARCH_LIMIT = 15;    // max documents per search query
+const SONGS_SHOWN = 5;      // songs shown on a card before "See more"
+const MIN_STREAMS = 50;     // a song needs this many new streams to land in the report
 
 const $  = id => document.getElementById(id);
 const lc = s => String(s || '').toLowerCase().trim();
 const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const isApproved = d => lc(d.status) === 'approved';
 const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
+const fmt = n => Number(n).toLocaleString('en-US');
+const num = v => { const t = String(v).trim(); if (t === '') return null; const n = Number(t); return Number.isInteger(n) && n >= 0 ? n : null; };
 
 function toast(msg) {
   const t = $('toast');
   t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000);
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-/* ── state (all in memory, nothing is re-read unless needed) ── */
-const stats = new Map();          // uid -> { youtube, total, exists }
-const searchCache = new Map();    // search text -> Map(uid -> row)
+/* ---------- state (kept in memory, nothing is read twice unless needed) ---------- */
+const stats = new Map();        // uid -> { youtube, total, exists }
+const songById = new Map();     // song id -> { id, title, streams, last }  (one shared object per song)
+const searchCache = new Map();  // search text -> Map(uid -> artist row)
 let browse = { rows: new Map(), cursor: null, more: false, loaded: false };
 let searchRows = new Map();
-let view = 'browse';              // 'browse' | 'search'
+let view = 'browse';            // 'browse' | 'search'
 let busy = false;
 
-/* One row per artist. Several approved songs by the same artist share one analytics record. */
+const currentRows = () => view === 'search' ? searchRows : browse.rows;
+const getRow = uid => currentRows().get(uid);
+const sortedSongs = r => [...r.songs.values()].sort((a, b) => a.id < b.id ? -1 : 1);
+
+/* One card per artist. Every song keeps its own streams and its own "streams at last report". */
 function addSong(map, d) {
   const s = d.data();
   if (!isApproved(s) || !s.userId) return;
   let r = map.get(s.userId);
-  if (!r) { r = { uid: s.userId, name: s.artistName || '', email: s.email || '', songs: [], ids: new Set() }; map.set(s.userId, r); }
-  if (r.ids.has(d.id)) return;
-  r.ids.add(d.id);
-  r.songs.push(s.releaseTitle || 'Untitled');
+  if (!r) { r = { uid: s.userId, name: s.artistName || '', email: s.email || '', songs: new Map(), shown: SONGS_SHOWN, done: false }; map.set(s.userId, r); }
+  let song = songById.get(d.id);
+  if (!song) {
+    song = { id: d.id, title: s.releaseTitle || 'Untitled', streams: Number(s.streams) || 0, last: Number(s.lastExport) || 0 };
+    songById.set(d.id, song);
+  }
+  r.songs.set(d.id, song);
 }
 
-/* Analytics docs for the artists on screen; only ones we have not read yet. */
+/* Artist totals (analytics docs) for the cards on screen, only the ones not read yet. */
 async function fetchStats(uids) {
   const need = uids.filter(u => !stats.has(u));
   for (let i = 0; i < need.length; i += 30) {
@@ -208,7 +248,7 @@ async function fetchStats(uids) {
   }
 }
 
-/* ── browse: approved songs, 10 at a time ── */
+/* ---------- browse ---------- */
 async function loadMore() {
   if (busy) return;
   busy = true; $('more').disabled = true;
@@ -232,7 +272,7 @@ async function loadMore() {
   if (view === 'browse') render();
 }
 
-/* ── search: reads only what matches, across all submissions ── */
+/* ---------- search ---------- */
 async function runSearch() {
   const q = $('q').value.trim();
   if (!q) return clearSearch();
@@ -245,13 +285,10 @@ async function runSearch() {
     const subs = collection(db, 'submissions');
     const jobs = [];
     if (q.includes('@')) {
-      // exact email
       new Set([q, key]).forEach(v => jobs.push(getDocs(query(subs, where('email', '==', v), limit(SEARCH_LIMIT)))));
     } else if (/^[A-Za-z0-9]{20,}$/.test(q)) {
-      // exact user ID
       jobs.push(getDocs(query(subs, where('userId', '==', q), limit(SEARCH_LIMIT))));
     } else {
-      // song title or artist name, by start of the text (case variants because Firestore is case sensitive)
       const variants = [...new Set([q, key, q.toUpperCase(), titleCase(q)])];
       ['releaseTitle', 'artistName'].forEach(f => variants.forEach(v =>
         jobs.push(getDocs(query(subs, where(f, '>=', v), where(f, '<=', v + '\uf8ff'), limit(SEARCH_LIMIT))))));
@@ -275,85 +312,257 @@ function clearSearch() {
   render();
 }
 
-/* ── render ── */
-function rowHtml(r) {
+/* ---------- drawing the cards ---------- */
+function moreLabel(r) {
+  const hidden = r.songs.size - r.shown;
+  if (hidden > 0) return `See more (${hidden} more)`;
+  // all loaded songs are showing; in browse we can still ask for the next few
+  const exhausted = browse.loaded && !browse.more;
+  if (view === 'browse' && !r.done && !exhausted && r.songs.size >= r.shown) return 'See more';
+  return '';
+}
+
+function cardHtml(r) {
   const s = stats.get(r.uid) || { youtube: 0, total: 0 };
-  const label = r.songs.slice(0, 3).join(', ') + (r.songs.length > 3 ? ` +${r.songs.length - 3}` : '');
+  const songs = sortedSongs(r).slice(0, r.shown).map(sg => {
+    const added = sg.streams - sg.last;
+    return `
+      <div class="song">
+        <div class="sname"><span title="${esc(sg.title)}">${esc(sg.title)}</span>${added > 0 ? `<em>+${fmt(added)} since last report</em>` : ''}</div>
+        <input class="n" type="number" inputmode="numeric" min="0" step="1" value="${sg.streams}"
+          data-s="${esc(sg.id)}" data-k="${esc(r.uid)}:${esc(sg.id)}" aria-label="Streams for ${esc(sg.title)}">
+      </div>`;
+  }).join('');
+  const more = moreLabel(r);
   return `
-    <div class="row" data-uid="${esc(r.uid)}">
+    <article class="card" data-uid="${esc(r.uid)}">
       <div class="who"><b title="${esc(r.name)}">${esc(r.name || 'Unknown artist')}</b><small title="${esc(r.uid)}">${esc(r.email || r.uid)}</small></div>
-      <div class="songs" title="${esc(r.songs.join(', '))}">${esc(label)}</div>
-      <label class="cell"><span>YouTube</span><input data-f="yt" type="number" inputmode="numeric" min="0" step="1" value="${s.youtube}"></label>
-      <label class="cell"><span>Total</span><input data-f="total" type="number" inputmode="numeric" min="0" step="1" value="${s.total}"></label>
-      <div class="act"><button class="btn" data-act="save" disabled>Save</button></div>
-    </div>`;
+      <div class="songs">${songs}</div>
+      ${more ? `<button class="more" data-act="more">${more}</button>` : ''}
+      <div class="cfoot">
+        <label><span>YouTube</span><input class="n" type="number" inputmode="numeric" min="0" step="1" value="${s.youtube}" data-yt data-k="${esc(r.uid)}:yt"></label>
+        <div class="tot"><span>Total streams</span><b>${fmt(s.total)}</b></div>
+        <button class="btn" data-act="save" disabled>Save</button>
+      </div>
+    </article>`;
+}
+
+/* keep whatever is typed but not saved yet when the list is redrawn */
+function snapshotDirty() {
+  const m = {};
+  document.querySelectorAll('#list input[data-k]').forEach(i => { if (i.value !== i.defaultValue) m[i.dataset.k] = i.value; });
+  return m;
+}
+function restoreDirty(m) {
+  document.querySelectorAll('#list input[data-k]').forEach(i => { if (m[i.dataset.k] !== undefined) i.value = m[i.dataset.k]; });
+  document.querySelectorAll('#list .card').forEach(updateCard);
 }
 
 function render() {
-  const map = view === 'search' ? searchRows : browse.rows;
-  const rows = [...map.values()];
-  $('list').innerHTML = rows.length ? rows.map(rowHtml).join('')
+  const dirty = snapshotDirty();
+  const rows = [...currentRows().values()];
+  $('list').innerHTML = rows.length ? rows.map(cardHtml).join('')
     : `<div class="note"><b>${view === 'search' ? 'No approved songs found' : 'No approved songs yet'}</b>${view === 'search' ? 'Search matches the start of a song title or artist name.' : ''}</div>`;
+  restoreDirty(dirty);
   $('count').textContent = rows.length ? `${rows.length} artist${rows.length === 1 ? '' : 's'}` : '';
   $('more').style.display = view === 'browse' && browse.more ? '' : 'none';
   $('clear').style.display = view === 'search' ? '' : 'none';
 }
 
-/* ── edit + save: one small write, only when something changed ── */
-function readRow(rowEl) {
-  const yt = rowEl.querySelector('[data-f="yt"]').value.trim();
-  const tt = rowEl.querySelector('[data-f="total"]').value.trim();
-  const y = Number(yt), t = Number(tt);
-  const ok = yt !== '' && tt !== '' && Number.isInteger(y) && Number.isInteger(t) && y >= 0 && t >= 0;
-  return { ok, y, t };
+function renderCard(uid) {
+  const el = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"]`);
+  const r = getRow(uid);
+  if (!el || !r) return;
+  const dirty = snapshotDirty();
+  const tmp = document.createElement('div');
+  tmp.innerHTML = cardHtml(r);
+  el.replaceWith(tmp.firstElementChild);
+  restoreDirty(dirty);
 }
 
-function syncButton(rowEl) {
-  const cur = stats.get(rowEl.dataset.uid) || { youtube: 0, total: 0 };
-  const v = readRow(rowEl);
-  const btn = rowEl.querySelector('[data-act="save"]');
-  btn.disabled = !v.ok || (v.y === cur.youtube && v.t === cur.total);
+/* ---------- editing: total follows the songs, save is one small batch ---------- */
+function updateCard(card) {
+  const cur = stats.get(card.dataset.uid) || { youtube: 0, total: 0 };
+  let delta = 0, valid = true, dirty = false;
+  card.querySelectorAll('input[data-s]').forEach(i => {
+    const v = num(i.value), sg = songById.get(i.dataset.s);
+    if (v === null) { valid = false; return; }
+    if (v !== sg.streams) { dirty = true; delta += v - sg.streams; }
+  });
+  const y = num(card.querySelector('[data-yt]').value);
+  if (y === null) valid = false; else if (y !== cur.youtube) dirty = true;
+  card.querySelector('.tot b').textContent = fmt(cur.total + delta);
+  const btn = card.querySelector('[data-act="save"]');
+  btn.disabled = !(valid && dirty);
   btn.textContent = 'Save';
   btn.classList.remove('ok');
 }
 
-$('list').addEventListener('input', e => {
-  const rowEl = e.target.closest('.row');
-  if (rowEl) syncButton(rowEl);
-});
-
-$('list').addEventListener('click', async e => {
-  const btn = e.target.closest('[data-act="save"]');
-  if (!btn || btn.disabled) return;
-  const rowEl = btn.closest('.row'), uid = rowEl.dataset.uid;
-  const v = readRow(rowEl);
-  if (!v.ok) { toast('Enter whole numbers, 0 or more.'); return; }
+async function saveCard(uid) {
+  const card = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"]`);
+  const btn = card.querySelector('[data-act="save"]');
   const cur = stats.get(uid) || { youtube: 0, total: 0, exists: false };
-  // New record: write both fields so the app always finds them. Existing record: only what changed.
+  const changes = [];
+  let delta = 0;
+  for (const i of card.querySelectorAll('input[data-s]')) {
+    const v = num(i.value), sg = songById.get(i.dataset.s);
+    if (v === null) { toast('Use whole numbers, 0 or more.'); return; }
+    if (v !== sg.streams) { changes.push({ sg, v }); delta += v - sg.streams; }
+  }
+  const y = num(card.querySelector('[data-yt]').value);
+  if (y === null) { toast('Use whole numbers, 0 or more.'); return; }
+
   const patch = {};
-  if (!cur.exists || v.y !== cur.youtube) patch.youtubeStreams = v.y;
-  if (!cur.exists || v.t !== cur.total)   patch.totalStreams = v.t;
+  if (!cur.exists || y !== cur.youtube) patch.youtubeStreams = y;
+  if (changes.length || !cur.exists) patch.totalStreams = increment(delta);
+
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    await setDoc(doc(db, 'analytics', uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
-    stats.set(uid, { youtube: v.y, total: v.t, exists: true });
-    btn.textContent = 'Saved'; btn.classList.add('ok');
-    setTimeout(() => { if (btn.textContent === 'Saved') syncButton(rowEl); }, 2200);
+    const batch = writeBatch(db);
+    changes.forEach(c => batch.update(doc(db, 'submissions', c.sg.id), { streams: c.v }));
+    batch.set(doc(db, 'analytics', uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
+    await batch.commit();
+    changes.forEach(c => { c.sg.streams = c.v; });
+    stats.set(uid, { youtube: y, total: cur.total + delta, exists: true });
+    renderCard(uid);
+    const fresh = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"] [data-act="save"]`);
+    if (fresh) {
+      fresh.textContent = 'Saved'; fresh.classList.add('ok');
+      setTimeout(() => { if (fresh.textContent === 'Saved' && fresh.isConnected) { fresh.textContent = 'Save'; fresh.classList.remove('ok'); } }, 2200);
+    }
   } catch (err) {
     console.error(err);
     toast('Save failed: ' + err.message);
-    syncButton(rowEl);
+    updateCard(card);
   }
+}
+
+/* ---------- see more songs on one card ---------- */
+async function seeMore(uid, btn) {
+  const r = getRow(uid);
+  if (!r) return;
+  if (r.songs.size > r.shown) {                       // already loaded, just show them
+    r.shown = Math.min(r.shown + SONGS_SHOWN, r.songs.size);
+    return renderCard(uid);
+  }
+  if (busy) return;
+  busy = true; btn.disabled = true; btn.textContent = 'Loading…';
+  try {
+    const last = sortedSongs(r).pop().id;
+    const docs = (await getDocs(query(collection(db, 'submissions'),
+      where('userId', '==', uid), where('status', 'in', APPROVED),
+      orderBy(documentId()), startAfter(last), limit(SONGS_SHOWN)))).docs;
+    docs.forEach(d => addSong(currentRows(), d));
+    if (docs.length < SONGS_SHOWN) r.done = true;
+    r.shown = Math.min(r.shown + SONGS_SHOWN, r.songs.size);
+  } catch (e) {
+    console.error(e);
+    toast('Could not load more songs.');
+  }
+  busy = false;
+  renderCard(uid);
+}
+
+/* ---------- the report ---------- */
+let pending = [];
+
+function csvText(items) {
+  const cell = v => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+  const today = new Date().toISOString().slice(0, 10);
+  const lines = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date'].map(cell).join(',')];
+  items.forEach(it => lines.push([cell(it.artist), cell(it.email), cell(it.song), it.added, it.streams, today].join(',')));
+  return '\ufeff' + lines.join('\r\n');
+}
+
+function saveFile(text) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = `444music-streams-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+async function prepareReport() {
+  if (busy) return;
+  if ([...document.querySelectorAll('[data-act="save"]')].some(b => !b.disabled)) { toast('Save your changes first.'); return; }
+  busy = true; $('report').disabled = true; $('report').textContent = 'Checking…';
+  try {
+    // a song can only have 50+ new streams if it has 50+ in total, so only those are read
+    const snap = await getDocs(query(collection(db, 'submissions'), where('streams', '>=', MIN_STREAMS)));
+    const items = [];
+    snap.forEach(d => {
+      const s = d.data();
+      if (!isApproved(s)) return;
+      const streams = Number(s.streams) || 0, last = Number(s.lastExport) || 0;
+      const added = streams - last;
+      if (added >= MIN_STREAMS) items.push({ id: d.id, artist: s.artistName || '', email: s.email || '', song: s.releaseTitle || 'Untitled', added, streams });
+    });
+    items.sort((a, b) => a.artist.localeCompare(b.artist) || a.song.localeCompare(b.song));
+    if (!items.length) {
+      toast(`No songs have ${MIN_STREAMS}+ new streams yet.`);
+    } else {
+      pending = items;
+      const total = items.reduce((n, it) => n + it.added, 0);
+      $('dt').textContent = `${items.length} song${items.length === 1 ? '' : 's'} ready`;
+      $('dp').textContent = `${fmt(total)} new streams across songs with ${MIN_STREAMS}+ since the last report. Downloading starts these songs from 0 again. Songs under ${MIN_STREAMS} keep adding up.`;
+      $('veil').classList.add('show');
+    }
+  } catch (e) {
+    console.error(e);
+    toast('Could not build the report: ' + e.message);
+  }
+  busy = false; $('report').disabled = false; $('report').textContent = 'Download report';
+}
+
+$('dno').onclick = () => { $('veil').classList.remove('show'); pending = []; };
+
+$('dyes').onclick = async () => {
+  if (!pending.length) return;
+  const btn = $('dyes');
+  btn.disabled = true; btn.textContent = 'Working…';
+  const items = pending;
+  const text = csvText(items);
+  try {
+    // reset first; the file is only handed over once the reset has gone through
+    for (let i = 0; i < items.length; i += 400) {
+      const batch = writeBatch(db);
+      items.slice(i, i + 400).forEach(it => batch.update(doc(db, 'submissions', it.id), { lastExport: it.streams, lastExportAt: serverTimestamp() }));
+      await batch.commit();
+    }
+    saveFile(text);
+    items.forEach(it => { const sg = songById.get(it.id); if (sg) sg.last = it.streams; });
+    pending = [];
+    $('veil').classList.remove('show');
+    render();
+    toast('Report downloaded');
+  } catch (e) {
+    console.error(e);
+    toast('Something went wrong, no file was downloaded. Try again.');
+  }
+  btn.disabled = false; btn.textContent = 'Download and reset';
+};
+
+/* ---------- wiring ---------- */
+$('list').addEventListener('input', e => {
+  const c = e.target.closest('.card');
+  if (c) updateCard(c);
+});
+$('list').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  const uid = b.closest('.card').dataset.uid;
+  if (b.dataset.act === 'save') saveCard(uid);
+  else if (b.dataset.act === 'more') seeMore(uid, b);
 });
 
-/* ── controls ── */
 $('sf').addEventListener('submit', e => { e.preventDefault(); runSearch(); });
 $('clear').onclick = clearSearch;
 $('more').onclick = loadMore;
+$('report').onclick = prepareReport;
 $('q').addEventListener('input', e => { if (!e.target.value && view === 'search') clearSearch(); });
 $('out').onclick = () => signOut(auth);
 
-/* ── auth ── */
+/* ---------- auth ---------- */
 $('gb').onclick = async () => {
   $('gerr').textContent = '';
   try { await signInWithEmailAndPassword(auth, $('ge').value.trim(), $('gp').value); }
