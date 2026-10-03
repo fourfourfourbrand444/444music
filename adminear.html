@@ -2,755 +2,327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analytics • 444Music Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>444Music — Earnings Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:     #000000;
-  --card:   #0b0b0b;
-  --field:  #141414;
-  --line:   rgba(255,255,255,0.08);
-  --line-2: rgba(255,255,255,0.18);
-  --text:   #f2f0ec;
-  --muted:  #9a9791;
-  --faint:  #5f5d59;
-  --green:  #8fd19e;
-  --head:   'Outfit', sans-serif;
-  --body:   'Plus Jakarta Sans', system-ui, sans-serif;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
-button, input { font: inherit; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
-button:disabled { cursor: not-allowed; }
-:focus-visible { outline: 2px solid var(--line-2); outline-offset: 2px; }
-
-/* sign in */
-#gate { max-width: 340px; margin: 18vh auto 0; padding: 0 20px; }
-.gate-box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px; }
-.gate-box h2 { font-family: var(--head); font-size: 20px; font-weight: 700; }
-.gate-box p { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
-.gate-box input { background: var(--field); border: 1px solid transparent; border-radius: 10px; padding: 11px 13px; outline: none; }
-.gate-box input:focus { border-color: var(--line-2); }
-#gerr { font-size: 12.5px; min-height: 16px; color: var(--muted); }
-
-/* shell */
-#app { display: none; }
-.top { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 60px; border-bottom: 1px solid var(--line); }
-.brand { font-family: var(--head); font-weight: 800; font-size: 19px; letter-spacing: -0.4px; display: flex; align-items: center; gap: 10px; }
-.brand span { font-family: var(--body); font-size: 11px; font-weight: 600; letter-spacing: 0; color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px 10px; }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 34px 24px 80px; }
-.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.head h1 { font-family: var(--head); font-size: 28px; font-weight: 700; letter-spacing: -0.6px; }
-.head p { color: var(--muted); margin-top: 4px; font-size: 13.5px; max-width: 52ch; }
-
-/* controls */
-.search { display: flex; gap: 10px; margin: 24px 0 18px; }
-.search input { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; outline: none; }
-.search input::placeholder { color: var(--faint); }
-.search input:focus { border-color: var(--line-2); }
-
-.btn { background: var(--text); color: #000; border-radius: 10px; padding: 10px 20px; font-weight: 600; font-size: 13px; white-space: nowrap; transition: opacity .15s; }
-.btn:hover:not(:disabled) { opacity: .86; }
-.btn:disabled { opacity: .26; }
-.btn.ok { background: transparent; color: var(--green); opacity: 1; }
-.ghost { border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 13px; color: var(--text); background: transparent; transition: background .15s; white-space: nowrap; }
-.ghost:hover:not(:disabled) { background: var(--field); }
-.ghost:disabled { opacity: .4; }
-
-/* artist cards */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; align-items: start; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px 20px 18px; }
-.who b { display: block; font-family: var(--head); font-weight: 600; font-size: 17px; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.who small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.songs { margin-top: 14px; }
-.song { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 0; border-top: 1px solid var(--line); }
-.sname { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.sname span { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sname em { font-style: normal; font-size: 12px; color: var(--green); }
-.sname em.ed { color: var(--muted); }
-.n { width: 104px; flex: none; background: var(--field); border: 1px solid transparent; border-radius: 9px; padding: 8px 11px; outline: none; text-align: right; font-variant-numeric: tabular-nums; }
-.n::placeholder { color: var(--faint); }
-.n:focus { border-color: var(--line-2); }
-.n::-webkit-outer-spin-button, .n::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.n[type=number] { -moz-appearance: textfield; }
-
-.more { display: block; width: 100%; padding: 9px 0 4px; color: var(--muted); font-size: 12.5px; font-weight: 600; text-align: center; border-top: 1px solid var(--line); }
-.more:hover:not(:disabled) { color: var(--text); }
-
-.cfoot { display: flex; align-items: flex-end; gap: 14px; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); }
-.cfoot label, .tot { display: flex; flex-direction: column; gap: 4px; }
-.cfoot span, .tot span { font-size: 11.5px; color: var(--muted); }
-.cfoot label .n { width: 96px; text-align: left; }
-.tot { flex: 1; min-width: 0; }
-.tot b { font-family: var(--head); font-size: 22px; font-weight: 600; letter-spacing: -0.4px; font-variant-numeric: tabular-nums; line-height: 1.1; }
-
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; color: var(--muted); font-size: 12.5px; min-height: 36px; }
-.note { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); }
-.note b { display: block; color: var(--text); font-family: var(--head); font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-
-/* confirm dialog */
-.veil { position: fixed; inset: 0; background: rgba(0,0,0,.66); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 40; }
-.veil.show { display: flex; }
-.dialog { background: var(--card); border: 1px solid var(--line-2); border-radius: 18px; padding: 24px; width: 100%; max-width: 380px; }
-.dialog h3 { font-family: var(--head); font-size: 19px; font-weight: 600; }
-.dialog p { color: var(--muted); margin-top: 8px; font-size: 13.5px; }
-.dact { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 140%); background: var(--text); color: #000; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 13px; transition: transform .25s ease; z-index: 50; max-width: calc(100% - 32px); text-align: center; }
-.toast.show { transform: translate(-50%, 0); }
-
-@media (max-width: 760px) {
-  .top { padding: 0 16px; }
-  .wrap { padding: 24px 14px 64px; }
-  .grid { grid-template-columns: minmax(0, 1fr); }
-  .search { flex-wrap: wrap; }
-  .search input { flex-basis: 100%; }
-}
-@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--b:rgba(0,0,0,.14);--g:#f4f4f4;--d:#666}
+body{font-family:Inter,sans-serif;background:#fff;color:#000;padding-bottom:60px}
+button{font:inherit;cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+input,select{font:inherit;font-size:16px;border:1px solid var(--b);border-radius:9px;padding:10px 12px;background:var(--g);min-width:0;color:#000}
+.btn{background:#000;color:#fff;border:1px solid #000;border-radius:9px;padding:10px 14px;font-weight:600;font-size:12px;white-space:nowrap}
+.btn.o{background:#fff;color:#000;border-color:var(--b)}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--b);font-weight:800}
+.hr{display:flex;gap:8px;align-items:center;margin-left:auto}
+.wrap{max-width:880px;margin:0 auto;padding:22px 16px}
+h1{font-size:24px;font-weight:800;margin-bottom:6px}
+.sub{color:var(--d);font-size:13px;line-height:1.6;margin-bottom:16px}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.ctl input{flex:2 1 240px}.ctl select{flex:1 1 170px}
+.cnt{font-size:12px;color:var(--d);margin-bottom:10px}
+.card{border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:12px;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.t{font-weight:800;font-size:16px;overflow-wrap:anywhere}.s{font-size:12px;color:var(--d);overflow-wrap:anywhere;margin-top:2px}
+.tag{font-size:10px;font-weight:700;border:1px solid #000;border-radius:5px;padding:3px 7px;white-space:nowrap;height:fit-content}.tag.f{background:#000;color:#fff}
+.box{background:var(--g);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:9px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}
+.lb{font-size:11px;color:var(--d);font-weight:600}
+.pr{display:flex;gap:6px;align-items:center}.pr input{width:112px;text-align:right}
+.note{font-size:12px;line-height:1.5;border:1px dashed #000;border-radius:8px;padding:9px 11px}
+.pg{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:16px;font-size:12px}
+.empty{text-align:center;padding:50px 10px;color:var(--d);font-size:13px}
+#gate{max-width:340px;margin:16vh auto;padding:24px;border:1px solid var(--b);border-radius:16px;display:flex;flex-direction:column;gap:10px}
+#gate p{font-size:12px;color:var(--d)}#gerr{font-size:12px;min-height:14px}
+#toast{position:fixed;bottom:16px;left:16px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none;z-index:9}
+#toast div{background:#fff;border:1px solid #000;border-radius:9px;padding:10px 14px;font-size:12.5px}#toast .e{background:#000;color:#fff}
 </style>
 </head>
 <body>
-
 <div id="gate">
-  <div class="gate-box">
-    <h2>Admin sign in</h2>
-    <p>Use your admin account.</p>
-    <input id="ge" type="email" placeholder="Email" autocomplete="username">
-    <input id="gp" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="btn" id="gb">Sign in</button>
-    <div id="gerr"></div>
+  <h2>Admin sign in</h2><p>Use your admin account.</p>
+  <input id="ge" type="email" placeholder="Email" autocomplete="username">
+  <input id="gp" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn" id="gb">Sign in</button><div id="gerr"></div>
+</div>
+<div id="toast"></div>
+<div id="app" style="display:none">
+  <header><span>444Music · Earnings</span><span class="hr"><button class="btn" id="send" disabled>Send payout emails (0)</button><button class="btn o" id="out">Sign out</button></span></header>
+  <div class="wrap">
+    <h1>Earnings Manager</h1>
+    <p class="sub">Approved releases only. The owner is the account that uploaded the release (its user ID), never the email typed on the form. Distribute splits an amount in USD: the owner's share goes to the owner's main earnings, each contributor's share goes only to the contributor dashboard.</p>
+    <div class="ctl">
+      <input id="q" placeholder="Search song, artist, owner email, owner name or UID — press Enter" autocomplete="off">
+      <button class="btn" id="sb">Search</button>
+      <select id="mode"><option value="all">All approved releases</option><option value="locked">Only releases with a locked split</option></select>
+    </div>
+    <div class="cnt" id="cnt"></div>
+    <div id="list"></div>
+    <div class="pg" id="pg"></div>
   </div>
 </div>
-
-<div id="app">
-  <header class="top">
-    <div class="brand">444Music <span>Admin</span></div>
-    <button class="ghost" id="out">Sign out</button>
-  </header>
-
-  <main class="wrap">
-    <div class="head">
-      <div>
-        <h1>Analytics</h1>
-        <p>Streams for every approved song. Download the report when it's time to pay.</p>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="ghost" id="last">Last report</button>
-        <button class="ghost" id="report">Download report</button>
-      </div>
-    </div>
-
-    <form class="search" id="sf" autocomplete="off">
-      <input id="q" type="text" placeholder="Search song, artist, email or user ID" spellcheck="false">
-      <button class="btn" type="submit">Search</button>
-      <button class="ghost" type="button" id="clear" style="display:none">Clear</button>
-    </form>
-
-    <div class="grid" id="list"></div>
-
-    <div class="foot">
-      <span id="count"></span>
-      <button class="ghost" id="more" style="display:none">Load more artists</button>
-    </div>
-  </main>
-</div>
-
-<div class="veil" id="veil">
-  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dt">
-    <h3 id="dt"></h3>
-    <p id="dp"></p>
-    <div class="dact">
-      <button class="ghost" id="dno">Cancel</button>
-      <button class="btn" id="dyes">Download and reset</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, setDoc, getDocs, query, where, orderBy, limit, startAfter, documentId, serverTimestamp, increment, writeBatch }
-  from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {getFirestore,collection,getDocs,getDoc,doc,query,where,limit,startAfter,documentId,runTransaction,writeBatch,increment,serverTimestamp} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const app  = initializeApp({
-  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
-  authDomain: "usersubmissionsportal.firebaseapp.com",
-  projectId: "usersubmissionsportal",
-  storageBucket: "usersubmissionsportal.firebasestorage.app",
-  messagingSenderId: "734783502459",
-  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-});
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app=initializeApp({apiKey:"AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",authDomain:"usersubmissionsportal.firebaseapp.com",projectId:"usersubmissionsportal",storageBucket:"usersubmissionsportal.firebasestorage.app",messagingSenderId:"734783502459",appId:"1:734783502459:web:cfa2cc5de6976003b24ade"});
+const auth=getAuth(app),db=getFirestore(app);
+const ADMINS=['444musicdistro@gmail.com'];   // accounts allowed to open this page
+const APPROVED=['approved','Approved'];       // status values that count as approved
+const PAGE=10;
+const BACKEND='https://four44music-broadcast-backend.onrender.com'; // payout email server
+const MAX_PEOPLE=50,MAX_SONGS=30;             // must match the limits on the backend
 
-const ADMINS   = ['444musicdistro@gmail.com'];   // accounts allowed on this page
-const APPROVED = ['Approved', 'approved'];
-const PAGE = 10;            // approved releases read per page of artists
-const SEARCH_LIMIT = 15;    // max documents per search query
-const SONGS_SHOWN = 5;      // songs shown on a card before "See more"
-const MIN_STREAMS = 50;     // a song needs this many new streams to land in the report
-const RATE_PER_STREAM = 0.001;   // USD paid per stream. Starting value only: it can be changed inside the Excel file
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const num=v=>parseFloat(v)||0, r2=x=>Math.round(x*100)/100, lc=s=>String(s||'').toLowerCase().trim();
+const usd=n=>'$'+num(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uName=u=>u?(u.name||u.artistName||u.displayName||u.fullName||u.username||'').trim():'';
+const isApproved=s=>lc(s.status)==='approved';
+function toast(m,t){const d=document.createElement('div');d.textContent=m;if(t)d.className='e';$('toast').appendChild(d);setTimeout(()=>d.remove(),3500);}
 
-const $  = id => document.getElementById(id);
-const lc = s => String(s || '').toLowerCase().trim();
-const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const isApproved = d => lc(d.status) === 'approved';
-const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
-const fmt = n => Number(n).toLocaleString('en-US');
-const num = v => { const t = String(v).trim(); if (t === '') return null; const n = Number(t); return Number.isInteger(n) && n >= 0 ? n : null; };
-/* song box: empty is allowed (means "use the synced number") */
-const val = v => { const t = String(v).trim(); if (t === '') return { ok: true, v: null }; const n = Number(t); return Number.isInteger(n) && n >= 0 ? { ok: true, v: n } : { ok: false }; };
+let pages=[],idx=0,searching=false,loading=false,byId=new Map();
 
-function toast(msg) {
-  const t = $('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3200);
-}
-
-/* ---------- state (kept in memory, nothing is read twice unless needed) ---------- */
-const stats = new Map();        // uid -> { youtube, total, exists }
-const songById = new Map();     // "releaseId:trackNo" -> song (one shared object per track)
-const subById = new Map();      // release id -> { id, last:{trackNo:streams}, edits:{trackNo:streams} }
-const searchCache = new Map();  // search text -> Map(uid -> artist row)
-let browse = { rows: new Map(), cursor: null, more: false, loaded: false };
-let searchRows = new Map();
-let view = 'browse';            // 'browse' | 'search'
-let busy = false;
-
-const currentRows = () => view === 'search' ? searchRows : browse.rows;
-const getRow = uid => currentRows().get(uid);
-const sortedSongs = r => [...r.songs.values()].sort((a, b) => a.sub.id < b.sub.id ? -1 : a.sub.id > b.sub.id ? 1 : a.idx - b.idx);
-
-/* ---------- reading tracks from a release (same fields the artist page reads) ----------
-   multi-track: audioFiles[i].title + youtubeTrackMatches[i].views (status 'matched')
-   single/legacy: youtubeViews
-   no match yet = null (shown as "Pending", never as 0) */
-function readTracks(s) {
-  const list = Array.isArray(s.audioFiles) && s.audioFiles.length ? s.audioFiles : null;
-  if (list) {
-    const m = s.youtubeTrackMatches || {};
-    return list.map((t, i) => {
-      const x = m[String(i)];
-      const ok = x && x.status === 'matched' && typeof x.views === 'number';
-      const title = list.length === 1 ? (s.releaseTitle || (t && t.title) || 'Untitled') : ((t && t.title) || `Track ${i + 1}`);
-      return { idx: i, title, synced: ok ? x.views : null };
-    });
+async function chunk(col,f,vals){
+  const out=[];
+  for(let i=0;i<vals.length;i+=30){
+    (await getDocs(query(collection(db,col),where(f,'in',vals.slice(i,i+30))))).forEach(d=>out.push({id:d.id,...d.data()}));
   }
-  return [{ idx: 0, title: s.releaseTitle || s.songTitle || s.title || 'Untitled', synced: typeof s.youtubeViews === 'number' ? s.youtubeViews : null }];
+  return out;
 }
-const mapOf = v => (v && typeof v === 'object') ? Object.fromEntries(Object.entries(v).map(([k, n]) => [k, Number(n) || 0])) : {};
-const lastMapOf = v => typeof v === 'number' ? { '0': v } : mapOf(v);
+/* Attach the owner account (by userId) and the split record (by submissionId) to each release. */
+async function hydrate(subs){
+  const uids=[...new Set(subs.map(s=>s.userId).filter(Boolean))];
+  const [us,sp]=await Promise.all([chunk('users',documentId(),uids),chunk('splits','submissionId',subs.map(s=>s.id))]);
+  const U=new Map(us.map(u=>[u.id,u])),P=new Map(sp.map(p=>[p.submissionId,p]));
+  return subs.map(s=>({id:s.id,s,owner:U.get(s.userId)||null,split:P.get(s.id)||null}));
+}
 
-const effOf = sg => sg.edit !== null ? sg.edit : sg.synced;     // what the page shows (null = pending)
-const effNum = sg => effOf(sg) ?? 0;
-const lastOf = sg => Number(sg.sub.last[sg.idx]) || 0;
-/* typed value -> the edit to store (empty or same as synced = no edit) */
-const nextEdit = (sg, v) => (v === null || v === sg.synced) ? null : v;
-
-/* One card per artist. Every track keeps its own streams and its own "streams at last report". */
-function addSong(map, d) {
-  const s = d.data();
-  if (!isApproved(s) || !s.userId) return;
-  let r = map.get(s.userId);
-  if (!r) { r = { uid: s.userId, name: s.artistName || '', email: s.email || '', songs: new Map(), shown: SONGS_SHOWN, done: false }; map.set(s.userId, r); }
-  let sub = subById.get(d.id);
-  if (!sub) { sub = { id: d.id, last: lastMapOf(s.lastExport), edits: mapOf(s.streamEdits) }; subById.set(d.id, sub); }
-  readTracks(s).forEach(t => {
-    const key = `${d.id}:${t.idx}`;
-    let song = songById.get(key);
-    if (!song) {
-      const e = sub.edits[t.idx];
-      song = { key, sub, idx: t.idx, title: t.title, synced: t.synced, edit: e === undefined ? null : e };
-      songById.set(key, song);
+async function loadPage(i){
+  if(loading)return;loading=true;searching=false;
+  $('list').innerHTML='<div class="empty">Loading…</div>';
+  try{
+    if(!pages[i]){
+      const f=[where('status','in',APPROVED)];
+      if($('mode').value==='locked')f.push(where('splitLocked','==',true));
+      const q=query(collection(db,'submissions'),...f,...(i?[startAfter(pages[i-1].cur)]:[]),limit(PAGE+1));
+      const docs=(await getDocs(q)).docs,shown=docs.slice(0,PAGE);
+      pages[i]={items:await hydrate(shown.map(d=>({id:d.id,...d.data()}))),cur:shown[shown.length-1],more:docs.length>PAGE};
     }
-    r.songs.set(key, song);
+    idx=i;show(pages[i].items);
+  }catch(e){console.error(e);$('list').innerHTML='<div class="empty">Failed to load: '+esc(e.message)+'</div>';}
+  finally{loading=false;}
+}
+
+async function runSearch(){
+  const q=$('q').value.trim();
+  if(!q){pages=[];return loadPage(0);}
+  if(loading)return;loading=true;searching=true;
+  $('list').innerHTML='<div class="empty">Searching…</div>';
+  try{
+    const subs=new Map(),add=r=>r.docs.forEach(d=>subs.set(d.id,{id:d.id,...d.data()}));
+    const pre=(c,f,v)=>getDocs(query(collection(db,c),where(f,'>=',v),where(f,'<=',v+'\uf8ff'),limit(15)));
+    const byUser=uid=>getDocs(query(collection(db,'submissions'),where('userId','==',uid),limit(30))).then(add);
+    const vars=[...new Set([q,q.toLowerCase(),q.replace(/\b\w/g,c=>c.toUpperCase())])];
+    const jobs=[];
+    vars.forEach(v=>{
+      ['releaseTitle','artistName'].forEach(f=>jobs.push(pre('submissions',f,v).then(add)));
+      jobs.push(pre('users','name',v).then(r=>Promise.all(r.docs.map(d=>byUser(d.id)))));
+    });
+    jobs.push(pre('users','email',q.toLowerCase()).then(r=>Promise.all(r.docs.map(d=>byUser(d.id)))));
+    jobs.push(byUser(q));
+    if(!q.includes('/'))jobs.push(getDoc(doc(db,'submissions',q)).then(d=>{if(d.exists())subs.set(d.id,{id:d.id,...d.data()});}));
+    await Promise.all(jobs);
+    const found=[...subs.values()].filter(isApproved).slice(0,30);
+    show(await hydrate(found));
+  }catch(e){console.error(e);$('list').innerHTML='<div class="empty">Search failed: '+esc(e.message)+'</div>';}
+  finally{loading=false;}
+}
+
+/* ── RENDER ── */
+function info(r){
+  const s=r.s,sp=r.split,active=!!sp&&s.splitLocked===true;
+  const draft=Array.isArray(s.royaltySplits)?s.royaltySplits:[];
+  const list=active?(sp.contributors||[]):draft;
+  const cp=list.reduce((a,c)=>a+num(c.pct),0);
+  let block='';
+  if(!s.userId||!r.owner)block='The owner account for this release was not found (missing userId or deleted account). Payments are blocked.';
+  else if(s.splitLocked===true&&!sp)block='This split is locked but has no split record, so contributors cannot see balances. Payments are blocked until it is repaired.';
+  else if(!active&&draft.length)block='Collaborators were added but the split is not locked yet. Payments are paused until the owner locks it.';
+  return {active,list,opct:Math.max(0,100-cp),block,reset:s.splitLocked===true||draft.length>0||!!sp};
+}
+function cardEl(r){
+  const s=r.s,o=r.owner,x=info(r),el=document.createElement('div');
+  el.className='card';el.dataset.c=r.id;
+  const ownerBal=num(s.earningsBalance);
+  el.innerHTML=`
+  <div class="top"><div><div class="t">${esc(s.releaseTitle||'Untitled')}</div><div class="s">${esc(s.artistName||'')} · Release ID ${esc(r.id)}</div></div>
+    <span class="tag ${x.active?'f':''}">${x.active?'Split locked':(x.list.length?'Split not locked':'No split')}</span></div>
+  <div class="box"><div class="lb">Owner (paid to this account)</div>
+    <div class="row"><div><b>${esc(uName(o)||s.artistName||'Unknown')}</b><div class="s">Account: ${esc(o?o.email||'—':'—')}</div><div class="s">UID: ${esc(s.userId||'missing')}</div>${s.email&&o&&lc(s.email)!==lc(o.email)?`<div class="s">Upload form email (not used for payment): ${esc(s.email)}</div>`:''}</div>
+    <div class="s">Owner share <b>${x.opct.toFixed(1)}%</b></div></div>
+    <div class="row"><span class="lb">Owner earned on this release</span><span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${ownerBal.toFixed(2)}" ${x.block?'disabled':''}><button class="btn o" data-a="ob" ${x.block?'disabled':''}>Save</button></span></div></div>
+  <div class="box"><div class="row"><div class="lb">Contributors (${x.list.length})</div>${x.reset?'<button class="btn o" data-a="reset">Reset split</button>':''}</div>
+    ${x.list.length?x.list.map(c=>`<div class="row"><div><b>${esc(c.name||c.email)}</b> · ${num(c.pct).toFixed(1)}%<div class="s">${esc(c.role||'')} ${esc(c.email||'')}</div></div>
+      ${x.active&&!x.block?`<span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" value="${num(c.balance).toFixed(2)}"><button class="btn o" data-a="cb" data-em="${esc(lc(c.email))}">Save</button></span>`:`<span class="s">${x.active?usd(c.balance):'No balance until locked'}</span>`}</div>`).join(''):'<div class="s">No contributors on this release.</div>'}</div>
+  ${x.block?`<div class="note">${esc(x.block)}</div>`:`<div class="row"><span class="lb">Distribute (USD)</span><span class="pr"><input type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00"><button class="btn" data-a="pay">Distribute</button></span></div>`}`;
+  return el;
+}
+function show(items){
+  const L=$('list');L.innerHTML='';byId=new Map(items.map(r=>[r.id,r]));
+  items.forEach(r=>L.appendChild(cardEl(r)));
+  if(!items.length)L.innerHTML='<div class="empty">No approved releases found.</div>';
+  $('cnt').textContent=searching?items.length+' match'+(items.length===1?'':'es')+' (approved only)':'Page '+(idx+1)+' · '+items.length+' approved releases';
+  const p=$('pg');
+  if(searching){p.innerHTML='';return;}
+  p.innerHTML=`<button class="btn o" id="pv" ${idx?'':'disabled'}>‹ Prev</button><span>Page ${idx+1}</span><button class="btn o" id="nx" ${pages[idx]&&pages[idx].more?'':'disabled'}>Next ›</button>`;
+  $('pv').onclick=()=>{loadPage(idx-1);scrollTo(0,0);};$('nx').onclick=()=>{loadPage(idx+1);scrollTo(0,0);};
+}
+
+/* ── MONEY: one atomic transaction per action ──
+   Returns what changed for each person: [{email,name,role,sharePct,delta,newBalance}] (delta can be negative). */
+async function run(r,kind,v,em){
+  let out=[];
+  await runTransaction(db,async t=>{
+    out=[];
+    const sref=doc(db,'submissions',r.id),S=await t.get(sref);
+    if(!S.exists())throw new Error('Release not found');
+    const sd=S.data(),uid=sd.userId;
+    if(!uid)throw new Error('Release has no owner account');
+    if(!isApproved(sd))throw new Error('Release is not approved');
+    const draft=Array.isArray(sd.royaltySplits)?sd.royaltySplits:[];
+    if(sd.splitLocked!==true&&draft.length)throw new Error('Split is not locked');
+    const spref=r.split?doc(db,'splits',r.split.id):null;
+    const SP=spref?await t.get(spref):null;
+    if(sd.splitLocked===true&&!(SP&&SP.exists()))throw new Error('Split record missing');
+    const cons=SP&&SP.exists()?[...(SP.data().contributors||[])]:[];
+    const oldB=cons.map(c=>num(c.balance));
+    const oldO=num(sd.earningsBalance);let newO=oldO,nc=null;
+    if(kind==='pay'){
+      const cents=Math.round(v*100);let used=0;
+      nc=cons.map(c=>{const p=Math.round(cents*num(c.pct)/100);used+=p;return {...c,balance:r2(num(c.balance)+p/100)};});
+      newO=r2(oldO+(cents-used)/100);
+    }else if(kind==='ob')newO=r2(v);
+    else{
+      const i=cons.findIndex(c=>lc(c.email)===em);if(i<0)throw new Error('Contributor not found');
+      cons[i]={...cons[i],balance:r2(v)};nc=cons;
+    }
+    const d=r2(newO-oldO);
+    if(d){t.update(sref,{earningsBalance:newO,lastPayoutAt:serverTimestamp()});t.update(doc(db,'users',uid),{earnings:increment(d)});}
+    if(nc&&nc.length&&spref)t.update(spref,{contributors:nc,lastPayoutAt:serverTimestamp()});
+    /* who got what (owner email comes from the users record, never the upload form) */
+    const ownerEmail=lc(r.owner&&r.owner.email);
+    if(d&&ownerEmail)out.push({email:ownerEmail,name:uName(r.owner)||sd.artistName||'',role:'Owner',sharePct:Math.max(0,100-cons.reduce((a,c)=>a+num(c.pct),0)),delta:d,newBalance:newO});
+    if(nc)nc.forEach((c,i)=>{const cd=r2(num(c.balance)-oldB[i]);if(cd&&lc(c.email))out.push({email:lc(c.email),name:c.name||'',role:'Contributor',sharePct:num(c.pct),delta:cd,newBalance:num(c.balance)});});
   });
+  return out;
+}
+async function refresh(r){
+  const [S,P]=await Promise.all([getDoc(doc(db,'submissions',r.id)),r.split?getDoc(doc(db,'splits',r.split.id)):null]);
+  if(S.exists())r.s=S.data();if(P&&P.exists())r.split={id:P.id,...P.data()};
+  const old=document.querySelector(`[data-c="${CSS.escape(r.id)}"]`);if(old)old.replaceWith(cardEl(r));
 }
 
-/* Artist totals (analytics docs) for the cards on screen, only the ones not read yet. */
-async function fetchStats(uids) {
-  const need = uids.filter(u => !stats.has(u));
-  for (let i = 0; i < need.length; i += 30) {
-    const chunk = need.slice(i, i + 30);
-    const snap = await getDocs(query(collection(db, 'analytics'), where(documentId(), 'in', chunk)));
-    snap.forEach(d => {
-      const a = d.data();
-      stats.set(d.id, { youtube: Number(a.youtubeStreams ?? a.youtube ?? 0) || 0, total: Number(a.totalStreams ?? a.total ?? 0) || 0, exists: true });
-    });
-    chunk.forEach(u => { if (!stats.has(u)) stats.set(u, { youtube: 0, total: 0, exists: false }); });
-  }
+/* ── PAYOUT EMAILS: collected in memory, sent when you press the button (one email per person) ── */
+const pending=new Map();   // email -> {email,name,items:Map('releaseId|role' -> item)}
+let sending=false;
+function updateSend(){
+  const b=$('send');
+  b.disabled=sending||!pending.size;
+  b.textContent=sending?'Sending…':'Send payout emails ('+pending.size+')';
 }
-
-/* ---------- browse ---------- */
-async function loadMore() {
-  if (busy) return;
-  busy = true; $('more').disabled = true;
-  if (!browse.loaded) $('list').innerHTML = '<div class="note">Loading…</div>';
-  try {
-    const q = query(collection(db, 'submissions'), where('status', 'in', APPROVED),
-      ...(browse.cursor ? [startAfter(browse.cursor)] : []), limit(PAGE));
-    const docs = (await getDocs(q)).docs;
-    const before = new Set(browse.rows.keys());
-    docs.forEach(d => addSong(browse.rows, d));
-    if (docs.length) browse.cursor = docs[docs.length - 1];
-    browse.more = docs.length === PAGE;
-    browse.loaded = true;
-    await fetchStats([...browse.rows.keys()].filter(u => !before.has(u)));
-  } catch (e) {
-    console.error(e);
-    if (!browse.loaded) $('list').innerHTML = `<div class="note"><b>Couldn't load</b>${esc(e.message)}</div>`;
-    else toast('Could not load more.');
-  }
-  busy = false; $('more').disabled = false;
-  if (view === 'browse') render();
-}
-
-/* ---------- search (live, as you type) ----------
-   Every approved release is read ONCE per visit to this page (1 read each) and kept in memory.
-   After that, each keystroke only filters that list, which costs no reads and no writes.
-   Only the artist-total docs for the cards that appear are read, once each, and then remembered. */
-const SEARCH_CARDS = 12;      // most artist cards shown for one search
-let searchIndex = null, indexLoading = null, searchSeq = 0, searchTimer = null;
-
-const norm = s => lc(s).replace(/[^a-z0-9]+/g, ' ').trim();
-
-function indexDoc(d) {
-  const s = d.data();
-  if (!isApproved(s) || !s.userId) return null;
-  const tracks = Array.isArray(s.audioFiles) ? s.audioFiles.map(t => t && t.title) : [];
-  const title = norm(s.releaseTitle || s.songTitle || s.title);
-  const artist = norm(s.artistName);
-  const rest = norm([...tracks, s.email, s.userId, d.id].join(' '));
-  return { d, uid: s.userId, title, artist, h: ' ' + [title, artist, rest].join(' ') + ' ' };
-}
-
-function ensureIndex() {
-  if (searchIndex) return Promise.resolve(searchIndex);
-  if (!indexLoading) {
-    indexLoading = getDocs(query(collection(db, 'submissions'), where('status', 'in', APPROVED)))
-      .then(snap => { searchIndex = snap.docs.map(indexDoc).filter(Boolean); return searchIndex; })
-      .catch(e => { indexLoading = null; throw e; });
-  }
-  return indexLoading;
-}
-
-/* 0 = title or artist starts with it, 1 = any word starts with it, 2 = found inside a word (3+ letters) */
-function scoreOf(it, q) {
-  if (it.title.startsWith(q) || it.artist.startsWith(q)) return 0;
-  if (it.h.includes(' ' + q)) return 1;
-  if (q.length >= 3 && it.h.includes(q)) return 2;
-  return -1;
-}
-
-async function liveSearch() {
-  clearTimeout(searchTimer);
-  const raw = $('q').value;
-  if (!raw.trim()) return clearSearch();
-  const my = ++searchSeq;
-  try {
-    if (!searchIndex) {
-      view = 'search'; searchRows = new Map();
-      $('list').innerHTML = '<div class="note"><b>Loading songs…</b>This happens once, then search is instant.</div>';
-      $('clear').style.display = '';
+function queue(r,rows){
+  rows.forEach(x=>{
+    const k=r.id+'|'+x.role;let p=pending.get(x.email),it=p&&p.items.get(k);
+    if(x.delta>0){
+      if(!p){p={email:x.email,name:x.name,items:new Map()};pending.set(x.email,p);}
+      if(x.name)p.name=x.name;
+      if(it){it.amount=r2(it.amount+x.delta);it.balance=x.newBalance;it.sharePct=x.sharePct;}
+      else p.items.set(k,{releaseTitle:r.s.releaseTitle||'Untitled',artistName:r.s.artistName||'',role:x.role,sharePct:x.sharePct,amount:x.delta,balance:x.newBalance});
+    }else if(it){            // a correction downward only trims what is still waiting, it never emails
+      it.amount=r2(it.amount+x.delta);it.balance=x.newBalance;
+      if(it.amount<=0)p.items.delete(k);
+      if(!p.items.size)pending.delete(x.email);
     }
-    const idx = await ensureIndex();
-    if (my !== searchSeq) return;
-
-    const q = norm(raw);
-    const groups = new Map();                       // uid -> { best score, name, docs }
-    if (q) {
-      idx.forEach(it => {
-        const sc = scoreOf(it, q);
-        if (sc < 0) return;
-        let g = groups.get(it.uid);
-        if (!g) { g = { sc, name: it.artist, docs: [] }; groups.set(it.uid, g); }
-        if (sc < g.sc) g.sc = sc;
-        g.docs.push(it.d);
+  });
+  updateSend();
+}
+async function sendEmails(){
+  if(sending||!pending.size)return;
+  const n=pending.size;
+  if(!confirm('Send payout emails to '+n+(n===1?' person?':' people?')))return;
+  sending=true;updateSend();
+  let sent=0,failed=[],stopped=false;
+  try{
+    const token=await auth.currentUser.getIdToken();
+    const people=[...pending.values()].map(p=>({email:p.email,name:p.name,keys:[...p.items.keys()].slice(0,MAX_SONGS)}));
+    for(let i=0;i<people.length;i+=MAX_PEOPLE){
+      const part=people.slice(i,i+MAX_PEOPLE),keysOf=new Map(part.map(p=>[p.email,p.keys]));
+      const res=await fetch(BACKEND+'/api/payout/notify',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+        body:JSON.stringify({recipients:part.map(p=>({email:p.email,name:p.name,items:p.keys.map(k=>pending.get(p.email).items.get(k))}))})});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data.success){toast(data.message||('Sending failed ('+res.status+'). Nothing was cleared.'),'e');stopped=true;break;}
+      (data.results||[]).forEach(x=>{
+        const p=pending.get(x.email);
+        if(x.success&&p){(keysOf.get(x.email)||[]).forEach(k=>p.items.delete(k));if(!p.items.size)pending.delete(x.email);sent++;}
+        else if(!x.success)failed.push(x);
       });
     }
-    const ordered = [...groups.entries()].sort((a, b) => a[1].sc - b[1].sc || a[1].name.localeCompare(b[1].name));
-    const shown = ordered.slice(0, SEARCH_CARDS);
-
-    await fetchStats(shown.map(([u]) => u));
-    if (my !== searchSeq) return;
-
-    const rows = new Map();
-    shown.forEach(([, g]) => g.docs.forEach(d => addSong(rows, d)));
-    searchRows = rows; view = 'search';
-    render();
-    if (ordered.length > SEARCH_CARDS) $('count').textContent = `Showing the first ${SEARCH_CARDS} of ${ordered.length} artists. Keep typing to narrow it down.`;
-  } catch (e) {
-    console.error(e);
-    if (my === searchSeq) toast('Search failed. Try again.');
-  }
+  }catch(err){console.error(err);toast('Could not reach the email server. Nothing was cleared.','e');stopped=true;}
+  finally{sending=false;updateSend();}
+  if(sent)toast('Sent '+sent+' email'+(sent===1?'':'s'));
+  failed.slice(0,5).forEach(x=>toast('Failed: '+x.email+' — '+(x.error||'could not send'),'e'));
+  if(failed.length>5)toast('…and '+(failed.length-5)+' more failed. They are still waiting.','e');
+  if(!stopped&&!failed.length&&pending.size)toast('More songs are waiting. Press Send again.');
 }
+$('send').onclick=sendEmails;
+addEventListener('beforeunload',e=>{if(pending.size){e.preventDefault();e.returnValue='';}});
 
-function clearSearch() {
-  searchSeq++;
-  $('q').value = '';
-  view = 'browse';
-  render();
-}
-
-/* ---------- drawing the cards ---------- */
-function moreLabel(r) {
-  const hidden = r.songs.size - r.shown;
-  if (hidden > 0) return `See more (${hidden} more)`;
-  // all loaded songs are showing; in browse we can still ask for the next few
-  const exhausted = browse.loaded && !browse.more;
-  if (view === 'browse' && !r.done && !exhausted && r.songs.size >= r.shown) return 'See more';
-  return '';
-}
-
-function cardHtml(r) {
-  const s = stats.get(r.uid) || { youtube: 0, total: 0 };
-  const songs = sortedSongs(r).slice(0, r.shown).map(sg => {
-    const eff = effOf(sg);
-    const added = (eff ?? 0) - lastOf(sg);
-    const bits = [];
-    if (added > 0) bits.push(`+${fmt(added)} since last report`);
-    if (sg.edit !== null) bits.push('edited');
-    return `
-      <div class="song">
-        <div class="sname"><span title="${esc(sg.title)}">${esc(sg.title)}</span>${bits.length ? `<em class="${added > 0 ? '' : 'ed'}">${bits.join(' · ')}</em>` : ''}</div>
-        <input class="n" type="number" inputmode="numeric" min="0" step="1" value="${eff === null ? '' : eff}" placeholder="Pending"
-          data-s="${esc(sg.key)}" data-k="${esc(r.uid)}:${esc(sg.key)}" aria-label="Streams for ${esc(sg.title)}">
-      </div>`;
-  }).join('');
-  const more = moreLabel(r);
-  return `
-    <article class="card" data-uid="${esc(r.uid)}">
-      <div class="who"><b title="${esc(r.name)}">${esc(r.name || 'Unknown artist')}</b><small title="${esc(r.uid)}">${esc(r.email || r.uid)}</small></div>
-      <div class="songs">${songs}</div>
-      ${more ? `<button class="more" data-act="more">${more}</button>` : ''}
-      <div class="cfoot">
-        <label><span>YouTube</span><input class="n" type="number" inputmode="numeric" min="0" step="1" value="${s.youtube}" data-yt data-k="${esc(r.uid)}:yt"></label>
-        <div class="tot"><span>Total streams</span><b>${fmt(s.total)}</b></div>
-        <button class="btn" data-act="save" disabled>Save</button>
-      </div>
-    </article>`;
-}
-
-/* keep whatever is typed but not saved yet when the list is redrawn */
-function snapshotDirty() {
-  const m = {};
-  document.querySelectorAll('#list input[data-k]').forEach(i => { if (i.value !== i.defaultValue) m[i.dataset.k] = i.value; });
-  return m;
-}
-function restoreDirty(m) {
-  document.querySelectorAll('#list input[data-k]').forEach(i => { if (m[i.dataset.k] !== undefined) i.value = m[i.dataset.k]; });
-  document.querySelectorAll('#list .card').forEach(updateCard);
-}
-
-function render() {
-  const dirty = snapshotDirty();
-  const rows = [...currentRows().values()];
-  $('list').innerHTML = rows.length ? rows.map(cardHtml).join('')
-    : `<div class="note"><b>${view === 'search' ? 'No approved songs found' : 'No approved songs yet'}</b>${view === 'search' ? 'Search matches the start of a song title or artist name.' : ''}</div>`;
-  restoreDirty(dirty);
-  $('count').textContent = rows.length ? `${rows.length} artist${rows.length === 1 ? '' : 's'}` : '';
-  $('more').style.display = view === 'browse' && browse.more ? '' : 'none';
-  $('clear').style.display = view === 'search' ? '' : 'none';
-}
-
-function renderCard(uid) {
-  const el = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"]`);
-  const r = getRow(uid);
-  if (!el || !r) return;
-  const dirty = snapshotDirty();
-  const tmp = document.createElement('div');
-  tmp.innerHTML = cardHtml(r);
-  el.replaceWith(tmp.firstElementChild);
-  restoreDirty(dirty);
-}
-
-/* ---------- editing: total follows the songs, save is one small batch ---------- */
-function updateCard(card) {
-  const cur = stats.get(card.dataset.uid) || { youtube: 0, total: 0 };
-  let delta = 0, valid = true, dirty = false;
-  card.querySelectorAll('input[data-s]').forEach(i => {
-    const p = val(i.value), sg = songById.get(i.dataset.s);
-    if (!p.ok) { valid = false; return; }
-    const ne = nextEdit(sg, p.v);
-    if (ne !== sg.edit) { dirty = true; delta += (ne !== null ? ne : (sg.synced ?? 0)) - effNum(sg); }
-  });
-  const y = num(card.querySelector('[data-yt]').value);
-  if (y === null) valid = false; else if (y !== cur.youtube) dirty = true;
-  card.querySelector('.tot b').textContent = fmt(cur.total + delta);
-  const btn = card.querySelector('[data-act="save"]');
-  btn.disabled = !(valid && dirty);
-  btn.textContent = 'Save';
-  btn.classList.remove('ok');
-}
-
-async function saveCard(uid) {
-  const card = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"]`);
-  const btn = card.querySelector('[data-act="save"]');
-  const cur = stats.get(uid) || { youtube: 0, total: 0, exists: false };
-  const changes = [];
-  let delta = 0;
-  for (const i of card.querySelectorAll('input[data-s]')) {
-    const p = val(i.value), sg = songById.get(i.dataset.s);
-    if (!p.ok) { toast('Use whole numbers, 0 or more.'); return; }
-    const ne = nextEdit(sg, p.v);
-    if (ne !== sg.edit) { changes.push({ sg, ne }); delta += (ne !== null ? ne : (sg.synced ?? 0)) - effNum(sg); }
-  }
-  const y = num(card.querySelector('[data-yt]').value);
-  if (y === null) { toast('Use whole numbers, 0 or more.'); return; }
-
-  const patch = {};
-  if (!cur.exists || y !== cur.youtube) patch.youtubeStreams = y;
-  if (changes.length || !cur.exists) patch.totalStreams = increment(delta);
-
-  // one write per release that changed (all its edited tracks go in the same write)
-  const bySub = new Map();
-  changes.forEach(c => {
-    if (!bySub.has(c.sg.sub.id)) bySub.set(c.sg.sub.id, { ...c.sg.sub.edits });
-    const m = bySub.get(c.sg.sub.id);
-    if (c.ne === null) delete m[c.sg.idx]; else m[c.sg.idx] = c.ne;
-  });
-
-  btn.disabled = true; btn.textContent = 'Saving…';
-  try {
-    const batch = writeBatch(db);
-    bySub.forEach((m, id) => batch.update(doc(db, 'submissions', id), { streamEdits: m }));
-    batch.set(doc(db, 'analytics', uid), { ...patch, updatedAt: serverTimestamp() }, { merge: true });
+/* Admin reset: unlock the split and remove every contributor, so only the owner is paid. */
+async function resetSplit(r,b){
+  const bal=((r.split&&r.split.contributors)||[]).reduce((a,c)=>a+num(c.balance),0);
+  if(!confirm('Reset the split on "'+(r.s.releaseTitle||'Untitled')+'"?\n\nThis unlocks it and removes all contributors'+(bal>0?' and their balances ('+usd(bal)+' in total)':'')+'. Only the owner will be paid. This cannot be undone.'))return;
+  const txt=b.textContent;b.disabled=true;b.textContent='…';
+  try{
+    const batch=writeBatch(db);
+    batch.update(doc(db,'submissions',r.id),{splitLocked:false,royaltySplits:[]});
+    if(r.split)batch.delete(doc(db,'splits',r.split.id));
     await batch.commit();
-    changes.forEach(c => { c.sg.edit = c.ne; });
-    bySub.forEach((m, id) => { subById.get(id).edits = m; });
-    stats.set(uid, { youtube: y, total: cur.total + delta, exists: true });
-    renderCard(uid);
-    const fresh = $('list').querySelector(`.card[data-uid="${CSS.escape(uid)}"] [data-act="save"]`);
-    if (fresh) {
-      fresh.textContent = 'Saved'; fresh.classList.add('ok');
-      setTimeout(() => { if (fresh.textContent === 'Saved' && fresh.isConnected) { fresh.textContent = 'Save'; fresh.classList.remove('ok'); } }, 2200);
-    }
-  } catch (err) {
-    console.error(err);
-    toast('Save failed: ' + err.message);
-    updateCard(card);
-  }
+    r.split=null;await refresh(r);toast('Split reset');
+  }catch(err){console.error(err);toast('Failed: '+err.message,'e');b.disabled=false;b.textContent=txt;}
 }
-
-/* ---------- see more songs on one card ---------- */
-async function seeMore(uid, btn) {
-  const r = getRow(uid);
-  if (!r) return;
-  if (r.songs.size > r.shown) {                       // already loaded, just show them
-    r.shown = Math.min(r.shown + SONGS_SHOWN, r.songs.size);
-    return renderCard(uid);
-  }
-  if (busy) return;
-  busy = true; btn.disabled = true; btn.textContent = 'Loading…';
-  try {
-    const last = sortedSongs(r).pop().sub.id;
-    const docs = (await getDocs(query(collection(db, 'submissions'),
-      where('userId', '==', uid), where('status', 'in', APPROVED),
-      orderBy(documentId()), startAfter(last), limit(SONGS_SHOWN)))).docs;
-    docs.forEach(d => addSong(currentRows(), d));
-    if (docs.length < SONGS_SHOWN) r.done = true;
-    r.shown = Math.min(r.shown + SONGS_SHOWN, r.songs.size);
-  } catch (e) {
-    console.error(e);
-    toast('Could not load more songs.');
-  }
-  busy = false;
-  renderCard(uid);
-}
-
-/* ---------- the report ---------- */
-let pending = [];
-let pendingLast = new Map();   // release id -> its saved "last report" numbers
-
-function buildBook(items, date, rate) {
-  if (!window.XLSX) throw new Error('Excel library did not load');
-  const today = date || new Date().toISOString().slice(0, 10);
-  const rt = Number.isFinite(Number(rate)) && Number(rate) >= 0 && rate !== null && rate !== undefined ? Number(rate) : RATE_PER_STREAM;
-  const n = items.length;
-  const last = n + 1;   // last data row (row 1 is the header)
-
-  // columns A-G are the table; I1:I3 hold the rate that every amount is calculated from
-  const rows = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date', 'Amount to pay (USD)', '', 'Rate per stream (USD)']];
-  items.forEach((it, i) => rows.push([it.artist, it.email, it.song, it.added, it.streams, today, null, '', i === 0 ? rt : '']));
-  if (n === 0) rows.push([]);
-  rows.push([]);
-  rows.push(['TOTAL', '', `${n} songs`, items.reduce((s, it) => s + it.added, 0), '', '', null]);
-  const totalRow = rows.length;
-
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  const money = '$#,##0.00';
-  let sum = 0;
-  items.forEach((it, i) => {
-    const r = i + 2;
-    const v = Math.round(it.added * rt * 100) / 100;
-    sum += v;
-    ws['G' + r] = { t: 'n', f: `ROUND(D${r}*$I$2,2)`, v, z: money };
-  });
-  ws['G' + totalRow] = { t: 'n', f: `SUM(G2:G${last})`, v: Math.round(sum * 100) / 100, z: money };
-  if (n > 0) {
-    ws['I2'].z = '0.0000';
-    ws['I3'] = { t: 's', v: 'Change this rate and the amounts update.' };
-  }
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  range.e.r = Math.max(range.e.r, totalRow - 1);
-  range.e.c = Math.max(range.e.c, 8);
-  ws['!ref'] = XLSX.utils.encode_range(range);
-
-  const wide = i => Math.min(46, Math.max(10, ...rows.map(r => String(r[i] == null ? '' : r[i]).length)) + 3);
-  ws['!cols'] = [wide(0), wide(1), wide(2), 14, 15, 13, 20, 3, 24].map(w => ({ wch: w }));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Report ' + today);
-  return wb;
-}
-
-function saveFile(book, date) {
-  XLSX.writeFile(book, `444music-streams-${date || new Date().toISOString().slice(0, 10)}.xlsx`);
-}
-
-async function prepareReport() {
-  if (busy) return;
-  if ([...document.querySelectorAll('[data-act="save"]')].some(b => !b.disabled)) { toast('Save your changes first.'); return; }
-  busy = true; $('report').disabled = true; $('report').textContent = 'Checking…';
-  try {
-    // streams live inside each release, so approved releases are read once (1 read each)
-    const snap = await getDocs(query(collection(db, 'submissions'), where('status', 'in', APPROVED)));
-    const items = [];
-    const lasts = new Map();
-    snap.forEach(d => {
-      const s = d.data();
-      if (!isApproved(s)) return;
-      const edits = mapOf(s.streamEdits), last = lastMapOf(s.lastExport);
-      readTracks(s).forEach(t => {
-        const eff = edits[t.idx] !== undefined ? edits[t.idx] : t.synced;
-        if (eff === null || eff === undefined) return;
-        const added = eff - (Number(last[t.idx]) || 0);
-        if (added >= MIN_STREAMS) {
-          items.push({ sub: d.id, idx: t.idx, artist: s.artistName || '', email: s.email || '', song: t.title, added, streams: eff });
-          lasts.set(d.id, last);
-        }
-      });
-    });
-    items.sort((a, b) => a.artist.localeCompare(b.artist) || a.song.localeCompare(b.song));
-    if (!items.length) {
-      toast(`No songs have ${MIN_STREAMS}+ new streams yet.`);
-    } else {
-      pending = items; pendingLast = lasts;
-      const total = items.reduce((n, it) => n + it.added, 0);
-      $('dt').textContent = `${items.length} song${items.length === 1 ? '' : 's'} ready`;
-      $('dp').textContent = `${fmt(total)} new streams across songs with ${MIN_STREAMS}+ since the last report. Downloading starts these songs from 0 again. Songs under ${MIN_STREAMS} keep adding up.`;
-      $('veil').classList.add('show');
-    }
-  } catch (e) {
-    console.error(e);
-    toast('Could not build the report: ' + e.message);
-  }
-  busy = false; $('report').disabled = false; $('report').textContent = 'Download report';
-}
-
-$('dno').onclick = () => { $('veil').classList.remove('show'); pending = []; pendingLast = new Map(); };
-
-$('dyes').onclick = async () => {
-  if (!pending.length) return;
-  const btn = $('dyes');
-  btn.disabled = true; btn.textContent = 'Working…';
-  const items = pending;
-  const date = new Date().toISOString().slice(0, 10);
-  try {
-    const book = buildBook(items, date);
-    // one write per release; all its exported tracks are reset together
-    const bySub = new Map();
-    items.forEach(it => {
-      if (!bySub.has(it.sub)) bySub.set(it.sub, { ...(pendingLast.get(it.sub) || {}) });
-      bySub.get(it.sub)[it.idx] = it.streams;
-    });
-    const entries = [...bySub.entries()];
-    // reset first; the file is only handed over once the reset has gone through
-    for (let i = 0; i < entries.length; i += 400) {
-      const batch = writeBatch(db);
-      entries.slice(i, i + 400).forEach(([id, m]) => batch.update(doc(db, 'submissions', id), { lastExport: m, lastExportAt: serverTimestamp() }));
-      await batch.commit();
-    }
-    // keep a copy of this report (1 write, replaces the previous copy) so it can be downloaded again
-    let kept = true;
-    try {
-      await setDoc(doc(db, 'reports', 'latest'), {
-        date, rate: RATE_PER_STREAM, count: items.length, total: items.reduce((n, it) => n + it.added, 0), createdAt: serverTimestamp(),
-        items: items.map(it => ({ artist: it.artist, email: it.email, song: it.song, added: it.added, streams: it.streams }))
-      });
-    } catch (e) { console.error(e); kept = false; }
-    saveFile(book, date);
-    bySub.forEach((m, id) => { const sub = subById.get(id); if (sub) sub.last = m; });
-    pending = []; pendingLast = new Map();
-    $('veil').classList.remove('show');
-    render();
-    toast(kept ? 'Report downloaded' : 'Report downloaded, but a copy could not be saved');
-  } catch (e) {
-    console.error(e);
-    toast('Something went wrong, no file was downloaded. Try again.');
-  }
-  btn.disabled = false; btn.textContent = 'Download and reset';
-};
-
-/* ---------- wiring ---------- */
-$('list').addEventListener('input', e => {
-  const c = e.target.closest('.card');
-  if (c) updateCard(c);
-});
-$('list').addEventListener('click', e => {
-  const b = e.target.closest('[data-act]');
-  if (!b || b.disabled) return;
-  const uid = b.closest('.card').dataset.uid;
-  if (b.dataset.act === 'save') saveCard(uid);
-  else if (b.dataset.act === 'more') seeMore(uid, b);
+$('list').addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  if(sending){toast('Wait until the emails finish sending.','e');return;}
+  const r=byId.get(b.closest('.card').dataset.c);if(!r)return;
+  if(b.dataset.a==='reset'){await resetSplit(r,b);return;}
+  const v=parseFloat(b.parentElement.querySelector('input').value),a=b.dataset.a;
+  if(isNaN(v)||v<0||(a==='pay'&&v<=0)){toast('Enter a valid amount.','e');return;}
+  const txt=b.textContent;b.disabled=true;b.textContent='…';
+  try{
+    const changes=await run(r,a,v,b.dataset.em);
+    queue(r,changes);
+    await refresh(r);
+    toast(a==='pay'?'Distributed '+usd(v):'Saved');
+  }catch(err){console.error(err);toast('Failed: '+err.message,'e');b.disabled=false;b.textContent=txt;}
 });
 
-$('sf').addEventListener('submit', e => { e.preventDefault(); liveSearch(); });
-$('clear').onclick = clearSearch;
-$('more').onclick = loadMore;
-$('report').onclick = prepareReport;
-$('last').onclick = async () => {
-  if (busy) return;
-  busy = true; $('last').disabled = true; $('last').textContent = 'Loading…';
-  try {
-    const snap = await getDoc(doc(db, 'reports', 'latest'));   // 1 read
-    if (!snap.exists()) toast('No saved report yet. It saves with your next download.');
-    else { const r = snap.data(); saveFile(buildBook(r.items || [], r.date, r.rate), r.date); toast('Last report downloaded'); }
-  } catch (e) {
-    console.error(e);
-    toast('Could not load the last report: ' + e.message);
-  }
-  busy = false; $('last').disabled = false; $('last').textContent = 'Last report';
+/* ── CONTROLS + AUTH ── */
+$('sb').onclick=runSearch;
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
+$('mode').onchange=()=>{$('q').value='';pages=[];loadPage(0);};
+$('out').onclick=()=>{if(pending.size&&!confirm('Some payout emails have not been sent yet. Sign out anyway?'))return;signOut(auth);};
+$('gb').onclick=async()=>{
+  $('gerr').textContent='';
+  try{await signInWithEmailAndPassword(auth,$('ge').value.trim(),$('gp').value);}
+  catch(e){$('gerr').textContent='Sign in failed.';}
 };
-$('q').addEventListener('input', e => {
-  clearTimeout(searchTimer);
-  if (!e.target.value.trim()) { if (view === 'search') clearSearch(); return; }
-  searchTimer = setTimeout(liveSearch, 180);
-});
-$('out').onclick = () => signOut(auth);
-
-/* ---------- auth ---------- */
-$('gb').onclick = async () => {
-  $('gerr').textContent = '';
-  try { await signInWithEmailAndPassword(auth, $('ge').value.trim(), $('gp').value); }
-  catch (e) { $('gerr').textContent = 'Sign in failed.'; }
-};
-$('gp').addEventListener('keydown', e => { if (e.key === 'Enter') $('gb').click(); });
-
-onAuthStateChanged(auth, u => {
-  const ok = u && ADMINS.includes(lc(u.email));
-  $('gate').style.display = ok ? 'none' : 'block';
-  $('app').style.display  = ok ? 'block' : 'none';
-  if (ok && !browse.loaded) loadMore();
-  else if (u && !ok) { $('gerr').textContent = 'This account is not an admin.'; signOut(auth); }
+$('gp').addEventListener('keydown',e=>{if(e.key==='Enter')$('gb').click();});
+onAuthStateChanged(auth,u=>{
+  const ok=u&&ADMINS.includes(lc(u.email));
+  $('gate').style.display=ok?'none':'flex';$('app').style.display=ok?'block':'none';
+  if(ok){pages=[];loadPage(0);}
+  else{pending.clear();updateSend();if(u){$('gerr').textContent='This account is not an admin.';signOut(auth);}}
 });
 </script>
 </body>
