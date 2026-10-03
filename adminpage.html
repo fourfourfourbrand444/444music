@@ -198,6 +198,7 @@ const PAGE = 10;            // approved releases read per page of artists
 const SEARCH_LIMIT = 15;    // max documents per search query
 const SONGS_SHOWN = 5;      // songs shown on a card before "See more"
 const MIN_STREAMS = 50;     // a song needs this many new streams to land in the report
+const RATE_PER_STREAM = 0.001;   // USD paid per stream. Starting value only: it can be changed inside the Excel file
 
 const $  = id => document.getElementById(id);
 const lc = s => String(s || '').toLowerCase().trim();
@@ -523,16 +524,42 @@ async function seeMore(uid, btn) {
 let pending = [];
 let pendingLast = new Map();   // release id -> its saved "last report" numbers
 
-function buildBook(items, date) {
+function buildBook(items, date, rate) {
   if (!window.XLSX) throw new Error('Excel library did not load');
   const today = date || new Date().toISOString().slice(0, 10);
-  const rows = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date']];
-  items.forEach(it => rows.push([it.artist, it.email, it.song, it.added, it.streams, today]));
+  const rt = Number.isFinite(Number(rate)) && Number(rate) >= 0 && rate !== null && rate !== undefined ? Number(rate) : RATE_PER_STREAM;
+  const n = items.length;
+  const last = n + 1;   // last data row (row 1 is the header)
+
+  // columns A-G are the table; I1:I3 hold the rate that every amount is calculated from
+  const rows = [['Artist', 'Email', 'Song', 'New streams', 'Total streams', 'Report date', 'Amount to pay (USD)', '', 'Rate per stream (USD)']];
+  items.forEach((it, i) => rows.push([it.artist, it.email, it.song, it.added, it.streams, today, null, '', i === 0 ? rt : '']));
+  if (n === 0) rows.push([]);
   rows.push([]);
-  rows.push(['TOTAL', '', `${items.length} songs`, items.reduce((n, it) => n + it.added, 0), '', '']);
+  rows.push(['TOTAL', '', `${n} songs`, items.reduce((s, it) => s + it.added, 0), '', '', null]);
+  const totalRow = rows.length;
+
   const ws = XLSX.utils.aoa_to_sheet(rows);
+  const money = '$#,##0.00';
+  let sum = 0;
+  items.forEach((it, i) => {
+    const r = i + 2;
+    const v = Math.round(it.added * rt * 100) / 100;
+    sum += v;
+    ws['G' + r] = { t: 'n', f: `ROUND(D${r}*$I$2,2)`, v, z: money };
+  });
+  ws['G' + totalRow] = { t: 'n', f: `SUM(G2:G${last})`, v: Math.round(sum * 100) / 100, z: money };
+  if (n > 0) {
+    ws['I2'].z = '0.0000';
+    ws['I3'] = { t: 's', v: 'Change this rate and the amounts update.' };
+  }
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  range.e.r = Math.max(range.e.r, totalRow - 1);
+  range.e.c = Math.max(range.e.c, 8);
+  ws['!ref'] = XLSX.utils.encode_range(range);
+
   const wide = i => Math.min(46, Math.max(10, ...rows.map(r => String(r[i] == null ? '' : r[i]).length)) + 3);
-  ws['!cols'] = [wide(0), wide(1), wide(2), 14, 15, 13].map(w => ({ wch: w }));
+  ws['!cols'] = [wide(0), wide(1), wide(2), 14, 15, 13, 20, 3, 24].map(w => ({ wch: w }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Report ' + today);
   return wb;
@@ -609,7 +636,7 @@ $('dyes').onclick = async () => {
     let kept = true;
     try {
       await setDoc(doc(db, 'reports', 'latest'), {
-        date, count: items.length, total: items.reduce((n, it) => n + it.added, 0), createdAt: serverTimestamp(),
+        date, rate: RATE_PER_STREAM, count: items.length, total: items.reduce((n, it) => n + it.added, 0), createdAt: serverTimestamp(),
         items: items.map(it => ({ artist: it.artist, email: it.email, song: it.song, added: it.added, streams: it.streams }))
       });
     } catch (e) { console.error(e); kept = false; }
@@ -649,7 +676,7 @@ $('last').onclick = async () => {
   try {
     const snap = await getDoc(doc(db, 'reports', 'latest'));   // 1 read
     if (!snap.exists()) toast('No saved report yet. It saves with your next download.');
-    else { const r = snap.data(); saveFile(buildBook(r.items || [], r.date), r.date); toast('Last report downloaded'); }
+    else { const r = snap.data(); saveFile(buildBook(r.items || [], r.date, r.rate), r.date); toast('Last report downloaded'); }
   } catch (e) {
     console.error(e);
     toast('Could not load the last report: ' + e.message);
