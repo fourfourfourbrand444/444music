@@ -51,7 +51,7 @@ h1{font-size:24px;font-weight:800;margin-bottom:6px}
     <h1>Earnings Manager</h1>
     <p class="sub">Approved releases only. The owner is the account that uploaded the release (its user ID), never the email typed on the form. Distribute splits an amount in USD: the owner's share goes to the owner's main earnings, each contributor's share goes only to the contributor dashboard.</p>
     <div class="ctl">
-      <input id="q" placeholder="Search song, artist, owner email, owner name or UID — press Enter" autocomplete="off">
+      <input id="q" placeholder="Search song, artist, owner email, owner name or UID — results show as you type" autocomplete="off">
       <button class="btn" id="sb">Search</button>
       <select id="mode"><option value="all">All approved releases</option><option value="locked">Only releases with a locked split</option></select>
     </div>
@@ -72,6 +72,7 @@ const APPROVED=['approved','Approved'];       // status values that count as app
 const PAGE=10;
 const BACKEND='https://four44music-broadcast-backend.onrender.com'; // payout email server
 const MAX_PEOPLE=50,MAX_SONGS=30;             // must match the limits on the backend
+const SEARCH_CARDS=10;                        // most release cards shown for one search
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -82,6 +83,8 @@ const isApproved=s=>lc(s.status)==='approved';
 function toast(m,t){const d=document.createElement('div');d.textContent=m;if(t)d.className='e';$('toast').appendChild(d);setTimeout(()=>d.remove(),3500);}
 
 let pages=[],idx=0,searching=false,loading=false,byId=new Map();
+const userCache=new Map();   // owner accounts already read (uid -> user doc)
+const itemById=new Map();    // releases already on screen once (id -> {id,s,owner,split}), kept up to date by this page
 
 async function chunk(col,f,vals){
   const out=[];
@@ -92,10 +95,11 @@ async function chunk(col,f,vals){
 }
 /* Attach the owner account (by userId) and the split record (by submissionId) to each release. */
 async function hydrate(subs){
-  const uids=[...new Set(subs.map(s=>s.userId).filter(Boolean))];
+  const uids=[...new Set(subs.map(s=>s.userId).filter(Boolean))].filter(u=>!userCache.has(u));
   const [us,sp]=await Promise.all([chunk('users',documentId(),uids),chunk('splits','submissionId',subs.map(s=>s.id))]);
-  const U=new Map(us.map(u=>[u.id,u])),P=new Map(sp.map(p=>[p.submissionId,p]));
-  return subs.map(s=>({id:s.id,s,owner:U.get(s.userId)||null,split:P.get(s.id)||null}));
+  us.forEach(u=>userCache.set(u.id,u));
+  const P=new Map(sp.map(p=>[p.submissionId,p]));
+  return subs.map(s=>({id:s.id,s,owner:userCache.get(s.userId)||null,split:P.get(s.id)||null}));
 }
 
 async function loadPage(i){
@@ -108,35 +112,86 @@ async function loadPage(i){
       const q=query(collection(db,'submissions'),...f,...(i?[startAfter(pages[i-1].cur)]:[]),limit(PAGE+1));
       const docs=(await getDocs(q)).docs,shown=docs.slice(0,PAGE);
       pages[i]={items:await hydrate(shown.map(d=>({id:d.id,...d.data()}))),cur:shown[shown.length-1],more:docs.length>PAGE};
+      pages[i].items.forEach(it=>itemById.set(it.id,it));
     }
     idx=i;show(pages[i].items);
   }catch(e){console.error(e);$('list').innerHTML='<div class="empty">Failed to load: '+esc(e.message)+'</div>';}
   finally{loading=false;}
 }
 
-async function runSearch(){
-  const q=$('q').value.trim();
-  if(!q){pages=[];return loadPage(0);}
-  if(loading)return;loading=true;searching=true;
-  $('list').innerHTML='<div class="empty">Searching…</div>';
+/* ── SEARCH (live, as you type) ──
+   Every approved release and its owner are read ONCE per visit (1 read each) and kept in memory.
+   After that, each letter you type only filters that list: no reads, no writes.
+   A release card is read fresh the first time it appears (1 read + its split), then it is remembered. */
+let searchIndex=null,indexLoading=null,seq=0,timer=null;
+const norm=s=>lc(s).replace(/[^a-z0-9]+/g,' ').trim();
+
+function indexDoc(d){
+  const s=d.data();
+  if(!isApproved(s)||!s.userId)return null;
+  const o=userCache.get(s.userId);
+  const tracks=Array.isArray(s.audioFiles)?s.audioFiles.map(t=>t&&t.title):[];
+  const title=norm(s.releaseTitle||s.songTitle||s.title),artist=norm(s.artistName||uName(o));
+  const owner=norm([uName(o),o&&o.email].join(' '));
+  const rest=norm([...tracks,s.email,s.userId,d.id].join(' '));
+  return {id:d.id,title,artist,h:' '+[title,artist,owner,rest].join(' ')+' '};
+}
+function ensureIndex(){
+  if(searchIndex)return Promise.resolve(searchIndex);
+  if(!indexLoading){
+    indexLoading=(async()=>{
+      const snap=await getDocs(query(collection(db,'submissions'),where('status','in',APPROVED)));
+      const uids=[...new Set(snap.docs.map(d=>d.data().userId).filter(Boolean))].filter(u=>!userCache.has(u));
+      (await chunk('users',documentId(),uids)).forEach(u=>userCache.set(u.id,u));
+      searchIndex=snap.docs.map(indexDoc).filter(Boolean);
+      return searchIndex;
+    })().catch(e=>{indexLoading=null;throw e;});
+  }
+  return indexLoading;
+}
+/* 0 = title or artist starts with it, 1 = any word starts with it, 2 = found inside a word (3+ letters) */
+function scoreOf(it,q){
+  if(it.title.startsWith(q)||it.artist.startsWith(q))return 0;
+  if(it.h.includes(' '+q))return 1;
+  if(q.length>=3&&it.h.includes(q))return 2;
+  return -1;
+}
+/* numbers typed on a card but not saved yet would be lost if the list redraws */
+function hasUnsaved(){return [...document.querySelectorAll('#list input')].some(i=>i.value!==i.defaultValue);}
+
+function backToBrowse(){
+  seq++;clearTimeout(timer);
+  if(!searching)return;
+  if(hasUnsaved()){toast('Save or clear the numbers you typed first.','e');return;}
+  searching=false;
+  if(pages[idx])show(pages[idx].items);else{pages=[];loadPage(0);}
+}
+async function liveSearch(){
+  clearTimeout(timer);
+  const raw=$('q').value;
+  if(!raw.trim())return backToBrowse();
+  if(hasUnsaved()){toast('Save or clear the numbers you typed first, then search.','e');return;}
+  const my=++seq;
   try{
-    const subs=new Map(),add=r=>r.docs.forEach(d=>subs.set(d.id,{id:d.id,...d.data()}));
-    const pre=(c,f,v)=>getDocs(query(collection(db,c),where(f,'>=',v),where(f,'<=',v+'\uf8ff'),limit(15)));
-    const byUser=uid=>getDocs(query(collection(db,'submissions'),where('userId','==',uid),limit(30))).then(add);
-    const vars=[...new Set([q,q.toLowerCase(),q.replace(/\b\w/g,c=>c.toUpperCase())])];
-    const jobs=[];
-    vars.forEach(v=>{
-      ['releaseTitle','artistName'].forEach(f=>jobs.push(pre('submissions',f,v).then(add)));
-      jobs.push(pre('users','name',v).then(r=>Promise.all(r.docs.map(d=>byUser(d.id)))));
-    });
-    jobs.push(pre('users','email',q.toLowerCase()).then(r=>Promise.all(r.docs.map(d=>byUser(d.id)))));
-    jobs.push(byUser(q));
-    if(!q.includes('/'))jobs.push(getDoc(doc(db,'submissions',q)).then(d=>{if(d.exists())subs.set(d.id,{id:d.id,...d.data()});}));
-    await Promise.all(jobs);
-    const found=[...subs.values()].filter(isApproved).slice(0,30);
-    show(await hydrate(found));
-  }catch(e){console.error(e);$('list').innerHTML='<div class="empty">Search failed: '+esc(e.message)+'</div>';}
-  finally{loading=false;}
+    if(!searchIndex)$('list').innerHTML='<div class="empty">Loading songs… this happens once, then search is instant.</div>';
+    const all=await ensureIndex();
+    if(my!==seq)return;
+    const q=norm(raw),hits=[];
+    if(q)all.forEach(it=>{const sc=scoreOf(it,q);if(sc>=0)hits.push({it,sc});});
+    hits.sort((a,b)=>a.sc-b.sc||a.it.title.localeCompare(b.it.title));
+    const top=hits.slice(0,SEARCH_CARDS);
+    const missing=top.map(h=>h.it.id).filter(id=>!itemById.has(id));
+    if(missing.length){
+      const subs=(await chunk('submissions',documentId(),missing)).filter(isApproved);
+      if(my!==seq)return;
+      (await hydrate(subs)).forEach(it=>itemById.set(it.id,it));
+      if(my!==seq)return;
+    }
+    if(hasUnsaved()){toast('Save or clear the numbers you typed first, then search.','e');return;}
+    searching=true;
+    show(top.map(h=>itemById.get(h.it.id)).filter(Boolean));
+    if(hits.length>SEARCH_CARDS)$('cnt').textContent='Showing the first '+SEARCH_CARDS+' of '+hits.length+' matches. Keep typing to narrow it down.';
+  }catch(e){console.error(e);if(my===seq)toast('Search failed. Try again.','e');}
 }
 
 /* ── RENDER ── */
@@ -308,9 +363,14 @@ $('list').addEventListener('click',async e=>{
 });
 
 /* ── CONTROLS + AUTH ── */
-$('sb').onclick=runSearch;
-$('q').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
-$('mode').onchange=()=>{$('q').value='';pages=[];loadPage(0);};
+$('sb').onclick=liveSearch;
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')liveSearch();});
+$('q').addEventListener('input',e=>{
+  clearTimeout(timer);
+  if(!e.target.value.trim()){backToBrowse();return;}
+  timer=setTimeout(liveSearch,250);
+});
+$('mode').onchange=()=>{$('q').value='';seq++;pages=[];loadPage(0);};
 $('out').onclick=()=>{if(pending.size&&!confirm('Some payout emails have not been sent yet. Sign out anyway?'))return;signOut(auth);};
 $('gb').onclick=async()=>{
   $('gerr').textContent='';
