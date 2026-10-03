@@ -314,41 +314,88 @@ async function loadMore() {
   if (view === 'browse') render();
 }
 
-/* ---------- search ---------- */
-async function runSearch() {
-  const q = $('q').value.trim();
-  if (!q) return clearSearch();
-  if (q.length < 2) { toast('Type at least 2 characters.'); return; }
-  if (busy) return;
-  const key = lc(q);
-  if (searchCache.has(key)) { searchRows = searchCache.get(key); view = 'search'; render(); return; }
-  busy = true;
+/* ---------- search (live, as you type) ----------
+   Every approved release is read ONCE per visit to this page (1 read each) and kept in memory.
+   After that, each keystroke only filters that list, which costs no reads and no writes.
+   Only the artist-total docs for the cards that appear are read, once each, and then remembered. */
+const SEARCH_CARDS = 12;      // most artist cards shown for one search
+let searchIndex = null, indexLoading = null, searchSeq = 0, searchTimer = null;
+
+const norm = s => lc(s).replace(/[^a-z0-9]+/g, ' ').trim();
+
+function indexDoc(d) {
+  const s = d.data();
+  if (!isApproved(s) || !s.userId) return null;
+  const tracks = Array.isArray(s.audioFiles) ? s.audioFiles.map(t => t && t.title) : [];
+  const title = norm(s.releaseTitle || s.songTitle || s.title);
+  const artist = norm(s.artistName);
+  const rest = norm([...tracks, s.email, s.userId, d.id].join(' '));
+  return { d, uid: s.userId, title, artist, h: ' ' + [title, artist, rest].join(' ') + ' ' };
+}
+
+function ensureIndex() {
+  if (searchIndex) return Promise.resolve(searchIndex);
+  if (!indexLoading) {
+    indexLoading = getDocs(query(collection(db, 'submissions'), where('status', 'in', APPROVED)))
+      .then(snap => { searchIndex = snap.docs.map(indexDoc).filter(Boolean); return searchIndex; })
+      .catch(e => { indexLoading = null; throw e; });
+  }
+  return indexLoading;
+}
+
+/* 0 = title or artist starts with it, 1 = any word starts with it, 2 = found inside a word (3+ letters) */
+function scoreOf(it, q) {
+  if (it.title.startsWith(q) || it.artist.startsWith(q)) return 0;
+  if (it.h.includes(' ' + q)) return 1;
+  if (q.length >= 3 && it.h.includes(q)) return 2;
+  return -1;
+}
+
+async function liveSearch() {
+  clearTimeout(searchTimer);
+  const raw = $('q').value;
+  if (!raw.trim()) return clearSearch();
+  const my = ++searchSeq;
   try {
-    const subs = collection(db, 'submissions');
-    const jobs = [];
-    if (q.includes('@')) {
-      new Set([q, key]).forEach(v => jobs.push(getDocs(query(subs, where('email', '==', v), limit(SEARCH_LIMIT)))));
-    } else if (/^[A-Za-z0-9]{20,}$/.test(q)) {
-      jobs.push(getDocs(query(subs, where('userId', '==', q), limit(SEARCH_LIMIT))));
-    } else {
-      const variants = [...new Set([q, key, q.toUpperCase(), titleCase(q)])];
-      ['releaseTitle', 'artistName'].forEach(f => variants.forEach(v =>
-        jobs.push(getDocs(query(subs, where(f, '>=', v), where(f, '<=', v + '\uf8ff'), limit(SEARCH_LIMIT))))));
+    if (!searchIndex) {
+      view = 'search'; searchRows = new Map();
+      $('list').innerHTML = '<div class="note"><b>Loading songs…</b>This happens once, then search is instant.</div>';
+      $('clear').style.display = '';
     }
+    const idx = await ensureIndex();
+    if (my !== searchSeq) return;
+
+    const q = norm(raw);
+    const groups = new Map();                       // uid -> { best score, name, docs }
+    if (q) {
+      idx.forEach(it => {
+        const sc = scoreOf(it, q);
+        if (sc < 0) return;
+        let g = groups.get(it.uid);
+        if (!g) { g = { sc, name: it.artist, docs: [] }; groups.set(it.uid, g); }
+        if (sc < g.sc) g.sc = sc;
+        g.docs.push(it.d);
+      });
+    }
+    const ordered = [...groups.entries()].sort((a, b) => a[1].sc - b[1].sc || a[1].name.localeCompare(b[1].name));
+    const shown = ordered.slice(0, SEARCH_CARDS);
+
+    await fetchStats(shown.map(([u]) => u));
+    if (my !== searchSeq) return;
+
     const rows = new Map();
-    (await Promise.all(jobs)).forEach(sn => sn.docs.forEach(d => addSong(rows, d)));
-    await fetchStats([...rows.keys()]);
-    searchCache.set(key, rows);
+    shown.forEach(([, g]) => g.docs.forEach(d => addSong(rows, d)));
     searchRows = rows; view = 'search';
+    render();
+    if (ordered.length > SEARCH_CARDS) $('count').textContent = `Showing the first ${SEARCH_CARDS} of ${ordered.length} artists. Keep typing to narrow it down.`;
   } catch (e) {
     console.error(e);
-    toast('Search failed. Try again.');
+    if (my === searchSeq) toast('Search failed. Try again.');
   }
-  busy = false;
-  render();
 }
 
 function clearSearch() {
+  searchSeq++;
   $('q').value = '';
   view = 'browse';
   render();
@@ -666,7 +713,7 @@ $('list').addEventListener('click', e => {
   else if (b.dataset.act === 'more') seeMore(uid, b);
 });
 
-$('sf').addEventListener('submit', e => { e.preventDefault(); runSearch(); });
+$('sf').addEventListener('submit', e => { e.preventDefault(); liveSearch(); });
 $('clear').onclick = clearSearch;
 $('more').onclick = loadMore;
 $('report').onclick = prepareReport;
@@ -683,7 +730,11 @@ $('last').onclick = async () => {
   }
   busy = false; $('last').disabled = false; $('last').textContent = 'Last report';
 };
-$('q').addEventListener('input', e => { if (!e.target.value && view === 'search') clearSearch(); });
+$('q').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  if (!e.target.value.trim()) { if (view === 'search') clearSearch(); return; }
+  searchTimer = setTimeout(liveSearch, 180);
+});
 $('out').onclick = () => signOut(auth);
 
 /* ---------- auth ---------- */
