@@ -1265,32 +1265,34 @@ async function generateUniqueSlug(title, artist, excludeId) {
     slug = `${base}-${n++}`;
   }
 }
-async function sendApprovalEmail({ email, artistName, songTitle, upc }) {
-  if (!email) {
-    toast("warning", "No email on file — skipped sending");
+
+async function sendApprovalEmail({ id, email }) {
+  if (!id) {
+    toast("warning", "Missing submission id — approval email not sent");
     return false;
   }
-
-  const params = {
-    to_email:   email,
-    to_name:    artistName  || "Artist",
-    song_title: songTitle   || "Your Release",
-    upc_code:   upc         || "N/A"
-  };
-
   try {
-    const result = await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, params);
-    console.log("EmailJS success:", result.status, result.text);
-    toast("success", `Approval email sent to ${email}`);
-    return true;
+    const res = await fetch(`${BACKEND_URL}/api/submissions/notify-approval`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-app-secret': APP_SECRET
+      },
+      body: JSON.stringify({ submissionId: id })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success) {
+      toast("success", `Approval email sent to ${data.email || email || 'the artist'}`);
+      return true;
+    }
+    toast("error", data.message || "Approval email failed to send");
+    return false;
   } catch (err) {
-    console.error("EmailJS error:", err);
-    const errMsg = err.text || err.message || JSON.stringify(err);
-    toast("error", "Email failed: " + errMsg);
+    console.error("Approval email error:", err);
+    toast("error", "Approval email failed: " + err.message);
     return false;
   }
 }
-
 /* ─── INIT FIREBASE ──────────────────────── */
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
@@ -1974,7 +1976,7 @@ function display(data) {
         if (ok) {
           toast('success', `Status → "Approved"`);
           toast('info', 'Sending approval email…');
-          await sendApprovalEmail({ email, artistName, songTitle, upc: result.upc });
+                    await sendApprovalEmail({ id: subId, email });
           setTimeout(() => refreshCurrentView(), 300);
         } else {
           this.disabled = false;
@@ -2054,12 +2056,7 @@ function display(data) {
         this.disabled = true;
         this.textContent = 'Sending…';
         toast('info', 'Resending approval email…');
-        const sent = await sendApprovalEmail({
-          email:       this.dataset.email,
-          artistName:  this.dataset.artist,
-          songTitle:   this.dataset.title,
-          upc:         this.dataset.upc
-        });
+              const sent = await sendApprovalEmail({ id: this.dataset.id, email: this.dataset.email });
         this.disabled = false;
         this.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg> ${sent ? 'Email Sent' : 'Resend Approval Email'}`;
         setTimeout(() => {
