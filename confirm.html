@@ -2,327 +2,189 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confirmation Required — 444Music Distribution</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Confirmation — 444Music</title>
 
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
 :root {
-  --black:      #000000;
-  --black-1:    #080808;
-  --black-2:    #0d0d0d;
-  --black-3:    #111111;
-  --black-4:    #161616;
-  --white:      #ffffff;
-  --white-90:   rgba(255,255,255,0.90);
-  --white-70:   rgba(255,255,255,0.70);
-  --white-40:   rgba(255,255,255,0.40);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-10:   rgba(255,255,255,0.10);
-  --white-06:   rgba(255,255,255,0.06);
-  --grey:       #888888;
-  --grey-dark:  #444444;
-  --green:      #22c55e;
-  --amber:      #f59e0b;
-  --rose:       #ef4444;
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --s2: #2c2c2e;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t1: #ffffff;
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.30);
+  --blue: #0a84ff;
+  --yellow: #fdeb0d;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(--white); }
 
-.overlay {
-  min-height: 100vh; width: 100%;
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px; position: relative; overflow: hidden;
-  background: var(--black);
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--t1);
+  min-height: 100vh; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased;
+  transition: opacity .3s ease, transform .3s ease;
 }
-.orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; pointer-events: none; }
-.orb-1 { width: 380px; height: 380px; background: rgba(255,255,255,0.05); top: -140px; left: -100px; }
-.orb-2 { width: 320px; height: 320px; background: rgba(255,255,255,0.03); bottom: -120px; right: -100px; }
+body.closing { opacity: 0; transform: translateY(10px); }
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 
-.modal {
-  position: relative; z-index: 2;
-  width: 100%; max-width: 480px;
-  background: var(--black-2);
-  border: 1px solid var(--white-10);
-  border-radius: 22px;
-  padding: 30px 28px 26px;
-  max-height: 90vh; overflow-y: auto;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+.shell { max-width: 640px; margin: 0 auto; padding: 0 16px calc(170px + env(safe-area-inset-bottom)); }
+
+/* top bar */
+.bar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  height: 56px; margin: 0 -16px; padding: 0 16px;
+  background: rgba(0,0,0,0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
 }
-.modal.closing { opacity: 0; transform: translateY(10px) scale(0.98); }
-.modal::-webkit-scrollbar { width: 4px; }
-.modal::-webkit-scrollbar-thumb { background: var(--black-4); border-radius: 2px; }
+.back { width: 36px; height: 36px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; transition: transform .3s var(--ease); }
+.back:active { transform: scale(0.92); }
+.back svg { width: 16px; height: 16px; }
+.bar-title { font-size: 17px; font-weight: 600; }
+.bar-spacer { width: 36px; }
 
-.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-icon {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: var(--white); color: var(--black);
-  display: flex; align-items: center; justify-content: center;
-}
-.brand-name { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: -0.2px; }
-.close-btn {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--white-06); border: 1px solid var(--white-10);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--grey); cursor: pointer; transition: all 0.15s;
-}
-.close-btn:hover { background: var(--black-4); color: var(--white); border-color: var(--white-20); }
+/* hero */
+.hero { padding: 14px 4px 6px; }
+.hero h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }
+.hero p { font-size: 17px; line-height: 1.4; color: var(--t2); margin-top: 6px; }
 
-.title-block { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
-.shield-icon {
-  width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
-  background: var(--white-06); border: 1px solid var(--white-10);
-  color: var(--white); display: flex; align-items: center; justify-content: center;
-}
-.title-block h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 5px; }
-.sub-text { font-size: 13px; color: var(--grey); line-height: 1.5; }
+/* sections */
+.sh { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 16px 8px; }
+.sh h2 { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--t2); }
+.sh span { font-size: 13px; color: var(--t3); font-variant-numeric: tabular-nums; transition: color .25s ease; }
+.sh span.done { color: var(--yellow); }
+.group { background: var(--s1); border-radius: 16px; overflow: hidden; }
 
-.divider { height: 1px; background: var(--white-10); margin-bottom: 18px; }
-
-.progress-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.progress-label { font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: var(--grey-dark); }
-.progress-count { font-size: 12px; font-weight: 800; color: var(--white-70); font-family: 'Outfit', sans-serif; }
-.progress-track { width: 100%; height: 4px; background: var(--black-4); border-radius: 4px; overflow: hidden; margin-bottom: 22px; }
-.progress-fill { height: 100%; width: 0%; background: var(--white); border-radius: 4px; transition: width 0.35s ease; }
-
-.terms-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.terms-box {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--black-3); border: 1px solid var(--white-10);
-  border-radius: 14px; padding: 14px 15px; cursor: pointer;
-  transition: all 0.15s; outline: none;
-}
-.terms-box:hover { border-color: var(--white-20); }
-.terms-box:focus-visible { border-color: var(--white-40); }
-.terms-box.checked { background: var(--black-4); border-color: var(--white-40); }
-
+/* terms */
+.terms-box { position: relative; display: flex; align-items: flex-start; gap: 14px; padding: 16px; cursor: pointer; user-select: none; outline: none; transition: background-color .2s ease; }
+.terms-box + .terms-box::before { content: ''; position: absolute; top: 0; left: 54px; right: 0; height: 0.5px; background: var(--sep); }
+.terms-box:active { background: rgba(255,255,255,0.05); }
+.terms-box:focus-visible { background: rgba(255,255,255,0.06); }
 .custom-check {
-  width: 21px; height: 21px; border-radius: 6px; flex-shrink: 0; margin-top: 1px;
-  background: var(--black-4); border: 1.5px solid var(--white-20);
+  width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--t3); flex-shrink: 0; margin-top: 1px;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s;
+  transition: background-color .25s ease, border-color .25s ease;
 }
-.check-icon { opacity: 0; transform: scale(0.6); transition: all 0.15s; color: var(--black); }
-.terms-box.checked .custom-check { background: var(--white); border-color: var(--white); }
+.check-icon { width: 13px; height: 13px; color: #000; opacity: 0; transform: scale(0.5); transition: opacity .2s ease, transform .3s var(--ease); }
+.terms-box.checked .custom-check { background: var(--yellow); border-color: var(--yellow); }
 .terms-box.checked .check-icon { opacity: 1; transform: scale(1); }
+.term-text strong { display: block; font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.term-text span { font-size: 15px; line-height: 1.45; color: var(--t2); }
 
-.term-content { display: flex; align-items: flex-start; gap: 11px; flex: 1; min-width: 0; }
-.term-icon {
-  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
-  background: var(--white-06); border: 1px solid var(--white-10);
-  color: var(--white-70); display: flex; align-items: center; justify-content: center;
-}
-.term-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.term-text strong { font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--white); }
-.term-text span { font-size: 12px; color: var(--grey); line-height: 1.5; }
+.sf { margin: 10px 16px 0; font-size: 13px; line-height: 1.4; color: var(--t2); }
 
-.notice {
-  display: flex; align-items: flex-start; gap: 9px;
-  background: var(--white-06); border: 1px solid var(--white-10);
-  border-radius: 12px; padding: 12px 14px; margin-bottom: 22px;
-  color: var(--white-70); font-size: 12px; line-height: 1.5;
+/* dock */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  padding: 12px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,0.72); border-top: 0.5px solid var(--sep);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
 }
-.notice svg { flex-shrink: 0; margin-top: 1px; color: var(--white-40); }
+.dock-in { max-width: 640px; margin: 0 auto; }
+.confirm-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px;
+  border-radius: 999px; background: var(--yellow); color: #000; font-size: 17px; font-weight: 600;
+  transition: transform .3s var(--ease), opacity .2s ease;
+}
+.confirm-btn:active:not(:disabled) { transform: scale(0.98); }
+.confirm-btn:disabled { opacity: 0.4; cursor: default; }
+.cancel-btn { display: block; width: 100%; height: 42px; margin-top: 2px; font-size: 17px; color: var(--blue); }
+.cancel-btn:active { opacity: 0.6; }
 
-.button-group { display: flex; gap: 10px; }
-.cancel-btn, .confirm-btn {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px; border-radius: 12px; font-family: 'Nunito', sans-serif;
-  font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.15s;
-}
-.cancel-btn { background: transparent; border: 1px solid var(--white-20); color: var(--white-70); }
-.cancel-btn:hover { background: var(--white-06); border-color: var(--white-40); }
-.confirm-btn { background: var(--black-4); border: 1px solid var(--white-10); color: var(--grey-dark); cursor: not-allowed; }
-.confirm-btn.ready { background: var(--white); border-color: var(--white); color: var(--black); cursor: pointer; }
-.confirm-btn.ready:hover { opacity: 0.9; transform: translateY(-1px); }
-.confirm-btn:disabled { pointer-events: none; }
-
-@media (max-width: 480px) {
-  .modal { padding: 24px 18px 20px; border-radius: 18px; }
-  .button-group { flex-direction: column-reverse; }
-}
+@media (max-width: 420px) { .hero h1 { font-size: 30px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
+
 <body>
+<div class="shell">
 
-<div class="overlay">
+  <header class="bar">
+    <button type="button" class="back close-btn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="bar-title">Confirmation</span>
+    <span class="bar-spacer"></span>
+  </header>
 
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+  <div class="hero">
+    <h1>Confirm your release</h1>
+    <p>Read and agree to each term before you distribute.</p>
+  </div>
 
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="sh"><h2>Terms</h2><span id="progressCount">0 of 3</span></div>
+  <div class="group">
 
-    <div class="modal-header">
-      <div class="brand">
-        <div class="brand-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 18V5l12-2v13"/>
-            <circle cx="6" cy="18" r="3"/>
-            <circle cx="18" cy="16" r="3"/>
-          </svg>
-        </div>
-        <span class="brand-name">444Music</span>
+    <label class="terms-box" tabindex="0">
+      <input type="checkbox" class="term-checkbox" hidden>
+      <div class="custom-check" aria-hidden="true">
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-      <button class="close-btn" aria-label="Close dialog">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="title-block">
-      <div class="shield-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
+      <div class="term-text">
+        <strong>Copyright ownership</strong>
+        <span>I own or have legally licensed all copyrights to the sound recordings, compositions and artwork in this release, and I agree to all terms in the distribution agreement.</span>
       </div>
-      <div>
-        <h2 id="modal-title">Confirmation Required</h2>
-        <p class="sub-text">Read and confirm all terms below before distributing your release.</p>
+    </label>
+
+    <label class="terms-box" tabindex="0">
+      <input type="checkbox" class="term-checkbox" hidden>
+      <div class="custom-check" aria-hidden="true">
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
-    </div>
+      <div class="term-text">
+        <strong>Track accuracy</strong>
+        <span>I confirm that I have truthfully indicated the Track Origin and Track Properties for each track, so my release meets DSP requirements.</span>
+      </div>
+    </label>
 
-    <div class="divider"></div>
-
-    <div class="progress-row">
-      <span class="progress-label">Agreement Progress</span>
-      <span class="progress-count" id="progressCount">0 of 3</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-    </div>
-
-    <div class="terms-list">
-
-      <label class="terms-box" tabindex="0">
-        <input type="checkbox" class="term-checkbox" hidden>
-        <div class="custom-check" aria-hidden="true">
-          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <div class="term-content">
-          <div class="term-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M9 9h6M9 13h6M9 17h4"/>
-            </svg>
-          </div>
-          <div class="term-text">
-            <strong>Copyright Ownership</strong>
-            <span>I own or have legally licensed all copyrights to the sound recordings, compositions and artwork embodied in this release and agree to all terms in the distribution agreement.</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="terms-box" tabindex="0">
-        <input type="checkbox" class="term-checkbox" hidden>
-        <div class="custom-check" aria-hidden="true">
-          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <div class="term-content">
-          <div class="term-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-          </div>
-          <div class="term-text">
-            <strong>Track Accuracy</strong>
-            <span>I confirm that I have truthfully indicated the Track Origin and Track Properties for each track to ensure full compliance with DSP requirements.</span>
-          </div>
-        </div>
-      </label>
-
-      <label class="terms-box" tabindex="0">
-        <input type="checkbox" class="term-checkbox" hidden>
-        <div class="custom-check" aria-hidden="true">
-          <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <div class="term-content">
-          <div class="term-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-          </div>
-          <div class="term-text">
-            <strong>Streaming Integrity</strong>
-            <span>I acknowledge that artificial streaming and misleading promotion violates platform policies and may result in content removal, withheld royalties, or account penalties.</span>
-          </div>
-        </div>
-      </label>
-
-    </div>
-
-    <div class="notice">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-      <span>This agreement is legally binding once confirmed. Review all terms carefully.</span>
-    </div>
-
-    <div class="button-group">
-      <button class="cancel-btn" type="button">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-        Cancel
-      </button>
-      <button class="confirm-btn" id="confirmBtn" disabled type="button">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        Confirm &amp; Distribute
-      </button>
-    </div>
+    <label class="terms-box" tabindex="0">
+      <input type="checkbox" class="term-checkbox" hidden>
+      <div class="custom-check" aria-hidden="true">
+        <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="term-text">
+        <strong>Streaming integrity</strong>
+        <span>I understand that artificial streaming and misleading promotion break platform policies and can lead to content removal, withheld royalties or account penalties.</span>
+      </div>
+    </label>
 
   </div>
+  <p class="sf">This agreement is legally binding once you confirm. Please review each term carefully.</p>
+
+  <div class="dock">
+    <div class="dock-in">
+      <button class="confirm-btn" id="confirmBtn" disabled type="button">Confirm &amp; distribute</button>
+      <button class="cancel-btn" type="button">Cancel</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
   const checkboxes = document.querySelectorAll(".term-checkbox");
   const confirmBtn = document.getElementById("confirmBtn");
-  const progressFill = document.getElementById("progressFill");
   const progressCount = document.getElementById("progressCount");
   const termBoxes = document.querySelectorAll(".terms-box");
 
   function updateProgress() {
     const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
     const total = checkboxes.length;
-    const pct = (checked / total) * 100;
-
-    progressFill.style.width = pct + "%";
     progressCount.textContent = checked + " of " + total;
-
+    progressCount.classList.toggle("done", checked === total);
     confirmBtn.disabled = checked < total;
-    if (checked === total) {
-      confirmBtn.classList.add("ready");
-    } else {
-      confirmBtn.classList.remove("ready");
-    }
   }
 
   termBoxes.forEach((box, i) => {
     const cb = checkboxes[i];
 
     cb.addEventListener("change", () => {
-      if (cb.checked) {
-        box.classList.add("checked");
-      } else {
-        box.classList.remove("checked");
-      }
+      box.classList.toggle("checked", cb.checked);
       updateProgress();
     });
 
@@ -337,11 +199,7 @@ body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(-
 
   confirmBtn.addEventListener("click", () => {
     if (!confirmBtn.disabled) {
-      confirmBtn.innerHTML = `
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        Submitting...`;
+      confirmBtn.textContent = "Submitting…";
       confirmBtn.disabled = true;
       setTimeout(() => {
         window.location.href = "after-submission.html";
@@ -349,15 +207,12 @@ body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(-
     }
   });
 
-  document.querySelector(".close-btn").addEventListener("click", () => {
-    document.querySelector(".modal").classList.add("closing");
-    setTimeout(() => window.location.href = "javascript:history.back()", 300);
-  });
-
-  document.querySelector(".cancel-btn").addEventListener("click", () => {
-    document.querySelector(".modal").classList.add("closing");
-    setTimeout(() => window.location.href = "javascript:history.back()", 300);
-  });
+  function leave() {
+    document.body.classList.add("closing");
+    setTimeout(() => history.back(), 300);
+  }
+  document.querySelector(".close-btn").addEventListener("click", leave);
+  document.querySelector(".cancel-btn").addEventListener("click", leave);
 </script>
 </body>
 </html>
