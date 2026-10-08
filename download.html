@@ -1,274 +1,641 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music — Coming Soon to Google Play</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<title>444Music — Download for Android</title>
+<meta name="description" content="Download the 444Music app for Android.">
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('m444_theme'); } catch (e) {}
+  if (t !== 'dark' && t !== 'light') {
+    t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:        #ffffff;
-  --surface:   #f7f7f7;
-  --border:    rgba(0,0,0,0.08);
-  --black:     #0a0a0a;
-  --text:      #0a0a0a;
-  --text-sec:  #555555;
-  --text-mut:  #999999;
-  --ff-head: 'Outfit', sans-serif;
-  --ff-body: 'Nunito', sans-serif;
+  --bg: #ffffff;
+  --text: #202124;
+  --text2: #5f6368;
+  --line: #dadce0;
+  --surface: #ffffff;
+  --btn-bg: #0a0a0a;
+  --btn-text: #ffffff;
+  --input-bg: #ffffff;
+  --bar-bg: #e8eaed;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-html { -webkit-font-smoothing: antialiased; }
+[data-theme="dark"] {
+  --bg: #000000;
+  --text: #f5f5f7;
+  --text2: #a1a1a6;
+  --line: rgba(255,255,255,0.12);
+  --surface: rgba(255,255,255,0.06);
+  --btn-bg: #ffffff;
+  --btn-text: #000000;
+  --input-bg: rgba(255,255,255,0.06);
+  --bar-bg: rgba(255,255,255,0.14);
+}
+
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
 
 body {
-  font-family: var(--ff-body);
+  font-family: var(--font);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  line-height: 1.45;
 }
 
-.wrap {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 60px 24px 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+[data-theme="dark"] body {
+  background:
+    radial-gradient(900px 520px at 85% -8%, rgba(110,110,255,0.13), transparent 70%),
+    radial-gradient(700px 420px at 0% 12%, rgba(255,255,255,0.05), transparent 70%),
+    #000;
+  background-attachment: fixed;
 }
 
-/* NAV */
-.nav {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 56px;
+a { color: inherit; }
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
 }
+[data-theme="dark"] .topbar {
+  background: rgba(0,0,0,0.55);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+.topbar-in {
+  max-width: 980px; margin: 0 auto; padding: 0 20px;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+}
+.brand img { height: 26px; width: auto; display: block; }
+[data-theme="dark"] .brand img { filter: invert(1); }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: none; background: transparent; color: var(--text);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.icon-btn:hover { background: var(--line); }
 
-.logo img { height: 30px; width: auto; display: block; }
+/* PAGE */
+.page { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
 
-/* APP ICON */
+/* HEADER */
+.app-head { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
 .app-icon {
-  width: 96px; height: 96px; border-radius: 24px;
-  background: var(--black);
+  width: 92px; height: 92px; border-radius: 22%;
+  background: #ffffff; border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center; padding: 12%;
+  flex-shrink: 0;
+}
+.app-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.app-title { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+.app-dev { font-size: 0.95rem; font-weight: 600; color: var(--text2); margin-top: 4px; }
+.app-sub { font-size: 0.85rem; color: var(--text2); margin-top: 2px; }
+
+/* STATS */
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  margin-top: 26px; padding: 14px 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+[data-theme="dark"] .stats {
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: 18px;
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+}
+.stat { text-align: center; padding: 4px 8px; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat-top { font-size: 1.05rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 26px; }
+.stat-bot { font-size: 0.75rem; color: var(--text2); margin-top: 3px; }
+
+/* DOWNLOAD BUTTON */
+.dl-row { margin-top: 24px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 52px; min-width: 220px; padding: 0 32px;
+  border: none; border-radius: 999px;
+  background: var(--btn-bg); color: var(--btn-text);
+  font-family: var(--font); font-size: 1rem; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  transition: opacity .15s ease, transform .1s ease;
+}
+.btn:hover { opacity: .88; }
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.dl-note { font-size: 0.78rem; color: var(--text2); margin-top: 10px; }
+
+/* SECTIONS */
+section { margin-top: 38px; }
+h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.01em; }
+
+/* SCREENSHOTS */
+.shots { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.shots img {
+  height: 380px; width: auto; border-radius: 14px; flex-shrink: 0;
+  border: 1px solid var(--line); scroll-snap-align: start; display: block;
+}
+
+/* ABOUT */
+.about p { color: var(--text2); font-size: 0.95rem; max-width: 720px; }
+details { margin-top: 18px; max-width: 720px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--surface); }
+[data-theme="dark"] details { -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+details ol { margin: 10px 0 0 20px; color: var(--text2); font-size: 0.9rem; }
+details li { margin-bottom: 4px; }
+
+/* RATINGS */
+.rating-grid { display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; max-width: 560px; }
+.avg-big { font-size: 3.2rem; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+.avg-stars { margin-top: 6px; font-size: 0.95rem; letter-spacing: 1px; }
+.avg-count { font-size: 0.78rem; color: var(--text2); margin-top: 4px; }
+.bars { display: flex; flex-direction: column; gap: 5px; }
+.bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text2); }
+.bar-row span:first-child { width: 8px; text-align: right; }
+.bar-track { flex: 1; height: 8px; border-radius: 999px; background: var(--bar-bg); overflow: hidden; }
+.bar-fill { height: 100%; width: 0; background: var(--text); border-radius: 999px; }
+
+.star-on { color: var(--text); }
+.star-off { color: var(--line); }
+[data-theme="dark"] .star-off { color: rgba(255,255,255,0.22); }
+
+/* RATE FORM */
+.rate-box {
+  margin-top: 26px; max-width: 560px;
+  border: 1px solid var(--line); border-radius: 16px; padding: 18px;
+  background: var(--surface);
+}
+[data-theme="dark"] .rate-box { -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+.rate-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.rate-box .hint { font-size: 0.8rem; color: var(--text2); margin-bottom: 12px; }
+.star-pick { display: flex; gap: 6px; margin-bottom: 14px; }
+.star-pick button {
+  background: none; border: none; cursor: pointer; padding: 2px;
+  font-size: 2rem; line-height: 1; color: var(--line);
+}
+[data-theme="dark"] .star-pick button { color: rgba(255,255,255,0.22); }
+.star-pick button.on { color: var(--text); }
+.field {
+  width: 100%; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--input-bg); color: var(--text);
+  font-family: var(--font); font-size: 0.95rem; padding: 12px 14px; margin-bottom: 10px;
+  outline: none;
+}
+.field:focus { border-color: var(--text2); }
+textarea.field { min-height: 90px; resize: vertical; }
+.msg { font-size: 0.82rem; margin-top: 10px; color: var(--text2); min-height: 18px; }
+.msg.err { color: #d93025; }
+[data-theme="dark"] .msg.err { color: #ff6961; }
+
+/* REVIEW LIST */
+.review { padding: 18px 0; border-bottom: 1px solid var(--line); max-width: 720px; }
+.review:last-child { border-bottom: none; }
+.rev-top { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--bar-bg);
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 32px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  font-weight: 600; font-size: 0.9rem; flex-shrink: 0;
+}
+.rev-name { font-weight: 600; font-size: 0.92rem; }
+.rev-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.78rem; color: var(--text2); }
+.rev-meta .stars { font-size: 0.8rem; letter-spacing: 1px; }
+.rev-text { margin-top: 8px; font-size: 0.92rem; color: var(--text); white-space: pre-wrap; word-wrap: break-word; }
+.empty { color: var(--text2); font-size: 0.92rem; padding: 6px 0; }
+.more { margin-top: 14px; }
+.btn-ghost {
+  background: transparent; color: var(--text); border: 1px solid var(--line);
+  height: 42px; min-width: 0; padding: 0 22px; font-size: 0.9rem;
 }
 
-.app-icon img { width: 58px; height: auto; filter: invert(1); display: block; }
-
-/* BADGE */
-.status-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 7px 16px;
-  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--text-sec);
-  margin-bottom: 24px;
-}
-
-.status-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #f5a623;
-}
-
-h1 {
-  font-family: var(--ff-head);
-  font-size: clamp(2rem, 7vw, 2.6rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: var(--black);
-  margin-bottom: 18px;
-}
-
-.sub {
-  font-size: 0.98rem;
-  color: var(--text-sec);
-  line-height: 1.75;
-  max-width: 420px;
-  margin-bottom: 40px;
-}
-
-/* PLAY STORE BADGE */
-.store-badge-wrap {
-  margin-bottom: 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.store-badge-link {
-  display: inline-block;
-  line-height: 0;
-  filter: grayscale(1) opacity(0.55);
-  pointer-events: none;
-  transition: filter 0.2s ease;
-}
-
-.store-badge-img {
-  height: 54px;
-  width: auto;
-  display: block;
-}
-
-.store-badge-caption {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-mut);
-}
-
-/* SHOWCASE IMAGES */
-.showcase {
-  width: 100%;
-  margin-bottom: 44px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.showcase-main {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
-}
-
-.showcase-main img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.showcase-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.showcase-item {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-
-.showcase-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* NOTICE */
-.notice {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  font-size: 0.82rem;
-  color: var(--text-sec);
-  line-height: 1.65;
-  margin-bottom: 40px;
-}
-
-.notice strong { color: var(--black); }
+/* APP INFO */
+.info { max-width: 560px; }
+.info-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.info-row span:first-child { color: var(--text2); }
+.info-row span:last-child { text-align: right; font-weight: 500; }
 
 /* FOOTER */
-footer {
-  width: 100%;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-  font-size: 0.72rem;
-  color: var(--text-mut);
-}
+footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--text2); }
+footer a { text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 
-footer a { color: var(--text-sec); text-decoration: none; }
-footer a:hover { color: var(--black); }
+/* SIDE MENU */
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 40; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(320px, 86vw); z-index: 50;
+  background: var(--bg); border-left: 1px solid var(--line);
+  transform: translateX(100%); transition: transform .28s ease;
+  padding: 16px 20px; display: flex; flex-direction: column;
+}
+[data-theme="dark"] .drawer {
+  background: rgba(20,20,22,0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(30px); backdrop-filter: saturate(180%) blur(30px);
+}
+.drawer.open { transform: translateX(0); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; height: 44px; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+.row { display: flex; align-items: center; justify-content: space-between; padding: 16px 2px; border-bottom: 1px solid var(--line); text-decoration: none; font-size: 0.98rem; cursor: pointer; }
+.switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.slider { position: absolute; inset: 0; border-radius: 999px; background: #c7c7cc; transition: background .2s ease; }
+.slider::before { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.switch input:checked + .slider { background: #34c759; }
+.switch input:checked + .slider::before { transform: translateX(20px); }
+
+@media (max-width: 600px) {
+  .page { padding: 22px 16px 50px; }
+  .app-icon { width: 80px; height: 80px; }
+  .app-title { font-size: 1.35rem; }
+  .btn { width: 100%; }
+  .shots img { height: 300px; }
+  .rating-grid { grid-template-columns: 110px 1fr; gap: 16px; }
+  .avg-big { font-size: 2.6rem; }
+}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-
-  <nav class="nav">
-    <a class="logo" href="https://444music-distribution.vercel.app">
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="https://www.444musicdistro.com">
       <img src="https://444music-distribution.vercel.app/black.png" alt="444Music">
     </a>
-  </nav>
-
-  <div class="app-icon">
-    <img src="https://444music-distribution.vercel.app/black.png" alt="444Music App">
+    <button class="icon-btn" id="openMenu" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </div>
+</header>
 
-  <div class="status-badge">
-    <div class="status-dot"></div>
-    Coming Soon
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <span>Menu</span>
+    <button class="icon-btn" id="closeMenu" aria-label="Close menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
+  <label class="row">
+    <span>Dark mode</span>
+    <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
+  </label>
+  <a class="row" href="https://www.444musicdistro.com">Website</a>
+  <a class="row" href="https://www.444musicdistro.com/legal">Terms &amp; Privacy</a>
+</aside>
 
-  <h1>444Music is heading<br>to Google Play</h1>
+<main class="page">
 
-  <p class="sub">
-    We're putting the finishing touches on our official Android release.
-    The app will be available to download directly from the Google Play Store soon —
-    check back shortly.
-  </p>
-
-  <!-- Real official Google Play badge. Swap the href for your live
-       Play Store listing link once the app is published. -->
-  <div class="store-badge-wrap">
-    <a href="#" class="store-badge-link" aria-disabled="true">
-      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-           alt="Get it on Google Play" class="store-badge-img">
-    </a>
-    <div class="store-badge-caption">Coming Soon</div>
-  </div>
-
-  <!-- App showcase images
-       NOTE: these are temporary kommodo.ai hosted links that expire
-       Aug 30, 2026. Download these images and host them on your own
-       domain (e.g. alongside your other site assets) before then. -->
-  <div class="showcase">
-    <div class="showcase-main">
-      <img src="https://plain-weur-prod-public.komododecks.com/202607/31/LnyIei0wL8iB1ceHYfoh/image.png" alt="444Music app preview">
+  <div class="app-head">
+    <div class="app-icon">
+      <img src="https://444music-distribution.vercel.app/black.png" alt="444Music icon">
     </div>
-    <div class="showcase-grid">
-      <div class="showcase-item">
-        <img src="https://plain-weur-prod-public.komododecks.com/202607/31/SR2ptQlgm8KlUXREvmNz/image.png" alt="444Music login screen">
-      </div>
-      <div class="showcase-item">
-        <img src="https://plain-weur-prod-public.komododecks.com/202607/31/WOnVUHBoCnQ5Bfo9C4BH/image.png" alt="444Music releases dashboard">
-      </div>
+    <div>
+      <h1 class="app-title">444Music</h1>
+      <div class="app-dev">444Music Distribution</div>
+      <div class="app-sub">Music distribution for independent artists</div>
     </div>
   </div>
 
-  <div class="notice">
-    <strong>444Music</strong> is a distribution platform built for independent
-    African artists — 100+ global stores, 100% royalties kept, and real-time
-    analytics, all from one app. The Android app will be published on the
-    Google Play Store shortly.
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-top"><span id="statAvg">—</span><span id="statStar" style="display:none">★</span></div>
+      <div class="stat-bot" id="statReviews">No reviews yet</div>
+    </div>
+    <div class="stat">
+      <div class="stat-top">Everyone</div>
+      <div class="stat-bot">Age rating</div>
+    </div>
+    <div class="stat">
+      <div class="stat-top" id="statDownloads">—</div>
+      <div class="stat-bot">Downloads</div>
+    </div>
   </div>
+
+  <div class="dl-row">
+    <!-- Always the newest GitHub release. Every new release must be marked
+         "latest" and its file must be named exactly app-release.apk -->
+    <a class="btn" id="dlBtn"
+       href="https://github.com/fourfourfourbrand444/444music/releases/latest/download/app-release.apk">Download</a>
+    <div class="dl-note">Android · Free to download</div>
+  </div>
+
+  <section id="shotsSection">
+    <div class="shots" id="shots"></div>
+  </section>
+
+  <section class="about">
+    <h2>About this app</h2>
+    <p>
+      444Music is a distribution platform built for independent artists.
+      Release your music to 100+ global stores, keep 100% of your royalties,
+      and follow your streams and earnings with real-time analytics, all from one app.
+    </p>
+    <details>
+      <summary>How to install</summary>
+      <ol>
+        <li>Tap Download and wait for the file to finish.</li>
+        <li>Open the file. If your phone asks, allow installs from your browser, just this once.</li>
+        <li>Tap Install, then open 444Music.</li>
+      </ol>
+      <p style="margin-top:10px;font-size:.9rem">Updating later? Download again and install over the old version. Your account stays as it is.</p>
+    </details>
+  </section>
+
+  <section id="reviewsSection">
+    <h2>Ratings and reviews</h2>
+
+    <div class="rating-grid">
+      <div>
+        <div class="avg-big" id="avgBig">—</div>
+        <div class="avg-stars" id="avgStars"></div>
+        <div class="avg-count" id="avgCount">No reviews yet</div>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="rate-box" id="rateBox">
+      <h3>Rate this app</h3>
+      <div class="hint">Tell others what you think.</div>
+      <div class="star-pick" id="starPick" role="radiogroup" aria-label="Your rating"></div>
+      <input class="field" id="revName" type="text" maxlength="40" placeholder="Your name (optional)">
+      <textarea class="field" id="revText" maxlength="500" placeholder="Write a review (optional)"></textarea>
+      <button class="btn" id="revSubmit" type="button">Submit</button>
+      <div class="msg" id="revMsg"></div>
+    </div>
+
+    <div id="reviewList" style="margin-top:22px"></div>
+    <div class="more" id="moreWrap" style="display:none">
+      <button class="btn btn-ghost" id="moreBtn" type="button">Show more reviews</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>App information</h2>
+    <div class="info" id="info">
+      <div class="info-row"><span>Developer</span><span>444Music Distribution</span></div>
+      <div class="info-row" id="rowVersion" style="display:none"><span>Version</span><span id="infoVersion"></span></div>
+      <div class="info-row" id="rowUpdated" style="display:none"><span>Updated</span><span id="infoUpdated"></span></div>
+      <div class="info-row" id="rowSize" style="display:none"><span>Size</span><span id="infoSize"></span></div>
+      <div class="info-row"><span>Downloads</span><span id="infoDownloads">—</span></div>
+    </div>
+  </section>
 
   <footer>
-    © 2026 444Music · All rights reserved
-    &nbsp;·&nbsp;
-    <a href="https://444music-distribution.vercel.app">Website</a>
+    © 2026 444Music · All rights reserved ·
+    <a href="https://www.444musicdistro.com/legal">Terms &amp; Privacy</a> ·
+    <a href="https://www.444musicdistro.com">Website</a>
   </footer>
 
-</div>
+</main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ============ SETTINGS YOU MAY EDIT ============ */
+var REPO = 'fourfourfourbrand444/444music';
+var APK_NAME = 'app-release.apk';
+
+// Screenshot image links. Replace or add your own. Any link that fails to load is hidden.
+var SCREENSHOTS = [
+  'https://plain-weur-prod-public.komododecks.com/202607/31/LnyIei0wL8iB1ceHYfoh/image.png',
+  'https://plain-weur-prod-public.komododecks.com/202607/31/SR2ptQlgm8KlUXREvmNz/image.png',
+  'https://plain-weur-prod-public.komododecks.com/202607/31/WOnVUHBoCnQ5Bfo9C4BH/image.png'
+];
+
+var FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg',
+  authDomain: 'usersubmissionsportal.firebaseapp.com',
+  projectId: 'usersubmissionsportal',
+  storageBucket: 'usersubmissionsportal.firebasestorage.app',
+  messagingSenderId: '734783502459',
+  appId: '1:734783502459:web:cfa2cc5de6976003b24ade'
+};
+/* ================================================ */
+
+function $(id) { return document.getElementById(id); }
+
+/* ---------- Side menu + dark mode ---------- */
+(function () {
+  var drawer = $('drawer'), scrim = $('scrim'), toggle = $('darkToggle');
+  function open() { drawer.classList.add('open'); scrim.classList.add('open'); drawer.setAttribute('aria-hidden', 'false'); }
+  function close() { drawer.classList.remove('open'); scrim.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true'); }
+  $('openMenu').addEventListener('click', open);
+  $('closeMenu').addEventListener('click', close);
+  scrim.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+  toggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+  toggle.addEventListener('change', function () {
+    var t = toggle.checked ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('m444_theme', t); } catch (e) {}
+  });
+})();
+
+/* ---------- Screenshots ---------- */
+(function () {
+  var wrap = $('shots'), sec = $('shotsSection'), left = SCREENSHOTS.length;
+  if (!left) { sec.style.display = 'none'; return; }
+  SCREENSHOTS.forEach(function (src, i) {
+    var img = new Image();
+    img.alt = '444Music screenshot ' + (i + 1);
+    img.loading = 'lazy';
+    img.onerror = function () {
+      img.remove(); left--;
+      if (left <= 0) sec.style.display = 'none';
+    };
+    img.src = src;
+    wrap.appendChild(img);
+  });
+})();
+
+/* ---------- Real download count + app info from GitHub ---------- */
+function compactCount(n) {
+  if (n < 1000) return String(n);
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n) + '+';
+}
+
+(function () {
+  fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=30')
+    .then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); })
+    .then(function (list) {
+      var total = 0, latest = null;
+      list.forEach(function (rel) {
+        if (rel.draft) return;
+        (rel.assets || []).forEach(function (a) {
+          if (a.name === APK_NAME) {
+            total += a.download_count || 0;
+            if (!latest && !rel.prerelease) latest = { rel: rel, asset: a };
+          }
+        });
+      });
+      $('statDownloads').textContent = compactCount(total);
+      $('infoDownloads').textContent = total.toLocaleString();
+      if (latest) {
+        $('infoVersion').textContent = latest.rel.tag_name;
+        $('rowVersion').style.display = '';
+        if (latest.rel.published_at) {
+          $('infoUpdated').textContent = new Date(latest.rel.published_at)
+            .toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+          $('rowUpdated').style.display = '';
+        }
+        $('infoSize').textContent = (latest.asset.size / 1048576).toFixed(1) + ' MB';
+        $('rowSize').style.display = '';
+      }
+    })
+    .catch(function () { /* leave the dashes in place */ });
+})();
+
+/* ---------- Ratings and reviews ---------- */
+var db = null;
+try { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); } catch (e) { db = null; }
+
+var reviews = [];
+var shown = 10;
+var picked = 0;
+
+function starsHtml(n) {
+  var on = '', off = '';
+  for (var i = 0; i < 5; i++) { if (i < n) on += '★'; else off += '★'; }
+  return '<span class="star-on">' + on + '</span><span class="star-off">' + off + '</span>';
+}
+
+function renderSummary() {
+  var n = reviews.length;
+  var counts = [0, 0, 0, 0, 0, 0], sum = 0;
+  reviews.forEach(function (r) { var v = Math.round(r.rating); if (v >= 1 && v <= 5) { counts[v]++; sum += v; } });
+  var avg = n ? (sum / n) : 0;
+
+  $('avgBig').textContent = n ? avg.toFixed(1) : '—';
+  $('avgStars').innerHTML = n ? starsHtml(Math.round(avg)) : '';
+  var label = n ? (n + (n === 1 ? ' review' : ' reviews')) : 'No reviews yet';
+  $('avgCount').textContent = label;
+  $('statReviews').textContent = label;
+  $('statAvg').textContent = n ? avg.toFixed(1) : '—';
+  $('statStar').style.display = n ? '' : 'none';
+
+  var bars = '';
+  for (var s = 5; s >= 1; s--) {
+    var pct = n ? Math.round(counts[s] / n * 100) : 0;
+    bars += '<div class="bar-row"><span>' + s + '</span><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div></div>';
+  }
+  $('bars').innerHTML = bars;
+}
+
+function renderList() {
+  var box = $('reviewList');
+  box.innerHTML = '';
+  if (!reviews.length) {
+    var e = document.createElement('div');
+    e.className = 'empty';
+    e.textContent = 'Be the first to review 444Music.';
+    box.appendChild(e);
+    $('moreWrap').style.display = 'none';
+    return;
+  }
+  reviews.slice(0, shown).forEach(function (r) {
+    var name = (r.name && String(r.name).trim()) || 'Anonymous';
+    var item = document.createElement('div'); item.className = 'review';
+
+    var top = document.createElement('div'); top.className = 'rev-top';
+    var av = document.createElement('div'); av.className = 'avatar'; av.textContent = name.charAt(0).toUpperCase();
+    var nm = document.createElement('div'); nm.className = 'rev-name'; nm.textContent = name;
+    top.appendChild(av); top.appendChild(nm);
+
+    var meta = document.createElement('div'); meta.className = 'rev-meta';
+    var st = document.createElement('span'); st.className = 'stars'; st.innerHTML = starsHtml(Math.round(r.rating));
+    meta.appendChild(st);
+    if (r.createdAt && r.createdAt.toDate) {
+      var d = document.createElement('span');
+      d.textContent = r.createdAt.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      meta.appendChild(d);
+    }
+
+    item.appendChild(top); item.appendChild(meta);
+    if (r.text) {
+      var t = document.createElement('div'); t.className = 'rev-text'; t.textContent = r.text;
+      item.appendChild(t);
+    }
+    box.appendChild(item);
+  });
+  $('moreWrap').style.display = reviews.length > shown ? '' : 'none';
+}
+
+function loadReviews() {
+  if (!db) { $('reviewList').innerHTML = '<div class="empty">Reviews are unavailable right now.</div>'; return; }
+  db.collection('appReviews').orderBy('createdAt', 'desc').limit(100).get()
+    .then(function (snap) {
+      reviews = snap.docs.map(function (d) { return d.data(); })
+        .filter(function (r) { return typeof r.rating === 'number'; });
+      renderSummary(); renderList();
+    })
+    .catch(function () {
+      $('reviewList').innerHTML = '<div class="empty">Reviews are unavailable right now.</div>';
+    });
+}
+
+/* star picker */
+(function () {
+  var pick = $('starPick');
+  for (var i = 1; i <= 5; i++) {
+    (function (v) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = '★';
+      b.setAttribute('aria-label', v + ' star' + (v > 1 ? 's' : ''));
+      b.addEventListener('click', function () {
+        picked = v;
+        Array.prototype.forEach.call(pick.children, function (c, idx) { c.classList.toggle('on', idx < v); });
+        setMsg('');
+      });
+      pick.appendChild(b);
+    })(i);
+  }
+})();
+
+function setMsg(text, isErr) {
+  var m = $('revMsg'); m.textContent = text; m.className = 'msg' + (isErr ? ' err' : '');
+}
+
+function alreadyRated() { try { return localStorage.getItem('m444_rated') === '1'; } catch (e) { return false; } }
+
+if (alreadyRated()) {
+  $('rateBox').innerHTML = '<h3>Thanks for rating 444Music</h3><div class="hint" style="margin:0">Your review helps other artists.</div>';
+}
+
+$('revSubmit') && $('revSubmit').addEventListener('click', function () {
+  if (!picked) { setMsg('Please choose a star rating first.', true); return; }
+  if (!db) { setMsg('Could not send your review right now. Please try again later.', true); return; }
+  var btn = $('revSubmit');
+  btn.disabled = true; setMsg('Sending…');
+  var name = $('revName').value.trim().slice(0, 40);
+  var text = $('revText').value.trim().slice(0, 500);
+  db.collection('appReviews').add({
+    name: name,
+    rating: picked,
+    text: text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function () {
+    try { localStorage.setItem('m444_rated', '1'); } catch (e) {}
+    $('rateBox').innerHTML = '<h3>Thank you</h3><div class="hint" style="margin:0">Your review was posted.</div>';
+    loadReviews();
+  }).catch(function () {
+    btn.disabled = false;
+    setMsg('Could not send your review right now. Please try again later.', true);
+  });
+});
+
+$('moreBtn').addEventListener('click', function () { shown += 10; renderList(); });
+
+renderSummary();
+loadReviews();
+</script>
 </body>
 </html>
