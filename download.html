@@ -19,246 +19,271 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #ffffff;
-  --text: #202124;
-  --text2: #5f6368;
-  --line: #dadce0;
-  --surface: #ffffff;
-  --btn-bg: #0a0a0a;
-  --btn-text: #ffffff;
-  --input-bg: #ffffff;
-  --bar-bg: #e8eaed;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --text: #1c1c1e;
+  --text2: #6c6c70;
+  --sep: #d9d9de;
+  --fill: #e5e5ea;
+  --blue: #007aff;
+  --bar: rgba(242, 242, 247, 0.82);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Roboto, "Segoe UI", Arial, sans-serif;
 }
 
 [data-theme="dark"] {
   --bg: #000000;
-  --text: #f5f5f7;
-  --text2: #a1a1a6;
-  --line: rgba(255,255,255,0.12);
-  --surface: rgba(255,255,255,0.06);
-  --btn-bg: #ffffff;
-  --btn-text: #000000;
-  --input-bg: rgba(255,255,255,0.06);
-  --bar-bg: rgba(255,255,255,0.14);
+  --card: #1c1c1e;
+  --text: #f2f2f7;
+  --text2: #98989d;
+  --sep: #38383a;
+  --fill: #3a3a3c;
+  --blue: #0a84ff;
+  --bar: rgba(0, 0, 0, 0.78);
 }
 
-html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+html { -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; }
 
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  line-height: 1.45;
-}
-
-[data-theme="dark"] body {
-  background:
-    radial-gradient(900px 520px at 85% -8%, rgba(110,110,255,0.13), transparent 70%),
-    radial-gradient(700px 420px at 0% 12%, rgba(255,255,255,0.05), transparent 70%),
-    #000;
-  background-attachment: fixed;
+  line-height: 1.4;
 }
 
 a { color: inherit; }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* TOP BAR */
 .topbar {
   position: sticky; top: 0; z-index: 20;
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-}
-[data-theme="dark"] .topbar {
-  background: rgba(0,0,0,0.55);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-  backdrop-filter: saturate(180%) blur(24px);
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--sep);
 }
 .topbar-in {
-  max-width: 980px; margin: 0 auto; padding: 0 20px;
-  height: 60px; display: flex; align-items: center; justify-content: space-between;
+  max-width: 820px; margin: 0 auto; padding: 0 20px;
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
 }
-.brand img { height: 26px; width: auto; display: block; }
+.brand img { height: 22px; width: auto; display: block; }
 [data-theme="dark"] .brand img { filter: invert(1); }
 .icon-btn {
-  width: 40px; height: 40px; border-radius: 50%;
+  width: 38px; height: 38px; border-radius: 50%;
   border: none; background: transparent; color: var(--text);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-.icon-btn:hover { background: var(--line); }
+.icon-btn:hover { background: var(--fill); }
 
 /* PAGE */
-.page { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+.page { max-width: 820px; margin: 0 auto; padding: 26px 20px 56px; }
 
 /* HEADER */
-.app-head { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+.head { display: flex; gap: 18px; align-items: flex-start; }
 .app-icon {
-  width: 92px; height: 92px; border-radius: 22%;
-  background: #ffffff; border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center; padding: 12%;
+  width: 112px; height: 112px; border-radius: 22.4%;
+  background: #ffffff; border: 1px solid var(--sep);
+  display: flex; align-items: center; justify-content: center; padding: 13%;
   flex-shrink: 0;
 }
 .app-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.app-title { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
-.app-dev { font-size: 0.95rem; font-weight: 600; color: var(--text2); margin-top: 4px; }
-.app-sub { font-size: 0.85rem; color: var(--text2); margin-top: 2px; }
+.head-text { min-width: 0; padding-top: 2px; }
+.app-title { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+.app-sub { font-size: 0.95rem; color: var(--text2); margin-top: 3px; }
+.get-row { margin-top: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.get {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 34px; min-width: 88px; padding: 0 22px;
+  border-radius: 999px; border: none;
+  background: var(--blue); color: #ffffff;
+  font-size: 0.95rem; font-weight: 700; text-decoration: none; cursor: pointer;
+  transition: opacity .15s ease;
+}
+.get:hover { opacity: .88; }
+.get:active { opacity: .7; }
+.get-note { font-size: 0.75rem; color: var(--text2); }
 
 /* STATS */
 .stats {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  margin-top: 26px; padding: 14px 0;
-  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  display: flex; margin-top: 24px; padding: 12px 0;
+  border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
+  overflow-x: auto; scrollbar-width: none;
 }
-[data-theme="dark"] .stats {
-  background: var(--surface);
-  border: 1px solid var(--line); border-radius: 18px;
-  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+.stats::-webkit-scrollbar { display: none; }
+.stat {
+  flex: 1 0 auto; min-width: 112px; padding: 0 14px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 4px;
 }
-.stat { text-align: center; padding: 4px 8px; }
-.stat + .stat { border-left: 1px solid var(--line); }
-.stat-top { font-size: 1.05rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 26px; }
-.stat-bot { font-size: 0.75rem; color: var(--text2); margin-top: 3px; }
-
-/* DOWNLOAD BUTTON */
-.dl-row { margin-top: 24px; }
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 52px; min-width: 220px; padding: 0 32px;
-  border: none; border-radius: 999px;
-  background: var(--btn-bg); color: var(--btn-text);
-  font-family: var(--font); font-size: 1rem; font-weight: 600;
-  text-decoration: none; cursor: pointer;
-  transition: opacity .15s ease, transform .1s ease;
-}
-.btn:hover { opacity: .88; }
-.btn:active { transform: scale(.98); }
-.btn[disabled] { opacity: .45; cursor: default; }
-.dl-note { font-size: 0.78rem; color: var(--text2); margin-top: 10px; }
+.stat + .stat { border-left: 1px solid var(--sep); }
+.stat-label { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text2); white-space: nowrap; }
+.stat-value { font-size: 1.3rem; font-weight: 700; line-height: 1.2; color: var(--text); min-height: 26px; display: flex; align-items: center; }
+.stat-value.small { font-size: 1rem; }
+.stat-value svg { display: block; }
+.stat-cap { font-size: 0.75rem; color: var(--text2); white-space: nowrap; min-height: 15px; }
 
 /* SECTIONS */
-section { margin-top: 38px; }
-h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.01em; }
+section { margin-top: 28px; }
+h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
 
 /* SCREENSHOTS */
-.shots { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
-.shots img {
-  height: 380px; width: auto; border-radius: 14px; flex-shrink: 0;
-  border: 1px solid var(--line); scroll-snap-align: start; display: block;
+.shots {
+  display: flex; gap: 12px; overflow-x: auto; padding: 2px 0 10px;
+  scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
 }
+.shots::-webkit-scrollbar { display: none; }
+.shot {
+  flex: 0 0 auto; height: 360px; aspect-ratio: 769 / 960;
+  border-radius: 18px; overflow: hidden; padding: 0;
+  border: 1px solid var(--sep); background: var(--card);
+  cursor: zoom-in; scroll-snap-align: start;
+}
+.shot img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* ABOUT */
-.about p { color: var(--text2); font-size: 0.95rem; max-width: 720px; }
-details { margin-top: 18px; max-width: 720px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--surface); }
-[data-theme="dark"] details { -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
-summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+.desc { position: relative; max-width: 720px; font-size: 0.95rem; line-height: 22px; max-height: 110px; overflow: hidden; }
+.desc.open { max-height: none; }
+.desc p { margin-bottom: 12px; }
+.desc p:last-child { margin-bottom: 0; }
+.desc strong { font-weight: 600; }
+.more-btn {
+  position: absolute; right: 0; bottom: 0; padding: 0 0 0 36px;
+  border: none; cursor: pointer; font-size: 0.95rem; line-height: 22px; color: var(--blue);
+  background: linear-gradient(to right, transparent, var(--bg) 40%);
+}
+
+details {
+  margin-top: 18px; max-width: 720px;
+  background: var(--card); border-radius: 12px; padding: 13px 16px;
+}
+summary { cursor: pointer; font-weight: 500; font-size: 0.95rem; }
 details ol { margin: 10px 0 0 20px; color: var(--text2); font-size: 0.9rem; }
 details li { margin-bottom: 4px; }
+details p { color: var(--text2); }
 
 /* RATINGS */
-.rating-grid { display: grid; grid-template-columns: 150px 1fr; gap: 24px; align-items: center; max-width: 560px; }
-.avg-big { font-size: 3.2rem; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
-.avg-stars { margin-top: 6px; font-size: 0.95rem; letter-spacing: 1px; }
-.avg-count { font-size: 0.78rem; color: var(--text2); margin-top: 4px; }
+.rating-grid { display: grid; grid-template-columns: 140px 1fr; gap: 22px; align-items: center; max-width: 560px; }
+.avg-big { font-size: 3.4rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+.avg-out { font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-top: 4px; }
 .bars { display: flex; flex-direction: column; gap: 5px; }
-.bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text2); }
-.bar-row span:first-child { width: 8px; text-align: right; }
-.bar-track { flex: 1; height: 8px; border-radius: 999px; background: var(--bar-bg); overflow: hidden; }
-.bar-fill { height: 100%; width: 0; background: var(--text); border-radius: 999px; }
+.bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.62rem; color: var(--text2); }
+.bar-stars { width: 36px; text-align: right; letter-spacing: 1px; }
+.bar-track { flex: 1; height: 4px; border-radius: 999px; background: var(--fill); overflow: hidden; }
+.bar-fill { height: 100%; width: 0; background: var(--text2); border-radius: 999px; }
+.avg-count { font-size: 0.75rem; color: var(--text2); margin-top: 10px; max-width: 560px; text-align: right; }
 
-.star-on { color: var(--text); }
-.star-off { color: var(--line); }
-[data-theme="dark"] .star-off { color: rgba(255,255,255,0.22); }
+.star-on { color: var(--text2); }
+.star-off { color: var(--fill); }
 
 /* RATE FORM */
-.rate-box {
-  margin-top: 26px; max-width: 560px;
-  border: 1px solid var(--line); border-radius: 16px; padding: 18px;
-  background: var(--surface);
-}
-[data-theme="dark"] .rate-box { -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
-.rate-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.rate-box { margin-top: 22px; max-width: 560px; background: var(--card); border-radius: 12px; padding: 16px; }
+.rate-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.rate-box h3 { font-size: 1rem; font-weight: 600; }
 .rate-box .hint { font-size: 0.8rem; color: var(--text2); margin-bottom: 12px; }
-.star-pick { display: flex; gap: 6px; margin-bottom: 14px; }
+.star-pick { display: flex; gap: 2px; }
 .star-pick button {
   background: none; border: none; cursor: pointer; padding: 2px;
-  font-size: 2rem; line-height: 1; color: var(--line);
+  font-size: 1.7rem; line-height: 1; color: var(--fill);
 }
-[data-theme="dark"] .star-pick button { color: rgba(255,255,255,0.22); }
-.star-pick button.on { color: var(--text); }
+.star-pick button.on { color: var(--blue); }
 .field {
-  width: 100%; border: 1px solid var(--line); border-radius: 12px;
-  background: var(--input-bg); color: var(--text);
-  font-family: var(--font); font-size: 0.95rem; padding: 12px 14px; margin-bottom: 10px;
+  width: 100%; border: 1px solid var(--sep); border-radius: 10px;
+  background: var(--bg); color: var(--text);
+  font-family: var(--font); font-size: 0.95rem; padding: 11px 13px; margin-bottom: 10px;
   outline: none;
 }
-.field:focus { border-color: var(--text2); }
-textarea.field { min-height: 90px; resize: vertical; }
+.field:focus { border-color: var(--blue); }
+textarea.field { min-height: 88px; resize: vertical; }
 .msg { font-size: 0.82rem; margin-top: 10px; color: var(--text2); min-height: 18px; }
-.msg.err { color: #d93025; }
-[data-theme="dark"] .msg.err { color: #ff6961; }
+.msg.err { color: #ff3b30; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 22px; border: none; border-radius: 999px;
+  background: var(--blue); color: #fff; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+}
+.btn[disabled] { opacity: .5; cursor: default; }
+.btn-ghost { background: transparent; color: var(--blue); padding: 0; height: auto; font-weight: 500; }
 
 /* REVIEW LIST */
-.review { padding: 18px 0; border-bottom: 1px solid var(--line); max-width: 720px; }
+.review { padding: 16px 0; border-bottom: 1px solid var(--sep); max-width: 720px; }
 .review:last-child { border-bottom: none; }
 .rev-top { display: flex; align-items: center; gap: 10px; }
 .avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--bar-bg);
+  width: 32px; height: 32px; border-radius: 50%; background: var(--fill);
   display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 0.9rem; flex-shrink: 0;
+  font-weight: 600; font-size: 0.85rem; flex-shrink: 0; color: var(--text2);
 }
 .rev-name { font-weight: 600; font-size: 0.92rem; }
-.rev-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.78rem; color: var(--text2); }
+.rev-meta { display: flex; align-items: center; gap: 8px; margin-top: 7px; font-size: 0.78rem; color: var(--text2); }
 .rev-meta .stars { font-size: 0.8rem; letter-spacing: 1px; }
-.rev-text { margin-top: 8px; font-size: 0.92rem; color: var(--text); white-space: pre-wrap; word-wrap: break-word; }
+.rev-text { margin-top: 7px; font-size: 0.92rem; white-space: pre-wrap; word-wrap: break-word; }
 .empty { color: var(--text2); font-size: 0.92rem; padding: 6px 0; }
-.more { margin-top: 14px; }
-.btn-ghost {
-  background: transparent; color: var(--text); border: 1px solid var(--line);
-  height: 42px; min-width: 0; padding: 0 22px; font-size: 0.9rem;
-}
+.more { margin-top: 12px; }
 
 /* APP INFO */
-.info { max-width: 560px; }
-.info-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.info { max-width: 560px; background: var(--card); border-radius: 12px; padding: 0 16px; }
+.info-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--sep); font-size: 0.92rem; }
+.info-row:last-child { border-bottom: none; }
 .info-row span:first-child { color: var(--text2); }
-.info-row span:last-child { text-align: right; font-weight: 500; }
+.info-row span:last-child { text-align: right; }
 
 /* FOOTER */
-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.78rem; color: var(--text2); }
+footer { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--sep); font-size: 0.78rem; color: var(--text2); }
 footer a { text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* SIDE MENU */
-.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.45); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 40; }
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,.4); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 40; }
 .scrim.open { opacity: 1; pointer-events: auto; }
 .drawer {
   position: fixed; top: 0; right: 0; bottom: 0; width: min(320px, 86vw); z-index: 50;
-  background: var(--bg); border-left: 1px solid var(--line);
+  background: var(--bg); border-left: 1px solid var(--sep);
   transform: translateX(100%); transition: transform .28s ease;
-  padding: 16px 20px; display: flex; flex-direction: column;
-}
-[data-theme="dark"] .drawer {
-  background: rgba(20,20,22,0.72);
-  -webkit-backdrop-filter: saturate(180%) blur(30px); backdrop-filter: saturate(180%) blur(30px);
+  padding: 14px 20px; display: flex; flex-direction: column;
 }
 .drawer.open { transform: translateX(0); }
-.drawer-head { display: flex; align-items: center; justify-content: space-between; height: 44px; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
-.row { display: flex; align-items: center; justify-content: space-between; padding: 16px 2px; border-bottom: 1px solid var(--line); text-decoration: none; font-size: 0.98rem; cursor: pointer; }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; height: 44px; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; }
+.group { background: var(--card); border-radius: 12px; padding: 0 16px; }
+.row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--sep); text-decoration: none; font-size: 0.98rem; cursor: pointer; }
+.row:last-child { border-bottom: none; }
 .switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
 .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
 .slider { position: absolute; inset: 0; border-radius: 999px; background: #c7c7cc; transition: background .2s ease; }
+[data-theme="dark"] .slider { background: #48484a; }
 .slider::before { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .switch input:checked + .slider { background: #34c759; }
 .switch input:checked + .slider::before { transform: translateX(20px); }
 
+/* IMAGE PREVIEW */
+.lb {
+  position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.92);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+.lb.open { opacity: 1; pointer-events: auto; }
+.lb img { max-width: 92vw; max-height: 88vh; width: auto; height: auto; border-radius: 12px; display: block; }
+.lb-btn {
+  position: absolute; width: 42px; height: 42px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.16); color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.lb-btn:hover { background: rgba(255,255,255,.26); }
+.lb-close { top: 16px; right: 16px; }
+.lb-prev { left: 16px; top: 50%; margin-top: -21px; }
+.lb-next { right: 16px; top: 50%; margin-top: -21px; }
+
 @media (max-width: 600px) {
-  .page { padding: 22px 16px 50px; }
-  .app-icon { width: 80px; height: 80px; }
-  .app-title { font-size: 1.35rem; }
-  .btn { width: 100%; }
-  .shots img { height: 300px; }
+  .page { padding: 20px 16px 48px; }
+  .app-icon { width: 96px; height: 96px; }
+  .app-title { font-size: 1.25rem; }
+  .shot { height: 300px; }
   .rating-grid { grid-template-columns: 110px 1fr; gap: 16px; }
-  .avg-big { font-size: 2.6rem; }
+  .avg-big { font-size: 2.8rem; }
+  .lb-prev, .lb-next { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
 }
 </style>
 </head>
@@ -283,61 +308,89 @@ footer a:hover { text-decoration: underline; }
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
-  <label class="row">
-    <span>Dark mode</span>
-    <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
-  </label>
-  <a class="row" href="https://www.444musicdistro.com">Website</a>
-  <a class="row" href="https://www.444musicdistro.com/legal">Terms &amp; Privacy</a>
+  <div class="group">
+    <label class="row">
+      <span>Dark mode</span>
+      <span class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></span>
+    </label>
+    <a class="row" href="https://www.444musicdistro.com">Website</a>
+    <a class="row" href="https://www.444musicdistro.com/legal">Terms &amp; Privacy</a>
+  </div>
 </aside>
+
+<div class="lb" id="lb" aria-hidden="true">
+  <button class="lb-btn lb-close" id="lbClose" aria-label="Close preview">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous image">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <img id="lbImg" alt="">
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next image">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+</div>
 
 <main class="page">
 
-  <div class="app-head">
+  <div class="head">
     <div class="app-icon">
       <img src="https://444music-distribution.vercel.app/black.png" alt="444Music icon">
     </div>
-    <div>
+    <div class="head-text">
       <h1 class="app-title">444Music</h1>
-      <div class="app-dev">444Music Distribution</div>
       <div class="app-sub">Music distribution for independent artists</div>
+      <div class="get-row">
+        <!-- Always the newest GitHub release. Every new release must be marked
+             "latest" and its file must be named exactly app-release.apk -->
+        <a class="get" id="dlBtn"
+           href="https://github.com/fourfourfourbrand444/444music/releases/latest/download/app-release.apk">Download</a>
+        <span class="get-note">Android · Free</span>
+      </div>
     </div>
   </div>
 
   <div class="stats">
     <div class="stat">
-      <div class="stat-top"><span id="statAvg">—</span><span id="statStar" style="display:none">★</span></div>
-      <div class="stat-bot" id="statReviews">No reviews yet</div>
+      <div class="stat-label" id="statReviews">No ratings</div>
+      <div class="stat-value" id="statAvg">—</div>
+      <div class="stat-cap" id="statStars">&nbsp;</div>
     </div>
     <div class="stat">
-      <div class="stat-top">Everyone</div>
-      <div class="stat-bot">Age rating</div>
+      <div class="stat-label">Age rating</div>
+      <div class="stat-value small">Everyone</div>
+      <div class="stat-cap">&nbsp;</div>
     </div>
     <div class="stat">
-      <div class="stat-top" id="statDownloads">—</div>
-      <div class="stat-bot">Downloads</div>
+      <div class="stat-label">Category</div>
+      <div class="stat-value">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </div>
+      <div class="stat-cap">Music</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Downloads</div>
+      <div class="stat-value" id="statDownloads">—</div>
+      <div class="stat-cap">Android</div>
     </div>
   </div>
 
-  <div class="dl-row">
-    <!-- Always the newest GitHub release. Every new release must be marked
-         "latest" and its file must be named exactly app-release.apk -->
-    <a class="btn" id="dlBtn"
-       href="https://github.com/fourfourfourbrand444/444music/releases/latest/download/app-release.apk">Download</a>
-    <div class="dl-note">Android · Free to download</div>
-  </div>
-
-  <section id="shotsSection">
+  <section id="shotsSection" style="margin-top:22px">
     <div class="shots" id="shots"></div>
   </section>
 
-  <section class="about">
-    <h2>About this app</h2>
-    <p>
-      444Music is a distribution platform built for independent artists.
-      Release your music to 100+ global stores, keep 100% of your royalties,
-      and follow your streams and earnings with real-time analytics, all from one app.
-    </p>
+  <section>
+    <div class="desc" id="desc">
+      <p>Release your music to the world from your phone. 444Music is a distribution platform built for independent artists. Upload your songs and cover art, submit your release, and we take it to major music stores and streaming platforms, so your fans can find you wherever they listen.</p>
+      <p><strong>Keep every dollar.</strong> There are no hidden fees. 100% of your royalties go straight to you, every time.</p>
+      <p><strong>Unlimited releases.</strong> Distribute as many releases as you want, whenever you are ready.</p>
+      <p><strong>Follow every release.</strong> See where each release stands, from draft to in review to approved, without chasing anyone for an update.</p>
+      <p><strong>Know your numbers.</strong> Check your total streams, how your streaming has grown over time, and which stores your streams come from.</p>
+      <p><strong>Get paid in the app.</strong> Watch your balance, see what each song has earned, and withdraw your earnings when you reach the minimum.</p>
+      <p><strong>Stay connected.</strong> Share updates with stories and posts, and follow other artists on 444Music.</p>
+      <p>Made for independent artists everywhere. Questions? Write to us at 444musicdistro@gmail.com.</p>
+    </div>
+
     <details>
       <summary>How to install</summary>
       <ol>
@@ -350,41 +403,46 @@ footer a:hover { text-decoration: underline; }
   </section>
 
   <section id="reviewsSection">
-    <h2>Ratings and reviews</h2>
+    <h2>Ratings &amp; Reviews</h2>
 
     <div class="rating-grid">
       <div>
         <div class="avg-big" id="avgBig">—</div>
-        <div class="avg-stars" id="avgStars"></div>
-        <div class="avg-count" id="avgCount">No reviews yet</div>
+        <div class="avg-out">out of 5</div>
       </div>
       <div class="bars" id="bars"></div>
     </div>
+    <div class="avg-count" id="avgCount">No reviews yet</div>
 
     <div class="rate-box" id="rateBox">
-      <h3>Rate this app</h3>
+      <div class="rate-head">
+        <h3>Rate this app</h3>
+        <div class="star-pick" id="starPick" role="radiogroup" aria-label="Your rating"></div>
+      </div>
       <div class="hint">Tell others what you think.</div>
-      <div class="star-pick" id="starPick" role="radiogroup" aria-label="Your rating"></div>
       <input class="field" id="revName" type="text" maxlength="40" placeholder="Your name (optional)">
       <textarea class="field" id="revText" maxlength="500" placeholder="Write a review (optional)"></textarea>
       <button class="btn" id="revSubmit" type="button">Submit</button>
       <div class="msg" id="revMsg"></div>
     </div>
 
-    <div id="reviewList" style="margin-top:22px"></div>
+    <div id="reviewList" style="margin-top:20px"></div>
     <div class="more" id="moreWrap" style="display:none">
       <button class="btn btn-ghost" id="moreBtn" type="button">Show more reviews</button>
     </div>
   </section>
 
   <section>
-    <h2>App information</h2>
+    <h2>Information</h2>
     <div class="info" id="info">
       <div class="info-row"><span>Developer</span><span>444Music Distribution</span></div>
+      <div class="info-row"><span>Category</span><span>Music</span></div>
+      <div class="info-row" id="rowSize" style="display:none"><span>Size</span><span id="infoSize"></span></div>
       <div class="info-row" id="rowVersion" style="display:none"><span>Version</span><span id="infoVersion"></span></div>
       <div class="info-row" id="rowUpdated" style="display:none"><span>Updated</span><span id="infoUpdated"></span></div>
-      <div class="info-row" id="rowSize" style="display:none"><span>Size</span><span id="infoSize"></span></div>
+      <div class="info-row"><span>Age rating</span><span>Everyone</span></div>
       <div class="info-row"><span>Downloads</span><span id="infoDownloads">—</span></div>
+      <div class="info-row"><span>Price</span><span>Free</span></div>
     </div>
   </section>
 
@@ -403,11 +461,14 @@ footer a:hover { text-decoration: underline; }
 var REPO = 'fourfourfourbrand444/444music';
 var APK_NAME = 'app-release.apk';
 
-// Screenshot image links. Replace or add your own. Any link that fails to load is hidden.
+// Screenshot image links. They all share the same size. Any link that fails to load is hidden.
 var SCREENSHOTS = [
-  'https://plain-weur-prod-public.komododecks.com/202607/31/LnyIei0wL8iB1ceHYfoh/image.png',
-  'https://plain-weur-prod-public.komododecks.com/202607/31/SR2ptQlgm8KlUXREvmNz/image.png',
-  'https://plain-weur-prod-public.komododecks.com/202607/31/WOnVUHBoCnQ5Bfo9C4BH/image.png'
+  'https://cdn.phototourl.com/member/2026-10-08-dd39cfbb-24ba-477f-870b-eabbb1d8e377.jpg',
+  'https://cdn.phototourl.com/member/2026-10-08-3f0a2a48-70f2-4a1d-bf1b-0dea7bcf750b.jpg',
+  'https://cdn.phototourl.com/member/2026-10-08-19c5013d-a78d-461d-9f57-4bf33b996963.jpg',
+  'https://cdn.phototourl.com/member/2026-10-08-fb16386f-a3b7-436f-94d5-e97354fb02ac.jpg',
+  'https://cdn.phototourl.com/member/2026-10-08-bd95abe6-5378-4f99-a350-f2bab78d0795.jpg',
+  'https://cdn.phototourl.com/member/2026-10-08-692379dd-a89e-4e47-a258-5ba6b53a5c73.png'
 ];
 
 var FIREBASE_CONFIG = {
@@ -440,21 +501,87 @@ function $(id) { return document.getElementById(id); }
   });
 })();
 
-/* ---------- Screenshots ---------- */
+/* ---------- Screenshots + full image preview ---------- */
 (function () {
   var wrap = $('shots'), sec = $('shotsSection'), left = SCREENSHOTS.length;
+  var lb = $('lb'), lbImg = $('lbImg'), current = 0, list = [];
+
   if (!left) { sec.style.display = 'none'; return; }
+
+  function show(i) {
+    current = (i + list.length) % list.length;
+    lbImg.src = list[current];
+    var many = list.length > 1;
+    $('lbPrev').style.display = many ? '' : 'none';
+    $('lbNext').style.display = many ? '' : 'none';
+  }
+  function openPreview(img) {
+    var imgs = Array.prototype.slice.call(wrap.querySelectorAll('img'));
+    list = imgs.map(function (x) { return x.src; });
+    if (!list.length) return;
+    show(Math.max(0, imgs.indexOf(img)));
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePreview() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
   SCREENSHOTS.forEach(function (src, i) {
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'shot';
+    card.setAttribute('aria-label', 'View screenshot ' + (i + 1));
     var img = new Image();
     img.alt = '444Music screenshot ' + (i + 1);
     img.loading = 'lazy';
     img.onerror = function () {
-      img.remove(); left--;
+      card.remove(); left--;
       if (left <= 0) sec.style.display = 'none';
     };
     img.src = src;
-    wrap.appendChild(img);
+    card.appendChild(img);
+    card.addEventListener('click', function () { openPreview(img); });
+    wrap.appendChild(card);
   });
+
+  $('lbClose').addEventListener('click', closePreview);
+  $('lbPrev').addEventListener('click', function (e) { e.stopPropagation(); show(current - 1); });
+  $('lbNext').addEventListener('click', function (e) { e.stopPropagation(); show(current + 1); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) closePreview(); });
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closePreview();
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+
+  var startX = null;
+  lb.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 50 && list.length > 1) show(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+})();
+
+/* ---------- About text: "more" ---------- */
+(function () {
+  var desc = $('desc');
+  if (desc.scrollHeight <= desc.clientHeight + 2) return;
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'more-btn';
+  btn.textContent = 'more';
+  btn.addEventListener('click', function () {
+    desc.classList.add('open');
+    btn.remove();
+  });
+  desc.appendChild(btn);
 })();
 
 /* ---------- Real download count + app info from GitHub ---------- */
@@ -515,17 +642,16 @@ function renderSummary() {
   var avg = n ? (sum / n) : 0;
 
   $('avgBig').textContent = n ? avg.toFixed(1) : '—';
-  $('avgStars').innerHTML = n ? starsHtml(Math.round(avg)) : '';
-  var label = n ? (n + (n === 1 ? ' review' : ' reviews')) : 'No reviews yet';
+  var label = n ? (n + (n === 1 ? ' rating' : ' ratings')) : 'No reviews yet';
   $('avgCount').textContent = label;
-  $('statReviews').textContent = label;
+  $('statReviews').textContent = n ? label : 'No ratings';
   $('statAvg').textContent = n ? avg.toFixed(1) : '—';
-  $('statStar').style.display = n ? '' : 'none';
+  $('statStars').innerHTML = n ? starsHtml(Math.round(avg)) : '&nbsp;';
 
   var bars = '';
   for (var s = 5; s >= 1; s--) {
     var pct = n ? Math.round(counts[s] / n * 100) : 0;
-    bars += '<div class="bar-row"><span>' + s + '</span><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div></div>';
+    bars += '<div class="bar-row"><span class="bar-stars">' + new Array(s + 1).join('★') + '</span><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div></div>';
   }
   $('bars').innerHTML = bars;
 }
@@ -601,16 +727,17 @@ function loadReviews() {
 })();
 
 function setMsg(text, isErr) {
-  var m = $('revMsg'); m.textContent = text; m.className = 'msg' + (isErr ? ' err' : '');
+  var m = $('revMsg'); if (!m) return;
+  m.textContent = text; m.className = 'msg' + (isErr ? ' err' : '');
 }
 
 function alreadyRated() { try { return localStorage.getItem('m444_rated') === '1'; } catch (e) { return false; } }
 
 if (alreadyRated()) {
-  $('rateBox').innerHTML = '<h3>Thanks for rating 444Music</h3><div class="hint" style="margin:0">Your review helps other artists.</div>';
+  $('rateBox').innerHTML = '<h3>Thanks for rating 444Music</h3><div class="hint" style="margin:6px 0 0">Your review helps other artists.</div>';
 }
 
-$('revSubmit') && $('revSubmit').addEventListener('click', function () {
+if ($('revSubmit')) $('revSubmit').addEventListener('click', function () {
   if (!picked) { setMsg('Please choose a star rating first.', true); return; }
   if (!db) { setMsg('Could not send your review right now. Please try again later.', true); return; }
   var btn = $('revSubmit');
@@ -624,7 +751,7 @@ $('revSubmit') && $('revSubmit').addEventListener('click', function () {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   }).then(function () {
     try { localStorage.setItem('m444_rated', '1'); } catch (e) {}
-    $('rateBox').innerHTML = '<h3>Thank you</h3><div class="hint" style="margin:0">Your review was posted.</div>';
+    $('rateBox').innerHTML = '<h3>Thank you</h3><div class="hint" style="margin:6px 0 0">Your review was posted.</div>';
     loadReviews();
   }).catch(function () {
     btn.disabled = false;
