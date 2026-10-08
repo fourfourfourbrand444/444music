@@ -2,658 +2,271 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Distribute Your Music — Platforms</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Stores — 444Music</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
 
-/* ─── RESET & BASE ─────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --accent:       #ffffff;
-  --accent-dim:   rgba(255,255,255,0.10);
-  --accent-border:rgba(255,255,255,0.4);
-  --bg:           #070707;
-  --bg-2:         #0d0d0d;
-  --glass:        rgba(255,255,255,0.035);
-  --glass-border: rgba(255,255,255,0.09);
-  --glass-hover:  rgba(255,255,255,0.06);
-  --text:         #f2f2f2;
-  --text-muted:   rgba(242,242,242,0.42);
-  --text-dim:     rgba(242,242,242,0.22);
-  --radius-card:  16px;
-  --radius-btn:   14px;
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --s2: #2c2c2e;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t1: #ffffff;
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.30);
+  --yellow: #fdeb0d;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
 
-html { scroll-behavior: smooth; }
-
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
+  font-family: var(--font); background: var(--bg); color: var(--t1);
+  min-height: 100vh; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased;
 }
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 
-/* ─── BACKGROUND ───────────────────────────────────────────── */
-.bg-mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.bg-mesh::before {
-  content: '';
-  position: absolute; top: -20%; left: -10%; width: 55%; height: 70%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.035) 0%, transparent 70%);
+.shell { max-width: 640px; margin: 0 auto; padding: 0 16px calc(130px + env(safe-area-inset-bottom)); }
+
+/* top bar */
+.bar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  height: 56px; margin: 0 -16px; padding: 0 16px;
+  background: rgba(0,0,0,0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
 }
-.bg-mesh::after {
-  content: '';
-  position: absolute; bottom: -15%; right: -5%; width: 50%; height: 60%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.02) 0%, transparent 70%);
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
-  opacity: 0.6;
-}
+.back { width: 36px; height: 36px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; transition: transform .3s var(--ease); }
+.back:active { transform: scale(0.92); }
+.back svg { width: 16px; height: 16px; }
+.bar-title { font-size: 17px; font-weight: 600; }
+.bar-spacer { width: 36px; }
 
-/* ─── WRAPPER ──────────────────────────────────────────────── */
-.wrapper { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 56px 24px 100px; }
+/* hero */
+.hero { padding: 14px 4px 6px; }
+.hero h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }
+.hero p { font-size: 17px; line-height: 1.4; color: var(--t2); margin-top: 6px; }
 
-/* ─── CONTROLS BAR ─────────────────────────────────────────── */
-.controls-bar { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.5s ease forwards; }
-
-.search-wrap { position: relative; flex: 1; min-width: 220px; }
-.search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; }
+/* search */
+.search { position: relative; margin-top: 20px; }
+.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--t2); pointer-events: none; }
 #searchInput {
-  width: 100%; padding: 13px 16px 13px 44px; background: var(--glass); border: 1px solid var(--glass-border);
-  border-radius: var(--radius-btn); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%; height: 40px; padding: 0 14px 0 36px; border: 0; outline: 0; border-radius: 12px;
+  background: var(--fill); color: var(--t1); font: inherit; font-size: 17px;
+  appearance: none; -webkit-appearance: none;
 }
-#searchInput::placeholder { color: var(--text-dim); }
-#searchInput:focus { border-color: rgba(255,255,255,0.35); box-shadow: 0 0 0 3px rgba(255,255,255,0.06); }
+#searchInput::placeholder { color: var(--t2); }
 
-.count-badge {
-  display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--glass);
-  border: 1px solid var(--glass-border); border-radius: var(--radius-btn); font-size: 13px; font-weight: 500;
-  color: var(--text-muted); white-space: nowrap;
-}
-.count-badge .count-num { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: #fff; min-width: 22px; text-align: center; display: inline-block; }
+/* sections */
+.sec { display: block; }
+.sh { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 16px 8px; }
+.sh h2 { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--t2); }
+.sh span { font-size: 13px; color: var(--t3); font-variant-numeric: tabular-nums; }
+.group { background: var(--s1); border-radius: 16px; overflow: hidden; }
 
-/* ─── SECTION LABEL ────────────────────────────────────────── */
-.section-label { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; padding-left: 2px; }
+/* platform rows (locked: every store is selected) */
+.platform { position: relative; display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 8px 16px; cursor: default; user-select: none; }
+.platform + .platform::before { content: ''; position: absolute; top: 0; left: 70px; right: 0; height: 0.5px; background: var(--sep); }
+.platform-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--s2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.platform-icon img { width: 56%; height: 56%; object-fit: contain; display: block; }
+.platform-icon i { font-size: 16px; color: var(--t2); }
+.pname { flex: 1; min-width: 0; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ptag { font-size: 13px; color: var(--t3); flex-shrink: 0; }
+.tick { width: 22px; height: 22px; border-radius: 50%; background: var(--yellow); color: #000; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tick svg { width: 12px; height: 12px; }
 
-/* ─── GRID ─────────────────────────────────────────────────── */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
+/* more stores row */
+.more { display: flex; align-items: center; gap: 14px; padding: 16px; }
+.more .platform-icon i { color: var(--yellow); }
+.more strong { display: block; font-size: 17px; font-weight: 600; }
+.more span { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--t2); }
 
-/* ─── PLATFORM CARD (locked/read-only: no hover lift, no pointer) ─── */
-.platform {
-  position: relative;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-  padding: 24px 14px 20px;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
-  cursor: default;
-  user-select: none;
-  transform: translateZ(0);
-}
-
-/* SELECTED STATE — every card is selected and locked */
-.platform.selected {
-  background-color: rgba(255,255,255,0.09);
-  border-color: rgba(255,255,255,0.55);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.35);
-}
-
-/* CHECKMARK BADGE */
-.checkmark {
-  position: absolute; top: 10px; right: 10px; width: 22px; height: 22px;
-  background: var(--accent); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
-.checkmark svg { width: 12px; height: 12px; color: #000; stroke-width: 3; }
-
-/* PLATFORM ICON */
-.platform-icon {
-  width: 52px; height: 52px; border-radius: 14px; overflow: hidden;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.platform-icon img { width: 60%; height: 60%; object-fit: contain; }
-.platform-icon i { font-size: 20px; color: rgba(255,255,255,0.75); }
-
-/* PLATFORM NAME */
-.platform span.pname { font-size: 12.5px; font-weight: 600; text-align: center; color: #fff; line-height: 1.3; }
-
-/* POPULAR tag */
-.tag-popular {
-  position: absolute; top: 9px; left: 9px; font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
-  text-transform: uppercase; padding: 3px 7px; border-radius: 999px;
-  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.16);
-}
-
-/* ─── DIVIDER ──────────────────────────────────────────────── */
-.more-label { display: flex; align-items: center; gap: 16px; margin: 38px 0 28px; }
-.more-label::before, .more-label::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
-.more-label span { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
-
-/* ─── ACTIONS ──────────────────────────────────────────────── */
-.actions-bar { position: sticky; bottom: 0; z-index: 10; padding: 18px 0 0; }
-.actions-inner {
-  display: flex; align-items: center; gap: 12px; padding: 16px 20px;
-  background: rgba(7,7,7,0.86); border: 1px solid var(--glass-border); border-radius: 20px;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  flex-wrap: wrap; justify-content: flex-end;
-}
-.actions-left { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 120px; }
-.actions-left span { font-size: 13px; color: var(--text-muted); }
-.actions-left strong { font-family: 'Outfit', sans-serif; color: #fff; font-size: 15px; }
-
-.btn {
-  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 14px; padding: 13px 26px;
-  border-radius: var(--radius-btn); border: none; cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
-  display: flex; align-items: center; gap: 8px; letter-spacing: 0.01em; white-space: nowrap;
-}
-.btn:active { transform: scale(0.96) !important; }
-
-.btn-primary { background: #ffffff; color: #080808; }
-.btn-primary:hover { background: #d9d9d9; }
-
-/* ─── MORE STORES BANNER ───────────────────────────────────── */
-.more-banner {
-  display: flex; align-items: center; gap: 18px;
-  margin-top: 30px; padding: 22px 24px;
-  border: 1px dashed rgba(255,255,255,0.22);
-  border-radius: var(--radius-card);
-  background: rgba(255,255,255,0.03);
-}
-.more-banner i { font-size: 22px; color: rgba(255,255,255,0.7); flex-shrink: 0; }
-.more-banner-text { display: flex; flex-direction: column; gap: 4px; }
-.more-banner-text strong { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
-.more-banner-text span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-
-@media (max-width: 600px) {
-  .more-banner { padding: 18px; gap: 14px; }
-  .more-banner-text strong { font-size: 14px; }
-  .more-banner-text span { font-size: 12.5px; }
-}
-
-/* ─── EMPTY STATE ──────────────────────────────────────────── */
-.empty-state { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: var(--text-dim); gap: 12px; font-size: 14px; }
-.empty-state svg { width: 40px; height: 40px; opacity: 0.3; }
+/* empty */
+.empty-state { display: none; flex-direction: column; align-items: center; gap: 10px; padding: 70px 20px; color: var(--t2); font-size: 17px; }
+.empty-state svg { width: 36px; height: 36px; opacity: 0.4; }
 .empty-state.visible { display: flex; }
 
-/* ─── FADE UP ───────────────────────────────────────────────── */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ─── SCROLLBAR ─────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-
-/* ─── RESPONSIVE ────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .wrapper { padding: 36px 14px 80px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
-  .platform { padding: 18px 10px 15px; }
-  .platform-icon { width: 44px; height: 44px; }
-  .actions-inner { gap: 8px; }
-  .btn { padding: 12px 18px; font-size: 13px; }
+/* dock */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,0.72); border-top: 0.5px solid var(--sep);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+.dock-in { max-width: 640px; margin: 0 auto; }
+.dock-count { margin-bottom: 8px; text-align: center; font-size: 14px; color: var(--t2); }
+.dock-count strong { color: var(--t1); font-weight: 600; font-variant-numeric: tabular-nums; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px;
+  border-radius: 999px; background: var(--yellow); color: #000; font-size: 17px; font-weight: 600;
+  transition: transform .3s var(--ease);
 }
+.btn:active { transform: scale(0.98); }
 
+@media (max-width: 420px) { .hero h1 { font-size: 30px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
+
 <body>
-
-<div class="bg-mesh"></div>
-
-<div class="wrapper">
-
-  <div class="controls-bar">
-    <div class="search-wrap">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="Search platforms…" autocomplete="off">
-    </div>
-    <div class="count-badge">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <span class="count-num" id="countNum">0</span>
-      <span>selected</span>
-    </div>
-  </div>
-
-  <!-- MAJOR PLATFORMS -->
-  <div class="section-label">Major Streaming Platforms</div>
-  <div class="grid" id="platformGrid">
-
-    <div class="platform selected" data-name="Spotify">
-      <div class="tag-popular">Top</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/spotify/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-spotify\'></i>'"></div>
-      <span class="pname">Spotify</span>
-    </div>
-
-    <div class="platform selected" data-name="Apple Music">
-      <div class="tag-popular">Top</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/applemusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-apple\'></i>'"></div>
-      <span class="pname">Apple Music</span>
-    </div>
-
-    <div class="platform selected" data-name="YouTube Music">
-      <div class="tag-popular">Top</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/youtubemusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-youtube\'></i>'"></div>
-      <span class="pname">YouTube Music</span>
-    </div>
-
-    <div class="platform selected" data-name="Amazon Music">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/amazonmusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-amazon\'></i>'"></div>
-      <span class="pname">Amazon Music</span>
-    </div>
-
-    <div class="platform selected" data-name="Tidal">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/tidal/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-water\'></i>'"></div>
-      <span class="pname">Tidal</span>
-    </div>
-
-    <div class="platform selected" data-name="Deezer">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/deezer/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-circle-play\'></i>'"></div>
-      <span class="pname">Deezer</span>
-    </div>
-
-    <div class="platform selected" data-name="Pandora">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/pandora/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-radio\'></i>'"></div>
-      <span class="pname">Pandora</span>
-    </div>
-
-    <div class="platform selected" data-name="SoundCloud">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/soundcloud/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-soundcloud\'></i>'"></div>
-      <span class="pname">SoundCloud</span>
-    </div>
-
-    <div class="platform selected" data-name="Napster">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/napster/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
-      <span class="pname">Napster</span>
-    </div>
-
-    <div class="platform selected" data-name="Qobuz">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-compact-disc"></i></div>
-      <span class="pname">Qobuz</span>
-    </div>
-
-    <div class="platform selected" data-name="iHeart Radio">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/iheartradio/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-tower-broadcast\'></i>'"></div>
-      <span class="pname">iHeart Radio</span>
-    </div>
-
-    <div class="platform selected" data-name="Anghami">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-globe"></i></div>
-      <span class="pname">Anghami</span>
-    </div>
-
-  </div>
-
-  <!-- SOCIAL PLATFORMS -->
-  <div class="more-label"><span>Social &amp; Video Platforms</span></div>
-  <div class="grid" id="socialGrid">
-
-    <div class="platform selected" data-name="TikTok">
-      <div class="tag-popular">Viral</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-tiktok\'></i>'"></div>
-      <span class="pname">TikTok</span>
-    </div>
-
-    <div class="platform selected" data-name="Instagram">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/instagram/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-instagram\'></i>'"></div>
-      <span class="pname">Instagram</span>
-    </div>
-
-    <div class="platform selected" data-name="Facebook">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/facebook/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-facebook\'></i>'"></div>
-      <span class="pname">Facebook</span>
-    </div>
-
-    <div class="platform selected" data-name="YouTube">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-youtube\'></i>'"></div>
-      <span class="pname">YouTube</span>
-    </div>
-
-    <div class="platform selected" data-name="Snapchat">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/snapchat/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-snapchat\'></i>'"></div>
-      <span class="pname">Snapchat</span>
-    </div>
-
-    <div class="platform selected" data-name="Triller">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-video"></i></div>
-      <span class="pname">Triller</span>
-    </div>
-
-  </div>
-
-  <!-- AFRICAN PLATFORMS -->
-  <div class="more-label"><span>African Platforms</span></div>
-  <div class="grid" id="africaGrid">
-
-    <div class="platform selected" data-name="Boomplay">
-      <div class="tag-popular">Africa</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">Boomplay</span>
-    </div>
-
-    <div class="platform selected" data-name="Audiomack">
-      <div class="tag-popular">Africa</div>
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/audiomack/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-headphones\'></i>'"></div>
-      <span class="pname">Audiomack</span>
-    </div>
-
-    <div class="platform selected" data-name="Mdundo">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-compact-disc"></i></div>
-      <span class="pname">Mdundo</span>
-    </div>
-
-    <div class="platform selected" data-name="Aftown">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">Aftown</span>
-    </div>
-
-    <div class="platform selected" data-name="Spinlet">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-headphones-simple"></i></div>
-      <span class="pname">Spinlet</span>
-    </div>
-
-    <div class="platform selected" data-name="Iroking">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-play"></i></div>
-      <span class="pname">iROKING</span>
-    </div>
-
-  </div>
-
-  <!-- RADIO & SYNC -->
-  <div class="more-label"><span>Radio, Sync &amp; More</span></div>
-  <div class="grid" id="radioGrid">
-
-    <div class="platform selected" data-name="Shazam">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/shazam/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-magnifying-glass\'></i>'"></div>
-      <span class="pname">Shazam</span>
-    </div>
-
-    <div class="platform selected" data-name="Beatport">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/beatport/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-record-vinyl\'></i>'"></div>
-      <span class="pname">Beatport</span>
-    </div>
-
-    <div class="platform selected" data-name="Bandcamp">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/bandcamp/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-bandcamp\'></i>'"></div>
-      <span class="pname">Bandcamp</span>
-    </div>
-
-    <div class="platform selected" data-name="7digital">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-download"></i></div>
-      <span class="pname">7digital</span>
-    </div>
-
-    <div class="platform selected" data-name="Resso">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-waveform-lines"></i></div>
-      <span class="pname">Resso</span>
-    </div>
-
-    <div class="platform selected" data-name="NetEase Music">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/neteasecloudmusic/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-cloud\'></i>'"></div>
-      <span class="pname">NetEase</span>
-    </div>
-
-    <div class="platform selected" data-name="KKBox">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/kkbox/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-box\'></i>'"></div>
-      <span class="pname">KKBox</span>
-    </div>
-
-    <div class="platform selected" data-name="Joox">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">Joox</span>
-    </div>
-
-    <div class="platform selected" data-name="Claro Música">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-signal"></i></div>
-      <span class="pname">Claro Música</span>
-    </div>
-
-    <div class="platform selected" data-name="Fizy">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-play"></i></div>
-      <span class="pname">Fizy</span>
-    </div>
-
-    <div class="platform selected" data-name="Yandex Music">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/yandex/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-music\'></i>'"></div>
-      <span class="pname">Yandex Music</span>
-    </div>
-
-    <div class="platform selected" data-name="Gaana">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">Gaana</span>
-    </div>
-
-    <div class="platform selected" data-name="JioSaavn">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/jiosaavn/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-play\'></i>'"></div>
-      <span class="pname">JioSaavn</span>
-    </div>
-
-    <div class="platform selected" data-name="Hungama">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-headphones"></i></div>
-      <span class="pname">Hungama</span>
-    </div>
-
-    <div class="platform selected" data-name="Nuuday">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
-      <span class="pname">Nuuday</span>
-    </div>
-
-    <div class="platform selected" data-name="MediaNet">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-network-wired"></i></div>
-      <span class="pname">MediaNet</span>
-    </div>
-
-  </div>
-
-  <!-- MORE GLOBAL & REGIONAL PLATFORMS -->
-  <div class="more-label"><span>More Global &amp; Regional Platforms</span></div>
-  <div class="grid" id="moreGrid">
-
-    <div class="platform selected" data-name="AMI Entertainment">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-headphones"></i></div>
-      <span class="pname">AMI Entertainment</span>
-    </div>
-
-    <div class="platform selected" data-name="AWA">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">AWA</span>
-    </div>
-
-    <div class="platform selected" data-name="Gracenote">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-database"></i></div>
-      <span class="pname">Gracenote</span>
-    </div>
-
-    <div class="platform selected" data-name="InProdicon">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-icons"></i></div>
-      <span class="pname">InProdicon</span>
-    </div>
-
-    <div class="platform selected" data-name="LINE">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/line/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-comment\'></i>'"></div>
-      <span class="pname">LINE</span>
-    </div>
-
-    <div class="platform selected" data-name="MixCloud">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/mixcloud/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-mixcloud\'></i>'"></div>
-      <span class="pname">MixCloud</span>
-    </div>
-
-    <div class="platform selected" data-name="Music Aroma">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-music"></i></div>
-      <span class="pname">Music Aroma</span>
-    </div>
-
-    <div class="platform selected" data-name="Muud">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-face-smile"></i></div>
-      <span class="pname">Muud</span>
-    </div>
-
-    <div class="platform selected" data-name="Peloton">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/peloton/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-person-biking\'></i>'"></div>
-      <span class="pname">Peloton</span>
-    </div>
-
-    <div class="platform selected" data-name="Saavn">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/jiosaavn/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-play\'></i>'"></div>
-      <span class="pname">Saavn</span>
-    </div>
-
-    <div class="platform selected" data-name="Sirius XM">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/siriusxm/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-satellite-dish\'></i>'"></div>
-      <span class="pname">Sirius XM</span>
-    </div>
-
-    <div class="platform selected" data-name="SoundMouse">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-computer-mouse"></i></div>
-      <span class="pname">SoundMouse</span>
-    </div>
-
-    <div class="platform selected" data-name="Tencent">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/tencentqq/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-solid fa-comment-dots\'></i>'"></div>
-      <span class="pname">Tencent</span>
-    </div>
-
-    <div class="platform selected" data-name="iMusica">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-signal"></i></div>
-      <span class="pname">iMusica</span>
-    </div>
-
-    <div class="platform selected" data-name="KION">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-film"></i></div>
-      <span class="pname">KION</span>
-    </div>
-
-    <div class="platform selected" data-name="Zvuk">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><i class="fa-solid fa-volume-high"></i></div>
-      <span class="pname">Zvuk</span>
-    </div>
-
-    <div class="platform selected" data-name="VK Музыка">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/vk/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-vk\'></i>'"></div>
-      <span class="pname">VK Музыка</span>
-    </div>
-
-    <div class="platform selected" data-name="ОК Музыка">
-      <div class="checkmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="platform-icon"><img src="https://cdn.simpleicons.org/odnoklassniki/ffffff" alt="" onerror="this.parentNode.innerHTML='<i class=\'fa-brands fa-odnoklassniki\'></i>'"></div>
-      <span class="pname">ОК Музыка</span>
-    </div>
-
-  </div>
-
-  <!-- +150 MORE STORES BANNER -->
-  <div class="more-banner">
-    <i class="fa-solid fa-layer-group"></i>
-    <div class="more-banner-text">
-      <strong>+150 more stores &amp; platforms</strong>
-      <span>Your music also reaches every additional store in our distribution network worldwide.</span>
+<div class="shell">
+
+  <header class="bar">
+    <button type="button" class="back" onclick="history.back()" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="bar-title">Stores</span>
+    <span class="bar-spacer"></span>
+  </header>
+
+  <div class="hero">
+    <h1>Your stores</h1>
+    <p>Your release goes to every platform below.</p>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="Search" autocomplete="off">
     </div>
   </div>
 
-  <!-- EMPTY STATE -->
-  <div class="empty-state" id="emptyState">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <span>No platforms match your search</span>
-  </div>
+  <div id="sections"></div>
 
-  <!-- STICKY ACTIONS BAR -->
-  <div class="actions-bar">
-    <div class="actions-inner">
-      <div class="actions-left">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        <span>All <strong id="countNum2">0</strong> platforms selected</span>
+  <div class="sec" id="moreSec">
+    <div class="sh"><h2>And more</h2></div>
+    <div class="group">
+      <div class="more">
+        <div class="platform-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div>
+          <strong>+150 more stores</strong>
+          <span>Your music also reaches every other store in our distribution network worldwide.</span>
+        </div>
       </div>
-      <button class="btn btn-primary" onclick="continueNext()">
-        Continue
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </button>
     </div>
   </div>
 
-</div><!-- /wrapper -->
+  <div class="empty-state" id="emptyState">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>No results</span>
+  </div>
+
+  <div class="dock">
+    <div class="dock-in">
+      <div class="dock-count">All <strong id="countNum">0</strong> platforms selected</div>
+      <button class="btn" type="button" onclick="continueNext()">Continue</button>
+    </div>
+  </div>
+
+</div>
 
 <script>
+/* Each item: [data-name, simpleicons slug (or null), Font Awesome fallback, tag, display name] */
+const SECTIONS = [
+  { title: 'Streaming', items: [
+    ['Spotify','spotify','fa-brands fa-spotify','Top'],
+    ['Apple Music','applemusic','fa-brands fa-apple','Top'],
+    ['YouTube Music','youtubemusic','fa-brands fa-youtube','Top'],
+    ['Amazon Music','amazonmusic','fa-brands fa-amazon'],
+    ['Tidal','tidal','fa-solid fa-water'],
+    ['Deezer','deezer','fa-solid fa-circle-play'],
+    ['Pandora','pandora','fa-solid fa-radio'],
+    ['SoundCloud','soundcloud','fa-brands fa-soundcloud'],
+    ['Napster','napster','fa-solid fa-music'],
+    ['Qobuz',null,'fa-solid fa-compact-disc'],
+    ['iHeart Radio','iheartradio','fa-solid fa-tower-broadcast'],
+    ['Anghami',null,'fa-solid fa-globe']
+  ]},
+  { title: 'Social & video', items: [
+    ['TikTok','tiktok','fa-brands fa-tiktok','Viral'],
+    ['Instagram','instagram','fa-brands fa-instagram'],
+    ['Facebook','facebook','fa-brands fa-facebook'],
+    ['YouTube','youtube','fa-brands fa-youtube'],
+    ['Snapchat','snapchat','fa-brands fa-snapchat'],
+    ['Triller',null,'fa-solid fa-video']
+  ]},
+  { title: 'African platforms', items: [
+    ['Boomplay',null,'fa-solid fa-music','Africa'],
+    ['Audiomack','audiomack','fa-solid fa-headphones','Africa'],
+    ['Mdundo',null,'fa-solid fa-compact-disc'],
+    ['Aftown',null,'fa-solid fa-music'],
+    ['Spinlet',null,'fa-solid fa-headphones-simple'],
+    ['Iroking',null,'fa-solid fa-play','','iROKING']
+  ]},
+  { title: 'Radio, sync & more', items: [
+    ['Shazam','shazam','fa-solid fa-magnifying-glass'],
+    ['Beatport','beatport','fa-solid fa-record-vinyl'],
+    ['Bandcamp','bandcamp','fa-brands fa-bandcamp'],
+    ['7digital',null,'fa-solid fa-download'],
+    ['Resso',null,'fa-solid fa-wave-square'],
+    ['NetEase Music','neteasecloudmusic','fa-solid fa-cloud','','NetEase'],
+    ['KKBox','kkbox','fa-solid fa-box'],
+    ['Joox',null,'fa-solid fa-music'],
+    ['Claro Música',null,'fa-solid fa-signal'],
+    ['Fizy',null,'fa-solid fa-play'],
+    ['Yandex Music','yandex','fa-solid fa-music'],
+    ['Gaana',null,'fa-solid fa-music'],
+    ['JioSaavn','jiosaavn','fa-solid fa-play'],
+    ['Hungama',null,'fa-solid fa-headphones'],
+    ['Nuuday',null,'fa-solid fa-tower-broadcast'],
+    ['MediaNet',null,'fa-solid fa-network-wired']
+  ]},
+  { title: 'Global & regional', items: [
+    ['AMI Entertainment',null,'fa-solid fa-headphones'],
+    ['AWA',null,'fa-solid fa-music'],
+    ['Gracenote',null,'fa-solid fa-database'],
+    ['InProdicon',null,'fa-solid fa-icons'],
+    ['LINE','line','fa-solid fa-comment'],
+    ['MixCloud','mixcloud','fa-brands fa-mixcloud'],
+    ['Music Aroma',null,'fa-solid fa-music'],
+    ['Muud',null,'fa-solid fa-face-smile'],
+    ['Peloton','peloton','fa-solid fa-person-biking'],
+    ['Saavn','jiosaavn','fa-solid fa-play'],
+    ['Sirius XM','siriusxm','fa-solid fa-satellite-dish'],
+    ['SoundMouse',null,'fa-solid fa-computer-mouse'],
+    ['Tencent','tencentqq','fa-solid fa-comment-dots'],
+    ['iMusica',null,'fa-solid fa-signal'],
+    ['KION',null,'fa-solid fa-film'],
+    ['Zvuk',null,'fa-solid fa-volume-high'],
+    ['VK Музыка','vk','fa-brands fa-vk'],
+    ['ОК Музыка','odnoklassniki','fa-brands fa-odnoklassniki']
+  ]}
+];
+
+const TICK = '<div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>';
+
+document.getElementById('sections').innerHTML = SECTIONS.map(sec => `
+  <div class="sec">
+    <div class="sh"><h2>${sec.title}</h2><span>${sec.items.length}</span></div>
+    <div class="group">
+      ${sec.items.map(([name, slug, fa, tag, label]) => `
+        <div class="platform selected" data-name="${name}">
+          <div class="platform-icon">${slug
+            ? `<img src="https://cdn.simpleicons.org/${slug}/ffffff" alt="" data-fa="${fa}">`
+            : `<i class="${fa}"></i>`}</div>
+          <span class="pname">${label || name}</span>
+          ${tag ? `<span class="ptag">${tag}</span>` : ''}
+          ${TICK}
+        </div>`).join('')}
+    </div>
+  </div>`).join('');
+
+/* Icon fallback if a brand logo fails to load */
+document.querySelectorAll('.platform-icon img').forEach(img => {
+  img.addEventListener('error', () => {
+    img.parentNode.innerHTML = `<i class="${img.dataset.fa}"></i>`;
+  });
+});
+
 const searchInput = document.getElementById('searchInput');
 const emptyState  = document.getElementById('emptyState');
+const moreSec     = document.getElementById('moreSec');
 
-/* All platforms are pre-selected and locked — no click-to-toggle.
-   updateCount just reflects the total (always everything) on load. */
+/* All platforms are pre-selected and locked — no click-to-toggle. */
 function updateCount() {
-  const n = document.querySelectorAll('.platform').length;
-  document.getElementById('countNum').textContent  = n;
-  document.getElementById('countNum2').textContent = n;
+  document.getElementById('countNum').textContent = document.querySelectorAll('.platform').length;
 }
 
 searchInput.addEventListener('input', () => {
@@ -661,12 +274,17 @@ searchInput.addEventListener('input', () => {
   let visible = 0;
 
   document.querySelectorAll('.platform').forEach(item => {
-    const name = item.dataset.name.toLowerCase();
-    const match = !q || name.includes(q);
+    const match = !q || item.dataset.name.toLowerCase().includes(q);
     item.style.display = match ? '' : 'none';
     if (match) visible++;
   });
 
+  document.querySelectorAll('#sections .sec').forEach(sec => {
+    const any = [...sec.querySelectorAll('.platform')].some(p => p.style.display !== 'none');
+    sec.style.display = any ? '' : 'none';
+  });
+
+  moreSec.style.display = q ? 'none' : '';
   emptyState.classList.toggle('visible', visible === 0 && q.length > 0);
 });
 
@@ -679,4 +297,4 @@ function continueNext() {
 updateCount();
 </script>
 </body>
-      </html>
+</html>
