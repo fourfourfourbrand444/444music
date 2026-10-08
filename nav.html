@@ -2,607 +2,511 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Pricing — 444Music Distribution</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Simple pricing. Pay once per release, no subscriptions. Keep 100% of your royalties.">
+<meta name="theme-color" content="#ffffff">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
-  :root{
-    --black:#060606;
-    --panel:#0e0e0e;
-    --panel-2:#131313;
-    --line: rgba(255,255,255,0.11);
-    --line-soft: rgba(255,255,255,0.06);
-    --white:#ffffff;
-    --muted: rgba(255,255,255,0.58);
-    --muted-2: rgba(255,255,255,0.38);
-    --radius: 16px;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--black);
-    color:var(--white);
-    font-family:'DM Sans', sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3{
-    font-family:'Sora', sans-serif;
-    margin:0;
-  }
-  .mono{
-    font-family:'DM Mono', monospace;
-    letter-spacing:0.02em;
-  }
-  a{color:inherit;}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .wrap{
-    max-width:1080px;
-    margin:0 auto;
-    padding:0 24px;
-  }
+:root {
+  --yellow: #fdeb0d;
+  --ink: #1c1c1e;
+  --ink2: #6c6c70;
+  --grey: #f2f2f7;
+  --sep: rgba(60,60,67,0.14);
+  --dark-card: #1c1c1e;
+  --dark-ink2: #98989f;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
+}
 
-  /* ── Nav ── */
-  nav{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:26px 0;
-    border-bottom:1px solid var(--line-soft);
-  }
-  .logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-family:'Sora', sans-serif;
-    font-weight:700;
-    font-size:17px;
-    letter-spacing:-0.01em;
-  }
-  .logo .mark{
-    width:26px;height:26px;
-    border-radius:7px;
-    background:var(--white);
-    color:var(--black);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'DM Mono', monospace;
-    font-size:12px;
-    font-weight:500;
-  }
-  .nav-cta{
-    font-size:13px;
-    font-weight:600;
-    padding:9px 18px;
-    border:1px solid var(--line);
-    border-radius:100px;
-    text-decoration:none;
-    white-space:nowrap;
-  }
-  .nav-cta:hover{background:var(--white); color:var(--black); border-color:var(--white);}
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--grey); }
+body {
+  font-family: var(--font);
+  background: #ffffff;
+  color: var(--ink);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+body.lock { overflow: hidden; }
+a { color: inherit; }
+button { font-family: inherit; }
 
-  /* ── Hero ── */
-  .hero{
-    padding:88px 0 56px;
-    text-align:center;
-  }
-  .hero h1{
-    font-size:clamp(34px, 5.2vw, 58px);
-    font-weight:800;
-    line-height:1.06;
-    letter-spacing:-0.02em;
-    max-width:780px;
-    margin:0 auto;
-  }
-  .hero p{
-    max-width:520px;
-    margin:22px auto 0;
-    color:var(--muted);
-    font-size:16.5px;
-    line-height:1.6;
-  }
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 60;
+  background: rgba(255,255,255,0.74);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  backdrop-filter: saturate(180%) blur(22px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s ease;
+}
+.nav.scrolled { border-bottom-color: var(--sep); }
+.nav-in { max-width: 1200px; margin: 0 auto; height: 60px; padding: 0 6%; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { display: flex; align-items: center; }
+.nav-logo img { height: 36px; width: auto; display: block; }
+.menu-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(120,120,128,0.12); color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .3s var(--ease);
+}
+.menu-btn:active { transform: scale(0.92); }
 
-  /* ── Pipeline strip ── */
-  .pipeline{
-    display:flex;
-    align-items:stretch;
-    justify-content:center;
-    gap:0;
-    margin:56px 0 8px;
-    flex-wrap:wrap;
-  }
-  .pstep{
-    flex:1 1 0;
-    min-width:130px;
-    padding:20px 14px;
-    text-align:center;
-    position:relative;
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    border-left:1px solid var(--line);
-  }
-  .pstep:last-child{border-right:1px solid var(--line);}
-  .pstep .num{
-    font-family:'DM Mono', monospace;
-    font-size:11px;
-    color:var(--muted-2);
-    display:block;
-    margin-bottom:8px;
-  }
-  .pstep .label{
-    font-family:'Sora', sans-serif;
-    font-weight:600;
-    font-size:14.5px;
-  }
-  .pstep .sub{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:5px;
-    line-height:1.4;
-  }
-  .pstep::after{
-    content:"→";
-    position:absolute;
-    right:-11px;
-    top:50%;
-    transform:translateY(-50%);
-    color:var(--muted-2);
-    font-size:14px;
-    z-index:2;
-    background:var(--black);
-    width:20px;
-  }
-  .pstep:last-child::after{content:none;}
+/* MENU SHEET */
+.scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.38); opacity: 0; pointer-events: none; transition: opacity .35s ease; z-index: 90; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; margin: 0 auto; max-width: 460px; z-index: 100;
+  background: rgba(246,246,248,0.88);
+  -webkit-backdrop-filter: saturate(180%) blur(30px); backdrop-filter: saturate(180%) blur(30px);
+  border-radius: 26px 26px 0 0;
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom));
+  transform: translateY(105%); transition: transform .5s var(--ease);
+}
+.sheet.open { transform: translateY(0); }
+@media (min-width: 700px) { .sheet { bottom: 24px; border-radius: 26px; } }
+.grabber { width: 36px; height: 5px; border-radius: 3px; background: rgba(60,60,67,0.3); margin: 0 auto 6px; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 4px; }
+.sheet-title { font-size: 17px; font-weight: 600; }
+.sheet-done { border: none; background: none; color: #007aff; font-size: 17px; font-weight: 600; cursor: pointer; padding: 6px 4px; }
+.list { background: #ffffff; border-radius: 14px; margin-top: 6px; overflow: hidden; }
+.row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 16px; font-size: 17px; color: #000; text-decoration: none;
+  transition: background-color .15s ease;
+}
+.row + .row { border-top: 1px solid var(--sep); }
+.row:active { background: rgba(0,0,0,0.05); }
+.row::after { content: ""; width: 8px; height: 8px; border-top: 2px solid #c4c4c7; border-right: 2px solid #c4c4c7; transform: rotate(45deg); margin-right: 4px; }
+.pill {
+  display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 999px;
+  font-size: 17px; font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+  transition: transform .3s var(--ease), opacity .2s ease;
+}
+.pill:active { transform: scale(0.98); }
+.pill.yellow { background: var(--yellow); color: #000; }
 
-  /* ── Pricing grid ── */
-  .pricing{
-    padding:72px 0 40px;
-  }
-  .section-head{
-    text-align:center;
-    margin-bottom:44px;
-  }
-  .section-head h2{
-    font-size:clamp(24px,3vw,32px);
-    font-weight:700;
-    letter-spacing:-0.01em;
-  }
-  .section-head p{
-    color:var(--muted);
-    font-size:14.5px;
-    margin-top:10px;
-  }
-  .currency-note{
-    display:inline-flex;
-    gap:6px;
-    align-items:center;
-    font-family:'DM Mono', monospace;
-    font-size:12px;
-    color:var(--muted-2);
-    margin-top:14px;
-  }
+/* STORE BUTTONS */
+.store-stack { display: flex; flex-direction: column; gap: 12px; width: max-content; max-width: 100%; }
+.store-btn {
+  display: flex; align-items: center; gap: 13px; width: 232px; height: 60px; padding: 0 20px 0 18px;
+  border: none; border-radius: 14px; cursor: pointer; text-decoration: none; text-align: left;
+  font-family: var(--font); background: #000000; color: #ffffff;
+  transition: transform .3s var(--ease);
+}
+.store-btn:active { transform: scale(0.97); }
+.sb-icon { height: 26px; width: auto; display: block; flex-shrink: 0; filter: invert(1); }
+.sb-apple { width: 26px; height: 26px; fill: currentColor; flex-shrink: 0; }
+.sb-text { display: block; min-width: 0; }
+.sb-text small { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.07em; opacity: 0.62; line-height: 1; }
+.sb-text strong { display: block; font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-top: 3px; }
+.sheet-stores { width: 100%; margin-top: 14px; }
+.sheet-stores .store-btn { width: 100%; }
 
-  .plans{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:18px;
-  }
-  @media (max-width: 860px){
-    .plans{grid-template-columns:1fr;}
-    .pipeline{flex-direction:column;}
-    .pstep{border:1px solid var(--line) !important;}
-    .pstep::after{content:none;}
-  }
+/* iOS ALERT */
+.alert-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.36); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 200; }
+.alert-scrim.open { opacity: 1; pointer-events: auto; }
+.alert {
+  position: fixed; left: 50%; top: 50%; width: 270px; z-index: 210; text-align: center; color: #000;
+  background: rgba(250,250,252,0.9);
+  -webkit-backdrop-filter: saturate(180%) blur(30px); backdrop-filter: saturate(180%) blur(30px);
+  border-radius: 14px;
+  transform: translate(-50%, -50%) scale(1.12); opacity: 0; pointer-events: none;
+  transition: transform .32s var(--ease), opacity .22s ease;
+}
+.alert.open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+.alert-body { padding: 20px 16px 18px; }
+.alert-body h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+.alert-body p { font-size: 13px; margin-top: 5px; color: #3c3c43; line-height: 1.4; }
+.alert-btn { display: block; width: 100%; border: none; background: none; border-top: 1px solid rgba(60,60,67,0.29); padding: 13px; font: 600 17px var(--font); color: #007aff; cursor: pointer; border-radius: 0 0 14px 14px; }
+.alert-btn:active { background: rgba(0,0,0,0.06); }
 
-  .plan{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:30px 26px 26px;
-    display:flex;
-    flex-direction:column;
-    position:relative;
-    transition: transform .25s ease, border-color .25s ease;
-  }
-  .plan:hover{ transform: translateY(-3px); border-color: rgba(255,255,255,0.22); }
+/* HERO */
+.hero { background: #ffffff; padding: 9vh 6% 64px; text-align: center; }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 600; background: var(--yellow); color: #000; padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+.hero h1 { font-size: clamp(36px, 7vw, 68px); font-weight: 700; letter-spacing: -0.04em; line-height: 1.04; max-width: 800px; margin: 0 auto; }
+.hero p { max-width: 520px; margin: 18px auto 0; font-size: clamp(16px, 1.6vw, 19px); color: var(--ink2); }
 
-  .plan.featured{
-    background:var(--white);
-    color:var(--black);
-    border-color:var(--white);
-  }
-  .plan.featured .plan-desc{ color: rgba(0,0,0,0.6); }
-  .plan.featured .price .amount{ color: var(--black); }
-  .plan.featured .price .sub{ color: rgba(0,0,0,0.5); }
-  .plan.featured .feat{ color: rgba(0,0,0,0.78); }
-  .plan.featured .feat svg{ stroke:#060606; }
-  .plan.featured .plan-cta{ background:var(--black); color:var(--white); }
-  .plan.featured .plan-cta:hover{ background:#222; }
-  .plan.featured hr{ border-color: rgba(0,0,0,0.12); }
+/* SECTIONS */
+.sec { position: relative; border-radius: 28px 28px 0 0; margin-top: -28px; padding: 100px 6% 76px; }
+.sec.grey { background: var(--grey); color: var(--ink); }
+.sec.dark { background: #000000; color: #f5f5f7; }
+.sec-in { max-width: 1100px; margin: 0 auto; }
+.h2 { font-size: clamp(30px, 4.6vw, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.08; }
+.lead { font-size: clamp(16px, 1.6vw, 19px); color: var(--ink2); margin-top: 12px; max-width: 560px; }
+.dark .lead { color: var(--dark-ink2); }
+.center { text-align: center; }
+.center .lead { margin-left: auto; margin-right: auto; }
 
-  .badge{
-    position:absolute;
-    top:-11px; left:26px;
-    background:var(--white);
-    color:var(--black);
-    font-family:'DM Mono', monospace;
-    font-size:10.5px;
-    font-weight:500;
-    padding:4px 10px;
-    border-radius:100px;
-    letter-spacing:0.03em;
-  }
-  .plan.featured .badge{
-    background:var(--black);
-    color:var(--white);
-  }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
-  .plan-name{
-    font-size:13px;
-    font-family:'DM Mono', monospace;
-    color:var(--muted);
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-  }
-  .plan.featured .plan-name{ color:rgba(0,0,0,0.5); }
+/* STEPS */
+.steps { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.step { background: #ffffff; border-radius: 22px; padding: 22px; }
+.num { width: 30px; height: 30px; border-radius: 50%; background: var(--yellow); color: #000; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.step h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+.step p { font-size: 14px; color: var(--ink2); line-height: 1.5; }
 
-  .plan-title{
-    font-size:21px;
-    font-weight:700;
-    margin-top:8px;
-    font-family:'Sora', sans-serif;
-  }
-  .plan-desc{
-    font-size:13.5px;
-    color:var(--muted);
-    margin-top:8px;
-    line-height:1.55;
-    min-height:56px;
-  }
+/* PLANS */
+.plans { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+.plan { background: #ffffff; border-radius: 26px; padding: 28px 24px 24px; display: flex; flex-direction: column; position: relative; }
+.plan.featured { background: var(--dark-card); color: #f5f5f7; }
+.badge { position: absolute; top: 18px; right: 18px; background: var(--yellow); color: #000; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: 0.02em; }
+.plan-name { font-size: 13px; font-weight: 600; color: var(--ink2); }
+.featured .plan-name { color: var(--dark-ink2); }
+.plan-title { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; margin-top: 4px; }
+.plan-desc { font-size: 14.5px; color: var(--ink2); margin-top: 10px; line-height: 1.55; }
+.featured .plan-desc { color: var(--dark-ink2); }
+.price { margin-top: 22px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.price .amount { font-size: 40px; font-weight: 700; letter-spacing: -0.04em; }
+.price .sub { font-size: 14px; color: var(--ink2); }
+.featured .price .sub { color: var(--dark-ink2); }
+.features { list-style: none; margin-top: 20px; flex: 1; }
+.features li { position: relative; padding: 12px 0 12px 26px; border-top: 1px solid var(--sep); font-size: 14.5px; color: var(--ink2); line-height: 1.45; }
+.featured .features li { border-top-color: rgba(255,255,255,0.12); color: #d1d1d6; }
+.features li::before { content: ""; position: absolute; left: 3px; top: 16px; width: 5px; height: 10px; border-right: 2px solid #34c759; border-bottom: 2px solid #34c759; transform: rotate(40deg); }
+.plan-cta { margin-top: 22px; display: flex; align-items: center; justify-content: center; height: 50px; border-radius: 999px; font-size: 17px; font-weight: 600; text-decoration: none; background: rgba(120,120,128,0.14); color: #000; transition: transform .3s var(--ease); }
+.plan-cta:active { transform: scale(0.98); }
+.featured .plan-cta { background: var(--yellow); color: #000; }
 
-  .price{
-    margin-top:22px;
-    display:flex;
-    align-items:baseline;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-  .price .amount{
-    font-family:'Sora', sans-serif;
-    font-size:34px;
-    font-weight:800;
-    letter-spacing:-0.02em;
-  }
-  .price .sub{
-    font-size:13px;
-    color:var(--muted);
-    font-family:'DM Mono', monospace;
-  }
+/* TRUST */
+.trust-grid { margin-top: 34px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.trust-item { background: var(--dark-card); border-radius: 22px; padding: 24px 18px; text-align: center; }
+.trust-item .n { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; }
+.trust-item .l { font-size: 13.5px; color: var(--dark-ink2); margin-top: 6px; }
 
-  hr{
-    border:none;
-    border-top:1px solid var(--line);
-    margin:22px 0 18px;
-  }
+/* FAQ */
+.faq { margin-top: 32px; max-width: 760px; background: #ffffff; border-radius: 24px; overflow: hidden; }
+.faq-item + .faq-item { border-top: 1px solid var(--sep); }
+.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; background: none; border: none; text-align: left; font-size: 16px; font-weight: 500; color: var(--ink); cursor: pointer; }
+.faq-q::after { content: ""; flex-shrink: 0; width: 8px; height: 8px; border-right: 2px solid #aeaeb2; border-bottom: 2px solid #aeaeb2; transform: rotate(45deg); transition: transform .4s var(--ease); margin-right: 4px; }
+.faq-item.open .faq-q::after { transform: rotate(-135deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .45s var(--ease); }
+.faq-a p { padding: 0 20px 20px; font-size: 15px; color: var(--ink2); line-height: 1.6; }
 
-  .features{
-    list-style:none;
-    padding:0; margin:0;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    flex:1;
-  }
-  .feat{
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    font-size:13.5px;
-    color: rgba(255,255,255,0.82);
-    line-height:1.5;
-  }
-  .feat svg{
-    flex-shrink:0;
-    margin-top:2px;
-    width:15px; height:15px;
-    stroke:#fff;
-    stroke-width:2;
-    fill:none;
-  }
+/* CTA */
+.cta { margin-top: 56px; background: #000000; color: #ffffff; border-radius: 28px; padding: 56px 24px; text-align: center; }
+.cta h2 { font-size: clamp(30px, 4.6vw, 46px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.08; }
+.cta p { color: var(--dark-ink2); font-size: 16px; margin: 12px auto 28px; max-width: 460px; }
+.cta .pill.yellow { width: 100%; max-width: 280px; margin: 0 auto; }
 
-  .plan-cta{
-    margin-top:26px;
-    display:block;
-    text-align:center;
-    padding:13px;
-    border-radius:10px;
-    background:var(--white);
-    color:var(--black);
-    text-decoration:none;
-    font-weight:700;
-    font-size:14px;
-    border:1px solid transparent;
-    cursor:pointer;
-  }
-  .plan-cta:hover{ background:#eee; }
-  .plan:not(.featured) .plan-cta{
-    background:transparent;
-    color:var(--white);
-    border:1px solid var(--line);
-  }
-  .plan:not(.featured) .plan-cta:hover{
-    background:rgba(255,255,255,0.06);
-    border-color:rgba(255,255,255,0.3);
-  }
+/* FOOTER */
+.footer { position: relative; background: var(--yellow); color: #000000; border-radius: 28px 28px 0 0; margin-top: -28px; padding: 72px 6% calc(32px + env(safe-area-inset-bottom)); }
+.footer-in { max-width: 1100px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+.footer-logo img { height: 40px; width: auto; display: block; }
+.footer-text { font-size: 15px; color: rgba(0,0,0,0.65); max-width: 300px; margin: 14px 0 22px; }
+.footer .store-stack { margin-bottom: 22px; }
+.socials { display: flex; gap: 10px; }
+.social { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.09); color: #000; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 16px; transition: background-color .2s ease, transform .3s var(--ease); }
+.social:hover { background: rgba(0,0,0,0.16); }
+.social:active { transform: scale(0.92); }
+.footer-col h4 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 15px; color: rgba(0,0,0,0.7); text-decoration: none; margin-bottom: 12px; }
+.footer-col a:hover { color: #000; }
+.footer-bottom { margin-top: 48px; padding-top: 22px; border-top: 1px solid rgba(0,0,0,0.16); font-size: 13px; color: rgba(0,0,0,0.6); }
 
-  /* ── Trust strip ── */
-  .trust{
-    padding:56px 0;
-    border-top:1px solid var(--line-soft);
-    border-bottom:1px solid var(--line-soft);
-    margin-top:60px;
-  }
-  .trust-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:28px;
-    text-align:center;
-  }
-  @media (max-width:760px){
-    .trust-grid{grid-template-columns:repeat(2,1fr);}
-  }
-  @media (max-width:420px){
-    .trust-grid{grid-template-columns:1fr; gap:22px;}
-  }
-  .trust-item .num{
-    font-family:'Sora', sans-serif;
-    font-size:26px;
-    font-weight:800;
-  }
-  .trust-item .label{
-    font-size:12.5px;
-    color:var(--muted);
-    margin-top:6px;
-  }
-
-  /* ── FAQ ── */
-  .faq{
-    padding:70px 0;
-    max-width:760px;
-    margin:0 auto;
-  }
-  .faq-item{
-    border-bottom:1px solid var(--line-soft);
-    padding:22px 0;
-  }
-  .faq-item h3{
-    font-size:15.5px;
-    font-weight:600;
-    font-family:'DM Sans', sans-serif;
-  }
-  .faq-item p{
-    font-size:13.5px;
-    color:var(--muted);
-    margin:10px 0 0;
-    line-height:1.6;
-  }
-
-  /* ── Footer CTA ── */
-  .footer-cta{
-    text-align:center;
-    padding:70px 24px 90px;
-  }
-  .footer-cta h2{
-    font-size:clamp(24px,3.4vw,36px);
-    font-weight:800;
-    letter-spacing:-0.02em;
-  }
-  .footer-cta p{
-    color:var(--muted);
-    margin-top:14px;
-    font-size:14.5px;
-  }
-  .footer-cta .plan-cta{
-    display:inline-block;
-    margin-top:26px;
-    padding:14px 32px;
-  }
-  footer{
-    border-top:1px solid var(--line-soft);
-    padding:26px 0;
-    text-align:center;
-    color:var(--muted-2);
-    font-size:12.5px;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ transition:none !important; }
-  }
-
-  /* ── Mobile ── */
-  @media (max-width: 600px){
-    .wrap{ padding:0 18px; }
-    nav{ padding:18px 0; }
-    .logo{ font-size:15px; }
-    .nav-cta{ font-size:12.5px; padding:8px 14px; }
-    .hero{ padding:52px 0 36px; }
-    .hero p{ font-size:15px; }
-    .pipeline{ margin:36px 0 8px; }
-    .pstep{ min-width:0; flex:1 1 45%; padding:16px 10px; }
-    .pricing{ padding:52px 0 24px; }
-    .plan{ padding:24px 20px 22px; }
-    .trust{ padding:40px 0; margin-top:40px; }
-    .faq{ padding:48px 0; }
-    .footer-cta{ padding:52px 20px 64px; }
-  }
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  .steps, .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  .plans { grid-template-columns: 1fr; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 7vh 6% 56px; }
+  .sec { padding: 84px 6% 60px; }
+  .cta { padding: 44px 20px; }
+}
+@media (max-width: 420px) {
+  .steps, .trust-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <nav>
-    <div class="logo"><span class="mark">4</span>444Music</div>
-    <a href="login.html" class="nav-cta">Release a track</a>
+<!-- NAV -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="nav-logo" href="index.html" aria-label="444Music home">
+      <img src="https://www.444musicdistro.com/black.png" alt="444Music">
+    </a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- MENU SHEET -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <div class="grabber"></div>
+  <div class="sheet-head">
+    <span class="sheet-title">444Music</span>
+    <button class="sheet-done" id="sheetDone" type="button">Done</button>
+  </div>
+  <nav class="list">
+    <a class="row" href="nav.html">Pricing</a>
+    <a class="row" href="legal.html">About</a>
+    <a class="row" href="faq.html">FAQ</a>
+    <a class="row" href="https://www.youtube.com/@444musicdistribution" target="_blank" rel="noopener">Watch tutorials</a>
+    <a class="row" href="mailto:444musicdistro@gmail.com">Contact</a>
   </nav>
-
-  <section class="hero">
-    <h1>Your music, out there.<br>No label, no gatekeepers.</h1>
-    <p>Upload once, distribute everywhere — Spotify, Apple Music, Boomplay, Audiomack and more. Pay only when you're ready to go live.</p>
-  </section>
-
-  <div id="pipeline" class="pipeline">
-    <div class="pstep">
-      <span class="num mono">01</span>
-      <div class="label">Submit</div>
-      <div class="sub">Upload your track & artwork</div>
-    </div>
-    <div class="pstep">
-      <span class="num mono">02</span>
-      <div class="label">Draft</div>
-      <div class="sub">Sits safely on your dashboard</div>
-    </div>
-    <div class="pstep">
-      <span class="num mono">03</span>
-      <div class="label">Pay</div>
-      <div class="sub">Whenever you're ready</div>
-    </div>
-    <div class="pstep">
-      <span class="num mono">04</span>
-      <div class="label">Live</div>
-      <div class="sub">On every platform, worldwide</div>
-    </div>
+  <div class="store-stack sheet-stores">
+    <a class="store-btn" href="download.html">
+      <img class="sb-icon" src="https://www.444musicdistro.com/black.png" alt="">
+      <span class="sb-text"><small>DOWNLOAD ON</small><strong>444Music</strong></span>
+    </a>
+    <button class="store-btn" type="button" data-apple>
+      <svg class="sb-apple" viewBox="12 0 146 170" aria-hidden="true"><path d="M150.37 130.25 C147.92 135.91 145.02 141.12 141.66 145.91 C137.08 152.44 133.33 156.96 130.44 159.47 C125.96 163.59 121.16 165.7 116.02 165.82 C112.33 165.82 107.88 164.77 102.7 162.64 C97.51 160.52 92.74 159.47 88.36 159.47 C83.78 159.47 78.87 160.52 73.61 162.64 C68.35 164.77 64.11 165.88 60.87 165.99 C55.93 166.2 51.02 163.99 46.12 159.47 C42.99 156.74 39.07 152.06 34.36 145.43 C29.32 138.35 25.17 130.14 21.91 120.78 C18.42 110.67 16.68 100.88 16.68 91.4 C16.68 80.54 19.02 71.18 23.71 63.34 C27.39 57.03 32.29 52.05 38.43 48.39 C44.57 44.73 51.2 42.87 58.34 42.75 C62.25 42.75 67.38 43.96 73.76 46.34 C80.12 48.73 84.21 49.94 86.0 49.94 C87.34 49.94 91.87 48.53 99.55 45.7 C106.82 43.08 112.95 41.99 117.96 42.42 C131.56 43.52 141.78 48.88 148.57 58.55 C136.41 65.92 130.4 76.25 130.52 89.5 C130.63 99.82 134.38 108.41 141.73 115.23 C145.06 118.39 148.78 120.84 152.92 122.59 C152.02 125.19 151.08 127.68 150.08 130.07 Z M119.11 7.24 C119.11 15.33 116.15 22.88 110.25 29.86 C103.13 38.19 94.52 43.0 85.18 42.24 C85.06 41.27 85.0 40.25 85.0 39.17 C85.0 31.4 88.38 23.08 94.4 16.29 C97.41 12.85 101.24 9.99 105.88 7.71 C110.51 5.46 114.89 4.22 119.0 4.0 C119.07 5.06 119.11 6.12 119.11 7.24 Z"/></svg>
+      <span class="sb-text"><small>Download on the</small><strong>App Store</strong></span>
+    </button>
   </div>
 </div>
 
-<div class="wrap">
-  <section class="pricing" id="pricing">
-    <div class="section-head">
-      <h2>Simple pricing. No subscriptions.</h2>
-      <p>Pay per release — never a monthly fee. Prices shown in Ghana cedis and US dollars.</p>
-      <div class="currency-note mono">GHS · USD — same rate everywhere</div>
-    </div>
+<!-- APPLE COMING SOON ALERT -->
+<div class="alert-scrim" id="alertScrim"></div>
+<div class="alert" id="alertBox" role="alertdialog" aria-modal="true" aria-labelledby="alertTitle" aria-describedby="alertMsg" aria-hidden="true">
+  <div class="alert-body">
+    <h3 id="alertTitle">Coming soon</h3>
+    <p id="alertMsg">The iPhone app is on its way. Please check back shortly.</p>
+  </div>
+  <button class="alert-btn" id="alertOk" type="button">OK</button>
+</div>
 
+<!-- HERO -->
+<section class="hero">
+  <span class="eyebrow">Pricing</span>
+  <h1>Your music, out there.<br>No label, no gatekeepers.</h1>
+  <p>Upload once, distribute everywhere. Spotify, Apple Music, Boomplay, Audiomack and more. Pay only when you're ready to go live.</p>
+</section>
+
+<!-- PIPELINE -->
+<section class="sec grey">
+  <div class="sec-in">
+    <div class="reveal center">
+      <h2 class="h2">How a release moves.</h2>
+      <p class="lead">Four simple steps from upload to worldwide.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="num">1</div><h3>Submit</h3><p>Upload your track and artwork.</p></div>
+      <div class="step reveal"><div class="num">2</div><h3>Draft</h3><p>Sits safely on your dashboard.</p></div>
+      <div class="step reveal"><div class="num">3</div><h3>Pay</h3><p>Whenever you're ready.</p></div>
+      <div class="step reveal"><div class="num">4</div><h3>Live</h3><p>On every platform, worldwide.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="sec grey" style="background:#ffffff; padding-top:100px;">
+  <div class="sec-in">
+    <div class="reveal center">
+      <h2 class="h2">Simple pricing. No subscriptions.</h2>
+      <p class="lead">Pay per release, never a monthly fee. Shown in Ghana cedis and US dollars at the same rate everywhere.</p>
+    </div>
     <div class="plans">
 
-      <!-- Plan 1: Draft & Release -->
-      <div class="plan">
-        <div class="plan-name mono">Single</div>
+      <div class="plan reveal" style="background:var(--grey);">
+        <div class="plan-name">Single</div>
         <div class="plan-title">Draft &amp; Release</div>
-        <div class="plan-desc">Upload now, decide later. Your track saves as a draft the moment you submit it — nothing is charged until you choose to publish.</div>
-        <div class="price">
-          <span class="amount">Free</span>
-          <span class="sub">to submit</span>
-        </div>
-        <hr>
+        <div class="plan-desc">Upload now, decide later. Your track saves as a draft the moment you submit it. Nothing is charged until you choose to publish.</div>
+        <div class="price"><span class="amount">Free</span><span class="sub">to submit</span></div>
         <ul class="features">
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Upload your track & cover art anytime</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Appears instantly on your dashboard</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Held as a draft — no expiry, no pressure</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Pay GHS 39 / $3 whenever you're ready to go live</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Standard review before release</li>
+          <li>Upload your track &amp; cover art anytime</li>
+          <li>Appears instantly on your dashboard</li>
+          <li>Held as a draft, no expiry, no pressure</li>
+          <li>Pay GHS 39 / $3 whenever you're ready to go live</li>
+          <li>Standard review before release</li>
         </ul>
-        <a href="login.html" class="plan-cta">Start a draft</a>
+        <a href="login.html" class="plan-cta" style="background:#ffffff;">Start a draft</a>
       </div>
 
-      <!-- Plan 2: Instant Release -->
-      <div class="plan featured">
-        <div class="badge mono">MOST POPULAR</div>
-        <div class="plan-name mono">Single</div>
+      <div class="plan featured reveal">
+        <div class="badge">Most popular</div>
+        <div class="plan-name">Single</div>
         <div class="plan-title">Instant Release</div>
-        <div class="plan-desc">Ready now? Pay upfront and skip the wait — your track moves straight into review the moment payment clears.</div>
-        <div class="price">
-          <span class="amount">GHS 39</span>
-          <span class="sub mono">≈ $3 USD</span>
-        </div>
-        <hr>
+        <div class="plan-desc">Ready now? Pay upfront and skip the wait. Your track moves straight into review the moment payment clears.</div>
+        <div class="price"><span class="amount">GHS 39</span><span class="sub">≈ $3 USD</span></div>
         <ul class="features">
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Goes to review as soon as payment is confirmed</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No draft-holding step — fastest path to live</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Distributed to Spotify, Apple Music, Boomplay & more</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Full earnings dashboard from day one</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One-time payment — track is yours, forever</li>
+          <li>Goes to review as soon as payment is confirmed</li>
+          <li>No draft-holding step, the fastest path to live</li>
+          <li>Distributed to Spotify, Apple Music, Boomplay &amp; more</li>
+          <li>Full earnings dashboard from day one</li>
+          <li>One-time payment, track is yours forever</li>
         </ul>
         <a href="login.html" class="plan-cta">Release instantly</a>
       </div>
 
-      <!-- Plan 3: EP / Album -->
-      <div class="plan">
-        <div class="plan-name mono">Project</div>
+      <div class="plan reveal" style="background:var(--grey);">
+        <div class="plan-name">Project</div>
         <div class="plan-title">EP / Album</div>
-        <div class="plan-desc">One price for the whole project. Upload as many tracks as your EP or album needs — no per-track charges, ever.</div>
-        <div class="price">
-          <span class="amount">GHS 69</span>
-          <span class="sub mono">≈ $6 USD</span>
-        </div>
-        <hr>
+        <div class="plan-desc">One price for the whole project. Upload as many tracks as your EP or album needs, with no per-track charges, ever.</div>
+        <div class="price"><span class="amount">GHS 69</span><span class="sub">≈ $6 USD</span></div>
         <ul class="features">
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Unlimited tracklist — 3 tracks or 30</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Same fast pipeline: pay → review → live</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One shared cover art & metadata set for the project</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Best value per track for full projects</li>
-          <li class="feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Delivered to every major platform worldwide</li>
+          <li>Unlimited tracklist, 3 tracks or 30</li>
+          <li>Same fast pipeline: pay, review, live</li>
+          <li>One shared cover art &amp; metadata set for the project</li>
+          <li>Best value per track for full projects</li>
+          <li>Delivered to every major platform worldwide</li>
         </ul>
-        <a href="login.html" class="plan-cta">Release your project</a>
+        <a href="login.html" class="plan-cta" style="background:#ffffff;">Release your project</a>
       </div>
 
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="trust">
+<!-- TRUST -->
+<section class="sec dark">
+  <div class="sec-in">
+    <div class="reveal center">
+      <h2 class="h2">You keep what you earn.</h2>
+    </div>
     <div class="trust-grid">
-      <div class="trust-item">
-        <div class="num">100%</div>
-        <div class="label">Royalties kept by the artist</div>
-      </div>
-      <div class="trust-item">
-        <div class="num">$50</div>
-        <div class="label">Minimum withdrawal</div>
-      </div>
-      <div class="trust-item">
-        <div class="num">GHS · $</div>
-        <div class="label">Priced in cedis & dollars</div>
-      </div>
-      <div class="trust-item">
-        <div class="num">No expiry</div>
-        <div class="label">Drafts never disappear</div>
-      </div>
+      <div class="trust-item reveal"><div class="n">100%</div><div class="l">Royalties kept by the artist</div></div>
+      <div class="trust-item reveal"><div class="n">$50</div><div class="l">Minimum withdrawal</div></div>
+      <div class="trust-item reveal"><div class="n">GHS · $</div><div class="l">Priced in cedis &amp; dollars</div></div>
+      <div class="trust-item reveal"><div class="n">No expiry</div><div class="l">Drafts never disappear</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="faq" id="faq">
-    <div class="section-head" style="margin-bottom:34px;">
-      <h2>Questions, answered</h2>
+<!-- FAQ + CTA -->
+<section class="sec grey">
+  <div class="sec-in">
+    <div class="reveal">
+      <h2 class="h2">Questions, answered.</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item"><button class="faq-q" type="button">What's the difference between Draft &amp; Release and Instant Release?</button><div class="faq-a"><p>Both cost the same, GHS 39 / $3. The only difference is timing. Draft &amp; Release lets you upload now and pay whenever you decide to publish. Instant Release charges upfront so your track skips straight to review with no waiting.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button">Can I release an EP or full album?</button><div class="faq-a"><p>Yes. The EP/Album plan is a flat GHS 69 / $6 for the entire project, no matter how many tracks it contains. One cover, one set of metadata, one release.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button">Do prices change based on my location?</button><div class="faq-a"><p>No. Every plan is shown in both Ghana cedis and US dollars at the same rate, so artists releasing from anywhere pay the same fair price.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button">Is there a subscription or recurring fee?</button><div class="faq-a"><p>Never. You pay once per release. There's no monthly plan, no renewal, and no hidden charge after your track goes live.</p></div></div>
     </div>
 
-    <div class="faq-item">
-      <h3>What's the difference between Draft &amp; Release and Instant Release?</h3>
-      <p>Both cost the same — GHS 39 / $3 — the only difference is timing. Draft & Release lets you upload now and pay whenever you decide to publish. Instant Release charges upfront so your track skips straight to review with no waiting.</p>
+    <div class="cta reveal">
+      <h2>Your next release starts here.</h2>
+      <p>Upload your track, choose your plan, and go live on every major platform.</p>
+      <a class="pill yellow" href="login.html">Get started free</a>
     </div>
-    <div class="faq-item">
-      <h3>Can I release an EP or full album?</h3>
-      <p>Yes. The EP/Album plan is a flat GHS 69 / $6 for the entire project, no matter how many tracks it contains — one cover, one set of metadata, one release.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Do prices change based on my location?</h3>
-      <p>No. Every plan is shown in both Ghana cedis and US dollars at the same rate, so artists releasing from anywhere pay the same fair price.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Is there a subscription or recurring fee?</h3>
-      <p>Never. You pay once per release. There's no monthly plan, no renewal, and no hidden charge after your track goes live.</p>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <section class="footer-cta">
-    <h2>Your next release starts here.</h2>
-    <p>Upload your track, choose your plan, and go live on every major platform.</p>
-    <a href="login.html" class="plan-cta">Get started free</a>
-  </section>
-</div>
-
-<footer>
-  © 444Music Distribution — built for independent artists worldwide.
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-in">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="footer-logo" href="index.html"><img src="https://www.444musicdistro.com/black.png" alt="444Music"></a>
+        <p class="footer-text">Global music distribution for independent artists. Upload once, distribute everywhere.</p>
+        <div class="store-stack">
+          <a class="store-btn" href="download.html">
+            <img class="sb-icon" src="https://www.444musicdistro.com/black.png" alt="">
+            <span class="sb-text"><small>DOWNLOAD ON</small><strong>444Music</strong></span>
+          </a>
+          <button class="store-btn" type="button" data-apple>
+            <svg class="sb-apple" viewBox="12 0 146 170" aria-hidden="true"><path d="M150.37 130.25 C147.92 135.91 145.02 141.12 141.66 145.91 C137.08 152.44 133.33 156.96 130.44 159.47 C125.96 163.59 121.16 165.7 116.02 165.82 C112.33 165.82 107.88 164.77 102.7 162.64 C97.51 160.52 92.74 159.47 88.36 159.47 C83.78 159.47 78.87 160.52 73.61 162.64 C68.35 164.77 64.11 165.88 60.87 165.99 C55.93 166.2 51.02 163.99 46.12 159.47 C42.99 156.74 39.07 152.06 34.36 145.43 C29.32 138.35 25.17 130.14 21.91 120.78 C18.42 110.67 16.68 100.88 16.68 91.4 C16.68 80.54 19.02 71.18 23.71 63.34 C27.39 57.03 32.29 52.05 38.43 48.39 C44.57 44.73 51.2 42.87 58.34 42.75 C62.25 42.75 67.38 43.96 73.76 46.34 C80.12 48.73 84.21 49.94 86.0 49.94 C87.34 49.94 91.87 48.53 99.55 45.7 C106.82 43.08 112.95 41.99 117.96 42.42 C131.56 43.52 141.78 48.88 148.57 58.55 C136.41 65.92 130.4 76.25 130.52 89.5 C130.63 99.82 134.38 108.41 141.73 115.23 C145.06 118.39 148.78 120.84 152.92 122.59 C152.02 125.19 151.08 127.68 150.08 130.07 Z M119.11 7.24 C119.11 15.33 116.15 22.88 110.25 29.86 C103.13 38.19 94.52 43.0 85.18 42.24 C85.06 41.27 85.0 40.25 85.0 39.17 C85.0 31.4 88.38 23.08 94.4 16.29 C97.41 12.85 101.24 9.99 105.88 7.71 C110.51 5.46 114.89 4.22 119.0 4.0 C119.07 5.06 119.11 6.12 119.11 7.24 Z"/></svg>
+            <span class="sb-text"><small>Download on the</small><strong>App Store</strong></span>
+          </button>
+        </div>
+        <div class="socials">
+          <a class="social" href="https://www.instagram.com/444music_distribution?igsh=cDdhbTJzYXdkd2lp" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a class="social" href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+          <a class="social" href="https://www.facebook.com/share/g/1BogQQDH5P/" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a class="social" href="https://www.tiktok.com/@444musicdistribution?_r=1&_t=ZS-957m4qSvgj2" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="legal.html">About</a>
+        <a href="nav.html">Pricing</a>
+        <a href="support.html">Contact</a>
+        <a href="faq.html">FAQ</a>
+        <a href="https://ofbluhface.vercel.app/">Developer</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="legal.html">Terms of Service</a>
+        <a href="legal.html">Privacy Policy</a>
+        <a href="legal.html">Cookie Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Artists</h4>
+        <a href="login.html">Create account</a>
+        <a href="login.html">Log in</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 444Music Distribution. All rights reserved.</div>
+  </div>
 </footer>
 
+<script>
+/* NAV hairline on scroll */
+(function () {
+  var nav = document.getElementById('nav');
+  function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* MENU SHEET */
+(function () {
+  var btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
+  function open() { sheet.classList.add('open'); scrim.classList.add('open'); sheet.setAttribute('aria-hidden', 'false'); btn.setAttribute('aria-expanded', 'true'); document.body.classList.add('lock'); }
+  function close() { sheet.classList.remove('open'); scrim.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false'); document.body.classList.remove('lock'); }
+  btn.addEventListener('click', open);
+  scrim.addEventListener('click', close);
+  document.getElementById('sheetDone').addEventListener('click', close);
+  sheet.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+
+/* APPLE COMING SOON ALERT */
+(function () {
+  var box = document.getElementById('alertBox'), scrim = document.getElementById('alertScrim');
+  function open() { box.classList.add('open'); scrim.classList.add('open'); box.setAttribute('aria-hidden', 'false'); document.getElementById('alertOk').focus(); }
+  function close() { box.classList.remove('open'); scrim.classList.remove('open'); box.setAttribute('aria-hidden', 'true'); }
+  document.querySelectorAll('[data-apple]').forEach(function (el) {
+    el.addEventListener('click', function () { document.getElementById('sheetDone').click(); open(); });
+  });
+  document.getElementById('alertOk').addEventListener('click', close);
+  scrim.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+
+/* FAQ */
+document.querySelectorAll('.faq-q').forEach(function (q) {
+  q.addEventListener('click', function () {
+    var item = q.closest('.faq-item');
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function (i) {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = '0px';
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      var a = item.querySelector('.faq-a');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+
+/* REVEAL ON SCROLL */
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -4% 0px' });
+  els.forEach(function (e) { io.observe(e); });
+})();
+</script>
 </body>
 </html>
