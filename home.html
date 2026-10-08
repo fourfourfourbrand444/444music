@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--black:#000;--black-1:#080808;--black-3:#0e0e0e;--black-4:#161616;--white:#fff;--w90:rgba(255,255,255,.9);--w70:rgba(255,255,255,.7);--w40:rgba(255,255,255,.4);--w20:rgba(255,255,255,.2);--w06:rgba(255,255,255,.06);--grey:#888;--grey-d:#444;--rose:#f87171;--border:rgba(255,255,255,.1)}
+:root{--black:#000;--black-1:#080808;--black-4:#161616;--white:#fff;--w90:rgba(255,255,255,.9);--w70:rgba(255,255,255,.7);--w40:rgba(255,255,255,.4);--w20:rgba(255,255,255,.2);--w06:rgba(255,255,255,.06);--grey:#888;--grey-d:#444;--rose:#f87171;--border:rgba(255,255,255,.1)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Nunito',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;min-height:100vh}
@@ -59,13 +59,17 @@ header{position:fixed;top:0;left:0;right:0;z-index:2000;display:flex;align-items
 @media(max-width:780px){.hero-bg-grid .bg-col:nth-child(n+3){display:none}.bg-card{border-radius:14px}.bg-card-info{padding:12px 10px 10px}.bg-card-info h4{font-size:13px}.bg-card-info p{font-size:10px}}
 @media(max-width:640px){header{padding:0 18px}.hero-cta{bottom:28px}}
 
-/* promo ad */
-.ad-overlay{position:absolute;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;background:rgba(0,0,0,.72);backdrop-filter:blur(6px)}
-.ad-overlay.active{display:flex}
-.ad-card{width:100%;max-width:380px;border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6);animation:fadeUp .4s ease both}
-.ad-card a{display:block;line-height:0}.ad-card img{width:100%;display:block;object-fit:cover}
-.ad-dismiss{background:none;border:none;color:var(--w70);font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;padding:10px 18px}
-.ad-dismiss:hover{color:#fff}
+/* promo ad: full-screen, like a real in-app ad */
+.ad-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 16px;background:rgba(8,8,10,.82);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.ad-overlay.active{display:flex;animation:adIn .35s ease both}
+@keyframes adIn{from{opacity:0}to{opacity:1}}
+.ad-tag{font-size:11px;font-weight:700;letter-spacing:.3px;color:var(--w40)}
+.ad-card{width:100%;max-width:min(94vw,460px);border-radius:24px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06)}
+.ad-card a{display:block;line-height:0}
+.ad-card img{display:block;width:100%;height:auto;max-height:72svh;object-fit:contain;background:#111}
+.ad-dismiss{min-width:140px;padding:13px 32px;border:none;border-radius:100px;background:rgba(255,255,255,.14);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,transform .15s}
+.ad-dismiss:hover{background:rgba(255,255,255,.22)}
+.ad-dismiss:active{transform:scale(.97)}
 
 /* get the app */
 .getapp{position:relative;z-index:1;padding:96px 24px 130px;text-align:center}
@@ -76,26 +80,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:2000;display:flex;align-items
 .store:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05),0 12px 28px rgba(0,0,0,.55)}
 .store:active{transform:translateY(0) scale(.98)}
 .store .ico{width:34px;display:grid;place-items:center;flex-shrink:0;font-size:31px;color:#1c1c1e}
-.store .ico svg{width:30px;height:30px;display:block}
+.store .ico img{width:34px;height:34px;object-fit:contain;display:block}
 .store small{display:block;font-size:10.5px;font-weight:700;color:#6a6a6e;letter-spacing:.4px}
 .store b{display:block;font-family:'Outfit',sans-serif;font-size:22px;font-weight:600;letter-spacing:-.4px;line-height:1.15;color:#202022}
 
-/* modal */
-.modal-ov{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
-.modal-ov.open{opacity:1;pointer-events:all}
-.modal{width:100%;max-width:400px;max-height:88vh;display:flex;flex-direction:column;background:var(--black-3);border:1px solid var(--border);border-radius:22px;padding:30px 24px 22px;text-align:center;transform:translateY(12px);transition:transform .25s}
-.modal h3 + p{margin-bottom:18px}
-.perks-title{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--w90);text-align:left;margin-bottom:10px}
-.perks{list-style:none;overflow-y:auto;text-align:left;margin-bottom:20px;padding-right:4px;scrollbar-width:thin}
-.perks li{display:flex;gap:13px;padding:11px 0;border-top:1px solid var(--border)}
-.perks li:first-child{border-top:none}
-.perks i{width:34px;height:34px;border-radius:10px;background:var(--w06);border:1px solid var(--border);display:grid;place-items:center;font-size:14px;color:var(--w90);flex-shrink:0}
-.perks b{display:block;font-size:14px;font-weight:800;margin-bottom:2px}
-.perks span{display:block;font-size:12.5px;line-height:1.5;color:var(--grey)}
-.modal-ov.open .modal{transform:translateY(0)}
-.modal h3{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;margin-bottom:10px}
-.modal p{font-size:14px;line-height:1.65;color:var(--w70);margin-bottom:22px}
-.modal button{width:100%;padding:13px;border:none;border-radius:100px;background:#fff;color:#000;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+/* iOS-style alert */
+.al-ov{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s}
+.al-ov.open{opacity:1;pointer-events:all}
+.al{width:270px;border-radius:14px;overflow:hidden;text-align:center;background:rgba(44,44,46,.94);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Roboto,Arial,sans-serif;transform:scale(1.12);transition:transform .2s ease}
+.al-ov.open .al{transform:scale(1)}
+.al-body{padding:20px 16px 18px}
+.al h3{font-size:17px;font-weight:600;line-height:1.25;color:#fff;margin-bottom:4px}
+.al p{font-size:13px;line-height:1.35;color:#fff}
+.al button{display:block;width:100%;padding:12px;border:none;border-top:.5px solid rgba(255,255,255,.2);background:transparent;color:#0a84ff;font-family:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.al button:active{background:rgba(255,255,255,.12)}
 
 /* bottom nav */
 .bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(120%);z-index:1500;display:flex;align-items:center;gap:2px;background:rgba(10,10,10,.85);backdrop-filter:blur(18px) saturate(1.5);border:1px solid var(--border);border-radius:100px;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.55);opacity:0;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s}
@@ -142,28 +140,17 @@ footer span{color:var(--w90);font-weight:700}
   <div class="hero-bg-grid" id="heroGrid" aria-hidden="true"></div>
   <div class="hero-overlay"></div>
   <div class="hero-cta"><a href="wey.html" class="btn-primary">Go to Dashboard</a></div>
-  <div class="ad-overlay" id="adOverlay">
-    <div class="ad-card"><a href="#" target="_blank" rel="noopener noreferrer" id="adLink"><img id="adImage" src="" alt="Sponsored"></a></div>
-    <button type="button" class="ad-dismiss" id="adDismiss">dismiss</button>
-  </div>
 </section>
 
 <section class="getapp" id="getApp">
   <h2>Get App Now</h2>
   <p>Your feed, stories and notifications live in the 444Music app.</p>
   <div class="stores">
-    <button type="button" class="store" data-store="Google Play" aria-label="Get it on Google Play">
-      <span class="ico">
-        <svg viewBox="0 0 512 512" aria-hidden="true" stroke-linejoin="round" stroke-width="10">
-          <polygon points="70,30 70,482 235,256" fill="#00b8ff" stroke="#00b8ff"/>
-          <polygon points="70,30 255,143 235,256" fill="#00e676" stroke="#00e676"/>
-          <polygon points="70,482 235,256 255,369" fill="#f4433c" stroke="#f4433c"/>
-          <polygon points="255,143 440,256 255,369 235,256" fill="#ffc400" stroke="#ffc400"/>
-        </svg>
-      </span>
-      <span><small>GET IT ON</small><b>Google Play</b></span>
+    <button type="button" class="store" data-os="android" aria-label="Download 444Music for Android">
+      <span class="ico"><img src="https://www.444musicdistro.com/black.png" alt=""></span>
+      <span><small>DOWNLOAD FOR ANDROID</small><b>444Music</b></span>
     </button>
-    <button type="button" class="store" data-store="the App Store" aria-label="Download on the App Store">
+    <button type="button" class="store" data-os="ios" aria-label="Download on the App Store">
       <span class="ico"><i class="fa-brands fa-apple"></i></span>
       <span><small>Download on the</small><b>App Store</b></span>
     </button>
@@ -180,22 +167,18 @@ footer span{color:var(--w90);font-weight:700}
   <a href="ear.html" class="bnav-item"><i class="fa-solid fa-wallet"></i><span>Earnings</span></a>
 </nav>
 
-<div class="modal-ov" id="modalOv">
-  <div class="modal" role="dialog" aria-modal="true">
-    <h3>Not live yet</h3>
-    <p id="modalText"></p>
-    <div class="perks-title">What you'll get in the app</div>
-    <ul class="perks">
-      <li><i class="fa-solid fa-newspaper"></i><div><b>Your own feed</b><span>See what artists you follow are posting, or discover new music and people.</span></div></li>
-      <li><i class="fa-solid fa-image"></i><div><b>Post anything</b><span>Share updates, photos and links with your followers in seconds.</span></div></li>
-      <li><i class="fa-solid fa-heart"></i><div><b>Likes and comments</b><span>React to posts and reply in threaded comments, just like you'd expect.</span></div></li>
-      <li><i class="fa-solid fa-share"></i><div><b>Share posts</b><span>Send a post to a friend or add it to your own story with one tap.</span></div></li>
-      <li><i class="fa-solid fa-circle-plus"></i><div><b>Stories</b><span>Share photos, text and links that disappear after 24 hours, and see who viewed them.</span></div></li>
-      <li><i class="fa-solid fa-user-plus"></i><div><b>Follow and grow</b><span>Follow artists, build your audience and find new people in the People tab.</span></div></li>
-      <li><i class="fa-solid fa-bell"></i><div><b>Instant alerts</b><span>Know right away when someone follows you, likes, comments or replies.</span></div></li>
-      <li><i class="fa-solid fa-hashtag"></i><div><b>Hashtags and mentions</b><span>Get found through #tags and @mentions and search for artists and posts.</span></div></li>
-    </ul>
-    <button type="button" id="modalClose">Got it</button>
+<!-- promo ad -->
+<div class="ad-overlay" id="adOverlay">
+  <div class="ad-tag">Sponsored</div>
+  <div class="ad-card"><a href="#" target="_blank" rel="noopener noreferrer" id="adLink"><img id="adImage" src="" alt="Sponsored"></a></div>
+  <button type="button" class="ad-dismiss" id="adDismiss">Dismiss</button>
+</div>
+
+<!-- iOS-style alert -->
+<div class="al-ov" id="alOv">
+  <div class="al" role="alertdialog" aria-modal="true" aria-labelledby="alTitle" aria-describedby="alMsg">
+    <div class="al-body"><h3 id="alTitle"></h3><p id="alMsg"></p></div>
+    <button type="button" id="alOk">OK</button>
   </div>
 </div>
 
@@ -215,7 +198,7 @@ const app = initializeApp({
 const auth = getAuth(app), db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
-/* ── Hero background (same cards, same order as before) ── */
+/* ── Hero background ── */
 const U = "https://images.unsplash.com/photo-";
 const A = {
   K:  ["KOJO BLAZE",   "84.2M Total Streams", "1729089714501-69dc75883944"],
@@ -244,17 +227,34 @@ $("closeSidebar").onclick = overlay.onclick = () => setSidebar(false);
 /* ── Bottom nav appears once the hero is scrolled past ── */
 new IntersectionObserver(es => es.forEach(e => $("bottomNav").classList.toggle("visible", !e.isIntersecting)), { threshold: 0.05 }).observe($("heroSection"));
 
-/* ── Store buttons ── */
+/* ── Store buttons + iOS-style alert ── */
+const ALERTS = {
+  android: {
+    title: "Android Only",
+    msg: "This version of 444Music works on Android devices only.",
+    onOk: () => { location.href = "download.html"; }
+  },
+  ios: {
+    title: "Not Available Yet",
+    msg: "The iOS version of 444Music isn't available yet. Please check back later.",
+    onOk: null
+  }
+};
+let current = null;
+const closeAlert = () => $("alOv").classList.remove("open");
 document.querySelectorAll(".store").forEach(b => b.onclick = () => {
-  $("modalText").textContent = `The 444Music app isn't live on ${b.dataset.store} yet. Please come back and download it once it's released.`;
-  $("modalOv").classList.add("open");
+  current = ALERTS[b.dataset.os];
+  $("alTitle").textContent = current.title;
+  $("alMsg").textContent = current.msg;
+  $("alOv").classList.add("open");
 });
-const closeModal = () => $("modalOv").classList.remove("open");
-$("modalClose").onclick = closeModal;
-$("modalOv").onclick = e => { if (e.target.id === "modalOv") closeModal(); };
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+$("alOk").onclick = () => {
+  closeAlert();
+  if (current && current.onOk) current.onOk();
+};
 
 /* ── Promo ad: latest doc in siteAds, shown until an admin deletes it ── */
+const closeAd = () => { $("adOverlay").classList.remove("active"); document.body.style.overflow = ""; };
 async function loadAd() {
   try {
     const snap = await getDocs(query(collection(db, "siteAds"), orderBy("createdAt", "desc"), limit(1)));
@@ -264,11 +264,13 @@ async function loadAd() {
     $("adImage").src = ad.imageUrl;
     $("adLink").href = ad.linkUrl;
     $("adOverlay").classList.add("active");
+    document.body.style.overflow = "hidden";
   } catch (e) { console.error("ad load error", e); }
 }
-$("adDismiss").onclick = () => $("adOverlay").classList.remove("active");
+$("adDismiss").onclick = closeAd;
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeAd(); });
 
-/* ── Auth + analytics record (the dashboard's stream stats read analytics/{uid}) ── */
+/* ── Auth + analytics record ── */
 onAuthStateChanged(auth, async user => {
   if (!user) { location.href = "login.html"; return; }
   loadAd();
