@@ -2,139 +2,101 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Release Submitted • 444Music</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Release Submitted — 444Music</title>
+
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
 :root {
-  --black:      #000000;
-  --black-1:    #080808;
-  --black-2:    #0d0d0d;
-  --black-3:    #111111;
-  --black-4:    #161616;
-  --white:      #ffffff;
-  --white-90:   rgba(255,255,255,0.90);
-  --white-70:   rgba(255,255,255,0.70);
-  --white-40:   rgba(255,255,255,0.40);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-10:   rgba(255,255,255,0.10);
-  --white-06:   rgba(255,255,255,0.06);
-  --grey:       #888888;
-  --grey-dark:  #444444;
-  --green:      #22c55e;
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --s2: #2c2c2e;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t1: #ffffff;
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.30);
+  --blue: #0a84ff;
+  --yellow: #fdeb0d;
+  --green: #30d158;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
 body {
-  min-height: 100vh;
-  background: var(--black);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Nunito', sans-serif;
-  padding: 32px 20px;
-  color: var(--white);
+  font-family: var(--font); background: var(--bg); color: var(--t1);
+  min-height: 100vh; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased;
 }
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: var(--blue); text-decoration: none; }
 
-.card {
-  width: 100%; max-width: 400px;
-  background: var(--black-2);
-  border: 1px solid var(--white-10);
-  border-radius: 22px;
-  padding: 34px 30px 30px;
-  text-align: center;
-  opacity: 0; transform: translateY(16px);
-  animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
-}
-@keyframes cardIn { to { opacity:1; transform: translateY(0); } }
+.shell { max-width: 480px; margin: 0 auto; padding: 56px 16px calc(170px + env(safe-area-inset-bottom)); text-align: center; }
 
-.check-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);
-  border-radius: 999px; padding: 6px 14px;
-  font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
-  color: var(--green); margin-bottom: 22px;
-}
-.check-badge svg { width: 13px; height: 13px; flex-shrink: 0; }
+/* status */
+.status { display: inline-flex; align-items: center; gap: 8px; animation: rise .6s var(--ease) both; }
+.status-dot { width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: #000; display: flex; align-items: center; justify-content: center; }
+.status-dot svg { width: 14px; height: 14px; }
+.status span { font-size: 17px; font-weight: 600; color: var(--green); }
 
+/* cover */
 .cover-frame {
-  width: 168px; height: 168px; margin: 0 auto 22px;
-  border-radius: 18px; overflow: hidden;
-  background: var(--black-3); border: 1px solid var(--white-10);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  width: min(220px, 62vw); aspect-ratio: 1 / 1; margin: 28px auto 26px; border-radius: 20px; overflow: hidden;
+  background: var(--s1); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.08);
+  animation: rise .7s .08s var(--ease) both;
 }
 .cover-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover-frame svg { width: 40px; height: 40px; color: var(--grey-dark); }
-
-.skeleton { background: linear-gradient(90deg, var(--black-3) 25%, rgba(255,255,255,0.05) 50%, var(--black-3) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+.cover-frame svg { width: 40px; height: 40px; color: var(--t3); }
+.skeleton { background: linear-gradient(90deg, var(--s1) 25%, var(--s2) 50%, var(--s1) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
-h1 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 21px; font-weight: 800; letter-spacing: -0.3px;
-  color: var(--white); margin-bottom: 5px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.artist-line {
-  font-size: 13.5px; color: var(--grey); font-weight: 600; margin-bottom: 22px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
+/* titles */
+h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: rise .7s .14s var(--ease) both; }
+.artist-line { margin-top: 4px; min-height: 22px; font-size: 17px; color: var(--t2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; animation: rise .7s .18s var(--ease) both; }
 
-.date-row {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: var(--black-3); border: 1px solid var(--white-10);
-  border-radius: 14px; padding: 14px 16px; margin-bottom: 22px;
-}
-.date-icon {
-  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-  background: var(--white-06); border: 1px solid var(--white-10);
-  display: flex; align-items: center; justify-content: center; color: var(--white-70);
-}
-.date-icon svg { width: 16px; height: 16px; }
-.date-text { text-align: left; flex: 1; min-width: 0; }
-.date-label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--grey-dark); }
-.date-value { font-size: 14px; font-weight: 700; color: var(--white); margin-top: 2px; }
-.date-chip {
-  font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 8px;
-  background: var(--white-06); border: 1px solid var(--white-10); color: var(--white-70);
-  white-space: nowrap; flex-shrink: 0;
-}
+/* date row */
+.group { margin-top: 28px; background: var(--s1); border-radius: 16px; overflow: hidden; text-align: left; animation: rise .7s .24s var(--ease) both; }
+.date-row { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 16px; }
+.date-text { flex: 1; min-width: 0; }
+.date-label { font-size: 13px; color: var(--t2); }
+.date-value { margin-top: 1px; font-size: 17px; font-weight: 500; }
+.date-chip { flex-shrink: 0; padding: 4px 12px; border-radius: 999px; background: rgba(253,235,13,0.14); color: var(--yellow); font-size: 14px; font-weight: 600; }
 
-p.note {
-  font-size: 13px; color: var(--grey); line-height: 1.6; margin-bottom: 26px;
-}
+.note { margin: 18px 16px 0; font-size: 15px; line-height: 1.45; color: var(--t2); animation: rise .7s .3s var(--ease) both; }
 
+/* dock */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  padding: 12px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,0.72); border-top: 0.5px solid var(--sep);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+}
+.dock-in { max-width: 480px; margin: 0 auto; }
 .btn {
-  width: 100%; padding: 15px; border-radius: 13px;
-  background: var(--white); border: none; color: var(--black);
-  font-family: 'Nunito', sans-serif; font-size: 14.5px; font-weight: 800;
-  cursor: pointer; letter-spacing: 0.2px;
-  transition: opacity 0.2s, transform 0.15s;
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 52px;
+  border-radius: 999px; background: var(--yellow); color: #000; font-size: 17px; font-weight: 600;
+  transition: transform .3s var(--ease);
 }
-.btn:hover { opacity: 0.9; transform: translateY(-1px); }
 .btn:active { transform: scale(0.98); }
+.link-row { display: block; margin-top: 2px; padding: 11px 0; text-align: center; font-size: 17px; }
+.link-row:active { opacity: 0.6; }
 
-.link-row { margin-top: 16px; }
-.link-row a {
-  font-size: 12.5px; color: var(--grey); text-decoration: none; font-weight: 700;
-  transition: color 0.15s;
-}
-.link-row a:hover { color: var(--white); }
-
-@media(max-width:400px){
-  .card { padding: 28px 20px 24px; }
-  h1 { font-size: 19px; }
-  .cover-frame { width: 140px; height: 140px; }
-}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 
-<div class="card">
+<div class="shell">
 
-  <div class="check-badge">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-    Submitted
+  <div class="status">
+    <div class="status-dot">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <span>Submitted</span>
   </div>
 
   <div class="cover-frame skeleton" id="coverFrame"></div>
@@ -142,25 +104,25 @@ p.note {
   <h1 id="releaseTitleEl">Loading…</h1>
   <p class="artist-line" id="artistLineEl">&nbsp;</p>
 
-  <div class="date-row">
-    <div class="date-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  <div class="group">
+    <div class="date-row">
+      <div class="date-text">
+        <div class="date-label">Release date</div>
+        <div class="date-value" id="releaseDateEl">—</div>
+      </div>
+      <div class="date-chip" id="countdownChip" style="display:none;"></div>
     </div>
-    <div class="date-text">
-      <div class="date-label">Release Date</div>
-      <div class="date-value" id="releaseDateEl">—</div>
-    </div>
-    <div class="date-chip" id="countdownChip" style="display:none;"></div>
   </div>
 
   <p class="note">Your release is in and under review. We'll notify you once it goes live.</p>
 
-  <button class="btn" onclick="window.location.href='wey.html'">Go to Dashboard</button>
+</div>
 
-  <div class="link-row">
-    <a href="wey.html">View all my releases</a>
+<div class="dock">
+  <div class="dock-in">
+    <button class="btn" type="button" onclick="window.location.href='wey.html'">Go to dashboard</button>
+    <a class="link-row" href="wey.html">View all my releases</a>
   </div>
-
 </div>
 
 <script type="module">
@@ -182,6 +144,8 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+const COVER_PLACEHOLDER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
 
 // Pulls the release this person just submitted — cover art comes from
 // the upload step, title/artist/date come from the release-info step;
@@ -234,11 +198,9 @@ function countdownLabel(releaseDateStr) {
 function renderOverview(data) {
   const coverFrame = document.getElementById('coverFrame');
   coverFrame.classList.remove('skeleton');
-  if (data.coverURL) {
-    coverFrame.innerHTML = `<img src="${escHtml(data.coverURL)}" alt="Cover art">`;
-  } else {
-    coverFrame.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-  }
+  coverFrame.innerHTML = data.coverURL
+    ? `<img src="${escHtml(data.coverURL)}" alt="Cover art">`
+    : COVER_PLACEHOLDER;
 
   document.getElementById('releaseTitleEl').textContent = data.releaseTitle || 'Untitled Release';
   const featuring = data.featuring && data.featuring.trim() ? ` ft. ${data.featuring}` : '';
@@ -264,7 +226,7 @@ function renderOverview(data) {
 function renderEmptyState() {
   const coverFrame = document.getElementById('coverFrame');
   coverFrame.classList.remove('skeleton');
-  coverFrame.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+  coverFrame.innerHTML = COVER_PLACEHOLDER;
   document.getElementById('releaseTitleEl').textContent = 'Release Submitted';
   document.getElementById('artistLineEl').textContent = '';
   document.getElementById('releaseDateEl').textContent = '—';
