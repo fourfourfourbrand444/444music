@@ -2,356 +2,208 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pricing • 444Music Distribution</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Pricing — 444Music</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
 
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  /* ── very deep, near-absolute black — sampled from the home page system ── */
-  --black:      #020202;
-  --black-1:    #060606;
-  --black-2:    #0a0a0a;
-  --black-3:    #0e0e0e;
-  --black-4:    #131313;
-  --white:      #FFFFFF;
-  --white-90:   rgba(255,255,255,0.90);
-  --white-70:   rgba(255,255,255,0.70);
-  --white-40:   rgba(255,255,255,0.40);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-10:   rgba(255,255,255,0.10);
-  --white-06:   rgba(255,255,255,0.06);
-  --grey:       #888888;
-  --grey-light: #AAAAAA;
-  --grey-dark:  #444444;
-  --green:      #22C55E;
-  --green-dim:  rgba(34,197,94,0.12);
-  --green-border: rgba(34,197,94,0.2);
-  --rose:       #EF4444;
-  --radius:     20px;
-  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --s2: #2c2c2e;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t1: #ffffff;
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.30);
+  --blue: #0a84ff;
+  --yellow: #fdeb0d;
+  --green: #30d158;
+  --rose: #ff453a;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
 
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
-  background: var(--black);
-  color: var(--white);
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font); background: var(--bg); color: var(--t1);
+  min-height: 100vh; overflow-x: hidden; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased;
 }
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: var(--blue); text-decoration: none; }
 
-.page-loader {
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--black);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.15s ease;
-}
+/* loader */
+.page-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; transition: opacity .2s ease; }
 .page-loader.hide { opacity: 0; pointer-events: none; }
-.loader-spin {
-  width: 34px; height: 34px; border: 3px solid var(--white-10);
-  border-top-color: var(--white); border-radius: 50%;
-  animation: loaderSpin 0.8s linear infinite;
-}
-@keyframes loaderSpin { to { transform: rotate(360deg); } }
-
-.pending-pay-banner {
-  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
-  z-index: 4000; display: none; align-items: center; gap: 12px;
-  background: var(--black-2); border: 1px solid var(--white-20);
-  border-radius: 14px; padding: 12px 16px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-  font-size: 12.5px; color: var(--white-70); max-width: 92vw;
-}
-.pending-pay-banner button {
-  background: var(--white); color: var(--black); border: none;
-  border-radius: 8px; padding: 8px 14px; font-family: inherit;
-  font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
-}
-.pending-pay-banner button:hover { opacity: 0.9; }
-
-/* ── TOPBAR — logo only, no back-to-dashboard button ── */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(2, 2, 2, 0.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--white-10);
-  padding: 0 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 64px;
-  animation: topbarIn 0.5s ease both;
-}
-@keyframes topbarIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.topbar-logo { font-weight: 800; font-size: 18px; color: var(--white); text-decoration: none; letter-spacing: 0.2px; display: flex; align-items: center; gap: 10px; }
-.topbar-logo img { height: 30px; width: auto; object-fit: contain; }
-
-.page-header { text-align: center; padding: 64px 20px 0; animation: headerIn 0.7s ease 0.1s both; }
-@keyframes headerIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.page-header h1 { font-size: clamp(32px, 5vw, 50px); font-weight: 800; line-height: 1.12; color: var(--white); margin-bottom: 14px; letter-spacing: -0.5px; }
-.page-header p { font-size: clamp(14px, 1.8vw, 16px); color: var(--grey); max-width: 480px; margin: 0 auto 28px; line-height: 1.6; font-weight: 500; }
-
-/* ── CURRENCY SELECTOR — cosmetic only, doesn't touch Paystack ── */
-.currency-select-wrap {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin: 0 auto 8px; flex-wrap: wrap;
-}
-.currency-select-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--grey);
-  text-transform: uppercase;
-}
-.currency-select {
-  background: var(--black-2); color: var(--white); border: 1px solid var(--white-20);
-  border-radius: 999px; padding: 8px 16px; font-family: inherit; font-size: 13px;
-  font-weight: 700; cursor: pointer; appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23AAAAAA'/></svg>");
-  background-repeat: no-repeat; background-position: right 14px center; padding-right: 32px;
-  transition: var(--transition);
-}
-.currency-select:hover { border-color: var(--white-40); }
-.currency-select:focus { outline: none; border-color: var(--white-70); }
-.currency-note-small {
-  font-size: 11px; color: var(--grey-dark); max-width: 460px; margin: 8px auto 36px; font-weight: 500;
-}
-
-.trust-strip {
-  max-width: 600px; margin: 0 auto 52px;
-  display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap;
-  background: var(--black-2); border: 1px solid var(--white-10); border-radius: 16px;
-  padding: 14px 16px;
-  animation: headerIn 0.7s ease 0.2s both;
-}
-.trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--white-70); font-weight: 600; }
-.trust-item i { color: var(--green); font-size: 12px; }
-
-.plans-label {
-  text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--grey); margin-bottom: 24px;
-}
-.pricing-section { padding: 0 20px 20px; }
-.pricing-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
-
-.price-card {
-  background: var(--black-1); border: 1px solid var(--white-10); border-radius: var(--radius);
-  padding: 24px 22px 22px; position: relative; transition: var(--transition);
-  opacity: 0; transform: translateY(28px); display: flex; flex-direction: column;
-}
-.price-card.visible { animation: cardReveal 0.55s cubic-bezier(0.34, 1.1, 0.64, 1) forwards; }
-.price-card:nth-child(1) { animation-delay: 0.05s; }
-.price-card:nth-child(2) { animation-delay: 0.15s; }
-.price-card:nth-child(3) { animation-delay: 0.25s; }
-@keyframes cardReveal { from { opacity: 0; transform: translateY(28px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-/* ── FEATURED / SINGLE CARD — pure white, sampled from the home page's light-section treatment ── */
-.price-card.featured {
-  background: var(--white);
-  border-color: rgba(0,0,0,0.10);
-  border-width: 1.5px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-}
-.price-card.featured::before {
-  content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.3), transparent);
-}
-.price-card.featured .plan-name        { color: #0a0a0a; }
-.price-card.featured .plan-desc        { color: #55555a; }
-.price-card.featured .price-currency   { color: rgba(10,10,10,0.65); }
-.price-card.featured .price-amount     { color: #0a0a0a; }
-.price-card.featured .price-usd        { color: #6b6b6b; }
-.price-card.featured .price-period     { color: #8a8a8a; }
-.price-card.featured .card-divider     { background: rgba(0,0,0,0.10); }
-.price-card.featured .features-label   { color: #7a7a7a; }
-.price-card.featured .feature-list li  { color: #4a4a4a; }
-.price-card.featured .feature-list li i{ color: #0a0a0a; }
-.price-card.featured .store-chip       { background: #f2f2f2; border-color: rgba(0,0,0,0.08); color: #555; }
-.price-card.featured .plan-badge.popular { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
-.price-card.featured .plan-btn.solid   { background: #0a0a0a; border-color: #0a0a0a; color: #fff; }
-.price-card.featured .plan-btn.solid:hover:not(:disabled) { background: #262626; }
-.price-card.featured .plan-error       { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.35); color: #c62828; }
-
-.plan-badge {
-  display: inline-flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 800;
-  letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 11px; border-radius: 999px;
-  margin-bottom: 18px; width: fit-content;
-}
-.plan-badge.starter { background: var(--white-06); color: var(--grey); border: 1px solid var(--white-10); }
-.plan-badge.popular { background: var(--white-20); color: var(--white); border: 1px solid var(--white-40); }
-.plan-badge.pro     { background: var(--white-06); color: var(--grey); border: 1px solid var(--white-10); }
-.plan-badge i { font-size: 9px; }
-
-.plan-name { font-size: 22px; font-weight: 800; letter-spacing: 0.1px; margin-bottom: 6px; color: var(--white); }
-.plan-desc { font-size: 13px; color: var(--grey); line-height: 1.55; margin-bottom: 22px; font-weight: 500; }
-
-.price-block { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
-.price-currency { font-size: 15px; font-weight: 700; color: var(--white-70); padding-bottom: 8px; }
-.price-amount { font-family: 'DM Mono', monospace; font-size: 40px; font-weight: 500; line-height: 1; color: var(--white); }
-.price-usd { font-size: 13px; font-weight: 600; color: var(--grey); padding-bottom: 8px; }
-.price-period { font-size: 12px; color: var(--grey-dark); margin-bottom: 22px; font-weight: 500; }
-
-.card-divider { height: 1px; background: var(--white-10); margin-bottom: 20px; }
-.features-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 12px; }
-
-.feature-list { list-style: none; margin-bottom: 20px; flex: 1; }
-.feature-list li { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--white-70); font-weight: 600; line-height: 1.4; }
-.feature-list li i { font-size: 10px; color: var(--white-70); margin-top: 4px; flex-shrink: 0; width: 14px; text-align: center; }
-.feature-list li.muted { color: var(--grey-dark); }
-.feature-list li.muted i { color: var(--grey-dark); }
-
-.plan-btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 800;
-  text-decoration: none; letter-spacing: 1px; text-transform: uppercase;
-  transition: var(--transition); cursor: pointer; border: 1px solid; font-family: inherit;
-  margin-top: auto; width: 100%;
-}
-.plan-btn i, .plan-btn svg { font-size: 13px; transition: transform 0.2s; }
-.plan-btn:hover:not(:disabled) i { transform: translateX(3px); }
-.plan-btn.outline { background: transparent; border-color: var(--white-20); color: var(--white-70); }
-.plan-btn.outline:hover:not(:disabled) { border-color: var(--white-40); background: var(--white-06); color: var(--white); }
-.plan-btn.solid { background: var(--white); border-color: var(--white); color: var(--black); }
-.plan-btn.solid:hover:not(:disabled) { background: #eaeaea; }
-.plan-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-.plan-btn:disabled:hover i { transform: none; }
-
-.btn-spinner {
-  width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: currentColor;
-  border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block;
-}
-.plan-btn.solid .btn-spinner { border-color: rgba(0,0,0,0.2); border-top-color: var(--black); }
-.price-card.featured .plan-btn.solid .btn-spinner { border-color: rgba(255,255,255,0.25); border-top-color: #fff; }
+.loader-spin { width: 28px; height: 28px; border: 3px solid var(--fill); border-top-color: var(--t1); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.plan-error {
-  display: none; align-items: center; gap: 7px; font-size: 11.5px; color: var(--rose);
-  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
-  border-radius: 9px; padding: 9px 11px; margin-bottom: 10px; font-weight: 600; line-height: 1.4;
+/* nav */
+.topbar {
+  position: sticky; top: 0; z-index: 100; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.72); border-bottom: 0.5px solid rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
 }
+.topbar-logo { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; color: var(--t1); }
+.topbar-logo img { height: 26px; width: auto; object-fit: contain; }
+
+/* hero */
+.page-header { text-align: center; padding: 64px 20px 0; }
+.page-header h1 { font-size: clamp(40px, 7vw, 64px); font-weight: 700; letter-spacing: -0.045em; line-height: 1.05; }
+.page-header p { font-size: clamp(17px, 2.4vw, 21px); line-height: 1.4; color: var(--t2); max-width: 480px; margin: 14px auto 0; }
+
+.currency-select-wrap { display: flex; justify-content: center; margin-top: 30px; }
+.currency-select {
+  height: 38px; padding: 0 36px 0 16px; border: 0; outline: 0; border-radius: 999px; background-color: var(--fill); color: var(--t1);
+  font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%23ebebf5' stroke-opacity='.6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M1 1l4 4 4-4'/></svg>");
+  background-repeat: no-repeat; background-position: right 15px center;
+  transition: background-color .2s ease;
+}
+.currency-select:hover { background-color: rgba(120,120,128,0.34); }
+.currency-select option { background: var(--s2); color: var(--t1); }
+.currency-note-small { margin: 12px auto 0; max-width: 420px; font-size: 13px; line-height: 1.4; color: var(--t3); }
+
+/* plans */
+.pricing-section { padding: 44px 16px 0; }
+.pricing-grid { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: stretch; }
+
+.price-card {
+  position: relative; display: flex; flex-direction: column; padding: 30px 26px 26px;
+  background: var(--s1); border-radius: 26px;
+  opacity: 0; transform: translateY(22px);
+}
+.price-card.visible { animation: rise .7s var(--ease) forwards; }
+.price-card:nth-child(2).visible { animation-delay: .08s; }
+.price-card:nth-child(3).visible { animation-delay: .16s; }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+.plan-badge { position: absolute; top: 22px; right: 22px; padding: 4px 11px; border-radius: 999px; background: #0a0a0a; color: #fff; font-size: 12px; font-weight: 600; }
+.plan-name { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+.plan-desc { margin-top: 6px; min-height: 66px; font-size: 15px; line-height: 1.45; color: var(--t2); }
+
+.price-block { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.price-currency { font-size: 20px; font-weight: 600; color: var(--t2); }
+.price-amount { font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.price-usd { font-size: 14px; color: var(--t3); font-variant-numeric: tabular-nums; }
+.price-period { margin-top: 8px; font-size: 14px; color: var(--t2); }
+
+.plan-error { display: none; align-items: flex-start; gap: 8px; margin-top: 18px; padding: 11px 14px; border-radius: 14px; background: rgba(255,69,58,0.14); color: var(--rose); font-size: 14px; font-weight: 500; line-height: 1.35; }
 .plan-error.show { display: flex; }
-.plan-error i { flex-shrink: 0; margin-top: 1px; }
 
-.stores-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-.store-chip {
-  display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600;
-  color: var(--grey); background: var(--black-3); border: 1px solid var(--white-10);
-  padding: 4px 9px; border-radius: 999px;
+.plan-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 50px; margin-top: 22px;
+  border-radius: 999px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  transition: transform .3s var(--ease), opacity .2s ease, background-color .2s ease;
 }
-.store-chip i { font-size: 10px; }
+.plan-error + .plan-btn { margin-top: 12px; }
+.plan-btn:active:not(:disabled) { transform: scale(0.97); }
+.plan-btn:disabled { opacity: 0.55; cursor: default; }
+.plan-btn.outline { background: var(--fill); color: var(--t1); }
+.plan-btn.outline:hover:not(:disabled) { background: rgba(120,120,128,0.34); }
+.plan-btn.solid { background: var(--t1); color: #000; }
+.btn-spinner { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,0.25); border-top-color: currentColor; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+.plan-btn.solid .btn-spinner { border-color: rgba(0,0,0,0.2); border-top-color: #000; }
 
-/* ── COMPARE TABLE — white panel on the deep black page, sampled from the home page's light-section blocks ── */
-.compare-section { max-width: 780px; margin: 0 auto; padding: 56px 20px 0; }
-.compare-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 24px; color: var(--white); }
-.compare-table-wrap {
-  border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; overflow: hidden;
-  background: var(--white);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-  opacity: 0;
-}
-.compare-table-wrap.visible { animation: cardReveal 0.6s ease forwards; }
-.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.compare-table th {
-  padding: 13px 16px; text-align: center; font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
-  text-transform: uppercase; color: #8a8a8a; background: #f4f4f4; border-bottom: 1px solid rgba(0,0,0,0.08);
-}
-.compare-table th:first-child { text-align: left; }
-.compare-table th.hl { color: #0a0a0a; }
-.compare-table td { padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.06); color: #4a4a4a; text-align: center; font-size: 13px; font-weight: 600; }
-.compare-table td:first-child { text-align: left; color: #0a0a0a; font-weight: 700; }
+.feature-list { list-style: none; margin-top: 24px; padding-top: 6px; border-top: 0.5px solid var(--sep); }
+.feature-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 15px; line-height: 1.35; }
+.feature-list li svg { width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; color: var(--t2); }
+
+/* featured (white) card */
+.price-card.featured { background: #ffffff; color: #1d1d1f; }
+.price-card.featured .plan-desc, .price-card.featured .price-period { color: #6e6e73; }
+.price-card.featured .price-currency { color: #6e6e73; }
+.price-card.featured .price-usd { color: #8e8e93; }
+.price-card.featured .feature-list { border-top-color: rgba(0,0,0,0.1); }
+.price-card.featured .feature-list li svg { color: #1d1d1f; }
+.price-card.featured .plan-btn.solid { background: #000; color: #fff; }
+.price-card.featured .plan-btn.solid .btn-spinner { border-color: rgba(255,255,255,0.25); border-top-color: #fff; }
+.price-card.featured .plan-error { background: rgba(255,69,58,0.1); color: #d70015; }
+
+/* compare — yellow panel */
+.compare-section { max-width: 1040px; margin: 14px auto 0; padding: 0 16px; }
+.compare-panel { background: var(--yellow); color: #000; border-radius: 28px; padding: 34px 26px 14px; opacity: 0; transform: translateY(22px); }
+.compare-panel.visible { animation: rise .7s var(--ease) forwards; }
+.compare-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 14px; padding: 0 4px; }
+.compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.compare-table { width: 100%; min-width: 440px; border-collapse: collapse; font-size: 15px; }
+.compare-table th { padding: 12px 8px; text-align: center; font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.55); border-bottom: 0.5px solid rgba(0,0,0,0.2); }
+.compare-table th:first-child, .compare-table td:first-child { text-align: left; padding-left: 4px; }
+.compare-table th.hl { color: #000; }
+.compare-table td { padding: 14px 8px; text-align: center; border-bottom: 0.5px solid rgba(0,0,0,0.14); color: rgba(0,0,0,0.7); }
+.compare-table td:first-child { color: #000; font-weight: 500; }
+.compare-table td.hl-col { color: #000; font-weight: 600; }
 .compare-table tr:last-child td { border-bottom: none; }
-.compare-table .yes { color: var(--green); }
-.compare-table .hl-col { color: #0a0a0a; font-weight: 700; }
+.compare-table svg { width: 16px; height: 16px; display: inline-block; vertical-align: middle; }
 
-.faq-section { max-width: 680px; margin: 0 auto; padding: 56px 20px 0; opacity: 0; }
-.faq-section.visible { animation: headerIn 0.7s ease forwards; }
-.faq-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 24px; color: var(--white); }
-.faq-item { border-bottom: 1px solid var(--white-10); overflow: hidden; }
-.faq-q {
-  width: 100%; background: none; border: none; color: var(--white); font-family: inherit;
-  font-size: 14px; font-weight: 700; text-align: left; padding: 17px 0; cursor: pointer;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: color var(--transition);
-}
-.faq-q:hover { color: var(--white-70); }
-.faq-q i { font-size: 13px; color: var(--grey-dark); transition: transform 0.25s ease; flex-shrink: 0; }
-.faq-item.open .faq-q i { transform: rotate(45deg); color: var(--white); }
-.faq-a { font-size: 13px; color: var(--grey); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
-.faq-item.open .faq-a { max-height: 200px; padding-bottom: 17px; }
+/* faq */
+.faq-section { max-width: 680px; margin: 0 auto; padding: 64px 16px 0; opacity: 0; transform: translateY(22px); }
+.faq-section.visible { animation: rise .7s var(--ease) forwards; }
+.faq-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; text-align: center; margin-bottom: 22px; }
+.faq-group { background: var(--s1); border-radius: 18px; overflow: hidden; }
+.faq-item { position: relative; }
+.faq-item + .faq-item::before { content: ''; position: absolute; top: 0; left: 18px; right: 0; height: 0.5px; background: var(--sep); }
+.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; font-size: 17px; font-weight: 500; text-align: left; line-height: 1.3; }
+.faq-q svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--t3); transition: transform .35s var(--ease); }
+.faq-item.open .faq-q svg { transform: rotate(45deg); color: var(--t1); }
+.faq-a { max-height: 0; overflow: hidden; padding: 0 18px; font-size: 15px; line-height: 1.5; color: var(--t2); transition: max-height .4s var(--ease), padding .3s ease; }
+.faq-item.open .faq-a { max-height: 220px; padding-bottom: 18px; }
 
-.bottom-banner { max-width: 780px; margin: 56px auto 0; padding: 0 20px; }
-.bottom-banner-inner { background: var(--white); border-radius: 22px; padding: 28px 30px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.bottom-banner-text { flex: 1; min-width: 220px; }
-.bottom-banner-inner h3 { font-size: 20px; font-weight: 800; color: var(--black); line-height: 1.2; margin-bottom: 6px; }
-.bottom-banner-inner p { color: #555; font-size: 12.5px; font-weight: 500; }
-.banner-btns { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: var(--white);
-  padding: 12px 20px; border-radius: 99px; font-size: 12.5px; font-weight: 800;
-  letter-spacing: 0.3px; text-decoration: none; transition: var(--transition);
-}
-.btn-primary:hover { opacity: 0.85; }
-.btn-secondary {
-  display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #444;
-  padding: 12px 20px; border-radius: 99px; font-size: 12.5px; font-weight: 700;
-  text-decoration: none; transition: var(--transition); border: 1px solid #ccc;
-}
-.btn-secondary:hover { border-color: #999; color: #111; }
-.banner-icon-circle { width: 56px; height: 56px; background: var(--black); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.banner-icon-circle i { color: var(--white); font-size: 22px; }
+/* bottom banner — yellow */
+.bottom-banner { max-width: 1040px; margin: 64px auto 0; padding: 0 16px; }
+.bottom-banner-inner { background: var(--yellow); color: #000; border-radius: 28px; padding: 44px 28px; text-align: center; }
+.bottom-banner-inner h3 { font-size: clamp(26px, 4.5vw, 36px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.12; }
+.bottom-banner-inner p { margin-top: 8px; font-size: 17px; line-height: 1.4; color: rgba(0,0,0,0.65); }
+.banner-btns { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #000; color: #fff; font-size: 17px; font-weight: 600; transition: transform .3s var(--ease); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 22px; border-radius: 999px; color: #000; font-size: 17px; font-weight: 500; transition: background-color .2s ease; }
+.btn-secondary:hover { background: rgba(0,0,0,0.08); }
 
+.page-end { height: calc(64px + env(safe-area-inset-bottom)); }
+
+/* pending payment banner */
+.pending-pay-banner {
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 4000;
+  display: none; align-items: center; gap: 14px; max-width: 92vw; padding: 10px 10px 10px 18px;
+  background: rgba(44,44,46,0.88); border-radius: 999px; box-shadow: 0 14px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.1);
+  -webkit-backdrop-filter: saturate(180%) blur(26px); backdrop-filter: saturate(180%) blur(26px);
+  font-size: 15px; color: var(--t1);
+}
+.pending-pay-banner button { height: 34px; padding: 0 16px; border-radius: 999px; background: var(--t1); color: #000; font-size: 15px; font-weight: 600; white-space: nowrap; }
+
+/* lock overlay — iOS alert */
 .lock-overlay {
-  position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  display: flex; align-items: center; justify-content: center; padding: 24px;
-  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(0,0,0,0.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transition: opacity .3s ease;
 }
 .lock-overlay.open { opacity: 1; pointer-events: all; }
 .lock-card {
-  width: 100%; max-width: 380px; background: var(--black-1); border: 1.5px solid var(--green-border);
-  border-radius: 24px; padding: 28px; text-align: center;
-  transform: translateY(14px) scale(0.97); transition: transform 0.3s cubic-bezier(0.34,1.25,0.64,1);
+  width: 280px; border-radius: 16px; overflow: hidden; text-align: center; background: rgba(44,44,46,0.94);
+  -webkit-backdrop-filter: saturate(180%) blur(30px); backdrop-filter: saturate(180%) blur(30px);
+  transform: scale(1.12); opacity: 0; transition: transform .4s var(--ease), opacity .25s ease;
 }
-.lock-overlay.open .lock-card { transform: translateY(0) scale(1); }
-.lock-icon { width: 60px; height: 60px; margin: 0 auto 20px; background: var(--green-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.lock-icon i { color: var(--green); font-size: 26px; }
-.lock-title { font-size: 18px; font-weight: 800; color: var(--white); margin-bottom: 10px; }
-.lock-text { font-size: 13px; color: var(--white-70); line-height: 1.6; margin-bottom: 24px; }
-.lock-btn {
-  width: 100%; padding: 15px; background: var(--green); color: var(--black); border: none;
-  border-radius: 12px; font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit;
-  transition: var(--transition);
-}
-.lock-btn:hover { opacity: 0.9; }
-.lock-checking { color: var(--grey); font-size: 12px; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.lock-overlay.open .lock-card { transform: scale(1); opacity: 1; }
+.lock-body { padding: 22px 16px 18px; }
+.lock-icon { width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%; background: rgba(48,209,88,0.16); color: var(--green); display: flex; align-items: center; justify-content: center; }
+.lock-icon svg { width: 22px; height: 22px; }
+.lock-title { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+.lock-text { font-size: 13px; line-height: 1.4; color: rgba(255,255,255,0.85); }
+.lock-btn { display: block; width: 100%; padding: 13px; border-top: 0.5px solid var(--sep); color: var(--blue); font-size: 17px; font-weight: 600; transition: background-color .15s ease; }
+.lock-btn:active { background: rgba(255,255,255,0.1); }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--white-20); border-radius: 4px; }
-
-@media (max-width: 900px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) {
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
-  .topbar { padding: 0 20px; }
-  .compare-section { overflow-x: auto; }
-  .compare-table { min-width: 480px; }
-  .bottom-banner-inner { flex-direction: column; text-align: center; }
-  .banner-btns { justify-content: center; }
-}
+@media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 440px; } .plan-desc { min-height: 0; } }
 @media (max-width: 480px) {
-  .page-header { padding-top: 40px; }
-  .price-amount { font-size: 34px; }
+  .page-header { padding-top: 44px; }
+  .price-amount { font-size: 42px; }
+  .compare-panel { padding: 28px 18px 10px; border-radius: 24px; }
+  .bottom-banner-inner { padding: 36px 20px; border-radius: 24px; }
 }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
 </style>
 </head>
 <body>
@@ -360,19 +212,18 @@ body {
 
 <nav class="topbar">
   <a href="index.html" class="topbar-logo">
-    <img src="logo.png" alt="444Music" onerror="this.style.display='none'">
+    <img src="logo.png" alt="" onerror="this.style.display='none'">
     444Music
   </a>
 </nav>
 
 <header class="page-header">
-  <h1>Simple, serious pricing.</h1>
-  <p>Upload once, reach 100+ stores, and keep every cent you earn.</p>
+  <h1>Pricing</h1>
+  <p>Upload once, reach 100+ stores and keep every cent you earn.</p>
 
-  <!-- ── CURRENCY SELECTOR — display only. Payment always charges in GHC regardless of what's selected here. ── -->
+  <!-- Currency selector — display only. Payment always charges in GHC. -->
   <div class="currency-select-wrap">
-    <span class="currency-select-label">View prices in</span>
-    <select class="currency-select" id="currencySelect" onchange="renderPrices(this.value)">
+    <select class="currency-select" id="currencySelect" onchange="renderPrices(this.value)" aria-label="Currency">
       <option value="GHS">🇬🇭 Ghana — GHS</option>
       <option value="NGN">🇳🇬 Nigeria — NGN</option>
       <option value="USD">🇺🇸 United States — USD</option>
@@ -385,25 +236,16 @@ body {
       <option value="OTHER">🌐 Other — USD</option>
     </select>
   </div>
-  <p class="currency-note-small" id="currencyDisclaimer">You'll always be charged the exact GHC amount shown below at checkout.</p>
-
-  <div class="trust-strip">
-    <div class="trust-item"><i class="fa-solid fa-circle-check"></i> 100% Royalties</div>
-    <div class="trust-item"><i class="fa-solid fa-store"></i> 100+ Stores</div>
-    <div class="trust-item"><i class="fa-solid fa-qrcode"></i> Free ISRC &amp; UPC</div>
-    <div class="trust-item"><i class="fa-solid fa-circle-xmark"></i> Cancel Anytime</div>
-  </div>
+  <p class="currency-note-small" id="currencyDisclaimer">You'll be charged the exact GHC amount at checkout.</p>
 </header>
 
 <section class="pricing-section">
-  <div class="plans-label">CHOOSE YOUR PLAN</div>
   <div class="pricing-grid" id="pricingGrid">
 
-    <!-- ── CARD 1: DRAFT (FREE) ── -->
+    <!-- DRAFT (FREE) -->
     <div class="price-card" data-plan="draft">
-      <div class="plan-badge starter"><i class="fa-solid fa-seedling"></i> Starter</div>
       <div class="plan-name">Release as Draft</div>
-      <div class="plan-desc">Upload now, settle fees after your release starts earning.</div>
+      <div class="plan-desc">Upload now and settle the fee once your release starts earning.</div>
 
       <div class="price-block">
         <span class="price-currency" data-currency-label="draft">GHC</span>
@@ -412,36 +254,23 @@ body {
       </div>
       <div class="price-period">No upfront payment</div>
 
-      <div class="card-divider"></div>
-      <div class="features-label">WHAT'S INCLUDED</div>
+      <div class="plan-error" id="err-draft"><span></span></div>
+      <a href="agreement.html" class="plan-btn outline">Get started free</a>
+
       <ul class="feature-list">
-        <li><i class="fa-solid fa-check"></i> Upload unlimited songs as draft</li>
-        <li><i class="fa-solid fa-check"></i> 100+ digital store distribution</li>
-        <li><i class="fa-solid fa-check"></i> Free ISRC &amp; UPC barcode</li>
-        <li><i class="fa-solid fa-check"></i> Keep 100% of royalties</li>
-        <li><i class="fa-solid fa-check"></i> Artist dashboard access</li>
-        <li><i class="fa-solid fa-check"></i> Basic streaming analytics</li>
-        <li class="muted"><i class="fa-solid fa-xmark"></i> Cover art design</li>
-        <li class="muted"><i class="fa-solid fa-xmark"></i> Priority delivery</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unlimited draft uploads</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>100+ digital stores</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free ISRC &amp; UPC</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keep 100% of royalties</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Artist dashboard &amp; basic analytics</li>
       </ul>
-
-      <div class="stores-row">
-        <span class="store-chip"><i class="fa-brands fa-spotify"></i> Spotify</span>
-        <span class="store-chip"><i class="fa-solid fa-music"></i> Apple</span>
-        <span class="store-chip"><i class="fa-brands fa-youtube"></i> YouTube</span>
-        <span class="store-chip"><i class="fa-brands fa-tiktok"></i> TikTok</span>
-        <span class="store-chip"><i class="fa-solid fa-plus"></i> 96 more</span>
-      </div>
-
-      <div class="plan-error" id="err-draft"><i class="fa-solid fa-triangle-exclamation"></i><span></span></div>
-      <a href="agreement.html" class="plan-btn outline">Get Started Free <i class="fa-solid fa-arrow-right"></i></a>
     </div>
 
-    <!-- ── CARD 2: SINGLE — white featured card ── -->
+    <!-- SINGLE — featured -->
     <div class="price-card featured" data-plan="single">
-      <div class="plan-badge popular"><i class="fa-solid fa-fire"></i> Most Popular</div>
+      <div class="plan-badge">Most popular</div>
       <div class="plan-name">Single</div>
-      <div class="plan-desc">Drop a track professionally with fast global delivery and store cover art.</div>
+      <div class="plan-desc">Drop a track with fast global delivery and cover art review.</div>
 
       <div class="price-block">
         <span class="price-currency" data-currency-label="single">GHC</span>
@@ -450,38 +279,25 @@ body {
       </div>
       <div class="price-period">One-time per release</div>
 
-      <div class="card-divider"></div>
-      <div class="features-label">WHAT'S INCLUDED</div>
-      <ul class="feature-list">
-        <li><i class="fa-solid fa-check"></i> 1 single release (1–2 tracks)</li>
-        <li><i class="fa-solid fa-check"></i> Spotify, Apple Music, TikTok &amp; 100+ stores</li>
-        <li><i class="fa-solid fa-check"></i> Free ISRC &amp; UPC barcode</li>
-        <li><i class="fa-solid fa-check"></i> Keep 100% of royalties</li>
-        <li><i class="fa-solid fa-check"></i> Fast 5–7 day delivery</li>
-        <li><i class="fa-solid fa-check"></i> Cover art review &amp; upload</li>
-        <li><i class="fa-solid fa-check"></i> Streaming analytics dashboard</li>
-        <li><i class="fa-solid fa-check"></i> Metadata &amp; credits management</li>
-      </ul>
-
-      <div class="stores-row">
-        <span class="store-chip"><i class="fa-brands fa-spotify"></i> Spotify</span>
-        <span class="store-chip"><i class="fa-solid fa-music"></i> Apple</span>
-        <span class="store-chip"><i class="fa-brands fa-youtube"></i> YouTube</span>
-        <span class="store-chip"><i class="fa-brands fa-amazon"></i> Amazon</span>
-        <span class="store-chip"><i class="fa-solid fa-plus"></i> 96 more</span>
-      </div>
-
-      <div class="plan-error" id="err-single"><i class="fa-solid fa-triangle-exclamation"></i><span></span></div>
+      <div class="plan-error" id="err-single"><span></span></div>
       <button type="button" class="plan-btn solid" id="btn-single" onclick="startPayment('single', 39.99, this)">
-        <span class="btn-label">Release Single</span> <i class="fa-solid fa-arrow-right"></i>
+        <span class="btn-label">Release single</span>
       </button>
+
+      <ul class="feature-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>1 single release (1–2 tracks)</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Spotify, Apple Music, TikTok &amp; 100+ stores</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free ISRC &amp; UPC</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keep 100% of royalties</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>5–7 day delivery</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cover art review &amp; analytics</li>
+      </ul>
     </div>
 
-    <!-- ── CARD 3: EP / ALBUM ── -->
+    <!-- EP / ALBUM -->
     <div class="price-card" data-plan="ep">
-      <div class="plan-badge pro"><i class="fa-solid fa-layer-group"></i> Pro</div>
       <div class="plan-name">EP / Album</div>
-      <div class="plan-desc">Full project distribution with advanced reporting and priority support.</div>
+      <div class="plan-desc">A full project with advanced reporting and priority support.</div>
 
       <div class="price-block">
         <span class="price-currency" data-currency-label="ep">GHC</span>
@@ -490,110 +306,111 @@ body {
       </div>
       <div class="price-period">One-time per project</div>
 
-      <div class="card-divider"></div>
-      <div class="features-label">WHAT'S INCLUDED</div>
-      <ul class="feature-list">
-        <li><i class="fa-solid fa-check"></i> Up to 20 tracks per project</li>
-        <li><i class="fa-solid fa-check"></i> Global distribution to 100+ stores</li>
-        <li><i class="fa-solid fa-check"></i> Free ISRC for each track + UPC</li>
-        <li><i class="fa-solid fa-check"></i> Keep 100% of royalties</li>
-        <li><i class="fa-solid fa-check"></i> Priority 3–5 day delivery</li>
-        <li><i class="fa-solid fa-check"></i> Full royalty breakdown reports</li>
-        <li><i class="fa-solid fa-check"></i> Artist dashboard with insights</li>
-        <li><i class="fa-solid fa-check"></i> Priority email support</li>
-      </ul>
-
-      <div class="stores-row">
-        <span class="store-chip"><i class="fa-brands fa-spotify"></i> Spotify</span>
-        <span class="store-chip"><i class="fa-solid fa-music"></i> Apple</span>
-        <span class="store-chip"><i class="fa-brands fa-youtube"></i> YouTube</span>
-        <span class="store-chip"><i class="fa-brands fa-tidal"></i> Tidal</span>
-        <span class="store-chip"><i class="fa-solid fa-plus"></i> 96 more</span>
-      </div>
-
-      <div class="plan-error" id="err-ep"><i class="fa-solid fa-triangle-exclamation"></i><span></span></div>
+      <div class="plan-error" id="err-ep"><span></span></div>
       <button type="button" class="plan-btn outline" id="btn-ep" onclick="startPayment('ep', 69.99, this)">
-        <span class="btn-label">Release Project</span> <i class="fa-solid fa-arrow-right"></i>
+        <span class="btn-label">Release project</span>
       </button>
+
+      <ul class="feature-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Up to 20 tracks</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>100+ stores worldwide</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Free ISRC for every track + UPC</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keep 100% of royalties</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority 3–5 day delivery</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full royalty reports &amp; priority support</li>
+      </ul>
     </div>
 
   </div>
 </section>
 
 <section class="compare-section">
-  <div class="compare-title">Plan Comparison</div>
-  <div class="compare-table-wrap" id="compareTable">
-    <table class="compare-table">
-      <thead>
-        <tr><th>Feature</th><th>Starter</th><th class="hl">Single</th><th>EP / Album</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Store Distribution</td><td>100+</td><td class="hl-col">100+</td><td>100+</td></tr>
-        <tr><td>Royalty Split</td><td>100%</td><td class="hl-col">100%</td><td>100%</td></tr>
-        <tr><td>Releases</td><td>1</td><td class="hl-col">1 Single</td><td>1 Project</td></tr>
-        <tr><td>Free ISRC &amp; UPC</td><td class="yes"><i class="fa-solid fa-check"></i></td><td class="hl-col yes"><i class="fa-solid fa-check"></i></td><td class="yes"><i class="fa-solid fa-check"></i></td></tr>
-        <tr><td>Analytics</td><td>Basic</td><td class="hl-col">Standard</td><td>Advanced</td></tr>
-        <tr><td>Support</td><td>Community</td><td class="hl-col">Email</td><td>Priority</td></tr>
-      </tbody>
-    </table>
+  <div class="compare-panel" id="compareTable">
+    <div class="compare-title">Compare plans</div>
+    <div class="compare-scroll">
+      <table class="compare-table">
+        <thead>
+          <tr><th>Feature</th><th>Starter</th><th class="hl">Single</th><th>EP / Album</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Store distribution</td><td>100+</td><td class="hl-col">100+</td><td>100+</td></tr>
+          <tr><td>Royalty split</td><td>100%</td><td class="hl-col">100%</td><td>100%</td></tr>
+          <tr><td>Releases</td><td>1</td><td class="hl-col">1 single</td><td>1 project</td></tr>
+          <tr><td>Free ISRC &amp; UPC</td>
+            <td><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="hl-col"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          <tr><td>Analytics</td><td>Basic</td><td class="hl-col">Standard</td><td>Advanced</td></tr>
+          <tr><td>Support</td><td>Community</td><td class="hl-col">Email</td><td>Priority</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
 <section class="faq-section" id="faqSection">
-  <div class="faq-title">Frequently Asked Questions</div>
+  <div class="faq-title">Questions</div>
+  <div class="faq-group">
 
-  <div class="faq-item">
-    <button class="faq-q">When do I pay for the Release as Draft plan? <i class="fa-solid fa-plus"></i></button>
-    <div class="faq-a">You upload for free and only settle the distribution fee once your release starts earning. We deduct from your first royalty payout — no upfront cash needed.</div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q">How long does it take for my music to go live? <i class="fa-solid fa-plus"></i></button>
-    <div class="faq-a">Standard delivery is 5–7 business days. Pro plans enjoy priority processing of 3–5 days. Stores like Spotify and Apple Music control final publishing timelines.</div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q">Do you take any percentage of my royalties? <i class="fa-solid fa-plus"></i></button>
-    <div class="faq-a">Never. You keep 100% of all streaming royalties across every store. Our revenue comes from the one-time plan fees only.</div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q">Can I upgrade my plan later? <i class="fa-solid fa-plus"></i></button>
-    <div class="faq-a">Yes. You can choose a different plan for each new release from your dashboard. Your existing releases remain active regardless of which plan you pick next.</div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q">What currency will I actually be charged in? <i class="fa-solid fa-plus"></i></button>
-    <div class="faq-a">All payments are processed in Ghanaian Cedis (GHC) through Paystack. The currency dropdown above just shows you an approximate equivalent in your local currency so you know roughly what to expect before checkout.</div>
+    <div class="faq-item">
+      <button class="faq-q">When do I pay for the Release as Draft plan?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="faq-a">You upload for free and only settle the distribution fee once your release starts earning. We deduct from your first royalty payout — no upfront cash needed.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How long does it take for my music to go live?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="faq-a">Standard delivery is 5–7 business days. Pro plans enjoy priority processing of 3–5 days. Stores like Spotify and Apple Music control final publishing timelines.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Do you take any percentage of my royalties?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="faq-a">Never. You keep 100% of all streaming royalties across every store. Our revenue comes from the one-time plan fees only.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I upgrade my plan later?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="faq-a">Yes. You can choose a different plan for each new release from your dashboard. Your existing releases remain active regardless of which plan you pick next.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What currency will I be charged in?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <div class="faq-a">All payments are processed in Ghanaian Cedis (GHC) through Paystack. The currency menu at the top only shows an approximate equivalent in your local currency so you know roughly what to expect before checkout.</div>
+    </div>
+
   </div>
 </section>
 
 <div class="bottom-banner">
   <div class="bottom-banner-inner">
-    <div class="banner-icon-circle"><i class="fa-solid fa-headphones"></i></div>
-    <div class="bottom-banner-text">
-      <h3>Ready to get your music heard?</h3>
-      <p>Join thousands of independent artists already distributing with 444Music.</p>
-      <div class="banner-btns">
-        <a href="agreement.html" class="btn-primary"><i class="fa-solid fa-rocket"></i> Start Distributing</a>
-        <a href="support.html" class="btn-secondary"><i class="fa-solid fa-circle-question"></i> Talk to Support</a>
-      </div>
+    <h3>Ready to get your music heard?</h3>
+    <p>Join thousands of independent artists distributing with 444Music.</p>
+    <div class="banner-btns">
+      <a href="agreement.html" class="btn-primary">Start distributing</a>
+      <a href="support.html" class="btn-secondary">Talk to support</a>
     </div>
   </div>
 </div>
 
-<div style="height: 60px;"></div>
+<div class="page-end"></div>
 
+<!-- pending payment banner -->
+<div class="pending-pay-banner" id="pendingPayBanner">
+  <span>Payment in progress</span>
+  <button type="button" id="pendingPayBtn">Continue</button>
+</div>
+
+<!-- already-paid lock -->
 <div class="lock-overlay" id="lockOverlay">
-  <div class="lock-card">
-    <div class="lock-icon"><i class="fa-solid fa-circle-check"></i></div>
-    <div class="lock-title">Payment Completed</div>
-    <div class="lock-text">You've already paid for a release. Continue to finish submitting it before starting anything new.</div>
-    <button class="lock-btn" id="lockContinueBtn">CONTINUE <i class="fa-solid fa-arrow-right"></i></button>
+  <div class="lock-card" role="alertdialog" aria-modal="true">
+    <div class="lock-body">
+      <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="lock-title">Payment completed</div>
+      <div class="lock-text">You've already paid for a release. Continue to finish submitting it before starting anything new.</div>
+    </div>
+    <button class="lock-btn" id="lockContinueBtn" type="button">Continue</button>
   </div>
 </div>
 
 <script>
 /* ── CURRENCY DISPLAY — cosmetic only, never touches payment logic ──
    Rates are GHC → target currency, approximate as of mid-2026.
-   These are static snapshot values — refresh periodically, or wire
-   this up to a live FX rates API later if you want it to auto-update. */
+   Static snapshot values — refresh periodically, or wire to a live FX API later. */
 const CURRENCY_RATES = {
   GHS: { rate: 1,        symbol: 'GHC',  locale: 'en-GH' },
   NGN: { rate: 131,      symbol: '₦',    locale: 'en-NG' },
@@ -609,7 +426,6 @@ const CURRENCY_RATES = {
 
 function formatAmount(value, currencyCode) {
   const cfg = CURRENCY_RATES[currencyCode] || CURRENCY_RATES.USD;
-  // XOF and NGN conventionally show no/zero decimals for round numbers; others show 2
   const decimals = (currencyCode === 'XOF') ? 0 : 2;
   return value.toLocaleString(cfg.locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
@@ -630,10 +446,8 @@ function renderPrices(currencyCode) {
     const subLabelEl = document.querySelector(`[data-sub-label="${plan}"]`);
     if (subLabelEl) {
       if (currencyCode === 'GHS') {
-        // Already showing GHC as primary — sub-label falls back to USD reference
         subLabelEl.textContent = baseGhc === 0 ? '/ $0' : `/ $${formatAmount(baseGhc * CURRENCY_RATES.USD.rate, 'USD')}`;
       } else {
-        // Any non-GHC currency selected — sub-label always shows the real GHC charge amount
         subLabelEl.textContent = baseGhc === 0 ? '/ GHC 0' : `/ GHC ${formatAmount(baseGhc, 'GHS')}`;
       }
     }
@@ -642,26 +456,25 @@ function renderPrices(currencyCode) {
   const disclaimer = document.getElementById('currencyDisclaimer');
   if (disclaimer) {
     disclaimer.textContent = (currencyCode === 'GHS')
-      ? "You'll be charged the exact GHC amount shown below at checkout."
-      : `Approximate ${currencyCode} preview — you'll still be charged the exact GHC amount shown next to it at checkout.`;
+      ? "You'll be charged the exact GHC amount at checkout."
+      : `Approximate ${currencyCode} preview. You'll be charged the GHC amount shown next to it.`;
   }
 }
 
-// Render default (GHS) view on load
 document.addEventListener('DOMContentLoaded', () => renderPrices('GHS'));
 
-/* ── REVEAL ANIMATIONS ────────────────────────────────────────── */
+/* ── REVEAL ANIMATIONS ── */
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
   });
 }, { threshold: 0.08 });
-document.querySelectorAll('.price-card, .compare-table-wrap, #faqSection').forEach(el => observer.observe(el));
+document.querySelectorAll('.price-card, .compare-panel, #faqSection').forEach(el => observer.observe(el));
 document.querySelectorAll('.price-card').forEach(card => {
   if (card.getBoundingClientRect().top < window.innerHeight) card.classList.add('visible');
 });
 
-/* ── FAQ ACCORDION ────────────────────────────────────────────── */
+/* ── FAQ ACCORDION ── */
 document.querySelectorAll('.faq-q').forEach(btn => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
@@ -671,7 +484,7 @@ document.querySelectorAll('.faq-q').forEach(btn => {
   });
 });
 
-/* ── BACKEND CONFIG — same backend the app calls ──────────────── */
+/* ── BACKEND CONFIG — same backend the app calls ── */
 const BACKEND_BASE = 'https://four44music-broadcast-backend.onrender.com';
 
 let currentUser = null;
@@ -696,7 +509,7 @@ function showPendingPayBanner(reference) {
 }
 
 /* ── PAYMENT LOGIC UNCHANGED — always sends the real GHC amount
-   regardless of what currency is showing on screen. ──────────── */
+   regardless of what currency is showing on screen. ── */
 async function startPayment(planKey, amountGHS, btnEl) {
   if (!currentUser) {
     window.location.href = 'login.html';
@@ -788,7 +601,7 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-/* ── FIREBASE — auth + resume-lock check ──────────────────────── */
+/* ── FIREBASE — auth + resume-lock check ── */
 import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js').then(async ({ initializeApp }) => {
   const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js');
   const { getFirestore, collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js');
