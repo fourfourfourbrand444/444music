@@ -328,11 +328,11 @@ details.fold[open] summary::after { transform: rotate(45deg); }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </div>
       <div class="cover-empty-title">Add cover art</div>
-      <div class="cover-empty-sub">3000 × 3000 px, JPG or PNG</div>
+      <div class="cover-empty-sub">4000 × 4000 px, JPG</div>
     </div>
     <div class="cover-badge-top" id="coverBadge">Required</div>
     <div class="cover-change">Change</div>
-    <input type="file" id="coverInput" accept="image/*">
+    <input type="file" id="coverInput" accept=".jpg,.jpeg,image/jpeg">
   </div>
   <div class="ferr" id="coverErr"></div>
 
@@ -499,10 +499,42 @@ const globalErr   = document.getElementById('globalErr');
 const globalErrText = document.getElementById('globalErrText');
 
 // ── COVER ART ────────────────────────────────────────────────────
+// ── COVER ART ────────────────────────────────────────────────────
+// AVVO rule: JPG, exactly 4000 x 4000, RGB. Read from the file header, no upload needed.
+async function checkCover(file) {
+  if (!/\.jpe?g$/i.test(file.name)) return 'Cover art must be a JPG file.';
+  const v = new DataView(await file.arrayBuffer());
+  if (v.byteLength < 4 || v.getUint16(0) !== 0xFFD8) return 'This is not a valid JPG file.';
+  let p = 2;
+  while (p + 4 <= v.byteLength) {
+    if (v.getUint8(p) !== 0xFF) { p++; continue; }
+    const m = v.getUint8(p + 1);
+    if (m === 0xFF) { p++; continue; }
+    if (m === 0xDA) break;
+    if (m === 0xD8 || m === 0x01 || (m >= 0xD0 && m <= 0xD7)) { p += 2; continue; }
+    const len = v.getUint16(p + 2);
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+      const h = v.getUint16(p + 5), w = v.getUint16(p + 7), comps = v.getUint8(p + 9);
+      if (w !== 4000 || h !== 4000) return `Cover art must be exactly 4000 × 4000 px. Yours is ${w} × ${h}.`;
+      if (comps !== 3) return 'Cover art must be RGB. CMYK and grayscale images are not accepted.';
+      return '';
+    }
+    p += 2 + len;
+  }
+  return 'Could not read this image. Please export it again as a JPG.';
+}
+
 coverHero.addEventListener('click', () => coverInput.click());
-coverInput.addEventListener('change', e => {
+coverInput.addEventListener('change', async e => {
   const f = e.target.files[0];
   if (!f) return;
+  const problem = await checkCover(f);
+  coverInput.value = '';
+  if (problem) {
+    coverErr.innerHTML = ERR_ICON + problem;
+    coverErr.style.display = 'flex';
+    return;
+  }
   coverFile = f;
   coverErr.style.display = 'none';
   const reader = new FileReader();
@@ -688,8 +720,8 @@ function buildTrackRow(t, i) {
           ${t.mp3FileName ? `
             <div class="zone-title">${escHtml(t.mp3FileName)}</div>
             <div class="zone-sub">${t.mp3File ? fmtBytes(t.mp3File.size) : ''}</div>` : `
-            <div class="zone-title empty">Choose MP3</div>
-            <div class="zone-sub">MP3 only, up to 50 MB</div>`}
+           <div class="zone-title empty">Choose WAV</div>
+                      <div class="zone-sub">WAV, 16-bit+, 44.1 kHz+, stereo</div>`}
         </div>
         ${t.mp3FileName && !locked ? `<span class="zone-swap">Replace</span>` : ''}
       </div>
@@ -755,7 +787,7 @@ function buildTrackRow(t, i) {
   const zone = row.querySelector('.zone');
   if (zone) {
     const fileInput = document.createElement('input');
-    fileInput.type = 'file'; fileInput.accept = '.mp3,audio/mpeg';
+    fileInput.type = 'file'; fileInput.accept = '.wav,audio/wav,audio/x-wav';
     zone.appendChild(fileInput);
     zone.addEventListener('click', () => { if (!locked) fileInput.click(); });
     fileInput.addEventListener('click', e => e.stopPropagation());
@@ -775,24 +807,51 @@ function buildTrackRow(t, i) {
   return row;
 }
 
-function handleTrackFile(id, file) {
+// AVVO rule: WAV, 16-bit or higher, 44.1 kHz or higher, stereo. Read from the real WAV header.
+async function checkWav(file) {
+  const buf = await file.slice(0, 65536).arrayBuffer();
+  const v = new DataView(buf);
+  const tag = o => String.fromCharCode(v.getUint8(o), v.getUint8(o + 1), v.getUint8(o + 2), v.getUint8(o + 3));
+  if (buf.byteLength < 12 || tag(0) !== 'RIFF' || tag(8) !== 'WAVE') return 'This is not a valid WAV file.';
+  let pos = 12;
+  while (pos + 8 <= buf.byteLength) {
+    const id = tag(pos), size = v.getUint32(pos + 4, true);
+    if (id === 'fmt ' && pos + 24 <= buf.byteLength) {
+      const channels = v.getUint16(pos + 10, true);
+      const rate = v.getUint32(pos + 12, true);
+      const bits = v.getUint16(pos + 22, true);
+      if (bits < 16) return 'Audio must be 16-bit or higher. Re-export at 16-bit or 24-bit.';
+      if (rate < 44100) return 'Audio must be 44.1 kHz or higher. Re-export at 44.1 kHz or 48 kHz.';
+      if (channels !== 2) return 'Audio must be stereo. Mono files are not accepted.';
+      return '';
+    }
+    pos += 8 + size + (size % 2);
+  }
+  return 'Could not read this WAV file. Please re-export it and try again.';
+}
+
+async function handleTrackFile(id, file) {
   if (!file) return;
   const t = tracks.find(x => x.id === id);
   if (!t) return;
   const ext = file.name.split('.').pop().toLowerCase();
-  if (ext !== 'mp3') {
-    t.errors.mp3 = `.${ext} files are not accepted. Please select an MP3 file only.`;
+  if (ext !== 'wav') {
+    t.errors.mp3 = `.${ext} files are not accepted. Please select a WAV file only.`;
     renderTracks(); return;
   }
-  if (file.size > 50 * 1024 * 1024) {
-    t.errors.mp3 = 'File exceeds 50 MB limit.';
+  if (file.size > 100 * 1024 * 1024) {
+    t.errors.mp3 = 'File exceeds the 100 MB limit.';
+    renderTracks(); return;
+  }
+  const problem = await checkWav(file);
+  if (problem) {
+    t.errors.mp3 = problem;
     renderTracks(); return;
   }
   t.mp3File = file; t.mp3FileName = file.name;
   delete t.errors.mp3;
   renderTracks();
 }
-
 addTrackBtn.addEventListener('click', () => {
   const nt = mkTrack();
   tracks.push(nt);
@@ -816,7 +875,7 @@ function validateAll() {
       t.errors.artists = 'Track 1 must have one artist tagged Main.';
       valid = false;
     }
-    if (!t.mp3File)                      { t.errors.mp3 = 'Please select an MP3 file.'; valid = false; }
+    if (!t.mp3File)                      { t.errors.mp3 = 'Please select a WAV file.'; valid = false; }
     if (Object.keys(t.errors).length) expanded.add(t.id);
   });
   renderTracks();
