@@ -463,6 +463,38 @@ function uploadToCloudinary(file, folder, onProgress) {
   });
 }
 
+// ── R2 AUDIO — private bucket, upload link comes from our backend ──
+const BACKEND_URL = "https://four44music-broadcast-backend.onrender.com";
+
+async function uploadWavToR2(file, onProgress) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Please sign in again.");
+  const token = await user.getIdToken();
+
+  const res = await fetch(`${BACKEND_URL}/api/audio/upload-url`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ contentType: 'audio/wav', size: file.size })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) throw new Error(data.message || 'Could not start the upload.');
+
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', data.uploadUrl, true);
+    xhr.setRequestHeader('Content-Type', 'audio/wav');
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300)
+      ? resolve()
+      : reject(new Error(`Upload was refused (HTTP ${xhr.status}).`));
+    xhr.onerror = () => reject(new Error('Network error during upload.'));
+    xhr.send(file);
+  });
+  return data.key;
+}
+
 function fmtBytes(b){ return b < 1024*1024 ? (b/1024).toFixed(1)+' KB' : (b/(1024*1024)).toFixed(1)+' MB'; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -918,7 +950,7 @@ submitBtn.addEventListener('click', async () => {
       updateUpRow(t.id, t.releaseTitle || 'Track', 'uploading', 0);
       renderTracks();
       try {
-        t.fileUrl = await uploadToCloudinary(t.mp3File, 'tracks', pct => {
+              t.fileKey = await uploadWavToR2(t.mp3File, pct => {
           t.progress = pct;
           updateUpRow(t.id, t.releaseTitle || 'Track', 'uploading', pct);
           renderTracks();
@@ -929,7 +961,7 @@ submitBtn.addEventListener('click', async () => {
       } catch (e) {
         anyError = true;
         t.status = 'error';
-        t.errorMsg = 'Upload failed. Check connection and retry.';
+        t.errorMsg = (e && e.message) ? e.message : 'Upload failed. Check connection and retry.';
         updateUpRow(t.id, t.releaseTitle || 'Track', 'error', 0);
         renderTracks();
       }
@@ -943,11 +975,12 @@ submitBtn.addEventListener('click', async () => {
       // Each track carries its FULL artists array (name, type, spotifyUrl,
       // appleUrl) — the shape the Release Info page reads to auto-sync.
       const audioFiles = tracks
-        .filter(t => t.fileUrl)
+                .filter(t => t.fileKey)
         .map(t => ({
           title: t.releaseTitle.trim(),
           artists: t.artists.map(a => ({ name: a.name, type: a.type, spotifyUrl: a.spotifyUrl, appleUrl: a.appleUrl })),
-          url: t.fileUrl
+                    key: t.fileKey,
+          url: 'r2:' + t.fileKey
         }));
       const existing = new URLSearchParams(window.location.search);
       const ref = existing.get('ref');
