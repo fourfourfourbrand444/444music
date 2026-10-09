@@ -641,6 +641,50 @@ body.select-mode .card { cursor: pointer; }
 }
 .edit-smartlink-btn:hover { background: rgba(96,165,250,0.08); border-color: var(--blue); }
 
+/* AVVO */
+.avvo-box {
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 2px;
+}
+.avvo-box.avvo-sent   { border-color: rgba(74,222,128,0.35); }
+.avvo-box.avvo-failed { border-color: rgba(248,113,113,0.35); }
+.avvo-line { font-size: 0.78rem; color: var(--text-sec); line-height: 1.5; margin-bottom: 8px; word-break: break-word; }
+.avvo-box.avvo-sent .avvo-line   { color: var(--green); }
+.avvo-box.avvo-failed .avvo-line { color: var(--red); }
+.avvo-actions { display: flex; gap: 8px; }
+.avvo-btn {
+  flex: 1; padding: 10px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  color: var(--text-sec);
+  font-family: var(--ff); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer; transition: all var(--trans);
+}
+.avvo-btn:hover { border-color: var(--white); color: var(--white); }
+.avvo-btn.primary { background: var(--white); border-color: var(--white); color: var(--black); }
+.avvo-btn.primary:hover { background: #e5e5e5; }
+.avvo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.avvo-input {
+  width: 100%; margin-bottom: 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px; color: var(--text);
+  font-family: var(--ff); font-size: 0.86rem;
+  padding: 12px 14px; outline: none;
+}
+.avvo-input:focus { border-color: var(--white); }
+.avvo-login-err { color: var(--red); font-size: 0.78rem; min-height: 18px; margin-bottom: 10px; }
+.avvo-pre {
+  background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px; margin-bottom: 18px;
+  font-size: 0.72rem; color: var(--text-sec);
+  max-height: 50vh; overflow: auto; white-space: pre-wrap; word-break: break-word;
+}
+
 /* DELETE BUTTON */
 .delete-btn {
   width: 100%; margin-top: 2px;
@@ -1145,7 +1189,9 @@ body.select-mode .card { cursor: pointer; }
 <!-- FIREBASE + LOGIC -->
 <script type="module">
 import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+ from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -1296,6 +1342,7 @@ async function sendApprovalEmail({ id, email }) {
 /* ─── INIT FIREBASE ──────────────────────── */
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
+const auth = getAuth(app);
 window.db = db;
 
 try {
@@ -1784,6 +1831,26 @@ function display(data) {
          </button>`
       : '';
 
+   const avvoState  = item.avvoSendState || '';
+    const avvoStat   = item.avvoStatus || '';
+    const canAvvo    = statusKey === 'review' && isPaid;
+    const alreadySent = !!item.avvoReleaseId && avvoStat.toLowerCase() !== 'returned';
+    const canSendAvvo = canAvvo && !alreadySent && avvoState !== 'sending';
+    let avvoLine = '';
+    if (avvoState === 'sending') avvoLine = 'Sending to AVVO…';
+    else if (avvoState === 'sent') avvoLine = 'Sent to AVVO — status: ' + (avvoStat || 'moderation');
+    else if (avvoState === 'failed') avvoLine = 'AVVO send failed: ' + (item.avvoLastError || 'unknown error');
+    const avvoClass = avvoState === 'failed' ? 'avvo-failed' : (avvoState === 'sent' ? 'avvo-sent' : '');
+    const avvoHtml = (canAvvo || avvoState)
+      ? `<div class="avvo-box ${avvoClass}">
+           ${avvoLine ? `<div class="avvo-line">${escHtml(avvoLine)}</div>` : ''}
+           <div class="avvo-actions">
+             <button class="avvo-btn" data-avvo="preview" data-id="${item.id}">Preview AVVO</button>
+             ${canSendAvvo ? `<button class="avvo-btn primary" data-avvo="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${avvoState === 'failed' || avvoStat.toLowerCase() === 'returned' ? 'Retry AVVO' : 'Send to AVVO'}</button>` : ''}
+           </div>
+         </div>`
+      : '';
+
     card.innerHTML = `
       <div class="card-select-box ${selectedIds.has(item.id) ? 'checked' : ''}" data-select-id="${item.id}">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1875,7 +1942,8 @@ function display(data) {
         ${editReasonHtml}
         ${editTakedownHtml}
        ${editUpcHtml}
-        ${editSmartlinkHtml}
+      ${editSmartlinkHtml}
+        ${avvoHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
@@ -2174,6 +2242,36 @@ function display(data) {
       });
     }
 
+    card.querySelectorAll('[data-avvo]').forEach((btn) => {
+      btn.addEventListener('click', async function() {
+        const action = this.dataset.avvo;
+        const subId  = this.dataset.id;
+        const label  = this.textContent;
+        this.disabled = true;
+        try {
+          if (action === 'preview') {
+            this.textContent = 'Loading…';
+            const data = await avvoCall('GET', subId, 'preview');
+            if (data) showAvvoPreview(data);
+          } else {
+            if (!confirm(`Send "${this.dataset.title}" by ${this.dataset.artist} to AVVO?`)) return;
+            this.textContent = 'Starting…';
+            const data = await avvoCall('POST', subId, 'send');
+            if (data) {
+              toast('success', `Sending to AVVO (${data.environment}). Refresh in a minute to see the result.`);
+              if (data.warnings && data.warnings.length) toast('warning', data.warnings.join(' | '));
+              setTimeout(() => refreshCurrentView(), 5000);
+            }
+          }
+        } catch (err) {
+          toast('error', 'AVVO: ' + err.message);
+        } finally {
+          this.disabled = false;
+          this.textContent = label;
+        }
+      });
+    });
+
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
     });
@@ -2200,6 +2298,88 @@ function display(data) {
 
     resultsEl.appendChild(card);
   });
+}
+
+function waitForAuth() {
+  return new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (u) => { unsub(); resolve(u); });
+  });
+}
+
+function promptAdminLogin() {
+  return new Promise((resolve) => {
+    const o = document.createElement('div');
+    o.className = 'reason-overlay';
+    o.innerHTML = `
+      <div class="reason-card">
+        <div class="reason-title">Admin sign-in</div>
+        <div class="reason-sub">Sign in with your admin account to use Send to AVVO.</div>
+        <input type="email" class="avvo-input" id="avvoLoginEmail" placeholder="Admin email" autocomplete="username">
+        <input type="password" class="avvo-input" id="avvoLoginPass" placeholder="Password" autocomplete="current-password">
+        <div class="avvo-login-err" id="avvoLoginErr"></div>
+        <div class="reason-btns">
+          <button class="reason-submit" id="avvoLoginGo" style="background:var(--white);color:var(--black);">Sign in</button>
+          <button class="reason-cancel" id="avvoLoginNo">Cancel</button>
+        </div>
+      </div>`;
+    document.body.appendChild(o);
+    const emailEl = o.querySelector('#avvoLoginEmail');
+    const passEl  = o.querySelector('#avvoLoginPass');
+    const errEl   = o.querySelector('#avvoLoginErr');
+    const goBtn   = o.querySelector('#avvoLoginGo');
+    const close = (r) => { o.remove(); resolve(r); };
+    goBtn.addEventListener('click', async () => {
+      goBtn.disabled = true;
+      errEl.textContent = '';
+      try {
+        await signInWithEmailAndPassword(auth, emailEl.value.trim(), passEl.value);
+        close(true);
+      } catch (e) {
+        errEl.textContent = 'Sign-in failed. Check the email and password.';
+        goBtn.disabled = false;
+      }
+    });
+    passEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') goBtn.click(); });
+    o.querySelector('#avvoLoginNo').addEventListener('click', () => close(false));
+    setTimeout(() => emailEl.focus(), 50);
+  });
+}
+
+async function getAdminToken() {
+  let user = auth.currentUser || await waitForAuth();
+  if (!user) {
+    const ok = await promptAdminLogin();
+    if (!ok) return null;
+    user = auth.currentUser;
+  }
+  return await user.getIdToken();
+}
+
+async function avvoCall(method, subId, action) {
+  const token = await getAdminToken();
+  if (!token) return null;
+  const res = await fetch(`${BACKEND_URL}/api/avvo-send/${encodeURIComponent(subId)}/${action}`, {
+    method,
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`);
+  return data;
+}
+
+function showAvvoPreview(data) {
+  const o = document.createElement('div');
+  o.className = 'reason-overlay';
+  const warn = (data.warnings && data.warnings.length) ? `<br>Warnings: ${escHtml(data.warnings.join(' | '))}` : '';
+  o.innerHTML = `
+    <div class="reason-card" style="max-width:640px;">
+      <div class="reason-title">AVVO preview</div>
+      <div class="reason-sub">${data.sendable ? 'Ready to send.' : 'Cannot be sent yet: ' + escHtml(data.blockedReason)}${warn}</div>
+      <pre class="avvo-pre">${escHtml(JSON.stringify(data.payload, null, 2))}</pre>
+      <div class="reason-btns"><button class="reason-cancel">Close</button></div>
+    </div>`;
+  o.addEventListener('click', (e) => { if (e.target === o || e.target.closest('.reason-cancel')) o.remove(); });
+  document.body.appendChild(o);
 }
 
 async function safeUpdate(id, data) {
