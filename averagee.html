@@ -295,68 +295,34 @@ select.credit-input.empty { color: var(--t3); }
       <label class="row"><span class="l">Title</span><input id="releaseTitle" placeholder="Name of your release" autocomplete="off"></label>
       <label class="row"><span class="l">Type</span><div class="sel"><select id="releaseType"><option>Single</option><option>EP</option><option>Album</option></select></div></label>
       <label class="row"><span class="l">Genre</span><div class="sel">
-        <select id="genre">
-          <option>Alternative Rock</option>
-          <option>Alternativo &amp; Rock Latino</option>
-          <option>Anime</option>
-          <option>Baladas y Boleros</option>
-          <option>Big Band</option>
-          <option>Blues</option>
-          <option>Brazilian</option>
-          <option>C-Pop</option>
-          <option>Cantopop/HK-Pop</option>
-          <option>Children's</option>
-          <option>Chinese</option>
-          <option>Christian</option>
-          <option>Classical</option>
-          <option>Comedy</option>
-          <option>Contemporary Latin</option>
-          <option>Country</option>
-          <option>Dance</option>
-          <option>Easy Listening</option>
-          <option>Educational</option>
-          <option>Electronic</option>
-          <option>Enka</option>
-          <option>Experimental</option>
-          <option>Fitness &amp; Workout</option>
-          <option>Folk</option>
-          <option>French Pop</option>
-          <option>German Folk</option>
-          <option>German Pop</option>
-          <option>Hip-Hop/Rap</option>
-          <option>Holiday</option>
-          <option>Indo Pop</option>
-          <option>Inspirational</option>
-          <option>J-Pop</option>
-          <option>Jazz</option>
-          <option>K-Pop</option>
-          <option>Karaoke</option>
-          <option>Kayokyoku</option>
-          <option>Latin</option>
-          <option>Latin Jazz</option>
-          <option>Metal</option>
-          <option>New Age</option>
-          <option>Opera</option>
-          <option>Original Pilipino Music</option>
-          <option selected>Pop</option>
-          <option>Pop Latino</option>
-          <option>Punk</option>
-          <option>R&amp;B</option>
-          <option>Raíces</option>
-          <option>Reggae</option>
-          <option>Reggaeton y Hip-Hop</option>
-          <option>Regional Mexicano</option>
+       <select id="genre" class="empty">
+                    <option value="" disabled selected>Select</option>
+          <option>Pop</option>
           <option>Rock</option>
-          <option>Salsa y Tropical</option>
-          <option>Singer/Songwriter</option>
+          <option>Hip-Hop/Rap</option>
+          <option>R&amp;B</option>
+          <option>Electronic</option>
+          <option>Jazz</option>
+          <option>Classical</option>
+          <option>Country</option>
+          <option>Latin</option>
+          <option>Reggaeton</option>
+          <option>K-Pop</option>
+          <option>Indie</option>
+          <option>Metal</option>
+          <option>Punk</option>
+          <option>Blues</option>
           <option>Soul</option>
-          <option>Soundtrack</option>
-          <option>Spoken Word</option>
-          <option>Tai-Pop</option>
-          <option>Thai Pop</option>
-          <option>Trot</option>
-          <option>Vocal/Nostalgia</option>
-          <option>World</option>
+          <option>Funk</option>
+          <option>Disco</option>
+          <option>House</option>
+          <option>Techno</option>
+          <option>Trap</option>
+          <option>Drill</option>
+          <option>Afrobeat</option>
+          <option>Dancehall</option>
+          <option>Folk</option>
+          <option>Other</option>
         </select></div></label>
       <label class="row"><span class="l">Language</span><div class="sel">
         <select id="language" class="empty">
@@ -374,7 +340,7 @@ select.credit-input.empty { color: var(--t3); }
       <label class="row"><span class="l">Explicit</span><div class="sel"><select id="explicit"><option>No</option><option>Yes</option></select></div></label>
       <label class="row"><span class="l">Release date</span><input id="releaseDate" type="date"></label>
     </div>
-    <p class="sf">Choose a date at least 5 days from today.</p>
+    <p class="sf">Earliest date is 3 days from today. 14 days or more is recommended.</p>
 
     <!-- SONG -->
     <div class="sh"><h2>Song</h2><span class="req">Required</span></div>
@@ -432,6 +398,13 @@ select.credit-input.empty { color: var(--t3); }
       <button type="button" class="add-credit-btn" onclick="addCredit('writer')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Add songwriter or composer</button>
     </div>
 
+        <div class="sh"><h2>Publishers</h2><span class="req">Required</span></div>
+    <div class="group">
+      <div class="credits-list" id="publishingList"></div>
+      <button type="button" class="add-credit-btn" onclick="addCredit('publishing')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Add publisher</button>
+    </div>
+    <p class="sf">No publisher? Enter your own name.</p>
+
     <div class="sh"><h2>Musicians &amp; performers</h2><span>Optional</span></div>
     <div class="group">
       <div class="credits-list" id="musicianList"></div>
@@ -487,7 +460,7 @@ select.credit-input.empty { color: var(--t3); }
   <div class="rd-popup" role="alertdialog" aria-modal="true">
     <div class="rd-popup-body-wrap">
       <div class="rd-popup-title">Pick a later date?</div>
-      <div class="rd-popup-body">After approval, stores usually take 2–5 days to go live. Choose a date at least 5 days from today so your release lands on time.</div>
+      <div class="rd-popup-body">The earliest release date is 3 days from today. We recommend 14 days or more so stores have time to go live.</div>
     </div>
     <div class="rd-popup-actions">
       <button type="button" id="rdPopupIgnore">Keep date</button>
@@ -536,7 +509,11 @@ select.credit-input.empty { color: var(--t3); }
 (function(){
   const dateInput = document.getElementById('releaseDate');
   const overlay   = document.getElementById('rdPopupOverlay');
-  const MIN_DAYS  = 5;
+   const MIN_DAYS  = 14;   // recommended
+  const HARD_MIN  = 3;    // earliest AVVO accepts
+  function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  const earliest = new Date(); earliest.setHours(0, 0, 0, 0); earliest.setDate(earliest.getDate() + HARD_MIN);
+  dateInput.min = ymd(earliest);   // the date picker greys out everything before this
   function daysFromToday(dateStr) {
     if (!dateStr) return null;
     const chosen = new Date(dateStr + 'T00:00:00');
@@ -547,6 +524,7 @@ select.credit-input.empty { color: var(--t3); }
   const close = () => overlay.classList.remove('show');
   dateInput.addEventListener('change', function(){
     const diff = daysFromToday(dateInput.value);
+      if (diff !== null && diff < HARD_MIN) dateInput.value = '';
     if (diff !== null && diff < MIN_DAYS) open();
   });
   document.getElementById('rdPopupIgnore').addEventListener('click', close);
@@ -581,16 +559,18 @@ select.credit-input.empty { color: var(--t3); }
 const ROLES = {
   producer: ['Producer','Executive Producer','Co-Producer','Beat Maker','Mixing Engineer','Mastering Engineer','Recording Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor'],
   musician: ['Vocalist','Background Vocalist','Lead Vocalist','Rapper','Guitarist','Bassist','Drummer','Pianist','Keyboardist','DJ / Turntablist','Session Musician','String Arranger'],
-  writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer']
+    writer:   ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer'],
+  publishing: ['Publisher','Co-Publisher','Administrator']
 };
 const PLACEHOLDERS = {
   producer: { name: 'Full name, e.g. Metro Boomin' },
   musician: { name: 'Full name, e.g. John Mayer' },
-  writer:   { name: 'Full name, e.g. John Doe' }
+  writer:   { name: 'Full name, e.g. John Doe' },
+  publishing: { name: 'Publisher name' }
 };
-const NOUN = { producer: 'Producer', musician: 'Musician', writer: 'Songwriter' };
-const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList' };
-const credits  = { producer:[], musician:[], writer:[] };
+const NOUN = { producer: 'Producer', musician: 'Musician', writer: 'Songwriter', publishing: 'Publisher' };
+const LIST_IDS = { producer:'producerList', musician:'musicianList', writer:'writerList', publishing:'publishingList' };
+const credits  = { producer:[], musician:[], writer:[], publishing:[] };
 
 window.addCredit = function(type, quiet) {
   const list = document.getElementById(LIST_IDS[type]);
@@ -649,7 +629,7 @@ window.formatCreditsForEmail = function(arr) {
 
 window.collectCredits = function() {
   const result = {};
-  ['producer','musician','writer'].forEach(type => {
+  ['producer','musician','writer','publishing'].forEach(type => 
     result[type] = credits[type].filter(c => c.name && c.name.trim() !== '');
   });
   return result;
@@ -658,6 +638,7 @@ window.collectCredits = function() {
 // Start with one empty producer and one empty songwriter so it's clear they're needed
 addCredit('producer', true);
 addCredit('writer', true);
+addCredit('publishing', true);
 </script>
 
 <!-- ARTIST SUMMARY ENGINE — read-only display of the artists synced from Upload Files -->
@@ -894,7 +875,7 @@ async function sendEmails(data) {
     producers:      fmt(data.credits?.producer),
     musicians:      fmt(data.credits?.musician),
     songwriters:    fmt(data.credits?.writer),
-    publishers:     'N/A',
+     publishers:     fmt(data.credits?.publishing),
     lyrics:         data.lyrics        || 'Not provided',
     submitted_at:   new Date(data.createdAt).toLocaleString(),
     status:         data.status,
@@ -978,10 +959,13 @@ function validate() {
   const releaseTitle = document.getElementById("releaseTitle").value.trim();
   if (!releaseTitle) return { msg: 'Please enter a release title.', scrollTo: 'releaseTitle' };
 
+   if (!document.getElementById("genre").value) return { msg: 'Please select a genre.', scrollTo: 'genre' };
   if (!document.getElementById("language").value) return { msg: 'Please select a language.', scrollTo: 'language' };
 
   const releaseDate = document.getElementById("releaseDate").value;
-  if (!releaseDate) return { msg: 'Please choose a release date.', scrollTo: 'releaseDate' };
+   if (!releaseDate) return { msg: 'Please choose a release date.', scrollTo: 'releaseDate' };
+  const minDate = new Date(); minDate.setHours(0, 0, 0, 0); minDate.setDate(minDate.getDate() + 3);
+  if (new Date(releaseDate + 'T00:00:00') < minDate) return { msg: 'The earliest release date is 3 days from today.', scrollTo: 'releaseDate' };
 
   const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
   const previousReleaseDate = document.getElementById('previousReleaseDate').value;
@@ -999,7 +983,14 @@ function validate() {
   if (producers.length === 0) return { msg: 'Please add at least one producer.', scrollTo: 'producerList' };
 
   const writers = credits.writer.filter(w => w.name && w.name.trim() !== '');
-  if (writers.length === 0) return { msg: 'Please add at least one songwriter.', scrollTo: 'writerList' };
+   if (writers.length === 0) return { msg: 'Please add at least one songwriter.', scrollTo: 'writerList' };
+  const wLyric = w => /lyric|author|word/.test((w.role || '').toLowerCase());
+  const wComp  = w => /compos|music|melod/.test((w.role || '').toLowerCase());
+  if (!writers.some(w => wLyric(w) || !wComp(w))) return { msg: 'Add at least one lyricist or songwriter (AVVO needs an author).', scrollTo: 'writerList' };
+  if (!writers.some(w => wComp(w) || !wLyric(w))) return { msg: 'Add at least one composer or songwriter (AVVO needs a composer).', scrollTo: 'writerList' };
+
+  const publishers = credits.publishing.filter(p => p.name && p.name.trim() !== '');
+  if (publishers.length === 0) return { msg: 'Please add at least one publisher.', scrollTo: 'publishingList' };
 
   if (!window.ownershipConfirmed) {
     return { msg: 'Please confirm the ownership statement.', scrollTo: 'agreementBox' };
@@ -1025,7 +1016,7 @@ form.addEventListener("submit", async e => {
       const host = el.closest('.row') || el.closest('.group') || el;
       document.querySelectorAll('.invalid').forEach(x => x.classList.remove('invalid'));
       host.classList.add('invalid');
-      if (el.id === 'producerList' || el.id === 'writerList') el.closest('.group').classList.add('invalid');
+       if (el.id === 'producerList' || el.id === 'writerList' || el.id === 'publishingList') el.closest('.group').classList.add('invalid');
       host.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     return;
