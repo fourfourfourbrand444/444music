@@ -986,7 +986,7 @@ function validate() {
    if (writers.length === 0) return { msg: 'Please add at least one songwriter.', scrollTo: 'writerList' };
   const wLyric = w => /lyric|author|word/.test((w.role || '').toLowerCase());
   const wComp  = w => /compos|music|melod/.test((w.role || '').toLowerCase());
-  if (!writers.some(w => wLyric(w) || !wComp(w))) return { msg: 'Add at least one lyricist or songwriter (AVVO needs an author).', scrollTo: 'writerList' };
+  if (!writers.some(w => wLyric(w) || !wComp(w))) return { msg: 'Add at least one lyricist or songwriter .', scrollTo: 'writerList' };
   if (!writers.some(w => wComp(w) || !wLyric(w))) return { msg: 'Add at least one composer or songwriter (AVVO needs a composer).', scrollTo: 'writerList' };
 
   const publishers = credits.publishing.filter(p => p.name && p.name.trim() !== '');
