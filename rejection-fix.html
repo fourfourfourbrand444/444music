@@ -2,118 +2,222 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fix & Resubmit — 444Music</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Fix &amp; Resubmit — 444Music</title>
+
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
 :root {
-  --black: #000000; --black-2: #0d0d0d; --black-3: #111111; --black-4: #161616;
-  --white: #ffffff; --white-70: rgba(255,255,255,0.70); --white-40: rgba(255,255,255,0.40);
-  --white-10: rgba(255,255,255,0.10); --white-06: rgba(255,255,255,0.06);
-  --grey: #888888; --grey-dark: #444444;
-  --green: #22c55e; --green-dim: rgba(34,197,94,0.12); --green-brd: rgba(34,197,94,0.2);
-  --rose: #ef4444; --rose-dim: rgba(239,68,68,0.09); --rose-brd: rgba(239,68,68,0.2);
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --s2: #2c2c2e;
+  --s3: #636366;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t1: #ffffff;
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.30);
+  --blue: #0a84ff;
+  --yellow: #fdeb0d;
+  --green: #30d158;
+  --rose: #ff453a;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito',sans-serif;background:var(--black);color:var(--white);min-height:100vh;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;}
-.topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--white-10);position:sticky;top:0;background:var(--black);z-index:10;}
-.back-btn{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--white-06);border:1px solid var(--white-10);border-radius:10px;color:var(--white);transition:background .15s;}
-.back-btn:hover{background:var(--black-4);}
-.back-btn svg{width:15px;height:15px;}
-.topbar-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.05rem;}
-.page{max-width:560px;margin:0 auto;padding:20px 20px 60px;}
-.card{background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;padding:16px;margin-bottom:20px;}
-.reason-card{background:var(--rose-dim);border:1px solid var(--rose-brd);}
-.reason-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
-.reason-head svg{width:16px;height:16px;color:var(--rose);flex-shrink:0;}
-.reason-title{font-size:14px;font-weight:800;}
-.reason-text{font-size:12.5px;color:var(--white-70);line-height:1.5;margin-top:8px;}
-.category-chip{display:inline-block;margin-top:10px;padding:4px 9px;background:var(--black-4);border:1px solid var(--white-10);border-radius:7px;font-size:11px;font-weight:700;color:var(--white-70);}
-.detail-label{color:var(--grey-dark);font-size:10px;font-weight:800;letter-spacing:1.5px;margin-bottom:12px;}
-.detail-row{display:flex;gap:8px;margin-bottom:10px;}
-.detail-row:last-child{margin-bottom:0;}
-.detail-key{width:110px;flex-shrink:0;color:var(--grey);font-size:12.5px;font-weight:600;}
-.detail-val{font-size:13px;font-weight:700;}
-.section-title{font-size:14px;font-weight:800;margin-bottom:4px;}
-.section-sub{font-size:12px;color:var(--grey);line-height:1.5;margin-bottom:12px;}
 
-/* Editable metadata fields */
-.field-row{margin-bottom:12px;}
-.field-row:last-child{margin-bottom:0;}
-.field-row label{display:block;font-size:10.5px;font-weight:800;color:var(--grey);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
-.field-row input{width:100%;background:var(--black-4);border:1px solid var(--white-10);border-radius:10px;padding:11px 13px;color:var(--white);font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s;}
-.field-row input:focus{border-color:rgba(255,255,255,.4);}
-.field-row input::placeholder{color:var(--grey-dark);}
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--t1); min-height: 100vh; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input[type="file"] { display: none !important; }
 
-/* Original-on-file reference */
-.original-media-label{font-size:10px;font-weight:800;color:var(--grey-dark);letter-spacing:1.5px;margin-bottom:12px;}
-.original-media-row{display:flex;gap:12px;align-items:center;}
-.original-media-cover{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--black-4);border:1px solid var(--white-10);}
-.original-media-audio{flex:1;min-width:0;}
-.original-media-audio audio{width:100%;height:34px;}
+.shell { max-width: 640px; margin: 0 auto; padding: 0 16px calc(150px + env(safe-area-inset-bottom)); }
 
-/* New-pick preview */
-.media-preview{margin-top:10px;}
-.media-preview audio{width:100%;height:36px;}
-.media-preview img{width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:1px solid var(--white-10);display:block;}
+/* top bar */
+.bar {
+  position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  height: 56px; margin: 0 -16px; padding: 0 16px; background: rgba(0,0,0,0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+}
+.back { width: 36px; height: 36px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; transition: transform .3s var(--ease); }
+.back:active { transform: scale(0.92); }
+.back svg { width: 16px; height: 16px; }
+.bar-title { font-size: 17px; font-weight: 600; }
+.bar-spacer { width: 36px; }
 
-.filezone{width:100%;padding:18px;background:var(--black-3);border:1px solid var(--white-10);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .15s;margin-bottom:8px;}
-.filezone.has-file{border-color:var(--green-brd);text-align:left;}
-.filezone-empty-icon{width:52px;height:52px;margin:0 auto 12px;background:var(--black-4);border:1px solid var(--white-10);border-radius:14px;display:flex;align-items:center;justify-content:center;}
-.filezone-empty-icon svg{width:24px;height:24px;color:var(--grey-dark);}
-.filezone-hint{font-size:13px;font-weight:700;color:var(--white-70);}
-.filezone-sub{font-size:11px;color:var(--grey-dark);margin-top:4px;}
-.filezone-row{display:flex;align-items:center;gap:12px;}
-.filezone-check{width:42px;height:42px;flex-shrink:0;background:var(--green-dim);border:1px solid var(--green-brd);border-radius:10px;display:flex;align-items:center;justify-content:center;}
-.filezone-check svg{width:20px;height:20px;color:var(--green);}
-.filezone-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.filezone-size{font-size:11px;color:var(--grey);}
-.filezone-swap{width:18px;height:18px;color:var(--grey-dark);flex-shrink:0;}
-.zone-block{margin-bottom:20px;}
-.error-banner{display:flex;gap:8px;padding:12px 14px;background:var(--rose-dim);border:1px solid var(--rose-brd);border-radius:10px;margin-bottom:20px;}
-.error-banner svg{width:16px;height:16px;color:var(--rose);flex-shrink:0;margin-top:1px;}
-.error-banner span{font-size:12.5px;color:var(--rose);line-height:1.5;}
-.submit-btn{width:100%;padding:16px;border-radius:12px;background:var(--white);border:1px solid var(--white);color:var(--black);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;}
-.submit-btn:hover{opacity:.9;}
-.submit-btn:disabled{background:var(--black-3);border-color:var(--white-10);color:var(--grey);cursor:default;}
-.submit-btn svg{width:18px;height:18px;}
-.spinner{width:16px;height:16px;border:2px solid var(--white-10);border-top-color:var(--grey);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.hint-text{text-align:center;font-size:11px;color:var(--grey-dark);line-height:1.6;margin-top:14px;}
-.success-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:20px;}
-.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-dim);border:1px solid var(--green-brd);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
-.success-icon svg{width:32px;height:32px;color:var(--green);}
-.success-title{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;margin-bottom:6px;}
-.success-sub{font-size:12.5px;color:var(--grey);}
-.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:14px;}
-.loading-wrap .spinner{width:28px;height:28px;border-width:3px;}
-.loading-wrap span{font-size:12.5px;color:var(--grey);}
-input[type=file]{display:none;}
+.hero { padding: 14px 4px 6px; }
+.hero h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; }
+.hero p { font-size: 17px; color: var(--t2); margin-top: 6px; overflow-wrap: anywhere; }
+
+/* reason */
+.reason { margin-top: 20px; padding: 16px; border-radius: 16px; background: rgba(255,69,58,0.12); }
+.reason-top { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--rose); }
+.reason-top svg { width: 18px; height: 18px; flex-shrink: 0; }
+.reason p { margin-top: 8px; font-size: 16px; line-height: 1.45; color: var(--t1); overflow-wrap: anywhere; }
+
+/* sections */
+.sh { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 16px 8px; }
+.sh h2 { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--t2); }
+.sh span { font-size: 13px; color: var(--t3); }
+.sh span.req { color: var(--yellow); }
+.sf { margin: 8px 16px 0; font-size: 13px; line-height: 1.4; color: var(--t2); }
+.sf.warn { color: var(--rose); }
+
+.group { background: var(--s1); border-radius: 16px; overflow: hidden; transition: box-shadow .25s ease; }
+.group.invalid { box-shadow: 0 0 0 1.5px var(--rose); }
+
+.row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; transition: background-color .2s ease; }
+.row + .row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--sep); }
+.row .l { flex: 0 0 126px; font-size: 16px; color: var(--t1); }
+.row.invalid { background: rgba(255,69,58,0.12); }
+.row.invalid .l { color: var(--rose); }
+.row input, .row select {
+  flex: 1; min-width: 0; width: 100%; padding: 15px 0; background: none; border: 0; outline: 0; color: var(--t1);
+  font: inherit; font-size: 16px; text-align: right; appearance: none; -webkit-appearance: none; border-radius: 0;
+}
+.row input::placeholder { color: var(--t3); }
+.row input[type="date"] { min-height: 52px; }
+.row select { text-align-last: right; padding-right: 20px; cursor: pointer; }
+.row select.empty { color: var(--t3); }
+option { background: var(--s2); color: var(--t1); }
+.sel { position: relative; flex: 1; min-width: 0; display: flex; }
+.sel::after { content: ''; position: absolute; right: 3px; top: 50%; width: 7px; height: 7px; pointer-events: none; border-right: 2px solid var(--t3); border-bottom: 2px solid var(--t3); transform: translateY(-70%) rotate(45deg); }
+#confirmRow { display: none; }
+#confirmRow.visible { display: flex; animation: rowIn .35s var(--ease) both; }
+
+.ferr { display: flex; align-items: center; gap: 6px; padding: 8px 16px 10px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--rose); }
+.ferr svg { width: 14px; height: 14px; flex-shrink: 0; }
+#coverErr { display: none; justify-content: center; padding-top: 12px; }
+
+/* cover */
+.cover-hero {
+  position: relative; width: min(100%, 300px); aspect-ratio: 1 / 1; margin: 6px auto 0; border-radius: 22px; background: var(--s1); overflow: hidden; cursor: pointer;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.08); transition: transform .3s var(--ease), box-shadow .25s ease;
+}
+.cover-hero:active { transform: scale(0.98); }
+.cover-hero.invalid { box-shadow: 0 0 0 2px var(--rose), 0 18px 50px rgba(0,0,0,0.5); }
+.cover-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 20px; }
+.cover-empty-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--yellow); color: #000; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.cover-empty-icon svg { width: 20px; height: 20px; }
+.cover-empty-title { font-size: 17px; font-weight: 600; }
+.cover-empty-sub { font-size: 13px; color: var(--t2); }
+.cover-badge { position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); font-size: 12px; font-weight: 600; color: var(--t2); }
+.cover-badge.req { color: var(--yellow); }
+.cover-badge.new { color: var(--green); }
+.cover-change { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); padding: 7px 16px; border-radius: 999px; background: rgba(28,28,30,0.7); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); font-size: 14px; font-weight: 600; }
+
+/* tracks, audio */
+.track { margin-bottom: 12px; }
+.player { position: relative; padding: 12px 16px 14px; }
+.player.has-err { background: rgba(255,69,58,0.12); }
+.player.sep::before, .zone.sep::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--sep); }
+.player-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.player-top:last-child { margin-bottom: 0; }
+.player-meta { flex: 1; min-width: 0; }
+.player-name { font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-sub { font-size: 13px; color: var(--t2); margin-top: 2px; line-height: 1.35; }
+.player-replace { flex-shrink: 0; height: 32px; padding: 0 14px; border-radius: 999px; background: var(--fill); color: var(--blue); font-size: 14px; font-weight: 600; transition: transform .3s var(--ease); }
+.player-replace:active { transform: scale(0.94); }
+.player-replace.req { background: var(--yellow); color: #000; }
+.player audio { width: 100%; height: 36px; color-scheme: dark; display: block; }
+.zone { position: relative; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; cursor: pointer; transition: background-color .2s ease; }
+.zone:active { background: rgba(255,255,255,0.06); }
+.zone.has-err { background: rgba(255,69,58,0.12); }
+.zone-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--s2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--t2); }
+.zone.has-file .zone-icon { color: var(--yellow); }
+.zone-icon svg { width: 20px; height: 20px; }
+.zone-meta { flex: 1; min-width: 0; }
+.zone-title { font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--blue); }
+.zone-title.req { color: var(--yellow); }
+.zone-title.has { color: var(--t1); }
+.zone-sub { font-size: 13px; color: var(--t2); margin-top: 2px; line-height: 1.35; }
+.zone-swap { font-size: 14px; font-weight: 500; color: var(--blue); flex-shrink: 0; }
+
+/* credits */
+details.fold { margin-bottom: 12px; }
+details.fold summary { list-style: none; cursor: pointer; }
+details.fold summary::-webkit-details-marker { display: none; }
+details.fold summary .l { flex: 1; }
+details.fold summary .opt { font-size: 14px; color: var(--t3); }
+details.fold summary .opt.req { color: var(--yellow); }
+details.fold summary::after { content: ''; width: 8px; height: 8px; margin-left: 4px; flex-shrink: 0; border-right: 2px solid var(--t3); border-bottom: 2px solid var(--t3); transform: rotate(-45deg); transition: transform .35s var(--ease); }
+details.fold[open] summary::after { transform: rotate(45deg); }
+.credit-row { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 14px 16px; }
+.credit-row::before, .add-credit-btn::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--sep); }
+.credit-row-num { font-size: 13px; font-weight: 500; color: var(--t2); align-self: center; }
+.credit-remove { width: 26px; height: 26px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; color: var(--t2); transition: transform .3s var(--ease); }
+.credit-remove:active { transform: scale(0.9); }
+.credit-remove svg { width: 10px; height: 10px; }
+.cr-full { grid-column: 1 / -1; }
+.credit-input { width: 100%; padding: 11px 13px; border: 0; outline: 0; border-radius: 10px; background: var(--s2); color: var(--t1); font: inherit; font-size: 16px; appearance: none; -webkit-appearance: none; }
+.credit-input::placeholder { color: var(--t3); }
+.credit-input:focus { background: #3a3a3c; }
+select.credit-input { padding-right: 32px; cursor: pointer; }
+select.credit-input.empty { color: var(--t3); }
+.csel-wrap { position: relative; }
+.csel-wrap::after { content: ''; position: absolute; right: 14px; top: 50%; width: 7px; height: 7px; pointer-events: none; border-right: 2px solid var(--t3); border-bottom: 2px solid var(--t3); transform: translateY(-70%) rotate(45deg); }
+.add-credit-btn { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 50px; padding: 0 16px; font-size: 16px; font-weight: 500; color: var(--yellow); text-align: left; transition: background-color .2s ease; }
+.add-credit-btn:active { background: rgba(255,255,255,0.06); }
+.add-credit-btn .plus { width: 22px; height: 22px; border-radius: 50%; background: var(--yellow); color: #000; display: flex; align-items: center; justify-content: center; }
+.add-credit-btn .plus svg { width: 12px; height: 12px; }
+
+/* dock */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(0,0,0,0.72); border-top: 0.5px solid var(--sep); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); }
+.dock-in { max-width: 640px; margin: 0 auto; }
+#statusMsg { margin-bottom: 10px; text-align: center; font-size: 14px; font-weight: 500; line-height: 1.35; color: var(--t2); }
+#statusMsg:empty { display: none; }
+#statusMsg.error { color: var(--rose); }
+.submit-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 52px; border-radius: 999px; background: var(--yellow); color: #000; font-size: 17px; font-weight: 600; transition: transform .3s var(--ease), opacity .2s ease; }
+.submit-btn:active:not(:disabled) { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.5; cursor: default; }
+.submit-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+.spin { width: 17px; height: 17px; border: 2.5px solid rgba(0,0,0,0.2); border-top-color: #000; border-radius: 50%; animation: sp .7s linear infinite; }
+
+/* states */
+.loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--fill); border-top-color: var(--t1); border-radius: 50%; animation: sp .8s linear infinite; }
+.state { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 64vh; padding: 20px; }
+.state-ico { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; background: var(--fill); }
+.state-ico.ok { background: rgba(48,209,88,0.16); color: var(--green); }
+.state-ico svg { width: 30px; height: 30px; }
+.state-title { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; }
+.state-sub { font-size: 15px; line-height: 1.4; color: var(--t2); margin-top: 6px; max-width: 300px; }
+.state-btn { margin-top: 22px; height: 44px; padding: 0 22px; border-radius: 999px; background: var(--fill); font-size: 16px; font-weight: 600; }
+
+@keyframes sp { to { transform: rotate(360deg); } }
+@keyframes rowIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 420px) { .row .l { flex-basis: 108px; font-size: 15px; } .hero h1 { font-size: 30px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
+
 <body>
+<div class="shell">
+  <header class="bar">
+    <button type="button" class="back" id="backBtn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="bar-title">Fix release</span>
+    <span class="bar-spacer"></span>
+  </header>
 
-<div class="topbar">
-  <button class="back-btn" onclick="goBack()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-  </button>
-  <span class="topbar-title">Fix & Resubmit</span>
+  <div class="loading" id="loadingState"><div class="spinner"></div></div>
+  <div id="view"></div>
+
+  <div class="state" id="successState" style="display:none;">
+    <div class="state-ico ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="state-title">Sent for review</div>
+    <div class="state-sub" id="successSub">We'll take another look. No payment needed.</div>
+  </div>
 </div>
 
-<div id="loadingState" class="loading-wrap">
-  <div class="spinner"></div>
-  <span>Loading submission…</span>
-</div>
-
-<div id="pageContent" class="page" style="display:none;"></div>
-
-<div id="successState" class="success-wrap" style="display:none;">
-  <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-  <div class="success-title">Sent for Review</div>
-  <div class="success-sub">We'll take another look — no payment needed.</div>
+<div class="dock" id="dock" style="display:none;">
+  <div class="dock-in">
+    <div id="statusMsg"></div>
+    <button type="button" class="submit-btn" id="submitBtn"></button>
+  </div>
 </div>
 
 <script type="module">
@@ -133,46 +237,540 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// Same unsigned Cloudinary preset used everywhere else in the app.
+// Same Cloudinary cloud + preset as the Upload Files page.
 const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/dlbgqtvqg/auto/upload";
 const CLOUDINARY_PRESET = "glmamp2y";
 
-// Same admin-notify backend the app's RejectionFixScreen hits — untouched.
-// The metadata edits below just mutate `submissionData` before this is
-// called, so the existing email template keeps receiving the same
-// field names (artist_name, release_title, copyright, songwriters…)
-// it always has, just with corrected values.
-const NOTIFY_URL  = "https://four44music-broadcast-backend.onrender.com/api/submissions/notify";
-const APP_SECRET  = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
+// Same admin-notify endpoint and field names as before.
+const NOTIFY_URL = "https://four44music-broadcast-backend.onrender.com/api/submissions/notify";
+const APP_SECRET = "e993b17f0762667e27d5298839dacff4a7409bb74e11e9ecaf0bb2bb647120a8";
 
-function escHtml(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-function fmtBytes(b){ return b < 1024*1024 ? (b/1024).toFixed(1)+" KB" : (b/(1024*1024)).toFixed(1)+" MB"; }
+/* ───────── lists (same as Release Info) ───────── */
+const GENRES = ['Pop','Rock','Hip-Hop/Rap','R&B','Electronic','Jazz','Classical','Country','Latin','Reggaeton','K-Pop','Indie','Metal','Punk','Blues','Soul','Funk','Disco','House','Techno','Trap','Drill','Afrobeat','Dancehall','Folk','Other'];
+const LANGUAGES = ['Русский','English','Español','Français','Deutsch','Italiano','Português','日本語','한국어','中文','العربية','हिन्दी','Türkçe','Nederlands','Polski','Svenska','Norsk','Suomi','Dansk','Čeština','Română','Magyar','Ελληνικά','Українська',"O'zbek",'Қазақ','தமிழ்','తెలుగు','ไทย','Tiếng Việt','Bahasa Indonesia','Bahasa Melayu','Filipino','Kiswahili','Other'];
+const ROLES = {
+  producer:   ['Producer','Executive Producer','Co-Producer','Beat Maker','Mixing Engineer','Mastering Engineer','Recording Engineer','Vocal Producer','Sound Designer','Re-mixer','Programmer','Audio Editor'],
+  writer:     ['Songwriter','Lyricist','Composer','Co-Writer','Melody Writer','Arranger','Top-Liner','Concept Writer'],
+  publishing: ['Publisher','Co-Publisher','Administrator']
+};
+const NOUN        = { producer: 'Producer', writer: 'Songwriter', publishing: 'Publisher' };
+const PLACEHOLDER = { producer: 'Full name, e.g. Metro Boomin', writer: 'Full name, e.g. John Doe', publishing: 'Publisher name' };
+const FOLD_TITLE  = { producer: 'Producers & engineers', writer: 'Songwriters & composers', publishing: 'Publishers' };
+const ADD_LABEL   = { producer: 'Add producer or engineer', writer: 'Add songwriter or composer', publishing: 'Add publisher' };
+const CREDIT_TYPES = ['producer', 'writer', 'publishing'];
+
+/* ───────── icons ───────── */
+const ERR_ICON   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+const MUSIC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+const DOC_ICON   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>';
+const PLUS_ICON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const X_ICON     = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+const INFO_ICON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+const SUBMIT_HTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="submitLabel">Resubmit for review</span>';
+
+/* ───────── helpers ───────── */
+const $ = (id) => document.getElementById(id);
+const escHtml = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtBytes = (b) => b < 1024 * 1024 ? (b / 1024).toFixed(1) + ' KB' : (b / (1024 * 1024)).toFixed(1) + ' MB';
+const ymd = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const isYes = (v) => v === true || ['yes', 'true'].includes(String(v || '').trim().toLowerCase());
+const pick = (list, v) => { const s = String(v || '').trim().toLowerCase(); return list.find(o => o.toLowerCase() === s) || ''; };
+const meetsAudio = (u) => /\.wav(\?|#|$)/i.test(String(u || ''));
+const meetsCover = (u) => /\.jpe?g(\?|#|$)/i.test(String(u || ''));
+const isCopyright = (c) => { const s = String(c || '').toLowerCase(); return s.includes('copyright') || s.includes('license'); };
+const toDate10 = (v) => {
+  const s = String(v || '').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
+};
+const toIsoOrEmpty = (v) => { if (!v) return ''; try { return new Date(v).toISOString(); } catch (e) { return v; } };
+
+/* ───────── file checks (same rules as Upload Files) ───────── */
+async function checkCover(file) {
+  if (!/\.jpe?g$/i.test(file.name)) return 'Cover art must be a JPG file.';
+  const v = new DataView(await file.arrayBuffer());
+  if (v.byteLength < 4 || v.getUint16(0) !== 0xFFD8) return 'This is not a valid JPG file.';
+  let p = 2;
+  while (p + 4 <= v.byteLength) {
+    if (v.getUint8(p) !== 0xFF) { p++; continue; }
+    const m = v.getUint8(p + 1);
+    if (m === 0xFF) { p++; continue; }
+    if (m === 0xDA) break;
+    if (m === 0xD8 || m === 0x01 || (m >= 0xD0 && m <= 0xD7)) { p += 2; continue; }
+    const len = v.getUint16(p + 2);
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+      const h = v.getUint16(p + 5), w = v.getUint16(p + 7), comps = v.getUint8(p + 9);
+      if (w !== 4000 || h !== 4000) return `Cover art must be exactly 4000 × 4000 px. Yours is ${w} × ${h}.`;
+      if (comps !== 3) return 'Cover art must be RGB. CMYK and grayscale images are not accepted.';
+      return '';
+    }
+    p += 2 + len;
+  }
+  return 'Could not read this image. Please export it again as a JPG.';
+}
+
+async function checkWav(file) {
+  const buf = await file.slice(0, 65536).arrayBuffer();
+  const v = new DataView(buf);
+  const tag = o => String.fromCharCode(v.getUint8(o), v.getUint8(o + 1), v.getUint8(o + 2), v.getUint8(o + 3));
+  if (buf.byteLength < 12 || tag(0) !== 'RIFF' || tag(8) !== 'WAVE') return 'This is not a valid WAV file.';
+  let pos = 12;
+  while (pos + 8 <= buf.byteLength) {
+    const id = tag(pos), size = v.getUint32(pos + 4, true);
+    if (id === 'fmt ' && pos + 24 <= buf.byteLength) {
+      const channels = v.getUint16(pos + 10, true);
+      const rate = v.getUint32(pos + 12, true);
+      const bits = v.getUint16(pos + 22, true);
+      if (bits < 16) return 'Audio must be 16-bit or higher. Re-export at 16-bit or 24-bit.';
+      if (rate < 44100) return 'Audio must be 44.1 kHz or higher. Re-export at 44.1 kHz or 48 kHz.';
+      if (channels !== 2) return 'Audio must be stereo. Mono files are not accepted.';
+      return '';
+    }
+    pos += 8 + size + (size % 2);
+  }
+  return 'Could not read this WAV file. Please re-export it and try again.';
+}
+
+function uploadToCloudinary(file, folder, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", CLOUDINARY_URL, true);
+    xhr.upload.onprogress = e => { if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => {
+      try {
+        const res = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300 && res.secure_url) resolve(res.secure_url);
+        else reject(new Error(res.error?.message || "Upload failed. Check your connection and try again."));
+      } catch (e) { reject(new Error("Upload failed. Check your connection and try again.")); }
+    };
+    xhr.onerror = () => reject(new Error("Network error during upload. Check your connection and try again."));
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+    fd.append("folder", folder);
+    xhr.send(fd);
+  });
+}
+
+/* ───────── state ───────── */
+const params = new URLSearchParams(window.location.search);
+const releaseId = params.get("id");
+let data = null;
+let busy = false;
+let audioTarget = 0;
+const S = { tracks: [], cover: null, license: null, credits: { producer: [], writer: [], publishing: [] }, isSingle: true, copyrightMode: false, minDate: '', origDate: '', dateTooSoon: false };
+
+// Hidden pickers, shared by every drop zone.
+const mkInput = (accept) => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; document.body.appendChild(i); return i; };
+const coverInput   = mkInput('.jpg,.jpeg,image/jpeg');
+const audioInput   = mkInput('.wav,audio/wav,audio/x-wav');
+const licenseInput = mkInput('application/pdf,.pdf');
 
 function goBack() {
   if (document.referrer) history.back();
   else window.location.href = "wey.html";
 }
-window.goBack = goBack;
+$('backBtn').addEventListener('click', goBack);
 
-const params = new URLSearchParams(window.location.search);
-const releaseId = params.get("id");
-
-let submissionData = null;
-let pickedLicense = null;   // {file, name, size}
-let pickedAudio   = null;
-let pickedCover   = null;
-let submitting    = false;
-let errorMsg      = "";
-
-function isCopyright(category) {
-  const c = (category || "").toLowerCase();
-  return c.includes("copyright") || c.includes("license");
+async function loadData() {
+  // Prefer the full doc handed over by the dashboard, else read it by id.
+  try {
+    const cached = sessionStorage.getItem("rejectionFixData");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (!releaseId || parsed._id === releaseId) { data = parsed; return; }
+    }
+  } catch (e) {}
+  if (!releaseId) return;
+  const snap = await getDoc(doc(db, "submissions", releaseId));
+  if (snap.exists()) data = { ...snap.data(), _id: releaseId };
 }
 
+function showState(title, sub) {
+  $('loadingState').style.display = 'none';
+  $('view').innerHTML = `<div class="state"><div class="state-ico">${INFO_ICON}</div><div class="state-title">${escHtml(title)}</div><div class="state-sub">${escHtml(sub)}</div><button type="button" class="state-btn" id="stateBack">Go back</button></div>`;
+  $('stateBack').addEventListener('click', goBack);
+}
+
+function setStatus(msg) {
+  const el = $('statusMsg');
+  el.textContent = msg || '';
+  el.className = msg ? 'error' : '';
+}
+const setBtn = (label) => { const el = $('submitLabel'); if (el) el.textContent = label; };
+
+/* ───────── build working state from the submission ───────── */
+function buildState() {
+  S.copyrightMode = isCopyright(data.rejectionCategory);
+  const artistName = (data.artistName || '').trim();
+  const raw = Array.isArray(data.audioFiles) ? data.audioFiles.filter(Boolean) : [];
+  const base = raw.length ? raw : [{ title: data.releaseTitle || '', url: '', artists: artistName ? [{ name: artistName, type: 'main', spotifyUrl: '', appleUrl: '' }] : [] }];
+  S.tracks = base.map(t => ({
+    orig: t, title: String(t.title || '').trim(), url: String(t.url || ''),
+    required: !meetsAudio(t.url), file: null, preview: null, newUrl: null, error: ''
+  }));
+  const type = String(data.releaseType || '').toLowerCase();
+  S.isSingle = type ? type === 'single' : S.tracks.length === 1;
+
+  const coverUrl = data.officialCoverURL || data.coverURL || '';
+  S.cover = { url: coverUrl, required: !meetsCover(coverUrl), file: null, preview: null, newUrl: null, error: '' };
+  S.license = { file: null, newUrl: null, error: '' };
+
+  const c = data.credits || {};
+  const clone = (arr) => (Array.isArray(arr) ? arr : []).filter(x => x && String(x.name || '').trim()).map(x => ({ name: String(x.name), role: x.role || '', ipi: x.ipi || '' }));
+  S.credits = { producer: clone(c.producer), writer: clone(c.writer), publishing: clone(c.publishing) };
+
+  const min = new Date(); min.setHours(0, 0, 0, 0); min.setDate(min.getDate() + 3);
+  S.minDate = ymd(min);
+  S.origDate = toDate10(data.releaseDate);
+  S.dateTooSoon = !S.origDate || S.origDate < S.minDate;
+}
+
+/* ───────── rendering ───────── */
+function zoneHtml(o) {
+  const cls = o.file ? 'has' : (o.required ? 'req' : '');
+  return `
+    <div class="zone${o.sep ? ' sep' : ''}${o.file ? ' has-file' : ''}${o.error ? ' has-err' : ''}" data-zone="${o.key}">
+      <div class="zone-icon">${o.icon}</div>
+      <div class="zone-meta">
+        <div class="zone-title ${cls}">${escHtml(o.file ? o.file.name : o.title)}</div>
+        <div class="zone-sub">${escHtml(o.file ? fmtBytes(o.file.size) + ' · new file' : o.sub)}</div>
+      </div>
+      ${o.file ? '<span class="zone-swap">Replace</span>' : ''}
+    </div>
+    ${o.error ? `<div class="ferr">${ERR_ICON}${escHtml(o.error)}</div>` : ''}`;
+}
+
+function drawCover() {
+  const c = S.cover, hero = $('coverHero');
+  if (!hero) return;
+  const src = c.preview || c.url;
+  const badge = c.file ? ['new', 'New'] : c.required ? ['req', 'Required'] : ['', 'Current'];
+  hero.innerHTML = (src
+    ? `<img src="${escHtml(src)}" alt="Cover art">`
+    : `<div class="cover-empty"><div class="cover-empty-icon">${PLUS_ICON}</div><div class="cover-empty-title">Add cover art</div><div class="cover-empty-sub">4000 × 4000 px, JPG</div></div>`)
+    + `<div class="cover-badge ${badge[0]}">${badge[1]}</div>` + (src ? '<div class="cover-change">Replace</div>' : '');
+  const err = $('coverErr');
+  err.innerHTML = c.error ? ERR_ICON + escHtml(c.error) : '';
+  err.style.display = c.error ? 'flex' : 'none';
+}
+
+function drawTrackAudio(i) {
+  const t = S.tracks[i], el = $('trkAudio-' + i);
+  if (!el) return;
+  const src = t.preview || t.url;
+  const needs = t.required && !t.file;
+  const name = t.file ? t.file.name : (src ? 'Current file' : 'No file yet');
+  const sub = t.file ? fmtBytes(t.file.size) + ' · new file'
+    : needs ? (t.url ? "This isn't a WAV. Replace it with a WAV: 16-bit+, 44.1 kHz+, stereo." : 'WAV, 16-bit+, 44.1 kHz+, stereo')
+    : 'Tap Replace to upload a new WAV';
+  el.innerHTML = `
+    <div class="player${S.isSingle ? '' : ' sep'}${t.error ? ' has-err' : ''}">
+      <div class="player-top">
+        <div class="player-meta"><div class="player-name">${escHtml(name)}</div><div class="player-sub">${escHtml(sub)}</div></div>
+        <button type="button" class="player-replace${needs ? ' req' : ''}" data-zone="audio:${i}">${src ? 'Replace' : 'Choose WAV'}</button>
+      </div>
+      ${src ? `<audio controls preload="none" src="${escHtml(src)}"></audio>` : ''}
+    </div>
+    ${t.error ? `<div class="ferr">${ERR_ICON}${escHtml(t.error)}</div>` : ''}`;
+}
+
+function drawLicense() {
+  const el = $('licenseZone');
+  if (el) el.innerHTML = zoneHtml({ key: 'license', icon: DOC_ICON, file: S.license.file, required: true, title: 'Choose PDF', sub: 'PDF only', error: S.license.error });
+}
+
+function creditRowHtml(type, c, i) {
+  const roles = ROLES[type].slice();
+  if (c.role && !roles.includes(c.role)) roles.push(c.role);
+  return `
+    <div class="credit-row" data-type="${type}" data-i="${i}">
+      <span class="credit-row-num">${NOUN[type]} ${i + 1}</span>
+      <button type="button" class="credit-remove" aria-label="Remove" data-rm="${type}:${i}">${X_ICON}</button>
+      <input class="credit-input cr-full" type="text" data-f="name" aria-label="Full name" placeholder="${PLACEHOLDER[type]}" value="${escHtml(c.name)}" autocomplete="off">
+      <div class="csel-wrap cr-full">
+        <select class="credit-input${c.role ? '' : ' empty'}" data-f="role" aria-label="Role">
+          <option value="" disabled${c.role ? '' : ' selected'}>Role</option>${roles.map(r => `<option${r === c.role ? ' selected' : ''}>${escHtml(r)}</option>`).join('')}
+        </select>
+      </div>
+      ${type === 'writer' ? `<input class="credit-input cr-full" type="text" data-f="ipi" aria-label="IPI / CAE number" placeholder="IPI / CAE number (optional)" value="${escHtml(c.ipi)}" autocomplete="off">` : ''}
+    </div>`;
+}
+
+function updateCount(type) {
+  const n = S.credits[type].filter(c => c.name.trim()).length;
+  const el = $('count-' + type);
+  el.textContent = n ? `${n} added` : 'Required';
+  el.className = 'opt' + (n ? '' : ' req');
+}
+function drawCredits(type) {
+  $('list-' + type).innerHTML = S.credits[type].map((c, i) => creditRowHtml(type, c, i)).join('');
+  updateCount(type);
+}
+
+function selectHtml(id, list, value) {
+  return `<div class="sel"><select id="${id}" class="${value ? '' : 'empty'}"><option value="" disabled${value ? '' : ' selected'}>Select</option>${list.map(o => `<option${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select></div>`;
+}
+
+function trackShell(t, i) {
+  return `<div class="group track" id="trk-${i}">
+    ${S.isSingle ? '' : `<label class="row"><span class="l">Track ${i + 1}</span><input id="trkTitle-${i}" type="text" value="${escHtml(t.title)}" placeholder="Track title" autocomplete="off"></label>`}
+    <div id="trkAudio-${i}"></div>
+  </div>`;
+}
+
+function fixSections() {
+  const anyAudioReq = S.tracks.some(t => t.required);
+  const dateValue = S.dateTooSoon ? '' : S.origDate;
+  const copyright = (data.copyright || '').trim();
+  return `
+    <div class="sh"><h2>Cover art</h2>${S.cover.required ? '<span class="req">Required</span>' : '<span>Optional</span>'}</div>
+    <div class="cover-hero" id="coverHero"></div>
+    <div class="ferr" id="coverErr"></div>
+    <p class="sf">${S.cover.required && S.cover.url ? "Your current cover isn't a JPG. " : ''}Use a 4000 × 4000 px RGB JPG. The artist name and title on the cover must match the details below.</p>
+
+    <div class="sh"><h2>${S.isSingle ? 'Audio' : 'Tracks'}</h2>${anyAudioReq ? '<span class="req">Required</span>' : '<span>Optional</span>'}</div>
+    ${S.tracks.map(trackShell).join('')}
+
+    <div class="sh"><h2>Release</h2><span class="req">Required</span></div>
+    <div class="group">
+      <label class="row"><span class="l">Artist</span><input id="artistName" type="text" value="${escHtml(data.artistName || '')}" placeholder="Artist name" autocomplete="off"></label>
+      <label class="row"><span class="l">Title</span><input id="releaseTitle" type="text" value="${escHtml(data.releaseTitle || '')}" placeholder="Name of your release" autocomplete="off"></label>
+      <label class="row"><span class="l">Genre</span>${selectHtml('genre', GENRES, pick(GENRES, data.genre))}</label>
+      <label class="row"><span class="l">Language</span>${selectHtml('language', LANGUAGES, pick(LANGUAGES, data.language))}</label>
+      <label class="row"><span class="l">Explicit</span><div class="sel"><select id="explicit"><option${isYes(data.explicit) ? '' : ' selected'}>No</option><option${isYes(data.explicit) ? ' selected' : ''}>Yes</option></select></div></label>
+      <label class="row"><span class="l">Release date</span><input id="releaseDate" type="date" min="${S.minDate}" value="${dateValue}"></label>
+    </div>
+    <p class="sf${S.dateTooSoon ? ' warn' : ''}">${S.dateTooSoon ? 'Your original date has passed or is too close. Choose a new one, at least 3 days from today.' : 'Earliest date is 3 days from today. 14 days or more is recommended.'}</p>
+
+    <div class="sh"><h2>Copyright</h2><span class="req">Required</span></div>
+    <div class="group">
+      <label class="row"><span class="l">Copyright holder</span><input id="copyright" type="text" value="${escHtml(copyright)}" placeholder="Required" autocomplete="off"></label>
+      <label class="row" id="confirmRow"><span class="l">Confirm holder</span><input id="copyrightConfirm" type="text" placeholder="Type it again" autocomplete="off"></label>
+    </div>
+
+    <div class="sh"><h2>Credits</h2><span class="req">Required</span></div>
+    ${CREDIT_TYPES.map(type => `
+      <details class="group fold" id="fold-${type}">
+        <summary class="row"><span class="l">${FOLD_TITLE[type]}</span><span class="opt" id="count-${type}"></span></summary>
+        <div id="list-${type}"></div>
+        <button type="button" class="add-credit-btn" data-add="${type}"><span class="plus">${PLUS_ICON}</span>${ADD_LABEL[type]}</button>
+      </details>`).join('')}
+    <p class="sf">No publisher? Enter your own name.</p>`;
+}
+
+function licenseSection() {
+  return `
+    <div class="sh"><h2>License or proof</h2><span class="req">Required</span></div>
+    <div class="group" id="licenseGroup"><div id="licenseZone"></div></div>
+    <p class="sf">A license, purchase receipt, or written permission for the beat. PDF only.</p>
+    <p class="sf">No proof yet? You can leave this and come back. Your release stays Rejected until you upload it.</p>`;
+}
+
+function renderPage() {
+  const title = data.releaseTitle || 'Your release';
+  const artist = data.artistName || '';
+  const reason = String(data.rejectionReason || '').trim();
+  $('view').innerHTML = `
+    <div class="hero"><h1>Fix &amp; resubmit</h1><p>${escHtml(title)}${artist ? ' by ' + escHtml(artist) : ''}</p></div>
+    <div class="reason">
+      <div class="reason-top">${INFO_ICON}${S.copyrightMode ? 'License needed' : 'Needs a fix'}</div>
+      ${reason ? `<p>${escHtml(reason)}</p>` : ''}
+    </div>
+    ${S.copyrightMode ? licenseSection() : fixSections()}`;
+
+  if (S.copyrightMode) {
+    drawLicense();
+  } else {
+    drawCover();
+    S.tracks.forEach((_, i) => drawTrackAudio(i));
+    CREDIT_TYPES.forEach(type => {
+      drawCredits(type);
+      $('fold-' + type).open = !S.credits[type].some(c => c.name.trim());
+    });
+  }
+  $('loadingState').style.display = 'none';
+  $('submitBtn').innerHTML = SUBMIT_HTML;
+  $('dock').style.display = 'block';
+}
+
+/* ───────── interactions ───────── */
+function clearMarks() { document.querySelectorAll('.invalid').forEach(x => x.classList.remove('invalid')); }
+
+function wireView() {
+  const view = $('view');
+
+  view.addEventListener('click', (e) => {
+    if (busy) return;
+    clearMarks();
+    const add = e.target.closest('[data-add]');
+    if (add) {
+      const type = add.dataset.add;
+      S.credits[type].push({ name: '', role: '', ipi: '' });
+      drawCredits(type);
+      const rows = $('list-' + type).querySelectorAll('.credit-row');
+      const inp = rows[rows.length - 1].querySelector('input');
+      if (inp) inp.focus();
+      return;
+    }
+    const rm = e.target.closest('[data-rm]');
+    if (rm) {
+      const [type, i] = rm.dataset.rm.split(':');
+      S.credits[type].splice(Number(i), 1);
+      drawCredits(type);
+      return;
+    }
+    if (e.target.closest('#coverHero')) { coverInput.value = ''; coverInput.click(); return; }
+    const zone = e.target.closest('[data-zone]');
+    if (zone) {
+      const key = zone.dataset.zone;
+      if (key === 'license') { licenseInput.value = ''; licenseInput.click(); }
+      else { audioTarget = Number(key.split(':')[1]); audioInput.value = ''; audioInput.click(); }
+    }
+  });
+
+  const onEdit = (e) => {
+    const t = e.target;
+    if (e.type === 'input') { clearMarks(); setStatus(''); }
+    if (t.tagName === 'SELECT' && t.id) t.classList.toggle('empty', t.value === '');
+    if (t.id === 'copyright') {
+      const changed = t.value.trim() !== (data.copyright || '').trim();
+      $('confirmRow').classList.toggle('visible', changed);
+      if (!changed) $('copyrightConfirm').value = '';
+    }
+    if (t.id === 'releaseDate' && e.type === 'change' && t.value && t.value < S.minDate) t.value = '';
+    const row = t.closest && t.closest('.credit-row');
+    if (row && t.dataset.f) {
+      const type = row.dataset.type, i = Number(row.dataset.i);
+      if (S.credits[type][i]) S.credits[type][i][t.dataset.f] = t.value;
+      if (t.tagName === 'SELECT') t.classList.toggle('empty', t.value === '');
+      updateCount(type);
+    }
+  };
+  view.addEventListener('input', onEdit);
+  view.addEventListener('change', onEdit);
+}
+
+async function pickAudio(i, file) {
+  const t = S.tracks[i];
+  const ext = file.name.split('.').pop().toLowerCase();
+  let problem = '';
+  if (ext !== 'wav') problem = `.${ext} files are not accepted. Please select a WAV file only.`;
+  else if (file.size > 100 * 1024 * 1024) problem = 'File exceeds the 100 MB limit.';
+  else problem = await checkWav(file);
+  if (problem) { t.error = problem; drawTrackAudio(i); return; }
+  if (t.preview) URL.revokeObjectURL(t.preview);
+  t.file = file; t.preview = URL.createObjectURL(file); t.error = ''; t.newUrl = null;
+  drawTrackAudio(i);
+}
+
+async function pickCover(file) {
+  const c = S.cover;
+  let problem = await checkCover(file);
+  if (!problem && file.size > 40 * 1024 * 1024) problem = 'Cover art is too large. Keep it under 40 MB.';
+  if (problem) { c.error = problem; drawCover(); return; }
+  if (c.preview) URL.revokeObjectURL(c.preview);
+  c.file = file; c.preview = URL.createObjectURL(file); c.error = ''; c.newUrl = null;
+  drawCover();
+}
+
+function pickLicense(file) {
+  if (!/\.pdf$/i.test(file.name)) { S.license.error = 'Only PDF files are accepted.'; drawLicense(); return; }
+  S.license.file = file; S.license.error = ''; S.license.newUrl = null;
+  drawLicense();
+}
+
+coverInput.addEventListener('change',   e => { const f = e.target.files[0]; if (f && !busy) pickCover(f); });
+audioInput.addEventListener('change',   e => { const f = e.target.files[0]; if (f && !busy) pickAudio(audioTarget, f); });
+licenseInput.addEventListener('change', e => { const f = e.target.files[0]; if (f && !busy) pickLicense(f); });
+
+/* ───────── validation ───────── */
+function readFields() {
+  const val = (id) => ($(id) ? $(id).value : '');
+  return {
+    artistName: val('artistName').trim(), releaseTitle: val('releaseTitle').trim(),
+    genre: val('genre'), language: val('language'), explicit: val('explicit'), releaseDate: val('releaseDate'),
+    copyright: val('copyright').trim(), copyrightConfirm: val('copyrightConfirm').trim(),
+    trackTitles: S.tracks.map((_, i) => val('trkTitle-' + i).trim())
+  };
+}
+
+// Renaming the artist also renames the Main artist on every track,
+// because the track data is what gets sent to the distributor.
+function computeRename(newName) {
+  if (newName === (data.artistName || '').trim()) return { map: {} };
+  const mains = [];
+  S.tracks.forEach(t => (Array.isArray(t.orig.artists) ? t.orig.artists : []).forEach(a => {
+    if (a && a.type === 'main' && a.name && !mains.some(n => n.toLowerCase() === a.name.toLowerCase())) mains.push(a.name);
+  }));
+  if (!mains.length) return { map: {} };
+  if (mains.length === 1) return { map: { [mains[0].toLowerCase()]: newName } };
+  const parts = newName.split(',').map(s => s.trim()).filter(Boolean);
+  if (parts.length !== mains.length) return { error: `This release has ${mains.length} main artists. Keep ${mains.length} names separated by commas.` };
+  const map = {};
+  mains.forEach((n, i) => { map[n.toLowerCase()] = parts[i]; });
+  return { map };
+}
+
+const named = (arr) => arr.filter(c => c.name.trim());
+
+function validateFix() {
+  if (S.cover.required && !S.cover.file) return { msg: S.cover.url ? "Your current cover isn't a JPG. Please upload a 4000 × 4000 JPG." : 'Cover art is required.', el: 'coverHero' };
+  for (let i = 0; i < S.tracks.length; i++) {
+    if (S.tracks[i].required && !S.tracks[i].file) return { msg: S.isSingle ? 'Please choose a WAV file.' : `Please choose a WAV file for track ${i + 1}.`, el: 'trkAudio-' + i };
+  }
+  const f = readFields();
+  if (!S.isSingle) {
+    const bad = f.trackTitles.findIndex(t => !t);
+    if (bad >= 0) return { msg: `Track ${bad + 1} needs a title.`, el: 'trkTitle-' + bad };
+  }
+  if (!f.artistName) return { msg: 'Artist name is required.', el: 'artistName' };
+  const rename = computeRename(f.artistName);
+  if (rename.error) return { msg: rename.error, el: 'artistName' };
+  if (!f.releaseTitle) return { msg: 'Release title is required.', el: 'releaseTitle' };
+  if (!f.genre) return { msg: 'Please select a genre.', el: 'genre' };
+  if (!f.language) return { msg: 'Please select a language.', el: 'language' };
+  if (!f.releaseDate) return { msg: 'Please choose a release date.', el: 'releaseDate' };
+  if (f.releaseDate < S.minDate) return { msg: 'The earliest release date is 3 days from today.', el: 'releaseDate' };
+  if (!f.copyright) return { msg: 'Please enter the copyright holder.', el: 'copyright' };
+  if (f.copyright !== (data.copyright || '').trim()) {
+    if (!f.copyrightConfirm) return { msg: 'Please type the copyright holder again to confirm it.', el: 'copyrightConfirm' };
+    if (f.copyright !== f.copyrightConfirm) return { msg: "The two copyright holder entries don't match.", el: 'copyrightConfirm' };
+  }
+  if (!named(S.credits.producer).length) return { msg: 'Please add at least one producer.', el: 'fold-producer', fold: 'producer' };
+  const writers = named(S.credits.writer);
+  if (!writers.length) return { msg: 'Please add at least one songwriter.', el: 'fold-writer', fold: 'writer' };
+  const isLyric = w => /lyric|author|word/.test((w.role || '').toLowerCase());
+  const isComp  = w => /compos|music|melod/.test((w.role || '').toLowerCase());
+  if (!writers.some(w => isLyric(w) || !isComp(w))) return { msg: 'Add at least one lyricist or songwriter.', el: 'fold-writer', fold: 'writer' };
+  if (!writers.some(w => isComp(w) || !isLyric(w))) return { msg: 'Add at least one composer or songwriter.', el: 'fold-writer', fold: 'writer' };
+  if (!named(S.credits.publishing).length) return { msg: 'Please add at least one publisher.', el: 'fold-publishing', fold: 'publishing' };
+  return null;
+}
+
+function validateLicense() {
+  if (!S.license.file) return { msg: 'Please upload your license / proof document.', el: 'licenseGroup' };
+  return null;
+}
+
+function showProblem(p) {
+  setStatus(p.msg);
+  if (p.fold) $('fold-' + p.fold).open = true;
+  const el = $(p.el);
+  if (!el) return;
+  clearMarks();
+  const host = el.closest('.row') || el.closest('.group') || el;
+  host.classList.add('invalid');
+  host.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ───────── admin email (same endpoint and field names as before) ───────── */
 function fmtCreditList(list) {
   if (!Array.isArray(list)) return "None";
   const filtered = list.filter(c => c && c.name && c.name.trim());
-  if (filtered.length === 0) return "None";
+  if (!filtered.length) return "None";
   return filtered.map(c => {
     let line = `• ${c.name}`;
     if (c.role) line += ` — ${c.role}`;
@@ -180,440 +778,203 @@ function fmtCreditList(list) {
     return line;
   }).join("\n");
 }
-function fmtFeaturing(data) {
-  if (Array.isArray(data.featuredArtists) && data.featuredArtists.length) {
-    return data.featuredArtists.map(f => {
-      let line = `${f.name} (${f.role})`;
-      if (f.url && f.url.trim()) line += ` — ${f.url}`;
-      return line;
-    }).join("\n");
-  }
-  if (data.featuring && data.featuring.trim()) return data.featuring.trim();
-  return "None";
-}
 
-// Mirrors the credits.writer shape used on the Release Info step
-// ({ name, role, ipi }) — updates just the composer's name so any
-// existing role/IPI already on file isn't wiped out by this quick fix.
-function getComposerName(data) {
-  const writers = (data.credits && Array.isArray(data.credits.writer)) ? data.credits.writer : [];
-  return (writers[0] && writers[0].name) || "";
-}
-function buildUpdatedWriterCredits(data, composerName) {
-  const writers = (data.credits && Array.isArray(data.credits.writer)) ? [...data.credits.writer] : [];
-  const trimmed = (composerName || "").trim();
-  if (!trimmed) return writers; // left blank on purpose — don't wipe existing credits
-  if (writers.length && writers[0] && (writers[0].name || "").trim().toLowerCase() === trimmed.toLowerCase()) {
-    return writers; // unchanged
-  }
-  if (writers.length) {
-    writers[0] = { name: trimmed, role: (writers[0] && writers[0].role) || "Composer", ipi: (writers[0] && writers[0].ipi) || "" };
-  } else {
-    writers.push({ name: trimmed, role: "Composer", ipi: "" });
-  }
-  return writers;
-}
-
-async function loadData() {
-  // Prefer the full doc handed off via sessionStorage by the dashboard
-  // (same as Navigator arguments in the app); fall back to a direct
-  // Firestore read by id so this page also works from a bare link.
-  try {
-    const cached = sessionStorage.getItem("rejectionFixData");
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (!releaseId || parsed._id === releaseId) { submissionData = parsed; return; }
-    }
-  } catch (e) {}
-  if (!releaseId) return;
-  const snap = await getDoc(doc(db, "submissions", releaseId));
-  if (snap.exists()) submissionData = { ...snap.data(), _id: releaseId };
-}
-
-function render() {
-  const content = document.getElementById("pageContent");
-  if (!submissionData) {
-    content.innerHTML = `<div class="error-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Missing submission reference. Please go back and try again.</span></div>`;
-    document.getElementById("loadingState").style.display = "none";
-    content.style.display = "block";
-    return;
-  }
-  const data     = submissionData;
-  const category = (data.rejectionCategory || "Other").toString().trim();
-  const reason   = (data.rejectionReason || "").toString().trim();
-  const artist   = data.artistName || "—";
-  const title    = data.releaseTitle || "Your release";
-  const copyrightMode = isCopyright(category);
-
-  const originalAudioUrl = (Array.isArray(data.audioFiles) && data.audioFiles[0] && data.audioFiles[0].url) || "";
-  const originalCoverUrl = data.officialCoverURL || data.coverURL || "";
-  const hasOriginalMedia = !copyrightMode && (originalAudioUrl || originalCoverUrl);
-
-  content.innerHTML = `
-    <div class="card reason-card">
-      <div class="reason-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span class="reason-title">${escHtml(title)}</span>
-      </div>
-      ${reason ? `<div class="reason-text">${escHtml(reason)}</div>` : ""}
-      <span class="category-chip">${copyrightMode ? "Copyright / License Issue" : "Other Issue"}</span>
-    </div>
-
-    <div class="card">
-      <div class="detail-label">SUBMISSION DETAILS</div>
-      <div class="detail-row"><div class="detail-key">Artist Name</div><div class="detail-val">${escHtml(artist)}</div></div>
-      <div class="detail-row"><div class="detail-key">Release Title</div><div class="detail-val">${escHtml(title)}</div></div>
-    </div>
-
-    ${copyrightMode ? `
-      <div class="section-title">Upload License / Proof</div>
-      <div class="section-sub">A license, purchase receipt, or written permission for the beat — PDF only.</div>
-      <div class="filezone" id="zone-license" onclick="document.getElementById('input-license').click()"></div>
-      <input type="file" id="input-license" accept="application/pdf,.pdf">
-    ` : `
-      ${hasOriginalMedia ? `
-        <div class="card">
-          <div class="original-media-label">CURRENTLY ON FILE — WHAT WE RECEIVED</div>
-          <div class="original-media-row">
-            ${originalCoverUrl ? `<img class="original-media-cover" src="${escHtml(originalCoverUrl)}" alt="Current cover">` : ""}
-            <div class="original-media-audio">
-              ${originalAudioUrl ? `<audio controls src="${escHtml(originalAudioUrl)}"></audio>` : `<span style="font-size:12px;color:var(--grey);">No audio on file yet.</span>`}
-            </div>
-          </div>
-        </div>
-      ` : ""}
-
-      <div class="section-title">Update Release Details</div>
-      <div class="section-sub">Fix anything that was wrong — this goes out with your resubmission.</div>
-      <div class="card">
-        <div class="field-row">
-          <label>Artist Name</label>
-          <input type="text" id="fieldArtistName" value="${escHtml(data.artistName || "")}" placeholder="Artist name">
-        </div>
-        <div class="field-row">
-          <label>Release Title</label>
-          <input type="text" id="fieldReleaseTitle" value="${escHtml(data.releaseTitle || "")}" placeholder="Release title">
-        </div>
-        <div class="field-row">
-          <label>Copyright Holder</label>
-          <input type="text" id="fieldCopyright" value="${escHtml(data.copyright || "")}" placeholder="e.g. © 2026 Your Name">
-        </div>
-        <div class="field-row">
-          <label>Composer</label>
-          <input type="text" id="fieldComposer" value="${escHtml(getComposerName(data))}" placeholder="Composer / songwriter name">
-        </div>
-      </div>
-
-      <div class="zone-block">
-        <div class="section-title">Re-upload Audio File</div>
-        <div class="section-sub">Fixed version of the track — MP3 only, max 50 MB.</div>
-        <div class="filezone" id="zone-audio" onclick="document.getElementById('input-audio').click()"></div>
-        <input type="file" id="input-audio" accept="audio/mpeg,.mp3">
-        <div class="media-preview" id="audioPreviewWrap"></div>
-      </div>
-
-      <div class="zone-block">
-        <div class="section-title">Re-upload Cover Art</div>
-        <div class="section-sub">Fixed cover artwork — JPG or PNG, square, max 15 MB.</div>
-        <div class="filezone" id="zone-cover" onclick="document.getElementById('input-cover').click()"></div>
-        <input type="file" id="input-cover" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
-        <div class="media-preview" id="coverPreviewWrap"></div>
-      </div>
-    `}
-
-    <div id="errorSlot"></div>
-
-    <button class="submit-btn" id="submitBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-      Resubmit for Review
-    </button>
-
-    ${copyrightMode ? `<div class="hint-text">No proof yet? You can leave this and come back —<br>your release stays Rejected until you upload it.</div>` : ""}
-  `;
-
-  renderZones();
-  document.getElementById("submitBtn").addEventListener("click", submit);
-  if (copyrightMode) {
-    document.getElementById("input-license").addEventListener("change", e => handlePick(e, "license"));
-  } else {
-    document.getElementById("input-audio").addEventListener("change", e => handlePick(e, "audio"));
-    document.getElementById("input-cover").addEventListener("change", e => handlePick(e, "cover"));
-  }
-
-  document.getElementById("loadingState").style.display = "none";
-  content.style.display = "block";
-}
-
-function renderZones() {
-  const zones = [
-    ["zone-license", pickedLicense, "picture_as_pdf", "Tap to select a PDF", "PDF only"],
-    ["zone-audio",   pickedAudio,   "audio_file",     "Tap to select MP3",  "MP3 only"],
-    ["zone-cover",   pickedCover,   "image",          "Tap to select JPG or PNG", "JPG / PNG only"],
-  ];
-  zones.forEach(([id, picked, iconKey, hint, sub]) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (picked) {
-      el.classList.add("has-file");
-      el.innerHTML = `
-        <div class="filezone-row">
-          <div class="filezone-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div style="flex:1;min-width:0;">
-            <div class="filezone-name">${escHtml(picked.name)}</div>
-            <div class="filezone-size">${fmtBytes(picked.size)}</div>
-          </div>
-          <svg class="filezone-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-        </div>`;
-    } else {
-      el.classList.remove("has-file");
-      el.innerHTML = `
-        <div class="filezone-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg></div>
-        <div class="filezone-hint">${hint}</div>
-        <div class="filezone-sub">${sub}</div>`;
-    }
+function featuringText(d) {
+  const label = { featured: 'Featured', secondary: 'Secondary' };
+  const lines = [];
+  (Array.isArray(d.audioFiles) ? d.audioFiles : []).forEach((t, i) => {
+    const others = (Array.isArray(t.artists) ? t.artists : []).filter(a => a && a.type !== 'main' && a.name);
+    if (others.length) lines.push(`Track ${i + 1}${t.title ? ' — ' + t.title : ''}: ` + others.map(a => `${a.name} (${label[a.type] || a.type})`).join(', '));
   });
-}
-
-function setError(msg) {
-  errorMsg = msg;
-  const slot = document.getElementById("errorSlot");
-  slot.innerHTML = msg ? `<div class="error-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${escHtml(msg)}</span></div>` : "";
-}
-
-// New file picks now also drop a local (object-URL) preview so the
-// artist can listen / look before resubmitting — nothing is uploaded
-// until they hit Resubmit.
-function handlePick(e, kind) {
-  const file = e.target.files[0];
-  if (!file) return;
-  setError("");
-
-  if (kind === "license") {
-    if (!file.name.toLowerCase().endsWith(".pdf")) { setError("Only PDF files are accepted."); return; }
-    pickedLicense = { file, name: file.name, size: file.size };
-  } else if (kind === "audio") {
-    if (!file.name.toLowerCase().endsWith(".mp3")) { setError("Only MP3 files are accepted."); return; }
-    if (file.size > 50 * 1024 * 1024) { setError("Audio file exceeds 50 MB limit."); return; }
-    pickedAudio = { file, name: file.name, size: file.size };
-    const wrap = document.getElementById("audioPreviewWrap");
-    if (wrap) wrap.innerHTML = `<audio controls src="${URL.createObjectURL(file)}"></audio>`;
-  } else if (kind === "cover") {
-    const ext = file.name.toLowerCase();
-    if (!ext.endsWith(".jpg") && !ext.endsWith(".jpeg") && !ext.endsWith(".png")) { setError("Only JPG or PNG accepted."); return; }
-    if (file.size > 15 * 1024 * 1024) { setError("Cover art exceeds 15 MB limit."); return; }
-    pickedCover = { file, name: file.name, size: file.size };
-    const wrap = document.getElementById("coverPreviewWrap");
-    if (wrap) wrap.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="Cover preview">`;
+  if (lines.length) return lines.join('\n');
+  if (Array.isArray(d.featuredArtists) && d.featuredArtists.some(f => f && f.name)) {
+    return d.featuredArtists.filter(f => f && f.name).map(f => `${f.name}${f.role ? ' (' + f.role + ')' : ''}${f.url && f.url.trim() ? ' — ' + f.url : ''}`).join("\n");
   }
-  renderZones();
+  return d.featuring && String(d.featuring).trim() ? String(d.featuring).trim() : "None";
 }
 
-async function uploadToCloudinary(file, folder) {
-  const fd = new FormData();
-  fd.append("upload_preset", CLOUDINARY_PRESET);
-  fd.append("folder", folder);
-  fd.append("file", file);
-  const res  = await fetch(CLOUDINARY_URL, { method: "POST", body: fd });
-  const json = await res.json();
-  if (json.secure_url) return json.secure_url;
-  console.error("Cloudinary error:", json);
-  return null;
-}
-
-// UNCHANGED end-to-end — still hits the exact same admin-notify
-// endpoint with the exact same field names the current email template
-// expects. The only difference is that by the time this runs,
-// `submissionData` (aliased as `data`) may already have been mutated
-// with the artist's corrected artist_name / release_title / copyright
-// / songwriters, so the email just reflects the fix.
-async function notifyAdmin(kind, { licenseUrl, audioUrl, coverUrl } = {}) {
-  const data     = submissionData;
-  const category = (data.rejectionCategory || "Other").toString().trim();
-  const reason   = (data.rejectionReason || "").toString().trim();
-  const credits  = data.credits || {};
-
-  // Prefer the freshly-fixed cover from THIS resubmit; fall back to the
-  // official cover (original upload) rather than the possibly-stale
-  // dashboard-edited coverURL, for the same reason mapSubmissionForEmail
-  // on the backend prefers officialCoverURL — a dashboard "Change Cover"
-  // quick-edit should never leak into an admin-facing email.
-  const resolvedCoverUrl = coverUrl || data.officialCoverURL || data.coverURL || "";
-  let audioFiles;
-  if (audioUrl) {
-    audioFiles = [{ title: data.releaseTitle || "", url: audioUrl }];
-  } else if (Array.isArray(data.audioFiles)) {
-    audioFiles = data.audioFiles
-      .map(m => ({ title: m.title || data.releaseTitle || "", url: m.url || "" }))
-      .filter(m => m.url);
-  } else {
-    audioFiles = [];
-  }
-
+async function notifyAdmin(d, kind, licenseUrl) {
+  const credits = d.credits || {};
+  const audioFiles = (Array.isArray(d.audioFiles) ? d.audioFiles : [])
+    .map(m => ({ title: m.title || d.releaseTitle || "", url: m.url || "" })).filter(m => m.url);
   const body = {
     type: "resubmission",
-    submissionId: data._id,
+    submissionId: d._id,
     is_resend: true,
-    email: data.email || "",
-    artist_name: data.artistName || "",
-    release_title: data.releaseTitle || "",
-    featuring: fmtFeaturing(data),
-    release_type: data.releaseType || "",
-    genre: data.genre || "",
-    language: data.language || "Not specified",
-    release_date: data.releaseDate || "Not set",
-    explicit: data.explicit || "",
-    country: data.country || "",
-    phone: data.phone || "Not provided",
-    label: data.label || "Independent",
-    copyright: data.copyright || "Not provided",
-    isrc: data.isrc || "Not provided",
-    upc: data.upc || "Auto-assign",
-    catalog_number: data.catalogNumber || "Not provided",
-    version: data.version || "",
-    previously_released: data.previouslyReleased || "",
-    previous_release_date: data.previousReleaseDate || "N/A",
-    vocal_type: data.vocalType || "",
-    ownership_confirmed: data.ownershipConfirmed === true ? "Yes — confirmed original work" : "Not confirmed",
+    email: d.email || "",
+    artist_name: d.artistName || "",
+    release_title: d.releaseTitle || "",
+    featuring: featuringText(d),
+    release_type: d.releaseType || "",
+    genre: d.genre || "",
+    language: d.language || "Not specified",
+    release_date: d.releaseDate || "Not set",
+    explicit: d.explicit || "",
+    country: d.country || "",
+    phone: d.phone || "Not provided",
+    label: d.label || "Independent",
+    copyright: d.copyright || "Not provided",
+    isrc: d.isrc || "Not provided",
+    upc: d.upc || "Auto-assign",
+    catalog_number: d.catalogNumber || "Not provided",
+    version: d.version || "",
+    previously_released: d.previouslyReleased || "",
+    previous_release_date: d.previousReleaseDate || "N/A",
+    vocal_type: d.vocalType || "",
+    ownership_confirmed: d.ownershipConfirmed === true ? "Yes — confirmed original work" : "Not confirmed",
     producers: fmtCreditList(credits.producer),
     musicians: fmtCreditList(credits.musician),
     songwriters: fmtCreditList(credits.writer),
-    lyrics: data.lyrics || "Not provided",
-    payment_status: data.paid || "Not confirmed",
-    category,
-    previous_reason: reason,
+    publishers: fmtCreditList(credits.publishing),
+    lyrics: d.lyrics || "Not provided",
+    payment_status: String(d.paid || '').toLowerCase() === 'paid' ? 'Paid' : 'Not confirmed',
+    category: (d.rejectionCategory || "Other").toString().trim(),
+    previous_reason: (d.rejectionReason || "").toString().trim(),
     fix_kind: kind,
     ...(licenseUrl ? { fix_license_url: licenseUrl } : {}),
-    cover_url: resolvedCoverUrl,
+    cover_url: d.officialCoverURL || d.coverURL || "",
     audio_files: audioFiles,
     status: "Review",
     submitted_at: new Date().toString(),
   };
-
   try {
-    const res  = await fetch(NOTIFY_URL, {
+    const res = await fetch(NOTIFY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-app-secret": APP_SECRET },
       body: JSON.stringify(body),
     });
     const text = await res.text();
     console.log("[Notify resubmit] status=", res.status, "body=", text);
-    return { ok: res.ok, status: res.status, text };
+    return { ok: res.ok, status: res.status };
   } catch (e) {
     console.error("[Notify resubmit] ERROR:", e);
-    return { ok: false, status: 0, text: String(e) };
+    return { ok: false, status: 0 };
   }
+}
+
+/* ───────── submit ───────── */
+async function submitLicense() {
+  const L = S.license;
+  if (!L.newUrl) {
+    setBtn('Uploading…');
+    L.newUrl = await uploadToCloudinary(L.file, 'license-proofs', p => setBtn(`Uploading… ${p}%`));
+  }
+  await updateDoc(doc(db, "submissions", data._id), {
+    status: "Review",
+    rejectionReason: deleteField(),
+    rejectionCategory: deleteField(),
+    resubmittedAt: serverTimestamp(),
+    licenseURL: L.newUrl,
+  });
+  return notifyAdmin(data, "license", L.newUrl);
+}
+
+async function submitFix() {
+  const f = readFields();
+  const rename = computeRename(f.artistName).map;
+
+  // Upload only what was replaced. Finished uploads are kept, so a retry doesn't repeat them.
+  if (S.cover.file && !S.cover.newUrl) {
+    setBtn('Uploading cover…');
+    S.cover.newUrl = await uploadToCloudinary(S.cover.file, 'covers', p => setBtn(`Uploading cover… ${p}%`));
+  }
+  for (let i = 0; i < S.tracks.length; i++) {
+    const t = S.tracks[i];
+    if (t.file && !t.newUrl) {
+      const label = S.isSingle ? 'audio' : `track ${i + 1}`;
+      setBtn(`Uploading ${label}…`);
+      t.newUrl = await uploadToCloudinary(t.file, 'tracks', p => setBtn(`Uploading ${label}… ${p}%`));
+    }
+  }
+
+  // audioFiles is what gets sent to the distributor, so the new files and edits must land here.
+  const audioFiles = S.tracks.map((t, i) => {
+    const o = { ...t.orig };
+    o.title = S.isSingle ? f.releaseTitle : f.trackTitles[i];
+    o.url = t.newUrl || t.url;
+    if (Array.isArray(t.orig.artists)) {
+      o.artists = t.orig.artists.filter(Boolean).map(a => {
+        const n = a.type === 'main' && a.name ? rename[a.name.toLowerCase()] : null;
+        return n ? { ...a, name: n } : { ...a };
+      });
+    }
+    return o;
+  });
+
+  const trim = (arr, withIpi) => named(arr).map(c => withIpi ? { name: c.name.trim(), role: c.role || '', ipi: (c.ipi || '').trim() } : { name: c.name.trim(), role: c.role || '' });
+  const old = data.credits || {};
+  const credits = {
+    ...old,
+    producer: trim(S.credits.producer),
+    musician: Array.isArray(old.musician) ? old.musician : [],
+    writer: trim(S.credits.writer, true),
+    publishing: trim(S.credits.publishing),
+  };
+
+  const payload = {
+    status: "Review",
+    rejectionReason: deleteField(),
+    rejectionCategory: deleteField(),
+    resubmittedAt: serverTimestamp(),
+    artistName: f.artistName, releaseTitle: f.releaseTitle,
+    genre: f.genre, language: f.language, explicit: f.explicit,
+    copyright: f.copyright, credits, audioFiles,
+  };
+  if (f.releaseDate !== S.origDate) payload.releaseDate = toIsoOrEmpty(f.releaseDate);
+  if (S.cover.newUrl) Object.assign(payload, { resubmittedCoverURL: S.cover.newUrl, coverURL: S.cover.newUrl, officialCoverURL: S.cover.newUrl });
+  const firstNew = S.tracks.find(t => t.newUrl);
+  if (firstNew) payload.resubmittedAudioURL = firstNew.newUrl;
+
+  setBtn('Saving…');
+  await updateDoc(doc(db, "submissions", data._id), payload);
+
+  const merged = { ...data, artistName: f.artistName, releaseTitle: f.releaseTitle, genre: f.genre, language: f.language, explicit: f.explicit, copyright: f.copyright, credits, audioFiles };
+  if (payload.releaseDate) merged.releaseDate = payload.releaseDate;
+  if (S.cover.newUrl) { merged.coverURL = S.cover.newUrl; merged.officialCoverURL = S.cover.newUrl; }
+  return notifyAdmin(merged, "audio_and_cover");
 }
 
 async function submit() {
-  if (submitting) return;
-  const data = submissionData;
-  const category = (data.rejectionCategory || "Other").toString().trim();
-  const copyrightMode = isCopyright(category);
+  if (busy) return;
+  setStatus('');
+  const problem = S.copyrightMode ? validateLicense() : validateFix();
+  if (problem) { showProblem(problem); return; }
 
-  if (!data._id) { setError("Missing submission reference. Please go back and try again."); return; }
-  if (copyrightMode && !pickedLicense) { setError("Please upload your license / proof document."); return; }
-
-  let newArtistName = data.artistName || "";
-  let newReleaseTitle = data.releaseTitle || "";
-  let newCopyright = data.copyright || "";
-  let newComposer = getComposerName(data);
-
-  if (!copyrightMode) {
-    if (!pickedAudio || !pickedCover) { setError("Please upload both the fixed MP3 and cover art."); return; }
-    newArtistName   = (document.getElementById("fieldArtistName")?.value || "").trim();
-    newReleaseTitle = (document.getElementById("fieldReleaseTitle")?.value || "").trim();
-    newCopyright    = (document.getElementById("fieldCopyright")?.value || "").trim();
-    newComposer     = document.getElementById("fieldComposer")?.value || "";
-    if (!newArtistName)   { setError("Artist name is required."); return; }
-    if (!newReleaseTitle) { setError("Release title is required."); return; }
-  }
-
-  submitting = true;
-  setError("");
-  const btn = document.getElementById("submitBtn");
+  busy = true;
+  const btn = $('submitBtn');
   btn.disabled = true;
-  btn.innerHTML = `<div class="spinner"></div> Submitting…`;
-
-  let notifyResult = { ok: true };
+  btn.innerHTML = '<span class="spin"></span><span id="submitLabel">Submitting…</span>';
   try {
-    const docRef = doc(db, "submissions", data._id);
-    if (copyrightMode) {
-      const url = await uploadToCloudinary(pickedLicense.file, "license-proofs");
-      if (!url) { throw new Error("Upload failed. Check your connection and try again."); }
-      await updateDoc(docRef, {
-        status: "Review",
-        rejectionReason: deleteField(),
-        rejectionCategory: deleteField(),
-        resubmittedAt: serverTimestamp(),
-        licenseURL: url,
-      });
-      notifyResult = await notifyAdmin("license", { licenseUrl: url });
-    } else {
-      const audioUrl = await uploadToCloudinary(pickedAudio.file, "tracks");
-      if (!audioUrl) { throw new Error("Audio upload failed. Check your connection and try again."); }
-      const coverUrl = await uploadToCloudinary(pickedCover.file, "covers");
-      if (!coverUrl) { throw new Error("Cover art upload failed. Check your connection and try again."); }
-
-      const updatedWriters = buildUpdatedWriterCredits(data, newComposer);
-      const updatedCredits = {
-        producer: (data.credits && data.credits.producer) || [],
-        musician: (data.credits && data.credits.musician) || [],
-        writer:   updatedWriters,
-      };
-
-      await updateDoc(docRef, {
-        status: "Review",
-        rejectionReason: deleteField(),
-        rejectionCategory: deleteField(),
-        resubmittedAt: serverTimestamp(),
-        resubmittedAudioURL: audioUrl,
-        resubmittedCoverURL: coverUrl,
-        // Also sync the two fields any future email (e.g. a later Pay
-        // Now resend) actually reads from. Without this, coverURL and
-        // officialCoverURL would stay frozen on the original — pre-fix
-        // — cover art forever, and only THIS immediate notify call
-        // would ever show the corrected artwork.
-        coverURL: coverUrl,
-        officialCoverURL: coverUrl,
-        artistName: newArtistName,
-        releaseTitle: newReleaseTitle,
-        copyright: newCopyright,
-        credits: updatedCredits,
-      });
-
-      // Reflect the edits on the in-memory object too, so notifyAdmin()
-      // (below) — which reads straight off `submissionData` — sends
-      // the corrected metadata in the same admin email it always sends.
-      data.artistName   = newArtistName;
-      data.releaseTitle = newReleaseTitle;
-      data.copyright     = newCopyright;
-      data.credits        = updatedCredits;
-
-      notifyResult = await notifyAdmin("audio_and_cover", { audioUrl, coverUrl });
-    }
-
+    const result = S.copyrightMode ? await submitLicense() : await submitFix();
     sessionStorage.removeItem("rejectionFixData");
-    document.getElementById("pageContent").style.display = "none";
-    document.getElementById("successState").style.display = "flex";
-    if (!notifyResult.ok) {
-      document.querySelector("#successState .success-sub").textContent =
-        "Your fix was saved, but we couldn't reach the admin notification service (status " +
-        notifyResult.status + "). The team may not see this until that's checked.";
+    $('view').style.display = 'none';
+    $('dock').style.display = 'none';
+    $('successState').style.display = 'flex';
+    if (!result.ok) {
+      $('successSub').textContent = `Your fix was saved, but we couldn't reach the admin notification service (status ${result.status}). The team may not see it until that's checked.`;
     }
-    setTimeout(() => { window.location.href = "releases.html"; }, notifyResult.ok ? 1400 : 3200);
+    setTimeout(() => { window.location.href = "releases.html"; }, result.ok ? 1400 : 3200);
   } catch (e) {
     console.error("[Resubmit] ERROR:", e);
-    submitting = false;
+    busy = false;
     btn.disabled = false;
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Resubmit for Review`;
-    setError(e.message || "Something went wrong saving your fix. Please try again.");
+    btn.innerHTML = SUBMIT_HTML;
+    setStatus(e.message || 'Something went wrong saving your fix. Please try again.');
   }
 }
 
+$('submitBtn').addEventListener('click', submit);
+
+/* ───────── start ───────── */
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "login.html"; return; }
   await loadData();
-  render();
+  if (!data || !data._id) { showState('Release not found', "We couldn't find this release. Go back and try again."); return; }
+  const status = String(data.status || '').trim().toLowerCase();
+  if (status && status !== 'rejected') { showState('Nothing to fix', "This release isn't waiting for changes right now."); return; }
+  buildState();
+  renderPage();
+  if (!$('view').dataset.wired) { wireView(); $('view').dataset.wired = '1'; }
 });
 </script>
 </body>
