@@ -2596,7 +2596,25 @@ function closeConfirm() {
 }
 
 async function deleteOneSubmission(id) {
-  await deleteDoc(doc(db, "submissions", id));
+   const token = await getAdminToken();
+  if (!token) throw new Error('Admin sign-in is required to delete.');
+  let force = '';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(`${BACKEND_URL}/api/submission-delete/${encodeURIComponent(id)}${force}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const out = await res.json().catch(() => ({}));
+    if (res.ok && out.success) break;
+    if (res.status === 409 && out.code === 'AVVO_SENT' && attempt === 0) {
+      if (!confirm('This release was already sent to AVVO. Deleting it here does NOT remove it from AVVO. Delete anyway?')) {
+        throw new Error('Delete cancelled.');
+      }
+      force = '?force=1';
+      continue;
+    }
+    throw new Error(out.message || `Delete failed (HTTP ${res.status}).`);
+  }
   try {
     const existing = await getDocs(
       query(collection(db, "payments"), where("submissionId", "==", id))
