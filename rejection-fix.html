@@ -975,8 +975,19 @@ async function submitFix() {
   const firstNew = S.tracks.find(t => t.newUrl);
   if (firstNew) payload.resubmittedAudioURL = firstNew.newUrl;
 
-  setBtn('Saving…');
+   setBtn('Saving…');
   await updateDoc(doc(db, "submissions", data._id), payload);
+
+  // Remove replaced WAVs from R2. Best effort: the backend only deletes files the submission no longer uses.
+  const oldKeys = S.tracks.filter(t => t.newUrl && String(t.url).startsWith('r2:')).map(t => t.url.slice(3));
+  if (oldKeys.length) {
+    auth.currentUser.getIdToken().then(token => fetch(`${BACKEND_URL}/api/audio/cleanup`, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ submissionId: data._id, keys: oldKeys })
+    })).catch(() => {});
+  }
 
   const merged = { ...data, artistName: f.artistName, releaseTitle: f.releaseTitle, genre: f.genre, language: f.language, explicit: f.explicit, copyright: f.copyright, credits, audioFiles };
   if (payload.releaseDate) merged.releaseDate = payload.releaseDate;
