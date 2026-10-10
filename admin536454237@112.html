@@ -2254,7 +2254,15 @@ function display(data) {
             const data = await avvoCall('GET', subId, 'preview');
             if (data) showAvvoPreview(data);
           } else {
-            if (!confirm(`Send "${this.dataset.title}" by ${this.dataset.artist} to AVVO?`)) return;
+            this.textContent = 'Checking…';
+            const pre = await avvoCall('GET', subId, 'preview');
+            if (!pre) return;
+            if (!pre.sendable) { toast('error', 'AVVO: ' + pre.blockedReason); return; }
+            let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to AVVO?`;
+            if (pre.dateShift) {
+              msg = `WARNING: the release date ${pre.dateShift.from} is less than 3 days away. It will be moved to ${pre.dateShift.to} (${pre.dateShift.days} day${pre.dateShift.days === 1 ? '' : 's'} later) and saved on the release.\n\n` + msg;
+            }
+            if (!confirm(msg)) return;
             this.textContent = 'Starting…';
             const data = await avvoCall('POST', subId, 'send');
             if (data) {
