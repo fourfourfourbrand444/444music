@@ -2044,7 +2044,8 @@ function display(data) {
         if (ok) {
           toast('success', `Status → "Approved"`);
           toast('info', 'Sending approval email…');
-                    await sendApprovalEmail({ id: subId, email });
+                   await sendApprovalEmail({ id: subId, email });
+          await cleanupApprovedAudio([subId]);
           setTimeout(() => refreshCurrentView(), 300);
         } else {
           this.disabled = false;
@@ -2373,6 +2374,27 @@ async function avvoCall(method, subId, action) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`);
   return data;
+}
+
+// After approval the WAVs are no longer needed, so the backend deletes them from R2.
+async function cleanupApprovedAudio(ids) {
+  try {
+    const token = await getAdminToken();
+    if (!token) { toast('warning', 'Not signed in, so the audio was not deleted from R2.'); return; }
+    let deleted = 0;
+    for (const id of ids) {
+      const res = await fetch(`${BACKEND_URL}/api/approval-cleanup/${encodeURIComponent(id)}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out.success) deleted += out.deleted || 0;
+      else toast('warning', out.message || `Audio cleanup failed (HTTP ${res.status}).`);
+    }
+    if (deleted) toast('info', `${deleted} audio file${deleted === 1 ? '' : 's'} deleted from R2`);
+  } catch (err) {
+    toast('warning', 'Audio cleanup failed: ' + err.message);
+  }
 }
 
 function showAvvoPreview(data) {
@@ -2746,6 +2768,7 @@ async function bulkUpdateStatus(newStatus) {
     }
     await safeUpdate(id, data);
   }
+  if (newStatus === 'Approved') await cleanupApprovedAudio(ids);
   toast('success', `${ids.length} submissions → "${newStatus}"`);
   selectedIds.clear();
   updateBulkBar();
