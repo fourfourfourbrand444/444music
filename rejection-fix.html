@@ -354,6 +354,49 @@ function uploadToCloudinary(file, folder, onProgress) {
   });
 }
 
+/* ───────── R2 AUDIO (private bucket, links come from our backend) ───────── */
+const BACKEND_URL = "https://four44music-broadcast-backend.onrender.com";
+
+async function uploadWavToR2(file, onProgress) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Please sign in again.");
+  const token = await user.getIdToken();
+  const res = await fetch(`${BACKEND_URL}/api/audio/upload-url`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ contentType: 'audio/wav', size: file.size })
+  });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok || !out.success) throw new Error(out.message || 'Could not start the upload.');
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', out.uploadUrl, true);
+    xhr.setRequestHeader('Content-Type', 'audio/wav');
+    xhr.upload.onprogress = e => { if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300) ? resolve() : reject(new Error(`Upload was refused (HTTP ${xhr.status}).`));
+    xhr.onerror = () => reject(new Error('Network error during upload. Check your connection and try again.'));
+    xhr.send(file);
+  });
+  return out.key;
+}
+
+// "r2:audio/..." files are private, so playing one needs a short-lived link from the backend.
+const playUrlCache = {};
+async function resolvePlayUrl(url) {
+  if (!String(url).startsWith('r2:')) return url;
+  if (playUrlCache[url]) return playUrlCache[url];
+  const user = auth.currentUser;
+  if (!user) return '';
+  const token = await user.getIdToken();
+  const res = await fetch(`${BACKEND_URL}/api/audio/play-url?key=${encodeURIComponent(url.slice(3))}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok || !out.success) return '';
+  playUrlCache[url] = out.url;
+  return out.url;
+}
+
 /* ───────── state ───────── */
 const params = new URLSearchParams(window.location.search);
 const releaseId = params.get("id");
@@ -472,9 +515,15 @@ function drawTrackAudio(i) {
         <div class="player-meta"><div class="player-name">${escHtml(name)}</div><div class="player-sub">${escHtml(sub)}</div></div>
         <button type="button" class="player-replace${needs ? ' req' : ''}" data-zone="audio:${i}">${src ? 'Replace' : 'Choose WAV'}</button>
       </div>
-      ${src ? `<audio controls preload="none" src="${escHtml(src)}"></audio>` : ''}
+           ${src ? `<audio controls preload="none"${String(src).startsWith('r2:') ? '' : ` src="${escHtml(src)}"`}></audio>` : ''}
     </div>
-    ${t.error ? `<div class="ferr">${ERR_ICON}${escHtml(t.error)}</div>` : ''}`;
+      ${t.error ? `<div class="ferr">${ERR_ICON}${escHtml(t.error)}</div>` : ''}`;
+  if (src && String(src).startsWith('r2:')) {
+    resolvePlayUrl(src).then(u => {
+      const a = el.querySelector('audio');
+      if (a && u) a.src = u;
+    });
+  }
 }
 
 function drawLicense() {
@@ -883,7 +932,7 @@ async function submitFix() {
     if (t.file && !t.newUrl) {
       const label = S.isSingle ? 'audio' : `track ${i + 1}`;
       setBtn(`Uploading ${label}…`);
-      t.newUrl = await uploadToCloudinary(t.file, 'tracks', p => setBtn(`Uploading ${label}… ${p}%`));
+      t.newUrl = 'r2:' + await uploadWavToR2(t.file, p => setBtn(`Uploading ${label}… ${p}%`));
     }
   }
 
@@ -891,7 +940,8 @@ async function submitFix() {
   const audioFiles = S.tracks.map((t, i) => {
     const o = { ...t.orig };
     o.title = S.isSingle ? f.releaseTitle : f.trackTitles[i];
-    o.url = t.newUrl || t.url;
+       o.url = t.newUrl || t.url;
+    if (String(o.url).startsWith('r2:')) o.key = o.url.slice(3); else delete o.key;
     if (Array.isArray(t.orig.artists)) {
       o.artists = t.orig.artists.filter(Boolean).map(a => {
         const n = a.type === 'main' && a.name ? rename[a.name.toLowerCase()] : null;
