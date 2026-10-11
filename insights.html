@@ -228,17 +228,7 @@ body{
 
 <div class="container">
 
-  <div class="page-header">
-    <div>
-     
-    </div>
-    
-      </div>
-      
-      </div>
-      
-    </div>
-  </div>
+ 
 
   <section class="stats">
     <div class="stat-card hero">
@@ -427,41 +417,6 @@ function buildTrendFromTotal(total) {
 /* ═══════════════════════════════════════════
    PROFILE AVATAR
 ═══════════════════════════════════════════ */
-const profileAvatar = document.getElementById("profileAvatar");
-const avatarEditBtn = document.getElementById("avatarEditBtn");
-const avatarInput   = document.getElementById("avatarInput");
-let currentUid = null;
-
-function renderAvatar(photoURL) {
-  profileAvatar.innerHTML = photoURL
-    ? `<img src="${photoURL}" alt="Profile photo">`
-    : `<i class="fa-solid fa-user"></i>`;
-}
-
-profileAvatar.addEventListener("click", () => avatarInput.click());
-avatarEditBtn.addEventListener("click", (e) => { e.stopPropagation(); avatarInput.click(); });
-
-avatarInput.addEventListener("change", async (e) => {
-  const file = e.target.files && e.target.files[0];
-  if (!file || !currentUid) return;
-  if (file.size > 5 * 1024 * 1024) { alert("Image must be under 5MB"); return; }
-
-  avatarEditBtn.classList.add("uploading");
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    const base64 = ev.target.result;
-    try {
-      await setDoc(doc(db, "users", currentUid), { photoURL: base64 }, { merge: true });
-      renderAvatar(base64);
-    } catch (err) {
-      console.error("Avatar update error:", err);
-      alert("Couldn't update your photo. Please try again.");
-    } finally {
-      avatarEditBtn.classList.remove("uploading");
-    }
-  };
-  reader.readAsDataURL(file);
-});
 
 /* ═══════════════════════════════════════════
    PER-RELEASE / PER-TRACK STREAM TOTALS
@@ -507,12 +462,9 @@ function hasAnyRealViews(breakdown) {
 /* ═══════════════════════════════════════════
    LOAD REAL DATA
 ═══════════════════════════════════════════ */
-onAuthStateChanged(auth, async (user) => {
-  if (!user) { location.href = "login.html"; return; }
-  currentUid = user.uid;
 
-  const userSnap = await getDoc(doc(db, "users", user.uid));
-  renderAvatar(userSnap.exists() ? (userSnap.data().photoURL || null) : null);
+  onAuthStateChanged(auth, async (user) => {
+  if (!user) { location.href = "login.html"; return; }
 
   const submissionsQuery = query(collection(db, "submissions"), where("userId", "==", user.uid));
   const submissionsSnap  = await getDocs(submissionsQuery);
