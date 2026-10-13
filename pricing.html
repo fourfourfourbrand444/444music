@@ -204,6 +204,72 @@ a { color: var(--blue); text-decoration: none; }
   .bottom-banner-inner { padding: 36px 20px; border-radius: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+
+/* ═══════════════ PROMO CSS — START (delete this block when promo ends) ═══════════════ */
+.promo-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  background: #000; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  animation: promoFade .5s ease both;
+}
+.promo-overlay::before {
+  content: ''; position: fixed; top: -20%; left: 50%; width: 140vmax; height: 90vmax; transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(253,235,13,0.16), rgba(253,235,13,0.05) 55%, transparent 75%);
+  pointer-events: none;
+}
+@keyframes promoFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes promoRise { from { opacity: 0; transform: translateY(26px) scale(.985); } to { opacity: 1; transform: none; } }
+
+.promo-card {
+  position: relative; width: 100%; max-width: 400px; margin: auto;
+  padding: 34px 28px 28px; text-align: center;
+  background: var(--yellow); color: #000; border-radius: 34px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.12);
+  animation: promoRise .8s var(--ease) .1s both;
+}
+.promo-pill {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 13px;
+  border-radius: 999px; background: rgba(0,0,0,0.08);
+  font-size: 13px; font-weight: 600; letter-spacing: -0.005em;
+}
+.promo-pill i { width: 7px; height: 7px; border-radius: 50%; background: #000; display: block; }
+
+.promo-title {
+  margin-top: 20px; font-size: clamp(34px, 9vw, 42px); font-weight: 700;
+  letter-spacing: -0.045em; line-height: 1.04;
+}
+.promo-sub {
+  margin: 12px auto 0; max-width: 300px; font-size: 17px; line-height: 1.38;
+  color: rgba(0,0,0,0.66); letter-spacing: -0.012em;
+}
+
+.promo-count {
+  margin: 26px 0 0; padding: 22px 16px 18px; border-radius: 24px; background: rgba(0,0,0,0.07);
+}
+.promo-days {
+  font-size: 84px; font-weight: 700; letter-spacing: -0.06em; line-height: .95;
+  font-variant-numeric: tabular-nums;
+}
+.promo-days-label { margin-top: 6px; font-size: 15px; font-weight: 600; color: rgba(0,0,0,0.6); letter-spacing: -0.01em; }
+.promo-dots { display: flex; justify-content: center; gap: 5px; margin-top: 16px; }
+.promo-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.16); transition: background-color .4s ease; }
+.promo-dots span.on { background: #000; }
+
+.promo-btn {
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 54px; margin-top: 22px;
+  border-radius: 999px; background: #000; color: #fff !important;
+  font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  transition: transform .3s var(--ease), opacity .2s ease;
+}
+.promo-btn:active { transform: scale(0.97); opacity: .9; }
+.promo-fine { margin-top: 14px; font-size: 12.5px; line-height: 1.4; color: rgba(0,0,0,0.5); }
+
+@media (max-width: 380px) {
+  .promo-card { padding: 28px 22px 24px; border-radius: 30px; }
+  .promo-days { font-size: 72px; }
+}
+/* ═══════════════ PROMO CSS — END ═══════════════ */
 </style>
 </head>
 <body>
@@ -406,6 +472,85 @@ a { color: var(--blue); text-decoration: none; }
     <button class="lock-btn" id="lockContinueBtn" type="button">Continue</button>
   </div>
 </div>
+
+<!-- ═══════════════ PROMO HTML + JS — START (delete this block when promo ends) ═══════════════ -->
+<div class="promo-overlay" id="promoOverlay" role="dialog" aria-modal="true" aria-labelledby="promoTitle">
+  <div class="promo-card">
+    <div class="promo-pill"><i></i>Limited-time promo</div>
+
+    <h2 class="promo-title" id="promoTitle">Distribute<br>for free.</h2>
+    <p class="promo-sub">Unlimited songs to 100+ stores. No fees while the promo runs.</p>
+
+    <div class="promo-count">
+      <div class="promo-days" id="promoDays">14</div>
+      <div class="promo-days-label" id="promoDaysLabel">days left</div>
+      <div class="promo-dots" id="promoDots" aria-hidden="true"></div>
+    </div>
+
+    <a href="files.htm" class="promo-btn">Start distributing</a>
+    <p class="promo-fine" id="promoFine">Pricing returns when the promo ends.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ── PROMO SETTINGS — edit these two lines to restart / extend ──
+     PROMO_END: moment the promo finishes (UTC = Ghana time).
+     PROMO_TOTAL_DAYS: length of the promo, used for the dots. */
+  var PROMO_END = '2026-10-27T00:00:00Z';
+  var PROMO_TOTAL_DAYS = 14;
+
+  var overlay = document.getElementById('promoOverlay');
+  if (!overlay) return;
+  var end = new Date(PROMO_END).getTime();
+  var DAY = 86400000;
+
+  function closePromo() {
+    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    document.body.style.overflow = '';
+    if (timer) clearInterval(timer);
+  }
+
+  // already over → never show
+  if (isNaN(end) || Date.now() >= end) { var timer = null; closePromo(); return; }
+
+  document.body.style.overflow = 'hidden';
+
+  var dotsEl = document.getElementById('promoDots');
+  var daysEl = document.getElementById('promoDays');
+  var labelEl = document.getElementById('promoDaysLabel');
+  var fineEl = document.getElementById('promoFine');
+
+  for (var i = 0; i < PROMO_TOTAL_DAYS; i++) dotsEl.appendChild(document.createElement('span'));
+
+  var lastShown = -1;
+  function render() {
+    var left = end - Date.now();
+    if (left <= 0) { closePromo(); return; }
+    var days = Math.ceil(left / DAY);
+    if (days === lastShown) return;
+    lastShown = days;
+
+    daysEl.textContent = days;
+    labelEl.textContent = days === 1 ? 'last day' : 'days left';
+
+    var dots = dotsEl.children;
+    for (var j = 0; j < dots.length; j++) {
+      dots[j].className = j < days ? 'on' : '';
+    }
+  }
+
+  // "Ends 26 October" (last full day = end minus 1 ms)
+  try {
+    var lastDay = new Date(end - 1).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+    fineEl.textContent = 'Offer ends ' + lastDay + '. Pricing returns after the promo.';
+  } catch (e) {}
+
+  render();
+  var timer = setInterval(render, 30000);
+})();
+</script>
+<!-- ═══════════════ PROMO HTML + JS — END ═══════════════ -->
 
 <script>
 /* ── CURRENCY DISPLAY — cosmetic only, never touches payment logic ──
