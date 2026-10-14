@@ -370,7 +370,7 @@ select.credit-input.empty { color: var(--t3); }
     <!-- RIGHTS -->
     <div class="sh"><h2>Label &amp; rights</h2></div>
     <div class="group">
-      <label class="row"><span class="l">Label</span><input id="label" placeholder="Optional · Independent" autocomplete="off"></label>
+      <label class="row"><span class="l">Label</span><input id="label" value="444Music Distribution" readonly tabindex="-1" style="color:var(--t2)"></label>
       <label class="row"><span class="l">Copyright holder</span><input id="copyright" placeholder="Required" autocomplete="off"></label>
       <label class="row"><span class="l">Confirm holder</span><input id="copyrightConfirm" placeholder="Type it again" autocomplete="off"></label>
     </div>
@@ -823,7 +823,12 @@ function applyUploadSync() {
   if (audioFiles.length) document.getElementById('prefillBadge').classList.add('show');
 }
 applyUploadSync();
-
+function makeCatalogNumber() {
+  const t = Date.now().toString(36).toUpperCase().slice(-5);
+  const r = Math.random().toString(36).toUpperCase().slice(2, 4);
+  return '444M-' + t + r;
+}
+document.getElementById('catalogNumber').value = makeCatalogNumber();
 async function verifyPayment(reference) {
   try {
     const snap = await getDoc(doc(db, 'pendingPayments', reference));
@@ -1044,11 +1049,11 @@ form.addEventListener("submit", async e => {
     explicit:      document.getElementById("explicit").value,
     email:         document.getElementById("email").value.trim(),
     phone:         '',
-    label:         document.getElementById("label").value.trim(),
+     label:         "444Music Distribution",
     copyright:     document.getElementById("copyright").value.trim(),
     isrc:          document.getElementById("isrc").value.trim(),
     upc:           document.getElementById("upc").value.trim(),
-    catalogNumber: document.getElementById("catalogNumber").value.trim(),
+       catalogNumber: document.getElementById("catalogNumber").value.trim() || makeCatalogNumber(),
     lyrics:        document.getElementById("lyrics").value.trim(),
     version:               document.getElementById("version").value,
     previouslyReleased:    previouslyReleased,
