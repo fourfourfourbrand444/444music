@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Upload Files — 444Music</title>
 
 <style>
@@ -440,7 +443,8 @@ onAuthStateChanged(auth, user => {
 const CLOUDINARY_URL    = "https://api.cloudinary.com/v1_1/dlbgqtvqg/auto/upload";
 const CLOUDINARY_PRESET = "glmamp2y";
 
-function uploadToCloudinary(file, folder, onProgress) {
+// One single attempt. Preset is sent FIRST, file LAST (safest order for multipart parsers).
+function uploadToCloudinaryOnce(file, folder, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", CLOUDINARY_URL, true);
@@ -456,11 +460,37 @@ function uploadToCloudinary(file, folder, onProgress) {
     };
     xhr.onerror = () => reject(new Error("Network error during upload."));
     const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", CLOUDINARY_PRESET);
+    fd.append("upload_preset", String(CLOUDINARY_PRESET).trim());
     fd.append("folder", folder);
+    fd.append("file", file);
     xhr.send(fd);
   });
+}
+
+function friendlyUploadError(msg) {
+  if (/preset/i.test(msg)) return "Cover art could not be uploaded. Please close this page, reopen it and try again.";
+  if (/network/i.test(msg)) return "Network error while uploading. Check your connection and try again.";
+  return msg || "Upload failed. Please try again.";
+}
+
+// Guard + automatic retry (up to 3 tries) for the preset error and network errors.
+async function uploadToCloudinary(file, folder, onProgress) {
+  if (!String(CLOUDINARY_PRESET || '').trim()) {
+    throw new Error("Upload is not set up correctly. Please refresh the page and try again.");
+  }
+  let lastMsg = '';
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      return await uploadToCloudinaryOnce(file, folder, onProgress);
+    } catch (e) {
+      lastMsg = (e && e.message) ? e.message : '';
+      const retryable = /preset must be specified|network/i.test(lastMsg);
+      if (!retryable || attempt === 3) break;
+      if (onProgress) onProgress(0);
+      await new Promise(r => setTimeout(r, 800 * attempt));
+    }
+  }
+  throw new Error(friendlyUploadError(lastMsg));
 }
 
 // ── R2 AUDIO — private bucket, upload link comes from our backend ──
@@ -530,7 +560,6 @@ const successBanner = document.getElementById('successBanner');
 const globalErr   = document.getElementById('globalErr');
 const globalErrText = document.getElementById('globalErrText');
 
-// ── COVER ART ────────────────────────────────────────────────────
 // ── COVER ART ────────────────────────────────────────────────────
 // AVVO rule: JPG, exactly 4000 x 4000, RGB. Read from the file header, no upload needed.
 async function checkCover(file) {
@@ -937,9 +966,16 @@ submitBtn.addEventListener('click', async () => {
   renderTracks();
 
   try {
-    if (coverFile) {
+    if (coverFile && !coverUrl) {
       updateUpRow('cover', 'Cover art', 'uploading', 0);
-      coverUrl = await uploadToCloudinary(coverFile, 'covers', pct => updateUpRow('cover', 'Cover art', 'uploading', pct));
+      try {
+        coverUrl = await uploadToCloudinary(coverFile, 'covers', pct => updateUpRow('cover', 'Cover art', 'uploading', pct));
+      } catch (ce) {
+        updateUpRow('cover', 'Cover art', 'error', 0);
+        throw ce;
+      }
+      updateUpRow('cover', 'Cover art', 'done', 100);
+    } else if (coverUrl) {
       updateUpRow('cover', 'Cover art', 'done', 100);
     }
 
