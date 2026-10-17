@@ -288,6 +288,33 @@ const toDate10 = (v) => {
 };
 const toIsoOrEmpty = (v) => { if (!v) return ''; try { return new Date(v).toISOString(); } catch (e) { return v; } };
 
+const BAD_NAME_RE = /[,<>{}\[\]"]/g;
+const badNameChars = (s) => {
+  const str = String(s || '');
+  const out = Array.from(new Set(str.match(BAD_NAME_RE) || []));
+  let depth = 0, broken = false;
+  for (const ch of str) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && --depth < 0) { broken = true; break; }
+  }
+  if (broken || depth !== 0) out.push('OPEN');
+  return out;
+};
+const nameMsg = (name, bad, label = 'Artist name') => {
+  const chars = bad.filter(x => x !== 'OPEN');
+  const parts = [];
+  if (chars.length) parts.push(`can't contain ${chars.join(' ')}`);
+  if (bad.includes('OPEN')) parts.push('has a bracket ( ) that is not closed');
+  return `${label} "${name}" ${parts.join(' and ')}.${bad.includes(',') ? ' Add each artist separately instead of using commas.' : ''}`;
+};
+function currentMains() {
+  const out = [];
+  S.tracks.forEach(t => (Array.isArray(t.orig.artists) ? t.orig.artists : []).forEach(a => {
+    if (a && a.type === 'main' && a.name && !out.some(n => n.toLowerCase() === a.name.toLowerCase())) out.push(a.name);
+  }));
+  return out;
+}
+
 /* ───────── file checks (same rules as Upload Files) ───────── */
 async function checkCover(file) {
   if (!/\.jpe?g$/i.test(file.name)) return 'Cover art must be a JPG file.';
@@ -841,7 +868,12 @@ function validateFix() {
     const bad = f.trackTitles.findIndex(t => !t);
     if (bad >= 0) return { msg: `Track ${bad + 1} needs a title.`, el: 'trkTitle-' + bad };
   }
-  if (!f.artistName) return { msg: 'Artist name is required.', el: 'artistName' };
+ if (!f.artistName) return { msg: 'Artist name is required.', el: 'artistName' };
+  const nameParts = currentMains().length > 1 ? f.artistName.split(',').map(s => s.trim()) : [f.artistName];
+  for (const p of nameParts) {
+    const bad = badNameChars(p);
+    if (bad.length) return { msg: nameMsg(p, bad, 'Artist name'), el: 'artistName' };
+  }
   const rename = computeRename(f.artistName);
   if (rename.error) return { msg: rename.error, el: 'artistName' };
  if (!f.releaseTitle) return { msg: 'Release title is required.', el: 'releaseTitle' };
@@ -854,6 +886,8 @@ function validateFix() {
     for (const a of S.tracks[i].others) {
       const n = a.name.trim().toLowerCase();
       if (!n) continue;
+      const badF = badNameChars(a.name);
+      if (badF.length) return { msg: nameMsg(a.name.trim(), badF, 'Featured artist'), el: 'fold-feat-' + i, fold: 'feat-' + i };
       const where = S.isSingle ? '' : ` on track ${i + 1}`;
       if (mainNow.has(n)) return { msg: `"${a.name.trim()}" is already a main artist${where}. Remove it from featured artists.`, el: 'fold-feat-' + i, fold: 'feat-' + i };
       if (seen.has(n)) return { msg: `"${a.name.trim()}" is listed twice${where}.`, el: 'fold-feat-' + i, fold: 'feat-' + i };
