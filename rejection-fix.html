@@ -258,6 +258,7 @@ const PLACEHOLDER = { producer: 'Full name, e.g. Metro Boomin', writer: 'Full na
 const FOLD_TITLE  = { producer: 'Producers & engineers', writer: 'Songwriters & composers', publishing: 'Publishers' };
 const ADD_LABEL   = { producer: 'Add producer or engineer', writer: 'Add songwriter or composer', publishing: 'Add publisher' };
 const CREDIT_TYPES = ['producer', 'writer', 'publishing'];
+const ARTIST_TYPES = [['featured', 'Featured'], ['secondary', 'Secondary']];
 
 /* ───────── icons ───────── */
 const ERR_ICON   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
@@ -451,8 +452,8 @@ function buildState() {
   const raw = Array.isArray(data.audioFiles) ? data.audioFiles.filter(Boolean) : [];
   const base = raw.length ? raw : [{ title: data.releaseTitle || '', url: '', artists: artistName ? [{ name: artistName, type: 'main', spotifyUrl: '', appleUrl: '' }] : [] }];
   S.tracks = base.map(t => ({
-    orig: t, title: String(t.title || '').trim(), url: String(t.url || ''),
-    required: !meetsAudio(t.url), file: null, preview: null, newUrl: null, error: ''
+    orig: t, title: String(t.title || '').trim(), url: String(t.url || ''),required: !meetsAudio(t.url), file: null, preview: null, newUrl: null, error: '',
+    others: (Array.isArray(t.artists) ? t.artists : []).filter(a => a && a.type !== 'main' && String(a.name || '').trim()).map(a => ({ name: String(a.name), type: a.type === 'secondary' ? 'secondary' : 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
   }));
   const type = String(data.releaseType || '').toLowerCase();
   S.isSingle = type ? type === 'single' : S.tracks.length === 1;
@@ -559,6 +560,43 @@ function drawCredits(type) {
   updateCount(type);
 }
 
+function featRowHtml(ti, a, i) {
+  return `
+    <div class="credit-row" data-feat-row="1" data-t="${ti}" data-i="${i}">
+      <span class="credit-row-num">Artist ${i + 1}</span>
+      <button type="button" class="credit-remove" aria-label="Remove" data-rmfeat="${ti}:${i}">${X_ICON}</button>
+      <input class="credit-input cr-full" type="text" data-ff="name" aria-label="Artist name" placeholder="Artist name" value="${escHtml(a.name)}" autocomplete="off">
+      <div class="csel-wrap cr-full">
+        <select class="credit-input" data-ff="type" aria-label="Artist role">
+          ${ARTIST_TYPES.map(([v, l]) => `<option value="${v}"${a.type === v ? ' selected' : ''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <input class="credit-input cr-full" type="text" data-ff="spotifyUrl" aria-label="Spotify artist link" placeholder="Spotify artist link (optional)" value="${escHtml(a.spotifyUrl)}" autocomplete="off">
+      <input class="credit-input cr-full" type="text" data-ff="appleUrl" aria-label="Apple Music artist link" placeholder="Apple Music artist link (optional)" value="${escHtml(a.appleUrl)}" autocomplete="off">
+    </div>`;
+}
+
+function updateFeatCount(ti) {
+  const n = S.tracks[ti].others.filter(a => a.name.trim()).length;
+  const el = $('featCount-' + ti);
+  if (el) el.textContent = n ? `${n} added` : 'Optional';
+}
+
+function drawFeat(ti) {
+  const el = $('featList-' + ti);
+  if (!el) return;
+  el.innerHTML = S.tracks[ti].others.map((a, i) => featRowHtml(ti, a, i)).join('');
+  updateFeatCount(ti);
+}
+
+function featSection(t, i) {
+  return `<details class="group fold" id="fold-feat-${i}">
+    <summary class="row"><span class="l">${S.isSingle ? 'Featured artists' : 'Track ' + (i + 1)}</span><span class="opt" id="featCount-${i}"></span></summary>
+    <div id="featList-${i}"></div>
+    <button type="button" class="add-credit-btn" data-addfeat="${i}"><span class="plus">${PLUS_ICON}</span>Add featured artist</button>
+  </details>`;
+}
+
 function selectHtml(id, list, value) {
   return `<div class="sel"><select id="${id}" class="${value ? '' : 'empty'}"><option value="" disabled${value ? '' : ' selected'}>Select</option>${list.map(o => `<option${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select></div>`;
 }
@@ -582,6 +620,10 @@ function fixSections() {
 
     <div class="sh"><h2>${S.isSingle ? 'Audio' : 'Tracks'}</h2>${anyAudioReq ? '<span class="req">Required</span>' : '<span>Optional</span>'}</div>
     ${S.tracks.map(trackShell).join('')}
+
+    <div class="sh"><h2>Featured artists</h2><span>Optional</span></div>
+    ${S.tracks.map(featSection).join('')}
+    <p class="sf">Add anyone featured or credited as a secondary artist on a track. Main artists come from the Artist field below.</p>
 
     <div class="sh"><h2>Release</h2><span class="req">Required</span></div>
     <div class="group">
@@ -635,6 +677,7 @@ function renderPage() {
   } else {
     drawCover();
     S.tracks.forEach((_, i) => drawTrackAudio(i));
+    S.tracks.forEach((_, i) => { drawFeat(i); const d = $('fold-feat-' + i); if (d) d.open = S.tracks[i].others.length > 0; });
     CREDIT_TYPES.forEach(type => {
       drawCredits(type);
       $('fold-' + type).open = !S.credits[type].some(c => c.name.trim());
@@ -664,6 +707,23 @@ function wireView() {
       if (inp) inp.focus();
       return;
     }
+    const addF = e.target.closest('[data-addfeat]');
+    if (addF) {
+      const ti = Number(addF.dataset.addfeat);
+      S.tracks[ti].others.push({ name: '', type: 'featured', spotifyUrl: '', appleUrl: '' });
+      drawFeat(ti);
+      const rows = $('featList-' + ti).querySelectorAll('.credit-row');
+      const inp = rows[rows.length - 1].querySelector('input');
+      if (inp) inp.focus();
+      return;
+    }
+    const rmF = e.target.closest('[data-rmfeat]');
+    if (rmF) {
+      const [ti, i] = rmF.dataset.rmfeat.split(':').map(Number);
+      S.tracks[ti].others.splice(i, 1);
+      drawFeat(ti);
+      return;
+    }
     const rm = e.target.closest('[data-rm]');
     if (rm) {
       const [type, i] = rm.dataset.rm.split(':');
@@ -690,6 +750,12 @@ function wireView() {
       if (!changed) $('copyrightConfirm').value = '';
     }
     if (t.id === 'releaseDate' && e.type === 'change' && t.value && t.value < S.minDate) t.value = '';
+    const frow = t.closest && t.closest('[data-feat-row]');
+    if (frow && t.dataset.ff) {
+      const ti = Number(frow.dataset.t), i = Number(frow.dataset.i);
+      if (S.tracks[ti] && S.tracks[ti].others[i]) S.tracks[ti].others[i][t.dataset.ff] = t.value;
+      updateFeatCount(ti);
+    }
     const row = t.closest && t.closest('.credit-row');
     if (row && t.dataset.f) {
       const type = row.dataset.type, i = Number(row.dataset.i);
@@ -778,7 +844,22 @@ function validateFix() {
   if (!f.artistName) return { msg: 'Artist name is required.', el: 'artistName' };
   const rename = computeRename(f.artistName);
   if (rename.error) return { msg: rename.error, el: 'artistName' };
-  if (!f.releaseTitle) return { msg: 'Release title is required.', el: 'releaseTitle' };
+ if (!f.releaseTitle) return { msg: 'Release title is required.', el: 'releaseTitle' };
+  const mainNow = new Set();
+  S.tracks.forEach(t => (Array.isArray(t.orig.artists) ? t.orig.artists : []).forEach(a => {
+    if (a && a.type === 'main' && a.name) mainNow.add(String(rename.map[a.name.toLowerCase()] || a.name).trim().toLowerCase());
+  }));
+  for (let i = 0; i < S.tracks.length; i++) {
+    const seen = new Set();
+    for (const a of S.tracks[i].others) {
+      const n = a.name.trim().toLowerCase();
+      if (!n) continue;
+      const where = S.isSingle ? '' : ` on track ${i + 1}`;
+      if (mainNow.has(n)) return { msg: `"${a.name.trim()}" is already a main artist${where}. Remove it from featured artists.`, el: 'fold-feat-' + i, fold: 'feat-' + i };
+      if (seen.has(n)) return { msg: `"${a.name.trim()}" is listed twice${where}.`, el: 'fold-feat-' + i, fold: 'feat-' + i };
+      seen.add(n);
+    }
+  }
   if (!f.genre) return { msg: 'Please select a genre.', el: 'genre' };
   if (!f.language) return { msg: 'Please select a language.', el: 'language' };
   if (!f.releaseDate) return { msg: 'Please choose a release date.', el: 'releaseDate' };
@@ -943,11 +1024,15 @@ async function submitFix() {
        o.url = t.newUrl || t.url;
     if (String(o.url).startsWith('r2:')) o.key = o.url.slice(3); else delete o.key;
     if (Array.isArray(t.orig.artists)) {
-      o.artists = t.orig.artists.filter(Boolean).map(a => {
+      o.artists = t.orig.artists.filter(a => a && a.type === 'main').map(a => {
         const n = a.type === 'main' && a.name ? rename[a.name.toLowerCase()] : null;
         return n ? { ...a, name: n } : { ...a };
       });
     }
+    const mains = Array.isArray(o.artists) ? o.artists : [];
+    const extras = t.others.filter(a => a.name.trim()).map(a => ({ name: a.name.trim(), type: a.type === 'secondary' ? 'secondary' : 'featured', spotifyUrl: (a.spotifyUrl || '').trim(), appleUrl: (a.appleUrl || '').trim() }));
+    if (!mains.length && extras.length) mains.push({ name: f.artistName, type: 'main', spotifyUrl: '', appleUrl: '' });
+    if (mains.length || extras.length) o.artists = mains.concat(extras);
     return o;
   });
 
@@ -969,6 +1054,10 @@ async function submitFix() {
     artistName: f.artistName, releaseTitle: f.releaseTitle,
     genre: f.genre, language: f.language, explicit: f.explicit,
     copyright: f.copyright, credits, audioFiles,
+    featuredArtists: audioFiles.map(t => ({
+      track: t.title || '',
+      artists: (Array.isArray(t.artists) ? t.artists : []).map(a => ({ name: a.name || '', type: a.type || 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
+    })),
   };
   if (f.releaseDate !== S.origDate) payload.releaseDate = toIsoOrEmpty(f.releaseDate);
   if (S.cover.newUrl) Object.assign(payload, { resubmittedCoverURL: S.cover.newUrl, coverURL: S.cover.newUrl, officialCoverURL: S.cover.newUrl });
