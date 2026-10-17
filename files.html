@@ -407,6 +407,7 @@ details.fold[open] summary::after { transform: rotate(45deg); }
         </div>
       </div>
     </div>
+    <div class="ferr" id="artistNameErr" style="display:none"></div>
     <div class="artist-type-hint" id="artistTypeHint">Main artist is set on Track 1. This track can only have Featured or Secondary artists.</div>
 
     <div class="sh" style="margin-top:22px"><h2>Profiles</h2><span>Optional</span></div>
@@ -528,6 +529,27 @@ async function uploadWavToR2(file, onProgress) {
 function fmtBytes(b){ return b < 1024*1024 ? (b/1024).toFixed(1)+' KB' : (b/(1024*1024)).toFixed(1)+' MB'; }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Not allowed in artist names: comma (our separator), < > { } [ ] ", and unclosed round brackets.
+const BAD_NAME_RE = /[,<>{}\[\]"]/g;
+const badNameChars = (s) => {
+  const str = String(s || '');
+  const out = Array.from(new Set(str.match(BAD_NAME_RE) || []));
+  let depth = 0, broken = false;
+  for (const ch of str) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && --depth < 0) { broken = true; break; }
+  }
+  if (broken || depth !== 0) out.push('OPEN');
+  return out;
+};
+const nameMsg = (name, bad, label = 'Artist name') => {
+  const chars = bad.filter(x => x !== 'OPEN');
+  const parts = [];
+  if (chars.length) parts.push(`can't contain ${chars.join(' ')}`);
+  if (bad.includes('OPEN')) parts.push('has a bracket ( ) that is not closed');
+  return `${label} "${name}" ${parts.join(' and ')}.${bad.includes(',') ? ' Add each artist separately instead of using commas.' : ''}`;
+};
+
 const ERR_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -623,7 +645,8 @@ const artistCancelBtn    = document.getElementById('artistCancelBtn');
 const artistMainPillBtn  = artistTypeGroup.querySelector('[data-value="main"]');
 const artistNameRow      = artistNameInput.closest('.row');
 
-artistNameInput.addEventListener('input', () => artistNameRow.classList.remove('invalid'));
+const artistNameErr = document.getElementById('artistNameErr');
+artistNameInput.addEventListener('input', () => { artistNameRow.classList.remove('invalid'); artistNameErr.style.display = 'none'; });
 
 artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => {
   p.addEventListener('click', () => {
@@ -655,6 +678,7 @@ function promptForArtist(existing, isFirstTrack, trackHasMain) {
     artistTypeGroup.dataset.value = type;
     artistTypeGroup.querySelectorAll('.artist-type-pill').forEach(p => p.classList.toggle('selected', p.dataset.value === type));
     artistNameRow.classList.remove('invalid');
+   artistNameErr.style.display = 'none';
     artistOverlay.classList.add('open');
     setTimeout(() => artistNameInput.focus(), 50);
 
@@ -666,7 +690,14 @@ function promptForArtist(existing, isFirstTrack, trackHasMain) {
     }
     function onSave() {
       const name = artistNameInput.value.trim();
-      if (!name) { artistNameRow.classList.add('invalid'); return; }
+     if (!name) { artistNameRow.classList.add('invalid'); return; }
+      const bad = badNameChars(name);
+      if (bad.length) {
+        artistNameRow.classList.add('invalid');
+        artistNameErr.innerHTML = ERR_ICON + escHtml(nameMsg(name, bad));
+        artistNameErr.style.display = 'flex';
+        return;
+      }
       let chosenType = artistTypeGroup.dataset.value;
       if (!isFirstTrack && chosenType === 'main') chosenType = 'featured'; // hard safety net
       cleanup({
