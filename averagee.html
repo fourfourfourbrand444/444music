@@ -944,6 +944,26 @@ function resetBtn() {
 function showError(msg)   { statusMsg.textContent = msg; statusMsg.className = 'error'; }
 function showSuccess(msg) { statusMsg.textContent = msg; statusMsg.className = 'success'; }
 
+const BAD_NAME_RE = /[,<>{}\[\]"]/g;
+const badNameChars = (s) => {
+  const str = String(s || '');
+  const out = Array.from(new Set(str.match(BAD_NAME_RE) || []));
+  let depth = 0, broken = false;
+  for (const ch of str) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && --depth < 0) { broken = true; break; }
+  }
+  if (broken || depth !== 0) out.push('OPEN');
+  return out;
+};
+const nameMsg = (name, bad, label = 'Artist name') => {
+  const chars = bad.filter(x => x !== 'OPEN');
+  const parts = [];
+  if (chars.length) parts.push(`can't contain ${chars.join(' ')}`);
+  if (bad.includes('OPEN')) parts.push('has a bracket ( ) that is not closed');
+  return `${label} "${name}" ${parts.join(' and ')}.${bad.includes(',') ? ' Add each artist separately instead of using commas.' : ''}`;
+};
+
 function toIsoOrEmpty(dateInputValue) {
   if (!dateInputValue) return '';
   try { return new Date(dateInputValue).toISOString(); } catch (e) { return dateInputValue; }
@@ -960,7 +980,12 @@ function toIsoOrEmpty(dateInputValue) {
 function validate() {
   const artistName = document.getElementById("artistName").value.trim();
   if (!artistName) return { msg: 'No Main artist found from your upload. Go back to Upload Files and tag one.', scrollTo: 'mainArtistWrap' };
-
+  for (const t of audioFiles) {
+    for (const a of (t.artists || [])) {
+      const bad = badNameChars(a.name);
+      if (bad.length) return { msg: nameMsg(a.name, bad) + ' Go back to Upload Files and fix it.', scrollTo: 'mainArtistWrap' };
+    }
+  }
   const releaseTitle = document.getElementById("releaseTitle").value.trim();
   if (!releaseTitle) return { msg: 'Please enter a release title.', scrollTo: 'releaseTitle' };
 
