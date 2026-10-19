@@ -324,6 +324,9 @@ select.credit-input.empty { color: var(--t3); }
           <option>Folk</option>
           <option>Other</option>
         </select></div></label>
+            <label class="row" id="genreSubRow"><span class="l">Sub genre</span><div class="sel"><select id="genreSub" class="empty" disabled><option value="" disabled selected>Pick genre first</option></select></div></label>
+      <label class="row"><span class="l">Alt. genre</span><div class="sel"><select id="altGenre" class="empty"><option value="" selected>None (optional)</option></select></div></label>
+      <label class="row" id="altGenreSubRow" style="display:none"><span class="l">Alt. sub genre</span><div class="sel"><select id="altGenreSub" class="empty"><option value="" selected>None (optional)</option></select></div></label>
       <label class="row"><span class="l">Language</span><div class="sel">
         <select id="language" class="empty">
           <option value="" disabled selected>Select</option>
@@ -432,6 +435,91 @@ select.credit-input.empty { color: var(--t3); }
           <option>Ethiopia</option><option>Zimbabwe</option><option>Other</option>
         </select></div></label>
     </div>
+
+     <!-- RIGHTS & DISTRIBUTION ANSWERS -->
+    <div class="sh"><h2>Your song</h2><span class="req">Required</span></div>
+    <div class="group">
+      <div class="row"><span class="l">Original work</span>
+        <div class="seg radio-group" id="originalGroup" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">Cover, karaoke, tribute or sound-alike?</span>
+        <div class="seg radio-group" id="publicDomainGroup" data-value="No">
+          <button type="button" class="radio-pill selected" style="min-width:0;padding:6px 10px" data-value="No">No</button>
+          <button type="button" class="radio-pill" style="min-width:0;padding:6px 10px" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" style="min-width:0;padding:6px 10px" data-value="Not Sure">Not Sure</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">Compilation</span>
+        <div class="seg radio-group" id="compilationGroup" data-value="No">
+          <button type="button" class="radio-pill selected" data-value="No">No</button>
+          <button type="button" class="radio-pill" data-value="Yes">Yes</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">You hold a license</span>
+        <div class="seg radio-group" id="licenseGroup" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">US broadcast rights</span>
+        <div class="seg radio-group" id="broadcastGroup" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <label class="row"><span class="l">Product version</span><input id="productVersion" placeholder="Optional" autocomplete="off"></label>
+    </div>
+    <p class="sf">Choose No or Yes honestly. For a cover, a sample-based song, or a song you don't own fully, change the answers.</p>
+
+    <div class="sh"><h2>Platforms &amp; monetization</h2><span class="req">Required</span></div>
+    <div class="group">
+      <div class="row"><span class="l">SoundExchange</span>
+        <div class="seg radio-group" id="agSoundExchange" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">YouTube Music</span>
+        <div class="seg radio-group" id="agYoutubeMusic" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">YouTube Content ID</span>
+        <div class="seg radio-group" id="agContentId" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">Facebook / Instagram</span>
+        <div class="seg radio-group" id="agFacebook" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">TikTok exclusive</span>
+        <div class="seg radio-group" id="agTiktok" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">Licensing offers</span>
+        <div class="seg radio-group" id="agLicensing" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+      <div class="row"><span class="l">AVVO YouTube channel</span>
+        <div class="seg radio-group" id="agAvvoYoutube" data-value="Yes">
+          <button type="button" class="radio-pill selected" data-value="Yes">Yes</button>
+          <button type="button" class="radio-pill" data-value="No">No</button>
+        </div>
+      </div>
+    </div>
+    <p class="sf">All Yes by default. Change any to No if you don't want it.</p>
 
     <!-- OWNERSHIP -->
     <div class="sh"><h2>Ownership</h2><span class="req">Required</span></div>
@@ -757,6 +845,141 @@ addCredit('publishing', true);
 })();
 </script>
 
+<!-- GENRE LISTS ENGINE — Sub genre, Alt. genre, Alt. sub genre (AVVO lists) -->
+<script>
+(function(){
+  const GENRE_SUBS = {
+    'Pop': ['Synth-Pop','Electropop','Indie Pop','Dream Pop','Art Pop','Dance Pop','Teen Pop'],
+    'Rock': ['Alternative','Progressive','Psychedelic','Post-Rock','Garage','Grunge','Punk Rock'],
+    'Hip-Hop/Rap': ['Hip-Hop','Rap','Boom Bap','Cloud Rap','Conscious','Gangsta','Lo-Fi Hip-Hop','Trap Rap','Drill Rap','Mumble Rap'],
+    'R&B': ['Neo-Soul','Contemporary R&B','Quiet Storm','New Jack Swing'],
+    'Electronic': ['Ambient','Dubstep','Drum & Bass','IDM','Trance','Deep House','Progressive House'],
+    'Jazz': ['Smooth Jazz','Bebop','Cool Jazz','Free Jazz','Fusion'],
+    'Classical': ['Baroque','Romantic','Modern Classical','Orchestral','Chamber Music'],
+    'Country': ['Country Pop','Alt-Country','Bluegrass','Outlaw Country'],
+    'Latin': ['Salsa','Bachata','Cumbia','Latin Pop','Latin Trap'],
+    'Reggaeton': ['Reggaeton Romantico','Perreo','Dembow'],
+    'K-Pop': ['K-Pop Boy Group','K-Pop Girl Group','K-R&B','K-Hip-Hop'],
+    'Indie': ['Indie Rock','Indie Pop','Indie Folk','Indie Electronic'],
+    'Metal': ['Heavy Metal','Death Metal','Black Metal','Nu Metal','Metalcore'],
+    'Punk': ['Pop Punk','Hardcore','Post-Punk','Ska Punk'],
+    'Blues': ['Delta Blues','Chicago Blues','Electric Blues','Blues Rock'],
+    'Soul': ['Northern Soul','Southern Soul','Neo-Soul'],
+    'Funk': ['P-Funk','Electro Funk','Go-Go'],
+    'Disco': [],
+    'House': ['Deep House','Tech House','Progressive House','Acid House'],
+    'Techno': ['Minimal Techno','Detroit Techno','Industrial Techno'],
+    'Trap': ['Trap','Melodic Trap','Hard Trap','Phonk'],
+    'Drill': ['UK Drill','NY Drill','Chicago Drill'],
+    'Afrobeat': ['Afrobeats','Afro-Pop','Afro-Swing','Amapiano'],
+    'Dancehall': ['Dancehall','Bashment','Soca'],
+    'Folk': ['Folk Rock','Acoustic Folk','Neo-Folk','World Folk'],
+    'Other': []
+  };
+  window.GENRE_SUBS = GENRE_SUBS;
+
+  const genre    = document.getElementById('genre');
+  const sub      = document.getElementById('genreSub');
+  const alt      = document.getElementById('altGenre');
+  const altSub   = document.getElementById('altGenreSub');
+  const altSubRow = document.getElementById('altGenreSubRow');
+
+  function fill(sel, items, firstLabel, firstDisabled, keep) {
+    sel.innerHTML = '';
+    const o = document.createElement('option');
+    o.value = ''; o.textContent = firstLabel; o.selected = true;
+    if (firstDisabled) o.disabled = true;
+    sel.appendChild(o);
+    items.forEach(function(t){
+      const op = document.createElement('option');
+      op.value = t; op.textContent = t;
+      sel.appendChild(op);
+    });
+    if (keep && items.indexOf(keep) !== -1) sel.value = keep;
+    window.syncSelect(sel);
+  }
+
+  function refreshSub() {
+    const g = genre.value;
+    const list = GENRE_SUBS[g] || [];
+    if (!g) {
+      fill(sub, [], 'Pick genre first', true);
+      sub.disabled = true;
+    } else if (!list.length) {
+      fill(sub, [], 'Not needed for this genre', true);
+      sub.disabled = true;
+    } else {
+      fill(sub, list, 'Select', true);
+      sub.disabled = false;
+    }
+    refreshAlt();
+  }
+
+  function refreshAlt() {
+    const g = genre.value;
+    const keep = alt.value;
+    const others = Object.keys(GENRE_SUBS).filter(function(x){ return x !== g; });
+    fill(alt, others, 'None (optional)', false, keep);
+    refreshAltSub();
+  }
+
+  function refreshAltSub() {
+    const list = GENRE_SUBS[alt.value] || [];
+    if (alt.value && list.length) {
+      altSubRow.style.display = '';
+      fill(altSub, list, 'None (optional)', false, altSub.value);
+    } else {
+      altSubRow.style.display = 'none';
+      fill(altSub, [], 'None (optional)', false);
+    }
+  }
+
+  genre.addEventListener('change', refreshSub);
+  alt.addEventListener('change', refreshAltSub);
+  refreshSub();
+})();
+</script>
+
+<!-- COVER / COMPILATION RULE — forces Content ID, Facebook, TikTok to No -->
+<script>
+(function(){
+  const LOCK_IDS = ['agContentId', 'agFacebook', 'agTiktok'];
+  const saved = {};
+  function setGroup(id, val) {
+    const g = document.getElementById(id);
+    g.dataset.value = val;
+    g.querySelectorAll('.radio-pill').forEach(function(b){
+      b.classList.toggle('selected', b.dataset.value === val);
+    });
+  }
+  function apply() {
+    const force =
+      window.getRadioValue('publicDomainGroup') !== 'No' ||
+      window.getRadioValue('compilationGroup') === 'Yes' ||
+      window.getRadioValue('originalGroup') === 'No' ||
+      document.getElementById('version').value === 'Cover';
+    LOCK_IDS.forEach(function(id){
+      const g = document.getElementById(id);
+      if (force) {
+        if (!(id in saved)) saved[id] = g.dataset.value;
+        setGroup(id, 'No');
+        g.style.pointerEvents = 'none';
+        g.style.opacity = '0.45';
+      } else {
+        if (id in saved) { setGroup(id, saved[id]); delete saved[id]; }
+        g.style.pointerEvents = '';
+        g.style.opacity = '';
+      }
+    });
+  }
+  document.addEventListener('click', function(e){
+    if (e.target.closest && e.target.closest('.radio-pill')) setTimeout(apply, 0);
+  });
+  document.getElementById('version').addEventListener('change', apply);
+  apply();
+})();
+</script>
+
 <!-- FIREBASE + PAYMENT VERIFY/CLAIM + SUBMIT + BACKEND NOTIFY -->
 <script type="module">
 import { initializeApp }                    from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -827,8 +1050,15 @@ function makeCatalogNumber() {
   const t = Date.now().toString(36).toUpperCase().slice(-5);
   const r = Math.random().toString(36).toUpperCase().slice(2, 4);
   return '444M-' + t + r;
+}document.getElementById('catalogNumber').value = makeCatalogNumber();
+
+// One track only: lock Type to Single (EP / Album not allowed)
+if (audioFiles.length === 1) {
+  const typeSel = document.getElementById('releaseType');
+  typeSel.value = 'Single';
+  typeSel.disabled = true;
+  typeSel.closest('.row').style.opacity = '0.45';
 }
-document.getElementById('catalogNumber').value = makeCatalogNumber();
 async function verifyPayment(reference) {
   try {
     const snap = await getDoc(doc(db, 'pendingPayments', reference));
@@ -990,6 +1220,8 @@ function validate() {
   if (!releaseTitle) return { msg: 'Please enter a release title.', scrollTo: 'releaseTitle' };
 
    if (!document.getElementById("genre").value) return { msg: 'Please select a genre.', scrollTo: 'genre' };
+  const subList = (window.GENRE_SUBS || {})[document.getElementById("genre").value] || [];
+  if (subList.length && !document.getElementById("genreSub").value) return { msg: 'Please select a sub genre for your genre.', scrollTo: 'genreSub' };
   if (!document.getElementById("language").value) return { msg: 'Please select a language.', scrollTo: 'language' };
 
   const releaseDate = document.getElementById("releaseDate").value;
@@ -1083,7 +1315,25 @@ form.addEventListener("submit", async e => {
     version:               document.getElementById("version").value,
     previouslyReleased:    previouslyReleased,
     previousReleaseDate:   previouslyReleased === 'Yes' ? toIsoOrEmpty(previousReleaseDate) : '',
-    vocalType:             window.getRadioValue('vocalTypeGroup'),
+        vocalType:             window.getRadioValue('vocalTypeGroup'),
+    mainGenreSub:          document.getElementById("genreSub").value || '',
+    alternateGenre:        document.getElementById("altGenre").value || '',
+    alternateGenreSub:     document.getElementById("altGenreSub").value || '',
+    isOriginal:            window.getRadioValue('originalGroup') === 'Yes',
+    publicDomainStatus:    window.getRadioValue('publicDomainGroup'),
+    isCompilation:         window.getRadioValue('compilationGroup') === 'Yes',
+    hasLicense:            window.getRadioValue('licenseGroup') === 'Yes',
+    hasUsBroadcastRights:  window.getRadioValue('broadcastGroup') === 'Yes',
+    productVersion:        document.getElementById("productVersion").value.trim(),
+    agreements: {
+      soundexchange:        window.getRadioValue('agSoundExchange') === 'Yes',
+      youtube_music:        window.getRadioValue('agYoutubeMusic') === 'Yes',
+      youtube_content_id:   window.getRadioValue('agContentId') === 'Yes',
+      facebook_monetization: window.getRadioValue('agFacebook') === 'Yes',
+      tiktok_monetization:  window.getRadioValue('agTiktok') === 'Yes',
+      licensing:            window.getRadioValue('agLicensing') === 'Yes',
+      avvo_youtube_channel: window.getRadioValue('agAvvoYoutube') === 'Yes'
+    },
     ownershipConfirmed:    window.ownershipConfirmed,
     credits:               creditsData,
     featuredArtists:       emailArtistsPayload,
