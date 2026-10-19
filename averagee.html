@@ -1052,12 +1052,18 @@ function makeCatalogNumber() {
   return '444M-' + t + r;
 }document.getElementById('catalogNumber').value = makeCatalogNumber();
 
-// One track only: lock Type to Single (EP / Album not allowed)
-if (audioFiles.length === 1) {
+// One track: Type locked to Single. Two or more tracks: Single is not allowed, EP or Album only.
+{
   const typeSel = document.getElementById('releaseType');
-  typeSel.value = 'Single';
-  typeSel.disabled = true;
-  typeSel.closest('.row').style.opacity = '0.45';
+  if (audioFiles.length === 1) {
+    typeSel.value = 'Single';
+    typeSel.disabled = true;
+    typeSel.closest('.row').style.opacity = '0.45';
+  } else if (audioFiles.length > 1) {
+    const singleOpt = Array.from(typeSel.options).find(function(o){ return o.value === 'Single' || o.text === 'Single'; });
+    if (singleOpt) singleOpt.disabled = true;
+    typeSel.value = 'EP';
+  }
 }
 async function verifyPayment(reference) {
   try {
