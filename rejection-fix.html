@@ -84,6 +84,9 @@ option { background: var(--s2); color: var(--t1); }
 .sel { position: relative; flex: 1; min-width: 0; display: flex; }
 .sel::after { content: ''; position: absolute; right: 3px; top: 50%; width: 7px; height: 7px; pointer-events: none; border-right: 2px solid var(--t3); border-bottom: 2px solid var(--t3); transform: translateY(-70%) rotate(45deg); }
 #confirmRow { display: none; }
+.seg { display: flex; padding: 2px; border-radius: 9px; background: var(--fill); flex: 0 0 auto; margin-left: auto; }
+.radio-pill { min-width: 64px; padding: 6px 12px; border-radius: 7px; font-size: 14px; font-weight: 500; color: var(--t1); transition: background-color .25s ease; }
+.radio-pill.selected { background: var(--s3); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 #confirmRow.visible { display: flex; animation: rowIn .35s var(--ease) both; }
 
 .ferr { display: flex; align-items: center; gap: 6px; padding: 8px 16px 10px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--rose); }
@@ -259,6 +262,35 @@ const FOLD_TITLE  = { producer: 'Producers & engineers', writer: 'Songwriters & 
 const ADD_LABEL   = { producer: 'Add producer or engineer', writer: 'Add songwriter or composer', publishing: 'Add publisher' };
 const CREDIT_TYPES = ['producer', 'writer', 'publishing'];
 const ARTIST_TYPES = [['featured', 'Featured'], ['secondary', 'Secondary']];
+const TYPES = ['Single', 'EP', 'Album'];
+const GENRE_SUBS = {
+  'Pop': ['Synth-Pop','Electropop','Indie Pop','Dream Pop','Art Pop','Dance Pop','Teen Pop'],
+  'Rock': ['Alternative','Progressive','Psychedelic','Post-Rock','Garage','Grunge','Punk Rock'],
+  'Hip-Hop/Rap': ['Hip-Hop','Rap','Boom Bap','Cloud Rap','Conscious','Gangsta','Lo-Fi Hip-Hop','Trap Rap','Drill Rap','Mumble Rap'],
+  'R&B': ['Neo-Soul','Contemporary R&B','Quiet Storm','New Jack Swing'],
+  'Electronic': ['Ambient','Dubstep','Drum & Bass','IDM','Trance','Deep House','Progressive House'],
+  'Jazz': ['Smooth Jazz','Bebop','Cool Jazz','Free Jazz','Fusion'],
+  'Classical': ['Baroque','Romantic','Modern Classical','Orchestral','Chamber Music'],
+  'Country': ['Country Pop','Alt-Country','Bluegrass','Outlaw Country'],
+  'Latin': ['Salsa','Bachata','Cumbia','Latin Pop','Latin Trap'],
+  'Reggaeton': ['Reggaeton Romantico','Perreo','Dembow'],
+  'K-Pop': ['K-Pop Boy Group','K-Pop Girl Group','K-R&B','K-Hip-Hop'],
+  'Indie': ['Indie Rock','Indie Pop','Indie Folk','Indie Electronic'],
+  'Metal': ['Heavy Metal','Death Metal','Black Metal','Nu Metal','Metalcore'],
+  'Punk': ['Pop Punk','Hardcore','Post-Punk','Ska Punk'],
+  'Blues': ['Delta Blues','Chicago Blues','Electric Blues','Blues Rock'],
+  'Soul': ['Northern Soul','Southern Soul','Neo-Soul'],
+  'Funk': ['P-Funk','Electro Funk','Go-Go'],
+  'Disco': [],
+  'House': ['Deep House','Tech House','Progressive House','Acid House'],
+  'Techno': ['Minimal Techno','Detroit Techno','Industrial Techno'],
+  'Trap': ['Trap','Melodic Trap','Hard Trap','Phonk'],
+  'Drill': ['UK Drill','NY Drill','Chicago Drill'],
+  'Afrobeat': ['Afrobeats','Afro-Pop','Afro-Swing','Amapiano'],
+  'Dancehall': ['Dancehall','Bashment','Soca'],
+  'Folk': ['Folk Rock','Acoustic Folk','Neo-Folk','World Folk'],
+  'Other': []
+};
 
 /* ───────── icons ───────── */
 const ERR_ICON   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
@@ -624,6 +656,11 @@ function featSection(t, i) {
   </details>`;
 }
 
+function segHtml(id, options, value) {
+  return `<div class="seg radio-group" id="${id}" data-value="${escHtml(value)}">${options.map(o => `<button type="button" class="radio-pill${o === value ? ' selected' : ''}" data-value="${escHtml(o)}">${escHtml(o)}</button>`).join('')}</div>`;
+}
+const ynVal = (v, def) => (v === undefined || v === null || v === '' ? def : (isYes(v) ? 'Yes' : 'No'));
+
 function selectHtml(id, list, value) {
   return `<div class="sel"><select id="${id}" class="${value ? '' : 'empty'}"><option value="" disabled${value ? '' : ' selected'}>Select</option>${list.map(o => `<option${o === value ? ' selected' : ''}>${escHtml(o)}</option>`).join('')}</select></div>`;
 }
@@ -656,7 +693,12 @@ function fixSections() {
     <div class="group">
       <label class="row"><span class="l">Artist</span><input id="artistName" type="text" value="${escHtml(data.artistName || '')}" placeholder="Artist name" autocomplete="off"></label>
       <label class="row"><span class="l">Title</span><input id="releaseTitle" type="text" value="${escHtml(data.releaseTitle || '')}" placeholder="Name of your release" autocomplete="off"></label>
+            <label class="row"><span class="l">Type</span>${selectHtml('releaseType', TYPES, pick(TYPES, data.releaseType))}</label>
       <label class="row"><span class="l">Genre</span>${selectHtml('genre', GENRES, pick(GENRES, data.genre))}</label>
+      <label class="row" id="genreSubRow"><span class="l">Sub genre</span><div class="sel"><select id="genreSub" class="empty"></select></div></label>
+      <label class="row"><span class="l">Alt. genre</span><div class="sel"><select id="altGenre" class="empty"></select></div></label>
+      <label class="row" id="altGenreSubRow" style="display:none"><span class="l">Alt. sub genre</span><div class="sel"><select id="altGenreSub" class="empty"></select></div></label>
+      <label class="row"><span class="l">Version</span><input id="version" type="text" value="${escHtml(data.version || '')}" placeholder="e.g. Original, Remix, Cover" autocomplete="off"></label>
       <label class="row"><span class="l">Language</span>${selectHtml('language', LANGUAGES, pick(LANGUAGES, data.language))}</label>
       <label class="row"><span class="l">Explicit</span><div class="sel"><select id="explicit"><option${isYes(data.explicit) ? '' : ' selected'}>No</option><option${isYes(data.explicit) ? ' selected' : ''}>Yes</option></select></div></label>
       <label class="row"><span class="l">Release date</span><input id="releaseDate" type="date" min="${S.minDate}" value="${dateValue}"></label>
@@ -668,6 +710,30 @@ function fixSections() {
       <label class="row"><span class="l">Copyright holder</span><input id="copyright" type="text" value="${escHtml(copyright)}" placeholder="Required" autocomplete="off"></label>
       <label class="row" id="confirmRow"><span class="l">Confirm holder</span><input id="copyrightConfirm" type="text" placeholder="Type it again" autocomplete="off"></label>
     </div>
+
+       <div class="sh"><h2>Your song</h2><span class="req">Required</span></div>
+    <div class="group">
+      <div class="row"><span class="l">Vocals</span>${segHtml('vocalTypeGroup', ['Vocals', 'Instrumental'], /instrumental/i.test(data.vocalType || '') ? 'Instrumental' : 'Vocals')}</div>
+      <div class="row"><span class="l">Original work</span>${segHtml('originalGroup', ['Yes', 'No'], ynVal(data.isOriginal, 'Yes'))}</div>
+      <div class="row"><span class="l">Cover, karaoke, tribute or sound-alike?</span>${segHtml('publicDomainGroup', ['No', 'Yes', 'Not Sure'], ['No', 'Yes', 'Not Sure'].includes(String(data.publicDomainStatus || '')) ? data.publicDomainStatus : 'No')}</div>
+      <div class="row"><span class="l">Compilation</span>${segHtml('compilationGroup', ['No', 'Yes'], ynVal(data.isCompilation, 'No'))}</div>
+      <div class="row"><span class="l">You hold a license</span>${segHtml('licenseGroup2', ['Yes', 'No'], ynVal(data.hasLicense, 'Yes'))}</div>
+      <div class="row"><span class="l">US broadcast rights</span>${segHtml('broadcastGroup', ['Yes', 'No'], ynVal(data.hasUsBroadcastRights, 'Yes'))}</div>
+      <label class="row"><span class="l">Product version</span><input id="productVersion" type="text" value="${escHtml(data.productVersion || '')}" placeholder="Optional" autocomplete="off"></label>
+    </div>
+    <p class="sf">Answer honestly. For a cover, a sample-based song or a song you don't fully own, change the answers.</p>
+
+        <div class="sh"><h2>Platforms &amp; monetization</h2><span class="req">Required</span></div>
+    <div class="group">
+      <div class="row"><span class="l">SoundExchange</span>${segHtml('agSoundExchange', ['Yes', 'No'], ynVal((data.agreements || {}).soundexchange, 'Yes'))}</div>
+      <div class="row"><span class="l">YouTube Music</span>${segHtml('agYoutubeMusic', ['Yes', 'No'], ynVal((data.agreements || {}).youtube_music, 'Yes'))}</div>
+      <div class="row"><span class="l">YouTube Content ID</span>${segHtml('agContentId', ['Yes', 'No'], ynVal((data.agreements || {}).youtube_content_id, 'Yes'))}</div>
+      <div class="row"><span class="l">Facebook / Instagram</span>${segHtml('agFacebook', ['Yes', 'No'], ynVal((data.agreements || {}).facebook_monetization, 'Yes'))}</div>
+      <div class="row"><span class="l">TikTok exclusive</span>${segHtml('agTiktok', ['Yes', 'No'], ynVal((data.agreements || {}).tiktok_monetization, 'Yes'))}</div>
+      <div class="row"><span class="l">Licensing offers</span>${segHtml('agLicensing', ['Yes', 'No'], ynVal((data.agreements || {}).licensing, 'Yes'))}</div>
+      <div class="row"><span class="l">AVVO YouTube channel</span>${segHtml('agAvvoYoutube', ['Yes', 'No'], ynVal((data.agreements || {}).avvo_youtube_channel, 'Yes'))}</div>
+    </div>
+    <p class="sf">Content ID, Facebook and TikTok switch to No automatically for covers, samples and compilations.</p>
 
     <div class="sh"><h2>Credits</h2><span class="req">Required</span></div>
     ${CREDIT_TYPES.map(type => `
@@ -685,6 +751,78 @@ function licenseSection() {
     <div class="group" id="licenseGroup"><div id="licenseZone"></div></div>
     <p class="sf">A license, purchase receipt, or written permission for the beat. PDF only.</p>
     <p class="sf">No proof yet? You can leave this and come back. Your release stays Rejected until you upload it.</p>`;
+}
+
+function applyCoverLock() {
+  const gv = (id) => ($(id) ? $(id).dataset.value : '');
+  const force = gv('publicDomainGroup') !== 'No' || gv('compilationGroup') === 'Yes' || gv('originalGroup') === 'No' || /cover/i.test(($('version') || {}).value || '');
+  ['agContentId', 'agFacebook', 'agTiktok'].forEach(id => {
+    const g = $(id);
+    if (!g) return;
+    if (force) {
+      if (g.dataset.saved === undefined) g.dataset.saved = g.dataset.value;
+      g.dataset.value = 'No';
+      g.querySelectorAll('.radio-pill').forEach(b => b.classList.toggle('selected', b.dataset.value === 'No'));
+      g.style.pointerEvents = 'none';
+      g.style.opacity = '0.45';
+    } else {
+      if (g.dataset.saved !== undefined) {
+        g.dataset.value = g.dataset.saved;
+        g.querySelectorAll('.radio-pill').forEach(b => b.classList.toggle('selected', b.dataset.value === g.dataset.saved));
+        delete g.dataset.saved;
+      }
+      g.style.pointerEvents = '';
+      g.style.opacity = '';
+    }
+  });
+}
+
+function initGenreFields() {
+  const g = $('genre'), sub = $('genreSub'), alt = $('altGenre'), altSub = $('altGenreSub');
+  const altRow = $('altGenreSubRow'), type = $('releaseType');
+
+  const fill = (sel, items, label, locked, value) => {
+    sel.innerHTML = `<option value=""${locked ? ' disabled' : ''}>${label}</option>` + items.map(o => `<option>${escHtml(o)}</option>`).join('');
+    sel.value = items.includes(value) ? value : '';
+    sel.disabled = !!locked && !items.length;
+    sel.classList.toggle('empty', sel.value === '');
+  };
+  const refreshSub = (value) => {
+    const list = GENRE_SUBS[g.value] || [];
+    if (!g.value) fill(sub, [], 'Pick genre first', true, '');
+    else if (!list.length) fill(sub, [], 'Not needed for this genre', true, '');
+    else fill(sub, list, 'Select', false, value);
+  };
+  const refreshAltSub = (value) => {
+    const list = GENRE_SUBS[alt.value] || [];
+    if (alt.value && list.length) { altRow.style.display = ''; fill(altSub, list, 'None (optional)', false, value); }
+    else { altRow.style.display = 'none'; fill(altSub, [], 'None (optional)', false, ''); }
+  };
+  const refreshAlt = (value, subValue) => {
+    const others = Object.keys(GENRE_SUBS).filter(x => x !== g.value);
+    fill(alt, others, 'None (optional)', false, value);
+    refreshAltSub(subValue);
+  };
+
+  g.addEventListener('change', () => { refreshSub(''); refreshAlt(alt.value, altSub.value); });
+  alt.addEventListener('change', () => refreshAltSub(''));
+
+  // Show what the user first entered
+  refreshSub(String(data.mainGenreSub || ''));
+  refreshAlt(String(data.alternateGenre || ''), String(data.alternateGenreSub || ''));
+
+  // Type: 1 track = Single only, 2+ tracks = EP or Album only
+  const n = S.tracks.length;
+  if (n === 1) {
+    type.value = 'Single';
+    type.disabled = true;
+    type.classList.remove('empty');
+    type.closest('.row').style.opacity = '0.45';
+  } else if (n > 1) {
+    Array.from(type.options).forEach(o => { if (o.text === 'Single') o.disabled = true; });
+    if (!type.value || type.value === 'Single') type.value = 'EP';
+    type.classList.remove('empty');
+  }
 }
 
 function renderPage() {
@@ -711,7 +849,13 @@ function renderPage() {
     });
   }
   $('loadingState').style.display = 'none';
-  $('submitBtn').innerHTML = SUBMIT_HTML;
+   $('submitBtn').innerHTML = SUBMIT_HTML;
+    if (!S.copyrightMode) {
+    initGenreFields();
+    applyCoverLock();
+    $('view').addEventListener('click', () => setTimeout(applyCoverLock, 0));
+    $('version').addEventListener('input', applyCoverLock);
+  }
   $('dock').style.display = 'block';
 }
 
@@ -791,6 +935,15 @@ function wireView() {
       updateCount(type);
     }
   };
+   view.addEventListener('click', (e) => {
+    const pill = e.target.closest('.radio-pill');
+    if (!pill || busy) return;
+    const group = pill.closest('.radio-group');
+    group.querySelectorAll('.radio-pill').forEach(b => b.classList.remove('selected'));
+    pill.classList.add('selected');
+    group.dataset.value = pill.dataset.value;
+    clearMarks();
+  });
   view.addEventListener('input', onEdit);
   view.addEventListener('change', onEdit);
 }
