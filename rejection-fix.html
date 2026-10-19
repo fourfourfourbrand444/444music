@@ -515,8 +515,7 @@ function buildState() {
     others: (Array.isArray(t.artists) ? t.artists : []).filter(a => a && a.type !== 'main' && String(a.name || '').trim()).map(a => ({ name: String(a.name), type: a.type === 'secondary' ? 'secondary' : 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
   }));
   const type = String(data.releaseType || '').toLowerCase();
-  S.isSingle = type ? type === 'single' : S.tracks.length === 1;
-
+    S.isSingle = S.tracks.length === 1;
   const coverUrl = data.officialCoverURL || data.coverURL || '';
   S.cover = { url: coverUrl, required: !meetsCover(coverUrl), file: null, preview: null, newUrl: null, error: '' };
   S.license = { file: null, newUrl: null, error: '' };
@@ -988,7 +987,10 @@ function readFields() {
     artistName: val('artistName').trim(), releaseTitle: val('releaseTitle').trim(),
     genre: val('genre'), language: val('language'), explicit: val('explicit'), releaseDate: val('releaseDate'),
     copyright: val('copyright').trim(), copyrightConfirm: val('copyrightConfirm').trim(),
-    trackTitles: S.tracks.map((_, i) => val('trkTitle-' + i).trim())
+        trackTitles: S.tracks.map((_, i) => val('trkTitle-' + i).trim()),
+    releaseType: val('releaseType'), mainGenreSub: val('genreSub'),
+    alternateGenre: val('altGenre'), alternateGenreSub: val('altGenreSub'),
+    version: val('version').trim(), productVersion: val('productVersion').trim()
   };
 }
 
@@ -1047,7 +1049,10 @@ function validateFix() {
       seen.add(n);
     }
   }
-  if (!f.genre) return { msg: 'Please select a genre.', el: 'genre' };
+    if (!f.genre) return { msg: 'Please select a genre.', el: 'genre' };
+  if ((GENRE_SUBS[f.genre] || []).length && !f.mainGenreSub) return { msg: 'Please select a sub genre for your genre.', el: 'genreSub' };
+  if (S.tracks.length > 1 && f.releaseType === 'Single') return { msg: 'A release with more than one track must be an EP or Album.', el: 'releaseType' };
+  if (S.tracks.length === 1 && f.releaseType !== 'Single') return { msg: 'A release with one track must be a Single.', el: 'releaseType' };
   if (!f.language) return { msg: 'Please select a language.', el: 'language' };
   if (!f.releaseDate) return { msg: 'Please choose a release date.', el: 'releaseDate' };
   if (f.releaseDate < S.minDate) return { msg: 'The earliest release date is 3 days from today.', el: 'releaseDate' };
@@ -1186,6 +1191,28 @@ async function submitLicense() {
   return notifyAdmin(data, "license", L.newUrl);
 }
 
+function answers() {
+  const gv = (id) => ($(id) ? $(id).dataset.value : '');
+  const yes = (id) => gv(id) === 'Yes';
+  return {
+    vocalType: gv('vocalTypeGroup'),
+    isOriginal: yes('originalGroup'),
+    publicDomainStatus: gv('publicDomainGroup'),
+    isCompilation: yes('compilationGroup'),
+    hasLicense: yes('licenseGroup2'),
+    hasUsBroadcastRights: yes('broadcastGroup'),
+    agreements: {
+      soundexchange: yes('agSoundExchange'),
+      youtube_music: yes('agYoutubeMusic'),
+      youtube_content_id: yes('agContentId'),
+      facebook_monetization: yes('agFacebook'),
+      tiktok_monetization: yes('agTiktok'),
+      licensing: yes('agLicensing'),
+      avvo_youtube_channel: yes('agAvvoYoutube')
+    }
+  };
+}
+
 async function submitFix() {
   const f = readFields();
   const rename = computeRename(f.artistName).map;
@@ -1240,7 +1267,11 @@ async function submitFix() {
     resubmittedAt: serverTimestamp(),
     artistName: f.artistName, releaseTitle: f.releaseTitle,
     genre: f.genre, language: f.language, explicit: f.explicit,
-    copyright: f.copyright, credits, audioFiles,
+        copyright: f.copyright, credits, audioFiles,
+    releaseType: f.releaseType, mainGenreSub: f.mainGenreSub,
+    alternateGenre: f.alternateGenre, alternateGenreSub: f.alternateGenreSub,
+    version: f.version, productVersion: f.productVersion,
+    ...answers(),
     featuredArtists: audioFiles.map(t => ({
       track: t.title || '',
       artists: (Array.isArray(t.artists) ? t.artists : []).map(a => ({ name: a.name || '', type: a.type || 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
@@ -1265,7 +1296,7 @@ async function submitFix() {
     })).catch(() => {});
   }
 
-  const merged = { ...data, artistName: f.artistName, releaseTitle: f.releaseTitle, genre: f.genre, language: f.language, explicit: f.explicit, copyright: f.copyright, credits, audioFiles };
+    const merged = { ...data, artistName: f.artistName, releaseTitle: f.releaseTitle, genre: f.genre, language: f.language, explicit: f.explicit, copyright: f.copyright, credits, audioFiles, releaseType: f.releaseType, version: f.version, vocalType: answers().vocalType };
   if (payload.releaseDate) merged.releaseDate = payload.releaseDate;
   if (S.cover.newUrl) { merged.coverURL = S.cover.newUrl; merged.officialCoverURL = S.cover.newUrl; }
   return notifyAdmin(merged, "audio_and_cover");
