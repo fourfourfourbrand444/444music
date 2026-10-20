@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -194,6 +194,22 @@ select.credit-input.empty { color: var(--t3); }
 @media (max-width: 420px) { .row .l { flex-basis: 108px; font-size: 15px; } .hero h1 { font-size: 30px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
+<script>
+(function () {
+  function lock(o) {
+    if (o.tagName === 'OPTION' && !o.hasAttribute('value')) o.setAttribute('value', o.textContent.trim());
+  }
+  function scan(root) {
+    if (root.nodeType !== 1) return;
+    lock(root);
+    root.querySelectorAll('option').forEach(lock);
+  }
+  scan(document.documentElement);
+  new MutationObserver(function (list) {
+    list.forEach(function (m) { m.addedNodes.forEach(scan); });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 </head>
 
 <body>
