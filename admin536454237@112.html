@@ -1978,8 +1978,9 @@ function display(data) {
           rejectionCategory: result.category
         });
         if (ok) {
-          toast('success', `Rejected — reason saved`);
+                   toast('success', `Rejected — reason saved`);
           await sendRejectionEmail({ email, artistName, songTitle, reason: result.reason });
+          await cleanupRejectedAudio([subId]);
           setTimeout(() => refreshCurrentView(), 300);
         } else {
           this.disabled = false;
@@ -2397,6 +2398,28 @@ async function cleanupApprovedAudio(ids) {
   }
 }
 
+// After a rejection the WAVs are no longer needed, so the backend deletes them from R2.
+// The artist uploads a fresh WAV on the fix page.
+async function cleanupRejectedAudio(ids) {
+  try {
+    const token = await getAdminToken();
+    if (!token) { toast('warning', 'Not signed in, so the audio was not deleted from R2.'); return; }
+    let deleted = 0;
+    for (const id of ids) {
+      const res = await fetch(`${BACKEND_URL}/api/approval-cleanup/rejected/${encodeURIComponent(id)}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out.success) deleted += out.deleted || 0;
+      else toast('warning', out.message || `Audio cleanup failed (HTTP ${res.status}).`);
+    }
+    if (deleted) toast('info', `${deleted} audio file${deleted === 1 ? '' : 's'} deleted from R2`);
+  } catch (err) {
+    toast('warning', 'Audio cleanup failed: ' + err.message);
+  }
+}
+
 function showAvvoPreview(data) {
   const o = document.createElement('div');
   o.className = 'reason-overlay';
@@ -2786,9 +2809,10 @@ bulkRejectBtn.addEventListener('click', async () => {
     existing: ''
   });
   if (result === null) return;
-  toast('info', `Rejecting ${ids.length} submissions…`);
+   toast('info', `Rejecting ${ids.length} submissions…`);
+  const rejectedIds = [];
   for (const id of ids) {
-    await safeUpdate(id, { status: 'Rejected', rejectionReason: result.reason, rejectionCategory: result.category });
+    if (await safeUpdate(id, { status: 'Rejected', rejectionReason: result.reason, rejectionCategory: result.category })) rejectedIds.push(id);
     const sub = submissions.find(s => s.id === id);
     if (sub) {
       await sendRejectionEmail({
@@ -2799,6 +2823,7 @@ bulkRejectBtn.addEventListener('click', async () => {
       });
     }
   }
+    await cleanupRejectedAudio(rejectedIds);
   toast('success', `${ids.length} submissions rejected`);
   selectedIds.clear();
   updateBulkBar();
