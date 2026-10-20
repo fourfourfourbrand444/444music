@@ -762,6 +762,9 @@ function fixSections() {
 
 function licenseSection() {
   return `
+       <div class="sh"><h2>${S.isSingle ? 'Audio' : 'Tracks'}</h2>${S.tracks.some(t => t.required) ? '<span class="req">Required</span>' : '<span>Optional</span>'}</div>
+    ${S.tracks.map(trackShell).join('')}
+
     <div class="sh"><h2>License or proof</h2><span class="req">Required</span></div>
     <div class="group" id="licenseGroup"><div id="licenseZone"></div></div>
     <p class="sf">A license, purchase receipt, or written permission for the beat. PDF only.</p>
@@ -852,8 +855,9 @@ function renderPage() {
     </div>
     ${S.copyrightMode ? licenseSection() : fixSections()}`;
 
-  if (S.copyrightMode) {
+    if (S.copyrightMode) {
     drawLicense();
+    S.tracks.forEach((_, i) => drawTrackAudio(i));
   } else {
     drawCover();
     S.tracks.forEach((_, i) => drawTrackAudio(i));
@@ -1089,6 +1093,9 @@ function validateFix() {
 }
 
 function validateLicense() {
+  for (let i = 0; i < S.tracks.length; i++) {
+    if (S.tracks[i].required && !S.tracks[i].file) return { msg: S.isSingle ? 'Please choose a WAV file.' : `Please choose a WAV file for track ${i + 1}.`, el: 'trkAudio-' + i };
+  }
   if (!S.license.file) return { msg: 'Please upload your license / proof document.', el: 'licenseGroup' };
   return null;
 }
@@ -1197,14 +1204,42 @@ async function submitLicense() {
     setBtn('Uploading…');
     L.newUrl = await uploadToCloudinary(L.file, 'license-proofs', p => setBtn(`Uploading… ${p}%`));
   }
+   for (let i = 0; i < S.tracks.length; i++) {
+    const t = S.tracks[i];
+    if (t.file && !t.newUrl) {
+      const label = S.isSingle ? 'audio' : `track ${i + 1}`;
+      setBtn(`Uploading ${label}…`);
+      t.newUrl = 'r2:' + await uploadWavToR2(t.file, p => setBtn(`Uploading ${label}… ${p}%`));
+    }
+  }
+  const audioFiles = S.tracks.map((t, i) => {
+    const o = { ...t.orig };
+    const titleEl = $('trkTitle-' + i);
+    if (titleEl && titleEl.value.trim()) o.title = titleEl.value.trim();
+    o.url = t.newUrl || t.url;
+    if (String(o.url).startsWith('r2:')) o.key = o.url.slice(3); else delete o.key;
+    return o;
+  });
+  setBtn('Saving…');
   await updateDoc(doc(db, "submissions", data._id), {
     status: "Review",
     rejectionReason: deleteField(),
     rejectionCategory: deleteField(),
     resubmittedAt: serverTimestamp(),
     licenseURL: L.newUrl,
+    audioFiles,
+    audioDeleted: deleteField(),
   });
-  return notifyAdmin(data, "license", L.newUrl);
+  const oldKeys = S.tracks.filter(t => t.newUrl && String(t.url).startsWith('r2:')).map(t => t.url.slice(3));
+  if (oldKeys.length) {
+    auth.currentUser.getIdToken().then(token => fetch(`${BACKEND_URL}/api/audio/cleanup`, {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ submissionId: data._id, keys: oldKeys })
+    })).catch(() => {});
+  }
+  return notifyAdmin({ ...data, audioFiles }, "license", L.newUrl);
 }
 
 function answers() {
