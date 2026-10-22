@@ -1834,7 +1834,8 @@ function display(data) {
    const avvoState  = item.avvoSendState || '';
     const avvoStat   = item.avvoStatus || '';
     const canAvvo    = statusKey === 'review' && isPaid;
-    const alreadySent = !!item.avvoReleaseId && avvoStat.toLowerCase() !== 'returned';
+        const resendable = ['returned', 'deleted'].includes(avvoStat.toLowerCase());
+    const alreadySent = !!item.avvoReleaseId && !resendable;
     const canSendAvvo = canAvvo && !alreadySent && avvoState !== 'sending';
     let avvoLine = '';
     if (avvoState === 'sending') avvoLine = 'Sending to AVVO…';
@@ -1846,7 +1847,7 @@ function display(data) {
            ${avvoLine ? `<div class="avvo-line">${escHtml(avvoLine)}</div>` : ''}
            <div class="avvo-actions">
              <button class="avvo-btn" data-avvo="preview" data-id="${item.id}">Preview AVVO</button>
-             ${canSendAvvo ? `<button class="avvo-btn primary" data-avvo="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${avvoState === 'failed' || avvoStat.toLowerCase() === 'returned' ? 'Retry AVVO' : 'Send to AVVO'}</button>` : ''}
+             ${canSendAvvo ? `<button class="avvo-btn primary" data-avvo="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${avvoState === 'failed' || resendable ? 'Retry AVVO' : 'Send to AVVO'}</button>` : ''}
            </div>
          </div>`
       : '';
