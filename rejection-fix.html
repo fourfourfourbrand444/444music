@@ -277,7 +277,7 @@ const PLACEHOLDER = { producer: 'Full name, e.g. Metro Boomin', writer: 'Full na
 const FOLD_TITLE  = { producer: 'Producers & engineers', writer: 'Songwriters & composers', publishing: 'Publishers' };
 const ADD_LABEL   = { producer: 'Add producer or engineer', writer: 'Add songwriter or composer', publishing: 'Add publisher' };
 const CREDIT_TYPES = ['producer', 'writer', 'publishing'];
-const ARTIST_TYPES = [['featured', 'Featured'], ['secondary', 'Secondary']];
+const ARTIST_TYPES = [['featured', 'Featured']];
 const TYPES = ['Single', 'EP', 'Album'];
 const GENRE_SUBS = {
   'Pop': ['Synth-Pop','Electropop','Indie Pop','Dream Pop','Art Pop','Dance Pop','Teen Pop'],
@@ -528,7 +528,7 @@ function buildState() {
   const base = raw.length ? raw : [{ title: data.releaseTitle || '', url: '', artists: artistName ? [{ name: artistName, type: 'main', spotifyUrl: '', appleUrl: '' }] : [] }];
   S.tracks = base.map(t => ({
     orig: t, title: String(t.title || '').trim(), url: String(t.url || ''),required: !meetsAudio(t.url), file: null, preview: null, newUrl: null, error: '',
-    others: (Array.isArray(t.artists) ? t.artists : []).filter(a => a && a.type !== 'main' && String(a.name || '').trim()).map(a => ({ name: String(a.name), type: a.type === 'secondary' ? 'secondary' : 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
+    others: (Array.isArray(t.artists) ? t.artists : []).filter(a => a && a.type !== 'main' && String(a.name || '').trim()).map(a => ({ name: String(a.name), type: 'featured', spotifyUrl: a.spotifyUrl || '', appleUrl: a.appleUrl || '' }))
   }));
   const type = String(data.releaseType || '').toLowerCase();
     S.isSingle = S.tracks.length === 1;
@@ -702,7 +702,7 @@ function fixSections() {
 
     <div class="sh"><h2>Featured artists</h2><span>Optional</span></div>
     ${S.tracks.map(featSection).join('')}
-    <p class="sf">Add anyone featured or credited as a secondary artist on a track. Main artists come from the Artist field below.</p>
+    <p class="sf">Add anyone featured on a track. Main artists come from the Artist field below.</p>
 
     <div class="sh"><h2>Release</h2><span class="req">Required</span></div>
     <div class="group">
@@ -1295,7 +1295,7 @@ async function submitFix() {
       });
     }
     const mains = Array.isArray(o.artists) ? o.artists : [];
-    const extras = t.others.filter(a => a.name.trim()).map(a => ({ name: a.name.trim(), type: a.type === 'secondary' ? 'secondary' : 'featured', spotifyUrl: (a.spotifyUrl || '').trim(), appleUrl: (a.appleUrl || '').trim() }));
+    const extras = t.others.filter(a => a.name.trim()).map(a => ({ name: a.name.trim(),type: 'featured', spotifyUrl: (a.spotifyUrl || '').trim(), appleUrl: (a.appleUrl || '').trim() }));
     if (!mains.length && extras.length) mains.push({ name: f.artistName, type: 'main', spotifyUrl: '', appleUrl: '' });
     if (mains.length || extras.length) o.artists = mains.concat(extras);
     return o;
