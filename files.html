@@ -403,12 +403,12 @@ details.fold[open] summary::after { transform: rotate(45deg); }
         <div class="seg" id="artistTypeGroup" data-value="main">
           <button type="button" class="artist-type-pill" data-value="main">Main</button>
           <button type="button" class="artist-type-pill" data-value="featured">Featured</button>
-          <button type="button" class="artist-type-pill" data-value="secondary">Secondary</button>
+          
         </div>
       </div>
     </div>
     <div class="ferr" id="artistNameErr" style="display:none"></div>
-    <div class="artist-type-hint" id="artistTypeHint">Main artist is set on Track 1. This track can only have Featured or Secondary artists.</div>
+    <div class="artist-type-hint" id="artistTypeHint">Main artist is set on Track 1. This track can only have Featured artists.</div>
 
     <div class="sh" style="margin-top:22px"><h2>Profiles</h2><span>Optional</span></div>
     <div class="group">
@@ -699,7 +699,8 @@ function promptForArtist(existing, isFirstTrack, trackHasMain) {
         return;
       }
       let chosenType = artistTypeGroup.dataset.value;
-      if (!isFirstTrack && chosenType === 'main') chosenType = 'featured'; // hard safety net
+           if (!isFirstTrack && chosenType === 'main') chosenType = 'featured'; // hard safety net
+      if (chosenType === 'secondary') chosenType = 'featured'; // AVVO has no secondary role
       cleanup({
         name,
         type: chosenType,
@@ -801,7 +802,7 @@ function buildTrackRow(t, i) {
       </label>
 
       <div class="gh"><span>Artists</span></div>
-      ${!isFirstTrack ? `<div class="gnote">Main artist is set on Track 1. Add Featured or Secondary artists here.</div>` : ''}
+      ${!isFirstTrack ? `<div class="gnote">Main artist is set on Track 1. Add Featured artists here.</div>` : ''}
       ${chipsHtml}
       ${!locked ? `<button type="button" class="add-row" data-addartist="${t.id}"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Add artist</button>` : ''}
       ${t.errors.artists ? `<div class="ferr">${ERR_ICON}${t.errors.artists}</div>` : ''}
