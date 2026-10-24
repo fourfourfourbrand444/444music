@@ -1267,7 +1267,28 @@ async function sendRejectionEmail({ email, artistName, songTitle, reason }) {
     return false;
   }
 }
+// Edited + resubmitted releases that still need to go to AVVO
+function isEditedAwaitingAvvo(item) {
+  if ((item.status || '').toLowerCase() !== 'review') return false;
+  if (!item.resubmittedAt) return false;
+  const resendable = ['returned', 'deleted'].includes((item.avvoStatus || '').toLowerCase());
+  return !item.avvoReleaseId || resendable;
+}
 
+let editedFirst = null;
+
+async function fetchEditedReviewItems() {
+  try {
+    const snap = await getDocs(query(collection(db, 'submissions'), where('status', '==', 'Review')));
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(isEditedAwaitingAvvo)
+      .sort((a, b) => ((b.resubmittedAt && b.resubmittedAt.seconds) || 0) - ((a.resubmittedAt && a.resubmittedAt.seconds) || 0));
+  } catch (e) {
+    console.warn('Edited-first lookup failed (non-fatal):', e);
+    return [];
+  }
+}
 function isSubmissionPaid(item) {
   return item.paymentVerified === true || item.paid === 'Paid';
 }
@@ -1565,6 +1586,19 @@ async function loadPage(targetIndex) {
     const docs = snap.docs;
 
     submissions = docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Edited & resubmitted releases go first in "All" and "Review"
+    const wantsEdited = (currentStatusFilter === '' || currentStatusFilter === 'Review');
+    if (!wantsEdited) {
+      editedFirst = [];
+    } else {
+     if (editedFirst === null) editedFirst = await fetchEditedReviewItems();
+      if (editedFirst.length) {
+        const pinnedIds = new Set(editedFirst.map(e => e.id));
+        const rest = submissions.filter(s => !pinnedIds.has(s.id));
+        submissions = targetIndex === 0 ? [...editedFirst, ...rest] : rest;
+      }
+    }
     if (docs.length > 0) pageStartCursors[targetIndex + 1] = docs[docs.length - 1];
     hasNextPage = docs.length === pageSize;
     currentPageIndex = targetIndex;
@@ -1604,6 +1638,7 @@ function handleQueryError(err) {
 }
 
 function resetAndLoad() {
+  editedFirst = null;
   pageStartCursors = [null];
   currentPageIndex = 0;
   refreshTotalMatchingCount();
@@ -1612,6 +1647,7 @@ function resetAndLoad() {
 
 async function refreshCurrentView() {
   fullCollectionCache = null; // data changed — full search cache is stale
+    editedFirst = null;
   await Promise.all([refreshStatCounts(), refreshTotalMatchingCount()]);
   await loadPage(currentPageIndex);
 }
@@ -1742,6 +1778,7 @@ function display(data) {
     const card = document.createElement("div");
     card.className = "card";
     card.dataset.id = item.id;
+    if (isEditedAwaitingAvvo(item)) card.style.borderColor = 'rgba(96,165,250,0.55)';
     card.style.position = "relative";
     if (selectedIds.has(item.id)) card.classList.add("selected");
 
@@ -1868,6 +1905,7 @@ function display(data) {
       <div class="badge-row">
         <span class="badge ${statusClass}">${escHtml(status)}</span>
         <span class="badge ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span>
+                ${isEditedAwaitingAvvo(item) ? `<span class="badge" style="color:var(--blue);border-color:rgba(96,165,250,0.45);">✎ Edited — not sent to AVVO</span>` : ''}
         ${item.releaseType ? `<span class="badge" style="color:var(--text-sec);border-color:var(--border-strong);">${escHtml(item.releaseType)}</span>` : ''}
                   ${(isApproved && !item.smartLinkSlug) ? `<span class="badge" style="color:var(--red);border-color:rgba(248,113,113,0.35);">No Slug</span>` : ''}
                 ${(isApproved && isReleaseDateReached(item) && !hasAnyStoreLink(item)) ? `<span class="badge" style="color:var(--yellow);border-color:rgba(234,179,8,0.35);">⚠ Needs SmartLink</span>` : ''}
