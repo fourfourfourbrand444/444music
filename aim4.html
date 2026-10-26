@@ -609,7 +609,72 @@
 
   /* ---------- Validators ---------- */
 
-  function checkSpotify(raw){
+  var platform = 'spotify';
+
+(function(){
+  var linkSlide = slides.link;
+  var title = linkSlide.querySelector('h1');
+  var sub = linkSlide.querySelector('.sub');
+  var input = linkSlide.querySelector('#linkInput');
+  var COPY = {
+    spotify:   { name:'Spotify',   h:'Paste your Spotify song link',   s:'In Spotify, open your song, tap the three dots, choose Share, then Copy link.', p:'open.spotify.com/track/…' },
+    audiomack: { name:'Audiomack', h:'Paste your Audiomack song link', s:'In Audiomack, open your song, tap Share, then Copy link.', p:'audiomack.com/artist/song/song-name' }
+  };
+
+  var box = document.createElement('div');
+  box.className = 'genres';
+  box.style.marginBottom = '20px';
+  var buttons = {};
+
+  Object.keys(COPY).forEach(function(key){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'choice' + (key === platform ? ' selected' : '');
+    b.textContent = COPY[key].name;
+    b.addEventListener('click', function(){
+      platform = key;
+      Object.keys(buttons).forEach(function(k){ buttons[k].classList.toggle('selected', k === key); });
+      title.textContent = COPY[key].h;
+      sub.textContent = COPY[key].s;
+      input.placeholder = COPY[key].p;
+      input.value = '';
+      input.classList.remove('invalid');
+      linkSlide.querySelector('.err').textContent = '';
+    });
+    buttons[key] = b;
+    box.appendChild(b);
+  });
+
+  linkSlide.querySelector('.slide-body').insertBefore(box, input);
+})();
+
+function checkAudiomack(raw){
+  var v = raw.trim();
+  if(!v) return { ok:false, msg:'Paste the Audiomack link to your song.' };
+  if(!/^https?:\/\//i.test(v)) v = 'https://' + v;
+
+  var u;
+  try { u = new URL(v); }
+  catch(e){ return { ok:false, msg:"That doesn't look like a link. Copy it from Audiomack and paste it here." }; }
+
+  var host = u.hostname.replace(/^www\./, '').toLowerCase();
+
+  if(host === 'on.audiomack.com' || host === 'audiomack.app.link'){
+    if(/^\/[A-Za-z0-9_-]+\/?$/.test(u.pathname)) return { ok:true, value:u.href };
+    return { ok:false, msg:'That Audiomack link looks incomplete. Copy it again from Audiomack.' };
+  }
+
+  if(host === 'audiomack.com'){
+    if(/^\/[^\/]+\/song\/[^\/]+\/?$/.test(u.pathname)) return { ok:true, value:u.href };
+    if(/\/(album|playlist)\//.test(u.pathname)) return { ok:false, msg:'That is not a song link. Please paste the link to the song itself.' };
+    return { ok:false, msg:"That isn't a link to an Audiomack song. Copy the link from your song's Share menu." };
+  }
+
+  return { ok:false, msg:'This has to be an Audiomack link (it starts with audiomack.com).' };
+}
+
+function checkSpotify(raw){
+  if(platform === 'audiomack') return checkAudiomack(raw);
     var v = raw.trim();
     if(!v) return { ok:false, msg:'Paste the Spotify link to your song.' };
     if(!/^https?:\/\//i.test(v)) v = 'https://' + v;
@@ -833,7 +898,75 @@
 
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist'; }
 
-  sendBtn.addEventListener('click', async function(){
+  sendBtn.addEventListener('click', function(){
+  sendError.textContent = '';
+  if(!photo){ sendError.textContent = 'Please add your photo before sending.'; return; }
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+
+  var frame = document.createElement('iframe');
+  frame.name = 'sendFrame';
+  frame.style.display = 'none';
+  document.body.appendChild(frame);
+
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://formsubmit.co/444musicdistro@gmail.com';
+  form.enctype = 'multipart/form-data';
+  form.target = 'sendFrame';
+  form.style.display = 'none';
+
+  function add(name, value){
+    var i = document.createElement('input');
+    i.type = 'hidden'; i.name = name; i.value = value;
+    form.appendChild(i);
+  }
+  add('_subject', 'New song submission: ' + data.title + ' by ' + data.name);
+  add('_captcha', 'false');
+  add('_template', 'table');
+  add('Artist Name', data.name);
+  add('email', data.email);
+  add('Song Title', data.title);
+  add('Genre', data.genre);
+  add('Spotify Link', data.link);
+  add('Country', data.country);
+  add('Instagram', data.social || 'Not provided');
+
+  var fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.name = 'Photo';
+  var dt = new DataTransfer();
+  dt.items.add(new File([photo.blob], slug(data.name) + '-portrait.jpg', { type: 'image/jpeg' }));
+  fileInput.files = dt.files;
+  form.appendChild(fileInput);
+  document.body.appendChild(form);
+
+  var finished = false;
+  var timer = setTimeout(function(){
+    if(finished) return;
+    finished = true;
+    frame.remove(); form.remove();
+    sendError.textContent = 'This is taking too long. Check your connection and try again.';
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send song';
+  }, 30000);
+
+  frame.addEventListener('load', function(){
+    if(finished) return;
+    finished = true;
+    clearTimeout(timer);
+    frame.remove(); form.remove();
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send song';
+    stack = [];
+    current = 'done';
+    render();
+  });
+
+  form.submit();
+});
+
+sendBtn.addEventListener('click-old', async function(){
     sendError.textContent = '';
     sendBtn.disabled = true;
     sendBtn.textContent = 'Sending…';
