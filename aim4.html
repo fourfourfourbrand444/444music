@@ -893,7 +893,82 @@ function checkSpotify(raw){
 
   /* ---------- Send ---------- */
 
-  var sendBtn = $('#sendBtn');
+ function makeSlide(step, html){
+  var s = document.createElement('section');
+  s.className = 'slide';
+  s.dataset.step = step;
+  s.innerHTML = html;
+  $('.stage').appendChild(s);
+  slides[step] = s;
+  return s;
+}
+
+var chev = '<svg viewBox="0 0 9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6.5 6.5L1 14"/></svg>';
+
+var distSlide = makeSlide('dist',
+  '<div class="slide-body">' +
+    '<h1>Was your song distributed by 444Music?</h1>' +
+    '<p class="sub">We only pitch songs that were released through 444Music Distribution.</p>' +
+    '<div class="choices">' +
+      '<button type="button" class="choice" id="distYes">Yes, 444Music distributed it' + chev + '</button>' +
+      '<button type="button" class="choice" id="distNo">No, it was distributed elsewhere' + chev + '</button>' +
+    '</div>' +
+  '</div>'
+);
+
+var nodistSlide = makeSlide('nodist',
+  '<div class="slide-body">' +
+    '<h1>Distribute your song with us first</h1>' +
+    '<p class="sub">We can only pitch songs released through 444Music Distribution. Once your song is live through us, come back and submit it here.</p>' +
+  '</div>' +
+  '<div class="slide-foot">' +
+    '<a class="btn" href="https://www.444musicdistro.com/" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px">Go to 444Music Distribution</a>' +
+    '<button type="button" class="btn btn-ghost" id="distChange">Change my answer</button>' +
+  '</div>'
+);
+
+$('#distYes').addEventListener('click', function(){ go('out'); });
+$('#distNo').addEventListener('click', function(){ go('nodist'); });
+$('#distChange').addEventListener('click', back);
+
+ORDER.unshift('dist', 'nodist');
+PROGRESS.dist = 0;
+PROGRESS.nodist = 0;
+current = 'dist';
+
+var baseRender = render;
+render = function(){
+  baseRender();
+  if(current === 'out') backBtn.style.visibility = 'visible';
+};
+
+var THEMES = {
+  spotify:   { main:'#1DB954', hover:'#17a34a', soft:'#e3f8ea', text:'#0b3d1c' },
+  audiomack: { main:'#FFD60A', hover:'#f5cc00', soft:'#fff8d6', text:'#3d3500' }
+};
+
+var themeStyle = document.createElement('style');
+themeStyle.textContent = '.btn:not(.btn-ghost):hover{background:var(--accent-hover,#f5cc00)}.notice{color:var(--notice-text,#3d3500)}';
+document.head.appendChild(themeStyle);
+
+function applyTheme(){
+  var t = THEMES.audiomack;
+  if(ORDER.indexOf(current) >= ORDER.indexOf('link')) t = THEMES[platform];
+  var r = document.documentElement.style;
+  r.setProperty('--yellow', t.main);
+  r.setProperty('--yellow-soft', t.soft);
+  r.setProperty('--accent-hover', t.hover);
+  r.setProperty('--notice-text', t.text);
+}
+
+var themedRender = render;
+render = function(){ themedRender(); applyTheme(); };
+
+slides.link.querySelectorAll('.genres .choice').forEach(function(b){
+  b.addEventListener('click', applyTheme);
+});
+
+var sendBtn = $('#sendBtn');
   var sendError = $('#sendError');
 
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist'; }
