@@ -2,435 +2,880 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>444Music — Submit Your Song</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>444Music · Submit your song</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --black:#0a0a0a;
-    --gray-700:#4a4a4a;
-    --gray-600:#6b6b6b;
-    --gray-400:#a3a3a3;
-    --gray-200:#e4e4e4;
-    --gray-100:#f0f0f0;
+    --text-muted:#6b6b6b;
+    --text-faint:#a3a3a3;
+    --line:#e4e4e4;
+    --field:#f2f2f7;
+    --field-hover:#e9e9ee;
     --white:#ffffff;
-    --green:#1DB954;
+    --yellow:#FFD60A;
+    --yellow-soft:#fff8d6;
     --error:#d33;
   }
 
-  *{box-sizing:border-box;}
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html, body{ height:100%; }
 
   body{
-    margin:0;
     background:var(--white);
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color:var(--black);
+    font-family:'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing:antialiased;
   }
 
-  .page{
-    max-width:600px;
+  .app{
+    max-width:520px;
+    height:100vh;
+    height:100dvh;
     margin:0 auto;
-    padding:48px 24px 70px;
+    display:flex;
+    flex-direction:column;
   }
 
-  .header{
+  /* Header */
+  .top{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-bottom:36px;
-  }
-  .brand-icon{ width:30px; height:30px; flex:0 0 auto; object-fit:contain; }
-  .brand{ font-size:15px; font-weight:700; letter-spacing:0.2px; }
-  .brand span{ color:var(--green); }
-  .header .divider{ width:1px; height:16px; background:var(--gray-200); margin:0 2px; }
-  .header .tag{ font-size:12px; color:var(--gray-600); }
-
-  h1{ font-size:26px; font-weight:700; line-height:1.25; margin:0 0 14px; letter-spacing:-0.01em; }
-  .lede{ font-size:15px; line-height:1.7; color:var(--gray-700); margin:0 0 8px; }
-
-  hr{ border:none; border-top:1px solid var(--gray-200); margin:34px 0; }
-
-  h2{ font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-600); margin:0 0 20px; }
-
-  .field{ margin-bottom:20px; }
-  .field label{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:8px;
-    color:var(--black);
-  }
-  .field label svg{ width:14px; height:14px; stroke:var(--gray-600); flex:0 0 auto; }
-
-  .field input,
-  .field select{
-    width:100%;
-    padding:13px 14px;
-    font-size:14px;
-    font-family:inherit;
-    color:var(--black);
-    background:var(--white);
-    border:1px solid var(--gray-200);
-    border-radius:9px;
-    outline:none;
-    transition:border-color .15s ease;
-    appearance:none;
-    -webkit-appearance:none;
-  }
-  .field input::placeholder{ color:var(--gray-400); }
-  .field input:focus,
-  .field select:focus{ border-color:var(--black); }
-
-  .select-wrap{ position:relative; }
-  .select-wrap svg.chevron{
-    position:absolute;
-    right:14px;
-    top:50%;
-    transform:translateY(-50%);
-    width:14px;
-    height:14px;
-    stroke:var(--gray-600);
-    pointer-events:none;
+    justify-content:space-between;
+    padding:calc(env(safe-area-inset-top, 0px) + 14px) 16px 14px;
   }
 
-  .field .error-msg{
-    font-size:11.5px;
-    color:var(--error);
-    margin-top:6px;
-    display:none;
-  }
-  .field.has-error input,
-  .field.has-error select{ border-color:var(--error); }
-  .field.has-error .error-msg{ display:block; }
-
-  .hint{
-    font-size:11.5px;
-    color:var(--gray-400);
-    margin-top:6px;
-  }
-
-  .btn{
-    width:100%;
+  .back{
+    width:40px;
+    height:40px;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:8px;
-    padding:16px 18px;
-    border-radius:10px;
-    font-size:14.5px;
-    font-weight:600;
+    background:none;
     border:none;
-    cursor:pointer;
-    font-family:inherit;
-    transition:background .15s ease, opacity .15s ease, transform .05s ease;
-    text-decoration:none;
-    background:var(--black);
-    color:var(--white);
-  }
-  .btn:active{ transform:scale(0.99); }
-  .btn:disabled{ opacity:0.6; cursor:default; }
-  .btn svg{ width:16px; height:16px; stroke:var(--white); }
-
-  .btn .spinner{
-    width:15px; height:15px;
-    border:2px solid rgba(255,255,255,0.35);
-    border-top-color:#fff;
     border-radius:50%;
-    animation:spin 0.7s linear infinite;
-    display:none;
+    cursor:pointer;
+    color:var(--black);
   }
-  .btn.is-loading .spinner{ display:inline-block; }
-  .btn.is-loading .btn-label{ opacity:0.7; }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .back:hover{ background:var(--field); }
+  .back svg{ width:20px; height:20px; }
+  .top .spacer{ width:40px; }
 
-  .form-error{
-    font-size:13px;
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:'Outfit', sans-serif;
+    font-weight:600;
+    font-size:17px;
+    letter-spacing:0.1px;
+  }
+  .brand img{ width:28px; height:28px; object-fit:contain; }
+
+  .progress{
+    height:3px;
+    background:var(--line);
+    margin:0 24px;
+    border-radius:3px;
+    overflow:hidden;
+  }
+  #bar{
+    height:100%;
+    width:0;
+    background:var(--yellow);
+    border-radius:3px;
+    transition:width .4s cubic-bezier(.22,.8,.3,1);
+  }
+
+  /* Slides */
+  .stage{ position:relative; flex:1; overflow:hidden; }
+
+  .slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    padding:36px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+    overflow-y:auto;
+    opacity:0;
+    visibility:hidden;
+    transform:translateX(48px);
+    transition:transform .35s cubic-bezier(.22,.8,.3,1), opacity .25s ease, visibility 0s .35s;
+  }
+  .slide[data-pos="left"]{ transform:translateX(-48px); }
+  .slide[data-pos="active"]{
+    opacity:1;
+    visibility:visible;
+    transform:none;
+    transition:transform .35s cubic-bezier(.22,.8,.3,1), opacity .25s ease, visibility 0s;
+  }
+
+  .slide-body{ flex:1; }
+  .slide-foot{ margin-top:28px; }
+
+  h1{
+    font-family:'Outfit', sans-serif;
+    font-weight:600;
+    font-size:28px;
+    line-height:1.2;
+    letter-spacing:-0.02em;
+    margin-bottom:12px;
+  }
+
+  .sub{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--text-muted);
+    margin-bottom:28px;
+    max-width:44ch;
+  }
+
+  /* Inputs */
+  .input{
+    width:100%;
+    padding:17px 16px;
+    font-family:inherit;
+    font-size:17px;
+    color:var(--black);
+    background:var(--field);
+    border:2px solid transparent;
+    border-radius:14px;
+    outline:none;
+    transition:border-color .15s ease, background .15s ease;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  .input::placeholder{ color:var(--text-faint); }
+  .input:focus{ border-color:var(--black); background:var(--white); }
+  .input.invalid{ border-color:var(--error); background:var(--white); }
+
+  .err{
+    font-size:13.5px;
+    line-height:1.5;
     color:var(--error);
-    text-align:center;
-    margin-top:14px;
+    margin-top:10px;
+    min-height:20px;
+  }
+
+  /* Buttons */
+  .btn{
+    width:100%;
+    padding:17px 18px;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:600;
+    color:#000;
+    background:var(--yellow);
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    transition:transform .08s ease, opacity .15s ease, background .15s ease;
+  }
+  .btn:hover{ background:#f5cc00; }
+  .btn:active{ transform:scale(0.99); }
+  .btn:disabled{ opacity:0.55; cursor:default; }
+  .btn-ghost{ background:var(--field); }
+  .btn-ghost:hover{ background:var(--field-hover); }
+
+  .link-btn{
+    background:none;
+    border:none;
+    padding:0;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    color:var(--black);
+    text-decoration:underline;
+    text-underline-offset:3px;
+    cursor:pointer;
+  }
+
+  :focus-visible{ outline:2px solid var(--black); outline-offset:2px; }
+  .input:focus-visible{ outline:none; }
+
+  /* Choice rows */
+  .choices{ display:flex; flex-direction:column; gap:12px; }
+  .choice{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    padding:19px 18px;
+    font-family:inherit;
+    font-size:17px;
+    font-weight:500;
+    color:var(--black);
+    text-align:left;
+    background:var(--field);
+    border:2px solid transparent;
+    border-radius:14px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .choice:hover{ background:var(--field-hover); }
+  .choice.selected{ background:var(--white); border-color:var(--black); }
+  .choice svg{ width:9px; height:15px; color:var(--text-faint); flex:0 0 auto; }
+
+  .genres{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .genres .choice{ padding:16px; font-size:16px; }
+
+  /* Photo */
+  .notice{
+    background:var(--yellow-soft);
+    border-radius:12px;
+    padding:14px 16px;
+    font-size:14px;
+    line-height:1.55;
+    color:#3d3500;
+    margin-bottom:20px;
+  }
+
+  .photo-box{
+    width:100%;
+    max-width:260px;
+    aspect-ratio:4 / 5;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--field);
+    border:2px dashed #c9c9ce;
+    border-radius:16px;
+    cursor:pointer;
+    overflow:hidden;
+    color:var(--text-muted);
+    font-size:14.5px;
+    font-weight:500;
+    position:relative;
+  }
+  .photo-box:hover{ background:var(--field-hover); }
+  .photo-box svg{ width:34px; height:34px; }
+  .photo-box img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:var(--field);
     display:none;
   }
-  .form-error.show{ display:block; }
+  .photo-box.has-photo{ border-style:solid; border-color:var(--line); }
+  .photo-box.has-photo img{ display:block; }
+  .photo-box.has-photo svg,
+  .photo-box.has-photo span{ display:none; }
+
+  .photo-change{ text-align:center; margin-top:14px; min-height:20px; }
+
+  /* Review */
+  .review{ border-top:1px solid var(--line); }
+  .review-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .review-label{
+    flex:0 0 96px;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+  .review-value{
+    flex:1;
+    min-width:0;
+    font-size:15.5px;
+    font-weight:500;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .review-value.empty{ color:var(--text-faint); font-weight:400; }
+  .review-thumb{
+    width:48px;
+    height:60px;
+    object-fit:cover;
+    border-radius:8px;
+    display:block;
+  }
+  .review-row .link-btn{ flex:0 0 auto; }
 
   .fineprint{
     text-align:center;
-    font-size:11px;
-    color:var(--gray-400);
+    font-size:12px;
+    color:var(--text-faint);
     margin-top:14px;
   }
 
-  .footer-note{
-    text-align:center;
-    font-size:11.5px;
-    color:var(--gray-400);
-    margin-top:40px;
-  }
-
-  .modal-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(10,10,10,0.55);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:100;
-  }
-  .modal-overlay.show{ display:flex; }
-
-  .modal{
-    background:var(--white);
-    border-radius:14px;
-    max-width:400px;
-    width:100%;
-    padding:32px 28px 28px;
-    text-align:center;
-    animation:modalIn .18s ease;
-  }
-  @keyframes modalIn{
-    from{ opacity:0; transform:translateY(8px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-
-  .modal .check{
-    width:52px;
-    height:52px;
+  /* Done */
+  .done-icon{
+    width:56px;
+    height:56px;
     border-radius:50%;
-    background:var(--gray-100);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0 auto 18px;
-  }
-  .modal .check svg{ width:24px; height:24px; stroke:var(--green); }
-
-  .modal h3{
-    font-size:17px;
-    font-weight:700;
-    margin:0 0 10px;
-  }
-  .modal p{
-    font-size:13.5px;
-    color:var(--gray-600);
-    line-height:1.65;
-    margin:0 0 24px;
-  }
-
-  .btn-instagram{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:14px 16px;
-    border-radius:9px;
     background:var(--black);
-    color:var(--white);
-    font-size:14px;
-    font-weight:600;
-    text-decoration:none;
-    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:24px;
   }
-  .btn-instagram svg{ width:17px; height:17px; }
+  .done-icon svg{ width:26px; height:26px; color:var(--yellow); }
 
+  .btn-social{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    width:100%;
+    padding:17px 18px;
+    font-size:16px;
+    font-weight:600;
+    color:#fff;
+    background:var(--black);
+    border-radius:14px;
+    text-decoration:none;
+  }
+  .btn-social svg{ width:18px; height:18px; }
+
+  .contact{
+    text-align:center;
+    font-size:13px;
+    color:var(--text-faint);
+    margin-top:18px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .slide, .slide[data-pos="active"], #bar{ transition:none; }
+  }
 </style>
 </head>
 <body>
 
-<div class="page">
+<div class="app">
 
-  <div class="header">
-    <img class="brand-icon" src="https://www.444musicdistro.com/black.png" alt="444Music">
-    <div class="brand">444<span>Music</span></div>
-    <div class="divider"></div>
-    <div class="tag">Song Submission</div>
-  </div>
-
-  <h1>Submit your song for playlist consideration</h1>
-  <p class="lede">Fill in your details below and our team will review your song for our next playlist round. You'll hear back from us directly by email.</p>
-
-  <hr>
-
-  <h2>Song details</h2>
-
-  <form id="songForm">
-
-    <div class="field" id="field-name">
-      <label for="artistName">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
-        Artist name
-      </label>
-      <input type="text" id="artistName" name="Artist Name" placeholder="e.g. Pop Smoke" required>
-      <p class="error-msg">Please enter your artist name.</p>
-    </div>
-
-    <div class="field" id="field-email">
-      <label for="artistEmail">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6l8 7 8-7"/></svg>
-        Email address
-      </label>
-      <input type="email" id="artistEmail" name="Email" placeholder="you@example.com" required>
-      <p class="error-msg">Please enter a valid email address.</p>
-    </div>
-
-    <div class="field" id="field-title">
-      <label for="songTitle">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
-        Song title
-      </label>
-      <input type="text" id="songTitle" name="Song Title" placeholder="e.g. Late Nights" required>
-      <p class="error-msg">Please enter the song title.</p>
-    </div>
-
-    <div class="field" id="field-genre">
-      <label for="songGenre">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h4l3-8 4 16 3-8h4"/></svg>
-        Song genre
-      </label>
-      <div class="select-wrap">
-        <select id="songGenre" name="Genre" required>
-          <option value="" disabled selected>Select a genre</option>
-          <option>Afrobeats</option>
-          <option>Hip-Hop</option>
-          <option>R&amp;B</option>
-          <option>Amapiano</option>
-          <option>Pop</option>
-          <option>Dancehall</option>
-          <option>Gospel</option>
-          <option>Highlife</option>
-          <option>Drill</option>
-          <option>Other</option>
-        </select>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <p class="error-msg">Please select a genre.</p>
-    </div>
-
-    <div class="field" id="field-link">
-      <label for="songLink">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>
-        Song link
-      </label>
-      <input type="url" id="songLink" name="Song Link" placeholder="https://" required>
-      <p class="hint">Link to your song on Spotify, Audiomack, Boomplay, or wherever it's live.</p>
-      <p class="error-msg">Please enter a valid link starting with http:// or https://.</p>
-    </div>
-
-    <!-- FormSubmit.co config fields -->
-    <input type="hidden" name="_subject" value="New 444Music Song Submission">
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
-
-    <button type="submit" class="btn" id="submitBtn">
-      <span class="spinner"></span>
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
-      <span class="btn-label">Send song details</span>
+  <header class="top">
+    <button class="back" id="backBtn" type="button" aria-label="Go back" style="visibility:hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
-
-    <p class="form-error" id="formError">Something went wrong sending your form. Please try again.</p>
-  </form>
-
-  <p class="fineprint">Your details are sent securely and used only for playlist review.</p>
-
-  <p class="footer-note">444Music — playlisting@444musicdistro.com</p>
-
-</div>
-
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="check">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="brand">
+      <img src="https://www.444musicdistro.com/black.png" alt="" onerror="this.style.display='none'">
+      <span>444Music</span>
     </div>
-    <h3>Your song has been submitted</h3>
-    <p>You'll receive an email from us within 48 hours. If selected, your song will be added to our next playlist round and you'll be notified directly. Follow our Instagram for updates and behind-the-scenes on our playlist picks.</p>
-    <a href="https://www.instagram.com/444music_playlist/" target="_blank" rel="noopener" class="btn-instagram" id="followBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#fff" stroke="none"/></svg>
-      Follow us on Instagram
-    </a>
-  </div>
+    <div class="spacer"></div>
+  </header>
+
+  <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+
+  <main class="stage">
+
+    <!-- 1. Is the song out? -->
+    <section class="slide" data-step="out">
+      <div class="slide-body">
+        <h1>Is your song already out?</h1>
+        <p class="sub">We only add songs that are live on Spotify.</p>
+        <div class="choices">
+          <button type="button" class="choice" data-choice="yes">
+            Yes, it's live
+            <svg viewBox="0 0 9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6.5 6.5L1 14"/></svg>
+          </button>
+          <button type="button" class="choice" data-choice="no">
+            Not yet
+            <svg viewBox="0 0 9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6.5 6.5L1 14"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Not live yet -->
+    <section class="slide" data-step="no">
+      <div class="slide-body">
+        <h1>Come back once it's live</h1>
+        <p class="sub">We can only review songs that are already released on Spotify. When yours is out, return to this page and submit it.</p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn btn-ghost" id="changeAnswer">Change my answer</button>
+      </div>
+    </section>
+
+    <!-- 2. Spotify link -->
+    <section class="slide" data-step="link">
+      <div class="slide-body">
+        <h1>Paste your Spotify song link</h1>
+        <p class="sub">In Spotify, open your song, tap the three dots, choose Share, then Copy link.</p>
+        <input class="input" id="linkInput" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="open.spotify.com/track/…" aria-label="Spotify song link">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="link">Continue</button>
+      </div>
+    </section>
+
+    <!-- 3. Photo -->
+    <section class="slide" data-step="photo">
+      <div class="slide-body">
+        <h1>Add your photo</h1>
+        <div class="notice">Please upload a high-quality portrait of yourself, like a studio shot: good lighting, a plain background, face and shoulders in frame. Blurry, low-resolution or group photos can't be used.</div>
+        <div class="photo-box" id="photoBox" role="button" tabindex="0" aria-label="Choose a photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c0-4 3.3-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/></svg>
+          <span>Tap to choose a photo</span>
+          <img id="photoImg" alt="Your selected photo">
+        </div>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <div class="photo-change"><button type="button" class="link-btn" id="photoChange" hidden>Choose a different photo</button></div>
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="photo">Continue</button>
+      </div>
+    </section>
+
+    <!-- 4. Artist name -->
+    <section class="slide" data-step="name">
+      <div class="slide-body">
+        <h1>What's your artist name?</h1>
+        <p class="sub">Write it the way you want it to appear.</p>
+        <input class="input" id="nameInput" type="text" autocomplete="name" placeholder="Artist name" aria-label="Artist name">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="name">Continue</button>
+      </div>
+    </section>
+
+    <!-- 5. Email -->
+    <section class="slide" data-step="email">
+      <div class="slide-body">
+        <h1>What's your email address?</h1>
+        <p class="sub">You'll hear back from us directly by email.</p>
+        <input class="input" id="emailInput" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com" aria-label="Email address">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="email">Continue</button>
+      </div>
+    </section>
+
+    <!-- 6. Song title -->
+    <section class="slide" data-step="title">
+      <div class="slide-body">
+        <h1>What's the song title?</h1>
+        <p class="sub">Exactly as it appears on Spotify.</p>
+        <input class="input" id="titleInput" type="text" placeholder="Song title" aria-label="Song title">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="title">Continue</button>
+      </div>
+    </section>
+
+    <!-- 7. Genre -->
+    <section class="slide" data-step="genre">
+      <div class="slide-body">
+        <h1>What's the genre?</h1>
+        <p class="sub">Pick the one that fits best.</p>
+        <div class="genres" id="genreList"></div>
+        <p class="err" role="alert"></p>
+      </div>
+    </section>
+
+    <!-- 8. Country -->
+    <section class="slide" data-step="country">
+      <div class="slide-body">
+        <h1>Where are you based?</h1>
+        <p class="sub">City and country, or just the country.</p>
+        <input class="input" id="countryInput" type="text" autocomplete="country-name" placeholder="e.g. Accra, Ghana" aria-label="Where you are based">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="country">Continue</button>
+      </div>
+    </section>
+
+    <!-- 9. Instagram (optional) -->
+    <section class="slide" data-step="social">
+      <div class="slide-body">
+        <h1>What's your Instagram handle?</h1>
+        <p class="sub">Optional. Leave it blank if you'd rather not share it.</p>
+        <input class="input" id="socialInput" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="@yourhandle" aria-label="Instagram handle">
+        <p class="err" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" data-next="social">Continue</button>
+      </div>
+    </section>
+
+    <!-- 10. Review -->
+    <section class="slide" data-step="review">
+      <div class="slide-body">
+        <h1>Check your details</h1>
+        <p class="sub">Make sure everything is right before you send it.</p>
+        <div class="review" id="reviewList"></div>
+        <p class="err" id="sendError" role="alert"></p>
+      </div>
+      <div class="slide-foot">
+        <button type="button" class="btn" id="sendBtn">Send song</button>
+        <p class="fineprint">Your details are sent securely and used only for playlist review.</p>
+      </div>
+    </section>
+
+    <!-- Done -->
+    <section class="slide" data-step="done">
+      <div class="slide-body">
+        <div class="done-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h1>Your song has been submitted</h1>
+        <p class="sub">You'll receive an email from us within 48 hours. If selected, your song will be added to our next playlist round and you'll be notified directly. Follow our Instagram for updates and behind-the-scenes on our playlist picks.</p>
+      </div>
+      <div class="slide-foot">
+        <a class="btn-social" href="https://www.instagram.com/444music_playlist/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#fff" stroke="none"/></svg>
+          Follow us on Instagram
+        </a>
+        <p class="contact">Questions? playlisting@444musicdistro.com</p>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <script>
-  const form = document.getElementById('songForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const formError = document.getElementById('formError');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const followBtn = document.getElementById('followBtn');
+(function(){
+  // FormSubmit.co sends every submission (including the photo as an attachment)
+  // to this inbox. The first submission ever sent triggers a one-time
+  // "Confirm your FormSubmit activation" email: click Confirm once.
+  var ENDPOINT = "https://formsubmit.co/ajax/444musicdistro@gmail.com";
 
-  // FormSubmit.co — no signup/API key needed, just the destination email.
-  // NOTE: the first submission ever sent to this email triggers a one-time
-  // "Confirm your FormSubmit activation" email — click Confirm in that
-  // email once and every submission after that goes straight through.
-  const FORM_ENDPOINT = "https://formsubmit.co/ajax/444musicdistro@gmail.com";
+  var ORDER = ['out','no','link','photo','name','email','title','genre','country','social','review','done'];
+  var PROGRESS = {out:0, no:0, link:1, photo:2, name:3, email:4, title:5, genre:6, country:7, social:8, review:9, done:9};
+  var NEXT = {link:'photo', photo:'name', name:'email', email:'title', title:'genre', genre:'country', country:'social', social:'review'};
+  var GENRES = ['Afrobeats','Hip-Hop','R&B','Amapiano','Pop','Dancehall','Gospel','Highlife','Drill','Other'];
 
-  function setFieldError(fieldId, isError){
-    document.getElementById(fieldId).classList.toggle('has-error', isError);
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var slides = {};
+  document.querySelectorAll('.slide').forEach(function(s){ slides[s.dataset.step] = s; });
+
+  var bar = $('#bar');
+  var backBtn = $('#backBtn');
+
+  var current = 'out';
+  var stack = [];
+  var editing = false;
+  var photo = null;
+  var data = { link:'', name:'', email:'', title:'', genre:'', country:'', social:'' };
+
+  /* ---------- Navigation ---------- */
+
+  function render(){
+    var ci = ORDER.indexOf(current);
+    ORDER.forEach(function(id, i){
+      var el = slides[id];
+      var pos = i === ci ? 'active' : (i < ci ? 'left' : 'right');
+      el.dataset.pos = pos;
+      if(pos === 'active'){ el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
+      else { el.setAttribute('inert',''); el.setAttribute('aria-hidden','true'); }
+    });
+
+    bar.style.width = (PROGRESS[current] / 9 * 100) + '%';
+    backBtn.style.visibility = (current === 'out' || current === 'done') ? 'hidden' : 'visible';
+
+    if(current === 'review'){ editing = false; buildReview(); }
+
+    slides[current].scrollTop = 0;
+    var first = slides[current].querySelector('input[type="text"], input[type="email"]');
+    if(first){ setTimeout(function(){ first.focus({preventScroll:true}); }, 360); }
   }
 
-  function validate(){
-    let valid = true;
-
-    const name = document.getElementById('artistName').value.trim();
-    setFieldError('field-name', !name);
-    if(!name) valid = false;
-
-    const email = document.getElementById('artistEmail').value.trim();
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    setFieldError('field-email', !emailOk);
-    if(!emailOk) valid = false;
-
-    const title = document.getElementById('songTitle').value.trim();
-    setFieldError('field-title', !title);
-    if(!title) valid = false;
-
-    const genre = document.getElementById('songGenre').value;
-    setFieldError('field-genre', !genre);
-    if(!genre) valid = false;
-
-    const link = document.getElementById('songLink').value.trim();
-    const linkOk = /^https?:\/\/.+/i.test(link);
-    setFieldError('field-link', !linkOk);
-    if(!linkOk) valid = false;
-
-    return valid;
+  function go(id){ stack.push(current); current = id; render(); }
+  function back(){ if(!stack.length) return; current = stack.pop(); render(); }
+  function advance(from){
+    if(editing){ editing = false; go('review'); }
+    else { go(NEXT[from]); }
   }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    formError.classList.remove('show');
+  backBtn.addEventListener('click', back);
 
-    if(!validate()) return;
+  /* ---------- Errors ---------- */
 
-    submitBtn.disabled = true;
-    submitBtn.classList.add('is-loading');
+  function setError(step, msg, input){
+    var el = slides[step].querySelector('.err');
+    if(el) el.textContent = msg || '';
+    if(input) input.classList.toggle('invalid', !!msg);
+  }
 
-    try{
-      const formData = new FormData(form);
-      const response = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: formData
-      });
+  /* ---------- Validators ---------- */
 
-      const data = await response.json().catch(() => null);
+  function checkSpotify(raw){
+    var v = raw.trim();
+    if(!v) return { ok:false, msg:'Paste the Spotify link to your song.' };
+    if(!/^https?:\/\//i.test(v)) v = 'https://' + v;
 
-      if(response.ok && data && data.success !== "false"){
-        form.reset();
-        modalOverlay.classList.add('show');
-      } else {
-        formError.classList.add('show');
-      }
+    var u;
+    try { u = new URL(v); }
+    catch(e){ return { ok:false, msg:"That doesn't look like a link. Copy it from Spotify and paste it here." }; }
+
+    var host = u.hostname.replace(/^www\./, '').toLowerCase();
+
+    if(host === 'spotify.link'){
+      if(/^\/[A-Za-z0-9]+\/?$/.test(u.pathname)) return { ok:true, value:u.href };
+      return { ok:false, msg:'That Spotify link looks incomplete. Copy it again from Spotify.' };
+    }
+
+    if(host === 'open.spotify.com'){
+      var m = u.pathname.match(/^\/(?:intl-[a-z-]+\/)?(track|album|artist|playlist|episode|show)\/([A-Za-z0-9]{22})\/?$/);
+      if(!m) return { ok:false, msg:"That isn't a link to a Spotify song. Copy the link from your song's Share menu." };
+      if(m[1] !== 'track') return { ok:false, msg:'That is a ' + m[1] + ' link. Please paste the link to the song itself.' };
+      return { ok:true, value:u.href };
+    }
+
+    return { ok:false, msg:'This has to be a Spotify link (it starts with open.spotify.com).' };
+  }
+
+  var VALIDATORS = {
+    link:    { input:'#linkInput',    key:'link',    check:checkSpotify },
+    name:    { input:'#nameInput',    key:'name',    check:function(v){ v = v.trim(); return v.length < 2 ? {ok:false, msg:'Enter your artist name.'} : {ok:true, value:v}; } },
+    email:   { input:'#emailInput',   key:'email',   check:function(v){ v = v.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? {ok:true, value:v} : {ok:false, msg:'Enter a valid email address.'}; } },
+    title:   { input:'#titleInput',   key:'title',   check:function(v){ v = v.trim(); return v ? {ok:true, value:v} : {ok:false, msg:'Enter the song title.'}; } },
+    country: { input:'#countryInput', key:'country', check:function(v){ v = v.trim(); return v.length < 2 ? {ok:false, msg:'Tell us where you are based.'} : {ok:true, value:v}; } },
+    social:  { input:'#socialInput',  key:'social',  check:function(v){
+      v = v.trim();
+      if(!v) return { ok:true, value:'' };
+      v = v.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[\/?].*$/, '').replace(/^@/, '');
+      if(!/^[A-Za-z0-9._]{1,30}$/.test(v)) return { ok:false, msg:'Use just your handle, like @444music_playlist.' };
+      return { ok:true, value:'@' + v };
+    } }
+  };
+
+  function handleNext(step){
+    if(step === 'photo'){
+      if(!photo){ setError('photo', 'Please choose a photo to continue.'); return; }
+      setError('photo', '');
+      advance('photo');
+      return;
+    }
+    var cfg = VALIDATORS[step];
+    var input = $(cfg.input);
+    var res = cfg.check(input.value);
+    if(!res.ok){ setError(step, res.msg, input); input.focus(); return; }
+    setError(step, '', input);
+    data[cfg.key] = res.value;
+    input.value = res.value;
+    advance(step);
+  }
+
+  document.querySelectorAll('[data-next]').forEach(function(btn){
+    btn.addEventListener('click', function(){ handleNext(btn.dataset.next); });
+  });
+
+  Object.keys(VALIDATORS).forEach(function(step){
+    var input = $(VALIDATORS[step].input);
+    input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); handleNext(step); } });
+    input.addEventListener('input', function(){ setError(step, '', input); });
+  });
+
+  /* ---------- Song out? ---------- */
+
+  document.querySelectorAll('[data-choice]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      go(btn.dataset.choice === 'yes' ? 'link' : 'no');
+    });
+  });
+  $('#changeAnswer').addEventListener('click', back);
+
+  /* ---------- Genre ---------- */
+
+  var genreList = $('#genreList');
+  GENRES.forEach(function(g){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'choice';
+    b.textContent = g;
+    b.addEventListener('click', function(){
+      data.genre = g;
+      genreList.querySelectorAll('.choice').forEach(function(c){ c.classList.toggle('selected', c === b); });
+      setTimeout(function(){ advance('genre'); }, 220);
+    });
+    genreList.appendChild(b);
+  });
+
+  /* ---------- Photo ---------- */
+
+  var photoBox = $('#photoBox');
+  var photoInput = $('#photoInput');
+  var photoImg = $('#photoImg');
+  var photoChange = $('#photoChange');
+
+  function openPicker(){ photoInput.click(); }
+  photoBox.addEventListener('click', openPicker);
+  photoBox.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openPicker(); } });
+  photoChange.addEventListener('click', openPicker);
+
+  function loadImage(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){ URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("We couldn't read that file. Please use a JPG or PNG photo.")); };
+      img.src = url;
+    });
+  }
+
+  async function preparePhoto(file){
+    if(!/^image\//.test(file.type)) throw new Error('Please choose an image file (JPG or PNG).');
+    var img = await loadImage(file);
+    var w = img.naturalWidth, h = img.naturalHeight;
+
+    if(Math.min(w, h) < 800) throw new Error('This photo is too small. Use a high-quality photo at least 800 pixels on its shortest side.');
+    if(w > h * 1.05) throw new Error('Please upload a portrait photo, one that is taller than it is wide.');
+
+    var scale = Math.min(1, 1800 / Math.max(w, h));
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.round(w * scale);
+    canvas.height = Math.round(h * scale);
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    var quality = 0.9, blob;
+    do {
+      blob = await new Promise(function(r){ canvas.toBlob(r, 'image/jpeg', quality); });
+      quality -= 0.1;
+    } while(blob && blob.size > 3 * 1024 * 1024 && quality > 0.5);
+
+    if(!blob) throw new Error("We couldn't process that photo. Please try another one.");
+    return { blob: blob, url: URL.createObjectURL(blob) };
+  }
+
+  photoInput.addEventListener('change', async function(){
+    var file = photoInput.files && photoInput.files[0];
+    if(!file) return;
+    setError('photo', '');
+    try {
+      var result = await preparePhoto(file);
+      if(photo) URL.revokeObjectURL(photo.url);
+      photo = result;
+      photoImg.src = photo.url;
+      photoBox.classList.add('has-photo');
+      photoChange.hidden = false;
     } catch(err){
-      formError.classList.add('show');
+      setError('photo', err.message);
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.classList.remove('is-loading');
+      photoInput.value = '';
     }
   });
 
-  followBtn.addEventListener('click', () => modalOverlay.classList.remove('show'));
+  /* ---------- Review ---------- */
+
+  var reviewList = $('#reviewList');
+
+  function buildReview(){
+    reviewList.textContent = '';
+    var rows = [
+      ['Photo', 'photo'],
+      ['Spotify link', 'link'],
+      ['Artist name', 'name'],
+      ['Email', 'email'],
+      ['Song title', 'title'],
+      ['Genre', 'genre'],
+      ['Based in', 'country'],
+      ['Instagram', 'social']
+    ];
+
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'review-row';
+
+      var label = document.createElement('div');
+      label.className = 'review-label';
+      label.textContent = r[0];
+
+      var value = document.createElement('div');
+      value.className = 'review-value';
+
+      if(r[1] === 'photo'){
+        if(photo){
+          var img = document.createElement('img');
+          img.className = 'review-thumb';
+          img.src = photo.url;
+          img.alt = 'Your photo';
+          value.appendChild(img);
+        }
+      } else if(data[r[1]]){
+        value.textContent = data[r[1]];
+      } else {
+        value.textContent = 'Not provided';
+        value.classList.add('empty');
+      }
+
+      var edit = document.createElement('button');
+      edit.type = 'button';
+      edit.className = 'link-btn';
+      edit.textContent = 'Edit';
+      edit.setAttribute('aria-label', 'Edit ' + r[0].toLowerCase());
+      edit.addEventListener('click', function(){ editing = true; go(r[1]); });
+
+      row.appendChild(label);
+      row.appendChild(value);
+      row.appendChild(edit);
+      reviewList.appendChild(row);
+    });
+  }
+
+  /* ---------- Send ---------- */
+
+  var sendBtn = $('#sendBtn');
+  var sendError = $('#sendError');
+
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist'; }
+
+  sendBtn.addEventListener('click', async function(){
+    sendError.textContent = '';
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending…';
+
+    try {
+      var fd = new FormData();
+      fd.append('_subject', 'New song submission: ' + data.title + ' by ' + data.name);
+      fd.append('_captcha', 'false');
+      fd.append('_template', 'table');
+      fd.append('Artist Name', data.name);
+      fd.append('email', data.email);
+      fd.append('Song Title', data.title);
+      fd.append('Genre', data.genre);
+      fd.append('Spotify Link', data.link);
+      fd.append('Country', data.country);
+      fd.append('Instagram', data.social || 'Not provided');
+      fd.append('Photo', photo.blob, slug(data.name) + '-portrait.jpg');
+
+      var response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: fd
+      });
+      var result = await response.json().catch(function(){ return null; });
+
+      if(response.ok && result && String(result.success) !== 'false'){
+        stack = [];
+        current = 'done';
+        render();
+      } else {
+        sendError.textContent = 'Something went wrong sending your song. Please try again.';
+      }
+    } catch(err){
+      sendError.textContent = 'Something went wrong sending your song. Check your connection and try again.';
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send song';
+    }
+  });
+
+  render();
+})();
 </script>
 
 </body>
