@@ -973,7 +973,48 @@ var sendBtn = $('#sendBtn');
 
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist'; }
 
-  sendBtn.addEventListener('click', function(){
+ sendBtn.addEventListener('click', async function(){
+  sendError.textContent = '';
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+
+  try {
+    var fd = new FormData();
+    fd.append('_subject', 'New song submission: ' + data.title + ' by ' + data.name);
+    fd.append('_captcha', 'false');
+    fd.append('_template', 'table');
+    fd.append('Platform', platform === 'audiomack' ? 'Audiomack' : 'Spotify');
+    fd.append('Artist Name', data.name);
+    fd.append('email', data.email);
+    fd.append('Song Title', data.title);
+    fd.append('Genre', data.genre);
+    fd.append('Song Link', data.link);
+    fd.append('Country', data.country);
+    fd.append('Instagram', data.social || 'Not provided');
+
+    var response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: fd
+    });
+    var result = await response.json().catch(function(){ return null; });
+
+    if(response.ok && result && String(result.success) !== 'false'){
+      stack = [];
+      current = 'done';
+      render();
+    } else {
+      sendError.textContent = 'Something went wrong sending your song. Please try again.';
+    }
+  } catch(err){
+    sendError.textContent = 'Something went wrong sending your song. Check your connection and try again.';
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send song';
+  }
+});
+
+sendBtn.addEventListener('click-iframe', function(){
   sendError.textContent = '';
   if(!photo){ sendError.textContent = 'Please add your photo before sending.'; return; }
   sendBtn.disabled = true;
