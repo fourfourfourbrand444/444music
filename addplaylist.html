@@ -6,15 +6,14 @@
 <title>Listen Now</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Circular+Std:wght@400;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --spotify-green: #1DB954;
     --spotify-black: #191414;
     --spotify-white: #FFFFFF;
     --spotify-light-gray: #B3B3B3;
-    --audiomack-orange: #FFA500;
-    --boomplay-blue: #0066FF;
+    --audiomack-orange: #FFA200;
   }
 
   * {
@@ -25,7 +24,7 @@
 
   body {
     min-height: 100vh;
-    font-family: 'Montserrat', 'Circular Std', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background: var(--spotify-black);
     display: flex;
     align-items: center;
@@ -44,7 +43,6 @@
     z-index: 0;
   }
 
-  /* Multi-layer filter overlay for Spotify mood */
   .bg-stage::before {
     content: '';
     position: absolute;
@@ -58,7 +56,6 @@
     z-index: 1;
   }
 
-  /* Bottom vignette / fade */
   .bg-stage::after {
     content: '';
     position: absolute;
@@ -91,7 +88,6 @@
     width: 100%;
   }
 
-  /* Spotify-style logo mark at top */
   .brand-mark {
     margin-bottom: 6px;
     animation: fadeDown 0.7s ease both;
@@ -132,7 +128,6 @@
     color: var(--spotify-light-gray);
   }
 
-  /* Divider line */
   .divider {
     width: 48px;
     height: 2px;
@@ -140,32 +135,6 @@
     border-radius: 2px;
     margin-bottom: 4px;
     animation: fadeIn 0.7s 0.2s ease both;
-  }
-
-  /* Separator for submit section */
-  .section-sep {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: fadeIn 0.7s 0.6s ease both;
-  }
-
-  .section-sep::before,
-  .section-sep::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255,255,255,0.12);
-  }
-
-  .section-sep span {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    white-space: nowrap;
   }
 
   /* Buttons */
@@ -208,7 +177,6 @@
     transform: scale(0.97);
   }
 
-  /* Icon wrapper */
   .btn-icon {
     width: 36px;
     height: 36px;
@@ -270,70 +238,23 @@
 
   /* Audiomack button */
   .btn-audiomack {
-    background: #FF6600;
-    color: #fff;
-    box-shadow: 0 6px 36px rgba(255,102,0,0.35), 0 2px 8px rgba(0,0,0,0.4);
+    background: var(--audiomack-orange);
+    color: #000;
+    box-shadow: 0 6px 36px rgba(255,162,0,0.35), 0 2px 8px rgba(0,0,0,0.4);
     animation: fadeUp 0.6s 0.42s ease both;
   }
 
   .btn-audiomack:hover {
-    box-shadow: 0 10px 48px rgba(255,102,0,0.5), 0 2px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 48px rgba(255,162,0,0.5), 0 2px 12px rgba(0,0,0,0.5);
   }
 
+  /* Dark disc so the official orange logo stays visible on the orange button */
   .btn-audiomack .btn-icon {
-    background: rgba(0,0,0,0.15);
+    background: #000;
   }
 
-  /* Boomplay button */
-  .btn-boomplay {
-    background: #fff;
-    color: #111;
-    box-shadow: 0 6px 36px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.4);
-    animation: fadeUp 0.6s 0.54s ease both;
-  }
-
-  .btn-boomplay:hover {
-    box-shadow: 0 10px 48px rgba(255,255,255,0.28), 0 2px 12px rgba(0,0,0,0.5);
-  }
-
-  .btn-boomplay .btn-icon {
-    background: rgba(0,0,0,0.07);
-  }
-
-  .btn-boomplay .btn-label span.service {
-    opacity: 0.5;
-    color: #333;
-  }
-
-  /* Submit Song button */
-  .btn-submit {
-    background: linear-gradient(135deg, #2a1a4e 0%, #1a0e3a 100%);
-    color: #fff;
-    border: 1.5px solid rgba(168, 100, 255, 0.45);
-    box-shadow: 0 6px 36px rgba(140, 60, 255, 0.28), 0 2px 8px rgba(0,0,0,0.5);
-    animation: fadeUp 0.6s 0.72s ease both;
-  }
-
-  .btn-submit:hover {
-    box-shadow: 0 10px 48px rgba(140, 60, 255, 0.48), 0 2px 12px rgba(0,0,0,0.6);
-    border-color: rgba(168, 100, 255, 0.75);
-  }
-
-  .btn-submit .btn-icon {
-    background: rgba(140, 60, 255, 0.22);
-  }
-
-  .btn-submit .btn-label span.service {
-    color: rgba(200, 160, 255, 0.8);
-    opacity: 1;
-  }
-
-  .btn-submit .btn-label span.action {
-    color: #fff;
-  }
-
-  .btn-submit .btn-arrow {
-    color: rgba(180, 130, 255, 0.85);
+  .btn-audiomack .btn-icon svg {
+    display: block;
   }
 
   /* Footer */
@@ -363,7 +284,6 @@
     to { opacity: 1; }
   }
 
-  /* Pulse glow on spotlight */
   @keyframes glow-pulse {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 0.8; }
@@ -391,7 +311,6 @@
 
 <div class="container">
 
-  <!-- Music note / brand icon -->
   <div class="brand-mark">
     <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="22" cy="22" r="22" fill="#1DB954"/>
@@ -425,61 +344,14 @@
   <!-- Audiomack -->
   <a class="btn btn-audiomack" href="aim2.html" target="_blank" rel="noopener">
     <div class="btn-icon">
-      <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="12" fill="none"/>
-        <rect x="10" y="50" width="10" height="35" rx="5" fill="white"/>
-        <rect x="26" y="30" width="10" height="55" rx="5" fill="white"/>
-        <rect x="42" y="15" width="10" height="70" rx="5" fill="white"/>
-        <rect x="58" y="30" width="10" height="55" rx="5" fill="white"/>
-        <rect x="74" y="45" width="10" height="40" rx="5" fill="white" opacity="0.85"/>
-        <circle cx="89" cy="20" r="7" fill="white" opacity="0.6"/>
+      <!-- Audiomack logo -->
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Audiomack">
+        <path fill="#FFA200" d="M.331 11.378s.5418-.089.765.1439c.2234.2332.077.7156-.2195.7237-.2965.01-.5705.063-.765-.1439-.1946-.2066-.1424-.6218.2195-.7237m5.881 3.2925c-.0522.01-.1075-.018-.164-.059-.3884-.5413-.5287-2.3923-.707-2.5025-.185-.1144-.8545 1.0255-2.1862.903-.5569-.051-1.1236-.4121-1.4573-.662.031-.4206.0364-1.4027.8659-1.0833.5038.1939 1.3667.7266 2.1245-.23.8378-1.0579 1.2999-.7506 1.577-.5206.2771.23.0925 1.4259.5058 1.0916.4133-.3343 2.082-2.4103 2.082-2.4103s1.292-1.303 1.4898.067c.1979 1.3698 1.0403 2.8877 1.2635 2.8445.2234-.043 2.8223-5.3253 3.1945-5.666.3722-.3409 1.6252-.2961 1.5657.5781-.0596.8742-.1871 6.308-.1871 6.308s-.147 1.5311.0924.7128c.0992-.3392.206-.6453.3392-1.0024.6414-2.0534 1.734-5.5613 2.2784-7.3688.1252-.4325.233-.8037.3166-1.0891l.0001-.0008a3.5925 3.5925 0 0 1 .0973-.3305c.0455-.1532.0763-.2546.0858-.2813.0243-.068.0925-.1192.1884-.157.0962-.061.1995-.064.3165-.067.3021-.027.6907.012 1.0401.1119.1018 0 .2125.037.3172.1118v.0001s.0063 0 .0151.01c.0023 0 .0048 0 .0073.01.0219.015.0573.045.0983.095.0012 0 .0025 0 .004.01.017.021.0341.045.0515.073.1952.2863.315.814.1948 1.7498-.2996 2.3354-.5316 7.1397-.5316 7.1397s-.0461.2298.4353-.782c.0167-.035.0383-.066.058-.098.026-.017.0552-.042.0913-.085.2974-.3546 1.0968-.5629 1.6512-.5586.2336.028.4293.087.5462.1609.2188.333.0897 1.562.0897 1.562-.4612.043-1.3403.2908-1.6519.3366-.3118.046-.7852 2.0699-1.4433 1.8629-.6581-.2069-2.1246-1.1268-2.1246-1.2533 0-.1102.1152-1.4546.1453-1.8016.0022-.024.004-.046.0058-.068a.152.152 0 0 1 .0014-.014l-.0002.0003c.0213-.2733.0023-.3927-.1239-.1199-.1086.2346-.581 1.7359-1.1078 3.3709-.0556.1429-1.0511 3.1558-1.1818 3.5231-.156.4261-.287.7523-.3776.921-.1378.1867-.3234.3036-.5826.2252-.6465-.1954-1.4654-1.0889-1.473-1.3106-.0155-1.2503.0608-7.973-.2423-7.4127-.311.5744-2.73 4.5608-2.73 4.5608-.0405.01-.0705.01-.1062.01-.1712-.019-.4366-.074-.51-.2384-.004-.01-.0094-.018-.0129-.028-.0035-.01-.0075-.022-.0135-.04-.0329-.1097-.0463-.2289-.0753-.3265-.1082-.3652-.2813-.8886-.463-1.421-.2784-.9079-.5654-1.8366-.6127-1.9391-.0923-.2007-.2268-.116-.3475-.0002-.54.458-1.6868 2.4793-2.7225 2.5898"/>
       </svg>
     </div>
     <div class="btn-label">
       <span class="service">Add to</span>
       <span class="action">Audiomack Playlist</span>
-    </div>
-    <span class="btn-arrow">→</span>
-  </a>
-
-  <!-- Boomplay -->
-  <a class="btn btn-boomplay" href="aim3.html" target="_blank" rel="noopener">
-    <div class="btn-icon">
-      <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="44" fill="none" stroke="#E6002D" stroke-width="10"/>
-        <circle cx="50" cy="50" r="18" fill="#E6002D"/>
-        <polygon points="44,42 44,58 60,50" fill="white"/>
-      </svg>
-    </div>
-    <div class="btn-label">
-      <span class="service">Add to </span>
-      <span class="action">Boomplay Playlist</span>
-    </div>
-    <span class="btn-arrow" style="color:#333;">→</span>
-  </a>
-
-  <!-- Section separator -->
-  <div class="section-sep">
-    <span>Need a Distribution?</span>
-  </div>
-
-  <!-- Submit My Song -->
-  <a class="btn btn-submit" href="index.html">
-    <div class="btn-icon">
-      <!-- Upload / music note submit icon -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Music note base -->
-        <path d="M9 18V6l12-2v12" stroke="rgba(200,160,255,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Upload arrow on the note stem area -->
-        <circle cx="6" cy="18" r="3" stroke="rgba(200,160,255,0.9)" stroke-width="1.8"/>
-        <circle cx="18" cy="16" r="3" stroke="rgba(200,160,255,0.9)" stroke-width="1.8"/>
-        <!-- Small upload spark -->
-        <path d="M20.5 5L22 3.5M17.5 4L17 2M22 7L23.5 7" stroke="rgba(200,160,255,0.6)" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div class="btn-label">
-      <span class="service">Want to</span>
-      <span class="action">Distribute Your Song</span>
     </div>
     <span class="btn-arrow">→</span>
   </a>
