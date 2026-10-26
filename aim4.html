@@ -972,6 +972,25 @@ var sendBtn = $('#sendBtn');
   var sendError = $('#sendError');
 
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'artist'; }
+    var CLOUD_NAME    = 'dlbgqtvqg';
+  var UPLOAD_PRESET = 'glmamp2y';
+
+  async function uploadPhoto(blob){
+    var up = new FormData();
+    up.append('file', blob, slug(data.name) + '-portrait.jpg');
+    up.append('upload_preset', UPLOAD_PRESET);
+    up.append('tags', '444music-artist');
+
+    var res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+      method: 'POST',
+      body: up
+    });
+    var json = await res.json().catch(function(){ return null; });
+    if(!res.ok || !json || !json.secure_url){
+      throw new Error('Photo upload failed');
+    }
+    return json.secure_url;
+  }
 
  sendBtn.addEventListener('click', async function(){
   sendError.textContent = '';
@@ -988,7 +1007,9 @@ var sendBtn = $('#sendBtn');
     fd.append('email', data.email);
     fd.append('Song Title', data.title);
     fd.append('Genre', data.genre);
-    fd.append('Song Link', data.link);
+        fd.append('Song Link', data.link);
+    var photoUrl = await uploadPhoto(photo.blob);
+    fd.append('Artist Photo', photoUrl);
     fd.append('Country', data.country);
     fd.append('Instagram', data.social || 'Not provided');
 
