@@ -1,808 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Song Takedown Request — 444Music Distribution</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Song takedown — 444Music</title>
 <style>
-
-/* ── COLORS: #0a0a0a (black), #f0f0f0 (white/text), #ef4444 (red accent) ── */
-
 :root {
-  --black:   #0a0a0a;
-  --black2:  #111111;
-  --black3:  #161616;
-  --black4:  #1e1e1e;
-  --black5:  #252525;
-  --border:  rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --red:     #ef4444;
-  --red-dim: rgba(239,68,68,0.08);
-  --red-mid: rgba(239,68,68,0.16);
-  --white:   #f0f0f0;
-  --white2:  #a0a0a0;
-  --white3:  #606060;
+  --bg: #000000;
+  --s1: #1c1c1e;
+  --sep: rgba(84,84,88,0.55);
+  --fill: rgba(120,120,128,0.24);
+  --t2: rgba(235,235,245,0.60);
+  --t3: rgba(235,235,245,0.32);
+  --red: #ff453a;
+  --green: #30d158;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Roboto, Arial, sans-serif;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
+html, body { height: 100%; background: var(--bg); }
 body {
-  background: var(--black);
-  color: var(--white);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
+  font-family: var(--font); color: #fff; letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;
+  overflow: hidden; -webkit-tap-highlight-color: transparent;
 }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; touch-action: manipulation; }
 
-/* noise overlay */
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px;
-}
+.app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; }
+.bar { display: flex; align-items: center; justify-content: space-between; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 12px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; transition: transform .3s var(--ease), opacity .2s ease; }
+.icon-btn:active { transform: scale(0.92); }
+.icon-btn:disabled { opacity: 0.3; }
+.icon-btn svg { width: 18px; height: 18px; }
+.count { font-size: 13px; color: var(--t2); font-variant-numeric: tabular-nums; }
+.bar-gap { width: 36px; }
+.progress { height: 3px; margin: 0 16px; background: var(--fill); border-radius: 2px; overflow: hidden; }
+.progress i { display: block; height: 100%; width: 100%; background: #fff; transform-origin: left; transform: scaleX(0); transition: transform .5s var(--ease); }
+.app.finished .bar, .app.finished .progress { display: none; }
 
-/* ── NAV ── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 48px; height: 64px;
-  background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 10px;
-  text-decoration: none;
-}
-.nav-logo-icon {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: var(--red);
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 13px;
-  box-shadow: 0 0 16px rgba(239,68,68,0.4);
-}
-.nav-logo-text {
-  font-family: 'Sora', sans-serif; font-weight: 700;
-  font-size: 15px; color: var(--white);
-}
-.nav-links { display: flex; align-items: center; gap: 4px; }
-.nav-link {
-  text-decoration: none; color: var(--white2);
-  font-size: 13px; font-weight: 500;
-  padding: 6px 14px; border-radius: 7px; transition: all .2s;
-}
-.nav-link:hover { color: var(--white); background: var(--black3); }
-.nav-support {
-  display: flex; align-items: center; gap: 7px;
-  text-decoration: none; font-size: 13px; font-weight: 600;
-  color: var(--white2); padding: 7px 16px; border-radius: 8px;
-  border: 1px solid var(--border2); transition: all .2s;
-}
-.nav-support:hover { color: var(--white); border-color: rgba(255,255,255,0.22); }
+.stage { position: relative; flex: 1; overflow: hidden; }
+.step { position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 7vh 24px calc(36px + env(safe-area-inset-bottom, 0px)); }
+.step-in { max-width: 440px; margin: 0 auto; }
+.step.in-first { animation: rise .7s var(--ease) both; }
+.step.in-fwd  { animation: inFwd .45s var(--ease) both; }
+.step.in-back { animation: inBack .45s var(--ease) both; }
+.step.out-fwd  { animation: outFwd .26s ease both; pointer-events: none; }
+.step.out-back { animation: outBack .26s ease both; pointer-events: none; }
+@keyframes rise   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes inFwd  { from { opacity: 0; transform: translateX(44px); }  to { opacity: 1; transform: none; } }
+@keyframes inBack { from { opacity: 0; transform: translateX(-44px); } to { opacity: 1; transform: none; } }
+@keyframes outFwd  { to { opacity: 0; transform: translateX(-44px); } }
+@keyframes outBack { to { opacity: 0; transform: translateX(44px); } }
 
-/* ── SCROLL PROGRESS ── */
-.progress {
-  position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
-  background: var(--red); width: 0%;
-  box-shadow: 0 0 8px rgba(239,68,68,0.6);
-  transition: width .1s linear;
+.q { font-size: clamp(26px, 7vw, 32px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.15; }
+.hint { font-size: 16px; color: var(--t2); margin-top: 8px; line-height: 1.45; }
+.field { margin-top: 28px; }
+.input {
+  display: block; width: 100%; height: 56px; padding: 0 16px; border: 0; border-radius: 14px;
+  background: var(--s1); font-size: 17px; outline: none;
+  box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .2s ease;
 }
+.input:focus { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.5); }
+.input::placeholder { color: var(--t3); }
+.input[aria-invalid="true"] { box-shadow: inset 0 0 0 1.5px var(--red); }
+textarea.input { height: auto; min-height: 132px; padding: 14px 16px; resize: none; line-height: 1.45; }
+.err { color: var(--red); font-size: 14px; margin: 10px 4px 0; line-height: 1.4; }
+.err:empty { display: none; }
 
-/* ── HERO ── */
-.hero {
-  position: relative; overflow: hidden;
-  padding: 80px 48px 64px;
-  border-bottom: 1px solid var(--border);
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; height: 54px; margin-top: 24px; border-radius: 999px;
+  background: #fff; color: #000; font-size: 17px; font-weight: 600;
+  transition: transform .3s var(--ease), opacity .2s ease;
 }
-.hero-glow {
-  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
-  width: 500px; height: 300px; pointer-events: none;
-  background: radial-gradient(ellipse, rgba(239,68,68,0.08) 0%, transparent 70%);
-}
-.hero-inner {
-  max-width: 720px; margin: 0 auto; position: relative; z-index: 1;
-}
-.hero-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--red-dim); border: 1px solid rgba(239,68,68,0.2);
-  color: #f87171; font-size: 11px; font-weight: 700;
-  letter-spacing: .12em; text-transform: uppercase;
-  padding: 5px 13px; border-radius: 99px; margin-bottom: 22px;
-  animation: fadeUp .5s ease both;
-}
-.hero h1 {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(28px, 4.5vw, 46px);
-  font-weight: 800; line-height: 1.1;
-  letter-spacing: -1px; color: var(--white);
-  margin-bottom: 16px;
-  animation: fadeUp .5s .08s ease both;
-}
-.hero h1 span { color: var(--red); }
-.hero-sub {
-  font-size: 15px; color: var(--white2); line-height: 1.75;
-  max-width: 560px; margin-bottom: 36px;
-  animation: fadeUp .5s .16s ease both;
-}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+.btn.danger { background: var(--red); color: #fff; }
+.btn.busy { opacity: 1; pointer-events: none; }
+.spin { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* timeline strip */
-.timeline {
-  display: flex; gap: 0; align-items: stretch;
-  background: var(--black3); border: 1px solid var(--border);
-  border-radius: 14px; overflow: hidden;
-  animation: fadeUp .5s .24s ease both;
-}
-.tl-step {
-  flex: 1; padding: 18px 20px;
-  border-right: 1px solid var(--border);
-  position: relative;
-}
-.tl-step:last-child { border-right: none; }
-.tl-num {
-  font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700;
-  color: var(--red); letter-spacing: .1em; text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.tl-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
-.tl-sub { font-size: 11.5px; color: var(--white3); line-height: 1.5; }
+.list { background: var(--s1); border-radius: 14px; overflow: hidden; margin-top: 28px; }
+.opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 54px; padding: 10px 16px; font-size: 17px; text-align: left; transition: background-color .15s ease; }
+.opt + .opt { border-top: 0.5px solid var(--sep); }
+.opt:active { background: rgba(255,255,255,0.08); }
+.opt small { display: block; font-size: 13px; color: var(--t2); margin-top: 1px; }
+.opt svg { width: 20px; height: 20px; flex-shrink: 0; opacity: 0; transform: scale(0.6); transition: opacity .2s ease, transform .3s var(--ease); }
+.opt[aria-checked="true"] svg { opacity: 1; transform: none; }
 
-/* warning strip */
-.warn-strip {
-  display: flex; align-items: flex-start; gap: 14px;
-  background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.18);
-  border-radius: 12px; padding: 16px 20px;
-  margin-top: 20px;
-  animation: fadeUp .5s .3s ease both;
-}
-.warn-strip i { color: var(--red); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-.warn-strip p { font-size: 13px; color: var(--white2); line-height: 1.7; }
-.warn-strip p strong { color: var(--white); }
+.rrow { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; width: 100%; padding: 13px 16px; text-align: left; transition: background-color .15s ease; }
+.rrow + .rrow { border-top: 0.5px solid var(--sep); }
+.rrow:active { background: rgba(255,255,255,0.08); }
+.rk { font-size: 15px; color: var(--t2); flex-shrink: 0; }
+.rv { font-size: 15px; text-align: right; min-width: 0; word-break: break-word; }
+.warn { margin-top: 16px; padding: 13px 15px; border-radius: 14px; background: rgba(255,69,58,0.12); font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.9); }
+.warn strong { color: var(--red); font-weight: 600; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 12px; padding: 13px 16px; background: var(--s1); border-radius: 14px; font-size: 15px; line-height: 1.4; cursor: pointer; }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.sw { position: relative; width: 51px; height: 31px; flex-shrink: 0; border-radius: 999px; background: #3a3a3c; transition: background-color .25s ease; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform .3s var(--ease); }
+.toggle input:checked + .sw { background: var(--green); }
+.toggle input:checked + .sw::after { transform: translateX(20px); }
+.toggle input:focus-visible + .sw { outline: 2px solid #fff; outline-offset: 3px; }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.done { text-align: center; padding-top: 10vh; }
+.tick { width: 84px; height: 84px; margin: 0 auto 26px; border-radius: 50%; background: rgba(48,209,88,0.16); display: flex; align-items: center; justify-content: center; animation: pop .6s var(--ease) both; }
+.tick svg { width: 40px; height: 40px; }
+.tick path { stroke-dasharray: 30; stroke-dashoffset: 30; animation: draw .5s ease .35s forwards; }
+@keyframes pop  { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.done .hint { max-width: 320px; margin-left: auto; margin-right: auto; }
 
-/* ── MAIN LAYOUT ── */
-.page-body {
-  max-width: 1040px; margin: 0 auto;
-  padding: 60px 48px 100px;
-  display: grid; grid-template-columns: 1fr 360px; gap: 40px;
-  align-items: start;
+@media (hover: hover) and (pointer: fine) {
+  .opt:hover, .rrow:hover { background: rgba(255,255,255,0.05); }
+  .icon-btn:hover { background: rgba(120,120,128,0.36); }
 }
-
-/* ── FORM CARD ── */
-.form-card {
-  background: var(--black2); border: 1px solid var(--border);
-  border-radius: 20px; overflow: hidden;
-  animation: fadeUp .5s .1s ease both;
-}
-.form-card-header {
-  padding: 28px 32px 24px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 14px;
-}
-.form-header-icon {
-  width: 42px; height: 42px; border-radius: 11px;
-  background: var(--red-dim); border: 1px solid rgba(239,68,68,0.2);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--red); font-size: 16px;
-}
-.form-header-text h2 {
-  font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700;
-  color: var(--white); margin-bottom: 2px;
-}
-.form-header-text p { font-size: 12.5px; color: var(--white3); }
-
-form { padding: 32px; }
-
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-.field { margin-bottom: 20px; }
-.field label {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 11.5px; font-weight: 600; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--white2); margin-bottom: 8px;
-}
-.field label i { font-size: 10px; color: var(--white3); }
-
-.field input,
-.field select,
-.field textarea {
-  width: 100%;
-  background: var(--black3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 15px;
-  color: var(--white); font-family: 'DM Sans', sans-serif;
-  font-size: 14px; outline: none;
-  transition: border-color .2s, box-shadow .2s;
-  appearance: none;
-}
-.field input::placeholder,
-.field textarea::placeholder { color: var(--white3); }
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: rgba(239,68,68,0.5);
-  box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
-}
-.field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23606060' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
-.field select option { background: var(--black3); }
-.field textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
-
-/* confirm check */
-.confirm-check {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--black3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px; margin-bottom: 24px;
-  cursor: pointer; transition: border-color .2s;
-}
-.confirm-check:hover { border-color: var(--border2); }
-.confirm-check input[type=checkbox] {
-  width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px;
-  accent-color: var(--red); cursor: pointer;
-  background: transparent; border: none; padding: 0;
-}
-.confirm-check span {
-  font-size: 13px; color: var(--white2); line-height: 1.6;
-}
-.confirm-check strong { color: var(--white); }
-
-/* hidden fields */
-input[name="_captcha"],
-input[name="_next"] { display: none; }
-
-.submit-btn {
-  width: 100%; padding: 15px; border: none; border-radius: 11px;
-  background: var(--red); color: #fff;
-  font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
-  letter-spacing: .04em; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 9px;
-  transition: all .2s;
-  box-shadow: 0 4px 24px rgba(239,68,68,0.3);
-}
-.submit-btn:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(239,68,68,0.45);
-}
-.submit-btn:active { transform: translateY(0); }
-.submit-btn i { font-size: 14px; }
-
-.form-note {
-  text-align: center; font-size: 12px; color: var(--white3);
-  margin-top: 14px; line-height: 1.6;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.form-note i { font-size: 11px; }
-
-/* ── SIDEBAR ── */
-.sidebar { display: flex; flex-direction: column; gap: 16px; }
-
-.info-card {
-  background: var(--black2); border: 1px solid var(--border);
-  border-radius: 16px; padding: 22px;
-  animation: fadeUp .5s ease both;
-}
-.info-card-header {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
-}
-.info-card-icon {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: var(--black4); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; color: var(--white2);
-}
-.info-card-header h3 {
-  font-family: 'Sora', sans-serif; font-size: 13.5px;
-  font-weight: 700; color: var(--white);
-}
-
-/* timeline vertical */
-.vtl { display: flex; flex-direction: column; gap: 0; }
-.vtl-item {
-  display: flex; gap: 14px; padding-bottom: 18px;
-  position: relative;
-}
-.vtl-item:last-child { padding-bottom: 0; }
-.vtl-item:not(:last-child)::before {
-  content: '';
-  position: absolute; left: 13px; top: 28px;
-  width: 1px; height: calc(100% - 10px);
-  background: var(--border);
-}
-.vtl-dot {
-  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-  background: var(--black4); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; color: var(--white3); position: relative; z-index: 1;
-}
-.vtl-item.active .vtl-dot { background: var(--red-dim); border-color: rgba(239,68,68,0.3); color: var(--red); }
-.vtl-body { padding-top: 3px; }
-.vtl-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
-.vtl-sub { font-size: 12px; color: var(--white3); line-height: 1.55; }
-.vtl-badge {
-  display: inline-block; font-size: 10px; font-weight: 700;
-  letter-spacing: .07em; text-transform: uppercase;
-  padding: 2px 8px; border-radius: 99px; margin-top: 4px;
-  background: var(--red-dim); color: #f87171;
-  border: 1px solid rgba(239,68,68,0.2);
-}
-
-/* stats row in sidebar */
-.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-box {
-  background: var(--black3); border: 1px solid var(--border);
-  border-radius: 11px; padding: 14px;
-}
-.stat-box strong {
-  display: block; font-family: 'Sora', sans-serif;
-  font-size: 22px; font-weight: 800; color: var(--white); margin-bottom: 3px;
-}
-.stat-box span { font-size: 11px; color: var(--white3); }
-
-/* what happens list */
-.what-list { display: flex; flex-direction: column; gap: 10px; }
-.what-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 12.5px; color: var(--white2); line-height: 1.55;
-}
-.what-item i { font-size: 11px; color: var(--white3); margin-top: 2px; flex-shrink: 0; }
-
-/* ── TRUST BAR ── */
-.trust-bar {
-  border-top: 1px solid var(--border);
-  background: var(--black2);
-  padding: 40px 48px;
-}
-.trust-inner {
-  max-width: 1040px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-}
-.trust-item {
-  display: flex; align-items: flex-start; gap: 14px;
-}
-.trust-icon {
-  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
-  background: var(--black3); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; color: var(--white2);
-}
-.trust-text h4 {
-  font-family: 'Sora', sans-serif; font-size: 13.5px;
-  font-weight: 700; color: var(--white); margin-bottom: 4px;
-}
-.trust-text p { font-size: 12.5px; color: var(--white3); line-height: 1.6; }
-
-/* ── FOOTER ── */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 24px 48px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap;
-}
-.footer-left {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--white3);
-}
-.footer-left i { font-size: 11px; }
-.footer-right { font-size: 12px; color: var(--white3); }
-
-/* ── SUCCESS OVERLAY ── */
-.success-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-  display: none; align-items: center; justify-content: center; padding: 24px;
-}
-.success-overlay.show { display: flex; }
-.success-box {
-  background: var(--black2); border: 1px solid var(--border);
-  border-radius: 22px; padding: 48px 44px;
-  max-width: 440px; width: 100%; text-align: center;
-  animation: popIn .35s ease;
-}
-@keyframes popIn {
-  from { opacity: 0; transform: scale(.93); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.success-icon-wrap {
-  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 22px;
-  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
-  display: flex; align-items: center; justify-content: center;
-  color: #4ade80; font-size: 26px;
-}
-.success-box h2 {
-  font-family: 'Sora', sans-serif; font-size: 22px;
-  font-weight: 800; color: var(--white); margin-bottom: 10px;
-}
-.success-box p {
-  font-size: 14px; color: var(--white2); line-height: 1.75; margin-bottom: 28px;
-}
-.success-steps {
-  display: flex; flex-direction: column; gap: 10px;
-  text-align: left; margin-bottom: 28px;
-}
-.s-step {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--black3); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  font-size: 13px; color: var(--white2);
-}
-.s-step i { font-size: 12px; color: var(--white3); flex-shrink: 0; }
-.success-close {
-  width: 100%; padding: 13px; border-radius: 10px; border: none;
-  background: var(--black3); border: 1px solid var(--border2);
-  color: var(--white); font-family: 'Sora', sans-serif;
-  font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s;
-}
-.success-close:hover { background: var(--black4); }
-
-/* ── RESPONSIVE ── */
-@media(max-width: 900px) {
-  nav { padding: 0 20px; }
-  .nav-links { display: none; }
-  .hero { padding: 50px 20px 48px; }
-  .timeline { flex-direction: column; }
-  .tl-step { border-right: none; border-bottom: 1px solid var(--border); }
-  .tl-step:last-child { border-bottom: none; }
-  .page-body { grid-template-columns: 1fr; padding: 36px 20px 80px; gap: 28px; }
-  .form-row { grid-template-columns: 1fr; }
-  form { padding: 22px 20px; }
-  .form-card-header { padding: 20px; }
-  .trust-bar { padding: 32px 20px; }
-  .trust-inner { grid-template-columns: 1fr; gap: 16px; }
-  footer { padding: 20px; flex-direction: column; align-items: flex-start; }
-  .sidebar { order: -1; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; }
 }
 </style>
 </head>
 <body>
 
-<div class="progress" id="progress"></div>
-
-<!-- SUCCESS OVERLAY -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-box">
-    <div class="success-icon-wrap">
-      <i class="fa-solid fa-circle-check"></i>
-    </div>
-    <h2>Request Submitted</h2>
-    <p>Your takedown request has been received and logged. Here is what happens next:</p>
-    <div class="success-steps">
-      <div class="s-step">
-        <i class="fa-solid fa-envelope"></i>
-        Confirmation email sent to your address within 1 hour
-      </div>
-      <div class="s-step">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        Our team reviews your request within 24–72 hours
-      </div>
-      <div class="s-step">
-        <i class="fa-solid fa-tower-broadcast"></i>
-        Takedown sent to all DSPs — removal takes 2–3 weeks
-      </div>
-    </div>
-    <button class="success-close" onclick="document.getElementById('successOverlay').classList.remove('show')">
-      <i class="fa-solid fa-xmark" style="margin-right:7px"></i>Close
+<div class="app" id="app">
+  <div class="bar">
+    <button class="icon-btn" id="backBtn" type="button" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
+    <span class="count" id="count" aria-live="polite"></span>
+    <span class="bar-gap"></span>
   </div>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <main class="stage" id="stage"></main>
 </div>
-
-<!-- NAV -->
-<nav>
-  <a href="home.html" class="nav-logo">
-    <div class="nav-logo-icon"><i class="fa-solid fa-music"></i></div>
-    <span class="nav-logo-text">444Music</span>
-  </a>
-  <div class="nav-links">
-    <a href="home.html" class="nav-link">Home</a>
-    <a href="wey.html" class="nav-link">Dashboard</a>
-    <a href="tools.html" class="nav-link">Tools</a>
-  </div>
-  <a href="support.html" class="nav-support">
-    <i class="fa-solid fa-headset"></i> Support
-  </a>
-</nav>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <div class="hero-tag">
-      <i class="fa-solid fa-trash-can"></i>
-      Release Removal
-    </div>
-    <h1>Song Takedown<br><span>Request</span></h1>
-    <p class="hero-sub">
-      Submit a formal request to permanently remove your release from all digital streaming platforms worldwide. All requests are reviewed by our distribution team before being actioned.
-    </p>
-
-    <!-- timeline strip -->
-    <div class="timeline">
-      <div class="tl-step">
-        <div class="tl-num">Step 01</div>
-        <div class="tl-title">Submit Request</div>
-        <div class="tl-sub">Complete the form with your release details and reason</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">Step 02</div>
-        <div class="tl-title">Team Review</div>
-        <div class="tl-sub">Our team verifies and approves within 24–72 hours</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">Step 03</div>
-        <div class="tl-title">DSP Notification</div>
-        <div class="tl-sub">Takedown requests sent to all connected stores</div>
-      </div>
-      <div class="tl-step">
-        <div class="tl-num">Step 04</div>
-        <div class="tl-title">Full Removal</div>
-        <div class="tl-sub">Track removed from all platforms within 2–3 weeks</div>
-      </div>
-    </div>
-
-    <div class="warn-strip">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <p>
-        <strong>This action is irreversible.</strong> Once your release is removed from all stores, it cannot be reinstated under the same ISRC or release date. Please confirm that all pending royalties have been collected and analytics have been saved before proceeding.
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE BODY -->
-<div class="page-body">
-
-  <!-- FORM -->
-  <div class="form-card">
-    <div class="form-card-header">
-      <div class="form-header-icon"><i class="fa-solid fa-file-signature"></i></div>
-      <div class="form-header-text">
-        <h2>Takedown Submission Form</h2>
-        <p>All fields marked with an asterisk are required</p>
-      </div>
-    </div>
-
-    <form action="https://formsubmit.co/fourfourfourbrand444@gmail.com" method="POST" id="takedownForm">
-      <input type="hidden" name="_captcha" value="false"/>
-      <input type="hidden" name="_subject" value="New Song Takedown Request — 444Music"/>
-      <input type="hidden" name="_template" value="table"/>
-
-      <div class="form-row">
-        <div class="field">
-          <label><i class="fa-solid fa-user"></i> Artist Name *</label>
-          <input type="text" name="artist_name" placeholder="Your artist name" required/>
-        </div>
-        <div class="field">
-          <label><i class="fa-solid fa-music"></i> Song Title *</label>
-          <input type="text" name="song_title" placeholder="Title of the release" required/>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label><i class="fa-solid fa-envelope"></i> Email Address *</label>
-          <input type="email" name="email" placeholder="your@email.com" required/>
-        </div>
-        <div class="field">
-          <label><i class="fa-solid fa-hashtag"></i> Release / UPC / ISRC</label>
-          <input type="text" name="release_id" placeholder="Optional but recommended"/>
-        </div>
-      </div>
-
-      <div class="field">
-        <label><i class="fa-solid fa-list"></i> Reason for Takedown *</label>
-        <select name="reason" required>
-          <option value="">Select a reason</option>
-          <option value="Copyright Issue">Copyright Issue or Dispute</option>
-          <option value="Wrong Version Uploaded">Wrong Version Uploaded</option>
-          <option value="Switching Distributor">Switching to Another Distributor</option>
-          <option value="Contract Expired">Contract or Agreement Expired</option>
-          <option value="Label Request">Label or Management Request</option>
-          <option value="Personal Request">Personal / Artist Decision</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label><i class="fa-solid fa-globe"></i> Platforms to Remove From *</label>
-        <select name="platforms" required>
-          <option value="">Select scope</option>
-          <option value="All Platforms">All Platforms (Recommended)</option>
-          <option value="Spotify Only">Spotify Only</option>
-          <option value="Apple Music Only">Apple Music Only</option>
-          <option value="YouTube Music Only">YouTube Music Only</option>
-          <option value="Specific Platforms">Specific Platforms (Specify Below)</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label><i class="fa-solid fa-pen-to-square"></i> Additional Details</label>
-        <textarea name="details" placeholder="Provide any additional context, specific platform names, or special instructions for our team..."></textarea>
-      </div>
-
-      <label class="confirm-check">
-        <input type="checkbox" name="confirmed" required/>
-        <span>I confirm that I am the <strong>rightful owner or authorized representative</strong> of this release, and I understand that this takedown request is <strong>permanent and cannot be reversed</strong> once processed.</span>
-      </label>
-
-      <button type="submit" class="submit-btn">
-        <i class="fa-solid fa-paper-plane"></i>
-        Submit Takedown Request
-      </button>
-
-      <p class="form-note">
-        <i class="fa-solid fa-lock"></i>
-        Submissions are encrypted and reviewed only by the 444Music distribution team
-      </p>
-    </form>
-  </div>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-
-    <!-- Processing timeline -->
-    <div class="info-card" style="animation-delay:.15s">
-      <div class="info-card-header">
-        <div class="info-card-icon"><i class="fa-solid fa-clock"></i></div>
-        <h3>Processing Timeline</h3>
-      </div>
-      <div class="vtl">
-        <div class="vtl-item active">
-          <div class="vtl-dot"><i class="fa-solid fa-check"></i></div>
-          <div class="vtl-body">
-            <div class="vtl-title">Request Received</div>
-            <div class="vtl-sub">Immediate confirmation email sent</div>
-          </div>
-        </div>
-        <div class="vtl-item">
-          <div class="vtl-dot"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="vtl-body">
-            <div class="vtl-title">Internal Review</div>
-            <div class="vtl-sub">Verified by our distribution team</div>
-            <div class="vtl-badge">24–72 hours</div>
-          </div>
-        </div>
-        <div class="vtl-item">
-          <div class="vtl-dot"><i class="fa-solid fa-tower-broadcast"></i></div>
-          <div class="vtl-body">
-            <div class="vtl-title">Sent to DSPs</div>
-            <div class="vtl-sub">Takedown distributed to all platforms</div>
-          </div>
-        </div>
-        <div class="vtl-item">
-          <div class="vtl-dot"><i class="fa-solid fa-circle-xmark"></i></div>
-          <div class="vtl-body">
-            <div class="vtl-title">Full Removal</div>
-            <div class="vtl-sub">Track removed from all stores</div>
-            <div class="vtl-badge">2–3 weeks</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="info-card" style="animation-delay:.2s">
-      <div class="info-card-header">
-        <div class="info-card-icon"><i class="fa-solid fa-chart-bar"></i></div>
-        <h3>Service Stats</h3>
-      </div>
-      <div class="stat-row">
-        <div class="stat-box">
-          <strong>72h</strong>
-          <span>Max review time</span>
-        </div>
-        <div class="stat-box">
-          <strong>3 wks</strong>
-          <span>Full DSP removal</span>
-        </div>
-        <div class="stat-box">
-          <strong>150+</strong>
-          <span>Platforms covered</span>
-        </div>
-        <div class="stat-box">
-          <strong>100%</strong>
-          <span>Secure & private</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- What happens -->
-    <div class="info-card" style="animation-delay:.25s">
-      <div class="info-card-header">
-        <div class="info-card-icon"><i class="fa-solid fa-circle-info"></i></div>
-        <h3>What to Expect</h3>
-      </div>
-      <div class="what-list">
-        <div class="what-item">
-          <i class="fa-solid fa-circle-dot"></i>
-          A confirmation email will be sent to you within 1 hour of submission
-        </div>
-        <div class="what-item">
-          <i class="fa-solid fa-circle-dot"></i>
-          Individual stores process removals at different speeds — Spotify and Apple Music typically complete within 5–10 business days
-        </div>
-        <div class="what-item">
-          <i class="fa-solid fa-circle-dot"></i>
-          YouTube Content ID claims may take slightly longer to fully process
-        </div>
-        <div class="what-item">
-          <i class="fa-solid fa-circle-dot"></i>
-          Your ISRC is permanently retired and cannot be reused for a future release
-        </div>
-        <div class="what-item">
-          <i class="fa-solid fa-circle-dot"></i>
-          Any remaining royalties will still be paid out on the next payment cycle
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- TRUST BAR -->
-<div class="trust-bar">
-  <div class="trust-inner">
-    <div class="trust-item">
-      <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
-      <div class="trust-text">
-        <h4>Verified & Secure</h4>
-        <p>All takedown submissions are identity-verified and handled exclusively by our licensed distribution team.</p>
-      </div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-icon"><i class="fa-solid fa-globe"></i></div>
-      <div class="trust-text">
-        <h4>Global Coverage</h4>
-        <p>Takedowns are processed across 150+ digital stores and streaming platforms worldwide simultaneously.</p>
-      </div>
-    </div>
-    <div class="trust-item">
-      <div class="trust-icon"><i class="fa-solid fa-headset"></i></div>
-      <div class="trust-text">
-        <h4>Dedicated Support</h4>
-        <p>Our distribution support team is available to assist with any questions throughout the removal process.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-left">
-    <i class="fa-solid fa-music"></i>
-    444Music Distribution — All Rights Reserved
-  </div>
-  <div class="footer-right">© 2026 444Music Distribution</div>
-</footer>
 
 <script>
-// Scroll progress bar
-const progress = document.getElementById('progress');
-window.addEventListener('scroll', () => {
-  const s = window.scrollY;
-  const t = document.body.scrollHeight - window.innerHeight;
-  progress.style.width = (s / t * 100) + '%';
-});
+/* Where requests are emailed. FormSubmit's AJAX address; once the inbox is
+   confirmed you can swap the email for the private alias FormSubmit gives
+   you, so the address is not visible in this file. */
+var FORM_ENDPOINT = "https://formsubmit.co/ajax/fourfourfourbrand444@gmail.com";
+var HOME_URL = "home.html";
 
-// Form submit — intercept to show success overlay
-document.getElementById('takedownForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const form = this;
+var REASONS = [
+  "Copyright issue or dispute",
+  "Wrong version uploaded",
+  "Switching distributor",
+  "Agreement expired",
+  "Label or management request",
+  "Artist decision",
+  "Other"
+];
 
-  // Submit via fetch to formsubmit.co
-  const data = new FormData(form);
-  fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
-    .catch(() => {}) // formsubmit may not return JSON, that's fine
-    .finally(() => {
-      document.getElementById('successOverlay').classList.add('show');
-      form.reset();
+var A = { artist: "", title: "", upc: "", reason: "", scope: "", stores: "", email: "", details: "", confirm: false };
+
+var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+var DEFS = {
+  artist:  { q: "What’s your artist name?", hint: "The name shown on the release.", kind: "text", key: "artist", ph: "Artist name", ac: "name",
+             check: function (v) { return v ? "" : "Enter your artist name."; } },
+  title:   { q: "Which release should come down?", hint: "The song or album title, as it appears in stores.", kind: "text", key: "title", ph: "Release title", ac: "off",
+             check: function (v) { return v ? "" : "Enter the release title."; } },
+  upc:     { q: "What’s the UPC code?", hint: "Find it in My Releases, under Identifiers.", kind: "text", key: "upc", ph: "UPC code", ac: "off", mode: "numeric",
+             clean: function (v) { return v.replace(/[\s-]/g, ""); },
+             check: function (v) { return /^\d{12,14}$/.test(v) ? "" : "Enter the UPC code, 12 to 14 digits."; } },
+  reason:  { q: "Why are you removing it?", kind: "choice", key: "reason",
+             options: REASONS.map(function (r) { return { v: r, t: r }; }) },
+  scope:   { q: "Where should it be removed?", kind: "choice", key: "scope",
+             options: [ { v: "All stores", t: "All stores", s: "Recommended" }, { v: "Specific stores", t: "Specific stores", s: "You’ll name them next" } ] },
+  stores:  { q: "Which stores?", hint: "Type the store names, separated by commas.", kind: "text", key: "stores", ph: "Spotify, Boomplay", ac: "off",
+             check: function (v) { return v.length >= 2 ? "" : "Enter at least one store name."; } },
+  email:   { q: "What’s your email?", hint: "We’ll contact you here about this request.", kind: "text", key: "email", ph: "name@example.com", ac: "email", type: "email", mode: "email",
+             check: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? "" : "Enter a valid email address."; } },
+  details: { q: "Anything else we should know?", hint: "Optional.", kind: "area", key: "details", ph: "Add a note" },
+  review:  { kind: "review" }
+};
+
+var idx = 0, editing = false, sending = false, sent = false, renderedAt = 0;
+var stage = document.getElementById("stage");
+var backBtn = document.getElementById("backBtn");
+
+function stepList() {
+  var s = ["artist", "title", "upc", "reason", "scope"];
+  if (A.scope === "Specific stores") s.push("stores");
+  s.push("email", "details", "review");
+  return s;
+}
+function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function ready() { return Date.now() - renderedAt > 350; }   /* ignores accidental double taps right after a slide */
+
+function render(dir) {
+  var list = stepList(), name = list[idx], def = DEFS[name];
+  Array.prototype.forEach.call(stage.querySelectorAll(".step[data-old]"), function (n) { n.remove(); });
+  var old = stage.querySelector(".step");
+  var el = document.createElement("section");
+  el.className = "step in-" + (dir || "first");
+  el.setAttribute("aria-live", "polite");
+  el.innerHTML = '<div class="step-in">' + body(name, def) + "</div>";
+  if (old) {
+    old.setAttribute("data-old", "1");
+    old.className = "step out-" + (dir === "back" ? "back" : "fwd");
+    setTimeout(function () { if (old.parentNode) old.remove(); }, 300);
+  }
+  stage.appendChild(el);
+  renderedAt = Date.now();
+  document.getElementById("count").textContent = (idx + 1) + " of " + list.length;
+  document.getElementById("bar").style.transform = "scaleX(" + ((idx + 1) / list.length) + ")";
+  backBtn.disabled = sending;
+  wire(el, name, def);
+  if (dir) { setTimeout(function () { var f = el.querySelector("input[type=text],input[type=email],textarea"); if (f) f.focus({ preventScroll: true }); }, 380); }
+}
+
+function body(name, def) {
+  if (def.kind === "text" || def.kind === "area") {
+    var v = esc(A[def.key]);
+    var field = def.kind === "area"
+      ? '<textarea class="input" id="f" placeholder="' + esc(def.ph) + '" rows="4">' + v + "</textarea>"
+      : '<input class="input" id="f" type="' + (def.type || "text") + '" value="' + v + '" placeholder="' + esc(def.ph) + '" autocomplete="' + (def.ac || "off") + '"' +
+        (def.mode ? ' inputmode="' + def.mode + '"' : "") + ' autocapitalize="' + (def.type === "email" || def.mode ? "off" : "words") + '" spellcheck="false" enterkeyhint="next">';
+    return '<form id="stepForm" novalidate><h1 class="q">' + def.q + "</h1>" + (def.hint ? '<p class="hint">' + def.hint + "</p>" : "") +
+      '<div class="field">' + field + '<div class="err" id="err" role="alert"></div></div>' +
+      '<button class="btn" id="go" type="submit">' + (def.kind === "area" && !A.details ? "Skip" : "Continue") + "</button></form>";
+  }
+  if (def.kind === "choice") {
+    var opts = def.options.map(function (o) {
+      return '<button class="opt" type="button" role="radio" aria-checked="' + (A[def.key] === o.v) + '" data-v="' + esc(o.v) + '"><span>' + esc(o.t) +
+        (o.s ? "<small>" + esc(o.s) + "</small>" : "") + "</span>" + CHECK + "</button>";
+    }).join("");
+    return '<h1 class="q">' + def.q + '</h1><div class="list" role="radiogroup" aria-label="' + esc(def.q) + '">' + opts + "</div>";
+  }
+  var rows = [
+    ["Artist", "artist", A.artist], ["Release", "title", A.title], ["UPC", "upc", A.upc], ["Reason", "reason", A.reason],
+    ["Remove from", "scope", A.scope]
+  ];
+  if (A.scope === "Specific stores") rows.push(["Stores", "stores", A.stores]);
+  rows.push(["Email", "email", A.email]);
+  if (A.details) rows.push(["Note", "details", A.details]);
+  var rr = rows.map(function (r) { return '<button class="rrow" type="button" data-edit="' + r[1] + '"><span class="rk">' + r[0] + '</span><span class="rv">' + esc(r[2]) + "</span></button>"; }).join("");
+  return '<h1 class="q">Review your request</h1><div class="list">' + rr + "</div>" +
+    '<div class="warn"><strong>This can’t be undone.</strong> A removed release can’t be reinstated with the same ISRC or release date.</div>' +
+    '<label class="toggle"><span>I’m the owner or authorized representative of this release.</span><input type="checkbox" id="ok"' + (A.confirm ? " checked" : "") + '><span class="sw"></span></label>' +
+    '<div class="err" id="sendErr" role="alert"></div>' +
+    '<button class="btn danger" id="send" type="button"' + (A.confirm ? "" : " disabled") + ">Request takedown</button>";
+}
+
+function wire(el, name, def) {
+  if (def.kind === "text" || def.kind === "area") {
+    var f = el.querySelector("#f"), err = el.querySelector("#err"), go = el.querySelector("#go");
+    if (def.kind === "area") {
+      f.addEventListener("input", function () { go.textContent = f.value.trim() ? "Continue" : "Skip"; });
+    } else {
+      f.addEventListener("input", function () { f.removeAttribute("aria-invalid"); err.textContent = ""; });
+    }
+    el.querySelector("#stepForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!ready()) return;
+      var v = f.value.trim();
+      if (def.clean) v = def.clean(v);
+      var msg = def.check ? def.check(v) : "";
+      if (msg) { f.setAttribute("aria-invalid", "true"); err.textContent = msg; f.focus(); return; }
+      A[def.key] = v;
+      advance();
     });
+  } else if (def.kind === "choice") {
+    Array.prototype.forEach.call(el.querySelectorAll(".opt"), function (b) {
+      b.addEventListener("click", function () {
+        if (!ready()) return;
+        A[def.key] = b.getAttribute("data-v");
+        if (def.key === "scope" && A.scope !== "Specific stores") A.stores = "";
+        Array.prototype.forEach.call(el.querySelectorAll(".opt"), function (o) { o.setAttribute("aria-checked", o === b ? "true" : "false"); });
+        setTimeout(advance, 240);
+      });
+    });
+  } else {
+    var ok = el.querySelector("#ok"), send = el.querySelector("#send");
+    ok.addEventListener("change", function () { A.confirm = ok.checked; send.disabled = !ok.checked; });
+    send.addEventListener("click", submit);
+    Array.prototype.forEach.call(el.querySelectorAll(".rrow"), function (r) {
+      r.addEventListener("click", function () {
+        if (sending || !ready()) return;
+        editing = true;
+        idx = stepList().indexOf(r.getAttribute("data-edit"));
+        render("back");
+      });
+    });
+  }
+}
+
+function advance() {
+  var list = stepList();
+  if (editing) {
+    if (A.scope === "Specific stores" && !A.stores) { idx = list.indexOf("stores"); render("fwd"); return; }
+    editing = false;
+    idx = list.length - 1;
+    render("fwd");
+    return;
+  }
+  idx = Math.min(idx + 1, list.length - 1);
+  render("fwd");
+}
+
+backBtn.addEventListener("click", function () {
+  if (sending || sent) return;
+  if (idx === 0) { if (history.length > 1) history.back(); else location.href = HOME_URL; return; }
+  editing = false;
+  idx -= 1;
+  render("back");
 });
+
+function submit() {
+  if (sending || sent || !A.confirm) return;     /* one request only, however many times it's tapped */
+  sending = true;
+  var btn = document.getElementById("send"), err = document.getElementById("sendErr");
+  err.textContent = "";
+  btn.classList.add("busy");
+  btn.innerHTML = '<span class="spin"></span>Sending…';
+  backBtn.disabled = true;
+
+  var payload = {
+    _subject: "New Song Takedown Request — 444Music",
+    _template: "table",
+    _captcha: "false",
+    "Artist name": A.artist,
+    "Release title": A.title,
+    "UPC code": A.upc,
+    "Reason": A.reason,
+    "Remove from": A.scope === "Specific stores" ? "Specific stores: " + A.stores : "All stores",
+    email: A.email,
+    "Details": A.details || "None",
+    "Submitted": new Date().toISOString()
+  };
+
+  var ctrl = new AbortController();
+  var timer = setTimeout(function () { ctrl.abort(); }, 20000);
+
+  fetch(FORM_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload),
+    signal: ctrl.signal
+  }).then(function (res) {
+    return res.json().catch(function () { return {}; }).then(function (data) {
+      if (!res.ok || data.success === false || data.success === "false") {
+        console.error("Takedown send failed:", res.status, data);
+        throw new Error("rejected");
+      }
+    });
+  }).then(function () {
+    sent = true;
+    showDone();
+  }).catch(function (e) {
+    sending = false;
+    backBtn.disabled = false;
+    btn.classList.remove("busy");
+    btn.textContent = "Try again";
+    err.textContent = !navigator.onLine ? "You’re offline. Check your connection and try again."
+      : (e && e.name === "AbortError") ? "That took too long. Check your connection and try again."
+      : "We couldn’t send your request. Please try again in a moment.";
+  }).then(function () { clearTimeout(timer); });
+}
+
+function showDone() {
+  document.getElementById("app").classList.add("finished");
+  var old = stage.querySelector(".step");
+  var el = document.createElement("section");
+  el.className = "step in-first";
+  el.innerHTML = '<div class="step-in done"><div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
+    '<h1 class="q">Request sent</h1><p class="hint" id="doneMsg"></p>' +
+    '<a class="btn" href="' + HOME_URL + '" style="text-decoration:none">Done</a></div>';
+  if (old) old.remove();
+  stage.appendChild(el);
+  document.getElementById("doneMsg").textContent = "Our team will review it within 24–72 hours and contact you at " + A.email + ".";
+}
+
+render();
 </script>
 </body>
 </html>
