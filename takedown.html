@@ -142,6 +142,10 @@ textarea.input { height: auto; min-height: 132px; padding: 14px 16px; resize: no
    confirmed you can swap the email for the private alias FormSubmit gives
    you, so the address is not visible in this file. */
 var FORM_ENDPOINT = "https://formsubmit.co/ajax/fourfourfourbrand444@gmail.com";
+/* Email notification to the team. Get a free access key at web3forms.com
+   (enter the inbox that should receive requests; the key is emailed to you)
+   and paste it between the quotes. While it is empty, FormSubmit is used. */
+var WEB3FORMS_KEY = "";
 var HOME_URL = "home.html";
 
 var REASONS = [
@@ -321,9 +325,33 @@ function withTimeout(p, ms) {
     p.then(function (v) { clearTimeout(t); resolve(v); }, function (e) { clearTimeout(t); reject(e); });
   });
 }
-/* Email notification through FormSubmit. Sent as a plain form post, which
-   needs no CORS pre-check, so it is faster than the JSON version. */
-function sendMail(payload, ms) {
+/* FormSubmit version (used only while WEB3FORMS_KEY is empty). Sent as a plain
+   form post, which needs no CORS pre-check. */
+function sendMail(payload, ms) { return WEB3FORMS_KEY ? sendWeb3(payload, ms) : sendFormSubmit(payload, ms); }
+
+function sendWeb3(p, ms) {
+  var ctrl = new AbortController();
+  var t = setTimeout(function () { ctrl.abort(); }, ms);
+  var body = { access_key: WEB3FORMS_KEY, subject: p._subject, from_name: "444Music takedown page" };
+  Object.keys(p).forEach(function (k) { if (k.charAt(0) !== "_") body[k] = p[k]; });
+  return fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(body),
+    signal: ctrl.signal
+  }).then(function (res) {
+    return res.json().catch(function () { return {}; }).then(function (data) {
+      if (!res.ok || data.success === false) {
+        console.error("Takedown email failed (Web3Forms):", res.status, data);
+        var why = new Error("rejected");
+        why.detail = "HTTP " + res.status + (data && data.message ? " · " + data.message : "");
+        throw why;
+      }
+    });
+  }).then(function (v) { clearTimeout(t); return v; }, function (e) { clearTimeout(t); throw e; });
+}
+
+function sendFormSubmit(payload, ms) {
   var ctrl = new AbortController();
   var t = setTimeout(function () { ctrl.abort(); }, ms);
   return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: new URLSearchParams(payload), signal: ctrl.signal })
