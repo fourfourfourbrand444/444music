@@ -310,6 +310,36 @@ backBtn.addEventListener("click", function () {
   render("back");
 });
 
+function makeId() {
+  var c = "abcdefghjkmnpqrstuvwxyz23456789", r = "";
+  for (var i = 0; i < 8; i++) r += c.charAt(Math.floor(Math.random() * c.length));
+  return "td-" + Date.now().toString(36) + "-" + r;
+}
+function withTimeout(p, ms) {
+  return new Promise(function (resolve, reject) {
+    var t = setTimeout(function () { reject(new Error("timeout")); }, ms);
+    p.then(function (v) { clearTimeout(t); resolve(v); }, function (e) { clearTimeout(t); reject(e); });
+  });
+}
+/* Email notification through FormSubmit. Sent as a plain form post, which
+   needs no CORS pre-check, so it is faster than the JSON version. */
+function sendMail(payload, ms) {
+  var ctrl = new AbortController();
+  var t = setTimeout(function () { ctrl.abort(); }, ms);
+  return fetch(FORM_ENDPOINT, { method: "POST", headers: { "Accept": "application/json" }, body: new URLSearchParams(payload), signal: ctrl.signal })
+    .then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok || data.success === false || data.success === "false") {
+          console.error("Takedown email failed:", res.status, data);
+          var why = new Error("rejected");
+          why.detail = "HTTP " + res.status + (data && data.message ? " · " + data.message : "");
+          throw why;
+        }
+      });
+    })
+    .then(function (v) { clearTimeout(t); return v; }, function (e) { clearTimeout(t); throw e; });
+}
+
 function submit() {
   if (sending || sent || !A.confirm) return;     /* one request only, however many times it's tapped */
   sending = true;
@@ -319,10 +349,13 @@ function submit() {
   btn.innerHTML = '<span class="spin"></span>Sending…';
   backBtn.disabled = true;
 
+  if (!A.reqId) A.reqId = makeId();               /* same ID on every retry, so repeats can be spotted */
+  var record = { id: A.reqId, artist: A.artist, title: A.title, upc: A.upc, reason: A.reason, scope: A.scope, stores: A.stores, email: A.email, details: A.details, source: "takedown-page" };
   var payload = {
     _subject: "New Song Takedown Request — 444Music",
     _template: "table",
     _captcha: "false",
+    "Request ID": A.reqId,
     "Artist name": A.artist,
     "Release title": A.title,
     "UPC code": A.upc,
@@ -333,38 +366,35 @@ function submit() {
     "Submitted": new Date().toISOString()
   };
 
-  var ctrl = new AbortController();
-  var timer = setTimeout(function () { ctrl.abort(); }, 20000);
-
-  fetch(FORM_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(payload),
-    signal: ctrl.signal
-  }).then(function (res) {
-    return res.json().catch(function () { return {}; }).then(function (data) {
-      if (!res.ok || data.success === false || data.success === "false") {
-        console.error("Takedown send failed:", res.status, data);
-        var why = new Error("rejected");
-        why.detail = "HTTP " + res.status + (data && data.message ? " · " + data.message : "");
-        throw why;
+  /* 1) Save the request to the 444Music database (fast, and nothing is lost).
+     2) Email the team. Once the request is saved, the email goes in the
+        background and the artist doesn't have to wait for it. */
+  var stored = false;
+  var save = window.saveTakedown ? withTimeout(window.saveTakedown(A.reqId, record), 8000) : Promise.reject(new Error("storage unavailable"));
+  save.then(function () { stored = true; }, function (e) { console.warn("Takedown not saved to database:", e); })
+    .then(function () {
+      if (stored) {
+        sendMail(payload, 30000).catch(function (e) { console.warn("Takedown saved, email did not go out:", e); });
+        return;
       }
+      btn.innerHTML = '<span class="spin"></span>Still sending…';
+      return sendMail(payload, 45000);
+    })
+    .then(function () {
+      sent = true;
+      showDone();
+    })
+    .catch(function (e) {
+      sending = false;
+      backBtn.disabled = false;
+      btn.classList.remove("busy");
+      btn.textContent = "Try again";
+      err.textContent = !navigator.onLine ? "You’re offline. Check your connection and try again."
+        : (e && e.name === "AbortError") ? "That took too long. Check your connection and try again."
+        : "We couldn’t send your request. Please try again in a moment.";
+      var detail = (e && e.detail) || (e && e.name !== "AbortError" ? e.message : "");
+      if (detail) { var sm = document.createElement("small"); sm.textContent = detail; err.appendChild(sm); }
     });
-  }).then(function () {
-    sent = true;
-    showDone();
-  }).catch(function (e) {
-    sending = false;
-    backBtn.disabled = false;
-    btn.classList.remove("busy");
-    btn.textContent = "Try again";
-    err.textContent = !navigator.onLine ? "You’re offline. Check your connection and try again."
-      : (e && e.name === "AbortError") ? "That took too long. Check your connection and try again."
-      : "We couldn’t send your request. Please try again in a moment.";
-    /* small grey line with the technical reason, so a failure can be traced */
-    var detail = (e && e.detail) || (e && e.name !== "AbortError" ? e.message : "");
-    if (detail) { var sm = document.createElement("small"); sm.textContent = detail; err.appendChild(sm); }
-  }).then(function () { clearTimeout(timer); });
 }
 
 function showDone() {
@@ -381,6 +411,34 @@ function showDone() {
 }
 
 render();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain:        "usersubmissionsportal.firebaseapp.com",
+  projectId:         "usersubmissionsportal",
+  storageBucket:     "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+});
+const db = getFirestore(app);
+const auth = getAuth(app);
+let who = null;
+onAuthStateChanged(auth, (u) => { who = u; });
+
+/* Saves one takedown request. The document ID is the request ID, so a retry
+   overwrites the same request instead of creating a copy. */
+window.saveTakedown = (id, data) =>
+  setDoc(doc(db, "takedownRequests", id), Object.assign({}, data, {
+    uid: who ? who.uid : null,
+    status: "new",
+    createdAt: serverTimestamp()
+  }));
 </script>
 </body>
 </html>
