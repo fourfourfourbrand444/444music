@@ -68,6 +68,7 @@ button { cursor: pointer; border: 0; background: none; touch-action: manipulatio
 textarea.input { height: auto; min-height: 132px; padding: 14px 16px; resize: none; line-height: 1.45; }
 .err { color: var(--red); font-size: 14px; margin: 10px 4px 0; line-height: 1.4; }
 .err:empty { display: none; }
+.err small { display: block; margin-top: 4px; font-size: 12px; color: var(--t3); word-break: break-word; }
 
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -344,7 +345,9 @@ function submit() {
     return res.json().catch(function () { return {}; }).then(function (data) {
       if (!res.ok || data.success === false || data.success === "false") {
         console.error("Takedown send failed:", res.status, data);
-        throw new Error("rejected");
+        var why = new Error("rejected");
+        why.detail = "HTTP " + res.status + (data && data.message ? " · " + data.message : "");
+        throw why;
       }
     });
   }).then(function () {
@@ -358,6 +361,9 @@ function submit() {
     err.textContent = !navigator.onLine ? "You’re offline. Check your connection and try again."
       : (e && e.name === "AbortError") ? "That took too long. Check your connection and try again."
       : "We couldn’t send your request. Please try again in a moment.";
+    /* small grey line with the technical reason, so a failure can be traced */
+    var detail = (e && e.detail) || (e && e.name !== "AbortError" ? e.message : "");
+    if (detail) { var sm = document.createElement("small"); sm.textContent = detail; err.appendChild(sm); }
   }).then(function () { clearTimeout(timer); });
 }
 
