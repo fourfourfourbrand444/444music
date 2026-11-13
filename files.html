@@ -331,7 +331,7 @@ details.fold[open] summary::after { transform: rotate(45deg); }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </div>
       <div class="cover-empty-title">Add cover art</div>
-      <div class="cover-empty-sub">4000 × 4000 px, JPG</div>
+      <div class="cover-empty-sub">3000 × 3000 px, JPG</div>
     </div>
     <div class="cover-badge-top" id="coverBadge">Required</div>
     <div class="cover-change">Change</div>
@@ -598,7 +598,7 @@ async function checkCover(file) {
     const len = v.getUint16(p + 2);
     if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
       const h = v.getUint16(p + 5), w = v.getUint16(p + 7), comps = v.getUint8(p + 9);
-      if (w !== 4000 || h !== 4000) return `Cover art must be exactly 4000 × 4000 px. Yours is ${w} × ${h}.`;
+      if (w !== 3000 || h !== 3000) return `Cover art must be exactly 3000 × 3000 px. Yours is ${w} × ${h}.`;
       if (comps !== 3) return 'Cover art must be RGB. CMYK and grayscale images are not accepted.';
       return '';
     }
