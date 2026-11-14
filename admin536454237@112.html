@@ -1207,7 +1207,8 @@ import {
   where,
   orderBy,
   limit,
-  startAfter,
+    startAfter,
+  onSnapshot,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -1291,6 +1292,82 @@ async function fetchEditedReviewItems() {
 }
 // Partner needs the release date at least this many days ahead
 const PARTNER_MIN_DAYS = 7;
+const SHOW_AVVO_SEND = false; // set to true to show the Send to AVVO button again
+
+const partnerWatchers = {};
+const PARTNER_EST_MS = 180000; // estimated run time, 3 minutes
+
+function partnerProgressHtml(pct, text) {
+  return `<div class="avvo-box">
+    <div class="avvo-line">${escHtml(text)}</div>
+    <div style="height:8px;border-radius:4px;background:var(--input-bg);overflow:hidden;"><div style="height:100%;width:${pct}%;background:var(--green);"></div></div>
+    <div class="avvo-line" style="margin:6px 0 0;text-align:right;">${pct}%</div>
+  </div>`;
+}
+
+function partnerBoxHtml(item) {
+  const pu = item.partnerUpload || {};
+  const st = pu.status || '';
+  const can = (item.status || '').toLowerCase() === 'review' && isSubmissionPaid(item) && st !== 'running';
+  const cls = (st === 'failed' || st === 'needs_manual') ? 'avvo-failed' : (st ? 'avvo-sent' : '');
+  const line = st ? `Partner: ${st}${pu.message ? ' - ' + pu.message : ''}` : '';
+  const nm = item.artistName || 'Unknown Artist';
+  const tt = item.releaseTitle || item.songTitle || item.title || 'Untitled';
+  return `<div class="avvo-box ${cls}">
+    ${line ? `<div class="avvo-line">${escHtml(line)}</div>` : ''}
+    ${can ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(nm)}" data-title="${escHtml(tt)}">${st ? 'Retry Partner' : 'Send to Partner'}</button></div>` : ''}
+  </div>`;
+}
+
+function watchPartner(item, card, wire, resume) {
+  const slot = card.querySelector('.partner-slot');
+  if (!slot) return;
+  if (partnerWatchers[item.id]) partnerWatchers[item.id]();
+  const ms = (v) => (v && typeof v.toMillis === 'function') ? v.toMillis() : 0;
+  const baseline = resume ? 0 : ms((item.partnerUpload || {}).updatedAt);
+  const t0 = resume ? (ms((item.partnerUpload || {}).updatedAt) || Date.now()) : Date.now();
+  let pu = resume ? (item.partnerUpload || null) : null;
+  let stopped = false;
+  let timer = null;
+  let unsub = null;
+  const stop = () => {
+    stopped = true;
+    clearInterval(timer);
+    if (unsub) unsub();
+    delete partnerWatchers[item.id];
+  };
+  partnerWatchers[item.id] = stop;
+
+  const draw = () => {
+    if (stopped) return;
+    const elapsed = Date.now() - t0;
+    if (elapsed > 600000) {
+      slot.innerHTML = partnerProgressHtml(95, 'Taking longer than expected. Check GitHub Actions, then click Refresh.');
+      stop();
+      return;
+    }
+    const pct = (pu && typeof pu.progress === 'number')
+      ? Math.min(99, pu.progress)
+      : Math.min(95, Math.round(elapsed / PARTNER_EST_MS * 100));
+    slot.innerHTML = partnerProgressHtml(pct, pu ? (pu.message || 'Working...') : 'Starting... (GitHub is waking up)');
+  };
+  draw();
+  timer = setInterval(draw, 1000);
+
+  unsub = onSnapshot(doc(db, 'submissions', item.id), (snap) => {
+    if (stopped) return;
+    if (!snap.exists()) { stop(); return; }
+    const d = snap.data();
+    Object.assign(item, d);
+    const cur = d.partnerUpload || {};
+    if (ms(cur.updatedAt) <= baseline) return; // old status, script has not started yet
+    pu = cur;
+    if (cur.status === 'running') { draw(); return; }
+    stop();
+    slot.innerHTML = partnerBoxHtml(item);
+    wire(slot);
+  });
+}
 
 function partnerDateCheck(item) {
   const min = new Date();
@@ -1887,13 +1964,13 @@ function display(data) {
     const canAvvo    = statusKey === 'review' && isPaid;
         const resendable = ['returned', 'deleted'].includes(avvoStat.toLowerCase());
     const alreadySent = !!item.avvoReleaseId && !resendable;
-    const canSendAvvo = canAvvo && !alreadySent && avvoState !== 'sending';
+    const canSendAvvo = SHOW_AVVO_SEND && canAvvo && !alreadySent && avvoState !== 'sending';
     let avvoLine = '';
     if (avvoState === 'sending') avvoLine = 'Sending to AVVO…';
     else if (avvoState === 'sent') avvoLine = 'Sent to AVVO — status: ' + (avvoStat || 'moderation');
     else if (avvoState === 'failed') avvoLine = 'AVVO send failed: ' + (item.avvoLastError || 'unknown error');
     const avvoClass = avvoState === 'failed' ? 'avvo-failed' : (avvoState === 'sent' ? 'avvo-sent' : '');
-    const avvoHtml = (canAvvo || avvoState)
+    const avvoHtml = ((SHOW_AVVO_SEND && canAvvo) || avvoState)
       ? `<div class="avvo-box ${avvoClass}">
            ${avvoLine ? `<div class="avvo-line">${escHtml(avvoLine)}</div>` : ''}
            <div class="avvo-actions">
@@ -2009,7 +2086,7 @@ function display(data) {
        ${editUpcHtml}
       ${editSmartlinkHtml}
         ${avvoHtml}
-        ${partnerHtml}
+       <div class="partner-slot">${partnerHtml}</div>
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
@@ -2348,7 +2425,7 @@ function display(data) {
       });
     });
 
-    card.querySelectorAll('[data-partner]').forEach((btn) => {
+   const wirePartner = (root) => root.querySelectorAll('[data-partner]').forEach((btn) => {
       btn.addEventListener('click', async function() {
         const label = this.textContent;
         this.disabled = true;
@@ -2371,7 +2448,8 @@ function display(data) {
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-          toast('success', 'Started. Click Refresh in about 2 minutes to see the result.');
+          toast('success', 'Started. Watch the progress bar on the card.');
+          watchPartner(item, card, wirePartner, false);
         } catch (err) {
           toast('error', 'Partner: ' + err.message);
         } finally {
@@ -2380,6 +2458,9 @@ function display(data) {
         }
       });
     });
+
+    wirePartner(card);
+    if (puStatus === 'running') watchPartner(item, card, wirePartner, true);
 
     card.querySelector('.delete-btn').addEventListener('click', function() {
       openConfirm(this.dataset.id, this.dataset.name, this.dataset.title);
