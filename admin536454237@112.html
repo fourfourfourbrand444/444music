@@ -1292,6 +1292,7 @@ async function fetchEditedReviewItems() {
 }
 // Partner needs the release date at least this many days ahead
 const PARTNER_MIN_DAYS = 7;
+const AUTO_SUBMIT_PARTNER = true; // set true only after a clean test
 const PARTNER_ATTENTION = ['Rejected', 'Documents Needed', 'Action Needed', 'Takedown'];
 function needsPartnerAttention(item) {
   return PARTNER_ATTENTION.includes(item.partnerStatus || '') || !!item.partnerAlert;
@@ -2476,7 +2477,7 @@ function display(data) {
           const res = await fetch(`${BACKEND_URL}/api/submissions/send-to-partner`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-app-secret': APP_SECRET },
-            body: JSON.stringify({ submissionId: this.dataset.id, autoSubmit: false })
+            body: JSON.stringify({ submissionId: this.dataset.id, autoSubmit: AUTO_SUBMIT_PARTNER })
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
