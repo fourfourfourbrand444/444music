@@ -2433,12 +2433,12 @@ function display(data) {
           const chk = partnerDateCheck(item);
           let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to the partner?`;
           if (chk.needsShift) {
-            msg = `WARNING: the release date (${chk.from}) is less than ${PARTNER_MIN_DAYS} days away. It will be moved to ${chk.to} and saved on the release.\n\n` + msg;
+            msg = `WARNING: the release date (${chk.from}) is less than ${PARTNER_MIN_DAYS} days away. The partner copy will use ${chk.to}. The artist's date is not changed.\n\n` + msg;
           }
           if (!confirm(msg)) return;
           this.textContent = 'Sending…';
           if (chk.needsShift) {
-            const saved = await safeUpdate(this.dataset.id, { releaseDate: chk.to });
+           const saved = true;
             if (!saved) return;
           }
           const res = await fetch(`${BACKEND_URL}/api/submissions/send-to-partner`, {
