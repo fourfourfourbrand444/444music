@@ -1289,6 +1289,20 @@ async function fetchEditedReviewItems() {
     return [];
   }
 }
+// Partner needs the release date at least this many days ahead
+const PARTNER_MIN_DAYS = 7;
+
+function partnerDateCheck(item) {
+  const min = new Date();
+  min.setDate(min.getDate() + PARTNER_MIN_DAYS);
+  const pad = (n) => String(n).padStart(2, '0');
+  const minKey = `${min.getFullYear()}-${pad(min.getMonth() + 1)}-${pad(min.getDate())}`;
+  const raw = String(item.releaseDate || '').slice(0, 10);
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(raw);
+  if (valid && raw >= minKey) return { needsShift: false, from: raw, to: raw };
+  return { needsShift: true, from: valid ? raw : 'not set', to: minKey };
+}
+
 function isSubmissionPaid(item) {
   return item.paymentVerified === true || item.paid === 'Paid';
 }
@@ -1889,6 +1903,18 @@ function display(data) {
          </div>`
       : '';
 
+    const pu = item.partnerUpload || {};
+    const puStatus = pu.status || '';
+    const canPartner = statusKey === 'review' && isPaid && puStatus !== 'running';
+    const puClass = (puStatus === 'failed' || puStatus === 'needs_manual') ? 'avvo-failed' : (puStatus ? 'avvo-sent' : '');
+    const puLine = puStatus ? `Partner: ${puStatus}${pu.message ? ' - ' + pu.message : ''}` : '';
+    const partnerHtml = (canPartner || puStatus)
+      ? `<div class="avvo-box ${puClass}">
+           ${puLine ? `<div class="avvo-line">${escHtml(puLine)}</div>` : ''}
+           ${canPartner ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${puStatus ? 'Retry Partner' : 'Send to Partner'}</button></div>` : ''}
+         </div>`
+      : '';
+
     card.innerHTML = `
       <div class="card-select-box ${selectedIds.has(item.id) ? 'checked' : ''}" data-select-id="${item.id}">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1983,6 +2009,7 @@ function display(data) {
        ${editUpcHtml}
       ${editSmartlinkHtml}
         ${avvoHtml}
+        ${partnerHtml}
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           Delete Submission
@@ -2314,6 +2341,39 @@ function display(data) {
           }
         } catch (err) {
           toast('error', 'AVVO: ' + err.message);
+        } finally {
+          this.disabled = false;
+          this.textContent = label;
+        }
+      });
+    });
+
+    card.querySelectorAll('[data-partner]').forEach((btn) => {
+      btn.addEventListener('click', async function() {
+        const label = this.textContent;
+        this.disabled = true;
+        try {
+          const chk = partnerDateCheck(item);
+          let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to the partner?`;
+          if (chk.needsShift) {
+            msg = `WARNING: the release date (${chk.from}) is less than ${PARTNER_MIN_DAYS} days away. It will be moved to ${chk.to} and saved on the release.\n\n` + msg;
+          }
+          if (!confirm(msg)) return;
+          this.textContent = 'Sending…';
+          if (chk.needsShift) {
+            const saved = await safeUpdate(this.dataset.id, { releaseDate: chk.to });
+            if (!saved) return;
+          }
+          const res = await fetch(`${BACKEND_URL}/api/submissions/send-to-partner`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-app-secret': APP_SECRET },
+            body: JSON.stringify({ submissionId: this.dataset.id, autoSubmit: false })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+          toast('success', 'Started. Click Refresh in about 2 minutes to see the result.');
+        } catch (err) {
+          toast('error', 'Partner: ' + err.message);
         } finally {
           this.disabled = false;
           this.textContent = label;
