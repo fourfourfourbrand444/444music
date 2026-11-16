@@ -2434,7 +2434,7 @@ function display(data) {
             if (data) showAvvoPreview(data);
           } else {
             this.textContent = 'Checking…';
-            const pre = await avvoCall('GET', subId, 'preview');
+                        const pre = { sendable: true };
             if (!pre) return;
             if (!pre.sendable) { toast('error', 'AVVO: ' + pre.blockedReason); return; }
             let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to AVVO?`;
