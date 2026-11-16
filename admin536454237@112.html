@@ -1317,8 +1317,7 @@ async function fetchAttentionItems() {
     return [];
   }
 }
-const SHOW_AVVO_SEND = false; // set to true to show the Send to AVVO button again
-
+const SHOW_AVVO_SEND = true; // set to true to show the Send to AVVO button again
 const partnerWatchers = {};
 const PARTNER_EST_MS = 180000; // estimated run time, 3 minutes
 
@@ -1996,7 +1995,7 @@ function display(data) {
     const avvoStat   = item.avvoStatus || '';
     const canAvvo    = statusKey === 'review' && isPaid;
         const resendable = ['returned', 'deleted'].includes(avvoStat.toLowerCase());
-    const alreadySent = !!item.avvoReleaseId && !resendable;
+       const alreadySent = (!!item.avvoReleaseId || avvoState === 'sent') && !resendable;
     const canSendAvvo = SHOW_AVVO_SEND && canAvvo && !alreadySent && avvoState !== 'sending';
     let avvoLine = '';
     if (avvoState === 'sending') avvoLine = 'Sending to AVVO…';
