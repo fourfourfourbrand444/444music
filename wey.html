@@ -738,7 +738,7 @@ function renderTracklist(data) {
 
 const SMARTLINK_BASE = "https://444musicdistro.com/";
 function copySmartLink(slug) {
-  const url = SMARTLINK_BASE + slug;
+  const url = /^https?:/i.test(slug) ? slug : SMARTLINK_BASE + slug;
   navigator.clipboard.writeText(url).then(() => {
     showToast("SmartLink copied to clipboard!");
   }).catch(() => {
@@ -945,7 +945,7 @@ async function openMetaModal(releaseId) {
   const paid = isPaidValue(data.paid);
   const rejectionReasonHtml = (isRejected && data.rejectionReason && data.rejectionReason.trim())
     ? `<div class="meta-rejection-reason"><strong>Reason for rejection</strong>${escHtml(data.rejectionReason)}</div>` : '';
-  const smartSlug = data.smartLinkSlug ? String(data.smartLinkSlug) : '';
+   const smartSlug = data.partnerShareLink ? String(data.partnerShareLink) : (data.smartLinkSlug ? SMARTLINK_BASE + String(data.smartLinkSlug) : '');
   const feat = featuringDisplay(data);
 
   content.innerHTML = `
@@ -963,7 +963,7 @@ async function openMetaModal(releaseId) {
       </div>
       ${isApproved && smartSlug ? `
       <div class="meta-smartlink-row">
-        <a href="${escHtml(SMARTLINK_BASE + smartSlug)}" target="_blank" rel="noopener" class="meta-smartlink-link">${escHtml(SMARTLINK_BASE + smartSlug)}</a>
+               <a href="${escHtml(smartSlug)}" target="_blank" rel="noopener" class="meta-smartlink-link">${escHtml(smartSlug)}</a>
         <button type="button" class="meta-smartlink-copy" data-copy-slug="${escHtml(smartSlug)}" aria-label="Copy link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>
