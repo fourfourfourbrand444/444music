@@ -223,7 +223,31 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 @keyframes appleFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes appleArtworkIn { from { opacity: 0; transform: translateY(26px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (max-width: 480px) { .apple-tpl-inner { padding: 80px 24px 48px; } .apple-tpl-title { font-size: 1.5rem; } }
-
+/* ===== RELEASE BANNER ===== */
+.rb-overlay { position: fixed; inset: 0; z-index: 7000; background: rgba(0,0,0,0.8); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; overflow-y: auto; }
+.rb-overlay.open { opacity: 1; pointer-events: all; }
+.rb-close { position: fixed; top: 20px; right: 20px; z-index: 3; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: background-color 0.2s ease, transform 0.3s var(--ease); }
+.rb-close:hover { background: rgba(255,255,255,0.26); }
+.rb-close:active { transform: scale(0.92); }
+.rb-close svg { width: 14px; height: 14px; }
+.rb-card { --rbw: min(360px, calc(100vw - 40px), calc(92vh * 9 / 16)); --rb-top: #0b0b0b; --rb-bot: #d4af37; --rb-ink-top: #fff; --rb-ink-bot: #111; container-type: inline-size; width: var(--rbw); aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; position: relative; background: linear-gradient(180deg, var(--rb-top) 0%, var(--rb-top) 30%, var(--rb-bot) 62%, var(--rb-bot) 100%); box-shadow: 0 30px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: calc(var(--rbw) * 0.07) calc(var(--rbw) * 0.09) calc(var(--rbw) * 0.08); transform: translateY(20px) scale(0.97); transition: transform 0.6s var(--ease); }
+.rb-overlay.open .rb-card { transform: translateY(0) scale(1); }
+.rb-new { display: flex; flex-direction: column; align-items: center; gap: 4cqw; width: 100%; color: var(--rb-ink-top); }
+.rb-new i { display: block; width: 52%; height: 1px; background: currentColor; opacity: 0.35; }
+.rb-new span { font-size: 3.6cqw; font-weight: 600; letter-spacing: 0.34em; padding-left: 0.34em; }
+.rb-frame { width: 78%; background: #fff; padding: 2.2cqw; box-shadow: 0 6cqw 12cqw rgba(0,0,0,0.35); }
+.rb-frame img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #e8e6e0; }
+.rb-text { text-align: center; width: 100%; color: var(--rb-ink-bot); }
+.rb-title { font-size: 7.2cqw; font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rb-artist { font-size: 4.2cqw; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb-bottom { display: flex; flex-direction: column; align-items: center; gap: 3.4cqw; color: var(--rb-ink-bot); width: 100%; }
+.rb-status { font-size: 3.3cqw; font-weight: 700; letter-spacing: 0.3em; padding-left: 0.3em; text-align: center; }
+.rb-stores { display: flex; align-items: center; justify-content: center; gap: 8cqw; }
+.rb-stores svg { width: 10.5cqw; height: 10.5cqw; display: block; }
+.rb-logo { display: inline-flex; align-items: center; gap: 2cqw; background: #fff; border-radius: 2.4cqw; padding: 1.8cqw 3.2cqw; box-shadow: 0 2cqw 5cqw rgba(0,0,0,0.18); }
+.rb-logo img { height: 5.4cqw; width: auto; display: block; }
+.rb-logo span { font-size: 4cqw; font-weight: 700; color: #111; letter-spacing: -0.02em; }
+.rb-hint { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.4); pointer-events: none; }
 /* ===== META MODAL (sheet) ===== */
 .meta-overlay { position: fixed; inset: 0; z-index: 6000; background: rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
 .meta-overlay.open { opacity: 1; pointer-events: all; }
@@ -472,24 +496,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <span id="toastMsg">Done</span>
 </div>
 
-<!-- APPLE-STYLE SHOWCASE -->
-<div class="apple-tpl-overlay" id="appleTplOverlay" role="dialog" aria-modal="true">
-  <button type="button" class="apple-tpl-close" id="appleTplClose" aria-label="Close">
+<!-- RELEASE BANNER -->
+<div class="rb-overlay" id="rbOverlay" role="dialog" aria-modal="true">
+  <button type="button" class="rb-close" id="rbClose" aria-label="Close">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
-  <div class="apple-tpl-inner">
-    <div class="apple-tpl-status" id="appleTplStatus">Draft</div>
-    <div class="apple-tpl-title" id="appleTplTitle">Title <span class="apple-tpl-type">- Single</span></div>
-    <div class="apple-tpl-subtitle">Distributed by</div>
-    <div class="apple-tpl-distrib">
-      <img src="https://www.444musicdistro.com/black.png" alt="444Music">
-      <span>444Music</span>
+  <div class="rb-card" id="rbCard">
+    <div class="rb-new"><i></i><span>NEW RELEASE</span></div>
+    <div class="rb-frame"><img id="rbArt" src="" alt="Cover art"></div>
+    <div class="rb-text">
+      <div class="rb-title" id="rbTitle"></div>
+      <div class="rb-artist" id="rbArtist"></div>
     </div>
-    <div class="apple-tpl-artwork-wrap">
-      <img id="appleTplArtwork" src="" alt="Cover art">
+    <div class="rb-bottom">
+      <div class="rb-status" id="rbStatus"></div>
+      <div class="rb-stores" id="rbStores">
+        <svg viewBox="0 0 24 24" aria-label="Spotify"><circle cx="12" cy="12" r="12" fill="#1ED760"/><g transform="translate(3.6 3.6) scale(0.7)"><path fill="#111" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></g></svg>
+        <svg viewBox="0 0 24 24" aria-label="Apple Music"><path fill="#111" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+        <svg viewBox="0 0 24 24" aria-label="YouTube Music"><circle cx="12" cy="12" r="12" fill="#FF0000"/><circle cx="12" cy="12" r="7" fill="none" stroke="#fff" stroke-width="1.6"/><path fill="#fff" d="M10.2 8.6v6.8l5.4-3.4z"/></svg>
+      </div>
+      <div class="rb-logo"><img src="https://www.444musicdistro.com/black.png" alt="444Music"><span>444Music</span></div>
     </div>
-    <div class="apple-tpl-hint">Tap anywhere to view details</div>
   </div>
+  <div class="rb-hint">Tap anywhere to view details</div>
 </div>
 
 <div class="meta-overlay" id="metaOverlay" role="dialog" aria-modal="true">
@@ -718,49 +747,124 @@ window.copySmartLink = copySmartLink;
 /* ═══════════════════════════════════════════════════════
    APPLE-STYLE SHOWCASE
 ═══════════════════════════════════════════════════════ */
-const appleTplOverlay = document.getElementById('appleTplOverlay');
-const appleTplClose   = document.getElementById('appleTplClose');
+const rbOverlay = document.getElementById('rbOverlay');
+const rbClose   = document.getElementById('rbClose');
 let _appleTplPendingId = null;
 
-function openAppleTemplate(releaseId) {
+/* Luxury fallbacks [top, bottom] — no purple */
+const RB_FALLBACK = [
+  ['#0b0b0b', '#d4af37'], ['#111111', '#f2c230'], ['#4a4d50', '#efe6d2'], ['#0f3d2e', '#d4af37'],
+  ['#0b1d3a', '#efe6d2'], ['#3b2a1a', '#e8d9b5'], ['#1a1a1a', '#c9c9c4'], ['#12312b', '#e9dfc6']
+];
+function rbHex(r, g, b) { return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+function rbHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  let h = 0, s = 0;
+  if (d) {
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? ((g - b) / d + (g < b ? 6 : 0)) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+  }
+  return { h, s, l };
+}
+function rbFromHsl(h, s, l) {
+  const f = n => { const k = (n + h / 30) % 12, a = s * Math.min(l, 1 - l); return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); };
+  return rbHex(f(0) * 255, f(8) * 255, f(4) * 255);
+}
+function rbIsPurple(c) { const x = rbHsl(c.r, c.g, c.b); return x.s > 0.18 && x.h >= 250 && x.h <= 325; }
+function rbInk(l) { return l < 0.55 ? '#ffffff' : '#111111'; }
+
+/* Dominant colours from the artwork → [top, bottom] or null */
+function rbExtract(url) {
+  return new Promise(resolve => {
+    if (!url) return resolve(null);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onerror = () => resolve(null);
+    img.onload = () => {
+      try {
+        const cv = document.createElement('canvas'); cv.width = cv.height = 28;
+        const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0, 28, 28);
+        const px = cx.getImageData(0, 0, 28, 28).data, buckets = {};
+        for (let i = 0; i < px.length; i += 4) {
+          if (px[i + 3] < 200) continue;
+          const k = (px[i] >> 5) + '-' + (px[i + 1] >> 5) + '-' + (px[i + 2] >> 5);
+          const b = buckets[k] || (buckets[k] = { n: 0, r: 0, g: 0, b: 0 });
+          b.n++; b.r += px[i]; b.g += px[i + 1]; b.b += px[i + 2];
+        }
+        let list = Object.values(buckets).map(b => ({ n: b.n, r: b.r / b.n, g: b.g / b.n, b: b.b / b.n }))
+          .filter(c => !rbIsPurple(c)).sort((a, b) => b.n - a.n);
+        if (!list.length) return resolve(null);
+        const c1 = list[0];
+        const c2 = list.find(c => Math.abs(c.r - c1.r) + Math.abs(c.g - c1.g) + Math.abs(c.b - c1.b) > 120) || null;
+        let a = rbHsl(c1.r, c1.g, c1.b);
+        let b = c2 ? rbHsl(c2.r, c2.g, c2.b) : { h: a.h, s: Math.min(a.s, 0.35), l: 0.8 };
+        let dark = a.l <= b.l ? a : b, light = a.l <= b.l ? b : a;
+        dark = { h: dark.h, s: Math.min(dark.s, 0.8), l: Math.min(dark.l, 0.24) };
+        light = { h: light.h, s: Math.min(light.s, 0.8), l: Math.min(Math.max(light.l, 0.5), 0.84) };
+        if (light.l - dark.l < 0.3) light.l = Math.min(0.82, dark.l + 0.4);
+        resolve([rbFromHsl(dark.h, dark.s, dark.l), rbFromHsl(light.h, light.s, light.l), dark.l, light.l]);
+      } catch (e) { resolve(null); } /* CORS blocked → fallback */
+    };
+    img.src = url;
+  });
+}
+function rbHexLum(hex) { const n = parseInt(hex.slice(1), 16); return rbHsl(n >> 16, (n >> 8) & 255, n & 255).l; }
+
+async function openAppleTemplate(releaseId) {
   const data = window._releaseMeta[releaseId];
   if (!data) return;
   _appleTplPendingId = releaseId;
 
   const rawStatus   = (data.status || 'Pending').trim();
   const statusClass = rawStatus.toLowerCase().replace(/\s+/g, '-');
-  const statusEl    = document.getElementById('appleTplStatus');
-  if (statusClass === 'approved') {
-    statusEl.classList.add('hidden');
-  } else {
-    statusEl.classList.remove('hidden');
-    statusEl.textContent = statusDisplayLabel(rawStatus);
+  const stores = document.getElementById('rbStores');
+  let line = '', showStores = true;
+  if (statusClass === 'approved') line = 'OUT NOW ON';
+  else if (statusClass === 'review' || statusClass === 'in-review') line = 'COMING SOON TO';
+  else if (statusClass === 'pending') line = 'PAY TO GO LIVE ON';
+  else { line = statusDisplayLabel(rawStatus).toUpperCase(); showStores = false; }
+
+  document.getElementById('rbStatus').textContent = line;
+  stores.style.display = showStores ? '' : 'none';
+  document.getElementById('rbTitle').textContent  = data.releaseTitle || 'Untitled Release';
+  document.getElementById('rbArtist').textContent = data.artistName || 'Unknown Artist';
+  document.getElementById('rbArt').src = data.coverURL || '';
+
+  let pal = await Promise.race([rbExtract(data.coverURL), new Promise(r => setTimeout(() => r(null), 900))]);
+  if (_appleTplPendingId !== releaseId) return;
+  let top, bot, lt, lb;
+  if (pal) { top = pal[0]; bot = pal[1]; lt = pal[2]; lb = pal[3]; }
+  else {
+    const f = RB_FALLBACK[Math.floor(Math.random() * RB_FALLBACK.length)];
+    top = f[0]; bot = f[1]; lt = rbHexLum(top); lb = rbHexLum(bot);
   }
+  const card = document.getElementById('rbCard');
+  card.style.setProperty('--rb-top', top);
+  card.style.setProperty('--rb-bot', bot);
+  card.style.setProperty('--rb-ink-top', rbInk(lt));
+  card.style.setProperty('--rb-ink-bot', rbInk(lb));
 
-  document.getElementById('appleTplTitle').innerHTML = `${escHtml(data.releaseTitle || 'Untitled Release')} <span class="apple-tpl-type">- ${escHtml(data.releaseType || 'Single')}</span>`;
-  document.getElementById('appleTplArtwork').src = data.coverURL || '';
-
-  appleTplOverlay.classList.remove('animate');
-  void appleTplOverlay.offsetWidth;
-  appleTplOverlay.classList.add('open', 'animate');
+  rbOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeAppleTemplateAndProceed() {
-  appleTplOverlay.classList.remove('open', 'animate');
+  rbOverlay.classList.remove('open');
   const id = _appleTplPendingId;
   _appleTplPendingId = null;
   if (id) openMetaModal(id);
 }
 function closeAppleTemplateOnly() {
-  appleTplOverlay.classList.remove('open', 'animate');
+  rbOverlay.classList.remove('open');
   _appleTplPendingId = null;
   document.body.style.overflow = '';
 }
-appleTplOverlay.addEventListener('click', function(e) {
-  if (e.target === appleTplClose || appleTplClose.contains(e.target)) return;
+rbOverlay.addEventListener('click', function(e) {
+  if (e.target === rbClose || rbClose.contains(e.target)) return;
   closeAppleTemplateAndProceed();
 });
-appleTplClose.addEventListener('click', function(e) { e.stopPropagation(); closeAppleTemplateOnly(); });
+rbClose.addEventListener('click', function(e) { e.stopPropagation(); closeAppleTemplateOnly(); });
 
 /* === META MODAL === */
 window._releaseMeta = {};
