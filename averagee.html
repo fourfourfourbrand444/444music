@@ -359,7 +359,7 @@ select.credit-input.empty { color: var(--t3); }
       <label class="row"><span class="l">Explicit</span><div class="sel"><select id="explicit"><option>No</option><option>Yes</option></select></div></label>
       <label class="row"><span class="l">Release date</span><input id="releaseDate" type="date"></label>
     </div>
-    <p class="sf">Earliest date is 3 days from today. 7 days or more is recommended.</p>
+        <p class="sf">Earliest date is 5 days from today. 7 days or more is recommended.</p>
 
     <!-- SONG -->
     <div class="sh"><h2>Song</h2><span class="req">Required</span></div>
@@ -564,7 +564,7 @@ select.credit-input.empty { color: var(--t3); }
   <div class="rd-popup" role="alertdialog" aria-modal="true">
     <div class="rd-popup-body-wrap">
       <div class="rd-popup-title">Pick a later date?</div>
-     <div class="rd-popup-body">The earliest release date is 3 days from today. We recommend 7 days or more so stores have time to go live.</div>
+         <div class="rd-popup-body">The earliest release date is 5 days from today. We recommend 7 days or more so stores have time to go live.</div>
     </div>
     <div class="rd-popup-actions">
       <button type="button" id="rdPopupIgnore">Keep date</button>
@@ -614,7 +614,7 @@ select.credit-input.empty { color: var(--t3); }
   const dateInput = document.getElementById('releaseDate');
   const overlay   = document.getElementById('rdPopupOverlay');
   const MIN_DAYS  = 7;    // recommended
-const HARD_MIN  = 3;    // earliest allowed
+const HARD_MIN  = 5;    // earliest allowed
   function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   const earliest = new Date(); earliest.setHours(0, 0, 0, 0); earliest.setDate(earliest.getDate() + HARD_MIN);
   dateInput.min = ymd(earliest);   // the date picker greys out everything before this
@@ -1248,9 +1248,8 @@ function validate() {
 
   const releaseDate = document.getElementById("releaseDate").value;
    if (!releaseDate) return { msg: 'Please choose a release date.', scrollTo: 'releaseDate' };
- const minDate = new Date(); minDate.setHours(0, 0, 0, 0); minDate.setDate(minDate.getDate() + 3);
-  if (new Date(releaseDate + 'T00:00:00') < minDate) return { msg: 'The earliest release date is 3 days from today.', scrollTo: 'releaseDate' };
-
+ const minDate = new Date(); minDate.setHours(0, 0, 0, 0); minDate.setDate(minDate.getDate() + 5);
+   if (new Date(releaseDate + 'T00:00:00') < minDate) return { msg: 'The earliest release date is 5 days from today.', scrollTo: 'releaseDate' };
   const previouslyReleased  = window.getRadioValue('previouslyReleasedGroup');
   const previousReleaseDate = document.getElementById('previousReleaseDate').value;
   if (previouslyReleased === 'Yes' && !previousReleaseDate) {
