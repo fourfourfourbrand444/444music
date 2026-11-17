@@ -230,7 +230,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .rb-close:hover { background: rgba(255,255,255,0.26); }
 .rb-close:active { transform: scale(0.92); }
 .rb-close svg { width: 14px; height: 14px; }
-.rb-card { --rbw: min(360px, calc(100vw - 40px), calc(92vh * 9 / 16)); --rb-top: #0b0b0b; --rb-bot: #d4af37; --rb-ink-top: #fff; --rb-ink-bot: #111; container-type: inline-size; width: var(--rbw); aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; position: relative; background: linear-gradient(180deg, var(--rb-top) 0%, var(--rb-top) 30%, var(--rb-bot) 62%, var(--rb-bot) 100%); box-shadow: 0 30px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: calc(var(--rbw) * 0.07) calc(var(--rbw) * 0.09) calc(var(--rbw) * 0.08); transform: translateY(20px) scale(0.97); transition: transform 0.6s var(--ease); }
+.rb-overlay { padding: 0; }
+.rb-card { --rbw: min(100vw, 430px); --rb-top: #0b0b0b; --rb-bot: #d4af37; --rb-ink-top: #fff; --rb-ink-bot: #111; position: fixed; inset: 0; width: 100%; height: 100%; border-radius: 0; overflow: hidden; background: linear-gradient(180deg, var(--rb-top) 0%, var(--rb-top) 30%, var(--rb-bot) 62%, var(--rb-bot) 100%); display: flex; justify-content: center; transform: translateY(20px) scale(0.97); transition: transform 0.6s var(--ease); }
+.rb-stage { container-type: inline-size; width: var(--rbw); height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top, 0px) + var(--rbw) * 0.2) calc(var(--rbw) * 0.09) calc(env(safe-area-inset-bottom, 0px) + var(--rbw) * 0.2); }
 .rb-overlay.open .rb-card { transform: translateY(0) scale(1); }
 .rb-new { display: flex; flex-direction: column; align-items: center; gap: 4cqw; width: 100%; color: var(--rb-ink-top); }
 .rb-new i { display: block; width: 52%; height: 1px; background: currentColor; opacity: 0.35; }
@@ -247,8 +249,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .rb-logo { display: inline-flex; align-items: center; gap: 2cqw; background: #fff; border-radius: 2.4cqw; padding: 1.8cqw 3.2cqw; box-shadow: 0 2cqw 5cqw rgba(0,0,0,0.18); }
 .rb-logo img { height: 5.4cqw; width: auto; display: block; }
 .rb-logo span { font-size: 4cqw; font-weight: 700; color: #111; letter-spacing: -0.02em; }
-.rb-hint { position: fixed; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.4); pointer-events: none; }
-/* ===== META MODAL (sheet) ===== */
+.rb-hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; mix-blend-mode: difference; opacity: 0.55; pointer-events: none; }
 .meta-overlay { position: fixed; inset: 0; z-index: 6000; background: rgba(0,0,0,0.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
 .meta-overlay.open { opacity: 1; pointer-events: all; }
 .meta-modal { background: var(--s1); border-radius: 26px; width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; transform: translateY(26px) scale(0.97); transition: transform 0.5s var(--ease); position: relative; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.14) transparent; }
@@ -502,6 +503,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <div class="rb-card" id="rbCard">
+  <div class="rb-stage">
     <div class="rb-new"><i></i><span>NEW RELEASE</span></div>
     <div class="rb-frame"><img id="rbArt" src="" alt="Cover art"></div>
     <div class="rb-text">
@@ -517,6 +519,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       </div>
       <div class="rb-logo"><img src="https://www.444musicdistro.com/black.png" alt="444Music"><span>444Music</span></div>
     </div>
+  </div>
   </div>
   <div class="rb-hint">Tap anywhere to view details</div>
 </div>
