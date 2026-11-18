@@ -724,7 +724,7 @@ function compactCount(n) {
   fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=30')
     .then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); })
     .then(function (list) {
-      var total = 0, latest = null;
+      var total = BASE_DOWNLOADS, latest = null;
       list.forEach(function (rel) {
         if (rel.draft) return;
         (rel.assets || []).forEach(function (a) {
