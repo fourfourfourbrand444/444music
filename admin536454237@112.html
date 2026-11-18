@@ -873,6 +873,27 @@ body.select-mode .card { cursor: pointer; }
   border: 1px solid var(--border-strong); color: var(--text-sec);
 }
 .reason-cancel:hover { color: var(--text); border-color: var(--white); }
+  /* COMPACT CARDS */
+#results { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.card { padding: 0; cursor: pointer; }
+.card:hover { background: var(--card-hover); }
+body.select-mode .card-top > .badge { margin-right: 32px; }
+.card-summary { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.card-summary .card-top { margin: 0; align-items: center; }
+.sum-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; font-size: 0.74rem; color: var(--text-sec); background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; }
+.chip b { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mut); font-weight: 700; }
+.chip.mono { font-family: ui-monospace, monospace; color: var(--text); font-weight: 600; }
+.chip.warn { color: var(--red); border-color: rgba(248,113,113,0.35); }
+.sum-comment { font-size: 0.76rem; color: var(--text-sec); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-sheet { display: none; }
+.card.open .card-sheet { display: block; position: fixed; z-index: 800; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 24px)); max-height: 90vh; overflow-y: auto; background: #0c0c0e; border: 1px solid var(--border-strong); border-radius: 14px; padding: 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.8); cursor: default; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.sheet-title { font-size: 0.95rem; font-weight: 700; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet-x { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; color: var(--text-sec); cursor: pointer; font-size: 0.85rem; }
+.sheet-x:hover { color: var(--white); border-color: var(--white); }
+.sheet-scrim { position: fixed; inset: 0; z-index: 700; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
+.sheet-scrim.open { opacity: 1; pointer-events: auto; }
 
 /* ANIMATIONS */
 @keyframes spin    { to { transform: rotate(360deg); } }
@@ -1859,6 +1880,7 @@ function display(data) {
     return;
   }
 
+  closeSheet();
   resultsEl.innerHTML = "";
 
   data.forEach((item, idx) => {
@@ -2118,7 +2140,6 @@ function display(data) {
         ${editReasonHtml}
         ${editTakedownHtml}
        ${editUpcHtml}
-      ${editSmartlinkHtml}
         ${avvoHtml}
        <div class="partner-slot">${partnerHtml}</div>
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
@@ -2126,7 +2147,7 @@ function display(data) {
           Delete Submission
         </button>
       </div>`;
-
+         compactCard(card, item);
     card.querySelector('[data-type="status"]').addEventListener('change', async function() {
       if (!this.value) return;
 
@@ -2523,7 +2544,69 @@ function display(data) {
     resultsEl.appendChild(card);
   });
 }
+/* ─── COMPACT CARD + DETAILS SHEET ─── */
+const sheetScrim = document.createElement('div');
+sheetScrim.className = 'sheet-scrim';
+document.body.appendChild(sheetScrim);
 
+function openSheet(card) {
+  closeSheet();
+  card.classList.add('open');
+  sheetScrim.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet() {
+  document.querySelectorAll('.card.open').forEach(c => c.classList.remove('open'));
+  sheetScrim.classList.remove('open');
+  document.body.style.overflow = '';
+}
+sheetScrim.addEventListener('click', closeSheet);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+
+function compactCard(card, item) {
+  const status = item.status || 'Pending';
+  const key = status.toLowerCase();
+  const cls = { pending: 'badge-pending', review: 'badge-review', approved: 'badge-approved', rejected: 'badge-rejected', 'taken down': 'badge-takendown' }[key] || 'badge-pending';
+  const name = item.artistName || 'Unknown Artist';
+  const title = item.releaseTitle || item.songTitle || item.title || 'Untitled';
+  const upc = String(item.upc || '').trim();
+  const partner = item.partnerStatus || (item.partnerUpload && item.partnerUpload.status) || '';
+  const comment = (key === 'rejected' && item.rejectionReason) || (key === 'taken down' && item.takedownReason) ||
+    item.partnerAlert || (item.partnerUpload && item.partnerUpload.message) || '';
+
+  card.querySelectorAll('.meta-item').forEach(m => {
+    const l = m.querySelector('.meta-label');
+    if (l && l.textContent.trim() === 'Referral') m.remove();
+  });
+
+  const box = card.querySelector('.card-select-box');
+  const topEl = card.querySelector('.card-top');
+  const rest = Array.from(card.children).filter(el => el !== box && el !== topEl);
+
+  const summary = document.createElement('div');
+  summary.className = 'card-summary';
+  summary.appendChild(topEl);
+  topEl.insertAdjacentHTML('beforeend', `<span class="badge ${cls}">${escHtml(status)}</span>`);
+  summary.insertAdjacentHTML('beforeend', `
+    <div class="sum-chips">
+      ${upc
+        ? `<span class="chip mono"><b>UPC</b>${escHtml(upc)}</span>`
+        : `<span class="chip ${key === 'approved' ? 'warn' : ''}"><b>UPC</b>${key === 'approved' ? 'Missing' : '—'}</span>`}
+      <span class="chip" ${partner ? `style="${partnerBadgeStyle(partner)}"` : ''}><b>Partner</b>${escHtml(partner || '—')}</span>
+    </div>
+    ${comment ? `<div class="sum-comment">${escHtml(comment)}</div>` : ''}`);
+
+  const sheet = document.createElement('div');
+  sheet.className = 'card-sheet';
+  sheet.innerHTML = `<div class="sheet-head"><div class="sheet-title">${escHtml(name)} · ${escHtml(title)}</div><button type="button" class="sheet-x" aria-label="Close">✕</button></div>`;
+  rest.forEach(el => sheet.appendChild(el));
+
+  card.appendChild(summary);
+  card.appendChild(sheet);
+
+  summary.addEventListener('click', () => { if (!selectMode) openSheet(card); });
+  sheet.querySelector('.sheet-x').addEventListener('click', closeSheet);
+}
 function waitForAuth() {
   return new Promise((resolve) => {
     const unsub = onAuthStateChanged(auth, (u) => { unsub(); resolve(u); });
@@ -2724,7 +2807,8 @@ function promptForUpcCatalog({ title, sub, existingUpc, existingCatalog }) {
       const upcVal = upcInputEl.value.trim();
       const catVal = catalogInputEl.value.trim();
       if (!upcVal) {
-        upcInputEl.style.borderColor = 'var(--red)';
+                upcInputEl.style.borderColor = 'var(--red)';
+        toast('error', 'UPC code is required before a release can be approved.');
         upcInputEl.focus();
         return;
       }
@@ -2993,7 +3077,17 @@ bulkClearBtn.addEventListener('click', () => {
 });
 
 async function bulkUpdateStatus(newStatus) {
-  const ids = Array.from(selectedIds);
+  let ids = Array.from(selectedIds);
+  if (newStatus === 'Approved') {
+    const withUpc = ids.filter(id => {
+      const sub = submissions.find(s => s.id === id);
+      return sub && String(sub.upc || '').trim();
+    });
+    const skipped = ids.length - withUpc.length;
+    if (skipped) toast('warning', `${skipped} skipped: no UPC code. Approve those one by one and enter the UPC.`);
+    ids = withUpc;
+    if (!ids.length) return;
+  }
   toast('info', `Updating ${ids.length} submissions…`);
   for (const id of ids) {
        const data = { status: newStatus };
