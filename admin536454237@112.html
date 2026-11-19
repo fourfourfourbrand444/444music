@@ -1426,6 +1426,16 @@ function partnerDateCheck(item) {
   return { needsShift: true, from: valid ? raw : 'not set', to: minKey };
 }
 
+function allotDateCheck(item) {
+  const t = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
+  const raw = String(item.releaseDate || '').slice(0, 10);
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(raw);
+  if (valid && raw >= today) return { needsShift: false, from: raw, to: raw };
+  return { needsShift: true, from: valid ? raw : 'not set', to: today };
+}
+
 function isSubmissionPaid(item) {
   return item.paymentVerified === true || item.paid === 'Paid';
 }
@@ -2486,10 +2496,11 @@ const editUpcHtml = (isApproved || statusKey === 'review')
         const label = this.textContent;
         this.disabled = true;
         try {
-          const chk = partnerDateCheck(item);
-          let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to the partner?`;
+          const isAllot = this.dataset.partner === 'allot';
+          const chk = isAllot ? allotDateCheck(item) : partnerDateCheck(item);
+          let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to ${isAllot ? 'Allot Lines' : 'the partner'}?`;
           if (chk.needsShift) {
-            msg = `WARNING: the release date (${chk.from}) is less than ${PARTNER_MIN_DAYS} days away. The partner copy will use ${chk.to}. The artist's date is not changed.\n\n` + msg;
+            msg = `WARNING: the release date (${chk.from})${isAllot ? 'has already passed. The Allot Lines copy will use today (' + chk.to + ').' : 'is less than ' + PARTNER_MIN_DAYS + ' days away. The partner copy will use ' + chk.to + '.'} The artist's date is not changed.\n\n` + msg;
           }
           if (!confirm(msg)) return;
           this.textContent = 'Sending…';
@@ -2497,7 +2508,6 @@ const editUpcHtml = (isApproved || statusKey === 'review')
            const saved = true;
             if (!saved) return;
           }
-          const isAllot = this.dataset.partner === 'allot';
           const res = await fetch(`${BACKEND_URL}/api/submissions/${isAllot ? 'send-to-allot' : 'send-to-partner'}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-app-secret': APP_SECRET },
