@@ -34,13 +34,6 @@ header p{color:var(--mute);margin-top:6px}
 .empty{color:var(--mute);font-size:.92rem;padding:18px 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid .panel,.geo .panel{margin:0}
-.store{display:grid;grid-template-columns:140px 1fr 90px;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
-.store:first-child{border:0}
-.sn{display:flex;align-items:center;gap:9px;font-weight:500}
-.sn i{width:9px;height:9px;border-radius:50%;flex:none}
-.track{height:4px;background:var(--soft);border-radius:4px;overflow:hidden}
-.track i{display:block;height:100%;border-radius:4px}
-.store .val{text-align:right}
 .item{border-top:1px solid var(--line)}
 .item:first-child{border:0}
 .item-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 0;text-align:left}
@@ -72,7 +65,6 @@ header p{color:var(--mute);margin-top:6px}
 .flag{font-size:1.2rem;flex:none}
 @media(max-width:900px){.grid,.geo{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}.strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--line)}.strip>div:nth-child(3){border-left:0}.strip>div:nth-child(n+3){border-top:1px solid var(--line)}.strip>div:nth-child(4){border-left:1px solid var(--line)}}
 @media(max-width:560px){.wrap{padding:20px 14px 56px}h1{font-size:1.6rem}.panel{padding:16px}.strip .num{font-size:2.1rem}.inner{padding-left:0}}
-@media(max-width:560px){.store{grid-template-columns:110px 1fr 76px;gap:10px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -88,12 +80,6 @@ header p{color:var(--mute);margin-top:6px}
     <div><span>Releases</span><div class="num" id="kRel">0</div></div>
     <div><span>Artists</span><div class="num" id="kArt">0</div></div>
     <div><span>Countries</span><div class="num" id="kCty">–</div></div>
-  </section>
-
-  <section class="panel">
-    <h2>Streams by store</h2>
-    <p class="sub">All-time streams from each store. Stores that haven't reported yet show as pending.</p>
-    <div id="stores"></div>
   </section>
 
   <div class="grid">
@@ -174,15 +160,6 @@ function breakdown(r){
     });
   }
   return [{ title: r.releaseTitle || r.songTitle || 'Untitled', views: num(r.youtubeViews) ? r.youtubeViews : null }];
-}
-
-/* ---------- streams by store (all-time) ---------- */
-function drawStores(){
-  const known = Object.keys(CH).filter(k => num(S.totals[k])), sum = known.reduce((s, k) => s + S.totals[k], 0) || 1;
-  $('#stores').innerHTML = Object.entries(CH).filter(([k]) => k !== 'other' || num(S.totals.other)).map(([k, [n, c]]) => {
-    const v = S.totals[k], has = num(v);
-    return `<div class="store"><span class="sn"><i style="background:${c}"></i>${n}</span><span class="track"><i style="width:${has ? v / sum * 100 : 0}%;background:${c}"></i></span><span class="val ${has ? '' : 'none'}">${has ? fmt(v) : 'Pending'}</span></div>`;
-  }).join('');
 }
 
 /* ---------- lists ---------- */
@@ -281,7 +258,7 @@ onAuthStateChanged(auth, async user => {
   if (DEMO) demo();
 
   $('#kTotal').textContent = fmt(S.total);
-  drawStores(); drawReleases(rel); drawArtists(rel); drawCountries(); drawMap();
+  drawReleases(rel); drawArtists(rel); drawCountries(); drawMap();
 });
 </script>
 </body>
