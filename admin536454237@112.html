@@ -2658,6 +2658,24 @@ function closeSheet() {
 sheetScrim.addEventListener('click', closeSheet);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
 
+function sentChipsHtml(item, key) {
+  if (key !== 'review') return '';
+  const pu = item.partnerUpload || {};
+  if (item.avvoSendState === 'sending' || pu.status === 'running') {
+    return '<span class="chip" style="color:var(--blue);border-color:rgba(96,165,250,0.4);"><b>Sent</b>Sending…</span>';
+  }
+  const sent = [];
+  if (item.avvoSendState === 'sent' || item.avvoReleaseId) sent.push('AVVO');
+  if (['submitted', 'draft_ready'].includes(pu.status)) {
+    const nm = pu.partner === 'allotlines' ? 'Allot' : 'Wise';
+    sent.push(pu.status === 'draft_ready' ? nm + ' (draft)' : nm);
+  }
+  if (sent.length) {
+    return '<span class="chip" style="color:var(--green);border-color:rgba(74,222,128,0.35);"><b>Sent</b>' + escHtml(sent.join(' + ')) + '</span>';
+  }
+  return '<span class="chip" style="color:var(--yellow);border-color:rgba(234,179,8,0.4);"><b>Sent</b>Not sent</span>';
+}
+
 function compactCard(card, item) {
   const status = item.status || 'Pending';
   const key = status.toLowerCase();
@@ -2684,7 +2702,7 @@ function compactCard(card, item) {
   summary.appendChild(topEl);
   topEl.insertAdjacentHTML('beforeend', `<span class="badge ${cls}">${escHtml(status)}</span>`);
   summary.insertAdjacentHTML('beforeend', `
-    <div class="sum-chips">
+  <div class="sum-chips">${sentChipsHtml(item, key)}
       ${upc
         ? `<span class="chip mono"><b>UPC</b>${escHtml(upc)}</span>`
         : `<span class="chip ${key === 'approved' ? 'warn' : ''}"><b>UPC</b>${key === 'approved' ? 'Missing' : '—'}</span>`}
