@@ -1316,6 +1316,7 @@ async function fetchEditedReviewItems() {
 // Partner needs the release date at least this many days ahead
 const PARTNER_MIN_DAYS = 7;
 const AUTO_SUBMIT_PARTNER = true; // set true only after a clean test
+const AUTO_SUBMIT_ALLOT = false;  // keep false until Allot Lines runs clean
 const PARTNER_ATTENTION = ['Rejected', 'Documents Needed', 'Action Needed', 'Takedown'];
 function needsPartnerAttention(item) {
   return PARTNER_ATTENTION.includes(item.partnerStatus || '') || !!item.partnerAlert;
@@ -1360,7 +1361,7 @@ function partnerBoxHtml(item) {
   const tt = item.releaseTitle || item.songTitle || item.title || 'Untitled';
   return `<div class="avvo-box ${cls}">
     ${line ? `<div class="avvo-line">${escHtml(line)}</div>` : ''}
-    ${can ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(nm)}" data-title="${escHtml(tt)}">${st ? 'Retry Partner' : 'Send to Partner'}</button></div>` : ''}
+    ${can ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(nm)}" data-title="${escHtml(tt)}">${st ? 'Retry Partner' : 'Send to Partner'}</button><button class="avvo-btn" data-partner="allot" data-id="${item.id}" data-artist="${escHtml(nm)}" data-title="${escHtml(tt)}">Send to Allot Lines</button></div>` : ''}
   </div>`;
 }
 
@@ -2042,7 +2043,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
     const partnerHtml = (canPartner || puStatus)
       ? `<div class="avvo-box ${puClass}">
            ${puLine ? `<div class="avvo-line">${escHtml(puLine)}</div>` : ''}
-           ${canPartner ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${puStatus ? 'Retry Partner' : 'Send to Partner'}</button></div>` : ''}
+           ${canPartner ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${puStatus ? 'Retry Partner' : 'Send to Partner'}</button><button class="avvo-btn" data-partner="allot" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">Send to Allot Lines</button></div>` : ''}
          </div>`
       : '';
 
@@ -2496,10 +2497,11 @@ const editUpcHtml = (isApproved || statusKey === 'review')
            const saved = true;
             if (!saved) return;
           }
-          const res = await fetch(`${BACKEND_URL}/api/submissions/send-to-partner`, {
+          const isAllot = this.dataset.partner === 'allot';
+          const res = await fetch(`${BACKEND_URL}/api/submissions/${isAllot ? 'send-to-allot' : 'send-to-partner'}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-app-secret': APP_SECRET },
-            body: JSON.stringify({ submissionId: this.dataset.id, autoSubmit: AUTO_SUBMIT_PARTNER })
+            body: JSON.stringify({ submissionId: this.dataset.id, autoSubmit: isAllot ? AUTO_SUBMIT_ALLOT : AUTO_SUBMIT_PARTNER })
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
