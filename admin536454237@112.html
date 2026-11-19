@@ -2500,7 +2500,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
           const chk = isAllot ? allotDateCheck(item) : partnerDateCheck(item);
           let msg = `Send "${this.dataset.title}" by ${this.dataset.artist} to ${isAllot ? 'Allot Lines' : 'the partner'}?`;
           if (chk.needsShift) {
-            msg = `WARNING: the release date (${chk.from})${isAllot ? 'has already passed. The Allot Lines copy will use today (' + chk.to + ').' : 'is less than ' + PARTNER_MIN_DAYS + ' days away. The partner copy will use ' + chk.to + '.'} The artist's date is not changed.\n\n` + msg;
+            msg = `WARNING: the release date (${chk.from}) ${isAllot ? 'has already passed. The Allot Lines copy will use today (' + chk.to + ').' : 'is less than ' + PARTNER_MIN_DAYS + ' days away. The partner copy will use ' + chk.to + '.'} The artist's date is not changed.\n\n` + msg;
           }
           if (!confirm(msg)) return;
           this.textContent = 'Sending…';
