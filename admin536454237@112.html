@@ -1415,6 +1415,79 @@ function watchPartner(item, card, wire, resume) {
   });
 }
 
+function avvoBoxHtml(item) {
+  const st = item.avvoSendState || '';
+  const stat = item.avvoStatus || '';
+  const resendable = ['returned', 'deleted'].includes(stat.toLowerCase());
+  const sentAlready = (!!item.avvoReleaseId || st === 'sent') && !resendable;
+  const paid = isSubmissionPaid(item);
+  const inReview = (item.status || '').toLowerCase() === 'review';
+  const can = SHOW_AVVO_SEND && inReview && paid && !sentAlready && st !== 'sending';
+  if (!((SHOW_AVVO_SEND && inReview && paid) || st)) return '';
+  let line = '';
+  if (st === 'sending') line = 'Sending to AVVO…';
+  else if (st === 'sent') line = 'Sent to AVVO — status: ' + (stat || 'moderation');
+  else if (st === 'failed') line = 'AVVO send failed: ' + (item.avvoLastError || 'unknown error');
+  const cls = st === 'failed' ? 'avvo-failed' : (st === 'sent' ? 'avvo-sent' : '');
+  const nm = item.artistName || 'Unknown Artist';
+  const tt = item.releaseTitle || item.songTitle || item.title || 'Untitled';
+  return `<div class="avvo-box ${cls}">
+    ${line ? `<div class="avvo-line">${escHtml(line)}</div>` : ''}
+    <div class="avvo-actions">
+      <button class="avvo-btn" data-avvo="preview" data-id="${item.id}">Preview AVVO</button>
+      ${can ? `<button class="avvo-btn primary" data-avvo="send" data-id="${item.id}" data-artist="${escHtml(nm)}" data-title="${escHtml(tt)}">${st === 'failed' || resendable ? 'Retry AVVO' : 'Send to AVVO'}</button>` : ''}
+    </div>
+  </div>`;
+}
+
+const avvoWatchers = {};
+const AVVO_EST_MS = 240000;
+
+function watchAvvo(item, card, wire, resume) {
+  const slot = card.querySelector('.avvo-slot');
+  if (!slot) return;
+  if (avvoWatchers[item.id]) avvoWatchers[item.id]();
+  const ms = (v) => (v && typeof v.toMillis === 'function') ? v.toMillis() : 0;
+  const baseline = resume ? 0 : ms((item.avvoRobot || {}).updatedAt);
+  const t0 = resume ? (ms((item.avvoRobot || {}).updatedAt) || Date.now()) : Date.now();
+  let rb = resume ? (item.avvoRobot || null) : null;
+  let stopped = false, timer = null, unsub = null;
+  const stop = () => {
+    stopped = true;
+    clearInterval(timer);
+    if (unsub) unsub();
+    delete avvoWatchers[item.id];
+  };
+  avvoWatchers[item.id] = stop;
+
+  const draw = () => {
+    if (stopped) return;
+    const elapsed = Date.now() - t0;
+    if (elapsed > 600000) {
+      slot.innerHTML = partnerProgressHtml(95, 'Taking longer than expected. Check GitHub Actions, then click Refresh.');
+      stop();
+      return;
+    }
+    const pct = Math.min(95, Math.round(elapsed / AVVO_EST_MS * 100));
+    slot.innerHTML = partnerProgressHtml(pct, rb ? (rb.message || 'Working...') : 'Starting... (GitHub is waking up)');
+  };
+  draw();
+  timer = setInterval(draw, 1000);
+
+  unsub = onSnapshot(doc(db, 'submissions', item.id), (snap) => {
+    if (stopped) return;
+    if (!snap.exists()) { stop(); return; }
+    Object.assign(item, snap.data());
+    const cur = item.avvoRobot || {};
+    if (ms(cur.updatedAt) <= baseline) return;
+    rb = cur;
+    if (cur.status === 'sending') { draw(); return; }
+    stop();
+    slot.innerHTML = avvoBoxHtml(item);
+    wire(slot);
+  });
+}
+
 function partnerDateCheck(item) {
   const min = new Date();
   min.setDate(min.getDate() + PARTNER_MIN_DAYS);
@@ -2151,7 +2224,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
         ${editReasonHtml}
         ${editTakedownHtml}
        ${editUpcHtml}
-        ${avvoHtml}
+<div class="avvo-slot">${avvoHtml}</div>
        <div class="partner-slot">${partnerHtml}</div>
         <button class="delete-btn" data-id="${item.id}" data-name="${escHtml(name)}" data-title="${escHtml(title)}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -2453,7 +2526,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
       });
     }
 
-    card.querySelectorAll('[data-avvo]').forEach((btn) => {
+const wireAvvo = (root) => root.querySelectorAll('[data-avvo]').forEach((btn) => {
       btn.addEventListener('click', async function() {
         const action = this.dataset.avvo;
         const subId  = this.dataset.id;
@@ -2477,9 +2550,10 @@ const editUpcHtml = (isApproved || statusKey === 'review')
             this.textContent = 'Starting…';
             const data = await avvoCall('POST', subId, 'send');
             if (data) {
-              toast('success', `Sending to AVVO (${data.environment}). Refresh in a minute to see the result.`);
+toast('success', 'Started. Watch the progress bar on the card.');
+              watchAvvo(item, card, wireAvvo, false);
               if (data.warnings && data.warnings.length) toast('warning', data.warnings.join(' | '));
-              setTimeout(() => refreshCurrentView(), 5000);
+
             }
           }
         } catch (err) {
@@ -2491,7 +2565,9 @@ const editUpcHtml = (isApproved || statusKey === 'review')
       });
     });
 
-   const wirePartner = (root) => root.querySelectorAll('[data-partner]').forEach((btn) => {
+  wireAvvo(card);
+    if (item.avvoSendState === 'sending') watchAvvo(item, card, wireAvvo, true);
+    const wirePartner = (root) => root.querySelectorAll('[data-partner]').forEach((btn) => {
       btn.addEventListener('click', async function() {
         const label = this.textContent;
         this.disabled = true;
