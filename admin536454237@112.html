@@ -1490,6 +1490,11 @@ function watchAvvo(item, card, wire, resume) {
   });
 }
 
+function otherRouteDone(item) {
+  const ps = (item.partnerUpload || {}).status || '';
+  return item.avvoSendState === 'sent' || !!item.avvoReleaseId || ['submitted', 'draft_ready'].includes(ps);
+}
+
 function partnerDateCheck(item) {
   const min = new Date();
   min.setDate(min.getDate() + PARTNER_MIN_DAYS);
@@ -2108,7 +2113,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
     let avvoLine = '';
     if (avvoState === 'sending') avvoLine = 'Sending to AVVO…';
     else if (avvoState === 'sent') avvoLine = 'Sent to AVVO — status: ' + (avvoStat || 'moderation');
-    else if (avvoState === 'failed') avvoLine = 'AVVO send failed: ' + (item.avvoLastError || 'unknown error');
+else if (avvoState === 'failed' && !['submitted', 'draft_ready'].includes((item.partnerUpload || {}).status)) avvoLine ='AVVO send failed: ' + (item.avvoLastError || 'unknown error');
     const avvoClass = avvoState === 'failed' ? 'avvo-failed' : (avvoState === 'sent' ? 'avvo-sent' : '');
     const avvoHtml = ((SHOW_AVVO_SEND && canAvvo) || avvoState)
       ? `<div class="avvo-box ${avvoClass}">
@@ -2123,8 +2128,8 @@ const editUpcHtml = (isApproved || statusKey === 'review')
     const pu = item.partnerUpload || {};
     const puStatus = pu.status || '';
     const canPartner = statusKey === 'review' && isPaid && puStatus !== 'running';
-    const puClass = (puStatus === 'failed' || puStatus === 'needs_manual') ? 'avvo-failed' : (puStatus ? 'avvo-sent' : '');
-    const puLine = puStatus ? `Partner: ${puStatus}${pu.message ? ' - ' + pu.message : ''}` : '';
+const puClass = (puStatus === 'failed' || puStatus === 'needs_manual') ? (otherRouteDone(item) ? '' : 'avvo-failed') : (puStatus ? 'avvo-sent' : '');
+const puLine = (puStatus && !(['failed', 'needs_manual'].includes(puStatus) && otherRouteDone(item))) ? `Partner: ${puStatus}${pu.message ? ' - ' + pu.message : ''}` : '';
     const partnerHtml = (canPartner || (puStatus && (statusKey === 'review' || !['failed', 'needs_manual'].includes(puStatus))))
       ? `<div class="avvo-box ${puClass}">
            ${puLine ? `<div class="avvo-line">${escHtml(puLine)}</div>` : ''}
@@ -2661,7 +2666,7 @@ function compactCard(card, item) {
   const title = item.releaseTitle || item.songTitle || item.title || 'Untitled';
   const upc = String(item.upc || '').trim();
   let partner = item.partnerStatus || (item.partnerUpload && item.partnerUpload.status) || '';
-  if (key !== 'review' && ['failed', 'needs_manual'].includes(partner)) partner = '';
+  if ((key !== 'review' || otherRouteDone(item)) && ['failed', 'needs_manual'].includes(partner)) partner = '';
   const comment = (key === 'rejected' && item.rejectionReason) || (key === 'taken down' && item.takedownReason) ||
     item.partnerAlert || ((key === 'review' && item.avvoSendState !== 'sent' && item.partnerUpload && ['failed', 'needs_manual'].includes(item.partnerUpload.status)) ? item.partnerUpload.message : '') || '';
 
