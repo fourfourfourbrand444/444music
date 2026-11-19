@@ -1422,7 +1422,9 @@ function avvoBoxHtml(item) {
   const sentAlready = (!!item.avvoReleaseId || st === 'sent') && !resendable;
   const paid = isSubmissionPaid(item);
   const inReview = (item.status || '').toLowerCase() === 'review';
-  const can = SHOW_AVVO_SEND && inReview && paid && !sentAlready && st !== 'sending';
+  const ru = item.avvoRobot && item.avvoRobot.updatedAt;
+  const stale = st === 'sending' && ru && typeof ru.toMillis === 'function' && Date.now() - ru.toMillis() > 600000;
+  const can = SHOW_AVVO_SEND && inReview && paid && !sentAlready && (st !== 'sending' || stale);
   if (!((SHOW_AVVO_SEND && inReview && paid) || st)) return '';
   let line = '';
   if (st === 'sending') line = 'Sending to AVVO…';
@@ -1464,7 +1466,7 @@ function watchAvvo(item, card, wire, resume) {
     if (stopped) return;
     const elapsed = Date.now() - t0;
     if (elapsed > 600000) {
-      slot.innerHTML = partnerProgressHtml(95, 'Taking longer than expected. Check GitHub Actions, then click Refresh.');
+            slot.innerHTML = avvoBoxHtml(item); wire(slot);
       stop();
       return;
     }
