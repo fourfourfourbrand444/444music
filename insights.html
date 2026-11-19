@@ -2,556 +2,344 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artist Insights • 444Music</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insights · 444Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <style>
-/* ═══════════════════════════════════════════════════
-   444MUSIC — ARTIST INSIGHTS  ·  Monochrome edition
-   All-time totals only. No date-range filters. Every
-   highlighted element is black/white — never blue.
-═══════════════════════════════════════════════════ */
-
-:root {
-  --void:          #050505;
-  --bg:            #070707;
-  --surface:       #111111;
-  --surface-2:     #161616;
-  --surface-3:     #1c1c1c;
-  --border:        rgba(255,255,255,0.08);
-  --border-2:      rgba(255,255,255,0.13);
-
-  --ac:            #f5f5f5;
-  --ac-dim:        rgba(255,255,255,0.09);
-  --ac-deep:       #cfcfcf;
-  --ac-light:      #ffffff;
-
-  --text-1:        #f2f2f2;
-  --text-2:        #9a9a9a;
-  --text-3:        #4d4d4d;
-
-  --radius-sm:     8px;
-  --radius:        14px;
-  --radius-lg:     20px;
-  --pill:          999px;
-
-  --font-head:     'Outfit', sans-serif;
-  --font-body:     'Plus Jakarta Sans', sans-serif;
-
-  --ease:          cubic-bezier(0.4,0,0.2,1);
-  --spring:        cubic-bezier(0.34,1.56,0.64,1);
-  --t:             0.24s;
-}
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--font-body);
-  background:var(--bg);
-  color:var(--text-1);
-  min-height:100vh;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--void)}
-::-webkit-scrollbar-thumb{background:var(--ac-deep);border-radius:99px}
-
-.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
-.orb-1{width:700px;height:700px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 68%);top:-280px;right:-150px;animation:orbFloat 12s ease-in-out infinite;}
-.orb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,0.035) 0%,transparent 70%);bottom:-150px;left:-100px;animation:orbFloat 15s ease-in-out infinite reverse;}
-@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-28px) scale(1.04)}}
-
-.container{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:52px 24px 88px;}
-
-/* ===== HEADER + PROFILE AVATAR ===== */
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:44px;animation:slideDown 0.6s var(--ease) both;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
-
-.page-header h1{
-  font-family:var(--font-head);
-  font-size:clamp(1.5rem,3.2vw,2rem);
-  font-weight:700;letter-spacing:-0.5px;
-  color:var(--text-1);line-height:1.15;
-  margin-bottom:10px;
-}
-.page-header p{font-size:0.86rem;color:var(--text-2);font-weight:400;line-height:1.6;max-width:46ch;}
-
-.profile-avatar-wrap{position:relative;flex-shrink:0;margin-top:2px;}
-.profile-avatar{
-  width:56px;height:56px;border-radius:50%;overflow:hidden;
-  background:var(--surface-2);border:1px solid var(--border-2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:border-color var(--t),transform var(--t) var(--ease);
-}
-.profile-avatar:hover{border-color:rgba(255,255,255,0.35);transform:translateY(-2px);}
-.profile-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-.profile-avatar i{font-size:1.3rem;color:var(--text-2);}
-.profile-avatar-edit{
-  position:absolute;bottom:-2px;right:-2px;
-  width:20px;height:20px;border-radius:50%;
-  background:#000;border:2px solid var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:0.55rem;cursor:pointer;
-  transition:transform var(--t);
-}
-.profile-avatar-edit:hover{transform:scale(1.12);}
-.profile-avatar-edit.uploading i{animation:spin 0.9s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ===== CARDS ===== */
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  padding:24px;
-  position:relative;overflow:hidden;
-  transition:border-color var(--t) var(--ease),box-shadow var(--t);
-}
-.card:hover{border-color:rgba(255,255,255,0.2);box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.06);}
-.card-topline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:0;transition:opacity var(--t);}
-.card:hover .card-topline{opacity:1}
-
-/* ===== STAT ROW — hero card is solid black (never blue) ===== */
-.stats{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-bottom:24px;animation:revealUp 0.6s var(--ease) 0.1s both;}
-@keyframes revealUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-
-.stat-card{
-  border-radius:var(--radius-lg);
-  padding:22px 20px 20px;
-  position:relative;overflow:hidden;
-  transition:transform var(--t) var(--ease),border-color var(--t),box-shadow var(--t);
-}
-.stat-card:hover{transform:translateY(-3px);}
-.stat-card.hero{
-  background:#000;
-  border:1px solid rgba(255,255,255,0.22);
-  box-shadow:0 16px 44px rgba(0,0,0,0.55);
-}
-.stat-card.plain{background:var(--surface);border:1px solid var(--border);}
-.stat-card.plain:hover{border-color:rgba(255,255,255,0.22);box-shadow:0 16px 40px rgba(0,0,0,0.45);}
-
-.stat-icon-wrap{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.9rem;margin-bottom:14px;background:rgba(255,255,255,0.1);color:#fff;}
-.stat-card.plain .stat-icon-wrap{background:var(--ac-dim);color:var(--ac)}
-
-.stat-card h2{
-  font-family:var(--font-head);
-  font-size:2.1rem;font-weight:900;
-  letter-spacing:-1px;line-height:1;
-  color:#fff;margin-bottom:6px;
-}
-.stat-card.plain h2{font-size:1.7rem;color:var(--text-1);}
-.stat-card p{font-size:0.72rem;color:var(--text-2);font-family:var(--font-body);font-weight:600;letter-spacing:0.05em;text-transform:uppercase;}
-.stat-card.hero p{color:rgba(255,255,255,0.55);}
-.stat-badge{position:absolute;top:18px;right:16px;font-size:0.64rem;font-family:var(--font-body);font-weight:700;padding:3px 9px;border-radius:var(--pill);background:rgba(255,255,255,0.12);color:#fff;}
-.stat-card.plain .stat-badge{background:var(--ac-dim);color:var(--ac);}
-
-/* ===== CHART ===== */
-.chart-section{animation:revealUp 0.6s var(--ease) 0.18s both;margin-bottom:20px}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
-.card-head h2{font-family:var(--font-head);font-size:1.05rem;font-weight:800;letter-spacing:-0.3px;color:var(--text-1);}
-.card-tag{font-family:var(--font-body);font-size:0.64rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ac);background:var(--ac-dim);border:1px solid rgba(255,255,255,0.16);border-radius:var(--pill);padding:3px 10px;}
-.chart-tabs{display:flex;gap:4px;background:var(--surface-2);border-radius:var(--radius-sm);padding:3px;}
-.chart-tab{font-family:var(--font-body);font-size:0.68rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);padding:5px 12px;border-radius:6px;cursor:pointer;transition:background var(--t),color var(--t);border:none;background:transparent;}
-.chart-tab.active{background:var(--surface-3);color:var(--ac)}
-.chart-tab:hover:not(.active){color:var(--text-2)}
-.chart-wrap{position:relative;height:220px;}
-
-/* ===== SOURCE OF STREAMS ===== */
-.sources{animation:revealUp 0.6s var(--ease) 0.24s both;margin-bottom:20px}
-.source-list{display:flex;flex-direction:column;gap:10px;}
-.source-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--t),background var(--t);}
-.source-row:hover{border-color:rgba(255,255,255,0.2);background:var(--surface-3);}
-.source-row.is-pending{opacity:0.55;}
-.source-icon-wrap{width:34px;height:34px;border-radius:var(--radius-sm);background:#000;border:1px solid var(--border-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.source-icon-wrap img{width:19px;height:19px;object-fit:contain;filter:grayscale(1) brightness(1.8);}
-.source-name{font-size:0.85rem;color:var(--text-1);font-weight:700;min-width:100px;}
-.source-bar-wrap{flex:1;height:5px;background:var(--surface-3);border-radius:var(--pill);overflow:hidden;}
-.source-bar{height:100%;border-radius:var(--pill);background:linear-gradient(90deg,var(--ac-deep),var(--ac-light));animation:barSlide 1s var(--spring) 0.4s both;transform-origin:left;}
-@keyframes barSlide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.source-count{font-family:var(--font-head);font-size:0.85rem;font-weight:800;color:var(--text-1);min-width:80px;text-align:right;}
-.source-count.pending-label{font-family:var(--font-body);font-weight:700;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);}
-
-/* ===== TOP RELEASES ===== */
-.top-releases{animation:revealUp 0.6s var(--ease) 0.28s both;margin-bottom:20px}
-#topReleases{display:flex;flex-direction:column;gap:10px}
-.release{padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color var(--t),background var(--t);}
-.release:hover{border-color:rgba(255,255,255,0.2);background:var(--surface-3);}
-.release-top-row{display:flex;align-items:center;gap:14px;}
-.release-num{font-family:var(--font-body);font-weight:700;font-size:0.68rem;color:var(--text-3);min-width:20px;text-align:center;}
-.release-disc{width:36px;height:36px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,var(--ac-deep),var(--ac-light));display:flex;align-items:center;justify-content:center;color:#000;font-size:0.85rem;flex-shrink:0;}
-.release-disc img{width:100%;height:100%;object-fit:cover;}
-.release-info{flex:1;min-width:0;}
-.release-title{font-size:0.88rem;font-weight:700;color:var(--text-1);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.release-meta{font-size:0.72rem;color:var(--text-3);font-family:var(--font-body);}
-.release-status{font-size:0.66rem;font-family:var(--font-body);font-weight:700;padding:3px 9px;border-radius:var(--pill);flex-shrink:0;}
-.status-approved{background:rgba(255,255,255,0.12);color:var(--text-1);border:1px solid rgba(255,255,255,0.2)}
-.status-pending{background:rgba(255,255,255,0.05);color:var(--text-2);border:1px solid rgba(255,255,255,0.12)}
-.release-total-streams{font-family:var(--font-head);font-size:0.9rem;font-weight:800;color:var(--text-1);white-space:nowrap;}
-
-/* Per-track breakdown, shown only for multi-track releases */
-.track-breakdown{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
-.track-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-left:34px;}
-.track-name{font-size:0.78rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.track-views{font-family:var(--font-head);font-size:0.78rem;font-weight:700;color:var(--text-2);white-space:nowrap;}
-.track-views.is-pending{font-family:var(--font-body);font-weight:600;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-3);}
-
-.empty{text-align:center;padding:40px 20px;color:var(--text-3);font-size:0.85rem;font-family:var(--font-body);font-weight:600;letter-spacing:0.04em;}
-.empty i{font-size:2rem;margin-bottom:12px;color:var(--ac);display:block;}
-
-@media(max-width:900px){
-  .stats{grid-template-columns:1fr 1fr}
-  .stats .stat-card.hero{grid-column:1/-1}
-}
-@media(max-width:580px){
-  .container{padding:32px 14px 64px}
-  .page-header{flex-direction:row;align-items:center;}
-  .stats{grid-template-columns:1fr 1fr;gap:10px}
-  .stat-card h2{font-size:1.6rem}
-  .stat-card.hero h2{font-size:2rem}
-  .chart-tabs{gap:2px}
-  .chart-tab{padding:4px 8px;font-size:0.6rem}
-  .chart-wrap{height:180px}
-  .source-name{min-width:76px;font-size:0.78rem;}
-  .track-row{padding-left:0;}
-}
+:root{color-scheme:dark;--bg:#0a0a0a;--panel:#141414;--ink:#f2f2f2;--mute:#8d9097;--line:#262626;--soft:#1e1e1e;--yellow:#f5c400;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,.num{font-family:'Outfit',sans-serif}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,.seg button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 20px 72px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+h1{font-size:2rem;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+header p{color:var(--mute);margin-top:6px}
+.seg{display:inline-flex;background:#1e1e1e;border-radius:999px;padding:3px}
+.seg button{padding:7px 16px;border-radius:999px;font-weight:500;color:var(--mute)}
+.seg button[aria-pressed=true]{background:var(--yellow);color:#000}
+.demo{background:#2a2410;border:1px solid #5c4d12;border-radius:10px;padding:8px 14px;margin-bottom:16px;font-size:.88rem}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.panel+.panel,.grid{margin-top:16px}
+.panel h2{font-size:1.1rem;font-weight:600;margin-bottom:2px}
+.sub{color:var(--mute);font-size:.88rem;margin-bottom:16px}
+.strip{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;padding:0}
+.strip>div{padding:20px 22px;border-left:1px solid var(--line)}
+.strip>div:first-child{border:0}
+.strip .num{font-size:2.6rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+.strip>div+div .num{font-size:1.7rem;font-weight:600;margin-top:6px}
+.strip span{color:var(--mute);font-size:.88rem}
+.strip>div:first-child .num{margin:6px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 10px;font-size:.88rem}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.chip b{font-weight:500;color:var(--mute)}
+.chip[aria-pressed=false]{opacity:.45}
+.chip:disabled{cursor:default;opacity:.5}
+.chart-box{position:relative;height:300px}
+.empty{color:var(--mute);font-size:.92rem;padding:18px 0}
+.chart-box .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(20,20,20,.9)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid .panel,.geo .panel{margin:0}
+.item{border-top:1px solid var(--line)}
+.item:first-child{border:0}
+.item-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 0;text-align:left}
+.item-head:hover .t{text-decoration:underline}
+.cov{width:42px;height:42px;border-radius:8px;background:var(--soft);flex:none;object-fit:cover;display:grid;place-items:center;font-family:'Outfit';font-weight:600;color:var(--mute)}
+.who{flex:1;min-width:0}
+.t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m{color:var(--mute);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val{font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.val.none{color:var(--mute);font-weight:400;font-size:.86rem}
+.chev{width:16px;height:16px;flex:none;color:var(--mute);transition:transform .2s}
+.open .chev{transform:rotate(180deg)}
+.item-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s}
+.item.open .item-body{grid-template-rows:1fr}
+.item-body>div{overflow:hidden}
+.inner{padding:0 0 12px 54px}
+.sr{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:.9rem;border-top:1px dashed var(--line)}
+.sr:first-child{border:0}
+.sr span:first-child{color:var(--mute);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:4px;background:var(--soft);border-radius:4px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ink);border-radius:4px}
+.more{margin-top:8px;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.geo{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-top:16px}
+#map{width:100%;height:auto;display:block}
+#map path{fill:#262626;stroke:#141414;stroke-width:.5}
+#map path.has{cursor:pointer}
+#map path.has:hover,#map path.on{fill:var(--yellow)!important}
+.rk{width:22px;color:var(--mute);font-size:.84rem;flex:none}
+.flag{font-size:1.2rem;flex:none}
+@media(max-width:900px){.grid,.geo{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}.strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--line)}.strip>div:nth-child(3){border-left:0}.strip>div:nth-child(n+3){border-top:1px solid var(--line)}.strip>div:nth-child(4){border-left:1px solid var(--line)}}
+@media(max-width:560px){.wrap{padding:20px 14px 56px}h1{font-size:1.6rem}.panel{padding:16px}.chart-box{height:240px}.strip .num{font-size:2.1rem}.inner{padding-left:0}.seg{width:100%}.seg button{flex:1;padding:7px 0}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-<div class="container">
-
- 
-
-  <section class="stats">
-    <div class="stat-card hero">
-      <div class="stat-icon-wrap"><i class="fa-solid fa-headphones"></i></div>
-      <div class="stat-badge">All-Time</div>
-      <h2 id="totalStreams">0</h2>
-      <p>Total Streams</p>
+<div class="wrap">
+  <header>
+    <div><h1>Insights</h1><p>How your music is performing across stores and countries.</p></div>
+    <div class="seg" role="group" aria-label="Date range">
+      <button data-r="7" aria-pressed="true">7 days</button>
+      <button data-r="30" aria-pressed="false">30 days</button>
+      <button data-r="all" aria-pressed="false">All time</button>
     </div>
-    <div class="stat-card plain">
-      <div class="stat-icon-wrap"><i class="fa-solid fa-music"></i></div>
-      <h2 id="totalReleases">0</h2>
-      <p>Total Releases</p>
-    </div>
-    <div class="stat-card plain">
-      <div class="stat-icon-wrap"><i class="fa-solid fa-globe"></i></div>
-      <h2>50+</h2>
-      <p>Stores Distributed</p>
-    </div>
+  </header>
+  <div class="demo" id="demo" hidden>Sample data is showing so you can preview the layout. Remove <b>?demo</b> from the address to see your real numbers.</div>
+
+  <section class="panel strip">
+    <div><span>Total streams</span><div class="num" id="kTotal">0</div><span id="kRange"></span></div>
+    <div><span>Releases</span><div class="num" id="kRel">0</div></div>
+    <div><span>Artists</span><div class="num" id="kArt">0</div></div>
+    <div><span>Countries</span><div class="num" id="kCty">–</div></div>
   </section>
 
-  <div class="card chart-section">
-    <div class="card-topline"></div>
-    <div class="card-head">
-      <h2>Streaming Growth</h2>
-      <div class="chart-tabs">
-        <button class="chart-tab active" data-range="7D">7D</button>
-        <button class="chart-tab" data-range="30D">30D</button>
-        <button class="chart-tab" data-range="All">All</button>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="streamsChart"></canvas>
-    </div>
+  <section class="panel">
+    <h2>Streams by store</h2>
+    <p class="sub">Daily streams. Tap a store to show or hide its line.</p>
+    <div class="chips" id="chips"></div>
+    <div class="chart-box"><canvas id="chart" aria-label="Streams per store over time" role="img"></canvas>
+      <div class="empty" id="chartEmpty" hidden>No daily stream data yet. Lines appear here as stores report streams for your releases.</div></div>
+  </section>
+
+  <div class="grid">
+    <section class="panel"><h2>Top releases</h2><p class="sub">Tap a release to see its tracks.</p><div id="rels"></div></section>
+    <section class="panel"><h2>Top artists</h2><p class="sub">Tap an artist to see their releases.</p><div id="arts"></div></section>
   </div>
 
-  <div class="card sources">
-    <div class="card-topline"></div>
-    <div class="card-head">
-      <h2>Source of Streams</h2>
-      <span class="card-tag">All-Time</span>
-    </div>
-    <div class="source-list">
-      <div class="source-row is-pending">
-        <div class="source-icon-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" alt="Spotify"></div>
-        <span class="source-name">Spotify</span>
-        <div class="source-bar-wrap"><div class="source-bar" style="width:0%"></div></div>
-        <span class="source-count pending-label">Pending</span>
-      </div>
-      <div class="source-row is-pending">
-        <div class="source-icon-wrap"><img src="apple-music.svg" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg'" alt="Apple Music"></div>
-        <span class="source-name">Apple Music</span>
-        <div class="source-bar-wrap"><div class="source-bar" style="width:0%"></div></div>
-        <span class="source-count pending-label">Pending</span>
-      </div>
-      <div class="source-row" id="youtubeSourceRow">
-        <div class="source-icon-wrap"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube"></div>
-        <span class="source-name">YouTube</span>
-        <div class="source-bar-wrap"><div class="source-bar" id="youtubeBar" style="width:0%"></div></div>
-        <span class="source-count" id="youtubeStreams">0</span>
-      </div>
-    </div>
+  <div class="geo">
+    <section class="panel"><h2>Where people listen</h2><p class="sub">Darker countries have more streams.</p>
+      <svg id="map" viewBox="0 0 960 500" role="img" aria-label="World map of streams by country"></svg>
+      <p class="empty" id="mapMsg" hidden></p></section>
+    <section class="panel"><h2>Top countries</h2><p class="sub">Tap a country for its share.</p><div id="ctys"></div></section>
   </div>
-
-  <div class="card top-releases">
-    <div class="card-topline"></div>
-    <div class="card-head">
-      <h2>Top Releases</h2>
-      <span class="card-tag">By Streams</span>
-    </div>
-    <div id="topReleases">
-      <div class="empty">
-        <i class="fa-solid fa-compact-disc"></i>
-        Your releases will appear here once submitted.
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
   authDomain: "usersubmissionsportal.firebaseapp.com",
   projectId: "usersubmissionsportal",
   storageBucket: "usersubmissionsportal.firebasestorage.app",
   messagingSenderId: "734783502459",
   appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
-};
-
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-/* ═══════════════════════════════════════════
-   STREAMING GROWTH CHART — 7D / 30D / All tabs
-═══════════════════════════════════════════ */
-const chartData = {
-  "7D":  { labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], data: [] },
-  "30D": { labels: ["W1","W2","W3","W4"], data: [] },
-  "All": { labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul"], data: [] }
-};
-
-const ctx = document.getElementById("streamsChart").getContext("2d");
-const gradient = ctx.createLinearGradient(0, 0, 0, 220);
-gradient.addColorStop(0, "rgba(255,255,255,0.22)");
-gradient.addColorStop(1, "rgba(255,255,255,0)");
-
-const streamsChart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: chartData["7D"].labels,
-    datasets: [{
-      label: "Streams",
-      data: chartData["7D"].data,
-      borderColor: "#f5f5f5",
-      borderWidth: 2.5,
-      pointBackgroundColor: "#f5f5f5",
-      pointRadius: 4,
-      pointHoverRadius: 7,
-      pointBorderWidth: 2,
-      pointBorderColor: "#111111",
-      tension: 0.45,
-      fill: true,
-      backgroundColor: gradient
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: "#1c1c1c", titleColor: "#ffffff", bodyColor: "#9a9a9a",
-        borderColor: "rgba(255,255,255,0.2)", borderWidth: 1, padding: 12, cornerRadius: 10,
-        displayColors: false,
-        callbacks: { label: c => `  ${c.parsed.y.toLocaleString()} streams` }
-      }
-    },
-    scales: {
-      x: { grid: { color: "rgba(255,255,255,0.04)", drawBorder: false }, ticks: { color: "#4d4d4d", font: { family: "'Plus Jakarta Sans'", size: 10, weight: 600 } } },
-      y: { grid: { color: "rgba(255,255,255,0.04)", drawBorder: false }, ticks: { color: "#4d4d4d", font: { family: "'Plus Jakarta Sans'", size: 10, weight: 600 }, callback: v => v >= 1000 ? (v/1000).toFixed(1)+"k" : v } }
-    }
-  }
 });
+const auth = getAuth(app), db = getFirestore(app);
 
-document.querySelectorAll(".chart-tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".chart-tab").forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    const key = tab.dataset.range;
-    if (chartData[key]) {
-      streamsChart.data.labels = chartData[key].labels;
-      streamsChart.data.datasets[0].data = chartData[key].data;
-      streamsChart.update();
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const num = v => typeof v === 'number' && isFinite(v);
+const fmt = n => Number(n).toLocaleString();
+const DEMO = /[?&]demo/.test(location.search);
+const CH = { youtube:['YouTube','#ea3a2e','youtubeStreams'], spotify:['Spotify','#1db954','spotifyStreams'],
+             apple:['Apple Music','#f2762e','appleMusicStreams'], other:['Other stores','#2f6df6','otherStreams'] };
+const S = { daily:{}, totals:{}, range:'7', hidden:new Set(), countries:[], total:0 };
+let chart;
+
+/* ---------- helpers ---------- */
+const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function days(range){
+  if (range === 'all') return Object.keys(S.daily).sort();
+  const out = [], t = new Date();
+  for (let i = +range - 1; i >= 0; i--) { const d = new Date(t); d.setDate(t.getDate() - i); out.push(iso(d)); }
+  return out;
+}
+const label = k => new Date(k + 'T00:00').toLocaleDateString('en', { month:'short', day:'numeric' });
+const flag = c => String.fromCodePoint(...[...c.toUpperCase()].map(x => 127397 + x.charCodeAt(0)));
+const ALIAS = { US:'United States of America', CD:'Dem. Rep. Congo', CZ:'Czechia', CI:"Côte d'Ivoire", CF:'Central African Rep.', SS:'S. Sudan', DO:'Dominican Rep.' };
+let dn; try { dn = new Intl.DisplayNames(['en'], { type:'region' }); } catch {}
+const cname = c => { try { return dn.of(c) || c; } catch { return c; } };
+const chev = '<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6l5 5 5-5"/></svg>';
+
+function item(head, body){
+  const el = document.createElement('div'); el.className = 'item';
+  el.innerHTML = `<button class="item-head" aria-expanded="false">${head}${chev}</button><div class="item-body"><div><div class="inner">${body}</div></div></div>`;
+  const b = el.querySelector('button');
+  b.onclick = () => b.setAttribute('aria-expanded', el.classList.toggle('open'));
+  return el;
+}
+function list(box, rows, empty, limit = 5){
+  box.innerHTML = '';
+  if (!rows.length) { box.innerHTML = `<p class="empty">${empty}</p>`; return; }
+  let all = false;
+  const draw = () => {
+    box.innerHTML = '';
+    (all ? rows : rows.slice(0, limit)).forEach(f => box.appendChild(f()));
+    if (rows.length > limit) {
+      const m = document.createElement('button'); m.className = 'more';
+      m.textContent = all ? 'Show less' : `Show all ${rows.length}`;
+      m.onclick = () => { all = !all; draw(); };
+      box.appendChild(m);
     }
-  });
-});
-
-/* Splits the real all-time total into an illustrative trend across
-   whichever range is selected, since the backend only stores
-   cumulative counters today (no per-day time series yet). The TOTAL
-   itself is always real — only how it's distributed across the chart's
-   x-axis is illustrative, since we don't have daily history yet. */
-function buildTrendFromTotal(total) {
-  const weights7  = [0.05, 0.08, 0.11, 0.14, 0.18, 0.20, 0.24];
-  const weights30 = [0.15, 0.22, 0.28, 0.35];
-  const weightsAll= [0.06, 0.09, 0.11, 0.13, 0.16, 0.19, 0.26];
-  const scale = (weights) => {
-    const sum = weights.reduce((a,b)=>a+b,0);
-    let running = 0;
-    return weights.map(w => { running += (w/sum) * total; return Math.round(running); });
   };
-  chartData["7D"].data  = scale(weights7);
-  chartData["30D"].data = scale(weights30);
-  chartData["All"].data = scale(weightsAll);
-  const activeKey = document.querySelector(".chart-tab.active")?.dataset.range || "7D";
-  streamsChart.data.labels = chartData[activeKey].labels;
-  streamsChart.data.datasets[0].data = chartData[activeKey].data;
-  streamsChart.update();
+  draw();
 }
 
-/* ═══════════════════════════════════════════
-   PROFILE AVATAR
-═══════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════
-   PER-RELEASE / PER-TRACK STREAM TOTALS
-   Reads real view counts written by the backend's YouTube matcher:
-     - New-style multi-track releases: submission.youtubeTrackMatches
-       = { "0": { status, videoId, views, title }, "1": {...}, ... }
-     - Legacy single-track releases: submission.youtubeViews (a plain
-       number written alongside the older youtubeVideoId field)
-   A track with no match yet, or a match with no views written yet,
-   is treated as "Pending" — never shown as 0.
-═══════════════════════════════════════════ */
-function getReleaseTrackBreakdown(release) {
-  const hasTrackList = Array.isArray(release.audioFiles) && release.audioFiles.length > 0;
-
-  if (hasTrackList) {
-    const matches = release.youtubeTrackMatches || {};
-    return release.audioFiles.map((track, i) => {
-      const match = matches[String(i)];
-      const hasViews = match && match.status === 'matched' && typeof match.views === 'number';
-      return {
-        title: track.title || `Track ${i + 1}`,
-        views: hasViews ? match.views : null // null = pending, never 0
-      };
+/* ---------- per release / per track views ---------- */
+function breakdown(r){
+  if (Array.isArray(r.audioFiles) && r.audioFiles.length) {
+    const mt = r.youtubeTrackMatches || {};
+    return r.audioFiles.map((t, i) => {
+      const m = mt[String(i)];
+      return { title: t.title || `Track ${i+1}`, views: m && m.status === 'matched' && num(m.views) ? m.views : null };
     });
   }
-
-  // Legacy single-track release
-  const hasViews = typeof release.youtubeViews === 'number';
-  return [{
-    title: release.releaseTitle || release.songTitle || release.title || 'Untitled',
-    views: hasViews ? release.youtubeViews : null
-  }];
+  return [{ title: r.releaseTitle || r.songTitle || 'Untitled', views: num(r.youtubeViews) ? r.youtubeViews : null }];
 }
 
-function getReleaseTotalViews(breakdown) {
-  return breakdown.reduce((sum, t) => sum + (typeof t.views === 'number' ? t.views : 0), 0);
+/* ---------- chart ---------- */
+function drawChart(){
+  const ds = days(S.range);
+  const keys = Object.keys(CH).filter(k => ds.some(d => S.daily[d]?.[k]) || Object.values(S.daily).some(v => v[k]));
+  $('#chartEmpty').hidden = keys.length > 0;
+  const sets = keys.map(k => ({
+    label: CH[k][0], data: ds.map(d => S.daily[d]?.[k] || 0), borderColor: CH[k][1], backgroundColor: CH[k][1],
+    borderWidth: 1.6, pointRadius: 0, pointHoverRadius: 4, tension: .3, hidden: S.hidden.has(k)
+  }));
+  const data = { labels: ds.map(label), datasets: sets };
+  if (!chart) {
+    chart = new Chart($('#chart'), { type:'line', data, options:{
+      responsive:true, maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ display:false }, tooltip:{ backgroundColor:'#262626', borderColor:'#3a3a3a', borderWidth:1, padding:10, cornerRadius:8, boxPadding:4, usePointStyle:true } },
+      scales:{ x:{ grid:{ display:false }, border:{ color:'#262626' }, ticks:{ color:'#8d9097', maxTicksLimit:8, maxRotation:0 } },
+               y:{ beginAtZero:true, grid:{ color:'#202020' }, border:{ display:false }, ticks:{ color:'#8d9097', maxTicksLimit:5, callback:v => v >= 1000 ? v/1000 + 'k' : v } } } } });
+  } else { chart.data = data; chart.update(); }
+  const sum = ds.reduce((a, d) => a + Object.entries(S.daily[d] || {}).reduce((s, [, v]) => s + (num(v) ? v : 0), 0), 0);
+  $('#kRange').textContent = Object.keys(S.daily).length && S.range !== 'all' ? `${fmt(sum)} in the last ${S.range} days` : '';
+}
+function drawChips(){
+  const box = $('#chips'); box.innerHTML = '';
+  Object.entries(CH).forEach(([k, [name, color]]) => {
+    const has = num(S.totals[k]) || Object.values(S.daily).some(v => v[k]);
+    if (!has && k === 'other') return;
+    const b = document.createElement('button'); b.className = 'chip'; b.style.setProperty('--c', color);
+    b.innerHTML = `<i></i>${name} <b>${has ? fmt(S.totals[k] ?? 0) : 'Pending'}</b>`;
+    if (!has) b.disabled = true; else {
+      b.setAttribute('aria-pressed', !S.hidden.has(k));
+      b.onclick = () => { S.hidden.has(k) ? S.hidden.delete(k) : S.hidden.add(k); b.setAttribute('aria-pressed', !S.hidden.has(k)); drawChart(); };
+    }
+    box.appendChild(b);
+  });
 }
 
-function hasAnyRealViews(breakdown) {
-  return breakdown.some(t => typeof t.views === 'number');
+/* ---------- lists ---------- */
+function drawReleases(rel){
+  const rows = rel.map(r => { const b = breakdown(r); const real = b.some(t => t.views !== null);
+    return { r, b, real, total: b.reduce((s, t) => s + (t.views || 0), 0) }; })
+    .sort((a, b) => (b.real - a.real) || (b.total - a.total));
+  list($('#rels'), rows.map(e => () => {
+    const r = e.r, cover = r.coverURL || r.officialCoverURL;
+    const head = `${cover ? `<img class="cov" src="${esc(cover)}" alt="" loading="lazy">` : `<span class="cov">${esc((r.releaseTitle||'?')[0])}</span>`}
+      <span class="who"><div class="t">${esc(r.releaseTitle || 'Untitled release')}</div><div class="m">${esc(r.artistName || '')} · ${esc(r.releaseType || 'Single')}</div></span>
+      <span class="val ${e.real ? '' : 'none'}">${e.real ? fmt(e.total) : 'No data yet'}</span>`;
+    const body = e.b.map(t => `<div class="sr"><span>${esc(t.title)}</span><span class="val ${t.views === null ? 'none' : ''}">${t.views === null ? 'Waiting for stores' : fmt(t.views)}</span></div>`).join('');
+    return item(head, body);
+  }), 'Your releases will show up here once you submit one.');
+}
+function drawArtists(rel){
+  const map = {};
+  rel.forEach(r => {
+    const n = (r.artistName || r.artist || 'Unknown artist').trim(), b = breakdown(r);
+    const a = map[n] ||= { n, tot:0, real:false, rel:[] };
+    const t = b.reduce((s, x) => s + (x.views || 0), 0), real = b.some(x => x.views !== null);
+    a.tot += t; a.real ||= real; a.rel.push({ t: r.releaseTitle || 'Untitled', v: t, real });
+  });
+  const rows = Object.values(map).sort((a, b) => (b.real - a.real) || (b.tot - a.tot));
+  $('#kArt').textContent = rows.length;
+  list($('#arts'), rows.map(a => () => {
+    const head = `<span class="cov">${esc(a.n[0].toUpperCase())}</span>
+      <span class="who"><div class="t">${esc(a.n)}</div><div class="m">${a.rel.length} ${a.rel.length === 1 ? 'release' : 'releases'}</div></span>
+      <span class="val ${a.real ? '' : 'none'}">${a.real ? fmt(a.tot) : 'No data yet'}</span>`;
+    return item(head, a.rel.map(x => `<div class="sr"><span>${esc(x.t)}</span><span class="val ${x.real ? '' : 'none'}">${x.real ? fmt(x.v) : 'No data yet'}</span></div>`).join(''));
+  }), 'Artists appear here once you have releases.');
+}
+function drawCountries(){
+  const rows = S.countries, tot = rows.reduce((s, c) => s + c.v, 0) || 1;
+  $('#kCty').textContent = rows.length || '–';
+  list($('#ctys'), rows.map((c, i) => () => {
+    const pct = (c.v / tot * 100);
+    const el = item(`<span class="rk">${i + 1}</span><span class="flag">${flag(c.code)}</span><span class="who"><div class="t">${esc(cname(c.code))}</div></span><span class="val">${fmt(c.v)}</span>`,
+      `<div class="sr"><span>Share of country streams</span><span class="val">${pct.toFixed(1)}%</span></div><div class="bar"><i style="width:${pct}%"></i></div>`);
+    el.dataset.code = c.code; return el;
+  }), 'Countries appear here once stores report where your streams come from.', 6);
 }
 
-/* ═══════════════════════════════════════════
-   LOAD REAL DATA
-═══════════════════════════════════════════ */
+/* ---------- map ---------- */
+async function drawMap(){
+  const msg = $('#mapMsg');
+  if (!S.countries.length) { msg.hidden = false; msg.textContent = 'No country data yet. The map fills in as stores report listener locations.'; }
+  if (!window.d3 || !window.topojson) return;
+  try {
+    const topo = await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')).json();
+    const feats = topojson.feature(topo, topo.objects.countries).features.filter(f => f.properties.name !== 'Antarctica');
+    const by = {}; S.countries.forEach(c => by[ALIAS[c.code] || cname(c.code)] = c);
+    const max = Math.max(1, ...S.countries.map(c => c.v));
+    const col = d3.scaleSqrt().domain([0, max]).range(['#4a4d54', '#f2f2f2']);
+    const proj = d3.geoNaturalEarth1().fitSize([960, 500], { type:'FeatureCollection', features:feats });
+    const g = d3.geoPath(proj);
+    d3.select('#map').selectAll('path').data(feats).join('path').attr('d', g)
+      .attr('class', f => by[f.properties.name] ? 'has' : '')
+      .style('fill', f => by[f.properties.name] ? col(by[f.properties.name].v) : null)
+      .each(function (f) { const c = by[f.properties.name]; d3.select(this).append('title').text(c ? `${f.properties.name}: ${fmt(c.v)} streams` : f.properties.name); })
+      .on('click', (e, f) => {
+        const c = by[f.properties.name]; if (!c) return;
+        document.querySelectorAll('#map path.on').forEach(p => p.classList.remove('on')); e.target.classList.add('on');
+        const el = document.querySelector(`#ctys .item[data-code="${c.code}"]`);
+        if (el) { el.classList.add('open'); el.querySelector('button').setAttribute('aria-expanded', 'true'); el.scrollIntoView({ block:'nearest', behavior:'smooth' }); }
+      });
+  } catch { msg.hidden = false; msg.textContent = 'The map could not load. Check your connection and refresh.'; }
+}
 
-  onAuthStateChanged(auth, async (user) => {
-  if (!user) { location.href = "login.html"; return; }
-
-  const submissionsQuery = query(collection(db, "submissions"), where("userId", "==", user.uid));
-  const submissionsSnap  = await getDocs(submissionsQuery);
-  document.getElementById("totalReleases").textContent = submissionsSnap.size;
-
-  const analyticsSnap = await getDoc(doc(db, "analytics", user.uid));
-  const data = analyticsSnap.exists() ? analyticsSnap.data() : {};
-
-  // Total Streams — real, from the backend's YouTube aggregation job.
-  // Spotify/Apple Music are never summed in here since we have no real
-  // data source for either yet (they show "Pending" in Source of
-  // Streams below, not a number).
-  const totalStreams = data.totalStreams ?? 0;
-  document.getElementById("totalStreams").textContent = totalStreams.toLocaleString();
-  buildTrendFromTotal(totalStreams);
-
-  // Source of Streams — YouTube is the only real source right now.
-  const yt = data.youtubeStreams ?? 0;
-  document.getElementById("youtubeStreams").textContent = yt.toLocaleString();
-  document.getElementById("youtubeBar").style.width = totalStreams > 0 ? '100%' : '0%';
-
-  // Top Releases — sorted by real combined streams, highest first.
-  // Releases with no confirmed views yet sort to the bottom rather
-  // than showing as 0.
-  const container = document.getElementById("topReleases");
-  if (submissionsSnap.size > 0) {
-    const releases = [];
-    submissionsSnap.forEach(docSnap => releases.push({ id: docSnap.id, ...docSnap.data() }));
-
-    const withBreakdown = releases.map(r => {
-      const breakdown = getReleaseTrackBreakdown(r);
-      return {
-        release: r,
-        breakdown,
-        total: getReleaseTotalViews(breakdown),
-        hasRealData: hasAnyRealViews(breakdown)
-      };
-    });
-
-    withBreakdown.sort((a, b) => {
-      if (a.hasRealData && !b.hasRealData) return -1;
-      if (!a.hasRealData && b.hasRealData) return 1;
-      return b.total - a.total;
-    });
-
-    container.innerHTML = "";
-    withBreakdown.forEach((entry, idx) => {
-      const r = entry.release;
-      const isApproved = (r.status || "").toLowerCase() === "approved";
-      const isMultiTrack = entry.breakdown.length > 1;
-
-      const trackRowsHtml = isMultiTrack
-        ? entry.breakdown.map(t => `
-            <div class="track-row">
-              <span class="track-name">${escHtml(t.title)}</span>
-              <span class="track-views ${t.views === null ? 'is-pending' : ''}">
-                ${t.views === null ? 'Pending' : t.views.toLocaleString()}
-              </span>
-            </div>
-          `).join('')
-        : '';
-
-      const div = document.createElement("div");
-      div.className = "release";
-      div.innerHTML = `
-        <div class="release-top-row">
-          <span class="release-num">${String(idx + 1).padStart(2,"0")}</span>
-          <div class="release-disc">${r.coverURL ? `<img src="${escHtml(r.coverURL)}" alt="Cover art">` : `<i class="fa-solid fa-compact-disc"></i>`}</div>
-          <div class="release-info">
-            <div class="release-title">${escHtml(r.releaseTitle || "Untitled Release")}</div>
-            <div class="release-meta">${escHtml(r.releaseType || "Single")} · ${escHtml(r.genre || "—")}</div>
-          </div>
-          <span class="release-total-streams">${entry.hasRealData ? entry.total.toLocaleString() : 'Pending'}</span>
-          <span class="release-status ${isApproved ? 'status-approved' : 'status-pending'}">${isApproved ? "Approved" : (r.status || "Pending")}</span>
-        </div>
-        ${trackRowsHtml ? `<div class="track-breakdown">${trackRowsHtml}</div>` : ''}
-      `;
-      container.appendChild(div);
-    });
+/* ---------- sample data for ?demo ---------- */
+function demo(){
+  const t = new Date(), up = [120, 0.9, 0.45, 0.2];
+  for (let i = 150; i >= 0; i--) {
+    const d = new Date(t); d.setDate(t.getDate() - i); const g = 1 + (150 - i) / 90, w = 1 + Math.sin(i / 2.2) * .35;
+    S.daily[iso(d)] = { youtube: Math.round(up[0] * g * w * (.7 + Math.random() * .6)), spotify: Math.round(70 * g * w * (.6 + Math.random() * .8)),
+                        apple: Math.round(34 * g * (.5 + Math.random())), other: Math.round(14 * g * (.4 + Math.random())) };
   }
+  Object.keys(CH).forEach(k => S.totals[k] = Object.values(S.daily).reduce((s, v) => s + v[k], 0));
+  S.total = Object.values(S.totals).reduce((a, b) => a + b, 0);
+  S.countries = [['GH',48200],['NG',39100],['US',12400],['GB',8300],['ZA',5100],['CA',3900],['DE',2600],['KE',2100],['FR',1500]].map(([code, v]) => ({ code, v }));
+  $('#demo').hidden = false;
+}
+
+/* ---------- boot ---------- */
+document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  S.range = b.dataset.r; drawChart();
 });
 
-function escHtml(str) {
-  return String(str || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+onAuthStateChanged(auth, async user => {
+  if (!user) { location.href = 'login.html'; return; }
+  const [subs, an] = await Promise.all([
+    getDocs(query(collection(db, 'submissions'), where('userId', '==', user.uid))),
+    getDoc(doc(db, 'analytics', user.uid))
+  ]);
+  const a = an.exists() ? an.data() : {};
+  const rel = []; subs.forEach(d => rel.push({ id: d.id, ...d.data() }));
+  $('#kRel').textContent = rel.length;
+
+  if (a.daily && typeof a.daily === 'object') S.daily = a.daily;
+  Object.entries(CH).forEach(([k, v]) => { if (num(a[v[2]])) S.totals[k] = a[v[2]]; });
+  S.total = num(a.totalStreams) ? a.totalStreams : Object.values(S.totals).reduce((s, v) => s + v, 0);
+  if (a.countries && typeof a.countries === 'object')
+    S.countries = Object.entries(a.countries).map(([code, v]) => ({ code: code.toUpperCase(), v: num(v) ? v : (v && num(v.streams) ? v.streams : 0) }))
+      .filter(c => c.v > 0).sort((x, y) => y.v - x.v);
+  if (DEMO) demo();
+
+  $('#kTotal').textContent = fmt(S.total);
+  drawChips(); drawChart(); drawReleases(rel); drawArtists(rel); drawCountries(); drawMap();
+});
 </script>
 </body>
 </html>
