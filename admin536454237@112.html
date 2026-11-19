@@ -2125,7 +2125,7 @@ const editUpcHtml = (isApproved || statusKey === 'review')
     const canPartner = statusKey === 'review' && isPaid && puStatus !== 'running';
     const puClass = (puStatus === 'failed' || puStatus === 'needs_manual') ? 'avvo-failed' : (puStatus ? 'avvo-sent' : '');
     const puLine = puStatus ? `Partner: ${puStatus}${pu.message ? ' - ' + pu.message : ''}` : '';
-    const partnerHtml = (canPartner || puStatus)
+    const partnerHtml = (canPartner || (puStatus && (statusKey === 'review' || !['failed', 'needs_manual'].includes(puStatus))))
       ? `<div class="avvo-box ${puClass}">
            ${puLine ? `<div class="avvo-line">${escHtml(puLine)}</div>` : ''}
            ${canPartner ? `<div class="avvo-actions"><button class="avvo-btn primary" data-partner="send" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">${puStatus ? 'Retry Partner' : 'Send to Partner'}</button><button class="avvo-btn" data-partner="allot" data-id="${item.id}" data-artist="${escHtml(name)}" data-title="${escHtml(title)}">Send to Allot Lines</button></div>` : ''}
@@ -2660,9 +2660,10 @@ function compactCard(card, item) {
   const name = item.artistName || 'Unknown Artist';
   const title = item.releaseTitle || item.songTitle || item.title || 'Untitled';
   const upc = String(item.upc || '').trim();
-  const partner = item.partnerStatus || (item.partnerUpload && item.partnerUpload.status) || '';
+  let partner = item.partnerStatus || (item.partnerUpload && item.partnerUpload.status) || '';
+  if (key !== 'review' && ['failed', 'needs_manual'].includes(partner)) partner = '';
   const comment = (key === 'rejected' && item.rejectionReason) || (key === 'taken down' && item.takedownReason) ||
-    item.partnerAlert || (item.partnerUpload && item.partnerUpload.message) || '';
+    item.partnerAlert || ((key === 'review' && item.avvoSendState !== 'sent' && item.partnerUpload && ['failed', 'needs_manual'].includes(item.partnerUpload.status)) ? item.partnerUpload.message : '') || '';
 
   card.querySelectorAll('.meta-item').forEach(m => {
     const l = m.querySelector('.meta-label');
