@@ -34,24 +34,11 @@ header p{color:var(--mute);margin-top:6px}
 .empty{color:var(--mute);font-size:.92rem;padding:18px 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid .panel,.geo .panel{margin:0}
-.linkrow{display:flex;align-items:center;justify-content:space-between;gap:18px}
-.linkrow .sub{margin:0;max-width:60ch}
-.btn{display:inline-block;flex:none;border:0;cursor:pointer;font-size:15px;padding:13px 24px;background:var(--ink);color:#0a0a0a;border-radius:4px;text-decoration:none;font-weight:700}
+.ext{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--ink);color:#0a0a0a;border-radius:4px;text-decoration:none;font-weight:500;font-size:.86rem;line-height:1}
 .btn:hover{background:#fff}
 .btn:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
-.sphead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-.textbtn{color:var(--mute);text-decoration:underline;text-underline-offset:3px;font-size:.88rem;white-space:nowrap}
-.textbtn:hover{color:var(--ink)}
-#spBox iframe{width:100%;height:352px;border:0;border-radius:8px;display:block}
-#spBox .btn{margin-top:4px}
-dialog{background:var(--panel);color:var(--ink);border:1px solid #333;border-radius:8px;padding:26px;width:min(440px,calc(100% - 32px));margin:auto}
-dialog::backdrop{background:rgba(0,0,0,.7)}
-dialog h2{font-size:1.25rem;margin-bottom:6px}
-dialog p{color:var(--mute);font-size:.92rem}
-dialog input{width:100%;margin:16px 0 6px;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:4px;color:var(--ink);font:inherit}
-dialog input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color:transparent}
-#spErr{color:#ff6b5e;min-height:1.3em;font-size:.88rem;margin:0}
-.dact{display:flex;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap}
+.btn img{width:16px;height:16px;display:block}
 .item{border-top:1px solid var(--line)}
 .item:first-child{border:0}
 .item-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 0;text-align:left}
@@ -83,7 +70,7 @@ dialog input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color
 .flag{font-size:1.2rem;flex:none}
 @media(max-width:900px){.grid,.geo{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}.strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--line)}.strip>div:nth-child(3){border-left:0}.strip>div:nth-child(n+3){border-top:1px solid var(--line)}.strip>div:nth-child(4){border-left:1px solid var(--line)}}
 @media(max-width:560px){.wrap{padding:20px 14px 56px}h1{font-size:1.6rem}.panel{padding:16px}.strip .num{font-size:2.1rem}.inner{padding-left:0}}
-@media(max-width:700px){.linkrow{flex-direction:column;align-items:flex-start}.btn{width:100%;text-align:center}}
+@media(max-width:560px){.ext{width:100%}.btn{flex:1;justify-content:center}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -91,6 +78,10 @@ dialog input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color
 <div class="wrap">
   <header>
     <div><h1>Insights</h1><p>How your music is performing across stores and countries.</p></div>
+    <div class="ext">
+      <a class="btn" href="https://artists.spotify.com" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/spotify/000000" alt="">Spotify for Artists</a>
+      <a class="btn" href="https://artists.apple.com" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/applemusic/000000" alt="">Apple Music for Artists</a>
+    </div>
   </header>
   <div class="demo" id="demo" hidden>Sample data is showing so you can preview the layout. Remove <b>?demo</b> from the address to see your real numbers.</div>
 
@@ -99,19 +90,6 @@ dialog input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color
     <div><span>Releases</span><div class="num" id="kRel">0</div></div>
     <div><span>Artists</span><div class="num" id="kArt">0</div></div>
     <div><span>Countries</span><div class="num" id="kCty">–</div></div>
-  </section>
-
-  <section class="panel linkrow">
-    <div><h2>Spotify listener numbers</h2><p class="sub">Spotify only shares listeners, streams and audience details with the artist. Open your Spotify for Artists dashboard to see them.</p></div>
-    <a class="btn" href="https://artists.spotify.com" target="_blank" rel="noopener noreferrer">Open Spotify for Artists</a>
-  </section>
-
-  <section class="panel" id="spPanel">
-    <div class="sphead">
-      <div><h2>Your Spotify</h2><p class="sub" id="spSub">Link your artist profile to play your top tracks here.</p></div>
-      <button class="textbtn" id="spChange" hidden>Change link</button>
-    </div>
-    <div id="spBox"></div>
   </section>
 
   <div class="grid">
@@ -127,23 +105,10 @@ dialog input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color
   </div>
 </div>
 
-<dialog id="spDlg" aria-labelledby="spTitle">
-  <h2 id="spTitle">Link your Spotify</h2>
-  <p>Paste your Spotify artist link and your top tracks will play right here on your dashboard.</p>
-  <input id="spInput" type="url" placeholder="https://open.spotify.com/artist/..." autocomplete="off" aria-label="Spotify artist link">
-  <p id="spErr" role="alert"></p>
-  <p>To get it: open your artist page on Spotify, tap the three dots, then Share, then Copy link.</p>
-  <div class="dact">
-    <button class="btn" id="spSave">Link my Spotify</button>
-    <button class="textbtn" id="spLater">Not now</button>
-    <button class="textbtn" id="spNever">Don't ask again</button>
-  </div>
-</dialog>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
@@ -283,52 +248,6 @@ function demo(){
   $('#demo').hidden = false;
 }
 
-/* ---------- spotify link + embedded player ---------- */
-let UID = '';
-const dlg = $('#spDlg'), inp = $('#spInput'), err = $('#spErr');
-function parseId(v){
-  v = v.trim();
-  const m = v.match(/open\.spotify\.com\/(?:intl-[a-z-]+\/)?artist\/([A-Za-z0-9]{22})/) || v.match(/^spotify:artist:([A-Za-z0-9]{22})$/);
-  return m ? m[1] : null;
-}
-async function loadLink(){
-  let id = '';
-  try { const d = await getDoc(doc(db, 'spotifyLinks', UID)); if (d.exists()) id = d.data().artistId || ''; } catch {}
-  if (!id) { try { id = localStorage.getItem('spotify:' + UID) || ''; } catch {} }
-  return id;
-}
-async function saveLink(id){
-  try { await setDoc(doc(db, 'spotifyLinks', UID), { artistId: id, savedAt: Date.now() }); } catch {}
-  try { localStorage.setItem('spotify:' + UID, id); } catch {}
-}
-function showPlayer(id){
-  $('#spChange').hidden = !id;
-  $('#spSub').textContent = id ? 'Your top tracks, played by Spotify.' : 'Link your artist profile to play your top tracks here.';
-  $('#spBox').innerHTML = id
-    ? `<iframe src="https://open.spotify.com/embed/artist/${id}?theme=0" title="Spotify player" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`
-    : '<button class="btn" id="spOpen">Link my Spotify</button>';
-  $('#spOpen')?.addEventListener('click', openDlg);
-}
-function openDlg(){ err.textContent = ''; inp.value = ''; dlg.showModal(); inp.focus(); }
-function noteAsk(never){ try { localStorage.setItem('spotifyAsk:' + UID, JSON.stringify({ last: Date.now(), never })); } catch {} }
-function shouldAsk(){
-  try {
-    const st = JSON.parse(localStorage.getItem('spotifyAsk:' + UID) || '{}');
-    if (st.never) return false;
-    if (!st.last) return true;
-    return Date.now() - st.last > 3 * 864e5 && Math.random() < .5;
-  } catch { return true; }
-}
-$('#spChange').onclick = openDlg;
-$('#spLater').onclick = () => { noteAsk(false); dlg.close(); };
-$('#spNever').onclick = () => { noteAsk(true); dlg.close(); };
-$('#spSave').onclick = async () => {
-  const id = parseId(inp.value);
-  if (!id) { err.textContent = 'That is not a Spotify artist link. It should look like open.spotify.com/artist/...'; return; }
-  await saveLink(id); noteAsk(false); showPlayer(id); dlg.close();
-};
-inp.addEventListener('keydown', e => { if (e.key === 'Enter') $('#spSave').click(); });
-
 /* ---------- boot ---------- */
 onAuthStateChanged(auth, async user => {
   if (!user) { location.href = 'login.html'; return; }
@@ -350,9 +269,6 @@ onAuthStateChanged(auth, async user => {
 
   $('#kTotal').textContent = fmt(S.total);
   drawReleases(rel); drawArtists(rel); drawCountries(); drawMap();
-  UID = user.uid;
-  const linked = await loadLink(); showPlayer(linked);
-  if (!linked && shouldAsk()) setTimeout(openDlg, 2000);
 });
 </script>
 </body>
