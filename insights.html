@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#0a0a0a;--panel:#141414;--ink:#f2f2f2;--mute:#8d9097;--line:#262626;--soft:#1e1e1e;--yellow:#f5c400;--r:16px}
+:root{color-scheme:dark;--bg:#0a0a0a;--panel:#141414;--ink:#f2f2f2;--mute:#8d9097;--line:#262626;--soft:#1e1e1e;--yellow:#f5c400;--r:8px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 h1,h2,.num{font-family:'Outfit',sans-serif}
@@ -34,11 +34,16 @@ header p{color:var(--mute);margin-top:6px}
 .empty{color:var(--mute);font-size:.92rem;padding:18px 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid .panel,.geo .panel{margin:0}
+.linkrow{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.linkrow .sub{margin:0;max-width:60ch}
+.btn{display:inline-block;flex:none;padding:13px 24px;background:var(--ink);color:#0a0a0a;border-radius:4px;text-decoration:none;font-weight:700}
+.btn:hover{background:#fff}
+.btn:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
 .item{border-top:1px solid var(--line)}
 .item:first-child{border:0}
 .item-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 0;text-align:left}
 .item-head:hover .t{text-decoration:underline}
-.cov{width:42px;height:42px;border-radius:8px;background:var(--soft);flex:none;object-fit:cover;display:grid;place-items:center;font-family:'Outfit';font-weight:600;color:var(--mute)}
+.cov{width:42px;height:42px;border-radius:4px;background:var(--soft);flex:none;object-fit:cover;display:grid;place-items:center;font-family:'Outfit';font-weight:600;color:var(--mute)}
 .who{flex:1;min-width:0}
 .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .m{color:var(--mute);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -65,6 +70,7 @@ header p{color:var(--mute);margin-top:6px}
 .flag{font-size:1.2rem;flex:none}
 @media(max-width:900px){.grid,.geo{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}.strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--line)}.strip>div:nth-child(3){border-left:0}.strip>div:nth-child(n+3){border-top:1px solid var(--line)}.strip>div:nth-child(4){border-left:1px solid var(--line)}}
 @media(max-width:560px){.wrap{padding:20px 14px 56px}h1{font-size:1.6rem}.panel{padding:16px}.strip .num{font-size:2.1rem}.inner{padding-left:0}}
+@media(max-width:700px){.linkrow{flex-direction:column;align-items:flex-start}.btn{width:100%;text-align:center}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -80,6 +86,11 @@ header p{color:var(--mute);margin-top:6px}
     <div><span>Releases</span><div class="num" id="kRel">0</div></div>
     <div><span>Artists</span><div class="num" id="kArt">0</div></div>
     <div><span>Countries</span><div class="num" id="kCty">–</div></div>
+  </section>
+
+  <section class="panel linkrow">
+    <div><h2>Spotify listener numbers</h2><p class="sub">Spotify only shares listeners, streams and audience details with the artist. Open your Spotify for Artists dashboard to see them.</p></div>
+    <a class="btn" href="https://artists.spotify.com" target="_blank" rel="noopener noreferrer">Open Spotify for Artists</a>
   </section>
 
   <div class="grid">
@@ -170,7 +181,7 @@ function drawReleases(rel){
   list($('#rels'), rows.map(e => () => {
     const r = e.r, cover = r.coverURL || r.officialCoverURL;
     const head = `${cover ? `<img class="cov" src="${esc(cover)}" alt="" loading="lazy">` : `<span class="cov">${esc((r.releaseTitle||'?')[0])}</span>`}
-      <span class="who"><div class="t">${esc(r.releaseTitle || 'Untitled release')}</div><div class="m">${esc(r.artistName || '')} · ${esc(r.releaseType || 'Single')}</div></span>
+      <span class="who"><div class="t">${esc(r.releaseTitle || 'Untitled release')}</div><div class="m">${esc(r.releaseType || 'Single')} by ${esc(r.artistName || 'Unknown artist')}</div></span>
       <span class="val ${e.real ? '' : 'none'}">${e.real ? fmt(e.total) : 'No data yet'}</span>`;
     const body = e.b.map(t => `<div class="sr"><span>${esc(t.title)}</span><span class="val ${t.views === null ? 'none' : ''}">${t.views === null ? 'Waiting for stores' : fmt(t.views)}</span></div>`).join('');
     return item(head, body);
