@@ -894,7 +894,9 @@ body.select-mode .card-top > .badge { margin-right: 32px; }
 .sheet-x:hover { color: var(--white); border-color: var(--white); }
 .sheet-scrim { position: fixed; inset: 0; z-index: 700; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
 .sheet-scrim.open { opacity: 1; pointer-events: auto; }
-
+.poster-chip { cursor: pointer; color: var(--text); border-color: var(--border-strong); font-family: var(--ff); }
+.poster-chip:hover { border-color: var(--white); color: var(--white); }
+.poster-chip:disabled { opacity: 0.5; cursor: wait; }
 /* ANIMATIONS */
 @keyframes spin    { to { transform: rotate(360deg); } }
 @keyframes toastIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
@@ -2717,9 +2719,32 @@ function compactCard(card, item) {
 
   card.appendChild(summary);
   card.appendChild(sheet);
+  if (key === 'approved') {
+    const pb = document.createElement('button');
+    pb.type = 'button';
+    pb.className = 'chip poster-chip';
+    pb.innerHTML = '<b>Share</b>Poster';
+    pb.addEventListener('click', (e) => { e.stopPropagation(); openPoster(item, pb); });
+    summary.querySelector('.sum-chips').appendChild(pb);
+  }
 
   summary.addEventListener('click', () => { if (!selectMode) openSheet(card); });
   sheet.querySelector('.sheet-x').addEventListener('click', closeSheet);
+}
+let posterMod = null;
+async function openPoster(item, btn) {
+  const label = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  try {
+    posterMod = posterMod || await import('/poster.js');
+    await posterMod.showPoster(item, toast);
+  } catch (e) {
+    toast('error', 'Poster failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = label;
+  }
 }
 function waitForAuth() {
   return new Promise((resolve) => {
