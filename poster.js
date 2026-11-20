@@ -6,17 +6,6 @@
 const W = 1080, H = 1350;
 const LOGO_URL = '/black.png';
 const ICONS = 'https://cdn.jsdelivr.net/npm/simple-icons@11.14.0/icons/';
-const STORE_MAP = [
-  ['spotify', 'spotify', 'Spotify'],
-  ['appleMusic', 'applemusic', 'Apple Music'],
-  ['itunes', 'applemusic', 'Apple Music'],
-  ['youtube', 'youtubemusic', 'YouTube Music'],
-  ['amazonMusic', 'amazonmusic', 'Amazon Music'],
-  ['deezer', 'deezer', 'Deezer'],
-  ['tidal', 'tidal', 'Tidal'],
-  ['audiomack', 'audiomack', 'Audiomack'],
-  ['boomplay', 'boomplay', 'Boomplay']
-];
 const DEFAULT_STORES = [
   { slug: 'spotify', name: 'Spotify' },
   { slug: 'applemusic', name: 'Apple Music' },
@@ -110,13 +99,9 @@ async function icon(slug, color) {
   } catch { iconCache[k] = null; }
   return iconCache[k];
 }
-function storesFor(item) {
-  const st = (item.smartLink && item.smartLink.stores) || {};
-  const out = [];
-  STORE_MAP.forEach(([key, slug, name]) => {
-    if (st[key] && String(st[key]).trim() && !out.some((o) => o.slug === slug)) out.push({ slug, name });
-  });
-  return (out.length ? out : DEFAULT_STORES).slice(0, 6);
+// Always the same three stores on every poster, whatever links the release has
+function storesFor() {
+  return DEFAULT_STORES;
 }
 
 /* ---------- cover + colours ---------- */
