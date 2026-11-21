@@ -371,6 +371,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .topbar { background: #000 !important; }
 .sidebar { background: #1c1c1e !important; }
 .release-row { content-visibility: auto; contain-intrinsic-size: 90px; }
+.nav-item { font-size: 16px; padding: 12px 14px; gap: 13px; }
+.nav-item svg { width: 21px; height: 21px; }
+.nav-section-label { font-size: 13px; padding: 20px 12px 8px; }
+.sidebar-brand { font-size: 1.2rem; }
+.nav-new { margin-left: auto; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #000; background: var(--green); padding: 3px 8px; border-radius: 999px; }
 </style>
 </head>
 <body>
@@ -412,7 +417,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Royalty Split
     </a>
-    <div class="nav-section-label">Tools</div>
+<div class="nav-section-label">Tools</div>
+    <a class="nav-item" href="presskit.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Press Kit <span class="nav-new">New</span>
+    </a>
+    <a class="nav-item" href="#" id="exportCatalogBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export Catalog <span class="nav-new">New</span>
+    </a>
     <a class="nav-item" href="https://444musicblog.vercel.app/">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/><path d="M12 12H3M16 6H3M12 18H3"/></svg>
       Promote/Playlist
@@ -1225,6 +1238,29 @@ async function pollPaymentStatus(reference, releaseId) {
   } catch (err) { console.error("[verify-payment] error:", err); }
 }
 function loadReleasesForCurrentUser() { if (window._reloadReleases) window._reloadReleases(); }
+
+/* EXPORT CATALOG (CSV) — uses the releases already loaded, no extra reads */
+function csvCell(v) { const s = String(v == null ? '' : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+document.getElementById('exportCatalogBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  const list = Object.values(window._releaseMeta || {});
+  if (!list.length) { showToast('No releases to export yet.', true); return; }
+  list.sort((a, b) => String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
+  const rows = [['Title', 'Artist', 'Type', 'Status', 'Release Date', 'Genre', 'Language', 'UPC', 'ISRC', 'Catalog Number', 'Label', 'Copyright', 'Smart Link']];
+  list.forEach(d => {
+    const link = d.partnerShareLink ? String(d.partnerShareLink) : (d.smartLinkSlug ? SMARTLINK_BASE + d.smartLinkSlug : '');
+    rows.push([d.releaseTitle, d.artistName, d.releaseType, statusDisplayLabel(d.status), String(d.releaseDate || '').slice(0, 10),
+      d.genre, d.language, d.upc, d.isrc, d.catalogNumber, d.label, d.copyright, link]);
+  });
+  const csv = '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = '444music-catalog-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  showToast('Catalog exported (' + list.length + ' releases)');
+  sidebar.classList.remove('open'); overlay.classList.remove('show');
+});
 
 /* CHECK REASONS & FIX */
 function openRejectionFix(releaseId) {
