@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Share your release | 444Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#0a0a0a;color:#f2f2f3;min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:36px 20px 56px}
+.brand{font-weight:700;font-size:.9rem;letter-spacing:.02em;margin-bottom:28px}
+h1{font-size:1.7rem;line-height:1.2;font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+.lead{color:#9a9a9f;line-height:1.55;margin-bottom:24px}
+.stage{width:100%;aspect-ratio:4/5;background:#141414;border-radius:4px;display:grid;place-items:center;color:#9a9a9f;font-size:.92rem;text-align:center;padding:24px;overflow:hidden}
+.stage canvas{width:100%;height:100%;display:block}
+.row{display:flex;gap:10px;margin-top:16px}
+.btn{flex:1;padding:14px 18px;border-radius:4px;border:1px solid #fff;background:#fff;color:#000;font:700 .8rem Inter,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.btn.alt{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.note{margin-top:14px;font-size:.82rem;color:#9a9a9f;line-height:1.5;min-height:1.2em}
+.note.err{color:#f87171}
+.foot{margin-top:34px;font-size:.84rem}
+.foot a{color:#9a9a9f}
+@media(max-width:420px){.row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">444Music</div>
+  <h1>Share your release</h1>
+  <p class="lead">Download your poster and post it to tell your fans your music is out.</p>
+
+  <div class="stage" id="stage">Making your poster…</div>
+  <div class="row">
+    <button class="btn" id="dl" disabled>Download</button>
+    <button class="btn alt" id="share" hidden>Share</button>
+  </div>
+  <div class="note" id="note"></div>
+  <div class="foot"><a href="https://www.444musicdistro.com/wey">Go to your dashboard</a></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { renderPoster } from "/poster.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+});
+const db = getFirestore(app);
+
+const $ = (id) => document.getElementById(id);
+const stage = $('stage'), note = $('note'), dl = $('dl'), share = $('share');
+const fail = (msg) => { stage.textContent = msg; note.textContent = ''; };
+
+(async () => {
+  const slug = (new URLSearchParams(location.search).get('s') || '').trim().toLowerCase();
+  if (!/^[a-z0-9-]{1,120}$/.test(slug)) return fail('This link is not valid.');
+
+  let item;
+  try {
+    const snap = await getDocs(query(collection(db, 'submissions'), where('smartLinkSlug', '==', slug), limit(1)));
+    if (snap.empty) return fail('We could not find this release.');
+    item = { id: snap.docs[0].id, ...snap.docs[0].data() };
+  } catch (e) {
+    console.error('Poster page read failed:', e);
+    return fail('We could not load this release right now. Please try again later.');
+  }
+  if (String(item.status || '').toLowerCase() !== 'approved') return fail('This poster is not available yet.');
+
+  let r;
+  try { r = await renderPoster(item); }
+  catch (e) { console.error('Poster draw failed:', e); return fail('We could not make the poster. Please try again.'); }
+
+  stage.textContent = '';
+  stage.appendChild(r.canvas);
+  const name = slug + '-444music-poster.jpg';
+  const blob = () => new Promise((ok, no) => {
+    try { r.canvas.toBlob((b) => (b ? ok(b) : no(new Error('empty'))), 'image/jpeg', 0.94); } catch (e) { no(e); }
+  });
+
+  if (!r.safe) {
+    note.className = 'note err';
+    note.textContent = 'The preview is ready, but saving is blocked for this cover. Please contact 444Music.';
+  } else {
+    dl.disabled = false;
+    note.textContent = 'Saves as a 1080 x 1350 image, the size for an Instagram post.';
+  }
+  dl.onclick = async () => {
+    try {
+      const url = URL.createObjectURL(await blob());
+      const a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    } catch { note.className = 'note err'; note.textContent = 'Could not save the image. Please try again.'; }
+  };
+  if (r.safe && navigator.share && navigator.canShare) {
+    share.hidden = false;
+    share.onclick = async () => {
+      try {
+        const file = new File([await blob()], name, { type: 'image/jpeg' });
+        if (navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: r.title });
+        else { note.className = 'note'; note.textContent = 'This device cannot share images from here. Use Download.'; }
+      } catch (e) { if (e && e.name !== 'AbortError') { note.className = 'note err'; note.textContent = 'Sharing failed. Use Download instead.'; } }
+    };
+  }
+})();
+</script>
+</body>
+</html>
