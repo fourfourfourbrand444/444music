@@ -52,14 +52,39 @@ h2 { font-size: 13px; font-weight: 400; color: var(--text2); margin: 0 6px 8px; 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .tags span { font-size: 12px; color: var(--text2); background: var(--fill); border-radius: 999px; padding: 3px 10px; }
 .foot { margin-top: auto; padding-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 20px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; transition: opacity .15s; }
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 20px; border: none; border-radius: 999px; background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
 .btn:active { opacity: .7; }
 .btn.red { background: rgba(255,69,58,.16); color: var(--red); }
 .warn { font-size: 12px; color: var(--text2); line-height: 1.45; margin-top: 12px; }
 .empty { display: none; text-align: center; color: var(--text2); font-size: 15px; padding: 70px 16px; }
 .empty.on { display: block; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 30px; } }
+
+/* claim sheet */
+.scrim { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.sheet { width: 100%; max-width: 520px; max-height: 86vh; display: flex; flex-direction: column; background: var(--card); border-radius: 22px; transform: translateY(24px) scale(.97); transition: transform .35s cubic-bezier(.32,.72,0,1); overflow: hidden; }
+.scrim.on .sheet { transform: none; }
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 18px 12px; border-bottom: .5px solid var(--sep); }
+.sheet-head h3 { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.sheet-head p { font-size: 13px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+.sheet-x { flex-shrink: 0; width: 30px; height: 30px; border: none; border-radius: 50%; background: var(--fill); color: var(--text2); font-size: 13px; cursor: pointer; }
+.sheet-list { overflow-y: auto; padding: 6px 18px 12px; -webkit-overflow-scrolling: touch; }
+.store { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.store + .store { border-top: .5px solid var(--sep); }
+.store-tile { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; color: #fff; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+.store-info { flex: 1; min-width: 0; }
+.store-name { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.store-note { font-size: 12px; color: var(--text2); margin-top: 1px; line-height: 1.35; }
+.store .btn { flex-shrink: 0; padding: 0 18px; }
+.sheet-foot { padding: 12px 18px 16px; border-top: .5px solid var(--sep); font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; } h1 { font-size: 30px; }
+  .scrim { align-items: flex-end; padding: 0; }
+  .sheet { max-width: none; max-height: 88vh; border-radius: 22px 22px 0 0; transform: translateY(100%); }
+}
+@media (prefers-reduced-motion: reduce) { .scrim, .sheet { transition: none; } }
 </style>
 </head>
 <body>
@@ -81,6 +106,21 @@ h2 { font-size: 13px; font-weight: 400; color: var(--text2); margin: 0 6px 8px; 
   <div class="empty" id="empty"></div>
 </main>
 
+<!-- claim profile sheet -->
+<div class="scrim" id="claimScrim" aria-hidden="true">
+  <div class="sheet" id="claimSheet" role="dialog" aria-modal="true" aria-labelledby="claimTitle">
+    <div class="sheet-head">
+      <div>
+        <h3 id="claimTitle">Claim Artist Profile</h3>
+        <p>Pick a store to open its artist portal and claim your page.</p>
+      </div>
+      <button class="sheet-x" id="claimClose" type="button" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="sheet-list" id="claimList"></div>
+    <div class="sheet-foot">Your music must already be live on a store before you can claim your profile there. Keep your artist name the same on every release.</div>
+  </div>
+</div>
+
 <script>
 var SECTIONS = [
   { id: 'artwork', name: 'Artwork' },
@@ -88,6 +128,30 @@ var SECTIONS = [
   { id: 'growth', name: 'Growth' },
   { id: 'royalties', name: 'Royalties' },
   { id: 'management', name: 'Account' }
+];
+
+/* Stores that let artists claim a profile. Order = order shown in the list. */
+var CLAIM_STORES = [
+  { name: 'Spotify', note: 'Spotify for Artists', icon: 'fa-brands fa-spotify', color: '#1db954',
+    href: 'https://artists.spotify.com/c/claim' },
+  { name: 'Apple Music', note: 'Apple Music for Artists', icon: 'fa-brands fa-apple', color: '#fa243c',
+    href: 'https://artists.apple.com' },
+  { name: 'Boomplay', note: 'Boomplay for Artists', letter: 'B', color: '#e8281e',
+    href: 'https://www.boomplay.com/ForArtist' },
+  { name: 'YouTube Music', note: 'Official Artist Channel', icon: 'fa-brands fa-youtube', color: '#ff0000',
+    href: 'https://support.google.com/youtube/answer/7336634' },
+  { name: 'Amazon Music', note: 'Amazon Music for Artists', icon: 'fa-brands fa-amazon', color: '#00a8e1',
+    href: 'https://artists.amazonmusic.com' },
+  { name: 'Audiomack', note: 'Audiomack for Creators', letter: 'A', color: '#ff7a00',
+    href: 'https://audiomack.com/creators' },
+  { name: 'Deezer', note: 'Deezer for Creators', icon: 'fa-brands fa-deezer', color: '#a238ff',
+    href: 'https://creators.deezer.com' },
+  { name: 'TIDAL', note: 'TIDAL for Artists', letter: 'T', color: '#111111',
+    href: 'https://artists.tidal.com' },
+  { name: 'SoundCloud', note: 'SoundCloud for Artists', icon: 'fa-brands fa-soundcloud', color: '#ff5500',
+    href: 'https://artists.soundcloud.com' },
+  { name: 'Pandora', note: 'Pandora AMP', letter: 'P', color: '#224099',
+    href: 'https://amp.pandora.com' }
 ];
 
 var TOOLS = [
@@ -132,9 +196,9 @@ var TOOLS = [
     tags: ['Recording ID', 'Required by stores'],
     href: 'https://distrofinder.org/signin', btn: 'Get code', ext: true },
   { cat: 'management', icon: 'fa-user-check', title: 'Claim Artist Profile',
-    desc: 'A step-by-step guide to claim your artist page on Spotify, Apple Music and Amazon Music.',
-    tags: ['Spotify for Artists', 'Apple Music', 'Amazon Music'],
-    href: 'https://artists.spotify.com/c/claim', btn: 'Get guide', ext: true },
+    desc: 'Choose a store and open its artist portal to claim your page, get verified and see your stats.',
+    tags: ['Spotify', 'Apple Music', 'Boomplay', 'YouTube Music', 'Amazon Music', 'Audiomack', 'Deezer', 'TIDAL'],
+    claim: true, btn: 'Choose store' },
   { cat: 'management', icon: 'fa-trash-can', title: 'Song Takedown',
     desc: 'Request removal of a release from all platforms. Full removal takes 5 to 14 business days.',
     tags: ['All platforms', 'Confirmation email'],
@@ -153,14 +217,20 @@ function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&
 
 function cardHtml(t) {
   var tile = t.danger ? 'c-danger' : 'c-' + t.cat;
-  var link = 'href="' + esc(t.href) + '"' + (t.ext ? ' target="_blank" rel="noopener noreferrer"' : '');
+  var action;
+  if (t.claim) {
+    action = '<button class="btn" type="button" data-open="claim">' + esc(t.btn) + '</button>';
+  } else {
+    var link = 'href="' + esc(t.href) + '"' + (t.ext ? ' target="_blank" rel="noopener noreferrer"' : '');
+    action = '<a class="btn' + (t.danger ? ' red' : '') + '" ' + link + '>' + esc(t.btn) + '</a>';
+  }
   return '<article class="card" data-search="' + esc((t.title + ' ' + t.desc + ' ' + t.tags.join(' ')).toLowerCase()) + '">' +
     '<div class="head"><div class="tile ' + tile + '"><i class="fa-solid ' + t.icon + '"></i></div>' +
     '<div><h3>' + esc(t.title) + '</h3>' + (t.note ? '<div class="note">' + esc(t.note) + '</div>' : '') + '</div></div>' +
     '<p>' + esc(t.desc) + '</p>' +
     '<div class="tags">' + t.tags.map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('') + '</div>' +
     (t.warn ? '<div class="warn">' + esc(t.warn) + '</div>' : '') +
-    '<div class="foot"><a class="btn' + (t.danger ? ' red' : '') + '" ' + link + '>' + esc(t.btn) + '</a></div>' +
+    '<div class="foot">' + action + '</div>' +
     '</article>';
 }
 
@@ -201,6 +271,45 @@ chipsEl.addEventListener('click', function (e) {
   apply();
 });
 apply();
+
+/* ---------- claim profile sheet ---------- */
+var scrim = document.getElementById('claimScrim');
+var claimList = document.getElementById('claimList');
+var claimClose = document.getElementById('claimClose');
+var lastOpener = null;
+
+claimList.innerHTML = CLAIM_STORES.map(function (s) {
+  var inner = s.icon ? '<i class="' + s.icon + '"></i>' : esc(s.letter || s.name.charAt(0));
+  return '<div class="store">' +
+    '<div class="store-tile" style="background:' + esc(s.color) + '">' + inner + '</div>' +
+    '<div class="store-info"><div class="store-name">' + esc(s.name) + '</div><div class="store-note">' + esc(s.note) + '</div></div>' +
+    '<a class="btn" href="' + esc(s.href) + '" target="_blank" rel="noopener noreferrer" aria-label="Claim your ' + esc(s.name) + ' profile">Claim</a>' +
+    '</div>';
+}).join('');
+
+function openClaim(opener) {
+  lastOpener = opener || null;
+  scrim.classList.add('on');
+  scrim.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  claimClose.focus();
+}
+function closeClaim() {
+  scrim.classList.remove('on');
+  scrim.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (lastOpener) lastOpener.focus();
+}
+
+list.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-open="claim"]');
+  if (b) openClaim(b);
+});
+claimClose.addEventListener('click', closeClaim);
+scrim.addEventListener('click', function (e) { if (e.target === scrim) closeClaim(); });
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && scrim.classList.contains('on')) closeClaim();
+});
 </script>
 </body>
 </html>
