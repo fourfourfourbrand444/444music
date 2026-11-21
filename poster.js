@@ -408,3 +408,6 @@ export async function showPoster(item, toast) {
   row.appendChild(close);
   document.body.appendChild(o);
 }
+
+/* used by poster.html (the page opened from the approval email) */
+export { render as renderPoster };
