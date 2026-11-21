@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Press Kit — 444Music</title>
+<style>
+:root { --bg:#000; --s1:#1c1c1e; --s2:#2c2c2e; --sep:rgba(84,84,88,0.55); --fill:rgba(120,120,128,0.24); --t2:rgba(235,235,245,0.6); --t3:rgba(235,235,245,0.32); --blue:#0a84ff; --green:#30d158; --ease:cubic-bezier(0.32,0.72,0,1); --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Helvetica Neue",Roboto,Arial,sans-serif; }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font); background:var(--bg); color:#fff; min-height:100vh; letter-spacing:-0.01em; -webkit-font-smoothing:antialiased; }
+a { color:inherit; text-decoration:none; }
+button { font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+.wrap { max-width:760px; margin:0 auto; padding:0 18px 60px; }
+.bar { display:flex; align-items:center; justify-content:space-between; gap:10px; height:56px; }
+.back { width:36px; height:36px; border-radius:50%; background:var(--fill); display:flex; align-items:center; justify-content:center; font-size:18px; }
+.btn { height:38px; padding:0 18px; border-radius:999px; background:#fff; color:#000; font-size:14px; font-weight:600; }
+.btn.ghost { background:var(--fill); color:#fff; }
+.btn:active { opacity:0.85; }
+.actions { display:flex; gap:8px; }
+.hero { padding:18px 0 8px; }
+.tag { font-size:12px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--t2); }
+.name { font-size:40px; font-weight:800; letter-spacing:-0.04em; line-height:1.05; margin-top:8px; word-break:break-word; }
+.count { font-size:15px; color:var(--t2); margin-top:8px; }
+.sec { margin-top:30px; }
+.sec h2 { font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--t2); margin:0 4px 10px; }
+.card { background:var(--s1); border-radius:16px; padding:16px; }
+.bio-view { font-size:16px; line-height:1.6; color:rgba(255,255,255,0.9); white-space:pre-wrap; word-break:break-word; }
+.bio-view.empty { color:var(--t3); }
+.bio-edit { margin-top:14px; }
+textarea { width:100%; min-height:130px; resize:vertical; background:var(--s2); border:0; outline:0; border-radius:12px; color:#fff; font:inherit; font-size:15px; line-height:1.5; padding:12px 14px; }
+textarea::placeholder { color:var(--t3); }
+.save-row { display:flex; align-items:center; gap:12px; margin-top:10px; }
+.save-note { font-size:13px; color:var(--t2); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; }
+.rel { background:var(--s1); border-radius:16px; overflow:hidden; }
+.rel img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:var(--s2); }
+.rel-body { padding:12px 14px 14px; }
+.rel-title { font-size:16px; font-weight:700; letter-spacing:-0.02em; word-break:break-word; }
+.rel-meta { font-size:13px; color:var(--t2); margin-top:3px; }
+.rel-link { display:block; margin-top:10px; font-size:13px; color:var(--blue); word-break:break-all; }
+.empty { text-align:center; color:var(--t2); padding:50px 10px; font-size:15px; }
+.toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(140%); background:rgba(44,44,46,0.95); border-radius:14px; padding:12px 18px; font-size:14px; font-weight:500; transition:transform 0.4s var(--ease); z-index:99; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+@media print {
+  body { background:#fff; color:#000; }
+  .noprint { display:none !important; }
+  .card, .rel { background:#fff; border:1px solid #ddd; }
+  .bio-view, .rel-title { color:#000; }
+  .tag, .count, .rel-meta, .sec h2 { color:#555; }
+  .rel-link { color:#0645ad; }
+  .rel, .card { break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar noprint">
+    <button class="back" onclick="history.back()" aria-label="Back">‹</button>
+    <div class="actions">
+      <button class="btn ghost" id="copyBtn">Copy text</button>
+      <button class="btn" id="printBtn">Save as PDF</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="tag">Press Kit</div>
+    <div class="name" id="artistName">Loading…</div>
+    <div class="count" id="countLine"></div>
+  </div>
+
+  <div class="sec">
+    <h2>About</h2>
+    <div class="card">
+      <div class="bio-view empty" id="bioView">No bio yet.</div>
+      <div class="bio-edit noprint">
+        <textarea id="bioInput" maxlength="1500" placeholder="Write a short bio: where you are from, your sound, your biggest moments."></textarea>
+        <div class="save-row">
+          <button class="btn" id="saveBio">Save bio</button>
+          <span class="save-note" id="saveNote"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>Releases</h2>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+  authDomain: "usersubmissionsportal.firebaseapp.com",
+  projectId: "usersubmissionsportal",
+  storageBucket: "usersubmissionsportal.firebasestorage.app",
+  messagingSenderId: "734783502459",
+  appId: "1:734783502459:web:cfa2cc5de6976003b24ade"
+});
+const auth = getAuth(app);
+const db = getFirestore(app);
+const SMARTLINK_BASE = "https://444musicdistro.com/";
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
+
+let kit = { name: '', bio: '', releases: [] };
+let currentUser = null;
+
+function paintBio() {
+  const v = $('bioView');
+  const b = (kit.bio || '').trim();
+  v.textContent = b || 'No bio yet.';
+  v.classList.toggle('empty', !b);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  try {
+    const [uSnap, sSnap] = await Promise.all([
+      getDoc(doc(db, 'users', user.uid)),
+      getDocs(query(collection(db, 'submissions'), where('userId', '==', user.uid)))
+    ]);
+    const u = uSnap.exists() ? uSnap.data() : {};
+    kit.bio = u.bio || '';
+    kit.releases = sSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(r => String(r.status || '').trim().toLowerCase() === 'approved')
+      .sort((a, b) => String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
+    kit.name = (kit.releases[0] && kit.releases[0].artistName) || user.displayName || (user.email || 'Artist').split('@')[0];
+
+    $('artistName').textContent = kit.name;
+    $('countLine').textContent = kit.releases.length + (kit.releases.length === 1 ? ' release' : ' releases') + ' on all major platforms';
+    $('bioInput').value = kit.bio;
+    paintBio();
+
+    if (!kit.releases.length) {
+      $('grid').innerHTML = '<div class="empty" style="grid-column:1/-1">Your approved releases will appear here.</div>';
+      return;
+    }
+    $('grid').innerHTML = kit.releases.map(r => {
+      const link = r.partnerShareLink ? String(r.partnerShareLink) : (r.smartLinkSlug ? SMARTLINK_BASE + r.smartLinkSlug : '');
+      const date = r.releaseDate ? new Date(r.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+      r._link = link; r._date = date;
+      return '<div class="rel">' +
+        (r.coverURL ? '<img src="' + esc(r.coverURL) + '" alt="Cover" loading="lazy" decoding="async" width="210" height="210">' : '<div style="aspect-ratio:1/1;background:#2c2c2e"></div>') +
+        '<div class="rel-body"><div class="rel-title">' + esc(r.releaseTitle || 'Untitled') + '</div>' +
+        '<div class="rel-meta">' + esc(r.releaseType || 'Single') + (date ? ' · ' + esc(date) : '') + (r.genre ? ' · ' + esc(r.genre) : '') + '</div>' +
+        (link ? '<a class="rel-link" href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(link) + '</a>' : '') +
+        '</div></div>';
+    }).join('');
+  } catch (e) {
+    console.error(e);
+    $('artistName').textContent = 'Could not load';
+    toast('Could not load your press kit. Refresh and try again.');
+  }
+});
+
+$('saveBio').addEventListener('click', async () => {
+  if (!currentUser) return;
+  const b = $('bioInput').value.trim();
+  $('saveBio').disabled = true;
+  try {
+    await setDoc(doc(db, 'users', currentUser.uid), { bio: b, bioUpdatedAt: serverTimestamp() }, { merge: true });
+    kit.bio = b; paintBio();
+    $('saveNote').textContent = 'Saved';
+    setTimeout(() => { $('saveNote').textContent = ''; }, 2000);
+  } catch (e) { toast('Could not save. Try again.'); }
+  $('saveBio').disabled = false;
+});
+
+$('printBtn').addEventListener('click', () => window.print());
+
+$('copyBtn').addEventListener('click', () => {
+  const lines = [kit.name.toUpperCase(), 'Press Kit', ''];
+  if (kit.bio) lines.push(kit.bio, '');
+  lines.push('RELEASES');
+  kit.releases.forEach(r => {
+    lines.push('- ' + (r.releaseTitle || 'Untitled') + ' (' + (r.releaseType || 'Single') + (r._date ? ', ' + r._date : '') + ')' + (r._link ? ' ' + r._link : ''));
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(() => toast('Press kit copied')).catch(() => toast('Could not copy'));
+});
+</script>
+</body>
+</html>
