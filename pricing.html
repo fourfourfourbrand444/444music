@@ -649,7 +649,7 @@ function showPendingPayBanner(reference) {
   if (!banner) return;
   banner.style.display = 'flex';
   document.getElementById('pendingPayBtn').onclick = () => {
-    window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`;
+  window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}&pr=${encodeURIComponent(sessionStorage.getItem('pendingPaymentPaystackRef') || '')}`;
   };
 }
 
@@ -728,7 +728,7 @@ async function checkPendingPaymentAndMaybeRedirect() {
       sessionStorage.removeItem('pendingPaymentRef');
       sessionStorage.removeItem('pendingPaymentPaystackRef');
       sessionStorage.removeItem('pendingPaymentPlan');
-      window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}`;
+      window.location.href = `payment-success.html?ref=${encodeURIComponent(reference)}&pr=${encodeURIComponent(paystackRef)}`;
       return;
     }
   } catch (err) {
