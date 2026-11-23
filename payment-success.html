@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Payment Confirmed — 444Music</title>
+<title>Payment — 444Music</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,12 +32,7 @@
   .bg-overlay {
     position: fixed;
     inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(7,7,7,0.7) 0%,
-      rgba(7,7,7,0.88) 50%,
-      rgba(3,3,3,0.95) 100%
-    );
+    background: linear-gradient(135deg, rgba(7,7,7,0.7) 0%, rgba(7,7,7,0.88) 50%, rgba(3,3,3,0.95) 100%);
     z-index: 1;
   }
 
@@ -51,7 +46,6 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 0;
   }
 
   .logo { margin-bottom: 3rem; }
@@ -69,11 +63,22 @@
     margin-bottom: 1.75rem;
     animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   }
+  .check-wrap svg { display: none; }
+  .check-wrap.is-ok svg.ic-ok { display: block; }
+  .check-wrap.is-fail { border-color: rgba(255,69,58,0.55); background: rgba(255,69,58,0.1); }
+  .check-wrap.is-fail svg.ic-fail { display: block; }
+  .check-wrap.is-wait .big-spin { display: block; }
 
-  .check-wrap svg { display: block; }
+  .big-spin {
+    display: none;
+    width: 26px; height: 26px;
+    border: 2.5px solid rgba(255,255,255,0.18);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
 
   h1 {
-    font-family: 'Inter', sans-serif;
     font-size: 1.75rem;
     font-weight: 600;
     color: #ffffff;
@@ -97,6 +102,7 @@
   .meta-label { font-size: 0.78rem; color: rgba(255,255,255,0.32); letter-spacing: 0.01em; }
   .meta-value { font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.75); }
   .meta-value.ok { color: #ffffff; }
+  .meta-value.bad { color: #ff453a; }
 
   .btn {
     display: flex;
@@ -120,75 +126,46 @@
     position: relative;
     overflow: hidden;
   }
-
-  .btn:hover:not(.loading) { background: #d9d9d9; }
-  .btn:active:not(.loading) { transform: scale(0.99); }
+  .btn:hover:not(.loading):not(:disabled) { background: #d9d9d9; }
+  .btn:active:not(.loading):not(:disabled) { transform: scale(0.99); }
   .btn.loading { cursor: default; opacity: 0.85; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+
+  .btn-link {
+    background: none; border: none; color: rgba(255,255,255,0.55);
+    font-family: inherit; font-size: 0.8rem; cursor: pointer; padding: 8px; margin-bottom: 0.4rem;
+    display: none;
+  }
+  .btn-link:hover { color: #fff; }
 
   .btn-progress {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 0%;
-    background: rgba(0,0,0,0.12);
-    border-radius: 500px;
-    transition: width 0.3s ease;
+    position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+    background: rgba(0,0,0,0.12); border-radius: 500px; transition: width 0.3s ease;
   }
-
   .btn-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
 
   .spinner {
-    width: 15px;
-    height: 15px;
-    border: 2px solid rgba(0,0,0,0.2);
-    border-top-color: #080808;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-    flex-shrink: 0;
+    width: 15px; height: 15px;
+    border: 2px solid rgba(0,0,0,0.2); border-top-color: #080808;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    display: none; flex-shrink: 0;
   }
 
   .redirect-note {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 0.01em;
-    min-height: 1.1rem;
-    margin-bottom: 0.4rem;
-    transition: opacity 0.3s;
-    opacity: 0;
+    font-size: 0.72rem; color: rgba(255,255,255,0.5); letter-spacing: 0.01em;
+    min-height: 1.1rem; margin-bottom: 0.4rem; transition: opacity 0.3s; opacity: 0;
   }
-
   .redirect-note.show { opacity: 1; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .secure {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.22);
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    justify-content: center;
+    font-size: 0.72rem; color: rgba(255,255,255,0.22); letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 5px; justify-content: center;
   }
-
   .secure svg { opacity: 0.5; }
 
-  .ref-note {
-    font-size: 0.68rem;
-    color: rgba(239,68,68,0.85);
-    letter-spacing: 0.01em;
-    margin-top: 0.9rem;
-    max-width: 300px;
-    line-height: 1.5;
-    display: none;
-  }
-  .ref-note.show { display: block; }
-
-  @keyframes pop {
-    from { opacity: 0; transform: scale(0.6); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-
+  @keyframes pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
   @media (max-width: 480px) { h1 { font-size: 1.5rem; } }
 </style>
 </head>
@@ -203,21 +180,25 @@
     <img src="https://444music-distribution.vercel.app/logo.png" alt="444Music Distribution"/>
   </div>
 
-  <div class="check-wrap">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <div class="check-wrap is-wait" id="iconWrap">
+    <div class="big-spin"></div>
+    <svg class="ic-ok" width="28" height="28" viewBox="0 0 28 28" fill="none">
       <path d="M6 14.5L11.5 20L22 9" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="ic-fail" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2.4" stroke-linecap="round">
+      <path d="M6 6l12 12M18 6L6 18"/>
     </svg>
   </div>
 
-  <h1>Payment confirmed</h1>
-  <p class="sub">Your payment went through. Submit your music below to start your distribution.</p>
+  <h1 id="title">Verifying payment…</h1>
+  <p class="sub" id="sub">Please wait while we confirm your payment with Paystack.</p>
 
   <div class="divider"></div>
 
   <div class="meta">
     <div class="meta-row">
       <span class="meta-label">Status</span>
-      <span class="meta-value ok">Approved</span>
+      <span class="meta-value" id="status">Checking…</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Processed</span>
@@ -225,22 +206,24 @@
     </div>
     <div class="meta-row">
       <span class="meta-label">Next step</span>
-      <span class="meta-value">Submit your music</span>
+      <span class="meta-value" id="next">—</span>
     </div>
   </div>
 
   <div class="redirect-note" id="rNote"></div>
 
-  <button class="btn" id="submitBtn" onclick="startRedirect()">
+  <button class="btn" id="submitBtn" disabled>
     <div class="btn-progress" id="btnProgress"></div>
     <div class="btn-inner">
       <svg id="btnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
       </svg>
       <div class="spinner" id="btnSpinner"></div>
-      <span id="btnText">Submit your music</span>
+      <span id="btnText">Please wait…</span>
     </div>
   </button>
+
+  <button class="btn-link" id="retryBtn" type="button">Check again</button>
 
   <div class="secure">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -249,40 +232,144 @@
     Payment secured
   </div>
 
-  <div class="ref-note" id="refWarning">
-    We couldn't find your payment reference on this page. If your next screen asks you to pay again, go back to Pricing and use "I've completed payment" instead of reloading this link directly.
-  </div>
-
 </div>
 
-<script>
-  const d = new Date();
-  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-  const h = d.getHours() % 12 || 12;
-  const m = String(d.getMinutes()).padStart(2,'0');
-  const ap = d.getHours() >= 12 ? 'PM' : 'AM';
-  document.getElementById('ts').textContent = mo + ' ' + d.getDate() + ', ' + h + ':' + m + ' ' + ap;
+<script type="module">
+  const BACKEND_BASE = 'https://four44music-broadcast-backend.onrender.com';
 
-  /* ── THE FIX ────────────────────────────────────────────────────
-     Previously this page redirected to a bare 'files.html' with no
-     payment reference attached at all, so every page after this one
-     lost track of which payment/submission this was — that's the
-     root cause of releases staying "Pending"/"Unpaid" after paying.
+  const urlParams = new URLSearchParams(window.location.search);
 
-     Now: read the reference from the URL's own ?ref= param first
-     (covers being linked to directly, e.g. from the manual
-     "I've completed payment" button on pricing.html), and fall back
-     to sessionStorage's 'pendingPaymentRef' (covers the normal
-     Paystack-redirect-back case, since Paystack's own redirect won't
-     necessarily preserve custom query params). Whichever is found,
-     it gets forwarded as ?ref=... on the next page. ──────────────── */
-  const urlParams  = new URLSearchParams(window.location.search);
-  const reference  = urlParams.get('ref') || sessionStorage.getItem('pendingPaymentRef') || '';
+  // Our own temp reference (used by files.html / Firestore pendingPayments doc id)
+  const reference = urlParams.get('ref') || sessionStorage.getItem('pendingPaymentRef') || '';
 
-  if (!reference) {
-    document.getElementById('refWarning').classList.add('show');
+  // Paystack reference (used to verify with the backend). Sources, in order:
+  //  ?pr=  (passed from pricing.html)
+  //  ?reference= / ?trxref=  (appended by Paystack when it redirects back)
+  //  sessionStorage (normal flow)
+  const paystackRef =
+    urlParams.get('pr') ||
+    urlParams.get('reference') ||
+    urlParams.get('trxref') ||
+    sessionStorage.getItem('pendingPaymentPaystackRef') ||
+    '';
+
+  const $ = id => document.getElementById(id);
+  const iconWrap = $('iconWrap'), titleEl = $('title'), subEl = $('sub');
+  const statusEl = $('status'), tsEl = $('ts'), nextEl = $('next');
+  const btn = $('submitBtn'), btnText = $('btnText'), btnIcon = $('btnIcon');
+  const retryBtn = $('retryBtn');
+
+  function formatNow() {
+    const d = new Date();
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    const h = d.getHours() % 12 || 12;
+    const m = String(d.getMinutes()).padStart(2, '0');
+    const ap = d.getHours() >= 12 ? 'PM' : 'AM';
+    return `${mo} ${d.getDate()}, ${h}:${m} ${ap}`;
   }
 
+  function setWaiting() {
+    iconWrap.className = 'check-wrap is-wait';
+    titleEl.textContent = 'Verifying payment…';
+    subEl.textContent = 'Please wait while we confirm your payment with Paystack.';
+    statusEl.textContent = 'Checking…'; statusEl.className = 'meta-value';
+    tsEl.textContent = '—'; nextEl.textContent = '—';
+    btn.disabled = true; btn.onclick = null;
+    btnText.textContent = 'Please wait…';
+    retryBtn.style.display = 'none';
+  }
+
+  function setPaid() {
+    iconWrap.className = 'check-wrap is-ok';
+    titleEl.textContent = 'Payment confirmed';
+    subEl.textContent = 'Your payment went through. Submit your music below to start your distribution.';
+    statusEl.textContent = 'Approved'; statusEl.className = 'meta-value ok';
+    tsEl.textContent = formatNow();
+    nextEl.textContent = 'Submit your music';
+    btn.disabled = false;
+    btnText.textContent = 'Submit your music';
+    btn.onclick = startRedirect;
+    retryBtn.style.display = 'none';
+  }
+
+  function setNotPaid(networkIssue) {
+    iconWrap.className = 'check-wrap is-fail';
+    titleEl.textContent = networkIssue ? "Couldn't verify payment" : 'Payment not completed';
+    subEl.textContent = networkIssue
+      ? 'We could not reach the server. Check your connection and try again.'
+      : "We couldn't find a completed payment. If you haven't paid, go back to pricing to start again. If you just paid, wait a few seconds and check again.";
+    statusEl.textContent = networkIssue ? 'Unverified' : 'Not paid'; statusEl.className = 'meta-value bad';
+    tsEl.textContent = '—';
+    nextEl.textContent = networkIssue ? 'Try again' : 'Choose a plan';
+    btn.disabled = false;
+    btnIcon.style.display = 'none';
+    btnText.textContent = 'Back to pricing';
+    btn.onclick = () => { window.location.href = 'pricing.html'; };
+    retryBtn.style.display = 'block';
+  }
+
+  // 1) Ask the backend about the Paystack reference
+  async function verifyWithBackend() {
+    if (!paystackRef) return { paid: false, error: false };
+    try {
+      const res = await fetch(`${BACKEND_BASE}/api/paystack/verify-payment/${encodeURIComponent(paystackRef)}`);
+      if (!res.ok) return { paid: false, error: true };
+      const data = await res.json();
+      return { paid: !!(data && data.paid === true), error: false };
+    } catch (e) {
+      return { paid: false, error: true };
+    }
+  }
+
+  // 2) Fallback: the pendingPayments doc is marked paid=true server-side
+  async function verifyWithFirestore() {
+    if (!reference) return false;
+    try {
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js');
+      const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js');
+      const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js');
+
+      const app = initializeApp({
+        apiKey:            "AIzaSyBzUD7avh7vJfeSMRl2o9F09_qd-pl0dSg",
+        authDomain:        "usersubmissionsportal.firebaseapp.com",
+        projectId:         "usersubmissionsportal",
+        storageBucket:     "usersubmissionsportal.firebasestorage.app",
+        messagingSenderId: "734783502459",
+        appId:             "1:734783502459:web:cfa2cc5de6976003b24ade"
+      });
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      const user = await new Promise(resolve => {
+        const off = onAuthStateChanged(auth, u => { off(); resolve(u); });
+      });
+      if (!user) return false;
+
+      const snap = await getDoc(doc(db, 'pendingPayments', reference));
+      if (!snap.exists()) return false;
+      const d = snap.data() || {};
+      return d.paid === true && (!d.uid || d.uid === user.uid);
+    } catch (e) {
+      console.error('[payment-success] Firestore check failed:', e);
+      return false;
+    }
+  }
+
+  async function runVerification() {
+    setWaiting();
+
+    const backend = await verifyWithBackend();
+    if (backend.paid) { setPaid(); return; }
+
+    const fsPaid = await verifyWithFirestore();
+    if (fsPaid) { setPaid(); return; }
+
+    setNotPaid(backend.error);
+  }
+
+  retryBtn.addEventListener('click', runVerification);
+
+  /* ── Redirect to the submission form, carrying the reference ── */
   const TARGET = reference
     ? `files.html?ref=${encodeURIComponent(reference)}`
     : 'files.html';
@@ -294,40 +381,34 @@
     if (started) return;
     started = true;
 
-    const btn = document.getElementById('submitBtn');
-    const progress = document.getElementById('btnProgress');
-    const icon = document.getElementById('btnIcon');
-    const spinner = document.getElementById('btnSpinner');
-    const text = document.getElementById('btnText');
-    const note = document.getElementById('rNote');
+    const progress = $('btnProgress'), spinner = $('btnSpinner'), note = $('rNote');
 
     btn.classList.add('loading');
-    icon.style.display = 'none';
+    btnIcon.style.display = 'none';
     spinner.style.display = 'block';
-
-    const steps = [
-      { at: 0,    pct: 20,  msg: 'Opening submission form…' },
-      { at: 400,  pct: 55,  msg: 'Loading your form…' },
-      { at: 900,  pct: 88,  msg: 'Redirecting now…' },
-    ];
-
     note.classList.add('show');
 
-    steps.forEach(({ at, pct, msg }) => {
+    [
+      { at: 0,   pct: 20, msg: 'Opening submission form…' },
+      { at: 400, pct: 55, msg: 'Loading your form…' },
+      { at: 900, pct: 88, msg: 'Redirecting now…' }
+    ].forEach(({ at, pct, msg }) => {
       setTimeout(() => {
         progress.style.width = pct + '%';
-        text.textContent = msg;
+        btnText.textContent = msg;
         note.textContent = 'Please wait…';
       }, at);
     });
 
     setTimeout(() => {
       progress.style.width = '100%';
-      text.textContent = 'Redirecting…';
+      btnText.textContent = 'Redirecting…';
       note.textContent = "You're being redirected now";
       setTimeout(() => { window.location.href = TARGET; }, 250);
     }, DURATION);
   }
+
+  runVerification();
 </script>
 
 </body>
